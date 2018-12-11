@@ -53,7 +53,7 @@ Mousetrap.prototype.stopCallback = function(e, element, combo) {
 
 
 Mousetrap.bind(["z", "n", "enter"], function () {
-	$("#passages #next a.macro-click").trigger("click");
+	$("#passages #next a.macro-link").trigger("click");
 });
 
 
