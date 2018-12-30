@@ -48,7 +48,7 @@ arguments)}}(b))};e.init();p.Mousetrap=e;"undefined"!==typeof module&&module.exp
 
 
 Mousetrap.prototype.stopCallback = function(e, element, combo) {
-    return false;
+	return false;
 }
 
 
@@ -130,27 +130,27 @@ Mousetrap.bind(["z", "n", "enter"], function () {
 
 
 Macro.add('time', {
-    handler: function() {
-        var time = State.variables.time;
-        var hour, daystate; // Never checked and always overwritten - no need to init with old value
-        // Sanity check
-        if (time < 0) time = 0;
-        if (time >= 24*60) time = 23*59+59;
-        hour = Math.floor(time / 60);
-        if (hour < 6) {
-            daystate = "night";
-        } else if (hour < 9) {
-            daystate = "dawn";
-        } else if (hour < 18) {
-            daystate = "day";
-        } else if (hour < 21) {
-            daystate = "dusk";
-        } else {
-            daystate = "night";
-        }
-        State.variables.hour = hour;
-        State.variables.daystate = daystate;
-    }
+	handler: function() {
+		var time = State.variables.time;
+		var hour, daystate; // Never checked and always overwritten - no need to init with old value
+		// Sanity check
+		if (time < 0) time = 0;
+		if (time >= 24*60) time = 23*59+59;
+		hour = Math.floor(time / 60);
+		if (hour < 6) {
+			daystate = "night";
+		} else if (hour < 9) {
+			daystate = "dawn";
+		} else if (hour < 18) {
+			daystate = "day";
+		} else if (hour < 21) {
+			daystate = "dusk";
+		} else {
+			daystate = "night";
+		}
+		State.variables.hour = hour;
+		State.variables.daystate = daystate;
+	}
 });
 
 
@@ -275,7 +275,7 @@ window.AvsAn = (function () {
 	function fill(prefix, node, dict) {
 		var a = dict.split(';', 3)
 			, n = a.map(function (x) { return parseInt(x, 36)||0; });
-		node.data={ 
+		node.data={
 					aCount:n[0],
 					anCount:n[1],
 					prefix:prefix,
@@ -289,9 +289,9 @@ window.AvsAn = (function () {
 	fill("", root, dict);
 	return {
 		raw: root,
-		//Usage example: AvsAn.query("example ") 
+		//Usage example: AvsAn.query("example ")
 		//Note that the terminal space indicates this is a complete word - this is sometimes significant, particularly for acronyms!
-		//returns: { 
+		//returns: {
 		//   prefix: "e", //the prefix sufficient to determine the article
 		//   aCount: 9682, //the number of times "a" was seen for this prefix
 		//   anCount: 1028246, //the number of times "an" was seen for this prefix
