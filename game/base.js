@@ -191,8 +191,14 @@ window.AvsAn = (function () {
 })();
 
 
-var enableLinkNumberify = true; // toggle this if you don't want to have the feature
- 
+/**
+ * This will enable or disable the feature completely, but will not remove it from the settings.
+ * Remember to modify the "settings" widget.
+ *
+ * @type {boolean}
+ */
+var enableLinkNumberify = true;
+
 if (enableLinkNumberify) {
 	var disableNumberifyInVisibleElements = [
 		'#passage-hairdressers-seat',
@@ -201,20 +207,20 @@ if (enableLinkNumberify) {
 		'#passage-cheats',
 		'#passage-testing-room'
 	];
- 
-// Number-ify links
+
+	// Number-ify links
 	var currentLinks = [];
- 
+
 	function getPrettyKeyNumber(counter) {
 		var str = "";
- 
+
 		if (counter > 30)
 			str = "Ctrl + ";
 		else if (counter > 20)
 			str = "Alt + ";
 		else if (counter > 10)
 			str = "Shift + ";
- 
+
 		if (counter % 10 === 0)
 			str += "0";
 		else if (counter < 10)
@@ -223,29 +229,35 @@ if (enableLinkNumberify) {
 			var c = Math.floor(counter / 10);
 			str += (counter - (10 * c)).toString();
 		}
- 
+
 		return str;
 	}
- 
+
 	$(document).on(':passagerender', function(ev) {
 		currentLinks = [];
- 
+
+		if (!State.variables.numberify_enabled)
+			return;
+
 		for (var i = 0; i < disableNumberifyInVisibleElements.length; i++) {
 			if ($(ev.content).find(disableNumberifyInVisibleElements[i]).length || $(ev.content).is(disableNumberifyInVisibleElements[i]))
 				return; // simply skip this render
 		}
- 
+
 		currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
- 
+
 		$(currentLinks).each(function(i, el) {
 			$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 		});
 	});
- 
+
 	$(document).on('keyup', function(ev) {
+		if (!State.variables.numberify_enabled)
+			return;
+
 		if ((ev.keyCode >= 48 && ev.keyCode <= 57) || (ev.keyCode >= 96 && ev.keyCode <= 105)) {
 			var fixedKeyIndex = (ev.keyCode < 60 ? ev.keyCode - 48 : ev.keyCode - 96);
- 
+
 			var requestedLinkIndex = [
 				9,
 				0,
@@ -258,14 +270,14 @@ if (enableLinkNumberify) {
 				7,
 				8
 			][fixedKeyIndex];
- 
+
 			if (ev.ctrlKey)
 				requestedLinkIndex += 30;
 			else if (ev.altKey)
 				requestedLinkIndex += 20;
 			else if (ev.shiftKey)
 				requestedLinkIndex += 10;
- 
+
 			if ($(currentLinks).length >= requestedLinkIndex + 1)
 				$(currentLinks[requestedLinkIndex]).click();
 		}
