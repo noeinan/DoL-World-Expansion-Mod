@@ -1,0 +1,373 @@
+:: StoryCaption [nobr]
+<<if $intro is 0>>
+<<weatherdisplay>>
+<<exposure>>
+<<if $gamemode is "soft">>
+<<set $pain to 0>>
+<</if>>
+<<if $images is 1>>
+	<<addclass body has-images>>
+	<<removeclass body no-images>>
+	<<img>>
+<<else>>
+	<<removeclass body has-images>>
+	<<addclass body no-images>>
+<</if>>
+<<exposure>>
+<<combateffects>>
+
+<<if $physiquechange is 1>><<set $physiquechange to 0>>
+	<<if $physiqueuse gte $physique / 1000>>
+<span class="gold">Your physique is improving due to all the exercise you are getting.</span><<set $physiqueuse to 0>><br><br>
+	<<else>>
+<span class="pink">You didn't get enough exercise yesterday, your physique has deteriorated slightly as a result.</span><<set $physiqueuse to 0>><br><br>
+	<</if>>
+<</if>>
+<<if $swimmingmissedtext isnot 1 and $mathsmissedtext isnot 1 and $sciencemissedtext isnot 1 and $englishmissedtext isnot 1 and $historymissedtext isnot 1>>
+<<else>>
+	<<if $swimmingmissedtext is 1>><<set $swimmingmissedtext to 0>>
+		<<if $swimmingmissed gte 10>>
+		<span class="red">You've missed so many swimming lessons that the police have been informed.</span><<crimeup 5>><br>
+		<<else>>
+		<span class="pink">You missed yesterday's swimming lesson.</span><br>
+		<</if>>
+
+	<</if>>
+	<<if $mathsmissedtext is 1>><<set $mathsmissedtext to 0>>
+		<<if $mathsmissed gte 10>>
+		<span class="red">You've missed so many maths lessons that the police have been informed.</span><<crimeup 5>><br>
+		<<else>>
+		<span class="pink">You missed yesterday's maths lesson!</span><br>
+		<</if>>
+
+	<</if>>
+	<<if $sciencemissedtext is 1>><<set $sciencemissedtext to 0>>
+		<<if $sciencemissed gte 10>>
+		<span class="red">You've missed so many science lessons that the police have been informed.</span><<crimeup 5>><br>
+		<<else>>
+		<span class="pink">You missed yesterday's science lesson!</span><br>
+		<</if>>
+
+	<</if>>
+	<<if $englishmissedtext is 1>><<set $englishmissedtext to 0>>
+		<<if $englishmissed gte 10>>
+		<span class="red">You've missed so many English lessons that the police have been informed.</span><<crimeup 5>><br>
+		<<else>>
+		<span class="pink">You missed yesterday's English lesson!</span><br>
+		<</if>>
+
+	<</if>>
+	<<if $historymissedtext is 1>><<set $historymissedtext to 0>>
+		<<if $historymissed gte 10>>
+		<span class="red">You've missed so many history lessons that the police have been informed.</span><<crimeup 5>><br>
+		<<else>>
+		<span class="pink">You missed yesterday's history lesson!</span><br>
+		<</if>>
+
+	<</if>>
+<br>
+<</if>>
+<<if $dev is 1>>
+<<set $money = Math.trunc($money)>>
+You have £<<print ($money / 100)>><br>
+<<else>>
+You have £<<print Math.trunc($money / 100)>>.<<if $money % 100 lte 9>>0<</if>><<print $money % 100>><br>
+<</if>>
+<br>
+<<time>>
+It is $hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>><br>
+It is <<if $weekday eq 1>><<print "Sunday">><<elseif $weekday eq 2>><<print "Monday">><<elseif $weekday eq 3>><<print "Tuesday">><<elseif $weekday eq 4>><<print "Wednesday">><<elseif $weekday eq 5>><<print "Thursday">><<elseif $weekday eq 6>><<print "Friday">><<elseif $weekday eq 7>><<print "Saturday">>.<</if>><br>
+<<schoolday>><br>
+<br>
+<<clothingcaption>>
+<br>
+<<stripcaption>>
+<<if $playergender is "m">>
+	<<if $playergender isnot $playergenderappearance>>
+		<<if $breastindicator is 1>>
+		<span class="pink">Your exposed breasts will make people think you're a girl!</span><br>
+		<<else>>
+		<span class="pink">The way you're dressed, people will think you're a girl!</span><br>
+		<</if>>
+	<</if>>
+<<elseif $playergender is "f">>
+	<<if $playergender isnot $playergenderappearance>>
+		<<if $breastindicator is 0 and $upperexposed is 2>>
+		<span class="pink">Your exposed flat chest will make people think you're a boy!</span><br>
+		<<else>>
+		<span class="pink">The way you're dressed, people will think you're a boy!</span><br>
+		<</if>>
+	<</if>>
+<</if>>
+
+
+<<clamp>>
+
+<<if $daystate is "night">>
+<<set $nightmod to 1.5>>
+<<else>>
+<<set $nightmod to 1>>
+<</if>>
+
+<<if $exposed gte 2>>
+<<set $exposedmod to 1.5>>
+<<elseif $exposed gte 1>>
+<<set $exposedmod to 1.2>>
+<<else>>
+<<set $exposedmod to 1>>
+<</if>>
+
+<<set $allure to (($beauty / 3) + $hairlength / 4 + $upperreveal + $underreveal + $lowerreveal) * $nightmod * $exposedmod>>
+<<if $collared gte 1>><<set $allure += 1000>><</if>>
+<<if $wolfgirl gte 6>><<set $allure += 500>><</if>>
+<<if $demon gte 6>><<set $allure += 500>><</if>>
+<<if $angel gte 6>><<set $allure += 500>><</if>>
+<<if $fallenangel gte 2>><<set $allure += 500>><</if>>
+<<goocount>><<set $allure += ($goocount * 50) + ($semencount * 50)>>
+<<if $legsacc is "stockings">><<set $allure += 300>><</if>>
+<<if $legsacc is "fishnet stockings">><<set $allure += 300>><</if>>
+<<set $allure *= $alluremod>>
+<<if $allure gte 8000 * $alluremod>><<set $allure to 8000 * $alluremod>><</if>>
+<<if $allure gte 8000>><<set $allure to 8000>><</if>>
+<<if $alluretest is 1>>
+<<set $allure += 100000>>
+<</if>>
+<<set $attractiveness to ($beauty / 3) + $hairlength / 4 + $upperreveal + $underreveal + $lowerreveal>>
+<<if $wolfgirl gte 6>><<set $attractiveness += 500>><</if>>
+<<if $demon gte 6>><<set $attractiveness += 500>><</if>>
+<<if $angel gte 6>><<set $attractiveness += 500>><</if>>
+<<if $fallenangel gte 2>><<set $attractiveness += 500>><</if>>
+<<if $legsacc is "stockings">><<set $attractiveness += 300>><</if>>
+<<if $legsacc is "fishnet stockings">><<set $attractiveness += 300>><</if>>
+<<set $rng to random(1, 100)>>
+
+
+<<if $collared gte 1>>
+<span class="pink">A collar with a leash attached encases your neck.</span><br>
+<</if>>
+<<if $vaginalchastityparasite isnot 0>>
+<span class="pink">You feel $vaginalchastityparasite squirming inside your vagina.</span><br>
+<</if>>
+<<if $penilechastityparasite isnot 0>>
+<span class="pink">You feel $penilechastityparasite squirming around your penis.</span><br>
+<</if>>
+<<if $analchastityparasite isnot 0>>
+<span class="pink">You feel $analchastityparasite squirming inside your lower intestine.</span><br>
+<</if>>
+<<if $chestparasite isnot 0>>
+<span class="pink">The parasites clinging to your nipples suck and massage you.</span><br>
+<</if>>
+<<if $penisparasite isnot 0>>
+<span class="pink">The parasite clinging to your penis sucks and massages you.</span><br>
+<</if>>
+<<if $clitparasite isnot 0>>
+<span class="pink">The parasite clinging to your clit sucks and massages you.</span><br>
+<</if>>
+
+<<if $leftarm is "bound" and $rightarm is "bound">>
+<span class="pink">Your arms are bound.</span><br>
+<<elseif $leftarm is "bound">>
+<span class="purple">Your left arm is bound.</span><br>
+<<elseif $rightarm is "bound">>
+<span class="purple">Your right arm is bound.</span><br>
+<</if>>
+<<if $feetuse is "bound">>
+<span class="pink">Your legs are bound.</span>
+<br>
+<</if>>
+<<goo>>
+
+
+<<if $gamemode isnot "soft">>
+Pain: <<paincaption>>
+<</if>>
+Arousal: <<arousalcaption>>
+Fatigue: <<tirednesscaption>>
+Stress: <<stresscaption>>
+<<if $innocencestate is 1>>
+Innocence: <<innocencecaption>>
+<<else>>
+Trauma: <<traumacaption>>
+<</if>>
+<<if $gamemode isnot "soft">>
+Control: <<controlcaption>>
+<</if>>
+Allure: <<allurecaption>>
+<<if $underwater is 1>>
+Air: <<oxygencaption>>
+<</if>>
+<<drunk>><<drugged>><<hallucinogen>>
+<br>
+
+<<if $tipdisable is "f">>
+<span class="gold">Tip:</span> <<tips>>
+<br><br>
+<</if>>
+
+<<silently>>
+
+<<if $hungerenabled is 1>>
+	<<if $hunger gte 2000>><<set $stress += ($hunger - 2000)>><<set $physique -= (($hunger - 2000) / 200)>>
+	<</if>>
+<</if>>
+<<if $thirstenabled is 1>>
+	<<if $thirst gte 2000>><<set $stress += ($thirst - 2000)>><<set $physique -= (($thirst - 2000) / 200)>>
+	<</if>>
+<</if>>
+
+<<if $hygieneenabled is 1>>
+	<<if $hygiene gte 2000>><<set $stress += ($hygiene - 2000)>>
+	<</if>>
+<</if>>
+
+<</silently>>
+
+<<if $debug is 1>>
+  <<debug>>
+<</if>>
+
+
+<<else>>
+
+<<versioninfo>>
+
+<</if>>
+
+<<if $menu is 1>>
+__Colour Key__<br>
+<span class="gold">Skill Up/Reward</span><br>
+<span class="green">Excellent/Safe</span><br>
+<span class="teal">Good/Reliable</span><br>
+<span class="lblue">Decent/Hopeful</span><br>
+<span class="blue">Okay/Unsure</span><br>
+<span class="purple">Poor/Precarious</span><br>
+<span class="pink">Bad/Risky</span><br>
+<span class="red">Terrible/Dangerous</span><br>
+<br>
+<span class="def">Defiant</span><br>
+<span class="brat">Bratty</span><br>
+<span class="meek">Meek</span><br>
+<span class="sub">Submissive/Assertive</span><br>
+<</if>>
+
+
+:: StoryMenu
+<<if $intro is 0 and $menu is 0 and $dancing is 0 and $combat is 0>>[[Characteristics]]
+[[Traits]]
+[[Social]]
+[[Statistics]]
+<<if $cheatdisable is "f">>[[Cheats]]<</if>>
+<</if>>
+
+
+
+:: Widgets Clothing Caption [widget]
+<<widget "clothingcaption">><<nobr>>
+
+<<if $upperclothes is "naked">>
+	<<if $lowerclothes is "naked">>
+		<<if $underclothes is "naked">>
+		<span class="red">You are completely naked!</span>
+		<</if>>
+		<<if $underclothes isnot "naked">>
+		<span class="pink">You are wearing nothing but a <<if $undertype isnot "chastity">>pair of <</if>><<underintegrity>> $undercolour $underclothes.</span>
+		<</if>>
+	<</if>>
+	<<if $lowerclothes isnot "naked">>
+		<<if $underclothes is "naked">>
+		<span class="pink">You are topless and wearing no underwear</span> but your lower half is covered by <<lowerword>> <<lowerintegrity>> $lowercolour $lowerclothes.
+		<</if>>
+		<<if $underclothes isnot "naked">>
+		<span class="pink">You are topless</span> with <<lowerword>> <<lowerintegrity>> $lowercolour $lowerclothes and <<underword>> <<underintegrity>> $undercolour $underclothes.
+		<</if>>
+	<</if>>
+<<elseif $upperclothes isnot "naked">>
+	<<if $lowerclothes is "naked">>
+		<<if $underclothes is "naked">>
+			<<if $upperonepiece is 1 and $lowerset isnot $upperset>>
+			You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes that has been torn at the waist <span class="red"> leaving your bottom half completely exposed!</span>
+			<<else>>
+		<span class="red">Your bottom half is completely exposed!</span> You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes.
+			<</if>>
+		<</if>>
+		<<if $underclothes isnot "naked">>
+			<<if $upperonepiece is 1 and $lowerset isnot $upperset>>
+			You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes that has been torn at the waist <span class="purple"> leaving your <<underword>> <<underintegrity>> $undercolour $underclothes exposed.</span>
+			<<else>>
+		You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes and <span class="purple">exposed <<underword>> <<underintegrity>> $undercolour $underclothes.</span>
+			<</if>>
+		<</if>>
+	<</if>>
+	<<if $lowerclothes isnot "naked">>
+		<<if $underclothes is "naked">>
+		You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes
+		<<if $loweronepiece isnot 1>>and <<lowerword>> <<lowerintegrity>> $lowercolour $lowerclothes
+		<</if>>
+		<span class="purple"><<if $lowertype is "swim">>and<<else>>but<</if>> you are not wearing underwear.</span>
+		<</if>>
+		<<if $underclothes isnot "naked">><<nobr>>
+		You are wearing <<upperword>> <<upperintegrity>> $uppercolour $upperclothes
+		<<if $loweronepiece isnot 1>>with <<lowerword>> <<lowerintegrity>> $lowercolour $lowerclothes
+		<</if>>and <<underword>> <<underintegrity>> $undercolour $underclothes.
+		<</nobr>><</if>>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "stripcaption">><<nobr>>
+
+<<if $uppertype isnot "naked" and $upperwetstage gte 3 and $lowertype isnot "naked" and $lowerwetstage gte 3 and $undertype isnot "naked" and $undertype isnot "chastity" and $underwetstage gte 3>>
+	<<if $upperset is $lowerset>>
+<br>Your $upperclothes, skirt and $underclothes are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+	<<else>>
+<br>Your $upperclothes, $lowerclothes and $underclothes are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+	<</if>>
+
+<<elseif $uppertype isnot "naked" and $upperwetstage gte 3 and $lowerwetstage gte 3 and $lowertype isnot "naked">>
+	<<if $upperset is $lowerset>>
+<br>Your $upperclothes and skirt are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<<else>>
+<br>Your $upperclothes and $lowerclothes are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<</if>>
+
+<<elseif $uppertype isnot "naked" and $upperwetstage gte 3>>
+<br>Your $upperclothes <<upperplural>> drenched, <span class="purple">revealing your <<breastsstop>></span><br>
+
+<<elseif $lowertype isnot "naked" and $lowerwetstage gte 3 and $undertype isnot "naked" and $undertype isnot "chastity" and $underwetstage gte 3>>
+<br>Your $lowerclothes and $underclothes are drenched, <span class="pink">revealing your <<genitalsstop>></span><br>
+
+<<elseif $lowertype isnot "naked" and $lowerwetstage gte 3>>
+<br>Your $lowerclothes <<lowerplural>> drenched, <span class="purple">revealing your <<undiesstop>></span><br>
+
+<<elseif $undertype isnot "naked" and $undertype isnot "chastity" and $underwetstage gte 3>>
+<br>Your $underclothes <<underplural>> drenched, <span class="pink">revealing your <<genitalsstop>></span><br>
+
+<<elseif $uppertype isnot "naked" and $upperexposed is 2 and $lowertype isnot "naked" and $lowerexposed is 2 and $undertype isnot "naked" and $undertype isnot "chastity" and $understate isnot "waist">>
+	<<if $upperset is $lowerset>>
+<br>Your $upperclothes, skirt and $underclothes have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+	<<else>>
+<br>Your $upperclothes, $lowerclothes and $underclothes have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+	<</if>>
+
+<<elseif $uppertype isnot "naked" and $upperexposed is 2 and $lowerexposed is 2 and $lowertype isnot "naked">>
+	<<if $upperset is $lowerset>>
+<br>Your $upperclothes and skirt have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<<else>>
+<br>Your $upperclothes and $lowerclothes have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<</if>>
+
+<<elseif $uppertype isnot "naked" and $upperexposed is 2>>
+<br>Your $upperclothes <<upperhas>> been pulled aside, <span class="purple">revealing your <<breastsstop>></span><br>
+
+<<elseif $lowertype isnot "naked" and $lowerexposed is 2 and $undertype isnot "naked" and $undertype isnot "chastity" and $understate isnot "waist">>
+<br>Your $lowerclothes <<lowerhas>> been pulled aside and your $underclothes pulled down, <span class="pink">revealing your <<genitalsstop>></span><br>
+
+<<elseif $lowertype isnot "naked" and $lowerexposed is 2>>
+<br>Your $lowerclothes <<lowerhas>> been pulled aside, <span class="purple">revealing your <<undiesstop>></span><br>
+
+<<elseif $undertype isnot "naked" and $undertype isnot "chastity" and $understate isnot "waist">>
+<br>Your $underclothes <<underhas>> been pulled down to your $understate, <span class="pink">revealing your <<genitalsstop>></span><br>
+<</if>>
+
+<</nobr>><</widget>>

@@ -1,0 +1,2167 @@
+:: Widgets [widget]
+<<widget "toggledebug">><<nobr>>
+<<if $debug>> <<set $debug to 1>>
+<<else>> <<set $debug to 0>>
+<</nobr>><</widget>>
+
+
+<<widget "statbar">><<nobr>>
+<<set _now to $args[0]>><<set _max to $args[1]>>
+<div class="meter">
+  <<set _percent=Math.floor((_now/_max)*100)>>
+  <<if _now gte _max>>
+	<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 4>>
+	<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 3>>
+	<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 2>>
+	<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 1>>
+	<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte 1>>
+	<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+  <<else>>
+	<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+  <</if>>
+</div>
+<</nobr>><</widget>>
+
+<<widget "statbarinverted">><<nobr>>
+<<set _now to $args[0]>><<set _max to $args[1]>>
+<div class="meter">
+  <<set _percent=Math.floor((_now/_max)*100)>>
+  <<if _now gte _max>>
+	<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 4>>
+	<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 3>>
+	<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 2>>
+	<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte (_max / 5) * 1>>
+	<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now gte 1>>
+	<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+  <<else>>
+	<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+  <</if>>
+</div>
+<</nobr>><</widget>>
+
+<<widget "statbarinvertedneg">><<nobr>>
+<<set _now to $args[0]>><<set _max to $args[1]>>
+<div class="meter">
+  <<set _percent=Math.floor((_now/_max)*100)>>
+  <<if _now lte _max>>
+	<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now lte (_max / 5) * 4>>
+	<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now lte (_max / 5) * 3>>
+	<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now lte (_max / 5) * 2>>
+	<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now lte (_max / 5) * 1>>
+	<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
+  <<elseif _now lte -1>>
+	<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+  <<else>>
+	<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+  <</if>>
+</div>
+<</nobr>><</widget>>
+
+
+<<widget "wateraction">><<nobr>>
+<<if $swimmingskill lt 100>><<set $seconds += 18>><<set $oxygen -= 180>>
+<<elseif $swimmingskill lt 200>><<set $seconds += 15>><<set $oxygen -= 150>>
+<<elseif $swimmingskill lt 300>><<set $seconds += 12>><<set $oxygen -= 120>>
+<<elseif $swimmingskill lt 400>><<set $seconds += 10>><<set $oxygen -= 100>>
+<<elseif $swimmingskill lt 500>><<set $seconds += 8>><<set $oxygen -= 80>>
+<<elseif $swimmingskill lt 600>><<set $seconds += 8>><<set $oxygen -= 80>>
+<<elseif $swimmingskill lt 700>><<set $seconds += 7>><<set $oxygen -= 70>>
+<<elseif $swimmingskill lt 800>><<set $seconds += 7>><<set $oxygen -= 70>>
+<<elseif $swimmingskill lt 900>><<set $seconds += 6>><<set $oxygen -= 60>>
+<<elseif $swimmingskill lt 1000>><<set $seconds += 6>><<set $oxygen -= 60>>
+<<else>><<set $seconds += 5>><<set $oxygen -= 50>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "underwater">><<nobr>>
+<<water>><<set $underwater to 1>><<set $underwatercheck to 1>>
+
+<<if $seconds gte 60>>
+<<set $seconds -= 60>>
+<<pass 1>>
+<</if>>
+<<if $oxygen lt 0 and $nooxygen is 1>>
+<<set $stress += 1000>>
+<<elseif $oxygen lt 0 and $nooxygen isnot 1>>
+<<set $nooxygen to 1>>
+<<else>>
+<<set $nooxygen to 0>>
+<</if>>
+<span class="lblue">Air:</span>
+<<if $oxygen lt 0>>
+<span class="red">You can't breathe! Your stress will increase and you'll soon pass out if you can't find air.</span>
+<</if>>
+<<oxygencaption>>
+
+<<if $underwaterintro isnot 1 and $combat isnot 1>><<set $underwaterintro to 1>>
+<i>You can't hold your breath forever. You will pass less time and use less air per action with a higher swimming skill.</i><br><br>
+<</if>>
+
+<</nobr>><</widget>>
+
+
+<<widget "oxygenrefresh">><<nobr>>
+<<set $oxygen to $oxygenmax>>
+<</nobr>><</widget>>
+
+
+<<widget "passwater">><<nobr>>
+
+<<if $outside is 1 and $weather is "clear">>
+	<<if $upperwet gte 1>>
+	<<set $upperwet -= ($pass * 2)>>
+	<</if>>
+	<<if $lowerwet gte 1>>
+	<<set $lowerwet -= ($pass * 2)>>
+	<</if>>
+	<<if $underwet gte 1>>
+	<<set $underwet -= ($pass * 2)>>
+	<</if>>
+<<elseif $outside is 1 and $weather is "rain">>
+	<<if $uppertype isnot "naked" and $uppertype isnot "swim">>
+<<set $upperwet += $pass>>
+	<</if>>
+	<<if $lowertype isnot "naked" and $lowertype isnot "swim">>
+<<set $lowerwet += $pass>>
+	<</if>>
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+<<set $underwet += $pass>>
+	<</if>>
+<<else>>
+	<<if $upperwet gte 1>>
+	<<set $upperwet -= $pass>>
+	<</if>>
+	<<if $lowerwet gte 1>>
+	<<set $lowerwet -= $pass>>
+	<</if>>
+	<<if $underwet gte 1>>
+	<<set $underwet -= $pass>>
+	<</if>>
+<</if>>
+
+
+<</nobr>><</widget>>
+
+
+<<widget "pass">><<nobr>>
+<<if $args[1]>>
+  <<if $args[1].includes("h", 0)>> <<set $pass to ($args[0]*60)>>
+  <<elseif $args[1].includes("d", 0)>> <<set $pass to ($args[0]*1440)>> <</if>>
+<<elseif $args[0]>> <<set $pass to $args[0]>>
+<<else>> <<set $pass to 0>> <</if>>
+<<passwater>>
+<<if $controlled is 0 and $anxiety gte 2>>
+  <<set $stress += $pass>>
+<<elseif $controlled is 0 and $anxiety gte 1>>
+<<else>>
+  <<set $stress -= $pass>>
+<</if>>
+<<if $hallucinogen gt 0>><<set $hallucinogen -= $pass>><</if>>
+<<if $drunk gt 0>><<set $drunk -= $pass>><</if>>
+<<if $drugged gt 0>><<set $drugged -= $pass>><</if>>
+<<if $pain gt 0>><<set $pain -= $pass>><</if>>
+<<if $pass gt 1200>>
+  <<set $hunger to 0>><<set $thirst to 0>><<set $hygiene to 0>><<set $tiredness to 0>>
+<<else>>
+  <<set $hunger += $pass>> <<set $thirst += $pass>> <<set $hygiene += $pass>> <<set $tiredness += $pass>>
+<</if>>
+<<set $time += $pass>> <<set $minute += $pass>>
+<<set $arousal -= $pass*10>><<arousalpass>>
+<</nobr>><</widget>>
+
+<<widget "neutral">><<nobr>>
+<<if $args[0]>>
+  <<if $consensual isnot 1>>
+	<<set $stress += 10 * $args[0] >>
+	<<combattrauma $args[0]>>
+  <</if>>
+  <<set $arousal += 20 * $args[0]>>
+  <<set $enemyarousal += $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "sex">><<nobr>>
+<<if $args[0]>>
+  <<if $consensual isnot 1>>
+	<<set $stress += 10 * $args[0]>>
+	<<combattrauma $args[0]>>
+  <<else>>
+	<<set $stress -= 10 * $args[0]>>
+  <</if>>
+  <<set $arousal += 20 * $args[0]>>
+  <<set $enemyarousal += 2 * $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "violence">><<nobr>>
+<<if $args[0]>>
+  <<set $stress += 10 * $args[0]>>
+  <<combattrauma $args[0]>>
+  <<set $pain += $args[0]>>
+  <<if $args[0] gt 6>>
+	<<set $enemyanger -= 5>>
+  <<else>>
+	<<set $enemyanger -= $args[0]>>
+  <</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "submission">><<nobr>>
+<<if $args[0]>>
+  <<if $consensual isnot 1>>
+	<<set $stress += 10 * $args[0]>>
+	<<set $submissive += 1>>
+  <<else>>
+	<<set $stress -= 10 * $args[0]>>
+	<<set $assertive += 1>>
+  <</if>>
+  <<set $arousal += 20 * $args[0]>>
+  <<set $enemyarousal += 3 * $args[0]>>
+  <<set $enemytrust += 2>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "defiance">><<nobr>>
+<<if $args[0]>>
+<<set _negargs = -$args[0]>>
+  <<set $stress -= 10 * $args[0]>>
+  <<combattrauma _negargs>>
+  <<set $enemyanger += 5 * $args[0]>>
+  <<set $enemyhealth -= (2 * $args[0] * ($physique / 4000))>>
+  <<set $submissive -= 1>>
+  <<set $enemytrust -= 4>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "brat">><<nobr>>
+<<if $args[0]>>
+<<set _negargs = -$args[0]>>
+  <<set $stress += 10 * $args[0]>>
+  <<combattrauma _negargs>>
+  <<set $enemyanger += 5 * $args[0]>>
+  <<set $submissive -= 1>>
+  <<set $enemytrust -= 2>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "meek">><<nobr>>
+<<if $args[0]>>
+  <<if $consensual isnot 1>>
+	<<set $submissive += 1>>
+  <<else>>
+	<<set $assertive += 1>>
+  <</if>>
+  <<set $arousal += 20 * $args[0]>>
+  <<set $enemyarousal += $args[0]>>
+  <<set $enemytrust += 1>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "crimeup">><<nobr>>
+<<if $args[0]>>
+  <<set $crime += $args[0]>>
+  <<set $crimehistory += $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "seductionskilluse">><<set $enemyarousal += ($seductionskill / 100)>><<set $seductionskill += 5>><</widget>>
+
+<<widget "seductionskillusecombat">><<set $enemyarousal += ($seductionskill / 100)>><<set $seductionskill += 5>><<set $seductionskillup to 1>><</widget>>
+
+<<widget "oralskilluse">><<set $enemyarousal += ($oralskill / 100)>><<set $oralskill += 5>><<set $oralskillup to 1>><</widget>>
+
+<<widget "vaginalskilluse">><<set $enemyarousal += ($vaginalskill / 100)>><<set $vaginalskill += 5>><<set $vaginalskillup to 1>><</widget>>
+
+<<widget "analskilluse">><<set $enemyarousal += ($analskill / 100)>><<set $analskill += 5>><<set $analskillup to 1>><</widget>>
+
+<<widget "handskilluse">><<set $enemyarousal += ($handskill / 100)>><<set $handskill += 5>><<set $handskillup to 1>><</widget>>
+
+<<widget "feetskilluse">><<set $enemyarousal += ($feetskill / 100)>><<set $feetskill += 5>><<set $feetskillup to 1>><</widget>>
+
+<<widget "bottomskilluse">><<set $enemyarousal += ($bottomskill / 100)>><<set $bottomskill += 5>><<set $bottomskillup to 1>><</widget>>
+
+<<widget "thighskilluse">><<set $enemyarousal += ($thighskill / 100)>><<set $thighskill += 5>><<set $thighskillup to 1>><</widget>>
+
+<<widget "chestskilluse">><<set $enemyarousal += ($chestskill / 100)>><<set $chestskill += 5>><<set $chestskillup to 1>><</widget>>
+
+<<widget "penileskilluse">><<set $enemyarousal += ($penileskill / 100)>><<set $penileskill += 5>><<set $penileskillup to 1>><</widget>>
+
+<<widget "skulduggeryskilluse">><<nobr>>
+<<set $skulduggery += 3>><span class="gold"> You learned a thing or two about skulduggery.</span><br><br>
+<</nobr>><</widget>>
+
+<<widget "swimmingskilluse">><<nobr>>
+<<set $swimmingskill += 9>><span class="gold"> You've become more confident at swimming.</span><br><br>
+<</nobr>><</widget>>
+
+<<widget "danceskilluse">><<nobr>>
+
+<<set $danceskill += 1>><span class="gold"> You feel more confident in your dancing abilities.</span>
+
+<</nobr>><</widget>>
+
+<<widget "historyskill">><<nobr>>
+<<set $history += 2>><<set $school += 2>>
+<<if $faceacc is "glasses">>
+<<set $history += 1>><<set $school += 1>>
+<</if>>
+<<if $exposed gte 1>>
+<<set $history += 1>><<set $school += 1>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "mathsskill">><<nobr>>
+<<set $maths += 2>><<set $school += 2>>
+<<if $faceacc is "glasses">>
+<<set $maths += 1>><<set $school += 1>>
+<</if>>
+<<if $exposed gte 1>>
+<<set $maths += 1>><<set $school += 1>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "scienceskill">><<nobr>>
+<<set $science += 2>><<set $school += 2>>
+<<if $faceacc is "glasses">>
+<<set $science += 1>><<set $school += 1>>
+<</if>>
+<<if $exposed gte 1>>
+<<set $science += 1>><<set $school += 1>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "englishskill">><<nobr>>
+<<set $english += 2>><<set $school += 2>>
+<<if $faceacc is "glasses">>
+<<set $english += 1>><<set $school += 1>>
+<</if>>
+<<if $exposed gte 1>>
+<<set $english += 1>><<set $school += 1>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "schoolskill">><<nobr>>
+<<historyskill>>
+<<mathsskill>>
+<<scienceskill>>
+<<englishskill>>
+<</nobr>><</widget>>
+
+<<widget "physique">><<nobr>>
+<<if $args[0]>><<set _temp to $args[0]>><<else>><<set _temp to 1>><</if>>
+<<if $exposed gte 2>>
+<<set _temp *= 1.2>>
+<<elseif $exposed is 1>>
+<<set _temp *= 1.1>>
+<</if>>
+<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>><span class="gold"> You get a good workout.</span>
+<</nobr>><</widget>>
+
+<<widget "bruise">><<nobr>>
+<<if $args[0]>>
+  <<switch $args[0]>>
+  <<case "face">>
+	<<set $facebruise += 1>>
+  <<case "neck">>
+	<<set $neckbruise += 1>>
+  <<case "chest">>
+	<<set $chestbruise += 1>>
+  <<case "rightarm">>
+	<<set $rightarmbruise += 1>>
+  <<case "leftarm">>
+	<<set $leftarmbruise += 1>>
+  <<case "tummy">>
+	<<set $tummybruise += 1>>
+  <<case "bottom">>
+	<<set $bottombruise += 1>>
+  <<case "thigh">>
+	<<set $thighbruise += 1>>
+  <<case "anus">>
+	<<set $anusbruise += 1>>
+  <<case "vagina">>
+	<<set $vaginabruise += 1>>
+  <<case "penis">>
+	<<set $penisbruise += 1>>
+  <<case "full">>
+	<<set $facebruise += 1>>
+	<<set $neckbruise += 1>>
+	<<set $chestbruise += 1>>
+	<<set $rightarmbruise += 1>>
+	<<set $leftarmbruise += 1>>
+	<<set $tummybruise += 1>>
+	<<set $bottombruise += 1>>
+	<<set $thighbruise += 1>>
+  <</switch>><</if>>
+<</nobr>><</widget>>
+
+
+<<widget "rapestat">><<set $rapestat += 1>><</widget>>
+
+<<widget "moleststat">><<set $moleststat += 1>><</widget>>
+
+<<widget "vaginalstat">><<set $vaginalstat += 1>><</widget>>
+
+<<widget "vaginalejacstat">><<set $vaginalejacstat += 1>><<set $purity -= 1>><<internalejac>><</widget>>
+
+<<widget "analstat">><<set $analstat += 1>><</widget>>
+
+<<widget "analejacstat">><<set $analejacstat += 1>><<set $purity -= 1>><<internalejac>><</widget>>
+
+<<widget "oralstat">><<set $oralstat += 1>><</widget>>
+
+<<widget "oralejacstat">><<set $oralejacstat += 1>><<set $purity -= 1>><<internalejac>><</widget>>
+
+<<widget "handstat">><<set $handstat += 1>><</widget>>
+
+<<widget "handejacstat">><<set $handejacstat += 1>><</widget>>
+
+<<widget "feetstat">><<set $feetstat += 1>><</widget>>
+
+<<widget "feetejacstat">><<set $feetejacstat += 1>><</widget>>
+
+<<widget "thighstat">><<set $thighstat += 1>><</widget>>
+
+<<widget "thighejacstat">><<set $thighejacstat += 1>><</widget>>
+
+<<widget "cheststat">><<set $cheststat += 1>><</widget>>
+
+<<widget "chestejacstat">><<set $chestejacstat += 1>><</widget>>
+
+<<widget "bottomstat">><<set $bottomstat += 1>><</widget>>
+
+<<widget "bottomejacstat">><<set $bottomejacstat += 1>><</widget>>
+
+<<widget "penilestat">><<set $penilestat += 1>><</widget>>
+
+<<widget "penileejacstat">><<set $penileejacstat += 1>><</widget>>
+
+<<widget "clothesstripstat">><<set $clothesstripstat += 1>><</widget>>
+
+<<widget "clothesruinstat">><<set $clothesruinstat += 1>><</widget>>
+
+<<widget "orgasmstat">><<set $orgasmstat += 1>><</widget>>
+
+<<widget "ejacstat">><<set $ejacstat += 1>><</widget>>
+
+<<widget "hitstat">><<set $hitstat += 1>><</widget>>
+
+<<widget "attackstat">><<set $attackstat += 1>><</widget>>
+
+<<widget "vaginalentranceejacstat">><<set $vaginalentranceejacstat += 1>>
+<</widget>>
+
+<<widget "faceejacstat">><<set $faceejacstat += 1>>
+<</widget>>
+
+<<widget "hairejacstat">><<set $hairejacstat += 1>>
+<</widget>>
+
+<<widget "tummyejacstat">><<set $tummyejacstat += 1>>
+<</widget>>
+
+<<widget "neckejacstat">><<set $neckejacstat += 1>>
+<</widget>>
+
+<<widget "dancestat">><<set $dancestat += 1>><</widget>>
+
+<<widget "hunger">><<nobr>>
+<<if $hunger gte 2000>><span class="red">You are starving!</span>
+<<elseif $hunger gte 1600>><span class="pink">You are famished.</span>
+<<elseif $hunger gte 1200>><span class="purple">You are hungry.</span>
+<<elseif $hunger gte 800>><span class="blue">You are peckish.</span>
+<<elseif $hunger gte 400>><span class="lblue">You are satisfied.</span>
+<<elseif $hunger gte 1>><span class="teal">You are satiated.</span>
+<<elseif $hunger lte 0>><span class="green">You are full.</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "thirst">><<nobr>>
+<<if $thirst gte 2000>><span class="red">You are dehydrated!</span>
+<<elseif $thirst gte 1600>><span class="pink">You are really thirsty.</span>
+<<elseif $thirst gte 1200>><span class="purple">You are thirsty.</span>
+<<elseif $thirst gte 800>><span class="blue">Your throat is dry.</span>
+<<elseif $thirst gte 400>><span class="lblue">You are satisfied.</span>
+<<elseif $thirst gte 1>><span class="teal">You are satiated.</span>
+<<elseif $thirst lte 0>><span class="green">You are full.</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "tirednesscaption">><<nobr>>
+<<if $tiredness gte 2000>><span class="red">You are exhausted.</span>
+<<elseif $tiredness gte 1600>><span class="pink">You are fatigued.</span>
+<<elseif $tiredness gte 1200>><span class="purple">You are tired.</span>
+<<elseif $tiredness gte 800>><span class="blue">You are wearied.</span>
+<<elseif $tiredness gte 400>><span class="lblue">You are alert.</span>
+<<elseif $tiredness gte 1>><span class="teal">You are wide awake.</span>
+<<else>><span class="green">You are refreshed.</span>
+<</if>>
+
+
+<<if $tiredness gte 2000>><<set $stress += (($tiredness - 2000) * 16)>><<set $trauma += (($tiredness - 2000) / 3)>>
+<</if>>
+<<set $tiredness = Math.clamp($tiredness, 0, $tirednessmax)>>
+<<statbar $tiredness $tirednessmax>>
+
+
+<</nobr>><</widget>>
+
+<<widget "hygiene">><<nobr>>
+<<if $hygiene gte 2000>><span class="red">You are filthy.</span>
+<<elseif $hygiene gte 1600>><span class="pink">You are soiled.</span>
+<<elseif $hygiene gte 1200>><span class="purple">You are smelly.</span>
+<<elseif $hygiene gte 800>><span class="blue">You are messy.</span>
+<<elseif $hygiene gte 400>><span class="lblue">You are neat.</span>
+<<elseif $hygiene gte 1>><span class="teal">You are clean.</span>
+<<elseif $hygiene lte 0>><span class="green">You are speckless.</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "stresscaption">><<nobr>>
+<<if $stress gte 10000>><span class="red">You are overwhelmed!</span>
+<<elseif $stress gte 8000>><span class="pink">You are distressed.</span>
+<<elseif $stress gte 6000>><span class="purple">You are strained.</span>
+<<elseif $stress gte 4000>><span class="blue">You are tense.</span>
+<<elseif $stress gte 2000>><span class="lblue">You are calm.</span>
+<<elseif $stress gte 1>><span class="teal">You are placid.</span>
+<<else>><span class="green">You are serene.</span>
+<</if>>
+
+<<statbar $stress $stressmax>>
+
+<</nobr>><</widget>>
+
+<<widget "traumacaption">><<nobr>>
+<<if $trauma gte $traumamax>><span class="red">You feel numb.</span>
+<<elseif $trauma gte ($traumamax / 5) * 4>><span class="pink">You are tormented.</span>
+<<elseif $trauma gte ($traumamax / 5) * 3>><span class="purple">You are disturbed.</span>
+<<elseif $trauma gte ($traumamax / 5) * 2>><span class="blue">You are troubled.</span>
+<<elseif $trauma gte ($traumamax / 5) * 1>><span class="lblue">You are nervous.</span>
+<<elseif $trauma gte 1>><span class="teal">You are uneasy.</span>
+<<else>><span class="green">You are healthy.</span>
+<</if>>
+
+
+<<statbar $trauma $traumamax>>
+
+<</nobr>><</widget>>
+
+
+<<widget "innocencecaption">><<nobr>>
+<<if $awareness gte 0>><span class="red">You understand.</span>
+<<elseif $awareness gt -40>><span class="pink">You are uncertain.</span>
+<<elseif $awareness gt -80>><span class="purple">You are perplexed.</span>
+<<elseif $awareness gt -120>><span class="blue">You are curious.</span>
+<<elseif $awareness gt -160>><span class="lblue">You are trusting.</span>
+<<elseif $awareness gt -200>><span class="teal">You are naive.</span>
+<<else>><span class="green">You are oblivious.</span>
+<</if>>
+
+
+<<statbarinvertedneg $awareness -200>>
+
+<</nobr>><</widget>>
+
+<<widget "controlcaption">><<nobr>>
+<<if $control gte $controlmax>><span class="green">You are confident.</span>
+<<elseif $control gte ($controlmax / 5) * 4>><span class="teal">You are insecure.</span>
+<<elseif $control gte ($controlmax / 5) * 3>><span class="lblue">You are worried.</span>
+<<elseif $control gte ($controlmax / 5) * 2>><span class="blue">You are anxious.</span>
+<<elseif $control gte ($controlmax / 5) * 1>><span class="purple">You are scared.</span>
+<<elseif $control gte 1>><span class="pink">You are frightened.</span>
+<<else>><span class="red">You are terrified.</span>
+<</if>>
+
+
+<<statbarinverted $control $controlmax>>
+
+<</nobr>><</widget>>
+
+
+<<widget "arousalcaption">><<nobr>>
+<<if $arousal gte 10000>><span class="red">You're shaking with arousal.</span>
+<<elseif $arousal gte 8000>><span class="pink">A heat rises within you.</span>
+<<elseif $arousal gte 6000>><span class="purple">You feel horny.</span>
+<<elseif $arousal gte 4000>><span class="blue">You feel lustful.</span>
+<<elseif $arousal gte 2000>><span class="lblue">You feel aroused.</span>
+<<elseif $arousal gte 1>><span class="teal">You feel sensual.</span>
+<<else>><span class="green">You feel cold.</span>
+<</if>>
+
+
+<<statbar $arousal $arousalmax>>
+
+
+<</nobr>><</widget>>
+
+
+<<widget "allurecaption">><<nobr>>
+
+<<if $allure gte (6000 * $alluremod)>><span class="red">You look like you need to be ravaged.</span>
+<<elseif $allure gte (4000 * $alluremod)>><span class="pink">You look perverted.</span>
+<<elseif $allure gte (3000 * $alluremod)>><span class="purple">You look lewd.</span>
+<<elseif $allure gte (2000 * $alluremod)>><span class="blue">You stand out.</span>
+<<elseif $allure gte (1500 * $alluremod)>><span class="lblue">You attract attention.</span>
+<<elseif $allure gte (1000 * $alluremod)>><span class="teal">You attract glances.</span>
+<<else>><span class="green">You look unremarkable.</span>
+<</if>>
+
+	<div class="meter">
+		<<set $percent=Math.floor(($allure/(8000 * $alluremod))*100)>>
+		<<if $allure gte (6000 * $alluremod)>>
+		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $allure gte (4000 * $alluremod)>>
+		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $allure gte (3000 * $alluremod)>>
+		<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $allure gte (2000 * $alluremod)>>
+		<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $allure gte (1500 * $alluremod)>>
+		<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $allure gte (1000 * $alluremod)>>
+		<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+		<<else>>
+		<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+		<</if>>
+	</div>
+
+<</nobr>><</widget>>
+
+
+<<widget "oxygencaption">><<nobr>>
+<<statbarinverted $oxygen $oxygenmax>>
+<</nobr>><</widget>>
+
+<<widget "flashbacktown">><<nobr>>
+<span class="red">You hear a car horn blare somewhere in the distance, and you panic. Phantom tendrils probe your body and restrict your limbs as a wordless voice jeers and promises endless debasement. It lasts only a moment, but the impression of violation remains.</span><<garousal>><<gstress>><<gtrauma>><<arousal 6>><<stress 12>><<trauma 6>><br><br>
+<</nobr>><</widget>>
+
+<<widget "flashbackhome">><<nobr>>
+<span class="red">You hear a car drive past, and you panic. Phantom tendrils probe your body and restrict your limbs as a wordless voice jeers and promises endless debasement. It lasts only a moment, but the impression of violation remains.</span><<garousal>><<gstress>><<gtrauma>><<arousal 6>><<stress 6>><<trauma 6>><br><br>
+<</nobr>><</widget>>
+
+<<widget "flashbackbeach">><<nobr>>
+<span class="red">You hear a gull squawk, and you panic. Phantom tendrils probe your body and restrict your limbs as a wordless voice jeers and promises endless debasement. It lasts only a moment, but the impression of violation remains.</span><<garousal>><<gstress>><<gtrauma>><<arousal 6>><<stress 6>><<trauma 6>><br><br>
+<</nobr>><</widget>>
+
+<<widget "flashbackunderground">><<nobr>>
+<span class="red">You feel a tremor through the earth, and you panic. Phantom tendrils probe your body and restrict your limbs as a wordless voice jeers and promises endless debasement. It lasts only a moment, but the impression of violation remains.</span><<garousal>><<gstress>><<gtrauma>><<arousal 6>><<stress 6>><<trauma 6>><br><br>
+<</nobr>><</widget>>
+
+<<widget "flashbackschool">><<nobr>>
+<span class="red">You remember the last time you were molested at school, and you panic. Phantom tendrils probe your body and restrict your limbs as a wordless voice jeers and promises endless debasement. It lasts only a moment, but the impression of violation remains.</span><<garousal>><<gstress>><<gtrauma>><<arousal 6>><<stress 6>><<trauma 6>><br><br>
+<</nobr>><</widget>>
+
+<<widget "drunk">><<nobr>>
+
+<<if $drunk gt 0>>
+	<<if $drunk lte 120>>
+	<span class="blue">You are woozy.</span>
+	<<elseif $drunk lte 240>>
+	<span class="purple">You are tipsy.</span>
+	<<elseif $drunk lte 360>>
+	<span class="purple">You are drunk.</span>
+	<<elseif $drunk lte 480>>
+	<span class="pink">You are smashed</span>
+	<<else>>
+	<span class="pink">You are wasted</span>
+	<</if>>
+
+	<div class="meter">
+		<<set $percent=Math.floor(($drunk/1000)*100)>>
+		<<if $drunk gte 500>>
+		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drunk gte 400>>
+		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drunk gte 300>>
+		<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drunk gte 200>>
+		<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drunk gte 100>>
+		<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drunk gte 1>>
+		<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+		<<else>>
+		<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+		<</if>>
+	</div>
+
+<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "drugged">><<nobr>>
+
+<<if $drugged gt 0>>
+<span class="pink">A lewd warmth fills you</span>
+	<div class="meter">
+		<<set $percent=Math.floor(($drugged/1000)*100)>>
+		<<if $drugged gte 500>>
+		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drugged gte 400>>
+		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drugged gte 300>>
+		<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drugged gte 200>>
+		<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drugged gte 100>>
+		<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $drugged gte 1>>
+		<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+		<<else>>
+		<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+		<</if>>
+	</div>
+
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "hallucinogen">><<nobr>>
+
+
+<<if $hallucinogen gt 0>>
+<span class="purple">Your perception is altered</span>
+	<div class="meter">
+		<<set $percent=Math.floor(($hallucinogen/1000)*100)>>
+		<<if $hallucinogen gte 500>>
+		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $hallucinogen gte 400>>
+		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $hallucinogen gte 300>>
+		<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $hallucinogen gte 200>>
+		<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $hallucinogen gte 100>>
+		<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $hallucinogen gte 1>>
+		<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+		<<else>>
+		<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+		<</if>>
+	</div>
+
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "paincaption">><<nobr>>
+<<if $pain gte 100>><span class="red">You sob uncontrollably.</span>
+<<elseif $pain gte 80>><span class="pink">You cry and whimper.</span>
+<<elseif $pain gte 60>><span class="purple">You are crying.</span>
+<<elseif $pain gte 40>><span class="blue">Tears run down your face.</span>
+<<elseif $pain gte 20>><span class="lblue">Tears well in your eyes.</span>
+<<elseif $pain gte 1>><span class="teal">You are upset.</span>
+<<else>><span class="green">You feel okay.</span>
+<</if>>
+
+
+	<div class="meter">
+		<<set $percent=Math.floor(($pain/200)*100)>>
+		<<if $pain gte 100>>
+		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $pain gte 80>>
+		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $pain gte 60>>
+		<<print '<div class="purplebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $pain gte 40>>
+		<<print '<div class="bluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $pain gte 20>>
+		<<print '<div class="lbluebar" style="width:' + $percent + '%"></div>'>>
+		<<elseif $pain gte 1>>
+		<<print '<div class="tealbar" style="width:' + $percent + '%"></div>'>>
+		<<else>>
+		<<print '<div class="greenbar" style="width:' + $percent + '%"></div>'>>
+		<</if>>
+	</div>
+
+
+<</nobr>><</widget>>
+
+
+<<widget "raped">><<nobr>>
+<<if $rapeavoid is 1 and $consensual is 0 and $gamemode isnot "soft">>
+<<set $rapeavoid to 0>><<set $rapestat += 1>><<set $famerape += $enemyno>><<set $fame += $enemyno>>
+	<<if $awareness lte 200>>
+	<<set $awareness += 5>>
+	<<elseif $awareness lte 400>>
+	<<set $awareness += 1>>
+	<</if>>
+	<<if $enemytype is "beast">>
+	<<set $beastrapestat += 1>>
+		<<if $awareness lte 300>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+	<<if $enemytype is "tentacles">>
+	<<set $tentaclerapestat += 1>>
+		<<if $awareness lte 400>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+<<elseif $sexavoid is 1 and $consensual is 1>>
+<<set $sexavoid to 0>><<set $famesex += $enemyno>><<set $fame += $enemyno>>
+<<controlloss>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "molested">><<nobr>>
+<<if $gamemode is "soft">>
+<<set $consensual to 1>>
+<</if>>
+<<if $molestavoid is 1 and $consensual is 0 and $gamemode isnot "soft">>
+<<set $molestavoid to 0>>
+<<moleststat>>
+
+	<<if $location is "town" and $flashbacktown is 0>>
+	<<set $flashbacktown to 7>>
+	<</if>>
+	<<if $location is "home" and $flashbackhome is 0>>
+	<<set $flashbackhome to 7>>
+	<</if>>
+	<<if $location is "beach" and $flashbackbeach is 0>>
+	<<set $flashbackbeach to 7>>
+	<</if>>
+	<<if $awareness lte 200>>
+	<<set $awareness += 5>>
+	<<elseif $awareness lte 400>>
+	<<set $awareness += 1>>
+	<</if>>
+	<<if $enemytype is "beast">>
+		<<if $awareness lte 300>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+	<<if $enemytype is "tentacles">>
+		<<if $awareness lte 400>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "consensual">><<nobr>>
+
+	<<if $awareness lte 200>>
+	<<set $awareness += 5>>
+	<<elseif $awareness lte 400>>
+	<<set $awareness += 1>>
+	<</if>>
+	<<if $enemytype is "beast">>
+		<<if $awareness lte 300>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+	<<if $enemytype is "tentacles">>
+		<<if $awareness lte 400>>
+		<<set $awareness += 1>>
+		<</if>>
+	<</if>>
+<<set $trueconsensual to 1>>
+<</nobr>><</widget>>
+
+<<widget "controlloss">><<nobr>>
+<<if $gamemode is "soft">>
+<<else>>
+<<set $pullaway to 0>>
+<<set $novaginal to 0>>
+<<set $noanal to 0>>
+<<set $nopenile to 0>>
+	<<if $control gt 1 and $consensual is 0>>
+		<<if $molesttrait gte 1 and $rapeavoid is 1>>
+		<<else>>
+		<<set $controlstart to $control>><<control -25>>
+			<<if $control gte ($controlmax * 0.74)>>
+			<span class="purple">Your sense of control wavers.</span>
+			<<elseif $control gte ($controlmax * 0.49)>>
+			<span class="purple">Your sense of control falters.</span>
+			<<elseif $control gte ($controlmax * 0.24)>>
+			<span class="pink">Your sense of control cracks.</span>
+			<<elseif $control gte 1>>
+			<span class="pink">Your sense of control breaks down.</span>
+			<<else>>
+			<span class="red">Your sense of control shatters.</span>
+			<</if>>
+		<</if>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "beastescape">><<nobr>>
+<<trauma 12>><<set $pain += 40>><<set $stress += 400>><<set $lowerintegrity -= 20>><<set $upperintegrity -= 20>><<set $underintegrity -= 20>><<bruise full>><<gstress>><<gtrauma>>
+<</nobr>><</widget>>
+
+<<widget "weatherdisplay">><<nobr>>
+<<if $images is 1>>
+	<<if $daystate is "day">>
+		<<if $location is "tentworld">>
+		<img id="daystate" src="img/misc/tentskyday.png">
+		<<else>>
+		<img id="daystate" src="img/misc/day.png">
+		<</if>>
+		<<if $location is "tentworld">>
+<img id="weather" src="img/misc/tentskyday.png">
+		<<elseif $weather is "clear">>
+<img id="weather" src="img/misc/clearday.png">
+		<<elseif $weather is "overcast">>
+<img id="weather" src="img/misc/overcastday.png">
+		<<elseif $weather is "rain">>
+<img id="weather" src="img/misc/rainday.gif">
+		<</if>>
+		<<if $location is "beach">>
+		<img id="location" src="img/misc/beachday.gif">
+		<<elseif $location is "sea">>
+		<img id="location" src="img/misc/beachday.gif">
+		<<elseif $location is "home">>
+		<img id="location" src="img/misc/homeday.gif">
+		<<elseif $location is "town">>
+		<img id="location" src="img/misc/townday.gif">
+		<<elseif $location is "forest">>
+		<img id="location" src="img/misc/forestday.png">
+		<<elseif $location is "lake">>
+		<img id="location" src="img/misc/lakeday.gif">
+		<<elseif $location is "asylum">>
+			<<if $hallucinations gte 1>>
+			<img id="location" src="img/misc/asylumdayvfast.gif">
+			<<else>>
+			<img id="location" src="img/misc/asylumdayslow.gif">
+			<</if>>
+		<<elseif $location is "tentworld">>
+		<img id="location" src="img/misc/tentworldday.gif">
+		<<elseif $location is "underground">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "sewers">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "school">>
+		<img id="location" src="img/misc/schoolday.png">
+		<<elseif $location is "cabin">>
+		<img id="location" src="img/misc/cabinday.gif">
+		<<elseif $location is "pool">>
+		<img id="location" src="img/misc/poolday.gif">
+		<</if>>
+	<<elseif $daystate is "night">>
+		<<if $location is "tentworld">>
+		<img id="daystate" src="img/misc/tentskynight.png">
+		<<else>>
+		<img id="daystate" src="img/misc/night.png">
+		<</if>>
+		<<if $location is "tentworld">>
+<img id="weather" src="img/misc/tentskynight.png">
+		<<elseif $weather is "clear">>
+<img id="weather" src="img/misc/clearnight.png">
+		<<elseif $weather is "overcast">>
+<img id="weather" src="img/misc/overcastnight.png">
+		<<elseif $weather is "rain">>
+<img id="weather" src="img/misc/rainnight.gif">
+		<</if>>
+		<<if $location is "beach">>
+		<img id="location" src="img/misc/beachnight.gif">
+		<<elseif $location is "sea">>
+		<img id="location" src="img/misc/beachnight.gif">
+		<<elseif $location is "home">>
+		<img id="location" src="img/misc/homenight.gif">
+		<<elseif $location is "town">>
+		<img id="location" src="img/misc/townnight.gif">
+		<<elseif $location is "forest">>
+		<img id="location" src="img/misc/forestnight.png">
+		<<elseif $location is "lake">>
+		<img id="location" src="img/misc/lakenight.gif">
+		<<elseif $location is "asylum">>
+			<<if $hallucinations gte 1>>
+			<img id="location" src="img/misc/asylumnightvfast.gif">
+			<<else>>
+			<img id="location" src="img/misc/asylumnightslow.gif">
+			<</if>>
+		<<elseif $location is "tentworld">>
+		<img id="location" src="img/misc/tentworldnight.gif">
+		<<elseif $location is "underground">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "sewers">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "school">>
+		<img id="location" src="img/misc/schoolnight.png">
+		<<elseif $location is "cabin">>
+		<img id="location" src="img/misc/cabinnight.gif">
+		<<elseif $location is "pool">>
+		<img id="location" src="img/misc/poolnight.gif">
+		<</if>>
+	<<elseif $daystate is "dawn">>
+		<<if $location is "tentworld">>
+		<img id="daystate" src="img/misc/tentskydawn.png">
+		<<else>>
+		<img id="daystate" src="img/misc/dawn.png">
+		<</if>>
+		<<if $location is "tentworld">>
+<img id="weather" src="img/misc/tentskydawn.png">
+		<<elseif $weather is "clear">>
+<img id="weather" src="img/misc/cleardawn.png">
+		<<elseif $weather is "overcast">>
+<img id="weather" src="img/misc/overcastdawn.png">
+		<<elseif $weather is "rain">>
+<img id="weather" src="img/misc/raindawn.gif">
+		<</if>>
+		<<if $location is "beach">>
+		<img id="location" src="img/misc/beachdawn.gif">
+		<<elseif $location is "sea">>
+		<img id="location" src="img/misc/beachdawn.gif">
+		<<elseif $location is "home">>
+		<img id="location" src="img/misc/homedawn.gif">
+		<<elseif $location is "town">>
+		<img id="location" src="img/misc/towndawn.gif">
+		<<elseif $location is "forest">>
+		<img id="location" src="img/misc/forestdawn.png">
+		<<elseif $location is "lake">>
+		<img id="location" src="img/misc/lakedawn.gif">
+		<<elseif $location is "asylum">>
+			<<if $hallucinations gte 1>>
+			<img id="location" src="img/misc/asylumdawnvfast.gif">
+			<<else>>
+			<img id="location" src="img/misc/asylumdawnslow.gif">
+			<</if>>
+		<<elseif $location is "tentworld">>
+		<img id="location" src="img/misc/tentworlddawn.gif">
+		<<elseif $location is "underground">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "sewers">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "school">>
+		<img id="location" src="img/misc/schooldawn.png">
+		<<elseif $location is "cabin">>
+		<img id="location" src="img/misc/cabindawn.gif">
+		<<elseif $location is "pool">>
+		<img id="location" src="img/misc/pooldawn.gif">
+		<</if>>
+	<<elseif $daystate is "dusk">>
+		<<if $location is "tentworld">>
+		<img id="daystate" src="img/misc/tentskydusk.png">
+		<<else>>
+		<img id="daystate" src="img/misc/dusk.png">
+		<</if>>
+		<<if $location is "tentworld">>
+<img id="weather" src="img/misc/tentskydusk.png">
+		<<elseif $weather is "clear">>
+<img id="weather" src="img/misc/cleardusk.png">
+		<<elseif $weather is "overcast">>
+<img id="weather" src="img/misc/overcastdusk.png">
+		<<elseif $weather is "rain">>
+<img id="weather" src="img/misc/raindusk.gif">
+		<</if>>
+		<<if $location is "beach">>
+		<img id="location" src="img/misc/beachdusk.gif">
+		<<elseif $location is "sea">>
+		<img id="location" src="img/misc/beachdusk.gif">
+		<<elseif $location is "home">>
+		<img id="location" src="img/misc/homedusk.gif">
+		<<elseif $location is "town">>
+		<img id="location" src="img/misc/towndusk.gif">
+		<<elseif $location is "forest">>
+		<img id="location" src="img/misc/forestdusk.png">
+		<<elseif $location is "lake">>
+		<img id="location" src="img/misc/lakedusk.gif">
+		<<elseif $location is "asylum">>
+			<<if $hallucinations gte 1>>
+			<img id="location" src="img/misc/asylumduskvfast.gif">
+			<<else>>
+			<img id="location" src="img/misc/asylumduskslow.gif">
+			<</if>>
+		<<elseif $location is "tentworld">>
+		<img id="location" src="img/misc/tentworlddusk.gif">
+		<<elseif $location is "underground">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "sewers">>
+		<img id="location" src="img/misc/deepunderground.png">
+		<<elseif $location is "school">>
+		<img id="location" src="img/misc/schooldusk.png">
+		<<elseif $location is "cabin">>
+		<img id="location" src="img/misc/cabindusk.gif">
+		<<elseif $location is "pool">>
+		<img id="location" src="img/misc/pooldusk.gif">
+		<</if>>
+	<</if>>
+
+<<else>>
+
+<<if $daystate is "day">>
+	<<if $weather is "clear">>
+		It's a bright and sunny day.<br>
+	<<elseif $weather is "rain">>
+		It's a rainy day.<br>
+	<<elseif $weather is "overcast">>
+		Clouds are hiding the sun.<br>
+	<</if>>
+<<elseif $daystate is "night">>
+	<<if $weather is "clear">>
+		The stars are shining.<br>
+	<<elseif $weather is "rain">>
+		It's a rainy night.<br>
+	<<elseif $weather is "overcast">>
+		All starlight is blocked by the clouds.<br>
+	<</if>>
+<<elseif $daystate is "dawn">>
+	<<if $weather is "clear">>
+		The sun is rising.<br>
+	<<elseif $weather is "rain">>
+		It's a rainy morning.<br>
+	<<elseif $weather is "overcast">>
+		It's a cloudy morning.<br>
+	<</if>>
+<<elseif $daystate is "dusk">>
+	<<if $weather is "clear">>
+		The sun is setting.<br>
+	<<elseif $weather is "rain">>
+		It's a rainy evening.<br>
+	<<elseif $weather is "overcast">>
+		It's cloudy evening.<br>
+	<</if>>
+<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "wearandtear">><<nobr>>
+<<set $upperintegrity -= 1>><<set $lowerintegrity -= 1>><<set $underintegrity -= 1>>
+<</nobr>><</widget>>
+
+<<widget "towelup">><<nobr>>
+<<if $exposed gte 1>>
+	<<if $upperwetstage gte 3>>
+	<<set $uppertowelnew to 1>><<uppertowel>>
+	<</if>>
+	<<if $lowerwetstage gte 3>>
+	<<set $lowertowelnew to 1>><<lowertowel>>
+	<</if>>
+	<<if $upperexposed gte 1>>
+	<<set $uppertowelnew to 1>><<uppertowel>>
+	<</if>>
+	<<if $lowerexposed gte 1>>
+	<<set $lowertowelnew to 1>><<lowertowel>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "plantupper">><<nobr>>
+<<if $upperexposed gte 2 or $upperwetstage gte 3>>
+<<set $upperplantnew to 1>><<upperplant>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "plantlower">><<nobr>>
+<<if $lowerexposed gte 2 and $underexposed gte 1 or $lowerwetstage gte 3 and $underwetstage gte 3 or $lowerwetstage gte 3 and $underexposed gte 1>>
+<<set $lowerplantnew to 1>><<lowerplant>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "plantup">><<nobr>>
+<<if $upperexposed gte 2 or $upperwetstage gte 3>>
+<<set $upperplantnew to 1>><<upperplant>>
+<</if>>
+<<if $lowerexposed gte 2 and $underexposed gte 1 or $lowerwetstage gte 3 and $underwetstage gte 3 or $lowerwetstage gte 3 and $underexposed gte 1>>
+<<set $lowerplantnew to 1>><<lowerplant>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "schoolspareclothes">><<nobr>>
+<<if $uppertype isnot "school" and $lowertype isnot "school">>
+<<set $uppertemp to "init">><<schoolshirt>><<set $uppercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $upperintegrity to $schoolshirtintegritymax / 2>>
+	<<if $clothingselector is "m">><<set $lowertemp to "init">>
+	<<schoolshorts>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolshortsintegritymax / 2>>
+	<<else>><<set $lowertemp to "init">>
+	<<schoolskirt>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolskirtintegritymax / 2>>
+	<</if>>
+<<elseif $lowertype isnot "school">><<set $lowertemp to "init">>
+	<<if $clothingselector is "m">>
+	<<schoolshorts>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolshortsintegritymax / 2>>
+	<<else>>
+	<<schoolskirt>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolskirtintegritymax / 2>>
+	<</if>>
+<<elseif $uppertype isnot "school">>
+<<set $uppertemp to "init">><<schoolshirt>><<set $uppercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $upperintegrity to $schoolshirtintegritymax / 2>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "spareschoolswimsuit">><<nobr>>
+<<set $uppertemp to "init">><<set $lowertemp to "init">><<upperschoolswimsuit>><<set $uppercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $upperintegrity to $schoolshirtintegritymax / 2>>
+<<set $lowertemp to "init">><<lowerschoolswimsuit>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolshortsintegritymax / 2>>
+<</nobr>><</widget>>
+
+<<widget "spareschoolswimshorts">><<nobr>>
+<<set $lowertemp to "init">><<schoolswimshorts>><<set $lowercolour to either("blue", "white", "red", "green", "black", "pink", "purple", "tangerine", "yellow")>><<set $lowerintegrity to $schoolshortsintegritymax / 2>>
+<</nobr>><</widget>>
+
+<<widget "exposure">><<nobr>>
+
+<<if $location isnot "beach" and $location isnot "pool" and $location isnot "sea" and $location isnot "lake">>
+<<set $libertine to 0>>
+<<else>>
+<<set $libertine to 1>>
+<</if>>
+
+
+<<set $upperexposedcarry to $upperexposed>>
+<<set $lowerexposedcarry to $lowerexposed>>
+<<set $underexposedcarry to $underexposed>>
+<<if $upperwetstage gte 3>>
+<<set $upperexposed to 2>>
+<</if>>
+<<if $lowerwetstage gte 3>>
+<<set $lowerexposed to 2>>
+<</if>>
+<<if $underwetstage gte 3>>
+<<set $underexposed to 1>>
+<</if>>
+
+<<set $breastindicator to 0>>
+
+<<if $crossdressing isnot 1>>
+<<if $underexposed gte 1 and $lowerexposed gte 2>>
+<<set $playergenderappearance to $playergender>>
+<<elseif $lowervaginaexposed gte 1 and $undervaginaexposed gte 1>>
+<<set $playergenderappearance to $playergender>>
+<<elseif $upperexposed gte 2 and $breastsize gte 3>>
+<<set $playergenderappearance to "f">><<set $breastindicator to 1>>
+<<elseif $lowergender isnot "n">>
+<<set $playergenderappearance to $lowergender>>
+<<elseif $uppergender isnot "n">>
+<<set $playergenderappearance to $uppergender>>
+<<elseif $undergender isnot "n" and $lowerexposed gte 2>>
+<<set $playergenderappearance to $undergender>>
+<<elseif $upperexposed gte 2 and $breastsize lte 2>>
+<<set $playergenderappearance to "m">>
+<<else>>
+<<set $playergenderappearance to $playergender>>
+<</if>>
+<</if>>
+
+<<set $exposed to 0>>
+<<if $upperexposed gte 1>>
+	<<if $playergenderappearance is "m">>
+	<<elseif $libertine gte 1>>
+	<<else>>
+	<<set $exposed to 1>>
+	<</if>>
+<</if>>
+<<if $upperexposed gte 2 and $playergenderappearance isnot "m">>
+<<set $exposed to 1>><<set $topless to 1>>
+<<else>>
+<<set $topless to 0>>
+<</if>>
+<<if $lowerexposed gte 1>>
+	<<if $libertine gte 1>>
+	<<else>>
+	<<set $exposed to 1>>
+	<</if>>
+<</if>>
+<<if $lowerexposed gte 2>>
+	<<if $underexposed gte 1>>
+	<<set $exposed to 2>>
+	<</if>>
+<</if>>
+
+<<set $upperexposed to $upperexposedcarry>>
+<<set $lowerexposed to $lowerexposedcarry>>
+<<set $underexposed to $underexposedcarry>>
+
+<</nobr>><</widget>>
+
+<<widget "integritycheck">><<nobr>>
+<<if $upperclothes isnot "naked">>
+	<<if $upperintegrity lte 0>><span class="lewd">Your $upperclothes <<upperplural>> ripped into scraps, exposing your <<breastsstop>></span><br><<upperruined>><<clothesruinstat>><<set $upperoff to 0>>
+	<</if>>
+<</if>>
+<<if $lowerclothes isnot "naked">>
+	<<if $lowerintegrity lte 0>><span class="lewd">Your $lowerclothes <<lowerplural>> ripped into scraps, exposing your <<undiesstop>></span><br><<lowerruined>><<clothesruinstat>><<set $loweroff to 0>>
+	<</if>>
+<</if>>
+<<if $underclothes isnot "naked">>
+	<<if $underintegrity lte 0>><span class="lewd">Your $underclothes <<underplural>> ripped into scraps, exposing your <<genitalsstop>></span><br>
+		<<if $undertype is "chastity">>
+		<<set $undertype to "brokenchastity">>
+			<<if $vaginalchastityparasite isnot 0>>
+<span class="pink">With the chastity belt gone, the $vaginalchastityparasite fall out of your vagina.</span><br><<set $vaginalchastityparasite to 0>>
+			<</if>>
+			<<if $penilechastityparasite isnot 0>>
+			<span class="pink">With the chastity belt gone, the $penilechastityparasite fall off of your penis.</span><br><<set $penilechastityparasite to 0>>
+			<</if>>
+			<<if $analchastityparasite isnot 0>>
+			<span class="pink">With the chastity belt gone, the $analchastityparasite fall out of your anus.</span><br>				<<set $analchastityparasite to 0>>
+			<</if>>
+			<<if $analshield is 1>><<set $analshield to 0>>
+			<</if>>
+		<</if>>
+	<<underruined>><<clothesruinstat>><<set $underoff to 0>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "unbind">><<nobr>>
+<<set $rightboundcarry to 0>>
+<<set $leftboundcarry to 0>>
+<<set $leftarm to 0>>
+<<set $rightarm to 0>>
+<</nobr>><</widget>>
+
+<<widget "bindings">><<nobr>>
+<<if $leftarm is "bound" and $position isnot "wall">><<set $leftboundcarry to 1>><</if>>
+<<if $rightarm is "bound" and $position isnot "wall">><<set $rightboundcarry to 1>><</if>>
+<<if $rightboundcarry is 1 and $rightarm isnot "bound">>
+<<set $rightarm to "bound">>
+<</if>>
+<<if $leftboundcarry is 1 and $leftarm isnot "bound">>
+<<set $leftarm to "bound">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "water">><<nobr>>
+<<if $uppertype isnot "swim" and $uppertype isnot "naked">>
+
+<<set $upperwet to 200>>
+<</if>>
+<<if $lowertype isnot "swim" and $lowertype isnot "naked">>
+
+<<set $lowerwet to 200>>
+<</if>>
+<<if $undertype isnot "swim" and $undertype isnot "naked" and $undertype isnot "chastity">>
+
+<<set $underwet to 200>>
+<</if>>
+
+<<waterwash>>
+<<set $inwater to 1>>
+<</nobr>><</widget>>
+
+<<widget "stripactions">><<nobr>>
+
+<<if $actionuncladoutfit is 1>><<set $actionuncladoutfit to 0>>
+	Feeling naughty, you remove your $upperclothes.<<uppernaked>><<lowernaked>>
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">><<exhibitionism1>><br><br><<else>><<exhibitionism2>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladupper is 1>><<set $actionuncladupper to 0>>
+Feeling naughty, you remove your $upperclothes.<<uppernaked>>
+	<<if $breastsize gte 3>><<exhibitionism1>><<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">><<exhibitionism1>><br><br><<else>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladlower is 1>><<set $actionuncladlower to 0>>
+	Feeling naughty, you remove your $lowerclothes.<<lowernaked>>
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">><<exhibitionism1>><br><br><<else>><<exhibitionism2>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladunder is 1>><<set $actionuncladunder to 0>>
+	You remove your $underclothes with shaking fingers.<<undernaked>><<exhibitionism2>><br><br>
+<</if>>
+
+<<if $uncladoutfit is 1>>
+Put your <<link $upperoff>><<set $eventskip to 1>><<outfiton>><<set $uncladoutfit to 0>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>> back on<br>
+<</if>>
+
+<<if $uncladupper is 1>>
+Put your <<link $upperoff>><<set $eventskip to 1>><<upperon>><<set $uncladupper to 0>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>> back on<br>
+<</if>>
+
+<<if $uncladlower is 1>>
+Put your <<link $loweroff>><<set $eventskip to 1>><<loweron>><<set $uncladlower to 0>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>> back on<br>
+<</if>>
+
+<<if $uncladunder is 1>>
+Put your <<link $underoff>><<set $eventskip to 1>><<underon>><<set $uncladunder to 0>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>> back on<br>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+	<<if $upperset is $lowerset>>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladoutfit to 1>><<set $uncladoutfit to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist1>><br>
+	<</if>>
+<<else>>
+	<<if $upperset is $lowerset and $exhibitionism gte 15>>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladoutfit to 1>><<set $uncladoutfit to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+	<</if>>
+<</if>>
+
+<<if $upperset isnot $lowerset and $uppertype isnot "naked">>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladupper to 1>><<set $uncladupper to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<if $breastsize gte 3>><<exhibitionist1>><<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">><<exhibitionist1>><</if>><br>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+	<<if $upperset isnot $lowerset and $lowertype isnot "naked">>
+Remove your <<link $lowerclothes>><<set $eventskip to 1>><<set $actionuncladlower to 1>><<set $uncladlower to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist1>><br>
+	<</if>>
+<<else>>
+	<<if $upperset isnot $lowerset and $lowertype isnot "naked" and $exhibitionism gte 15>>
+Remove your <<link $lowerclothes>><<set $eventskip to 1>><<set $actionuncladlower to 1>><<set $uncladlower to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+	<</if>>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity" and $exhibitionism gte 15>>
+Remove your <<link $underclothes>><<set $eventskip to 1>><<set $actionuncladunder to 1>><<set $uncladunder to 1>><<uncladcheck>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+<</if>>
+
+<<exposure>>
+
+<</nobr>><</widget>>
+
+<<widget "stripstoreactions">><<nobr>>
+
+<<if $actionuncladoutfit is 1>><<set $actionuncladoutfit to 0>>
+	<<if $storelocationinit is "wolfcave">>
+	You remove your $upperclothes. They may be animals, but stripping in front of them makes a chill run through your spine.
+	<<else>>
+	You check to make sure no one is around, then slowly remove your $upperclothes. Despite being alone, doing this in a public space makes a chill run through your spine.
+	<</if>>
+	<<storeupper>><<storelower>><<storelocation>><<upperundress>><<lowerundress>>
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">><<exhibitionism1>><br><br>
+	<<else>>
+	<<exhibitionism2>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladupper is 1>><<set $actionuncladupper to 0>>
+	<<if $storelocationinit is "wolfcave">>
+	You remove your $upperclothes. They may be animals, but stripping in front of them makes your nipples erect and your newly-exposed skin tingle.
+	<<else>>
+	You check to make sure no one is around, then slowly remove your $upperclothes. Despite being alone, doing this in a public space makes your nipples erect and your newly-exposed skin tingle.
+	<</if>>
+	<<storeupper>><<storelocation>><<upperundress>>
+	<<if $breastsize gte 3>><<exhibitionism1>><<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">><<exhibitionism1>><br><br>
+	<<else>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladlower is 1>><<set $actionuncladlower to 0>>
+	<<if $storelocationinit is "wolfcave">>
+	You remove your $lowerclothes. They may be animals, but stripping in front of them makes you shiver delightfully.
+	<<else>>
+	You check to make sure no one is around, then slowly remove your $lowerclothes. Despite being alone, doing this in a public space makes you shiver delightfully.
+	<</if>>
+	<<storelower>><<storelocation>><<lowerundress>>
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">><<exhibitionism1>><br><br>
+	<<else>>
+	<<exhibitionism2>><br><br>
+	<</if>>
+<</if>>
+
+<<if $actionuncladunder is 1>><<set $actionuncladunder to 0>>
+	<<if $storelocationinit is "wolfcave">>
+	You remove your $lowerclothes. They may be animals, but stripping in front of them makes your skin and <<genitals>> tingle.
+	<<else>>
+	You check to make sure no one is around, then slowly remove your $underclothes. Despite being alone, doing this in a public space makes your skin and <<genitals>> tingle.
+	<</if>>
+	<<storeunder>><<storelocation>><<underundress>><<exhibitionism2>><br><br>
+<</if>>
+
+<<if $storelocationinit is $storelocation>>
+<<link "Get Dressed">><<storeon>><<set $eventskip to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+	<<if $upperset is $lowerset>>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladoutfit to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist1>><br>
+	<</if>>
+<<else>>
+	<<if $upperset is $lowerset and $exhibitionism gte 15>>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladoutfit to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+	<</if>>
+<</if>>
+
+<<if $upperset isnot $lowerset and $uppertype isnot "naked">>
+Remove your <<link $upperclothes>><<set $eventskip to 1>><<set $actionuncladupper to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<if $breastsize gte 3>><<exhibitionist1>><<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">><<exhibitionist1>><</if>><br>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+	<<if $upperset isnot $lowerset and $lowertype isnot "naked">>
+Remove your <<link $lowerclothes>><<set $eventskip to 1>><<set $actionuncladlower to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist1>><br>
+	<</if>>
+<<else>>
+	<<if $upperset isnot $lowerset and $lowertype isnot "naked" and $exhibitionism gte 15>>
+Remove your <<link $lowerclothes>><<set $eventskip to 1>><<set $actionuncladlower to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+	<</if>>
+<</if>>
+
+<<if $undertype isnot "naked" and $undertype isnot "chastity" and $exhibitionism gte 15>>
+Remove your <<link $underclothes>><<set $eventskip to 1>><<set $actionuncladunder to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<exhibitionist2>><br>
+<</if>>
+
+<br>
+
+<<exposure>>
+
+<</nobr>><</widget>>
+
+<<widget "dancestripeffects">><<nobr>>
+
+
+<<if $danceaction is "outfitstripbreasts">><<set $danceaction to 0>>
+You gracefully remove your $upperclothes, exposing your <<breasts>> and $underclothes. The exhibition of your breasts makes them feel raw and sensitive.
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<uppernaked>><<lowernaked>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "outfitstripchest">><<set $danceaction to 0>>
+	<<if $playergender is "f">>
+	You gracefully remove your $upperclothes, exposing your <<breasts>> and $underclothes. You feel your nipples harden in response to being revealed.
+	<<else>>
+	You gracefully remove your $upperclothes, exposing your <<breasts>> and $underclothes. Your feminine countenance makes your revealed chest feel especially lewd.
+	<</if>>
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<uppernaked>><<lowernaked>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "outfitstripunder">><<set $danceaction to 0>>
+You gracefully remove your $upperclothes, exposing your <<breasts>> and $underclothes. You feel your nipples harden in response to being revealed.
+<<set $audiencearousal += 6>><<set $audienceexcitement += 6>><<set $audiencemod += 2>><<arousal 3>><<uppernaked>><<lowernaked>><<exhibitionism3>>
+<</if>>
+
+
+<<if $danceaction is "outfitstripnude">><<set $danceaction to 0>>
+You gracefully remove your $upperclothes, exposing your nude form. You shiver with excitement, your body laid totally bare.
+<<set $audiencearousal += 10>><<set $audienceexcitement += 10>><<set $audiencemod += 4>><<arousal 3>><<uppernaked>><<lowernaked>><<exhibitionism5>>
+<</if>>
+
+<<if $danceaction is "upperstripbreasts">><<set $danceaction to 0>>
+You gracefully remove your $upperclothes, exposing your <<breastsstop>> The exhibition of your breasts makes them feel raw and sensitive.
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<uppernaked>><<exhibitionism4>>
+<</if>>
+
+<<if $danceaction is "upperstripfchest">><<set $danceaction to 0>>
+	<<if $playergender is "f">>
+	You gracefully remove your $upperclothes, exposing your <<breastsstop>> You feel your nipples harden in response to being revealed.
+	<<else>>
+	You gracefully remove your $upperclothes, exposing your <<breastsstop>> Your feminine countenance makes your revealed chest feel especially lewd.
+	<</if>>
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<uppernaked>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "upperstripmchest">><<set $danceaction to 0>>
+You gracefully remove your $upperclothes, exposing your <<breastsstop>> You feel your nipples harden in response to being revealed.
+<<set $audiencearousal += 2>><<set $audienceexcitement += 2>><<set $audiencemod += 1>><<arousal 3>><<uppernaked>><<exhibitionism1>>
+<</if>>
+
+
+<<if $danceaction is "lowerstripunder">><<set $danceaction to 0>>
+You gracefully remove your $lowerclothes, exposing your $underclothes. Being seen in your underwear excites you.
+<<set $audiencearousal += 6>><<set $audienceexcitement += 6>><<set $audiencemod += 2>><<arousal 3>><<lowernaked>><<exhibitionism3>>
+<</if>>
+
+
+<<if $danceaction is "lowerstripnude">><<set $danceaction to 0>>
+You gracefully remove your $lowerclothes, exposing your <<genitalsstop>>
+	<<if $uppertype is "naked">>
+	You shiver with excitement, your body laid totally bare.
+	<<else>>
+	Your $upperclothes makes your naked lower half feel particularly conspicuous.
+	<</if>>
+<<set $audiencearousal += 10>><<set $audienceexcitement += 10>><<set $audiencemod += 4>><<arousal 3>><<lowernaked>><<exhibitionism5>>
+<</if>>
+
+
+<<if $danceaction is "understripskirt">><<set $danceaction to 0>>
+You gracefully remove your $underclothes from beneath your $lowerclothes. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+<<set $audiencearousal += 6>><<set $audienceexcitement += 6>><<set $audiencemod += 2>><<arousal 3>><<undernaked>><<exhibitionism3>>
+<</if>>
+
+
+<<if $danceaction is "understripnude">><<set $danceaction to 0>>
+You gracefully remove your $underclothes, exposing your <<genitalsstop>> You shiver with excitement, your body laid totally bare.
+<<set $audiencearousal += 10>><<set $audienceexcitement += 10>><<set $audiencemod += 4>><<arousal 3>><<undernaked>><<exhibitionism5>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "dancestripactions">><<nobr>>
+
+<br><br>
+	<<if $upperset is $lowerset>>
+		<<if $undertype isnot "naked">>
+			<<if $breastsize gte 3>>
+				<<if $exhibitionism gte 55>>
+				<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "outfitstripbreasts">></label> |
+				<</if>>
+			<<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">>
+				<<if $exhibitionism gte 55>>
+				<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "outfitstripchest">></label> |
+				<</if>>
+			<<else>>
+				<<if $exhibitionism gte 35>>
+				<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "outfitstripunder">></label> |
+				<</if>>
+			<</if>>
+		<<else>>
+			<<if $exhibitionism gte 75>>
+			<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist5>> <<radiobutton "$danceaction" "outfitstripnude">></label> |
+			<</if>>
+		<</if>>
+	<</if>>
+
+
+	<<if $uppertype isnot "naked" and $upperset isnot $lowerset>>
+		<<if $breastsize gte 3>>
+			<<if $exhibitionism gte 55>>
+			<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "upperstripbreasts">></label> |
+			<</if>>
+		<<elseif $playergenderappearance isnot "m" and $lowergender isnot "m">>
+			<<if $exhibitionism gte 55>>
+			<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "upperstripfchest">></label> |
+			<</if>>
+		<<else>>
+		<label><span class="meek">Strip $upperclothes</span> <<combatexhibitionist1>> <<radiobutton "$danceaction" "upperstripmchest">></label> |
+		<</if>>
+	<</if>>
+
+
+	<<if $lowertype isnot "naked" and $upperset isnot $lowerset>>
+		<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+			<<if $exhibitionism gte 35>>
+			<label><span class="meek">Strip $lowerclothes</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "lowerstripunder">></label> |
+			<</if>>
+		<<else>>
+			<<if $exhibitionism gte 75>>
+			<label><span class="meek">Strip $lowerclothes</span> <<combatexhibitionist5>> <<radiobutton "$danceaction" "lowerstripnude">></label> |
+			<</if>>
+		<</if>>
+	<</if>>
+
+
+	<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+		<<if $lowertype isnot "naked" and $skirt is 1>>
+			<<if $exhibitionism gte 35>>
+			<label><span class="meek">Strip $underclothes</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "understripskirt">></label> |
+			<</if>>
+		<<elseif $lowertype is "naked">>
+			<<if $exhibitionism gte 75>>
+			<label><span class="meek">Strip $underclothes</span> <<combatexhibitionist5>> <<radiobutton "$danceaction" "understripnude">></label> |
+			<</if>>
+		<</if>>
+	<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "uncladcheck">><<nobr>>
+<<if $uncladoutfit isnot 1 and $uncladupper isnot 1 and $uncladlower isnot 1 and $uncladunder isnot 1>>
+<<set $unclad to 0>>
+<<else>>
+<<set $unclad to 1>>
+<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "arousalpass">><<nobr>>
+<<if $penilechastityparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $vaginalchastityparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $analchastityparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $chestparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $penisparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $clitparasite isnot 0>>
+<<set $arousal += ($pass * 10)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "swimmingcheck">><<nobr>>
+<<if $swimmingskill gte $swimmingdifficulty>>
+<<set $swimmingcheck to "pass">>
+<<else>>
+<<set $swimmingcheck to "fail">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "undiestrauma">><<nobr>>
+<<if $undertype isnot "naked" and $undertype isnot "chastity">>
+<<gtrauma>><<gstress>><<trauma 1>><<stress 1>>
+<<else>>
+<<gtrauma>><<gstress>><<trauma 3>><<stress 3>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "goo">><<nobr>>
+<<goooutsidecount>>
+
+<<if $goooutsidecount gte 1 and $semenoutsidecount gte 1>>
+	<<if $goooutsidecount + $semenoutsidecount gte 100>>
+	<span class="red">Lewd fluid drenches you from head to toe.</span><br>
+	<<elseif $goooutsidecount + $semenoutsidecount gte 25>>
+	<span class="pink">You are drenched in slime and semen.</span><br>
+	<<elseif $goooutsidecount + $semenoutsidecount gte 20>>
+	<span class="purple">You are soaked with slime and semen.</span><br>
+	<<elseif $goooutsidecount + $semenoutsidecount gte 15>>
+	<span class="purple">Your skin is slick with slime and semen.</span><br>
+	<<elseif $goooutsidecount + $semenoutsidecount gte 10>>
+	<span class="purple">You are wet with slime and semen.</span><br>
+	<<elseif $goooutsidecount + $semenoutsidecount gte 5>>
+	<span class="purple">Your skin is moist with slime and semen.</span><br>
+	<<else>>
+	<span class="blue">You feel slime and semen on your skin.</span><br>
+	<</if>>
+
+<<elseif $goooutsidecount gte 1>>
+	<<if $goooutsidecount gte 25>>
+	<span class="pink">You are drenched in slime.</span><br>
+	<<elseif $goooutsidecount gte 20>>
+	<span class="purple">You are soaked with slime.</span><br>
+	<<elseif $goooutsidecount gte 15>>
+	<span class="purple">Your skin is slick with slime.</span><br>
+	<<elseif $goooutsidecount gte 10>>
+	<span class="purple">You are wet with slime.</span><br>
+	<<elseif $goooutsidecount gte 5>>
+	<span class="purple">Your skin is moist with slime.</span><br>
+	<<else>>
+	<span class="blue">You feel slime on your skin.</span><br>
+	<</if>>
+
+<<elseif $semenoutsidecount gte 1>>
+	<<if $semenoutsidecount gte 25>>
+	<span class="pink">You are drenched in semen.</span><br>
+	<<elseif $semenoutsidecount gte 20>>
+	<span class="purple">You are soaked with semen.</span><br>
+	<<elseif $semenoutsidecount gte 15>>
+	<span class="purple">Your skin is slick with semen.</span><br>
+	<<elseif $semenoutsidecount gte 10>>
+	<span class="purple">You are wet with semen.</span><br>
+	<<elseif $semenoutsidecount gte 5>>
+	<span class="purple">Your skin is moist with semen.</span><br>
+	<<else>>
+	<span class="blue">You feel semen on your skin.</span><br>
+	<</if>>
+<</if>>
+
+<<if $vaginagoo gte 1 and $vaginasemen gte 1>>
+	<<if $vaginagoo + $vaginasemen gte 5>>
+	<span class="red">Your womb overflows with slime and semen.</span><br>
+	<<elseif $vaginagoo + $vaginasemen gte 4>>
+	<span class="pink">Your <<pussy>> overflows with slime and semen.</span><br>
+	<<elseif $vaginagoo + $vaginasemen gte 3>>
+	<span class="pink">Slime and semen flows from your <<pussystop>></span><br>
+	<<elseif $vaginagoo + $vaginasemen gte 2>>
+	<span class="pink">Slime and semen stream from your <<pussystop>></span><br>
+	<<elseif $vaginagoo + $vaginasemen gte 1>>
+	<span class="pink">Slime and semen drip from your <<pussystop>></span><br>
+	<</if>>
+
+<<elseif $vaginagoo gte 1>>
+	<<if $vaginagoo gte 5>>
+	<span class="red">Your womb overflows with slime.</span><br>
+	<<elseif $vaginagoo gte 4>>
+	<span class="pink">Your <<pussy>> overflows with slime.</span><br>
+	<<elseif $vaginagoo gte 3>>
+	<span class="pink">Slime flows from your <<pussystop>></span><br>
+	<<elseif $vaginagoo gte 2>>
+	<span class="pink">Slime streams from your <<pussystop>></span><br>
+	<<elseif $vaginagoo gte 1>>
+	<span class="pink">Slime drips from your <<pussystop>></span><br>
+	<</if>>
+
+<<elseif $vaginasemen gte 1>>
+	<<if $vaginasemen gte 5>>
+	<span class="red">Your womb overflows with semen.</span><br>
+	<<elseif $vaginasemen gte 4>>
+	<span class="pink">Your <<pussy>> overflows with semen.</span><br>
+	<<elseif $vaginasemen gte 3>>
+	<span class="pink">Semen flows from your <<pussystop>></span><br>
+	<<elseif $vaginasemen gte 2>>
+	<span class="pink">Semen streams from your <<pussystop>></span><br>
+	<<elseif $vaginasemen gte 1>>
+	<span class="pink">Semen drips from your <<pussystop>></span><br>
+	<</if>>
+<</if>>
+
+<<if $anusgoo gte 1 and $anussemen gte 1>>
+	<<if $anusgoo + $anussemen gte 5>>
+	<span class="red">Your bowels overflow with slime and semen.</span><br>
+	<<elseif $anusgoo + $anussemen gte 4>>
+	<span class="pink">Your <<bottom>> overflows with slime and semen.</span><br>
+	<<elseif $anusgoo + $anussemen gte 3>>
+	<span class="pink">Slime and semen flows from your <<bottomstop>></span><br>
+	<<elseif $anusgoo + $anussemen gte 2>>
+	<span class="pink">Slime and semen stream from your <<bottomstop>></span><br>
+	<<elseif $anusgoo + $anussemen gte 1>>
+	<span class="pink">Slime and semen drip from your <<bottomstop>></span><br>
+	<</if>>
+
+<<elseif $anusgoo gte 1>>
+	<<if $anusgoo gte 5>>
+	<span class="red">Your bowels overflow with slime.</span><br>
+	<<elseif $anusgoo gte 4>>
+	<span class="pink">Your <<bottom>> overflows with slime.</span><br>
+	<<elseif $anusgoo gte 3>>
+	<span class="pink">Slime flows from your <<bottomstop>></span><br>
+	<<elseif $anusgoo gte 2>>
+	<span class="pink">Slime streams from your <<bottomstop>></span><br>
+	<<elseif $anusgoo gte 1>>
+	<span class="pink">Slime drips from your <<bottomstop>></span><br>
+	<</if>>
+
+<<elseif $anussemen gte 1>>
+	<<if $anussemen gte 5>>
+	<span class="red">Your bowels overflow with semen.</span><br>
+	<<elseif $anussemen gte 4>>
+	<span class="pink">Your <<bottom>> overflows with semen.</span><br>
+	<<elseif $anussemen gte 3>>
+	<span class="pink">Semen flows from your <<bottomstop>></span><br>
+	<<elseif $anussemen gte 2>>
+	<span class="pink">Semen streams from your <<bottomstop>></span><br>
+	<<elseif $anussemen gte 1>>
+	<span class="pink">Semen drips from your <<bottomstop>></span><br>
+	<</if>>
+<</if>>
+
+<<if $mouthgoo gte 1 and $mouthsemen gte 1>>
+	<<if $mouthgoo + $mouthsemen gte 5>>
+	<span class="red">You keep coughing up slime and semen.</span><br>
+	<<elseif $mouthgoo + $mouthsemen gte 4>>
+	<span class="pink">Slime and semen dribble down your chin.</span><br>
+	<<elseif $mouthgoo + $mouthsemen gte 3>>
+	<span class="pink">Slime and semen line the sides of your throat.</span><br>
+	<<elseif $mouthgoo + $mouthsemen gte 2>>
+	<span class="pink">Slime and semen layer the back of your throat.</span><br>
+	<<elseif $mouthgoo + $mouthsemen gte 1>>
+	<span class="purple">The taste of slime and semen permeates your mouth.</span><br>
+	<</if>>
+
+<<elseif $mouthgoo gte 1>>
+	<<if $mouthgoo gte 5>>
+	<span class="red">You keep coughing up slime.</span><br>
+	<<elseif $mouthgoo gte 4>>
+	<span class="pink">Slime dribbles down your chin.</span><br>
+	<<elseif $mouthgoo gte 3>>
+	<span class="pink">Slime lines the sides of your throat.</span><br>
+	<<elseif $mouthgoo gte 2>>
+	<span class="pink">Slime layers the back of your throat.</span><br>
+	<<elseif $mouthgoo gte 1>>
+	<span class="purple">The taste of slime permeates your mouth.</span><br>
+	<</if>>
+
+<<elseif $mouthsemen gte 1>>
+	<<if $mouthsemen gte 5>>
+	<span class="red">You keep coughing up semen.</span><br>
+	<<elseif $mouthsemen gte 4>>
+	<span class="pink">Semen dribbles down your chin.</span><br>
+	<<elseif $mouthsemen gte 3>>
+	<span class="pink">Semen lines the sides of your throat.</span><br>
+	<<elseif $mouthsemen gte 2>>
+	<span class="pink">Semen layers the back of your throat.</span><br>
+	<<elseif $mouthsemen gte 1>>
+	<span class="purple">The taste of semen permeates your mouth.</span><br>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "goocount">><<nobr>>
+<<if $neckgoo gte 5>><<set $neckgoo to 5>><</if>>
+<<if $rightarmgoo gte 5>><<set $rightarmgoo to 5>><</if>>
+<<if $leftarmgoo gte 5>><<set $leftarmgoo to 5>><</if>>
+<<if $thighgoo gte 5>><<set $thighgoo to 5>><</if>>
+<<if $bottomgoo gte 5>><<set $bottomgoo to 5>><</if>>
+<<if $tummygoo gte 5>><<set $tummygoo to 5>><</if>>
+<<if $chestgoo gte 5>><<set $chestgoo to 5>><</if>>
+<<if $facegoo gte 5>><<set $facegoo to 5>><</if>>
+<<if $hairgoo gte 5>><<set $hairgoo to 5>><</if>>
+<<if $feetgoo gte 5>><<set $feetgoo to 5>><</if>>
+<<if $vaginaoutsidegoo gte 5>><<set $vaginaoutsidegoo to 5>><</if>>
+<<if $vaginagoo gte 5>><<set $vaginagoo to 5>><</if>>
+<<if $penisgoo gte 5>><<set $penisgoo to 5>><</if>>
+<<if $anusgoo gte 5>><<set $anusgoo to 5>><</if>>
+<<if $mouthgoo gte 5>><<set $mouthgoo to 5>><</if>>
+<<set $goocount to $neckgoo + $rightarmgoo + $leftarmgoo + $thighgoo + $bottomgoo + $tummygoo + $chestgoo + $facegoo + $hairgoo + $feetgoo + $vaginaoutsidegoo + ($vaginagoo * 3) + ($penisgoo * 3) + ($anusgoo * 3) + ($mouthgoo * 3)>>
+
+
+<<if $necksemen gte 5>><<set $necksemen to 5>><</if>>
+<<if $rightarmsemen gte 5>><<set $rightarmsemen to 5>><</if>>
+<<if $leftarmsemen gte 5>><<set $leftarmsemen to 5>><</if>>
+<<if $thighsemen gte 5>><<set $thighsemen to 5>><</if>>
+<<if $bottomsemen gte 5>><<set $bottomsemen to 5>><</if>>
+<<if $tummysemen gte 5>><<set $tummysemen to 5>><</if>>
+<<if $chestsemen gte 5>><<set $chestsemen to 5>><</if>>
+<<if $facesemen gte 5>><<set $facesemen to 5>><</if>>
+<<if $hairsemen gte 5>><<set $hairsemen to 5>><</if>>
+<<if $feetsemen gte 5>><<set $feetsemen to 5>><</if>>
+<<if $vaginaoutsidesemen gte 5>><<set $vaginaoutsidesemen to 5>><</if>>
+<<if $vaginasemen gte 5>><<set $vaginasemen to 5>><</if>>
+<<if $penissemen gte 5>><<set $penissemen to 5>><</if>>
+<<if $anussemen gte 5>><<set $anussemen to 5>><</if>>
+<<if $mouthsemen gte 5>><<set $mouthsemen to 5>><</if>>
+<<set $semencount to $necksemen + $rightarmsemen + $leftarmsemen + $thighsemen + $bottomsemen + $tummysemen + $chestsemen + $facesemen + $hairsemen + $feetsemen + $vaginaoutsidesemen + ($vaginasemen * 3) + ($penissemen * 3) + ($anussemen * 3) + ($mouthsemen * 3)>>
+<</nobr>><</widget>>
+
+<<widget "goooutsidecount">><<nobr>>
+<<if $neckgoo gte 5>><<set $neckgoo to 5>><</if>>
+<<if $rightarmgoo gte 5>><<set $rightarmgoo to 5>><</if>>
+<<if $leftarmgoo gte 5>><<set $leftarmgoo to 5>><</if>>
+<<if $thighgoo gte 5>><<set $thighgoo to 5>><</if>>
+<<if $bottomgoo gte 5>><<set $bottomgoo to 5>><</if>>
+<<if $tummygoo gte 5>><<set $tummygoo to 5>><</if>>
+<<if $chestgoo gte 5>><<set $chestgoo to 5>><</if>>
+<<if $facegoo gte 5>><<set $facegoo to 5>><</if>>
+<<if $hairgoo gte 5>><<set $hairgoo to 5>><</if>>
+<<if $feetgoo gte 5>><<set $feetgoo to 5>><</if>>
+<<if $vaginaoutsidegoo gte 5>><<set $vaginaoutsidegoo to 5>><</if>>
+<<if $penisgoo gte 5>><<set $penisgoo to 5>><</if>>
+<<set $goooutsidecount to $neckgoo + $rightarmgoo + $leftarmgoo + $thighgoo + $bottomgoo + $tummygoo + $chestgoo + $facegoo + $hairgoo + $feetgoo + $vaginaoutsidegoo + ($penisgoo * 3)>>
+
+
+<<if $necksemen gte 5>><<set $necksemen to 5>><</if>>
+<<if $rightarmsemen gte 5>><<set $rightarmsemen to 5>><</if>>
+<<if $leftarmsemen gte 5>><<set $leftarmsemen to 5>><</if>>
+<<if $thighsemen gte 5>><<set $thighsemen to 5>><</if>>
+<<if $bottomsemen gte 5>><<set $bottomsemen to 5>><</if>>
+<<if $tummysemen gte 5>><<set $tummysemen to 5>><</if>>
+<<if $chestsemen gte 5>><<set $chestsemen to 5>><</if>>
+<<if $facesemen gte 5>><<set $facesemen to 5>><</if>>
+<<if $hairsemen gte 5>><<set $hairsemen to 5>><</if>>
+<<if $feetsemen gte 5>><<set $feetsemen to 5>><</if>>
+<<if $vaginaoutsidesemen gte 5>><<set $vaginaoutsidesemen to 5>><</if>>
+<<if $penissemen gte 5>><<set $penissemen to 5>><</if>>
+<<set $semenoutsidecount to $necksemen + $rightarmsemen + $leftarmsemen + $thighsemen + $bottomsemen + $tummysemen + $chestsemen + $facesemen + $hairsemen + $feetsemen + $vaginaoutsidesemen + ($penissemen * 3)>>
+<</nobr>><</widget>>
+
+<<widget "waterwash">><<nobr>>
+
+<<if $combat isnot 1>>
+	<<if $neckgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $neckgoo -= 1>><</if>>
+	<<if $rightarmgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $rightarmgoo -= 1>><</if>>
+	<<if $leftarmgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $leftarmgoo -= 1>><</if>>
+	<<if $thighgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $thighgoo -= 1>><</if>>
+	<<if $bottomgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $bottomgoo -= 1>><</if>>
+	<<if $tummygoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $tummygoo -= 1>><</if>>
+	<<if $chestgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $chestgoo -= 1>><</if>>
+	<<if $facegoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $facegoo -= 1>><</if>>
+	<<if $hairgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $hairgoo -= 1>><</if>>
+	<<if $feetgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $feetgoo -= 1>><</if>>
+	<<if $vaginaoutsidegoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $vaginaoutsidegoo -= 1>><</if>>
+	<<if $vaginagoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $vaginagoo -= 1>><</if>>
+	<<if $penisgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $penisgoo -= 1>><</if>>
+	<<if $anusgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $anusgoo -= 1>><</if>>
+	<<if $mouthgoo gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $mouthgoo -= 1>><</if>>
+
+
+	<<if $necksemen gte 1>><<set $waterwash += 1>><<set $necksemen -= 1>><</if>>
+	<<if $rightarmsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $rightarmsemen -= 1>><</if>>
+	<<if $leftarmsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $leftarmsemen -= 1>><</if>>
+	<<if $thighsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $thighsemen -= 1>><</if>>
+	<<if $bottomsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $bottomsemen -= 1>><</if>>
+	<<if $tummysemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $tummysemen -= 1>><</if>>
+	<<if $chestsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $chestsemen -= 1>><</if>>
+	<<if $facesemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $facesemen -= 1>><</if>>
+	<<if $hairsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $hairsemen -= 1>><</if>>
+	<<if $feetsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $feetsemen -= 1>><</if>>
+	<<if $vaginaoutsidesemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $vaginaoutsidesemen -= 1>><</if>>
+	<<if $vaginasemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $vaginasemen -= 1>><</if>>
+	<<if $penissemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $penissemen -= 1>><</if>>
+	<<if $anussemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $anussemen -= 1>><</if>>
+	<<if $mouthsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $mouthsemen -= 1>><</if>>
+<</if>>
+
+<<if $waterwash gte 10>>
+<span class="lewd">Copious amounts of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<<elseif $waterwash gte 5>>
+<span class="lewd">Lots of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<<elseif $waterwash gte 2>>
+<span class="lewd">Lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<<elseif $waterwash is 1>>
+<span class="lewd">Some lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<</if>>
+<<set $waterwash to 0>>
+
+<</nobr>><</widget>>
+
+<<widget "wash">><<nobr>>
+
+<<set $neckgoo to 0>>
+<<set $rightarmgoo to 0>>
+<<set $leftarmgoo to 0>>
+<<set $thighgoo to 0>>
+<<set $bottomgoo to 0>>
+<<set $tummygoo to 0>>
+<<set $chestgoo to 0>>
+<<set $facegoo to 0>>
+<<set $hairgoo to 0>>
+<<set $feetgoo to 0>>
+<<set $vaginagoo to 0>>
+<<set $vaginaoutsidegoo to 0>>
+<<set $penisgoo to 0>>
+<<set $anusgoo to 0>>
+<<set $mouthgoo to 0>>
+
+<<set $necksemen to 0>>
+<<set $rightarmsemen to 0>>
+<<set $leftarmsemen to 0>>
+<<set $thighsemen to 0>>
+<<set $bottomsemen to 0>>
+<<set $tummysemen to 0>>
+<<set $chestsemen to 0>>
+<<set $facesemen to 0>>
+<<set $hairsemen to 0>>
+<<set $feetsemen to 0>>
+<<set $vaginasemen to 0>>
+<<set $vaginaoutsidesemen to 0>>
+<<set $penissemen to 0>>
+<<set $anussemen to 0>>
+<<set $mouthsemen to 0>>
+
+<</nobr>><</widget>>
+
+<<widget "tipset">><<nobr>>
+
+<<set $tip to random(1000, 3000)>>
+	<<if $tip lte 2000>>
+	<<set $tipreaction to "low">>
+	<<else>>
+	<<set $tipreaction to "mid">>
+	<</if>>
+<<set $tip to $tipmod * $tip>>
+<<set $tip *= (1 + ($attractiveness / 10000))>>
+<<if $mathstrait gte 1>>
+<<set $tip *= (1 + ($mathstrait / 4))>>
+<</if>>
+<<set $tip to Math.trunc($tip)>>
+
+<</nobr>><</widget>>
+
+<<widget "tipreceive">><<nobr>>
+
+You make £<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.
+<<set $money += $tip>>
+
+<</nobr>><</widget>>
+
+<<widget "stealclothes">><<nobr>>
+<<set $stealtextskip to 1>>
+<<if $upperoff isnot 0>>
+<<uppersteal>>
+<</if>>
+<<if $loweroff isnot 0>>
+<<lowersteal>>
+<</if>>
+<<if $underoff isnot 0>>
+<<understeal>>
+<</if>>
+<<set $stealtextskip to 0>>
+<</nobr>><</widget>>
+
+<<widget "passout">><<nobr>>
+<<set $stress -= 5000>>
+<<set $passoutstat += 1>>
+<</nobr>><</widget>>
+
+<<widget "vaginaraped">><<nobr>>
+<<if $angel gte 1>>
+<<set $transformed to 0>>
+<</if>>
+<<if $angel gte 6>>
+<span class="red">Your halo shatters and your wings blacken. An overwhelming sense of loss overcomes you.</span><<set $trauma to $traumamax>><<set $fallenangel to 2>><<set $transformed to 1>>
+<<elseif $angel gte 4>>
+<span class="red">Your halo shatters and fades.</span>
+<</if>>
+<<set $angel to 0>><<set $angelbuild to 0>>
+<<set $vaginafucked to 1>>
+<</nobr>><</widget>>
+
+<<widget "penisraped">><<nobr>>
+<<if $angel gte 1>>
+<<set $transformed to 0>>
+<</if>>
+<<if $angel gte 6>>
+<span class="red">Your halo shatters and your wings blacken. An overwhelming sense of loss overcomes you.</span><<set $trauma to $traumamax>><<set $fallenangel to 2>><<set $transformed to 1>>
+<<elseif $angel gte 4>>
+<span class="red">Your halo shatters and fades.</span>
+<</if>>
+<<set $angel to 0>><<set $angelbuild to 0>>
+<<set $penisfucked to 1>>
+<</nobr>><</widget>>
+
+<<widget "anusraped">><<nobr>>
+
+<</nobr>><</widget>>
+
+<<widget "internalejac">><<nobr>>
+
+<<if $demon gte 6>>
+<<set $demonabsorb += 1>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "textmap">><<nobr>>
+
+
+__Map__<br>
+|.....Ba ─ Cl ─ St ─ Me<br>
+|..╱ ╲ ╱ ╲ ╱ ╲ ╱ ╲<br>
+|Do ─ Co ─ Hi ─ Ox ─ Ha<br>
+|..╲ ╱ ╲ ╱ ╲ ╱ ╲ ╱<br>
+|.....Da ─ Wo ─ Ni ─ El<br>
+<br>
+<</nobr>><</widget>>
+
+<<widget "rentday">><<nobr>>
+
+<<if $rentday is 1>>
+Sunday.
+<<elseif $rentday is 2>>
+Monday.
+<<elseif $rentday is 3>>
+Tuesday.
+<<elseif $rentday is 4>>
+Wednesday.
+<<elseif $rentday is 5>>
+Thursday.
+<<elseif $rentday is 6>>
+Friday.
+<<else>>
+Saturday.
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "tearup">><<nobr>>
+
+<<if $pain lte 20>>
+<<set $pain to 20>>
+<</if>>
+
+<</nobr>><</widget>>
+
+
+<<widget "roomoptions">><<nobr>>
+<<pilloptions>>
+
+<br>
+<</nobr>><</widget>>
+
+<<widget "pilloptions">><<nobr>>
+<<if $pillstaken is 1>><<set $pillstaken to 0>>
+You take the pills Doctor Harper prescribed. You feel dizzy.<<gcontrol>><<lawareness>><<awareness -1>><<control 10>><br><br>
+<</if>>
+<<if $pills gte 1 and $medicated is 0>>
+<<link "Take pills">><<set $medicated += 1>><<set $pillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
+<</if>>
+<<if $asylumpillstaken is 1>><<set $asylumpillstaken to 0>>
+You take the pills prescribed in the asylum. You feel hazy.<<ggcontrol>><<llawareness>><<awareness -5>><<control 25>><br><br>
+<</if>>
+<<if $asylumpills gte 1 and $asylummedicated lt 1>>
+<<link "Take strong pills">><<set $asylummedicated += 1>><<set $asylumpillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
+<</if>>
+
+
+<</nobr>><</widget>>

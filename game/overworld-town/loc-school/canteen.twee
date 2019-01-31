@@ -1,0 +1,367 @@
+:: Canteen [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+You are in the school canteen.
+<<if $schoolday is 1>>
+	<<if $schoolstate is "early">>
+	The room is empty.<br><br>
+	<<elseif $schoolstate is "late">>
+	The room is empty.<br><br>
+	<<elseif $schoolstate is "lunch">>
+	The room is packed with students chatting and eating their lunch.<br><br>
+	<<else>>
+	The room is empty, aside from a small group of students chatting around one of the tables.<br><br>
+	<</if>>
+<<elseif $schoolday isnot 1>>
+The room is empty.<br><br>
+<</if>>
+
+<<if $exposed gte 1>>
+	<<if $schoolstate is "lunch">>
+	You hide beneath a counter to conceal your <<nuditystop>> You hear the bustle of students mere feet away.<br><br>
+	<<elseif $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
+	You hide beneath a counter to conceal your <<nuditystop>> You should be able to sneak out if you're quick.<br><br>
+	<<else>>
+	<<exhibitionclassroom>>
+	<</if>>
+<</if>>
+
+<<if $stress gte 10000>>
+<<link [[Everything fades to black...|School Passout]]>><</link>>
+<<else>>
+	<<if $schoolday is 1>>
+		<<if $schoolstate is "early">>
+		<<elseif $schoolstate is "late">>
+		<<elseif $schoolstate is "lunch">>
+			<<if $robinmissing isnot 1 and $robinintro is 1 and $luncheaten isnot 1 and $exposed lte 0>>
+				<<set $rng to random(1, 100)>>
+				<<if $rng gte 96>>
+				<<robin>><<person1>>You see Robin trying to eat <<his>> lunch while a group of delinquents harass <<himstop>><<endevent>><br><br>
+				<<link [[Intervene (0:20)|Canteen Lunch Intervene]]>><<set $luncheaten to 1>><<set $robinlove += 5>><</link>><br>
+				<<else>>
+				You see Robin eating lunch.<br><br>
+				<<link [[Eat with Robin (0:20)|Canteen Lunch Robin]]>><<stress -6>><<trauma -2>><<pass 20>><<set $luncheaten to 1>><<set $robinlove += 1>><</link>><<ltrauma>><<lstress>><br>
+				<</if>>
+			<</if>>
+			<<if $luncheaten isnot 1 and $exposed lte 0>>
+<<link [[Eat Lunch (0:10)|Canteen Lunch]]>><<pass 10>><<stress -6>><<set $luncheaten to 1>><</link>><<lstress>><br>
+			<</if>>
+
+		<<elseif $canteenapproach isnot 1 and $exposed lte 0>>
+<<link [[Approach the students|Canteen Students]]>><</link>><br>
+		<</if>>
+	<<elseif $schoolday isnot 1>>
+
+	<</if>>
+
+	<<if $exposed gte 1 and $schoolstate is "lunch">>
+		<<if $leftarm isnot "bound" and $rightarm isnot "bound">>
+	<<link [[Cover yourself with a tray and try to leave|Canteen Tray]]>><</link>><br>
+		<</if>>
+	<<link [[Wait until the coast is clear|Canteen Wait]]>><</link>><br>
+	<<else>>
+<<link [[Leave the canteen (0:01)|Hallways]]>><<pass 1>><</link>><br>
+	<</if>>
+
+<</if>>
+
+:: Canteen Lunch [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+
+<<if $cool gte 160>>
+You sit down to eat. The other students at the table vie for your attention.
+<<stress -2>><<trauma -1>><<lstress>><<ltrauma>>
+<<elseif $cool lt 40>>
+You sit down to eat. The other students quickly vacate the table, not wanting to be seen with you.<<gtrauma>><<stress 1>><<trauma 1>>
+<<else>>
+You sit down to eat. No one pays you much attention.
+<</if>>
+<br><br>
+
+<<link [[Next|Canteen]]>><<endevent>><</link>><br>
+
+
+:: Canteen Students [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+<<generatey1>>
+<<if $devstate gte 1>>
+You approach the teenagers. A <<person1>><<person>> looks up at you suspiciously. "What do you want?"<br><br>
+
+
+<<link [[Flirt|Canteen Students Flirt]]>><</link>><<promiscuous1>><br>
+
+<<link [[Leave|Canteen]]>><<endevent>><</link>>
+
+<<else>>
+You approach the teenagers. They don't seem interested in speaking with you. "Get outta here, kid." Says a <<person1>><<personcomma>> with a dismissive gesture.<br><br><<endevent>>
+
+<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $danger gte (9900 - $allure)>><<set $canteenapproach to 1>>
+	<<generatey1>>As you turn to leave, a <<person1>><<person>> puts <<his>> hand on your shoulder. "Wait a minute, maybe you're more mature than you look. How about you show us that little <<if $playergenderappearance is "m">>penis<<else>>cunny<</if>> of yours?" The others laugh as the <<person>> assaults you.<br><br>
+
+	<<link [[Next|Canteen Students Molestation]]>><<set $molestationstart to 1>><</link>><br>
+
+	<<else>><<set $canteenapproach to 1>>
+	<<link [[Next|Canteen]]>><<endevent>><</link>><br>
+
+
+	<</if>>
+<</if>>
+
+
+:: Canteen Students Molestation [nobr]
+<<if $molestationstart is 1>>
+<<set $molestationstart to 0>>
+<<controlloss>>
+<<violence 1>>
+<<neutral 1>>
+<<molested>>
+<<set $event to "molestationhome">>
+<<man1init>><<npcidlegenitals>><<npcstrip>>
+<<if $delinquency lt 400>><<set $rescue to 1>><</if>>
+<<set $timer to 20>>
+<</if>>
+
+
+<<effects>>
+
+<<if $alarm is 1 and $rescue is 0>><<set $alarm to 0>>
+No one comes to your aid, likely due to your reputation as a delinquent.<br><br>
+<</if>>
+
+
+<<effectsman>><<man>>
+
+<<audience>>
+
+<<stateman>><br>
+<br>
+<<actionsman>>
+
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Canteen Students Molestation Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Canteen Students Molestation Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+<span id="next"><<link [[Next|Canteen Students Molestation Finish]]>><</link>></span><<nexttext>>
+<<elseif $timer lte 0>>
+<span id="next"><<link [[Next|Canteen Students Molestation Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Canteen Students Molestation]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Canteen Students Molestation Finish [nobr]
+<<if $enemyhealth lte 0>>
+
+<<He>> recoils in pain, a glint of fear in <<his>> eyes. "I think you've had enough," <<he>> says, acting confident, but betrayed by the quiver in <<his>> voice. <<tearful>> you smirk and walk away.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Canteen]]>><</link>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+
+<<His>> companions start laughing. "I think you enjoyed playing with that little <<girl>> a bit TOO much," one says. The <<person>> blushes furiously, while stammering an explanation to <<his>> friends. <<tearful>> you gather yourself.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Canteen]]>><</link>>
+<<elseif $alarm is 1 and $rescue is 1>>
+
+The <<person>> is interrupted by <<his>> friends. "Come on, we don't want to get in trouble." <<He>> hesitates, then relents in <<his>> assault. <<He>> shoves you away. <<tearful>> you pick yourself off the ground.<br><br>
+
+
+<<clotheson>>
+<<endcombat>>
+
+
+<br><br>
+<<link [[Next|Canteen]]>><</link>>
+
+<<elseif $timer lte 0>>
+
+Seeming to grow bored, the <<person>> shoves you away. <<tearful>> you pick yourself off the ground.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Canteen]]>><</link>>
+<</if>>
+
+
+:: Canteen Students Flirt [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+You lean seductively against the table and address the <<personstop>> "You look tense, anything I can do to help?"<<promiscuity1>><br><br>
+
+<<if $cool gte 160>>
+<<He>> checks you out, and blushes. "Would you... like to go somewhere private?" <<He>> clearly has lewd intentions.<br><br>
+
+	<<if $promiscuity gte 15>>
+<<link [[Accept|Canteen Student Encounter]]>><<set $sexstart to 1>><</link>><<promiscuous2>><br>
+	<</if>>
+<<link [[Refuse|Canteen]]>><<endevent>><</link>>
+
+<<elseif $cool lt 40>><<set $canteenapproach to 1>>
+The group burst into laughter, except the <<personcomma>> who looks mortified. "Fuck off. And don't speak to me again."<br><br>
+
+<<link [[Next|Canteen]]>><<endevent>><</link>><br><br>
+<<else>>
+	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $danger gte (9900 - $allure)>>
+	<<He>> checks you out, and blushes. "Would you... like to go somewhere private?" <<He>> clearly has lewd intentions.<br><br>
+
+		<<if $promiscuity gte 15>>
+<<link [[Accept|Canteen Student Encounter]]>><<set $sexstart to 1>><</link>><<promiscuous2>><br>
+		<</if>>
+<<link [[Refuse|Canteen]]>><<endevent>><</link>>
+	<<else>><<set $canteenapproach to 1>>
+	<<He>> blushes and looks away from you. <<His>> friends start laughing at <<his>> sudden reticence.<br><br>
+
+	<<link [[Next|Canteen]]>><<endevent>><</link>>
+	<</if>>
+
+<</if>>
+
+
+:: Canteen Student Encounter [nobr]
+<<if $sexstart is 1>>
+<<set $sexstart to 0>>
+<<consensual>>
+<<set $consensual to 1>>
+<<neutral 1>>
+<<set $event to "molestationhome">>
+<<man1init>>
+<<set $enemytrust += 100>>
+
+You and the <<person>> find a storeroom for some privacy.<<set $canteenapproach to 1>> <<promiscuity2>><br><br>
+
+<</if>>
+
+
+<<effects>>
+<<effectsman>><<man>>
+
+<<stateman>><br>
+<br>
+<<actionsman>>
+
+<<if $finish is 1>>
+<span id="next"><<link [[Next|Canteen Student Encounter Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Canteen Student Encounter Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Canteen Student Encounter Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Canteen Student Encounter]]>><</link>></span><<nexttext>>
+<</if>>
+
+
+:: Canteen Student Encounter Finish [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+
+"That was great," <<he>> says, panting. "See you around." <<tearful>> you gather yourself.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<elseif $enemyhealth lte 0>>
+
+The <<person>> staggers from the storeroom, looking confused and dejected. <<tearful>> you gather yourself.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+<<elseif $finish is 1>>
+
+The <<person>> looks dejected as <<he>> fixes <<his>> clothing and leaves the storeroom.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+<</if>>
+<br><br>
+<<link [[Next|Canteen]]>><</link>>
+
+:: Canteen Tray [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+You reach above the counter and take a tray. Holding it in front of you, you take a deep breath, and stand. You walk around the edge of the room, trying to act as if nothing is amiss. Fortunately, no one pays you any attention, and you arrive at the door.<br><br>
+
+<<if $rng gte 51>>
+You go through, and dart for safety beneath the nearby staircase.<<gstress>><<stress 2>><br><br>
+
+<<link [[Next|Hallways]]>><</link>>
+<<else>>
+As you reach for the handle however, the doors suddenly open, knocking you onto your back and sending your protective tray sprawling away from you. Worse, the sound of the collision got the attention of the rest of the room.<br><br>
+
+For a moment, the room goes silent, as everyone notices the underdressed <<girl>> on the floor, <<lewdness>> on display. Your daze is cruelly lifted when the room erupts into a jeering cheer. On the verge of panic, you flee from the room, chased by the jeers and whistles.
+<<gtrauma>><<gstress>><<lcool>><<trauma 6>><<stress 6>><<status -10>><br><br>
+
+<<link [[Next|Hallways]]>><</link>>
+<</if>>
+
+
+:: Canteen Wait [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+You wait, huddled beneath the counter as the students eat their lunches, so close yet unaware of your presence. The bell rings and your hear the room clearing. When it seems safe, you tentatively leave the safety of your hiding place. You peek through the door to make sure the hall is empty before exiting the canteen.<br><br>
+
+<br><br>
+<<link [[Next|Hallways]]>><</link>><br>
+
+<<pass 5>>
+<<schooleffects>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+<<if $schoolstate is "lunch">>
+<<pass 5>>
+<<schooleffects>>
+<</if>>
+
