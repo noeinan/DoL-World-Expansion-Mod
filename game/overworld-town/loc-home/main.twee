@@ -26,9 +26,25 @@ There's a note by the window.<br>
 <<link [[Read it|Robin Note]]>><<set $robinnote to 1>><</link>><br><br>
 <</if>>
 
+
+
 <<projectoptions>>
 
 <<roomoptions>>
+
+<<if $debug is 1>>/*indev radio testing*/
+A radio is on:<br>
+<<radio_placehere>>
+
+<span class="green">More debugging:</span><br>
+<<link [[Add test news|Bedroom]]>><<radio_addnews "meteor_fall" "2">><</link>> radio_addnews "meteor_fall" "2"<br>
+<<link [[Add test news|Bedroom]]>><<radio_addnews "godzilla_awaken" "3">><</link>> radio_addnews "godzilla_awaken" "3"<br>
+<<link [[Hard reset news|Bedroom]]>><<radio_hardreset>><</link>> radio_hardreset<br>
+<<link [[Midnight Importance reduction|Bedroom]]>><<radio_midnight>><</link>> radio_midnight<br>
+<<link [[Skip to 23:58|Bedroom]]>><<set $time to 1438>><</link>><br>
+<<link [[Test new features for DoL (0:15)|Bedroom]]>><<pass 15>><</link>><br>
+<span class="green">Debugging end here</span><br><br>
+<</if>>
 
 Your bed takes up most of the room.<br>
 <<link [[Strip and get in bed|Bed]]>><<storeclothes>><</link>><br>
@@ -122,6 +138,8 @@ You are not wearing underwear! The thought of going out like this quickens your 
 <<link [[NPC Settings]]>><</link>><br><br>
 <</if>>
 
+
+
 :: Bathroom [nobr]
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
@@ -139,7 +157,7 @@ You are in the bathroom.<br><br>
 <<link [[Outside (0:02)|Domus Street]]>><<pass 2>><</link>><br>
 <</if>>
 
-:: Sleep [nobr]
+:: Sleep [nobr autosave]
 <<sleep>><<effects>>
 
 <<sleepeffects>>
@@ -235,6 +253,214 @@ You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 
 <<set $phase to 0>>
 
+:: Bath Scream [nobr]
+<<effects>><<set $location to "home">><<set $outside to 0>>
+<<endevent>><<bailey>><<person1>>
+You scream. The trio recoil and scramble for the door handle. They flee into the hallway outside, leaving the door wide open. Heavy footsteps march closer, and Bailey enters. <<His>> eyes sweep the room before resting on you. "Did you see a spider?" <<he>> sneers. <<He>> steps closer and smacks you with the back of <<his>> hand. "Don't bother me again." <<He>> marches from the room, slamming the door behind <<himstop>><<gpain>><<gtrauma>><<gstress>><<pain 20>><<trauma 6>><<stress 6>><br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<endevent>>
+
+<<link [[Next|Bathroom]]>><<clotheson>><</link>><br>
+
+:: Bath Ask [nobr]
+<<effects>><<set $location to "home">><<set $outside to 0>>
+
+<<if $submissive gte 1150>>
+"D-don't look," you say. "Please leave."
+<<elseif $submissive lte 850>>
+"Leave," you say. "Perverts."
+<<else>>
+"Please leave," you say.
+<</if>>
+<br><br>
+
+<<if $rng gte 81>>
+They hesitate, then the <<person1>><<person>> lunges forward, grasps your mouth and pulls you to the edge of the bath. "Why?" <<he>> whispers into your ear. "When there's fun to be had here?"<br><br>
+
+<<link [[Next|Bath Molestation]]>><<set $molestationstart to 1>><</link>><br>
+
+<<else>>
+They hesitate, then the <<person3>><<person>> opens the door and leaves. The others follow, though the <<person1>><<person>> lingers a moment and leers at you.<br><br>
+<<endevent>>
+<<tearful>> you climb from the bath.<br><br>
+
+<<link [[Next|Bathroom]]>><<clotheson>><</link>><br>
+<</if>>
+
+
+:: Bath Molestation [nobr]
+<<if $molestationstart is 1>>
+<<set $molestationstart to 0>>
+<<controlloss>>
+<<violence 1>>
+<<neutral 1>>
+<<molested>>
+<<set $event to "molestationhome">>
+<<man1init>>
+<<set $rescue to 1>><<npcgag>>
+<</if>>
+
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>><br>
+<br>
+<<actionsman>>
+
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Bath Molestation Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Bath Molestation Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+<span id="next"><<link [[Next|Bath Molestation Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Bath Molestation]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Bath Molestation Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+
+Someone shoves you face-first into the water. They scurry from the room.<br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<<elseif $enemyhealth lte 0>>
+
+The <<person1>><<person>> backs away from you, nursing an injury. The others step back too, looking unsure. <<He>> opens <<his>> mouth as if to speak, but instead turns and walks from the room. The others follow.<br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<<else>><<set $rescued += 1>>/*Unnecessary if rescue is impossible*/
+
+<<endevent>><<bailey>><<person1>>
+Heavy footsteps respond to your cry, getting closer. The trio recoil and scramble for the door handle. They flee into the hallway outside, leaving the door wide open. Bailey enters. <<His>> eyes sweep the room before resting on you. "Did you see a spider?" <<he>> sneers. <<He>> steps closer and smacks you with the back of <<his>> hand. "Don't bother me again." <<He>> marches from the room, slamming the door behind <<himstop>><<gpain>><<gtrauma>><<gstress>><<pain 20>><<trauma 6>><<stress 6>><br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<</if>>
+
+
+:: Bath Sex [nobr]
+<<if $sexstart is 1>>
+<<set $sexstart to 0>>
+<<consensual>>
+<<set $consensual to 1>>
+<<neutral 1>>
+<<set $event to "molestationhome">>
+<<man1init>>
+<<set $enemytrust += 100>>
+<<set $rescue to 1>>
+You stand up. Their eyes grow wider. You grasp the <<person2>><<persons>> collar and pull <<him>> closer.<<person1>>
+<<promiscuity5>>
+<</if>>
+
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>><br>
+<br>
+<<actionsman>>
+
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Bath Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Bath Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+<span id="next"><<link [[Next|Bath Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $finish is 1>>
+<span id="next"><<link [[Next|Bath Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Bath Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Bath Sex Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+
+"You made me all messy again," you tease. "Leave me to clean up." They're blushing as they leave the room.<br><br>
+<<wash>>
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<<elseif $enemyhealth lte 0>>
+
+The <<person1>><<person>> backs away from you, nursing an injury. The others step back too, looking unsure. <<He>> opens <<his>> mouth as if to speak, but instead turns and walks from the room. The others follow.<br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<<elseif $alarm is 1 and $rescue is 1>><<set $rescued += 1>>/*Unnecessary if rescue is impossible*/
+
+<<endevent>><<bailey>><<person1>>
+Heavy footsteps respond to your cry, getting closer. The trio recoil and scramble for the door handle. They flee into the hallway outside, leaving the door wide open. Bailey enters. <<His>> eyes sweep the room before resting on you. "Did you see a spider?" <<he>> sneers. <<He>> steps closer and smacks you with the back of <<his>> hand. "Don't bother me again." <<He>> marches from the room, slamming the door behind <<himstop>><<gpain>><<gtrauma>><<gstress>><<pain 20>><<trauma 6>><<stress 6>><br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<<else>>
+
+They back away from you, still watching. "Privacy please," you say. They blush and leave the room.<br><br>
+
+<<tearful>> you climb from the bath.<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Bathroom]]>><</link>><br>
+
+<</if>>
+
+:: Bath Watch [nobr]
+<<effects>><<set $location to "home">><<set $outside to 0>>
+You're already clean, but you can't miss the opportunity to perform. You rise to your knees and pick up a sponge. Looking away from your audience, you run the sponge over your <<breastscomma>> down your tummy and across your <<genitalsstop>> The trio watch, transfixed.<<exhibitionism5>>
+
+You turn your back to them and stick out your <<bottomstop>> You reach back, but the <<person1>><<person>> snatches the sponge away. "Let me help," <<he>> says. The other two find other sponges. You let them clean you, turning to expose every inch of your body to them in turn. Their other hands aren't idle. They grope and fondle you without shame.<br><br>
+
+The water's getting cold. "I'm squeaky clean," you say. "Thanks for the help." They hesitate, but leave you be.<br><br>
+
+<<tearful>> you climb from the bath.<br><br><<endevent>>
+
+<<link [[Next|Bathroom]]>><<clotheson>><</link>><br>
+
+
 
 :: Bath [nobr]
 <<effects>><<set $location to "home">><<set $outside to 0>>
@@ -248,6 +474,27 @@ You wash until you're squeaky clean.<<wash>><br><br>
 As you remove the plug to drain the water, you feel something probe your <<genitalsstop>> You look between your legs, but you don't see anything abnormal. When you try to stand up however, translucent tendrils rise from the water and force you back down.<br><br>
 
 <<link [[Next|Bath Slime]]>><<set $molestationstart to 1>><</link>>
+
+<<elseif $danger gte (9900 -$allure / 2) and $rng gte 30 and $daystate isnot "night">>
+<<generatey1>><<generatey2>><<generatey3>><<fameexhibitionism 3>>
+As you remove the plug to drain the water, you hear voices from the hallway. They stop outside the door, before flinging it open. A <<person1>><<personcomma>> <<person2>><<personcomma>> and <<person3>><<person>> barge in.<br><br>
+<<if $exhibitionism gte 95 and $exhibitionismaction is "excited">> You yelp in surprise, but make no effort to hide your <<lewdnessstop>> They stare at you with wide eyes, surprised you are letting them. The <<person1>><<person>> grins and closes the door.<br><br>
+<<else>>
+You cover your <<lewdnessstop>> They stare at you with wide eyes. The <<person1>><<person>> grins and closes the door.<<gtrauma>><<gstress>><br><br>
+<<stress 6>><<trauma 6>>
+<br><br>
+<</if>>
+
+The <<person2>><<person>> blushes. "S-sorry," <<he>> says, not taking <<his>> eyes off you. "We didn't know you were in here."<br><br>
+
+<<link [[Scream|Bath Scream]]>><</link>><br>
+<<link [[Ask them to leave|Bath Ask]]>><</link>><br>
+	<<if $exhibitionism gte 75>>
+	<<link [[Let them watch (0:05)|Bath Watch]]>><<pass 5>><</link>><<exhibitionist5>><br>
+	<</if>>
+	<<if $promiscuity gte 75>>
+	<<link [[Goad|Bath Sex]]>><<set $sexstart to 1>><</link>><<promiscuous5>><br>
+	<</if>>
 
 <<else>>
 You wash until you're squeaky clean.<<wash>><br><br>
@@ -584,7 +831,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 <<set $outside to 1>><<set $location to "home">><<effects>>
 
 <<if $rng gte 51>>
-	You join the children playing hide-and-seek.
+	You join the game of hide-and-seek.
 		<<set $rng to random(1, 100)>>
 		<<if $rng gte 91>>
 		You hide behind a large potted plant,
@@ -607,7 +854,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 		<<else>>
 		You hide beneath a bush,
 		<</if>>
-		<<generatec1>><<person1>> and wait for the <<person>> to find you.<br><br>
+		<<generates1>><<person1>> and wait for the <<person>> to find you.<br><br>
 
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
 	<<if $danger gte (9900 - $allure)>>
@@ -633,7 +880,7 @@ The last of the water drains from the bath, taking the slime with it. <<tearful>
 	<</if>>
 <<else>>
 
-<<generatec1>><<person1>>A <<person>> runs up to you and prods your shoulder. "You're it!" <<he>> says with glee.<br><br>
+<<generates1>><<person1>>A <<person>> runs up to you and prods your shoulder. "You're it!" <<he>> says with glee.<br><br>
 
 	<<if $rng gte 81>>
 	You tag someone else and continue playing. You're chasing the <<person>> when <<he>> trips over a fallen branch, and you trip in turn. You land on top of <<himstop>><br><br>
@@ -834,3 +1081,4 @@ Bailey gives <<him>> a level stare. "You got what you paid for. Not my fault you
 <</if>>
 
 <<link [[Next|Bed]]>><</link>><br>
+
