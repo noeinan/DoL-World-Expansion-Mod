@@ -16,12 +16,12 @@ window.isSameTarget = isSameTarget; // export function
 
 // Finds tentacle with head set to tentacleState
 function findTentacleHead(tentacleState) {
-    var allTentacles = SugarCube.State.variables["alltentacles"];
-    for(var i = 0; i < allTentacles.length; i++) {
-        if(allTentacles[i].head === tentacleState) {
-            return i;
-        }
-    }
-    return -1;
+	var allTentacles = SugarCube.State.variables["alltentacles"];
+	for(var i = 0; i < allTentacles.length; i++) {
+		if(allTentacles[i].head === tentacleState) {
+			return i;
+		}
+	}
+	return -1;
 }
 window.findTentacleHead = findTentacleHead;
