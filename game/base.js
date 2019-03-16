@@ -198,7 +198,6 @@ window.AvsAn = (function () {
 	};
 })();
 
-
 /**
  * This will enable or disable the feature completely, but will not remove it from the settings.
  * Remember to modify the "settings" widget.
@@ -294,3 +293,4 @@ $(document).on('keyup', function(ev) {
 			$(currentLinks[requestedLinkIndex]).click();
 	}
 });
+
