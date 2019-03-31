@@ -402,6 +402,19 @@
 
 <</nobr>><</widget>>
 
+<<widget "rightsteal">><<nobr>>
+<<if $skulduggery gte 200 and $stealstate isnot 3 and $enemytype is "man">>
+<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+	<<if $rightactiondefault is "steal">>
+	| <label><span class="brat">Steal</span> <<radiobutton "$rightaction" "steal" checked>> <<skulduggerydifficulty>><<combatcrime>></label>
+	<<else>>
+	| <label><span class="brat">Steal</span> <<radiobutton "$rightaction" "steal">> <<skulduggerydifficulty>><<combatcrime>></label>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+
+
 :: Widgets Effects Hands [widget]
 <<widget "effectshandsclothes">><<nobr>>
 
@@ -521,7 +534,7 @@
 		<<if $enemytype is "beast">>
 		You hold the spray in both hands, and unload a full blast in the $beasttype's face. It whimpers.
 		<<elseif $enemyno gte 2>>
-		You hold the spray in both hands, and unload a full blast in at your assailants. They clutch their faces.<<ggcrime>><<crimeup 500>>
+		You hold the spray in both hands, and unload a full blast at your assailants. They clutch their faces.<<ggcrime>><<crimeup 500>>
 		<<else>>
 		You hold the spray in both hands, and unload a full blast at the assailant. <<He>> clutches <<his>> face.<<ggcrime>><<crimeup 500>>
 		<</if>>
@@ -584,8 +597,8 @@
 
 <<if $leftaction is "steal" and $rightaction is "steal">><<set $rightaction to 0>><<set $leftactiondefault to "steal">><<set $rightactiondefault to "steal">><<set $skulduggerydifficulty += 400>><<skulduggerycheck>><<person1>>
 	<<if $skulduggerysuccess is 1>><<set $stealstate to 3>>
-	You rummage through the <<persons>> <<walletstop>> <<encountersteal>>
-	<<else>><<brat 10>>
+	You rummage through the <<persons>> <<walletstop>> <<encountersteal>><<set $leftactiondefault to "leftcoverface">><<set $rightactiondefault to "rightcoverface">>
+	<<else>><<brat 15>><<set $speechsteal to 1>>
 	You rummage inside the <<persons>> <<walletstop>> <<He 1>> notices and shifts <<his>> valuables away from your hands.
 	<</if>>
 <<elseif $leftaction is "steal">><<set $leftactiondefault to "steal">><<set $leftaction to 0>><<skulduggerycheck>><<person1>>
@@ -597,9 +610,9 @@
 		<<elseif $stealstate is 1>><<set $stealstate to 2>>
 		You rummage through the <<persons>> <<walletstop>>
 		<<else>><<set $stealstate to 3>>
-		You sneak your hand into the <<persons>> <<walletstop>> <<encountersteal>>
+		You sneak your hand into the <<persons>> <<walletstop>> <<encountersteal>><<set $leftactiondefault to "leftcoverface">>
 		<</if>>
-	<<else>><<brat 10>>
+	<<else>><<brat 15>><<set $speechsteal to 1>>
 		<<if $stealstate is undefined>>
 		You run your hand over the <<persons>> skin, until it rests on <<his>> <<walletstop>> <<He 1>> isn't fooled. <<He 1>> shifts <<his>> valuables away from you.
 		<<elseif $stealstate is 0>>
@@ -611,15 +624,27 @@
 		<</if>>
 	<</if>>
 <<elseif $rightaction is "steal">><<set $rightaction to 0>><<set $rightactiondefault to "steal">><<skulduggerycheck>><<person1>>
-		<<if $stealstate is undefined>>
-		
-		<<elseif $stealstate is 0>>
-		
-		<<elseif $stealstate is 1>>
-		
-		<<else>>
-		
+	<<if $skulduggerysuccess is 1>>
+		<<if $stealstate is undefined>><<set $stealstate to 0>>
+		You run your hand over the <<persons>> skin, until it rests on <<his>> <<walletstop>>
+		<<elseif $stealstate is 0>><<set $stealstate to 1>>
+		You open the <<persons>> <<walletstop>>
+		<<elseif $stealstate is 1>><<set $stealstate to 2>>
+		You rummage through the <<persons>> <<walletstop>>
+		<<else>><<set $stealstate to 3>>
+		You sneak your hand into the <<persons>> <<walletstop>> <<encountersteal>><<set $rightactiondefault to "rightcoverface">>
 		<</if>>
+	<<else>><<brat 15>><<set $speechsteal to 1>>
+		<<if $stealstate is undefined>>
+		You run your hand over the <<persons>> skin, until it rests on <<his>> <<walletstop>> <<He 1>> isn't fooled. <<He 1>> shifts <<his>> valuables away from you.
+		<<elseif $stealstate is 0>>
+		You try to open the <<persons>> <<walletstop>> <<He>> notices and shifts <<his>> valuables away.
+		<<elseif $stealstate is 1>>
+		You rummage through the <<persons>> <<walletstop>> <<He>> notices and shifts <<his>> valuables away.
+		<<else>>
+		You sneak your hand into the <<persons>> <<walletstop>> <<He>> notices and shifts <<his>> valuables away.
+		<</if>>
+	<</if>>
 <</if>>
 
 <</nobr>><</widget>>
