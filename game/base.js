@@ -1,6 +1,6 @@
 config.history.controls = false;
 
-Config.history.maxStates = 20;
+Config.history.maxStates = 2;
 
 State.initPRNG();
 
@@ -204,7 +204,7 @@ window.AvsAn = (function () {
  *
  * @type {boolean}
  */
-var enableLinkNumberify = true;
+var enableLinkNumberify = false;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
