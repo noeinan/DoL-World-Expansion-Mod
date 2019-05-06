@@ -1,14 +1,24 @@
 :: Widgets Docks [widget]
 
+<<widget "dockclotheson">><<nobr>>
+<<if $storelocation is "docks">>
+You find your clothes where you left them.<<undress>><<storeon>><br><br>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "dockeffects">><<nobr>>
 
 <</nobr>><</widget>>
 
 <<widget "dockoptions">><<nobr>>
+
+
+
 <<endevent>>
 <<link [[Work (1:00)|Docks Work]]>><<set $phase to 0>><<pass 60>><<tiredness 6>><</link>><<gtiredness>><br>
 <<link [[Slack (1:00)|Docks Work]]>><<set $phase to 1>><<pass 60>><<dockstatus -1>><</link>><<lcool>><br>
-<<link [[Leave|Docks]]>><</link>><br>
+
+<<link [[Leave|Docks]]>><<if $storelocation is "docks">><<undress>><<storeon>><</if>><</link>><br>
 
 <</nobr>><</widget>>
 
@@ -37,7 +47,7 @@
 
 <<widget "dockwork">><<nobr>>
 <<set $dockhours += 1>>
-<<if $stress gte $stressmax>>
+<<if $stress gte 10000>>
 You've pushed yourself too much.<br><br>
 <<passout>>
 
@@ -50,6 +60,8 @@ You've pushed yourself too much.<br><br>
 
 <<elseif $hour gte 19>>
 You help put away equipment and make sure the containers are locked for the night.<br><br>
+
+<<dockclotheson>>
 
 You join the queue in front of security, where a surly <<generate1>><<person1>><<person>> hands out brown envelopes containing the day's pay.<<endevent>><br>
 
@@ -125,8 +137,8 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 		<<link [[Capsize the boat|Docks Rape Capsize]]>><<dockstatus -1>><</link>><<lcool>><br>
 
 		<<else>>
-
-		The <<person>> guides the captain while you and the <<person1>><<person>> help the crew with the spring lines. You swing the vessel around and make a successful landing.<br><br>
+		
+		The <<person>> guides the captain while you and the <<person1>><<person>> help the crew with the spring lines. <<if $exposed gte 1>>The sailors ogle you, though they try to hide it. <</if>>You swing the vessel around and make a successful landing.<br><br>
 		<<endevent>>
 		<<dockoptions>>
 
@@ -135,9 +147,15 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 	<<elseif $rng gte 71>>
 
 	A tourist vessel cuts across the docks, delaying the launch of other ships. They won't respond to hails. You're sent in a small boat to deliver a message.<br><br>
-
-	<<generate1>><<person1>>You climb aboard and push through the well-dressed crowd in search of the captain. You find <<him>> flirting with a passenger.<br><br>
-
+	
+	<<generate1>><<person1>>
+	
+	<<if $exposed gte 1>>
+	You climb aboard. The arrival of an undressed <<girl>> aboard the ship sends murmurs through the well-dressed crowd. You find the captain flirting with a passenger. <<He>> drops <<his>> glass when <<he>> sees you.
+	<<else>>	
+	You climb aboard and push through the well-dressed crowd in search of the captain. You find <<him>> flirting with a passenger.<br><br>
+	<</if>>
+	
 		<<if $submissive gte 1150>>
 		"Please sir," you say. "Your ship isn't meant to approach this way. You're blocking other ships."
 		<<elseif $submissive lte 850>>
@@ -174,8 +192,8 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 	<<link [[Ignore|Docks Examine]]>><<set $phase to 1>><</link>><br>
 
 	<<elseif $rng gte 41>>
-
-	You're tasked with cleaning the peer.
+	
+	You're tasked with cleaning the pier.
 		<<set $rng to random(1, 100)>>
 		<<if $rng gte 61>>
 		You notice a pink shape in the water, in front of an approaching ship.<br><br>
@@ -212,9 +230,9 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 		<</if>>
 
 	<<dockoptions>>
-
-	<<elseif $rng gte 11>>
-
+	
+	<<elseif $rng gte 11 and $exposed lte 0>>
+	
 	You're tasked with lubricating machinery.
 
 		<<if $dockstatus gte 30>>
@@ -233,7 +251,7 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 			<<if $lowerintegrity lte 0>><<lowerruined>><<exposure>>
 
 			Your weight tears you free of your clothing. <<generate2>><<person2>>A <<person>> catches you. <<He>> ogles your <<lewdnessstop>> So does everyone else. <<covered>> You squirm free and dash for safety, chased by jeers. You find a sheet to cover with.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 6>><br><br>
-
+			<<towelup>>
 			<<dockoptions>>
 
 			<<else>>
@@ -258,9 +276,9 @@ You make <span class="gold">£<<print (($dockwage * 12) / 100)>></span>.<<set $m
 		<<if $physique gte 15000 and $leftarm isnot "bound" and $rightarm isnot "bound">>
 
 		You have no trouble. You keep going while the other dockers stop to rest.<<gcool>><<dockstatus 1>><br><br>
-
-		<<dockoptions>>
-
+		
+		
+		
 		<<elseif $physique gte 5000 and $leftarm isnot "bound" and $rightarm isnot "bound">>
 
 		You manage to keep up with the other dockers.<br><br>
