@@ -1209,7 +1209,7 @@ You hasten your pace to escape the pervert.<br><br><<stress 3>>
 :: Street Car [nobr]
 <<effects>>
 
-<<if $phase is 1>>
+<<if $phase is 1 or $phase is 10>>
 
 You climb into the back of the car, and the <<person>> drives into a secluded alley. <<He>> joins you on the back seat.<<promiscuity2>><br><br>
 
@@ -1282,7 +1282,9 @@ After taking a look around to see if anyone else is watching, you <<nervously>> 
 <<set $enemytrust += 40>>
 <<set $tipmod to 2>><<tipset>>
 <</if>>
-
+<<if $phase is 10 and $stealstate is 3>>
+	While searching <<his>> wallet, your hand brushed against <span class="red">a police badge.</span>
+<</if>>
 
 <<effects>>
 <<effectsman>><<man>>
@@ -1293,6 +1295,8 @@ After taking a look around to see if anyone else is watching, you <<nervously>> 
 
 <<if $enemyarousal lt $enemyarousalmax and $enemyhealth gt 0 and $finish isnot 1>>
 <span id="next"><<link [[Next|Street Car Sex]]>><</link>></span><<nexttext>>
+<<elseif $phase is 10>>
+<span id="next"><<link [[Next|Street Car Sex Police]]>><</link>></span><<nexttext>>
 <<else>>
 <span id="next"><<link [[Next|Street Car Sex Finish]]>><</link>></span><<nexttext>>
 <</if>>
@@ -1338,6 +1342,122 @@ After taking a look around to see if anyone else is watching, you <<nervously>> 
 <<endcombat>>
 
 <<destinationeventend>>
+
+:: Street Car Sex Police [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>><<set $prostitutionstat += 1>><<fameprostitution 1>>
+
+	<<if $crime gte 2000 and $rng % 2>>
+		<<if $enemyanger lt 1 and $crime lte 4000 and $beauty gte ($beautymax / 7) * 5>>
+			The <<person1>><<person>> looks conflicted. Finally <<he>> speaks.<br>
+			"Listen," <<he>> says. "I'm with the police. This was a sting operation. Targeting you. We know you've been commiting crimes and prostitution is an easy way to get an arrest. So... so this."<br><br>
+
+			"Look I..." <<he>> says. "You're a sweet, gorgeous <<if $playergender is "m">>guy<<else>>girl<</if>>, and that was pretty good just now. I liked that. A lot. And noone else knows I caught you yet, so... We can just pretend I didn't, right."<br><br>
+
+			<<if $stealstate is 3>>
+				"You already helped yourself to the money in my wallet, so we'll agree you've been paid."
+			<<else>>
+				"Here's your pay."
+				<<tipreceive>>
+			<</if>><br><br>
+
+			"Be careful. The people after you may be closer than you think."<br>
+			<<clotheson>>
+			<<endcombat>>
+			<<destinationeventend>>
+		<<else>>
+			The <<person1>><<person>> looks at you lovingly.<br>
+			"What do I owe you for such amazing sex? Just name your price."<br><br>
+
+			<<if $skulduggery gte 700>><span class="gold">With your knowledge in the ways of trickery and deceipt, you smell a rat. The car. The person. Everything feels wrong. This feels like a setup.</span><br><br><</if>>
+
+			<<link [[Nothing|Street Car Sex Entrap]]>><<set $phase to 0>><</link>><br>
+			<<link [[£50|Street Car Sex Entrap]]>><<set $phase to 2>><</link>><br>
+			<<link [[£100|Street Car Sex Entrap]]>><<set $phase to 2>><</link>><br>
+			<<link [[£150|Street Car Sex Entrap]]>><<set $phase to 2>><</link>><br>
+			<<link [[£200|Street Car Sex Entrap]]>><<set $phase to 2>><</link>><br>
+			<<link [[£500|Street Car Sex Entrap]]>><<set $phase to 2>><</link>><br>
+		<</if>>
+	<<else>>
+		"That was great."<br>
+		<<He>> smiles, strokes your cheek and then shows you a police badge.<br>
+		"There's no cost involved, right? That'd be prostitution. A girl like you isn't a whore? I'd have to take you in for that."<br><br>
+
+		<<if $submissive lte 500>>
+			<<link [[Demand Payment|Street Car Sex Entrap]]>><<set $phase to 3>><<crimeup 50>><</link>><br>
+		<</if>>
+		<<link [[No Cost|Street Car Sex Entrap]]>><<set $phase to 0>><</link>><br>
+	<</if>>
+
+<<elseif $finish is 1>>
+	"Fine. I hope you don't expect anything." <<He>> shoves you out the car and drives away. <<tearful>> you struggle to your feet.<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<destinationeventend>>
+<<else>> /*only triggers if event goes nonconsens and fight*/
+	<<if $rng % 2>>
+		You manage to knock the <<person>> backwards, giving you time to escape. <<tearful>> you escape the car and flee down the alley.<br><br>
+		<<clotheson>>
+		<<endcombat>>
+		<<destinationeventend>>
+	<<else>>
+		You manage to knock the <<person>> backwards, and try to escape, <span class="red">but the car doors won't open.</span><br>
+		The <<person>> grabs you and quickly puts you in an arm-lock.<br><br>
+
+		"You just assaulted a police officer," <<he>> puts something on your arms, binding them behind you.<br><br><<set $rightarm to "bound">><<set $leftarm to "bound">>
+		<<set $rng to random(50, 100)>>
+		<<if $crime gt ($rng + ($enemyangermax - $enemyanger)) * 20>> /*more angry = more likely to arrest you for smaller crime value*/
+			"With your record, noone will ask too many awkward questions about how I caught you. I'll probably even get a bonus."<br><br>
+			<<link [[Next|Street Car Sex Entrap]]>><<set $phase to 1>><</link>><br>
+		<<else>>
+			"It's your lucky day. I'm on thin ice already with the boss - if I haul you in there'll be too many questions."<br><br>
+			"I should hurt you," <<He>> smiles viciously. "You're lucky I'm a police officer. I'll let you go. But I'll be keeping your clothes as 'evidence'."<br><br>
+			<<He>> shoves you out of the car naked. With your arms still bound your unable to stop yourself bashing into a wall.<br><br>
+			"Have a nice walk home!" <<His>> car screeches away.<<upperruined>><<lowerruined>><<underruined>>
+			<<endcombat>>
+			<<destinationeventend>>
+		<</if>>
+	<</if>>
+<</if>>
+
+
+::Street Car Sex Entrap [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<if $phase is 0>>
+	"There's no charge, <<if $skulduggery gte 700 or $stealstate gte 3>>Officer,<<else>><<if $pronoun is "m">>sir,<<else>>ma'am,<</if>><</if>>" you smile. "I'm not a prostitute!"<br>
+	"Right..." <<he>> says. "Then I guess you better be on your way."<br>
+	<<clotheson>>
+	<<endcombat>>
+	<<destinationeventend>>
+<</if>>
+<<if $phase gte 3>>
+	"You knew the deal. You said you'd pay. You can't arrest me for commiting a crime you paid me to do! Pay up."<br>
+	<<He>> holds up <<his>> hands: "Okay. Okay. It was worth a try."<br>
+	You shake your head as <<he>> smiles innocently.<br>
+<</if>>
+<<if $phase gte 2>>
+	"Take what you need from that bag beside you," <<he>> says. "It's all there."<br>
+	You turn to get the bag, when the <<person>> roughly grabs you. You feel something lock around your arms, binding them behind you.<<set $rightarm to "bound">><<set $leftarm to "bound">><br>
+	"Guess what?" <<He>> says. "You're under arrest. Prostitution."<br>
+<</if>>
+<<if $phase gte 1>>
+	<<He>> leaves you bound in the back of the car, as <<he>> goes forward to drive.<br><br>
+
+	"Sit back," <<he>> says. "Enjoy the ride."<br>
+	<<clotheson>>
+	You sit <<if $submissive lte 500>>silently fuming.<<else>>in silence.<</if>> <<He>> taps the steering wheel in time to the music on the radio.<br><br>
+
+	You notice <<him>> looking at you in the mirror. "Don't worry. It'll probably just be the pillory. Hardly a punishment at all. You'll be fine. Y'know it's my day off tomorrow. If you're still there I'll pay you a visit. Make sure you don't get cold," <<He>> leers at you in the mirror. "Would you like that? ... Sure you would."<br><br>
+
+	<<He>> eventually drops you off at the station, where you are put in a holding cell.<br>
+	"They'll be with you in a couple of hours," the <<person>> tells you as <<he>> leaves. "Have a nice day, citizen."<br><br>
+
+	<<link [[Wait|Police Cell]]>><<pass 2 hour>><<endcombat>><</link>><br>
+<</if>>
+
+
 
 :: Street Flirt [nobr]
 <<effects>>
