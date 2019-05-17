@@ -841,7 +841,7 @@
 <</nobr>><</widget>>
 
 <<widget "paincaption">><<nobr>>
-<<if $pain gte 100>><span class="red">You sob uncontrollably.</span>
+<<if $pain gte 100 and $willpowerpain is 0>><span class="red">You sob uncontrollably.</span>
 <<elseif $pain gte 80>><span class="pink">You cry and whimper.</span>
 <<elseif $pain gte 60>><span class="purple">You are crying.</span>
 <<elseif $pain gte 40>><span class="blue">Tears run down your face.</span>
@@ -853,7 +853,7 @@
 
 	<div class="meter">
 		<<set $percent=Math.floor(($pain/200)*100)>>
-		<<if $pain gte 100>>
+		<<if $pain gte 100 and $willpowerpain is 0>>
 		<<print '<div class="redbar" style="width:' + $percent + '%"></div>'>>
 		<<elseif $pain gte 80>>
 		<<print '<div class="pinkbar" style="width:' + $percent + '%"></div>'>>
@@ -1559,7 +1559,7 @@ Remove your <<link $underclothes>><<set $eventskip to 1>><<set $actionuncladunde
 
 <<if $actionuncladunder is 1>><<set $actionuncladunder to 0>>
 	<<if $storelocationinit is "wolfcave">>
-	You remove your $lowerclothes. They may be animals, but stripping in front of them makes your skin and <<genitals>> tingle.
+	You remove your $underclothes. They may be animals, but stripping in front of them makes your skin and <<genitals>> tingle.
 	<<else>>
 	You check to make sure no one is around, then slowly remove your $underclothes. Despite being alone, doing this in a public space makes your skin and <<genitals>> tingle.
 	<</if>>
@@ -2418,6 +2418,7 @@ and your fringe is very short.
 <<widget "beasttype">><<nobr>>
 
 <<if $args[0]>>
+<<set $basebeasttype to $args[0]>>
 	<<if $beastname is "blackwolf">>
 		<<if $hallucinations gte 1 and $blackwolfmonster is 1 or $blackwolfmonster is 1 and $monsterhallucinations is "f">>
 		<<set $monster to 1>>
@@ -2496,4 +2497,25 @@ and your fringe is very short.
 	<</if>>
 <</if>>
 
+<</nobr>><</widget>>
+
+
+<<widget "willpowerpain">><<nobr>>
+<<if $pain gte 100 and $willpowerpain is undefined>>
+	<<if ($willpower / 10) gte (($pain - 100) + random(1, 100))>>
+	<span class="green">The pain threatens to overwhelm, but you endure it.</span><<gwillpower>><<willpower 1>><br>
+	<<else>>
+	<span class="red">The pain overwhelms you.</span><<ggwillpower>><<willpower 5>><<set $willpowerpain to 0>><br>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "willpowerorgasm">><<nobr>>
+<<if $orgasmdown gte 1>>
+	<<if ($willpower / 10) gte (($orgasmdown * 30) + random(1, 80))>>
+	<span class="green">You endure the orgasmic shivers running through you.</span><<gwillpower>><<willpower 1>><<set $orgasmdown to 0>><br>
+	<<else>>
+	<span class="red">You struggle against the orgasmic spasms overwhelming you.</span><<gwillpower>><<willpower 1>><br>
+	<</if>>
+<</if>>
 <</nobr>><</widget>>
