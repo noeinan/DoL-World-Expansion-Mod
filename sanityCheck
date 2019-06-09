@@ -93,6 +93,12 @@ find . -name "*.twee" -exec cat '{}' ';' | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]
 find . -name "*.twee" -exec cat '{}' ';' | tr -c '.$a-zA-Z[]_' '\n' | sed 's/SugarCube\.State\.variables\./$/g' | sed -n -e 's/^[$]\(PC\|activeSlave\|\(slaves\|tanks\)\[[^]]*\]*\)[.]\([a-zA-Z]\+\).*$/[.]\3/p' | sort | uniq -u |sed 's/^\(.*\)$/-e\1\\\\\b/'  | xargs -r git grep -n --color | myprint "SlaveAttributeUsedOnce"
 $GREP "\$\(PC\|activeSlave\|slaves\|tanks\)[.][^a-zA-Z]" | myprint "UnexpectedCharAfterDot"
 
+#Find all the variables listed in init.twee
+VARIABLELIST=$(cat base-system/init.twee | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq)
+# Find all variables anywhere.  Commented out because the output is too noisy currently
+#VARIABLELIST=$(find . -name "*.twee" -exec cat '{}' ';' | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq)
+MISSINGFROMVERSIONUPDATE=$(for variable in $VARIABLELIST; do grep -q "$variable" base-system/version-update.twee || echo "$variable"; done)
+echo -e "base-system/version-update.twee$ENDC: $(echo $MISSINGFROMVERSIONUPDATE)" | myprint "MissingFromVersionUpdate"
 )
 
 git ls-files "game/*.twee" | xargs -d '\n'  ./devTools/check.py
