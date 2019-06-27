@@ -7,7 +7,9 @@ State.initPRNG();
 document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
 
-var xDown = null;
+window.SerializeGame = function () { return Save.serialize(); }; window.DeserializeGame = function (myGameState) { return Save.deserialize(myGameState) };
+
+var xDown = null;                                                        
 var yDown = null;
 
 /*Sidebar swipe*/
@@ -17,10 +19,10 @@ function getTouches(evt) {
 }
 
 function handleTouchStart(evt) {
-    const firstTouch = getTouches(evt)[0];
-    xDown = firstTouch.clientX;
-    yDown = firstTouch.clientY;
-};
+    var firstTouch = getTouches(evt)[0];                                      
+    xDown = firstTouch.clientX;                                      
+    yDown = firstTouch.clientY;                                      
+};                                                
 
 function handleTouchMove(evt) {
     if ( ! xDown || ! yDown ) {
@@ -147,32 +149,49 @@ function DefineMacroS(macroName, macroFunction) {
 	});
 }
 
-function underintegrity(){
+function underlowerintegrity(){
 	var output='';
-	var V = State.variables;
-	if (V.underintegritymax !== 0) {
-		if (V.underintegrity <= (V.underintegritymax / 10) * 2) {
+	var V = State.variables.worn.under_lower;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
 			output += "tattered \t";
-		} else if (V.underintegrity <= (V.underintegritymax / 10) * 5) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
 			output += "torn \t";
-		} else if (V.underintegrity <= (V.underintegritymax / 10) * 9) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
 			output += "frayed \t";
 		} else {
 		}
 	}
 	return output;
 }
-DefineMacroS("underintegrity", underintegrity);
+DefineMacroS("underlowerintegrity", underlowerintegrity);
+
+function underupperintegrity(){
+	var output='';
+	var V = State.variables.worn.under_upper;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
+			output += "tattered \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
+			output += "torn \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
+			output += "frayed \t";
+		} else {
+		}
+	}
+	return output;
+}
+DefineMacroS("underupperintegrity", underupperintegrity);
 
 function lowerintegrity(){
 	var output='';
-	var V = State.variables;
-	if (V.lowerintegritymax !== 0) {
-		if (V.lowerintegrity <= (V.lowerintegritymax / 10) * 2) {
+	var V = State.variables.worn.lower;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
 			output += "tattered \t";
-		} else if (V.lowerintegrity <= (V.lowerintegritymax / 10) * 5) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
 			output += "torn \t";
-		} else if (V.lowerintegrity <= (V.lowerintegritymax / 10) * 9) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
 			output += "frayed \t";
 		} else {
 		}
@@ -183,13 +202,13 @@ DefineMacroS("lowerintegrity", lowerintegrity);
 
 function upperintegrity(){
 	var output='';
-	var V = State.variables;
-	if (V.upperintegritymax !== 0) {
-		if (V.upperintegrity <= (V.upperintegritymax / 10) * 2) {
+	var V = State.variables.worn.upper;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
 			output += "tattered \t";
-		} else if (V.upperintegrity <= (V.upperintegritymax / 10) * 5) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
 			output += "torn \t";
-		} else if (V.upperintegrity <= (V.upperintegritymax / 10) * 9) {
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
 			output += "frayed \t";
 		} else {
 		}
@@ -264,6 +283,12 @@ var disableNumberifyInVisibleElements = [
 	'#passage-asylum-wardrobe',
 	'#passage-strip-club-dressing-room',
 	'#passage-brothel-dressing-room',
+	'#passage-school-boy-wardrobe',
+	'#passage-school-girl-wardrobe',
+	'#passage-eden-mirror',
+	'#passage-eerie-mirror-5',
+	'#passage-mirror-stop',
+	'#passage-mirror',
 	'#passage-testing-room'
 ];
 
@@ -341,3 +366,4 @@ $(document).on('keyup', function(ev) {
 			$(currentLinks[requestedLinkIndex]).click();
 	}
 });
+

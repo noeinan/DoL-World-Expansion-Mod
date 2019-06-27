@@ -298,7 +298,7 @@ You approach the figure. <<He>> turns to greet you as you near, revealing Jordan
 :: Temple Chastity [nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
 
-<<if $undertype isnot "chastity">>
+<<if !$worn.under_lower.type.includes("chastity")>>
 "We fit chastity belts to any virgin who should want one. You will need to undergo a brief examination beforehand, that we might verify your purity. If you are not a virgin, then we can provide you with a belt for £80. If you already have a chastity belt, an anal shield can be fitted for £50. Even virgins must pay for the shield however."<br><br>
 
 "Our belts are very durable, designed to protect from even the most vicious of assailants. We don't use keys; once on, only specialised equipment can remove them. Be warned however, those that cannot sate their lust through obvious means may be driven to other violent urges. Also keep in mind that they don't conceal much from view, nor do they protect well against finer assaults, by fingers and the like. They are designed to protect chastity as written in the holy texts."<br><br>
@@ -308,12 +308,12 @@ You approach the figure. <<He>> turns to greet you as you near, revealing Jordan
 	<<else>>
 	"We can remove your belt if you like. Once it's off however, you'll need to pay again to have another put on."<br><br>
 	<</if>>
-	<<if $analshield isnot 1>>
+	<<if $worn.under_lower.anal_shield isnot 1>>
 	"Or would you prefer to have even more protection? We can fit a shield that will protect your rear for £50."<br><br>
 	<</if>>
 <</if>>
 
-<<if $undertype isnot "chastity">>
+<<if !$worn.under_lower.type.includes("chastity")>>
 	<<if $templetest isnot "failed">>
 <<link [[Virginity test (0:05)|Temple Test]]>><<pass 5>><</link>><br>
 	<</if>>
@@ -322,22 +322,22 @@ You approach the figure. <<He>> turns to greet you as you near, revealing Jordan
 	<</if>>
 <</if>>
 
-<<if $undertype is "chastity" and $analshield isnot 1>>
+<<if $worn.under_lower.type.includes("chastity") and $worn.under_lower.anal_shield isnot 1>>
 	<<if $money gte 5000>>
 <<link [[Have shield fitted (£50 0:05)|Temple Chastity Shield]]>><<pass 5>><<set $money -= 5000>><</link>><br>
 	<<else>>
 	You can't afford to have a shield fitted.<br><br>
 	<</if>>
 <</if>>
-<<if $undertype is "chastity" and $analshield is 1>>
+<<if $worn.under_lower.type.includes("chastity") and $worn.under_lower.anal_shield is 1>>
 <<link [[Have shield removed (0:05)|Temple Chastity Shield Removal]]>><<pass 5>><</link>><br>
 <</if>>
-<<if $undertype is "chastity" and $penilevirginity is 1 and $vaginalvirginity is 1>>
+<<if $worn.under_lower.type.includes("chastity") and $penilevirginity is 1 and $vaginalvirginity is 1>>
 	<<if $money gte 8000>>
 <<link [[Have belt removed (£80 0:05)|Temple Chastity Removal]]>><<set $money -= 8000>><<pass 5>><</link>><br>
 	<<else>>
 	<</if>>
-<<elseif $undertype is "chastity">>
+<<elseif $worn.under_lower.type.includes("chastity")>>
 <<link [[Have belt removed (0:05)|Temple Chastity Removal]]>><<pass 5>><</link>><br>
 <</if>>
 
@@ -374,7 +374,7 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <</if>>
 
 "Everything is satisfactory," <<he>> says. "If there are any problems, come see me." <<He>> leaves you alone in the room.<br><br>
-<<set $chastitybeltnew to 1>><<chastitybelt>>
+<<underlowerwear 5>>
 <<clotheson>>
 
 <<link [[Next|Temple]]>><<endevent>><</link>>
@@ -399,7 +399,7 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <</if>>
 
 "Everything is satisfactory," <<he>> says. "If there are any problems, come see me." <<He>> leaves you alone in the room.<br><br>
-<<set $chastitybeltnew to 1>><<chastitybelt>>
+<<underlowerwear 5>>
 <<clotheson>>
 
 <<link [[Next|Temple]]>><<endevent>><</link>>
@@ -413,9 +413,9 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <<He>> stands up. "All done, you are now protected from sodomy. If there are any problems, come see me." <<He>> leaves you alone in the room.<br><br>
 
 
-<<set $analshield to 1>>
-<<set $underanusexposed to 0>>
-<<set $underanusexposedbase to 0>>
+<<set $worn.under_lower.anal_shield to 1>>
+<<set $worn.under_lower.anus_exposed to 0>>
+<<set $worn.under_lower.anus_exposed_base to 0>>
 <<clotheson>>
 
 <<link [[Next|Temple]]>><<endevent>><</link>>
@@ -429,9 +429,9 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <<He>> stands up. "All done, you are no longer protected from sodomy, be careful. If there are any problems, come see me." <<He>> leaves you alone in the room.<br><br>
 
 
-<<set $analshield to 0>>
-<<set $underanusexposed to 1>>
-<<set $underanusexposedbase to 1>>
+<<set $worn.under_lower.anal_shield to 0>>
+<<set $worn.under_lower.anus_exposed to 1>>
+<<set $worn.under_lower.vagina_exposed_base to 1>>
 
 
 			<<if $analchastityparasite isnot 0>>
@@ -452,7 +452,7 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 <<He>> stands up. "All done. If you would like a replacement you know where to find me." <<He>> leaves you alone in the room.<br><br>
 
 
-<<set $undertype to "brokenchastity">>
+<<$worn.under_lower.type.push("broken")>>
 
 <<underruined>>
 
@@ -465,7 +465,7 @@ You look down to examine it yourself. It doesn't feel as tight or uncomfortable 
 			<<if $analchastityparasite isnot 0>>
 			<span class="pink">With the chastity belt gone, the $analchastityparasite fall out of your anus.</span><br><<set $analchastityparasite to 0>>
 			<</if>>
-		<<if $analshield is 1>><<set $analshield to 0>><</if>>
+		<<if $worn.under_lower.anal_shield is 1>><<set $worn.under_lower.anal_shield to 0>><</if>>
 
 <<clotheson>>
 
@@ -565,12 +565,12 @@ The group stops once more, but this time someone rests their hand on your arm. Y
 <<set $outside to 1>><<set $location to "forest">><<effects>>
 
 
-<<uppernaked>><<lowernaked>><<undernaked>>
+<<upperstrip>><<lowerstrip>><<underlowerstrip>>
 
 The <<monks>> grasp your clothing and try to remove it. Between your blindness and the sheer number of hands pulling and tugging there's nothing you can do to stop them. They soon have you stripped and bare. <<covered>> <<gtrauma>><br><br>
 
-<<if $undertype is "chastity">>
-Someone grabs hold of your $underclothes and you hear a grinding sound. A cool breeze caresses your <<genitals>> directly. "We've opened your belt for the ceremony. We'll protect you again afterwards."<br><br>
+<<if $worn.under_lower.type.includes("chastity")>>
+Someone grabs hold of your $worn.under_lower.name and you hear a grinding sound. A cool breeze caresses your <<genitals>> directly. "We've opened your belt for the ceremony. We'll protect you again afterwards."<br><br>
 <</if>>
 
 
