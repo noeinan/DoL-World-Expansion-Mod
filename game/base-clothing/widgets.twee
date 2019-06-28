@@ -277,7 +277,7 @@
 <</if>>
 <</nobr>><</widget>>
 
-/*The "...send" widgets gives the player character new clothing. They take the index of the item you want to provide as an argument, the location you want to send it to as a second argument, (such as "wardrobe",) and the colour of the item as an optional third argument. Fourth argument defines the secondary colour, if present. Only the upper half is required in the case of outfits. They differ from the "...wear" widgets in that they send clothes to your wardrobe, rather than put them on your character.*/
+/*The "...send" widgets give the player character new clothing. They take the index of the item you want to provide as an argument, the location you want to send it to as a second argument, (such as "wardrobe",) and the colour of the item as an optional third argument. Fourth argument defines the secondary colour, if present. Only the upper half is required in the case of outfits. They differ from the "...wear" widgets in that they send clothes to your wardrobe, rather than put them on your character.*/
 
 <<widget "uppersend">><<nobr>>
 <<set _temp to $args[0]>>
@@ -671,8 +671,17 @@
 <</nobr>><</widget>>
 
 <<widget "upperruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.upper.cursed is 1>>
+<<if $worn.upper.cursed is 1 and !$worn.upper.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and $worn.upper.one_piece isnot "broken" and ($worn.upper.shop.includes("clothing") or $worn.upper.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.upper.cost * 1.5)>>
+		<<uppersend $worn.upper.index "wardrobe" $worn.upper.colour $worn.upper.accessory_colour>>
+		<<set $money -= Math.trunc($worn.upper.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.upper.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.upper.name)>>
+		<</if>>
+	<</if>>
 	<<if $worn.upper.set is $worn.lower.set>>
 	<<set $worn.lower.set to "lower">><<set $worn.lower.one_piece to "broken">>
 	<</if>>
@@ -682,8 +691,17 @@
 <</nobr>><</widget>>
 
 <<widget "lowerruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.lower.cursed is 1>>
+<<if $worn.lower.cursed is 1 and !$worn.lower.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and $worn.lower.one_piece isnot "broken" and ($worn.lower.shop.includes("clothing") or $worn.lower.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.lower.cost * 1.5)>>
+		<<lowersend $worn.lower.index "wardrobe" $worn.lower.colour $worn.lower.accessory_colour>>
+		<<set $money -= Math.trunc($worn.lower.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.lower.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.lower.name)>>
+		<</if>>
+	<</if>>
 	<<if $worn.upper.set is $worn.lower.set>>
 	<<set $worn.upper.set to "upper">><<set $worn.upper.one_piece to "broken">>
 	<</if>>
@@ -693,8 +711,17 @@
 <</nobr>><</widget>>
 
 <<widget "underupperruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.under_upper.cursed is 1>>
+<<if $worn.under_upper.cursed is 1 and !$worn.under_upper.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and $worn.under_upper.one_piece isnot "broken" and ($worn.under_upper.shop.includes("clothing") or $worn.under_upper.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.under_upper.cost * 1.5)>>
+		<<underuppersend $worn.under_upper.index "wardrobe" $worn.under_upper.colour $worn.under_upper.accessory_colour>>
+		<<set $money -= Math.trunc($worn.under_upper.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.under_upper.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.under_upper.name)>>
+		<</if>>
+	<</if>>
 	<<if $worn.under_upper.set is $worn.under_lower.set>>
 	<<set $worn.under_lower.set to "under_lower">><<set $worn.under_lower.one_piece to "broken">>
 	<</if>>
@@ -704,8 +731,17 @@
 <</nobr>><</widget>>
 
 <<widget "underlowerruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.under_lower.cursed is 1>>
+<<if $worn.under_lower.cursed is 1 and !$worn.under_lower.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and $worn.under_lower.one_piece isnot "broken" and ($worn.under_lower.shop.includes("clothing") or $worn.under_lower.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.under_lower.cost * 1.5)>>
+		<<underlowersend $worn.under_lower.index "wardrobe" $worn.under_lower.colour $worn.under_lower.accessory_colour>>
+		<<set $money -= Math.trunc($worn.under_lower.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.under_lower.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.under_lower.name)>>
+		<</if>>
+	<</if>>
 	<<if $worn.under_upper.set is $worn.under_lower.set>>
 	<<set $worn.under_upper.set to "under_upper">><<set $worn.under_upper.one_piece to "broken">>
 	<</if>>
@@ -715,40 +751,85 @@
 <</nobr>><</widget>>
 
 <<widget "headruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.head.cursed is 1>>
+<<if $worn.head.cursed is 1 and !$worn.head.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and ($worn.head.shop.includes("clothing") or $worn.head.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.head.cost * 1.5)>>
+		<<headsend $worn.head.index "wardrobe" $worn.head.colour $worn.head.accessory_colour>>
+		<<set $money -= Math.trunc($worn.head.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.head.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.head.name)>>
+		<</if>>
+	<</if>>
 	<<set $worn.head to clone($clothes.head[0])>>
 	<<set $carried.head to clone($clothes.head[0])>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "faceruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.face.cursed is 1>>
+<<if $worn.face.cursed is 1 and !$worn.face.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and ($worn.face.shop.includes("clothing") or $worn.face.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.face.cost * 1.5)>>
+		<<facesend $worn.face.index "wardrobe" $worn.face.colour $worn.face.accessory_colour>>
+		<<set $money -= Math.trunc($worn.face.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.face.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.face.name)>>
+		<</if>>
+	<</if>>
 	<<set $worn.face to clone($clothes.face[0])>>
 	<<set $carried.face to clone($clothes.face[0])>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "neckruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.neck.cursed is 1>>
+<<if $worn.neck.cursed is 1 and !$worn.neck.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and ($worn.neck.shop.includes("clothing") or $worn.neck.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.neck.cost * 1.5)>>
+		<<necksend $worn.neck.index "wardrobe" $worn.neck.colour $worn.neck.accessory_colour>>
+		<<set $money -= Math.trunc($worn.neck.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.neck.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.neck.name)>>
+		<</if>>
+	<</if>>
 	<<set $worn.neck to clone($clothes.neck[0])>>
 	<<set $carried.neck to clone($clothes.neck[0])>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "legsruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.legs.cursed is 1>>
+<<if $worn.legs.cursed is 1 and !$worn.legs.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and ($worn.legs.shop.includes("clothing") or $worn.legs.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.legs.cost * 1.5)>>
+		<<legssend $worn.legs.index "wardrobe" $worn.legs.colour $worn.legs.accessory_colour>>
+		<<set $money -= Math.trunc($worn.legs.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.legs.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.legs.name)>>
+		<</if>>
+	<</if>>
 	<<set $worn.legs to clone($clothes.legs[0])>>
 	<<set $carried.legs to clone($clothes.legs[0])>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "feetruined">><<nobr>><<set $eventskipoverrule to 1>>
-<<if $worn.feet.cursed is 1>>
+<<if $worn.feet.cursed is 1 and !$worn.feet.type.includes("broken")>>
 <<else>>
+	<<if $clothingrebuy is 1 and ($worn.feet.shop.includes("clothing") or $worn.feet.shop.includes("forest"))>>
+		<<if $money gte Math.trunc($worn.feet.cost * 1.5)>>
+		<<feetsend $worn.feet.index "wardrobe" $worn.feet.colour $worn.feet.accessory_colour>>
+		<<set $money -= Math.trunc($worn.feet.cost * 1.5)>>
+		<<set $effectsmessage to 1>><<set $rebuy_success to clone($worn.feet.name)>>
+		<<else>>
+		<<set $effectsmessage to 1>><<set $rebuy_failure to clone($worn.feet.name)>>
+		<</if>>
+	<</if>>
 	<<set $worn.feet to clone($clothes.feet[0])>>
 	<<set $carried.feet to clone($clothes.feet[0])>>
 <</if>>
@@ -1082,6 +1163,7 @@ You are conscious of your <<nuditystop>><br><br>
 
 <<widget "upperundress">><<nobr>>
 <<if $worn.upper.cursed is 1>>
+
 <<else>>
 	<<if $args[0] is "wardrobe">>
 		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
@@ -1354,7 +1436,7 @@ You are conscious of your <<nuditystop>><br><br>
 <</nobr>><</widget>>
 
 
-/*The "...storeon" widgets retrieve the clothing stored with the "...undress" widgets, that weren't put in a wardrobe. Requires the same argument that was used to store the clothing in order to correctly identify. Optionally accepts a second argument. Inputting "delete" will destroy the stored item, rather than wear it. Inputting "check" will set _store_check to 1, for when you want to check whether or not an item exists in a given location.*/
+/*The "storeon..." widgets retrieve the clothing stored with the "...undress" widgets, that weren't put in a wardrobe. Requires the same argument that was used to store the clothing in order to correctly identify. Optionally accepts a second argument. Inputting "delete" will destroy the stored item, rather than wear it. Inputting "check" will set _store_check to 1, for when you want to check whether or not an item exists in a given location.*/
 
 
 <<widget "storeon">><<nobr>>

@@ -10,8 +10,8 @@ You remove your clothing.<br><br>
 <<wearoutfit>>
 
 
-<<if $wear_upper isnot "none" and $worn.upper.cursed is 1>>
-You try to remove the $worn.upper.name, but it won't budge. <<cursedtext $worn.upper.name>><br><br>
+<<if $wear_upper gte 0 and $worn.upper.cursed is 1 or $wear_upper gte 0 and $wardrobe.upper[$wear_upper].one_piece is 1 and $worn.lower.cursed is 1>>
+You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>><br><br>
 <<elseif $wear_upper is "strip">>
 You remove the $worn.upper.name.<<upperundress $wardrobe_location>><br><br>
 <<elseif $wear_upper is "large_towel">>
@@ -30,6 +30,7 @@ You tie a towel around your chest.<br><br>
 		<<if $worn.upper.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
 				<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour>>
+				<<lowerundress $wardrobe_location>>
 				<<set $worn.lower to clone($wardrobe.lower[_e])>>
 				<<set $wardrobe.lower.deleteAt(_e)>>
 				<</if>>
@@ -39,8 +40,8 @@ You tie a towel around your chest.<br><br>
 	<</if>>
 <</if>>
 
-<<if $wear_lower isnot "none" and $worn.lower.cursed is 1>>
-You try to remove the $worn.lower.name, but it won't budge. <<cursedtext $worn.lower.name>><br><br>
+<<if $wear_lower gte 0 and $worn.lower.cursed is 1 or $wear_lower gte 0 and $wardrobe.lower[$wear_lower].one_piece is 1 and $worn.upper.cursed is 1>>
+You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>><br><br>
 <<elseif $wear_lower is "strip">>
 	<<if $wear_upper isnot "strip">>
 	You remove the $worn.lower.name.<<lowerundress $wardrobe_location>><br><br>
@@ -58,6 +59,7 @@ You tie a towel around your waist.<br><br>
 		<<if $worn.lower.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
 				<<if $wardrobe.upper[_e].set is $worn.lower.set and $wardrobe.upper[_e].colour is $worn.lower.colour>>
+				<<upperundress $wardrobe_location>>
 				<<set $worn.upper to clone($wardrobe.upper[_e])>>
 				<<set $wardrobe.upper.deleteAt(_e)>>
 				<</if>>
@@ -67,8 +69,8 @@ You tie a towel around your waist.<br><br>
 You put on the $worn.lower.name.<br><br>
 <</if>>
 
-<<if $wear_under_upper isnot "none" and $worn.under_upper.cursed is 1>>
-You try to remove the $worn.under_upper.name, but it won't budge. <<cursedtext $worn.under_upper.name>><br><br>
+<<if $wear_under_upper gte 0 and $worn.under_upper.cursed is 1 or $wear_under_upper gte 0 and $wardrobe.under_upper[$wear_under_upper].one_piece is 1 and $worn.under_lower.cursed is 1>>
+You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_upper.name $worn.under_lower.name>><br><br>
 <<elseif $wear_under_upper is "strip">>
 You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>><br><br>
 <<elseif $wear_under_upper isnot "none">>
@@ -81,6 +83,7 @@ You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>><b
 		<<if $worn.under_upper.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
 				<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour>>
+				<<underlowerundress $wardrobe_location>>
 				<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
 				<<set $wardrobe.under_lower.deleteAt(_e)>>
 				<</if>>
@@ -90,11 +93,15 @@ You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>><b
 You put on the $worn.under_upper.name.<br><br>
 <</if>>
 
-<<if $wear_under_lower isnot "none" and $worn.under_lower.cursed is 1>>
-You try to remove the $worn.under_lower.name, but it won't budge. <<cursedtext $worn.under_lower.name>><br><br>
+<<if $wear_under_lower gte 0 and $worn.under_lower.cursed is 1 or $wear_under_lower gte 0 and $wardrobe.under_lower[$wear_under_lower].one_piece is 1 and $worn.under_upper.cursed is 1>>
+You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>><br><br>
 <<elseif $wear_under_lower is "strip">>
 	<<if $wear_under_upper isnot "strip">>
-	You remove the $worn.under_lower.name.<<underlowerundress $wardrobe_location>><br><br>
+		<<if $worn.under_lower.cursed is 1>>
+		You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>><br><br>
+		<<else>>
+		You remove the $worn.under_lower.name.<<underlowerundress $wardrobe_location>><br><br>
+		<</if>>
 	<</if>>
 <<elseif $wear_under_lower isnot "none">>
 	<<if $wear_delete is 1>>
@@ -106,6 +113,7 @@ You try to remove the $worn.under_lower.name, but it won't budge. <<cursedtext $
 		<<if $worn.under_lower.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
 				<<if $wardrobe.under_upper[_e].set is $worn.under_lower.set and $wardrobe.under_upper[_e].colour is $worn.under_lower.colour>>
+				<<underupperundress $wardrobe_location>>
 				<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
 				<<set $wardrobe.under_upper.deleteAt(_e)>>
 				<</if>>
@@ -148,7 +156,11 @@ You remove the $worn.face.name.<<faceundress $wardrobe_location>><br><br>
 <<if $wear_neck isnot "none" and $worn.neck.cursed is 1>>
 You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>><br><br>
 <<elseif $wear_neck is "strip">>
-You remove the $worn.neck.name.<<neckundress $wardrobe_location>><br><br>
+	<<if $worn.neck.cursed is 1>>
+	You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>>
+	<<else>>
+	You remove the $worn.neck.name.<<neckundress $wardrobe_location>><br><br>
+	<</if>>
 <<elseif $wear_neck isnot "none">>
 	<<if $wear_delete is 1>>
 	You discard the $wardrobe.neck[$wear_neck].name.<<set $wardrobe.neck.deleteAt($wear_neck)>><br>
@@ -220,12 +232,20 @@ You squeeze the water from your clothes.<br><br>
 
 <<widget "wardrobe">><<nobr>>
 
+
+
 <<if $upperwetstage gte 1 or $lowerwetstage gte 1 or $underwetstage gte 1>>
 <<link [[Dry your clothes|$passage]]>><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>><br>
 <</if>>
 
 <<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>><br><br>
 
+__Clothing sets__<br>
+<<listoutfits>>
+
+
+<hr>
+__Clothing__<br>
 <label>Wear <<radiobutton "$wear_delete" 0 checked>></label> | <label> Discard <<if $images is 1>><<binicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 1>></label><br><br>
 
 __Outfits__ <i>Outfits take up both a top and bottom slot</i><br>
@@ -276,7 +296,7 @@ __Bottoms__ <i>$wardrobe.lower.length / $wardrobe.space</i><br>
 <</for>>
 <br>
 <br>
-__Underwear outfits__ <i>Outfits take up both a top and bottom slot</i><br>
+__Under outfits__ <i>Outfits take up both a top and bottom slot</i><br>
 <<if $worn.under_upper.name isnot "naked">>
 <<link [[Strip|$passage]]>><<set $wear_under_upper to "strip">><<set $wear_under_lower to "strip">><</link>> |
 <</if>>
@@ -291,7 +311,7 @@ __Underwear outfits__ <i>Outfits take up both a top and bottom slot</i><br>
 <</for>>
 <br>
 
-__Underwear tops__ <i>$wardrobe.under_upper.length / $wardrobe.space</i><br>
+__Under tops__ <i>$wardrobe.under_upper.length / $wardrobe.space</i><br>
 <<if $worn.under_upper.name isnot "naked">>
 <<link [[Strip|$passage]]>><<set $wear_under_upper to "strip">><</link>> |
 <</if>>
@@ -306,7 +326,7 @@ __Underwear tops__ <i>$wardrobe.under_upper.length / $wardrobe.space</i><br>
 <</for>>
 <br>
 
-__Underwear bottoms__ <i>$wardrobe.under_lower.length / $wardrobe.space</i><br>
+__Under bottoms__ <i>$wardrobe.under_lower.length / $wardrobe.space</i><br>
 <<if $worn.under_lower.name isnot "naked">>
 <<link [[Strip|$passage]]>><<set $wear_under_lower to "strip">><</link>> |
 <</if>>
@@ -400,15 +420,13 @@ __Feet__ <i>$wardrobe.feet.length / $wardrobe.space</i><br>
 
 <br>
 
-__Clothing sets__<br>
 
-<<listoutfits>>
-<br><br>
+
+
 Add new set:<br>
 Name: <<textbox "$outfit_name" Custom>> <br>
-Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>Sleep<<radiobutton "$outfit_type" "sleep">></label><br>
+Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>Sleep<<radiobutton "$outfit_type" "sleep">></label> | <label>Swimming<<radiobutton "$outfit_type" "swim">></label><br>
 <<link [[Add current clothes as new set|$passage]]>>
-
 <<set $outfit.push(
 	{index: $outfit.length,
 	name: $outfit_name,
@@ -438,6 +456,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 
 
 <br><br>
+
+
 
 
 
