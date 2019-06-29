@@ -1,462 +1,466 @@
 :: Widgets Wardrobe [widget]
 <<widget "wardrobewear">><<nobr>>
 
+<<if $wear is "strip">>
+You remove your clothing.<br><br>
 
-<<if $wear is "stripall">><<set $wear to 0>>
-<<if $uppertype is "naked" and $lowertype is "naked" and $undertype is "naked">>
-There's nothing to remove.
-<<else>>
-You remove your clothing.
+<<undress $wardrobe_location>>
 <</if>>
-<br><br>
-<<uppernaked>>
-<<lowernaked>>
-<<undernaked>>
+
+<<wearoutfit>>
+
+
+<<if $wear_upper gte 0 and $worn.upper.cursed is 1 or $wear_upper gte 0 and $wardrobe.upper[$wear_upper].one_piece is 1 and $worn.lower.cursed is 1>>
+You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>><br><br>
+<<elseif $wear_upper is "strip">>
+You remove the $worn.upper.name.<<upperundress $wardrobe_location>><br><br>
+<<elseif $wear_upper is "large_towel">>
+<<upperundress $wardrobe_location>><<lowerundress $wardrobe_location>><<set $worn.upper to clone($clothes.upper[14])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>><<set $worn.lower to clone($clothes.lower[15])>><<set $worn.lower.colour to clone($worn.upper.colour)>>
+You tie a large towel around your chest.<br><br>
+<<elseif $wear_upper is "towel">>
+<<upperundress $wardrobe_location>><<set $worn.upper to clone($clothes.upper[3])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>>
+You tie a towel around your chest.<br><br>
+<<elseif $wear_upper isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.upper[$wear_upper].name.<<set $wardrobe.upper.deleteAt($wear_upper)>><br>
+	<<else>>
+	<<upperundress $wardrobe_location>>
+	<<set $worn.upper to clone($wardrobe.upper[$wear_upper])>>
+	<<set $wardrobe.upper.deleteAt($wear_upper)>>
+		<<if $worn.upper.one_piece is 1>>
+			<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
+				<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour>>
+				<<lowerundress $wardrobe_location>>
+				<<set $worn.lower to clone($wardrobe.lower[_e])>>
+				<<set $wardrobe.lower.deleteAt(_e)>>
+				<</if>>
+			<</for>>
+		<</if>>
+	You put on the $worn.upper.name.<br><br>
+	<</if>>
 <</if>>
+
+<<if $wear_lower gte 0 and $worn.lower.cursed is 1 or $wear_lower gte 0 and $wardrobe.lower[$wear_lower].one_piece is 1 and $worn.upper.cursed is 1>>
+You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>><br><br>
+<<elseif $wear_lower is "strip">>
+	<<if $wear_upper isnot "strip">>
+	You remove the $worn.lower.name.<<lowerundress $wardrobe_location>><br><br>
+	<</if>>
+<<elseif $wear_lower is "towel">>
+<<lowerundress $wardrobe_location>><<set $worn.lower to clone($clothes.lower[3])>><<set $worn.lower.colour to clone($worn.lower.colour_options.random())>>
+You tie a towel around your waist.<br><br>
+<<elseif $wear_lower isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.lower[$wear_lower].name.<<set $wardrobe.lower.deleteAt($wear_lower)>><br>
+	<<else>>
+	<<lowerundress $wardrobe_location>>
+	<<set $worn.lower to clone($wardrobe.lower[$wear_lower])>>
+	<<set $wardrobe.lower.deleteAt($wear_lower)>>
+		<<if $worn.lower.one_piece is 1>>
+			<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
+				<<if $wardrobe.upper[_e].set is $worn.lower.set and $wardrobe.upper[_e].colour is $worn.lower.colour>>
+				<<upperundress $wardrobe_location>>
+				<<set $worn.upper to clone($wardrobe.upper[_e])>>
+				<<set $wardrobe.upper.deleteAt(_e)>>
+				<</if>>
+			<</for>>
+		<</if>>
+	<</if>>
+You put on the $worn.lower.name.<br><br>
+<</if>>
+
+<<if $wear_under_upper gte 0 and $worn.under_upper.cursed is 1 or $wear_under_upper gte 0 and $wardrobe.under_upper[$wear_under_upper].one_piece is 1 and $worn.under_lower.cursed is 1>>
+You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_upper.name $worn.under_lower.name>><br><br>
+<<elseif $wear_under_upper is "strip">>
+You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>><br><br>
+<<elseif $wear_under_upper isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.under_upper[$wear_under_upper].name.<<set $wardrobe.under_upper.deleteAt($wear_under_upper)>><br>
+	<<else>>
+	<<underupperundress $wardrobe_location>>
+	<<set $worn.under_upper to clone($wardrobe.under_upper[$wear_under_upper])>>
+	<<set $wardrobe.under_upper.deleteAt($wear_under_upper)>>
+		<<if $worn.under_upper.one_piece is 1>>
+			<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
+				<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour>>
+				<<underlowerundress $wardrobe_location>>
+				<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
+				<<set $wardrobe.under_lower.deleteAt(_e)>>
+				<</if>>
+			<</for>>
+		<</if>>
+	<</if>>
+You put on the $worn.under_upper.name.<br><br>
+<</if>>
+
+<<if $wear_under_lower gte 0 and $worn.under_lower.cursed is 1 or $wear_under_lower gte 0 and $wardrobe.under_lower[$wear_under_lower].one_piece is 1 and $worn.under_upper.cursed is 1>>
+You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>><br><br>
+<<elseif $wear_under_lower is "strip">>
+	<<if $wear_under_upper isnot "strip">>
+		<<if $worn.under_lower.cursed is 1>>
+		You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>><br><br>
+		<<else>>
+		You remove the $worn.under_lower.name.<<underlowerundress $wardrobe_location>><br><br>
+		<</if>>
+	<</if>>
+<<elseif $wear_under_lower isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.under_lower[$wear_under_lower].name.<<set $wardrobe.under_lower.deleteAt($wear_under_lower)>><br>
+	<<else>>
+	<<underlowerundress $wardrobe_location>>
+	<<set $worn.under_lower to clone($wardrobe.under_lower[$wear_under_lower])>>
+	<<set $wardrobe.under_lower.deleteAt($wear_under_lower)>>
+		<<if $worn.under_lower.one_piece is 1>>
+			<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
+				<<if $wardrobe.under_upper[_e].set is $worn.under_lower.set and $wardrobe.under_upper[_e].colour is $worn.under_lower.colour>>
+				<<underupperundress $wardrobe_location>>
+				<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
+				<<set $wardrobe.under_upper.deleteAt(_e)>>
+				<</if>>
+			<</for>>
+		<</if>>
+	<</if>>
+You put on the $worn.under_lower.name.<br><br>
+<</if>>
+
+<<if $wear_head isnot "none" and $worn.head.cursed is 1>>
+You try to remove the $worn.head.name, but it won't budge. <<cursedtext $worn.head.name>><br><br>
+<<elseif $wear_head is "strip">>
+You remove the $worn.head.name.<<headundress $wardrobe_location>><br><br>
+<<elseif $wear_head isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.head[$wear_head].name.<<set $wardrobe.head.deleteAt($wear_head)>><br>
+	<<else>>
+	<<headundress $wardrobe_location>>
+	<<set $worn.head to clone($wardrobe.head[$wear_head])>>
+	<<set $wardrobe.head.deleteAt($wear_head)>>
+	You put on the $worn.head.name.<br><br>
+	<</if>>
+<</if>>
+
+<<if $wear_face isnot "none" and $worn.face.cursed is 1>>
+You try to remove the $worn.face.name, but it won't budge. <<cursedtext $worn.face.name>><br><br>
+<<elseif $wear_face is "strip">>
+You remove the $worn.face.name.<<faceundress $wardrobe_location>><br><br>
+<<elseif $wear_face isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.face[$wear_face].name.<<set $wardrobe.face.deleteAt($wear_face)>><br>
+	<<else>>
+	<<faceundress $wardrobe_location>>
+	<<set $worn.face to clone($wardrobe.face[$wear_face])>>
+	<<set $wardrobe.face.deleteAt($wear_face)>>
+	You put on the $worn.face.name.<br><br>
+	<</if>>
+<</if>>
+
+<<if $wear_neck isnot "none" and $worn.neck.cursed is 1>>
+You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>><br><br>
+<<elseif $wear_neck is "strip">>
+	<<if $worn.neck.cursed is 1>>
+	You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>>
+	<<else>>
+	You remove the $worn.neck.name.<<neckundress $wardrobe_location>><br><br>
+	<</if>>
+<<elseif $wear_neck isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.neck[$wear_neck].name.<<set $wardrobe.neck.deleteAt($wear_neck)>><br>
+	<<else>>
+	<<neckundress $wardrobe_location>>
+	<<set $worn.neck to clone($wardrobe.neck[$wear_neck])>>
+	<<set $wardrobe.neck.deleteAt($wear_neck)>>
+	You put on the $worn.neck.name.<br><br>
+	<</if>>
+<</if>>
+
+<<if $wear_legs isnot "none" and $worn.legs.cursed is 1>>
+You try to remove the $worn.legs.name, but it won't budge. <<cursedtext $worn.legs.name>><br><br>
+<<elseif $wear_legs is "strip">>
+You remove the $worn.legs.name.<<legsundress $wardrobe_location>><br><br>
+<<elseif $wear_legs isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.legs[$wear_legs].name.<<set $wardrobe.legs.deleteAt($wear_legs)>><br>
+	<<else>>
+	<<legsundress $wardrobe_location>>
+	<<set $worn.legs to clone($wardrobe.legs[$wear_legs])>>
+	<<set $wardrobe.legs.deleteAt($wear_legs)>>
+	You put on the $worn.legs.name.<br><br>
+	<</if>>
+<</if>>
+
+<<if $wear_feet isnot "none" and $worn.feet.cursed is 1>>
+You try to remove the $worn.feet.name, but it won't budge. <<cursedtext $worn.feet.name>><br><br>
+<<elseif $wear_feet is "strip">>
+You remove the $worn.feet.name.<<feetundress $wardrobe_location>><br><br>
+<<elseif $wear_feet isnot "none">>
+	<<if $wear_delete is 1>>
+	You discard the $wardrobe.feet[$wear_feet].name.<<set $wardrobe.feet.deleteAt($wear_feet)>><br>
+	<<else>>
+	<<feetundress $wardrobe_location>>
+	<<set $worn.feet to clone($wardrobe.feet[$wear_feet])>>
+	<<set $wardrobe.feet.deleteAt($wear_feet)>>
+	You put on the $worn.feet.name.<br><br>
+	<</if>>
+<</if>>
+
+
+
 
 <<if $wear is "dry">><<set $wear to 0>>
 <<set $upperwet to 0>><<set $lowerwet to 0>><<set $underwet to 0>><<set $upperwetstage to 0>><<set $lowerwetstage to 0>><<set $underwetstage to 0>>
 You squeeze the water from your clothes.<br><br>
 <</if>>
 
-<<if $wear is "sundress">><<set $wear to 0>>
-You wear the sundress.<br><br>
-	<<if $uppersundressno gte 1 and $lowersundressno gte 1>>
-	<<uppernaked>><<lowernaked>>
-	<</if>>
-	<<if $uppersundressno gte 1>>
-<<uppersundress>>
-	<</if>>
-	<<if $lowersundressno gte 1>>
-	<<lowersundress>>
-	<</if>>
-<</if>>
-
-<<if $wear is "schoolswimsuit">><<set $wear to 0>>
-You wear the swimsuit.<br><br>
-	<<if $upperschoolswimsuitno gte 1>>
-<<upperschoolswimsuit>>
-	<</if>>
-	<<if $lowerschoolswimsuitno gte 1>>
-	<<lowerschoolswimsuit>>
-	<</if>>
-<</if>>
-
-<<if $wear is "eveninggown">><<set $wear to 0>>
-You wear the evening gown.<br><br>
-	<<if $uppereveninggownno gte 1>>
-<<uppereveninggown>>
-	<</if>>
-	<<if $lowereveninggownno gte 1>>
-	<<lowereveninggown>>
-	<</if>>
-<</if>>
-
-
-<<if $wear is "stripupper">><<set $wear to 0>>
-<<if $uppertype isnot "naked">>
-You take off your $upperclothes.
-<<else>>
-You are already topless.
-<</if>>
-<<uppernaked>><br><br>
-<</if>>
-
-<<if $wear is "uppertowel">><<set $wear to 0>><<set $uppertowelnew to 1>>
-You wrap the towel around your chest.<br><br>
-<<uppertowel>>
-<</if>>
-
-<<if $wear is "upperpjs">><<set $wear to 0>>
-You wear the pyjama shirt.<br><br>
-<<upperpjs>>
-<</if>>
-
-<<if $wear is "upperbikini">><<set $wear to 0>>
-You wear the bikini top.<br><br>
-<<upperbikini>>
-<</if>>
-
-<<if $wear is "tshirt">><<set $wear to 0>>
-You wear the t-shirt.<br><br>
-<<tshirt>>
-<</if>>
-
-<<if $wear is "schoolshirt">><<set $wear to 0>>
-You wear the school shirt.<br><br>
-<<schoolshirt>>
-<</if>>
-
-<<if $wear is "tanktop">><<set $wear to 0>>
-You wear the tank top.<br><br>
-<<tanktop>>
-<</if>>
-
-
-<<if $wear is "striplower">><<set $wear to 0>>
-<<if $lowertype isnot "naked">>
-You take off your
-<<if $upperset isnot $lowerset>>
-$lowerclothes
-<<else>>$upperclothes.
-<</if>>
-<<else>>
-You are already bottomless.
-<</if>>
-<<lowernaked>><br><br>
-<</if>>
-
-<<if $wear is "lowertowel">><<set $wear to 0>><<set $lowertowelnew to 1>>
-You wrap the towel around your pelvis.<br><br>
-<<lowertowel>>
-<</if>>
-
-<<if $wear is "lowerpjs">><<set $wear to 0>>
-You wear the pyjama bottoms.<br><br>
-<<lowerpjs>>
-<</if>>
-
-<<if $wear is "lowerbikini">><<set $wear to 0>>
-You wear the bikini bottoms.<br><br>
-<<lowerbikini>>
-<</if>>
-
-<<if $wear is "waistapron">><<set $wear to 0>>
-You wear the waist apron.<br><br>
-<<waistapron>>
-<</if>>
-
-<<if $wear is "shorts">><<set $wear to 0>>
-You wear the shorts.<br><br>
-<<shorts>>
-<</if>>
-
-<<if $wear is "schoolshorts">><<set $wear to 0>>
-You wear the school shorts.<br><br>
-<<schoolshorts>>
-<</if>>
-
-<<if $wear is "schoolskirt">><<set $wear to 0>>
-You wear the school skirt.<br><br>
-<<schoolskirt>>
-<</if>>
-
-<<if $wear is "schoolswimshorts">><<set $wear to 0>>
-You wear the swim shorts.<br><br>
-<<schoolswimshorts>>
-<</if>>
-
-<<if $wear is "stripunder">><<set $wear to 0>>
-<<if $undertype isnot "naked">>
-You take off your $underclothes.
-<<else>>
-You are already pantyless.
-<</if>>
-<<undernaked>><br><br>
-<</if>>
-
-<<if $wear is "plainpanties">><<set $wear to 0>>
-You wear the plain panties.<br><br>
-<<plainpanties>>
-<</if>>
-
-<<if $wear is "lacepanties">><<set $wear to 0>>
-You wear the lace panties.<br><br>
-<<lacepanties>>
-<</if>>
-
-<<if $wear is "yfronts">><<set $wear to 0>>
-You wear the Y fronts.<br><br>
-<<yfronts>>
-<</if>>
-
-<<if $wear is "tights">><<set $wear to 0>>
-You wear the tights.<br><br>
-<<tights>>
-<</if>>
-
-<<accessorieswear>>
+<<set $wear to 0>>
+<<set $wear_upper to "none">>
+<<set $wear_lower to "none">>
+<<set $wear_under_upper to "none">>
+<<set $wear_under_lower to "none">>
+<<set $wear_head to "none">>
+<<set $wear_face to "none">>
+<<set $wear_neck to "none">>
+<<set $wear_legs to "none">>
+<<set $wear_feet to "none">>
+<<set $wear_outfit to "none">>
+<<set $wear_delete to 0>>
 
 
 <<exposure>>
 
 <</nobr>><</widget>>
 
+
+
 <<widget "wardrobe">><<nobr>>
 
-<<if $hairlength gte 1000>>
-<<set $hairlengthstage to "feet">>
-<<elseif $hairlength gte 800>>
-<<set $hairlengthstage to "thighs">>
-<<elseif $hairlength gte 600>>
-<<set $hairlengthstage to "navel">>
-<<elseif $hairlength gte 400>>
-<<set $hairlengthstage to "chest">>
-<<elseif $hairlength gte 200>>
-<<set $hairlengthstage to "shoulder">>
-<<else>>
-<<set $hairlengthstage to "short">>
-<</if>>
 
-<<if $fringelength gte 1000>>
-<<set $fringelengthstage to "feet">>
-<<elseif $fringelength gte 800>>
-<<set $fringelengthstage to "thighs">>
-<<elseif $fringelength gte 600>>
-<<set $fringelengthstage to "navel">>
-<<elseif $fringelength gte 400>>
-<<set $fringelengthstage to "chest">>
-<<elseif $fringelength gte 200>>
-<<set $fringelengthstage to "shoulder">>
-<<else>>
-<<set $fringelengthstage to "short">>
-<</if>>
 
 <<if $upperwetstage gte 1 or $lowerwetstage gte 1 or $underwetstage gte 1>>
-<<link "Dry your clothes">><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>><br><br>
+<<link [[Dry your clothes|$passage]]>><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>><br>
 <</if>>
 
+<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>><br><br>
 
-Outfits<br>
-<<if $uppersundressno gte 1>> |
-<<link "Sundress">><<set $wear to "sundress">><<script>>state.display(state.active.title, null)<</script>><</link>>
+__Clothing sets__<br>
+<<listoutfits>>
 
-<<elseif $lowersundressno gte 1>> |
-<<link "Sundress">><<set $wear to "sundress">><<script>>state.display(state.active.title, null)<</script>><</link>>
+
+<hr>
+__Clothing__<br>
+<label>Wear <<radiobutton "$wear_delete" 0 checked>></label> | <label> Discard <<if $images is 1>><<binicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 1>></label><br><br>
+
+__Outfits__ <i>Outfits take up both a top and bottom slot</i><br>
+<<if $worn.upper.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_upper to "strip">><<set $wear_lower to "strip">><</link>> |
 <</if>>
+<<link [[Towel|$passage]]>><<set $wear_upper to "large_towel">><</link>> |
+<<for _i to 0; _i lt $wardrobe.upper.length; _i++>>
+	<<if $wardrobe.upper[_i].one_piece is 1>>
+	
+	<<print '<<link [[$wardrobe.upper[_i].name_cap|$passage]]>><<set $wear_upper to ' + _i + '>><</link>>'>> 
+		<<if $wardrobe.upper[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.upper[_i].colour + '">($wardrobe.upper[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+<</for>>
+<br>
 
-<<if $upperschoolswimsuitno gte 1>> |
-<<link "School swimsuit">><<set $wear to "schoolswimsuit">><<script>>state.display(state.active.title, null)<</script>><</link>>
-
-<<elseif $lowerschoolswimsuitno gte 1>> |
-<<link "School swimsuit">><<set $wear to "schoolswimsuit">><<script>>state.display(state.active.title, null)<</script>><</link>>
+__Tops__ <i>$wardrobe.upper.length / $wardrobe.space</i><br>
+<<if $worn.upper.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_upper to "strip">><</link>> |
 <</if>>
+<<link [[Towel|$passage]]>><<set $wear_upper to "towel">><</link>> |
+<<for _i to 0; _i lt $wardrobe.upper.length; _i++>>
+	<<if $wardrobe.upper[_i].one_piece isnot 1>>
+	
+	<<print '<<link [[$wardrobe.upper[_i].name_cap|$passage]]>><<set $wear_upper to ' + _i + '>><</link>>'>>
+		<<if $wardrobe.upper[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.upper[_i].colour + '">($wardrobe.upper[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+<</for>>
+<br>
 
-<<if $uppereveninggownno gte 1>> |
-<<link "Evening gown">><<set $wear to "eveninggown">><<script>>state.display(state.active.title, null)<</script>><</link>>
-
-<<elseif $lowereveninggownno gte 1>> |
-<<link "Evening gown">><<set $wear to "eveninggown">><<script>>state.display(state.active.title, null)<</script>><</link>>
+__Bottoms__ <i>$wardrobe.lower.length / $wardrobe.space</i><br>
+<<if $worn.lower.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_lower to "strip">><</link>> |
 <</if>>
+<<link [[Towel|$passage]]>><<set $wear_lower to "towel">><</link>> |
+<<for _i to 0; _i lt $wardrobe.lower.length; _i++>>
+	<<if $wardrobe.lower[_i].one_piece isnot 1>>
+	
+	<<print '<<link [[$wardrobe.lower[_i].name_cap|$passage]]>><<set $wear_lower to ' + _i + '>><</link>>'>> 
+		<<if $wardrobe.lower[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.lower[_i].colour + '">($wardrobe.lower[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+<</for>>
+<br>
+<br>
+__Under outfits__ <i>Outfits take up both a top and bottom slot</i><br>
+<<if $worn.under_upper.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_under_upper to "strip">><<set $wear_under_lower to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.under_upper.length; _i++>>
+	<<if $wardrobe.under_upper[_i].one_piece is 1>>
+	
+	<<print '<<link [[$wardrobe.under_upper[_i].name_cap|$passage]]>><<set $wear_under_upper to ' + _i + '>><</link>>'>> 
+		<<if $wardrobe.under_upper[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.under_upper[_i].colour + '">($wardrobe.under_upper[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+<</for>>
+<br>
+
+__Under tops__ <i>$wardrobe.under_upper.length / $wardrobe.space</i><br>
+<<if $worn.under_upper.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_under_upper to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.under_upper.length; _i++>>
+	<<if $wardrobe.under_upper[_i].one_piece isnot 1>>
+	
+	<<print '<<link [[$wardrobe.under_upper[_i].name_cap|$passage]]>><<set $wear_under_upper to ' + _i + '>><</link>>'>> 
+		<<if $wardrobe.under_upper[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.under_upper[_i].colour + '">($wardrobe.under_upper[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+<</for>>
+<br>
+
+__Under bottoms__ <i>$wardrobe.under_lower.length / $wardrobe.space</i><br>
+<<if $worn.under_lower.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_under_lower to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.under_lower.length; _i++>>
+
+	<<if $wardrobe.under_lower[_i].one_piece isnot 1>>
+	<<print '<<link [[$wardrobe.under_lower[_i].name_cap|$passage]]>><<set $wear_under_lower to ' + _i + '>><</link>>'>> 
+		<<if $wardrobe.under_lower[_i].colour isnot 0>>
+		<<print '<span class="' + $wardrobe.under_lower[_i].colour + '">($wardrobe.under_lower[_i].colour)</span>'>>
+		<</if>> |
+	<</if>>
+
+<</for>>
+<br>
+<br>
+
+__Head__ <i>$wardrobe.head.length / $wardrobe.space</i><br>
+<<if $worn.head.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_head to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.head.length; _i++>>
+
+	
+<<print '<<link [[$wardrobe.head[_i].name_cap|$passage]]>><<set $wear_head to ' + _i + '>><</link>>'>> 
+	<<if $wardrobe.head[_i].colour isnot 0>>
+	<<print '<span class="' + $wardrobe.head[_i].colour + '">($wardrobe.head[_i].colour)</span>'>>
+	<</if>> |
+
+<</for>>
+<br>
+
+__Face__ <i>$wardrobe.face.length / $wardrobe.space</i><br>
+<<if $worn.face.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_face to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.face.length; _i++>>
+
+	
+<<print '<<link [[$wardrobe.face[_i].name_cap|$passage]]>><<set $wear_face to ' + _i + '>><</link>>'>> 
+	<<if $wardrobe.face[_i].colour isnot 0>>
+	<<print '<span class="' + $wardrobe.face[_i].colour + '">($wardrobe.face[_i].colour)</span>'>>
+	<</if>> |
+
+<</for>>
+<br>
+
+__Neck__ <i>$wardrobe.neck.length / $wardrobe.space</i><br>
+<<if $worn.neck.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_neck to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.neck.length; _i++>>
+
+	
+<<print '<<link [[$wardrobe.neck[_i].name_cap|$passage]]>><<set $wear_neck to ' + _i + '>><</link>>'>> 
+	<<if $wardrobe.neck[_i].colour isnot 0>>
+	<<print '<span class="' + $wardrobe.neck[_i].colour + '">($wardrobe.neck[_i].colour)</span>'>>
+	<</if>> |
+
+<</for>>
+<br>
+
+__Legs__ <i>$wardrobe.legs.length / $wardrobe.space</i><br>
+<<if $worn.legs.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_legs to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.legs.length; _i++>>
+
+	
+<<print '<<link [[$wardrobe.legs[_i].name_cap|$passage]]>><<set $wear_legs to ' + _i + '>><</link>>'>> 
+	<<if $wardrobe.legs[_i].colour isnot 0>>
+	<<print '<span class="' + $wardrobe.legs[_i].colour + '">($wardrobe.legs[_i].colour)</span>'>>
+	<</if>> |
+
+<</for>>
+<br>
+
+__Feet__ <i>$wardrobe.feet.length / $wardrobe.space</i><br>
+<<if $worn.feet.name isnot "naked">>
+<<link [[Strip|$passage]]>><<set $wear_feet to "strip">><</link>> |
+<</if>>
+<<for _i to 0; _i lt $wardrobe.feet.length; _i++>>
+
+<<print '<<link [[$wardrobe.feet[_i].name_cap|$passage]]>><<set $wear_feet to ' + _i + '>><</link>>'>> 
+	<<if $wardrobe.feet[_i].colour isnot 0>>
+	<<print '<span class="' + $wardrobe.feet[_i].colour + '">($wardrobe.feet[_i].colour)</span>'>>
+	<</if>> |
+
+<</for>>
+<br>
 
 
 <br>
 
-<<link "Strip all">><<set $wear to "stripall">><<script>>state.display(state.active.title, null)<</script>><</link>>
 
-<br><br>
 
-Tops<br>
-<<if $upperpjsno gte 1>> |
-<<link "Pyjama shirt">><<set $wear to "upperpjs">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
 
-<<if $upperbikinino gte 1>> |
-<<link "Bikini top">><<set $wear to "upperbikini">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
+Add new set:<br>
+Name: <<textbox "$outfit_name" Custom>> <br>
+Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>Sleep<<radiobutton "$outfit_type" "sleep">></label> | <label>Swimming<<radiobutton "$outfit_type" "swim">></label><br>
+<<link [[Add current clothes as new set|$passage]]>>
+<<set $outfit.push(
+	{index: $outfit.length,
+	name: $outfit_name,
+	upper: clone($worn.upper.name),
+	lower: clone($worn.lower.name),
+	under_upper: clone($worn.under_upper.name),
+	under_lower: clone($worn.under_lower.name),
+	head: clone($worn.head.name),
+	face: clone($worn.face.name),
+	neck: clone($worn.neck.name),
+	legs: clone($worn.legs.name),
+	feet: clone($worn.feet.name),
+	type: ["normal"]
 
-<<if $tshirtno gte 1>> |
-<<link "T-shirt">><<set $wear to "tshirt">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
+},
 
-<<if $schoolshirtno gte 1>> |
-<<link "School shirt">><<set $wear to "schoolshirt">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
+)>>
 
-<<if $tanktopno gte 1>> |
-<<link "Tank top">><<set $wear to "tanktop">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
 
- | <<link "Towel">><<set $wear to "uppertowel">>
- <<script>>state.display(state.active.title, null)<</script>>
+<<if $outfit_name is "" or $outfit_name is "Custom">><<print '<<set $outfit_name to "Custom ' + $outfit.length + '">>'>><</if>>
+<<set $outfit.last().name to $outfit_name>>
+	<<if $outfit_type>>
+	<<set $outfit.last().type.push($outfit_type)>>
+	<</if>>
 <</link>>
 
-<br>
 
-<<link "Strip top">><<set $wear to "stripupper">><<script>>state.display(state.active.title, null)<</script>><</link>>
 
 <br><br>
 
-Bottoms<br>
-<<if $lowerpjsno gte 1>> |
-<<link "Pyjama bottoms">><<set $wear to "lowerpjs">>
-<<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $lowerbikinino gte 1>> |
-<<link "Bikini bottoms">><<set $wear to "lowerbikini">>
-<<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $waistapronno gte 1>> |
-<<link "Waist apron">><<set $wear to "waistapron">>
-<<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $shortsno gte 1>> |
-<<link "Shorts">><<set $wear to "shorts">><<script>>state.display(state.active.title, null)<</script>>
-<</link>>
-<</if>>
-
-<<if $schoolshortsno gte 1>> |
-<<link "School shorts">><<set $wear to "schoolshorts">><<script>>state.display(state.active.title, null)<</script>>
-<</link>>
-<</if>>
-
-<<if $schoolskirtno gte 1>> |
-<<link "School skirt">><<set $wear to "schoolskirt">><<script>>state.display(state.active.title, null)<</script>>
-<</link>>
-<</if>>
-
-<<if $schoolswimshortsno gte 1>> |
-<<link "School swim shorts">><<set $wear to "schoolswimshorts">><<script>>state.display(state.active.title, null)<</script>>
-<</link>>
-<</if>>
-
- | <<link "Towel">><<set $wear to "lowertowel">>
- <<script>>state.display(state.active.title, null)<</script>>
-<</link>>
 
 
-<br>
-
-<<link "Strip bottom">><<set $wear to "striplower">><<script>>state.display(state.active.title, null)<</script>><</link>>
-
-<br><br>
-
-Underwear<br>
-
-<<if $undertype is "chastity">>
-You can't remove your chastity belt without help.<br><br>
-<<else>>
-
-<<if $plainpantiesno gte 1>> |
-<<link "Plain panties">><<set $wear to "plainpanties">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $lacepantiesno gte 1>> |
-<<link "Lace panties">><<set $wear to "lacepanties">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $yfrontsno gte 1>> |
-<<link "Y fronts">><<set $wear to "yfronts">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
-
-<<if $tightsno gte 1>> |
-<<link "Tights">><<set $wear to "tights">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<</if>>
 
 
-<br>
-
-<<link "Strip underwear">><<set $wear to "stripunder">><<script>>state.display(state.active.title, null)<</script>><</link>>
-
-<br><br>
-<</if>>
-
-
-<<accessories>>
-
-<<link "Set currently worn clothing as casual outfit">><<set $upperoutfitcasual to $upperclothes>><<set $loweroutfitcasual to $lowerclothes>><<set $underoutfitcasual to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-<<link "Set currently worn clothing as school outfit">><<set $upperoutfitschool to $upperclothes>><<set $loweroutfitschool to $lowerclothes>><<set $underoutfitschool to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-<<link "Set currently worn clothing as custom 1 outfit">><<set $upperoutfitcustom1 to $upperclothes>><<set $loweroutfitcustom1 to $lowerclothes>><<set $underoutfitcustom1 to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-<<link "Set currently worn clothing as custom 2 outfit">><<set $upperoutfitcustom2 to $upperclothes>><<set $loweroutfitcustom2 to $lowerclothes>><<set $underoutfitcustom2 to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-<<link "Set currently worn clothing as custom 3 outfit">><<set $upperoutfitcustom3 to $upperclothes>><<set $loweroutfitcustom3 to $lowerclothes>><<set $underoutfitcustom3 to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-<<link "Set currently worn clothing as custom 4 outfit">><<set $upperoutfitcustom4 to $upperclothes>><<set $loweroutfitcustom4 to $lowerclothes>><<set $underoutfitcustom4 to $underclothes>><<script>>state.display(state.active.title, null)<</script>><</link>><br>
-
-<br>
-
-
-__Hair__<br>
-<<link "Natural">><<set $hairtype to "default">><<set $fringetype to "default">><<script>>state.display(state.active.title, null)<</script>><</link>> (changes both sides and fringe)
-<br><br>
-Your sides are in the "$hairtype" style, and positioned <<if $hairposition is "front">>in front of<<else>>behind<</if>> your body.
-
-<<if $hairtype is "default">>
-Changing your sides from natural will set your fringe to messy.
-<</if>>
-<br>
-
-
-<<link "Braid left">><<set $hairtype to "braid left">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Braid right">><<set $hairtype to "braid right">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Flat ponytail">><<set $hairtype to "flat ponytail">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Loose">><<set $hairtype to "loose">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Messy">><<set $hairtype to "messy">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Pigtails">><<set $hairtype to "pigtails">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Ponytail">><<set $hairtype to "ponytail">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Short">><<set $hairtype to "short">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Side tail left">><<set $hairtype to "side tail left">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Side tail right">><<set $hairtype to "side tail right">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Straight">><<set $hairtype to "straight">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Swept left">><<set $hairtype to "swept right">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Twin braids">><<set $hairtype to "twin braids">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Twintails">><<set $hairtype to "twintails">><<fringecheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-
-<br><br>
-
-<<link "Position in front of body">><<set $hairposition to "front">><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Position behind body">><<set $hairposition to "back">><<script>>state.display(state.active.title, null)<</script>><</link>> |
-
-<br><br>
-Your fringe is in the "$fringetype" style.
-
-<<if $fringetype is "default">>
-Changing your fringe from natural will set your sides to messy.
-<</if>>
-<br>
-
-
-<<link "Flaps">><<set $fringetype to "flaps">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Hime">><<set $fringetype to "hime">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Loose">><<set $fringetype to "loose">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Messy">><<set $fringetype to "messy">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Overgrown">><<set $fringetype to "overgrown">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Ringlets">><<set $fringetype to "ringlets">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Split">><<set $fringetype to "split">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Straight">><<set $fringetype to "straight">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-<<link "Swept left">><<set $fringetype to "swept right">><<haircheck>><<script>>state.display(state.active.title, null)<</script>><</link>> |
-
-<br>
-
-
-<<if $debug is 1>>
-<br>
-<<link "<<<">><<set $hairlength -= 1000>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>> |
-<<link "<<">><<set $hairlength -= 100>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>> |
-<<link "<">><<set $hairlength -= 10>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>> |
-Hair length: <span id="statshairlength"><<print Math.trunc($hairlength)>></span>
- | <<link ">">><<set $hairlength += 10>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>>
- | <<link ">>">><<set $hairlength += 100>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>>
- | <<link ">>>">><<set $hairlength += 1000>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>>
-<br>
-<<link "<<<">><<set $fringelength -= 1000>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>> |
-<<link "<<">><<set $fringelength -= 100>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>> |
-<<link "<">><<set $fringelength -= 10>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>> |
-Fringe length: <span id="statsfringelength"><<print Math.trunc($fringelength)>></span>
- | <<link ">">><<set $fringelength += 10>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>>
- | <<link ">>">><<set $fringelength += 100>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>>
- | <<link ">>>">><<set $fringelength += 1000>><<clamp>><<replace "#statsfringelength">><<print Math.trunc($fringelength)>><</replace>><</link>>
-<br>
-Hair Colour (<<= $haircolour>>):
-<<link "Black">><<set $haircolour to "black">><<goto "Wardrobe">><</link>> |
-<<link "Brown">><<set $haircolour to "brown">><<goto "Wardrobe">><</link>> |
-<<link "Red">><<set $haircolour to "red">><<goto "Wardrobe">><</link>> |
-<<link "Ginger">><<set $haircolour to "ginger">><<goto "Wardrobe">><</link>> |
-<<link "Blond">><<set $haircolour to "blond">><<goto "Wardrobe">><</link>> |
-<<link "Green">><<set $haircolour to "green">><<goto "Wardrobe">><</link>> |
-<<link "Blue">><<set $haircolour to "blue">><<goto "Wardrobe">><</link>> |
-<<link "Purple">><<set $haircolour to "purple">><<goto "Wardrobe">><</link>> <br>
-
-
-<br>
-
-
-<<link "Skip day">><<pass 23 hours>><<effects>><<goto "Wardrobe">><</link>> <br>
-
-<br>
-
-<</if>>
 
 <<set $upperoff to 0>>
 <<set $loweroff to 0>>
@@ -464,11 +468,13 @@ Hair Colour (<<= $haircolour>>):
 
 <<exposure>>
 
+
+
 <</nobr>><</widget>>
 
 :: Wardrobe [nobr]
-
 <<effects>>
+<<set $wardrobe_location to "wardrobe">>
 You look in your wardrobe.<br><br>
 <<wardrobewear>>
 [[Close wardrobe|Bedroom]]<br><br>
@@ -476,9 +482,10 @@ You look in your wardrobe.<br><br>
 
 :: Changing Room [nobr]
 <<effects>><<set $outside to 0>><<set $location to "beach">>
+<<set $wardrobe_location to "wardrobe">>
 You are in a small wooden changing room.<br><br>
 <<wardrobewear>>
-<<if $exposed lte 0>>
+<<if $exposed lte 1>>
 [[Leave|Beach]]<br><br>
 <<else>>
 You can't go out like this!<br><br>
@@ -488,6 +495,7 @@ You can't go out like this!<br><br>
 :: Eden Wardrobe [nobr]
 <<effects>>
 You look through the cupboard containing your clothes. There's an old dressing screen for privacy.<br><br>
+<<set $wardrobe_location to "wardrobe">>
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
@@ -507,6 +515,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 :: Asylum Wardrobe [nobr]
 <<effects>>
 You look through the cupboard containing your clothes.<br><br>
+<<set $wardrobe_location to "wardrobe">>
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
@@ -527,6 +536,7 @@ You look through the cupboard containing your clothes.<br><br>
 
 :: Strip Club Dressing Room [nobr]
 <<effects>><<set $outside to 0>><<set $location to "town">>
+<<set $wardrobe_location to "wardrobe">>
 You are in the strip club's dressing room. <<if $daystate isnot "day" and $daystate isnot "dawn">>There are a few mirrors, currently occupied by staff fixing their hair and makeup.<</if>><br><br>
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
@@ -548,6 +558,7 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 
 :: Brothel Dressing Room [nobr]
 <<effects>><<set $outside to 0>><<set $location to "town">>
+<<set $wardrobe_location to "wardrobe">>
 You are in the brothel's dressing room. There are a few mirrors, currently occupied by staff fixing their hair and makeup.<br><br>
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
@@ -565,4 +576,32 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 	You can't go out like this!<br><br>
 	<</if>>
 <</if>>
+<<wardrobe>>
+
+
+:: School Boy Wardrobe [nobr]
+<<effects>><<set $outside to 0>><<set $location to "pool">>
+<<set $wardrobe_location to "wardrobe">>
+You stand in front of your open locker.<br><br>
+<<wardrobewear>>
+<<if $exposed gte 2 and $exhibitionism lt 75>>
+You can't go out like this!<br><br>
+<<else>>
+[[Leave|School Boy's Changing Room]]<br><br>
+<</if>>
+
+<<wardrobe>>
+
+
+:: School Girl Wardrobe [nobr]
+<<effects>><<set $outside to 0>><<set $location to "pool">>
+<<set $wardrobe_location to "wardrobe">>
+You stand in front of your open locker.<br><br>
+<<wardrobewear>>
+<<if $exposed gte 2 and $exhibitionism lt 75>>
+You can't go out like this!<br><br>
+<<else>>
+[[Leave|School Girl's Changing Room]]<br><br>
+<</if>>
+
 <<wardrobe>>
