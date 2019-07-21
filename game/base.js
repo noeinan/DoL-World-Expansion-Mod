@@ -1,11 +1,66 @@
 config.history.controls = false;
 
-Config.history.maxStates = 2;
+Config.history.maxStates = 1;
 
 State.initPRNG();
 
+window.statsConsole = function(){
+    console.log("PenisGrowthTimer",SugarCube.State.variables.penisgrowthtimer);
+    console.log("BreastGrowthTimer",SugarCube.State.variables.breastgrowthtimer);
+
+}
+
+window.overlayShowHide = function(elementId){
+    var div = document.getElementById(elementId);
+    if(div != undefined){
+        var menuItems = ["cha_cap","tra_cap","soc_cap","sta_cap","che_cap"];
+        if(menuItems.includes(elementId)){
+           for(var i = 0, l = menuItems.length; i < l; i++){
+                if(menuItems[i] != elementId){
+                    var div2 = document.getElementById(menuItems[i]);
+                    console.log(div2);
+                    if(div2 != undefined){
+                        div2.classList.add("hidden");   
+                    }
+                }
+           }
+        }
+        div.classList.toggle("hidden");
+        if(elementId === "debugOverlay"){
+           SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+        }
+    }
+}
+
+window.overlayMenu = function(elementId, type){
+    switch(type){
+        case "debug":
+        var debug = ["debugMain", "debugCharacter", "debugEvents"]
+        for(var i = 0, l = debug.length; i < l; i++){
+            var div = document.getElementById(debug[i]);
+            if(div != undefined){
+                SugarCube.State.variables.debugMenu[1] = elementId;
+                if(elementId === debug[i]){
+                    div.classList.remove("hidden");
+                }else{
+                    div.classList.add("hidden");
+                }
+            }
+        }
+        break;
+    }
+}
+
+importStyles("style.css")
+.then(function () {
+    console.log("External Style Sheet Active")
+})
+.catch(function (err) {
+    console.log("External Style Sheet Missing");
+});
 
 
+/*Sidebar swipe*/
 document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
 
@@ -14,7 +69,7 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 var xDown = null;
 var yDown = null;
 
-/*Sidebar swipe*/
+
 function getTouches(evt) {
   return evt.touches ||             // browser API
          evt.originalEvent.touches; // jQuery
@@ -74,6 +129,7 @@ function handleTouchMove(evt) {
 function isUIBarStowed() {
 	return $( '#ui-bar' ).hasClass( 'stowed' );
 }
+
 
 
 jQuery(document).ready(function(){
@@ -388,3 +444,4 @@ $(document).on('keyup', function(ev) {
 			$(currentLinks[requestedLinkIndex]).click();
 	}
 });
+

@@ -132,9 +132,12 @@
 	<<if $lowerwet gte 1>>
 	<<set $lowerwet -= ($pass * 2)>>
 	<</if>>
-	<<if $underwet gte 1>>
-	<<set $underwet -= ($pass * 2)>>
+	<<if $underlowerwet gte 1>>
+	<<set $underlowerwet -= ($pass * 2)>>
 	<</if>>
+	<<if $underupperwet gte 1>>
+	<<set $underupperwet -= ($pass * 2)>>
+	<</if>>	
 <<elseif $outside is 1 and $weather is "rain">>
 	<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim")>>
 <<set $upperwet += $pass>>
@@ -143,7 +146,10 @@
 <<set $lowerwet += $pass>>
 	<</if>>
 	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
-<<set $underwet += $pass>>
+<<set $underlowerwet += $pass>>
+	<</if>>
+	<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("chastity")>>
+<<set $underupperwet += $pass>>
 	<</if>>
 <<else>>
 	<<if $upperwet gte 1>>
@@ -152,8 +158,11 @@
 	<<if $lowerwet gte 1>>
 	<<set $lowerwet -= $pass>>
 	<</if>>
-	<<if $underwet gte 1>>
-	<<set $underwet -= $pass>>
+	<<if $underlowerwet gte 1>>
+	<<set $underlowerwet -= $pass>>
+	<</if>>
+	<<if $underupperwet gte 1>>
+	<<set $underupperwet -= $pass>>
 	<</if>>
 <</if>>
 
@@ -170,9 +179,15 @@
 <<passwater>>
 <<if $controlled is 0 and $anxiety gte 2>>
 	<<set $stress += $pass>>
+    <<if $background is "crossdresser" and ($playergender is $playergenderappearance)>>
+        <<set $stress += $pass>>
+    <</if>>																						
 <<elseif $controlled is 0 and $anxiety gte 1>>
 <<else>>
 	<<set $stress -= $pass>>
+    <<if $background is "crossdresser" and ($playergender isnot $playergenderappearance)>>
+        <<set $stress -= $pass>>
+    <</if>>																						   
 <</if>>
 <<if $hallucinogen gt 0>><<set $hallucinogen -= $pass>><</if>>
 <<if $drunk gt 0>><<set $drunk -= $pass>><</if>>
@@ -497,7 +512,12 @@
 <<elseif $exposed is 1>>
 <<set _temp *= 1.1>>
 <</if>>
-<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>><span class="gold"> You get a good workout.</span>
+<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
+<<if $combat isnot 1>>
+<span class="gold"> You get a good workout.</span>
+<<else>>
+<span class="gold"> It invigorates you.</span>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "bruise">><<nobr>>
@@ -1320,16 +1340,16 @@
 <</nobr>><</widget>>
 
 <<widget "plantlower">><<nobr>>
-<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 or $lowerwetstage gte 3 and $underwetstage gte 3 or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1>>
+<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 or $lowerwetstage gte 3 and $underlowerwetstage gte 3 or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1>>
 <<lowerwear 8>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "plantup">><<nobr>>
-<<if $worn.upper.exposed gte 2 or $upperwetstage gte 3>>
+<<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 or $upperwetstage gte 3 and $underupperwetstage gte 3>>
 <<upperwear 6>>
 <</if>>
-<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 or $lowerwetstage gte 3 and $underwetstage gte 3 or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1>>
+<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 or $lowerwetstage gte 3 and $underlowerwetstage gte 3 or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1>>
 <<lowerwear 8>>
 <</if>>
 <</nobr>><</widget>>
@@ -1452,8 +1472,11 @@
 <<if $lowerwetstage gte 3>>
 <<set $worn.lower.exposed to 2>>
 <</if>>
-<<if $underwetstage gte 3>>
+<<if $underlowerwetstage gte 3>>
 <<set $worn.under_lower.exposed to 1>>
+<</if>>
+<<if $underupperwetstage gte 3>>
+<<set $worn.under_upper.exposed to 1>>
 <</if>>
 
 <<exposedcheck>>
@@ -1566,7 +1589,11 @@
 <</if>>
 <<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
 
-<<set $underwet to 200>>
+<<set $underlowerwet to 200>>
+<</if>>
+<<if !$worn.under_upper.type.includes("swim") and !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("chastity")>>
+
+<<set $underupperwet to 200>>
 <</if>>
 
 <<waterwash>>
@@ -1584,6 +1611,18 @@
 <<set $action_unclad_under_lower to 0>>
 <<set $action_unclad_under_upper to 0>>
 
+<</nobr>><</widget>>
+
+<<widget "activeclothes">><<nobr>>/*For use at the start of a loop with _e as the variable. Sets _active_clothes to each category of clothing in turn to simulate the functionality of an array.*/
+<<if _e is 0>><<set _active_clothes to "upper">><</if>>
+<<if _e is 1>><<set _active_clothes to "lower">><</if>>
+<<if _e is 2>><<set _active_clothes to "under_upper">><</if>>
+<<if _e is 3>><<set _active_clothes to "under_lower">><</if>>
+<<if _e is 4>><<set _active_clothes to "head">><</if>>
+<<if _e is 5>><<set _active_clothes to "face">><</if>>
+<<if _e is 6>><<set _active_clothes to "neck">><</if>>
+<<if _e is 7>><<set _active_clothes to "legs">><</if>>
+<<if _e is 8>><<set _active_clothes to "feet">><</if>>
 <</nobr>><</widget>>
 
 <<widget "storeactions">><<nobr>>
@@ -1650,28 +1689,15 @@
 	<<underlowerundress _temp_strip>>
 <</if>>
 
-<<for _i to 0; _i lt $store.upper.length; _i++>>
-	<<if $store.upper[_i].location is _temp_strip>>
-	<<set _temp_clothes_present to 1>>
-	<</if>>
-<</for>>
 
-<<for _i to 0; _i lt $store.lower.length; _i++>>
-	<<if $store.lower[_i].location is _temp_strip>>
-	<<set _temp_clothes_present to 1>>
-	<</if>>
-<</for>>
 
-<<for _i to 0; _i lt $store.under_upper.length; _i++>>
-	<<if $store.under_upper[_i].location is _temp_strip>>
-	<<set _temp_clothes_present to 1>>
-	<</if>>
-<</for>>
-
-<<for _i to 0; _i lt $store.under_lower.length; _i++>>
-	<<if $store.under_lower[_i].location is _temp_strip>>
-	<<set _temp_clothes_present to 1>>
-	<</if>>
+<<for _e to 0; _e lt $clothing_number; _e++>>
+<<activeclothes>>
+	<<for _i to 0; _i lt $store[_active_clothes].length; _i++>>
+		<<if $store[_active_clothes][_i].location is _temp_strip>>
+		<<set _temp_clothes_present to 1>>
+		<</if>>
+	<</for>>
 <</for>>
 
 <<if _temp_clothes_present is 1>>
@@ -1744,23 +1770,23 @@
 
 
 <<if $danceaction is "outfitstripbreasts">><<set $danceaction to 0>>
-You gracefully remove your $worn.upper.name, exposing your <<breasts>> and $worn.under_lower.name. The exhibition of your breasts makes them feel raw and sensitive.
+You gracefully remove your $worn.upper.name, exposing your <<undertop>> and $worn.under_lower.name. The exhibition of your breasts makes them feel raw and sensitive.
 <<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<upperstrip>><<lowerstrip>><<exhibitionism4>>
 <</if>>
 
 
 <<if $danceaction is "outfitstripchest">><<set $danceaction to 0>>
 	<<if $playergender is "f">>
-	You gracefully remove your $worn.upper.name, exposing your <<breasts>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
+	You gracefully remove your $worn.upper.name, exposing your <<undertop>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
 	<<else>>
-	You gracefully remove your $worn.upper.name, exposing your <<breasts>> and $worn.under_lower.name. Your feminine countenance makes your revealed chest feel especially lewd.
+	You gracefully remove your $worn.upper.name, exposing your <<undertop>> and $worn.under_lower.name. Your feminine countenance makes your revealed chest feel especially lewd.
 	<</if>>
 <<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<upperstrip>><<lowerstrip>><<exhibitionism4>>
 <</if>>
 
 
 <<if $danceaction is "outfitstripunder">><<set $danceaction to 0>>
-You gracefully remove your $worn.upper.name, exposing your <<breasts>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
+You gracefully remove your $worn.upper.name, exposing your <<undertop>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
 <<set $audiencearousal += 6>><<set $audienceexcitement += 6>><<set $audiencemod += 2>><<arousal 3>><<upperstrip>><<lowerstrip>><<exhibitionism3>>
 <</if>>
 
@@ -1790,6 +1816,53 @@ You gracefully remove your $worn.upper.name, exposing your <<breastsstop>> You f
 <<set $audiencearousal += 2>><<set $audienceexcitement += 2>><<set $audiencemod += 1>><<arousal 3>><<upperstrip>><<exhibitionism1>>
 <</if>>
 
+<<if $danceaction is "underoutfitstripbreasts">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name, exposing your <<breasts>> and $worn.under_lower.name. The exhibition of your breasts makes them feel raw and sensitive.
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<underupperstrip>><<underlowerstrip>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "underoutfitstripchest">><<set $danceaction to 0>>
+	<<if $playergender is "f">>
+	You gracefully remove your $worn.under_upper.name, exposing your <<breasts>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
+	<<else>>
+	You gracefully remove your $worn.under_upper.name, exposing your <<breasts>> and $worn.under_lower.name. Your feminine countenance makes your revealed chest feel especially lewd.
+	<</if>>
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<underupperstrip>><<underlowerstrip>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "underoutfitstripunder">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name, exposing your <<breasts>> and $worn.under_lower.name. You feel your nipples harden in response to being revealed.
+<<set $audiencearousal += 6>><<set $audienceexcitement += 6>><<set $audiencemod += 2>><<arousal 3>><<underupperstrip>><<underlowerstrip>><<exhibitionism3>>
+<</if>>
+
+
+<<if $danceaction is "underoutfitstripnude">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name, exposing your nude form. You shiver with excitement, your body laid totally bare.
+<<set $audiencearousal += 10>><<set $audienceexcitement += 10>><<set $audiencemod += 4>><<arousal 3>><<underupperstrip>><<underlowerstrip>><<exhibitionism5>>
+<</if>>
+
+<<if $danceaction is "underupperstripbreasts">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name, exposing your <<breastsstop>> The exhibition of your breasts makes them feel raw and sensitive.
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<underupperstrip>><<exhibitionism4>>
+<</if>>
+
+<<if $danceaction is "underupperstripfchest">><<set $danceaction to 0>>
+	<<if $playergender is "f">>
+	You gracefully remove your $worn.under_upper.name, exposing your <<breastsstop>> You feel your nipples harden in response to being revealed.
+	<<else>>
+	You gracefully remove your $worn.under_upper.name, exposing your <<breastsstop>> Your feminine countenance makes your revealed chest feel especially lewd.
+	<</if>>
+<<set $audiencearousal += 8>><<set $audienceexcitement += 8>><<set $audiencemod += 3>><<arousal 3>><<underupperstrip>><<exhibitionism4>>
+<</if>>
+
+
+<<if $danceaction is "underupperstripmchest">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name, exposing your <<breastsstop>> You feel your nipples harden in response to being revealed.
+<<set $audiencearousal += 2>><<set $audienceexcitement += 2>><<set $audiencemod += 1>><<arousal 3>><<underupperstrip>><<exhibitionism1>>
+<</if>>
+
 
 <<if $danceaction is "lowerstripunder">><<set $danceaction to 0>>
 You gracefully remove your $worn.lower.name, exposing your $worn.under_lower.name. Being seen in your underwear excites you.
@@ -1805,6 +1878,11 @@ You gracefully remove your $worn.lower.name, exposing your <<genitalsstop>>
 	Your $worn.upper.name makes your naked lower half feel particularly conspicuous.
 	<</if>>
 <<set $audiencearousal += 10>><<set $audienceexcitement += 10>><<set $audiencemod += 4>><<arousal 3>><<lowerstrip>><<exhibitionism5>>
+<</if>>
+
+<<if $danceaction is "underupperstripopen">><<set $danceaction to 0>>
+You gracefully remove your $worn.under_upper.name from beneath your $worn.upper.name. You're careful not to give too much away, but such a lewd gesture thrills you nonetheless.
+<<set $audiencearousal += 3>><<set $audienceexcitement += 3>><<set $audiencemod += 1>><<arousal 1>><<underupperstrip>><<exhibitionism1>>
 <</if>>
 
 
@@ -1874,8 +1952,46 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 		<</if>>
 	<</if>>
 
+	<<if $worn.under_upper.set is $worn.under_lower.set>>
+		<<if !$worn.under_lower.type.includes("naked")>>
+			<<if $breastsize gte 3>>
+				<<if $exhibitionism gte 55>>
+				<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underoutfitstripbreasts">></label> |
+				<</if>>
+			<<elseif $playergenderappearance isnot "m" and $worn.under_lower.gender isnot "m">>
+				<<if $exhibitionism gte 55>>
+				<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underoutfitstripchest">></label> |
+				<</if>>
+			<<else>>
+				<<if $exhibitionism gte 35>>
+				<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "underoutfitstripunder">></label> |
+				<</if>>
+			<</if>>
+		<<else>>
+			<<if $exhibitionism gte 75>>
+			<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist5>> <<radiobutton "$danceaction" "underoutfitstripnude">></label> |
+			<</if>>
+		<</if>>
+	<</if>>
 
-	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+
+	<<if !$worn.under_upper.type.includes("naked") and $worn.under_upper.set isnot $worn.under_lower.set>>
+		<<if !$worn.upper.type.includes("naked") and $worn.upper.open is 1>>
+		<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist1>> <<radiobutton "$danceaction" "underupperstripopen">></label> |
+		<<elseif $breastsize gte 3>>
+			<<if $exhibitionism gte 55>>
+			<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underupperstripbreasts">></label> |
+			<</if>>
+		<<elseif $playergenderappearance isnot "m" and $worn.under_lower.gender isnot "m">>
+			<<if $exhibitionism gte 55>>
+			<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underupperstripfchest">></label> |
+			<</if>>
+		<<else>>
+		<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist1>> <<radiobutton "$danceaction" "underupperstripmchest">></label> |
+		<</if>>
+	<</if>>
+
+	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_upper.set isnot $worn.under_lower.set>>
 		<<if !$worn.lower.type.includes("naked") and $worn.lower.skirt is 1>>
 			<<if $exhibitionism gte 35>>
 			<label><span class="meek">Strip $worn.under_lower.name</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "understripskirt">></label> |
@@ -2102,6 +2218,8 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 
 <</nobr>><</widget>>
 
+
+
 <<widget "goocount">><<nobr>>
 <<if $neckgoo gte 5>><<set $neckgoo to 5>><</if>>
 <<if $rightarmgoo gte 5>><<set $rightarmgoo to 5>><</if>>
@@ -2219,7 +2337,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 	<<if $mouthsemen gte 1>><<set $waterwash += 1>><<set $allure += 500>><<set $mouthsemen -= 1>><</if>>
 <</if>>
 
-<<if $waterwash gte 10>>
+<<if $waterwsh gte 10>>
 <span class="lewd">Copious amounts of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
 <<elseif $waterwash gte 5>>
 <span class="lewd">Lots of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
@@ -2232,7 +2350,8 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 
 <</nobr>><</widget>>
 
-<<widget "wash">><<nobr>>
+
+<<widget "wash">><<nobr>>					   
 
 <<set $neckgoo to 0>>
 <<set $rightarmgoo to 0>>
@@ -2322,7 +2441,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 
 <<widget "tipreceive">><<nobr>>
 
-You make £<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.
+<<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> £<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.
 <<set $money += $tip>>
 
 <</nobr>><</widget>>
@@ -2673,6 +2792,8 @@ and your fringe is very short.
 <</if>>
 <</nobr>><</widget>>
 
+
+
 <<widget "upperclothescolour">><<nobr>>
 
 <<if $upperwetstage gte 3>>
@@ -2735,7 +2856,7 @@ $worn.lower.colour
 
 <<widget "underlowerclothescolour">><<nobr>>
 
-<<if $underwetstage gte 3>>
+<<if $underlowerwetstage gte 3>>
 	<<if $worn.under_lower.colour is "wetgreen">>
 		green
 	<<elseif $worn.under_lower.colour is "wetred">>
@@ -2764,7 +2885,7 @@ $worn.under_lower.colour
 
 <<widget "underupperclothescolour">><<nobr>>
 
-<<if $underwetstage gte 3>>
+<<if $underupperwetstage gte 3>>
 	<<if $worn.under_upper.colour is "wetgreen">>
 		green
 	<<elseif $worn.under_upper.colour is "wetred">>

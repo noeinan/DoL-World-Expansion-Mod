@@ -1,0 +1,190 @@
+:: Widgets physicalAdjustmentsInit [widget]
+<<widget "physicalAdjustmentsInit">><<nobr>>
+
+<<set $sexStats to {
+    "breasts": {
+        "playedWith": 0
+    },
+    "creampie": {
+        "self": {
+            "anus":0,
+            "mouth":0,
+            "vagina":0
+        },
+        "npc":{
+            "anus":0,
+            "mouth":0,
+            "vagina":0,
+            "tentacle":0
+        }
+    },
+    "pills":{
+        "boughtOnce": false,
+        "autoName": ["breast", "penis"],
+        "autoApply": [1, 1],
+        "breastOwned": [0,0,0,null,0,0],
+        "breastState": 1,
+        "penisOwned": [0,0,0,null,0,0],
+        "penisState": 1
+    }
+}>>
+<</nobr>><</widget>>
+
+
+:: Widgets physicalAdjustments [widget]
+<<widget "physicalAdjustments">><<nobr>>
+
+/*Breasts*/
+
+<<set _breastMulti to $sexStats.pills.breastState>>
+<<if _breastMulti isnot 0>>
+    <<switch $playergender>>
+    <<case "m">>
+        <<set _breastMulti -= 1>>
+    <<case "f">>
+        <<set _breastMulti += (Math.clamp($sexStats.creampie.self.vagina * 2, 0, 50) / 100)>>
+    <</switch>>
+
+    <<set _breastMulti += (Math.clamp($sexStats.breasts.playedWith, 0, 500) / 400)>>
+
+    <<if $purity gte 990>>
+        <<set _breastMulti -= 1>>
+    <</if>>
+
+    <<if _breastMulti gt 0>>
+        <<set _impurityBoost to 1 + (100 - ($purity / 10))/ 100>>
+        <<set $breastgrowthtimer -= _breastMulti * 25 * _impurityBoost>>
+    <<elseif _breastMulti lt 0>>
+        <<set _purityBoost to 1 + ($purity / 10)/ 100>>
+        <<set $breastgrowthtimer -= _breastMulti * 25 * _purityBoost>>
+    <</if>>
+<<set $impurityBoost to _impurityBoost>>
+    <<if $chestparasite gte 1>>
+        <<set $breastgrowthtimer -= 300>>
+    <</if>>
+    
+    <<set _breastCupSize to ["none", "budding", "AA", "B", "C", "D", "DD", "DDD", "F", "G", "H", "I", "J"]>>
+    <<if $breastgrowthtimer lte 0 and $breastsize lt $breastsizemax>>
+        <<set $breastsize += 1>>
+        <<set $breastgrowthtimer += 700>>
+        <<set $breastgrowthmessage to $breastsize>><<set $effectsmessage to 1>>
+        <<set $breastcup to _breastCupSize[$breastsize]>>
+    <<elseif $breastgrowthtime gte 1000 and $breastsize gt 0>>
+        <<set $breastsize -= 1>>
+        <<set $breastgrowthtimer -= 700>>
+        <<set $breastshrinkmessage to $breastsize>><<set $effectsmessage to 1>>
+        <<set $breastcup to _breastCupSize[$breastsize]>>
+    <</if>>
+    
+    <<if $breastgrowthtimer gt 1000>>
+        <<set $breastgrowthtimer to 1000>>
+    <<elseif $breastgrowthtimer lt 0>>
+        <<set $breastgrowthtimer to 0>>
+    <</if>>
+<</if>>
+
+/*Penis*/
+<<if $penisexist is 1 and $sexStats.pills.penisState isnot 0>>
+    <<set _totalReduction to $sexStats.creampie.self.anus + $sexStats.creampie.self.mouth>>
+    <<set _totalIncrease to $sexStats.creampie.npc.anus + $sexStats.creampie.npc.mouth + $sexStats.creampie.npc.vagina>>
+    
+    <<switch $sexStats.pills.penisState>>
+    <<case 2 3>><<set _totalIncrease += 3>><<set _totalIncrease *= $sexStats.pills.penisState>>
+    <<case -1 -2>><<set _totalReduction += 3>><<set _totalReduction *= ($sexStats.pills.penisState * -1) + 1>>
+    <</switch>>
+
+    <<set _negativeChange to _totalReduction - _totalIncrease>>
+    <<set _positiveChange to _totalIncrease - _totalReduction>>
+    <<if _negativeChange gt 0>>
+        <<set $penisgrowthtimer += _negativeChange>>
+        <<set $penisgrowthtimer += 1000 / ($purity + 40) * _negativeChange>>
+    <<elseif _positiveChange gt 0>>
+        <<set $penisgrowthtimer -= _positiveChange>>
+        <<set $penisgrowthtimer -= 1000 / ($purity + 40) * _positiveChange>>
+    <</if>>
+    <<if $penissize lt 0>>
+        <<set $penisgrowthtimer -= 50>>
+    <</if>>
+    
+    <<if $penisparasite gte 1>>
+       <<set $penisgrowthtimer -= 300>>
+    <</if>>
+    <<if $penisgrowthtimer lte 0 and $penissize lt $penissizemax>>
+        <<set $penissize += 1>>
+        <<set $penisgrowthtimer += 700>>
+        <<set $penisgrowthmessage to $penissize>><<set $effectsmessage to 1>>
+    <<elseif $penisgrowthtimer gte 1000 and $penissize gt 0>>
+        <<set $penissize -= 1>>
+        <<set $penisgrowthtimer -= 700>>
+        <<set $penisshrinkmessage to $penissize>><<set $effectsmessage to 1>>
+    <<elseif $penisgrowthtimer gte 1200 and $penissize lte 0 and $penissize gt $penissizemin>>
+        <<set $penissize -= 1>>
+        <<set $penisgrowthtimer -= 1000>>
+        <<set $penisshrinkmessage to $penissize>><<set $effectsmessage to 1>>
+    <</if>>
+
+
+
+    <<if $penisgrowthtimer gt 1000>>
+       <<set $penisgrowthtimer to 1000>>
+    <</if>>
+    <<if $penisgrowthtimer lt 0>>
+       <<set $penisgrowthtimer to 0>>
+    <</if>>
+<</if>>
+
+
+/*Restting of values*/
+
+<<set $sexStats.creampie.npc.anus to 0>>
+<<set $sexStats.creampie.npc.mouth to 0>>
+<<set $sexStats.creampie.npc.vagina to 0>>
+<<set $sexStats.creampie.npc.tentacle to 0>>
+<<set $sexStats.creampie.self.anus to 0>>
+<<set $sexStats.creampie.self.mouth to 0>>
+<<set $sexStats.creampie.self.vagina to 0>>
+<<set $sexStats.breasts.playedWith to 0>>
+
+<<if $location is "home">>
+    <<for _i to 0; _i lt $sexStats.pills.autoApply.length; _i++>>
+        <<set _effects to $sexStats.pills.autoName[_i]>>
+        <<set _effectStrength to $sexStats.pills.autoApply[_i]>>
+        <<set _quantityLeft to $sexStats.pills[_effects + "Owned"][_effectStrength + 2]>>
+
+        <<if _quantityLeft isnot null and _effectStrength isnot 1>>
+            <<set $sexStats.pills[_effects + "State"] to _effectStrength>>
+            <<set $sexStats.pills[_effects + "Owned"][_effectStrength + 2] -= 1>>
+            <<set _quantityLeft-->>
+            <<set $pillsTaken to true>><<set $effectsmessage to 1>>
+            <<if _quantityLeft is 0>>
+                <<set $sexStats.pills.autoApply[_i] to 1>>
+                <<set $pillsTakenLast to true>>
+            <</if>>
+        <<else>>
+            <<set $sexStats.pills[_effects + "State"] to 1>>
+        <</if>>
+    <</for>>
+<<else>>
+    <<set $sexStats.pills.breastState to 1>>
+    <<set $sexStats.pills.penisState to 1>>
+<</if>>
+<</nobr>><</widget>>
+
+/*<<playWithBreasts>>*/
+:: Widgets playWithBreasts [widget]
+<<widget "playWithBreasts">><<nobr>>
+<<if $args[0]>>
+    <<set $sexStats.breasts.playedWith += $args[0]>>
+<<else>>
+    <<set $sexStats.breasts.playedWith++>>
+<</if>>
+<</nobr>><</widget>>
+
+/*<<creampie "npc" "anus" >> -- <<set $sexStats.creampie.npc.anus++>>*/
+/*<<creampie "self" "mouth">> -- <<set $sexStats.creampie.self.mouth++>>*/
+:: Widgets creampie [widget]
+<<widget "creampie">><<nobr>>
+<<if $args[0] and $args[1]>>
+    <<set $sexStats.creampie[$args[0]][$args[1]]++>>
+<</if>>
+<</nobr>><</widget>>

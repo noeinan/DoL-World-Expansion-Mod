@@ -7,10 +7,15 @@ Third argument - item index*/
 <<widget "uppershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
 
+<<if $args[0]>><<ShowUnderEquip>><</if>>
 <<if $args[0] is "buy">>
 You buy the $clothes.upper[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.upper[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "upper">>
+<<elseif $args[0] is "return">>
+<<clothingReset "upper">>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -26,6 +31,7 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 		<<else>>
 		<<upperwear _shop_temp>>
 		<</if>>
+    <<updateOwned "upper">>
 	<</if>>
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
@@ -78,6 +84,8 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 		<<if $wardrobe.upper.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span><br>
 		
+		
+		
 		<<elseif $daystate is "night">>
 			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>>.</span><br>
@@ -89,9 +97,19 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>></span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											   
+			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>><br>
+			<<if $tryOn.tryingOn.upper isnot null>>
+			<<link [[Return|$passage]]>><<uppershopbuy "return" null $clothes_choice>><</link>><br>
+			<</if>>			
 		<</if>>
 <</if>>
 <br>
@@ -143,9 +161,19 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 			<<if $worn.upper.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.upper.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											   
+			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.upper.cursed is 1>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.upper isnot null>>
+            <<link [[Return|$passage]]>><<uppershopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>		
 		<</if>>
 <</if>>
 <br>
@@ -168,10 +196,15 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 <<widget "lowershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
 
+<<if $args[0]>><<ShowUnderEquip>><</if>>										
 <<if $args[0] is "buy">>
 You buy the $clothes.lower[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.lower[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "lower">>
+<<elseif $args[0] is "return">>
+<<clothingReset "lower">>								
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -188,6 +221,7 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 		<<lowerwear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "lower">>						   
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -248,9 +282,19 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 			<<if $worn.lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.lower.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<lowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											   
+			<<link [[Buy and wear|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<lowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.lower.cursed is 1>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<lowershopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.lower isnot null>>
+            <<link [[Return|$passage]]>><<lowershopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>	
 		<</if>>
 <</if>>
 <br>
@@ -277,6 +321,10 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 You buy the $clothes.under_upper[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.under_upper[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "under_upper">>
+<<elseif $args[0] is "return">>
+<<clothingReset "under_upper">>									  
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -293,6 +341,7 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 		<<underupperwear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "under_upper">>								 
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -354,10 +403,19 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 			<<if $worn.under_upper.cursed is 1 or $worn.under_lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your <<if $worn.under_upper.cursed is 1>>$worn.under_upper.name<<else>>$worn.under_lower.name<</if>>.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+													 
+			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
-
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.under_upper.cursed is 1 or $worn.under_lower.cursed is 1>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<underuppershopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.under_upper isnot null>>
+            <<link [[Return|$passage]]>><<underuppershopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>		
 		<</if>>
 <</if>>
 <br>
@@ -408,9 +466,19 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 			<<if $worn.under_upper.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.under_upper.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+													 
+			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.under_upper.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<underuppershopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.under_upper isnot null>>
+            <<link [[Return|$passage]]>><<underuppershopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>			
 		<</if>>
 <</if>>
 <br>
@@ -435,6 +503,10 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 You buy the $clothes.under_lower[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.under_lower[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "under_lower">>
+<<elseif $args[0] is "return">>
+<<clothingReset "under_lower">>									  
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -451,6 +523,7 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 		<<underlowerwear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "under_lower">>								 
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -511,9 +584,19 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 			<<if $worn.under_lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.under_lower.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<underlowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+													 
+			<<link [[Buy and wear|$passage]]>><<clothingReset "under_lower">><<underlowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice>><<clothingReset "under_lower">><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.under_lower.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<underlowershopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.under_lower isnot null>>
+            <<link [[Return|$passage]]>><<underlowershopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>				
 		<</if>>
 <</if>>
 <br>
@@ -536,6 +619,10 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 You buy the $clothes.head[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.head[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "head">>
+<<elseif $args[0] is "return">>
+<<clothingReset "head">>							   
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -552,6 +639,7 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 		<<headwear _shop_temp>>
 		<</if>>
 	<</if>>
+<<updateOwned "head">>						  
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -621,9 +709,19 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 			<<if $worn.head.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.head.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<headshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+																							  
+			<<link [[Buy and wear|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<headshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.head.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<headshopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.head isnot null>>
+            <<link [[Return|$passage]]>><<headshopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>				
 		<</if>>
 <</if>>
 <br>
@@ -647,6 +745,10 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 You buy the $clothes.face[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.face[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "face">>
+<<elseif $args[0] is "return">>
+<<clothingReset "face">>							   
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -663,6 +765,7 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 		<<facewear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "face">>						  
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -723,9 +826,19 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 			<<if $worn.face.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.face.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<faceshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+					   
+			<<link [[Buy and wear|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<faceshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.face.cursed>>
+		<<else>>
+		<<link [[Try On|$passage]]>><<faceshopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.face isnot null>>
+            <<link [[Return|$passage]]>><<faceshopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>				
 		<</if>>
 <</if>>
 <br>
@@ -755,6 +868,10 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 You buy the $clothes.neck[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.neck[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "neck">>
+<<elseif $args[0] is "return">>
+<<clothingReset "neck">>							   
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -771,6 +888,7 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 		<<neckwear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "neck">>						  
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -831,9 +949,19 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 			<<if $worn.neck.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											  
+			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.neck.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<neckshopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.neck isnot null>>
+            <<link [[Return|$passage]]>><<neckshopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>				
 		<</if>>
 <</if>>
 <br>
@@ -867,6 +995,10 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 You buy the $clothes.legs[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.legs[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "legs">>
+<<elseif $args[0] is "return">>
+<<clothingReset "legs">>							   
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -883,6 +1015,7 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 		<<legswear _shop_temp>>
 		<</if>>
 	<</if>>
+    <<updateOwned "legs">>						  
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -943,9 +1076,19 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 			<<if $worn.legs.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											  
+			<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.legs.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<legsshopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.legs isnot null>>
+            <<link [[Return|$passage]]>><<legsshopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>		
 		<</if>>
 <</if>>
 <br>
@@ -976,6 +1119,10 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 You buy the $clothes.feet[_shop_temp].name.<br><br>
 <<elseif $args[0] is "steal">>
 You steal the $clothes.feet[_shop_temp].name.<br><br>
+<<elseif $args[0] is "try">>
+<<tryOnWear _shop_temp "feet">>
+<<elseif $args[0] is "return">>
+<<clothingReset "feet">>							   
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -992,6 +1139,7 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 		<<feetwear _shop_temp>>
 		<</if>>
 	<</if>>
+   <<updateOwned "feet">>						  
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -1052,9 +1200,19 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 			<<if $worn.feet.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span><br>
 			<<else>>
-			<<link [[Buy and wear|$passage]]>><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+											  
+			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+		<<else>>
+		<span class="pink">You cannot afford this item.</span><br>
+		<</if>>
+		<<if $worn.feet.cursed>>
+		<<else>>
+        <<link [[Try On|$passage]]>><<feetshopbuy "try" null $clothes_choice>><</link>><br>
+            <<if $tryOn.tryingOn.feet isnot null>>
+            <<link [[Return|$passage]]>><<feetshopbuy "return" null $clothes_choice>><</link>><br>
+            <</if>>		
 		<</if>>
 <</if>>
 <br>

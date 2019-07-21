@@ -176,6 +176,7 @@ It is <<print ($hour).toString().padStart(2,"0")>>:<<print ($time - $hour * 60).
 <<if $demon gte 6>><<set $allure += 500>><</if>>
 <<if $angel gte 6>><<set $allure += 500>><</if>>
 <<if $fallenangel gte 2>><<set $allure += 500>><</if>>
+<<if $cat gte 6>><<set $allure += 500>><</if>>
 <<goocount>><<set $allure += ($goocount * 50) + ($semencount * 50)>>
 
 <<set $allure -= $famescrap>>
@@ -199,6 +200,7 @@ It is <<print ($hour).toString().padStart(2,"0")>>:<<print ($time - $hour * 60).
 <<if $demon gte 6>><<set $attractiveness += 500>><</if>>
 <<if $angel gte 6>><<set $attractiveness += 500>><</if>>
 <<if $fallenangel gte 2>><<set $attractiveness += 500>><</if>>
+<<if $cat gte 6>><<set $attractiveness += 500>><</if>>
 <<set $rng to random(1, 100)>>
 
 
@@ -282,9 +284,47 @@ Air: <<oxygencaption>>
 
 <</silently>>
 
-<<if $debug is 1>>
-	<<debug>>
+
+<nav class="menuButtons">
+    <ul>
+        <li>
+        <input type="button" class="link-internal" value="CHARACTERISTICS" onclick="overlayShowHide('cha_cap')"/>
+        <div id="cha_cap" class="customOverlay hidden">
+            <<characteristics>>
+        </div>
+        <input type="button" class="link-internal" value="TRAITS" onclick="overlayShowHide('tra_cap')"/>
+        <div id="tra_cap" class="customOverlay hidden">
+            <<traits>>
+        </div>
+        <input type="button" class="link-internal" value="SOCIAL" onclick="overlayShowHide('soc_cap')"/>
+        <div id="soc_cap" class="customOverlay hidden">
+            <<social>>
+        </div>
+        <input type="button" class="link-internal" value="STATISTICS" onclick="overlayShowHide('sta_cap')"/>
+        <div id="sta_cap" class="customOverlay hidden">
+            <<statistics>>
+        </div>
+		</li>
+<<if $dancing is 0 and $combat is 0>>
+	<<if $cheatdisable is "f">>		
+		<li>
+        <input type="button" class="link-internal" value="CHEATS" onclick="overlayShowHide('che_cap')"/>
+        <div id="che_cap" class="customOverlay hidden">
+            <<cheats>>
+        </div>
+        </li>
+	<</if>>
 <</if>>
+        <<if $debug is 1>>
+        <li>
+            <<debug>>
+        </li>
+        <</if>>
+    </ul>
+</nav>
+
+
+
 
 
 <<else>>
@@ -293,7 +333,7 @@ Air: <<oxygencaption>>
 
 <</if>>
 
-<<if $menu is 1>>
+<<if $menu is 1>><br>
 __Colour Key__<br>
 <span class="gold">Skill Up/Reward</span><br>
 <span class="green">Excellent/Safe</span><br>
@@ -311,13 +351,10 @@ __Colour Key__<br>
 <</if>>
 
 
+
+
 :: StoryMenu
-<<if $intro is 0 and $dancing is 0 and $combat is 0 and $menu is 0>>[[Characteristics]]
-[[Traits]]
-[[Social]]
-[[Statistics]]
-<<if $cheatdisable is "f">>[[Cheats]]<</if>>
-<</if>>
+
 
 :: Widgets Clothing Caption [widget]
 <<widget "clothingcaption">><<nobr>>
@@ -442,44 +479,95 @@ __Colour Key__<br>
 
 <<widget "stripcaption">><<nobr>>
 
-<<if !$worn.upper.type.includes("naked") and $upperwetstage gte 3 and !$worn.lower.type.includes("naked") and $lowerwetstage gte 3 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underwetstage gte 3>>
-	<<if $worn.upper.set is $worn.lower.set>>
-<br>Your $worn.upper.name, skirt and $worn.under_lower.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+<<if !$worn.upper.type.includes("naked") and $upperwetstage gte 3 and !$worn.lower.type.includes("naked") and $lowerwetstage gte 3 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underlowerwetstage gte 3 and !$worn.under_upper.type.includes("naked") and $underupperwetstage gte 3>>
+	<<if $worn.under_upper.set is $worn.under_lower.set>>
+		<<if $worn.upper.set is $worn.lower.set>>
+	<br>Your $worn.upper.name and $worn.under_upper.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<<else>>
+	<br>Your $worn.upper.name, $worn.lower.name and $worn.under_upper.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<</if>>
+	
 	<<else>>
-<br>Your $worn.upper.name, $worn.lower.name and $worn.under_lower.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<<if $worn.upper.set is $worn.lower.set>>
+	<br>Your $worn.upper.name, $worn.under_lower.name and $worn.under_upper.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<<else>>
+	<br>Your $worn.upper.name, $worn.lower.name, $worn.under_lower.name and $worn.under_upper.name are drenched, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<</if>>
 	<</if>>
+	
+<<elseif !$worn.upper.type.includes("naked") and $upperwetstage gte 3 and !$worn.lower.type.includes("naked") and $lowerwetstage gte 3 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underlowerwetstage gte 3>>
+	<<if $worn.upper.set is $worn.lower.set>>
+<br>Your $worn.upper.name, and $worn.under_lower.name are drenched, <span class="pink">revealing your <<undertop>> and <<genitalsstop>></span><br>
+	<<else>>
+<br>Your $worn.upper.name, $worn.lower.name and $worn.under_lower.name are drenched, <span class="pink">revealing your <<undertop>> and <<genitalsstop>></span><br>
+	<</if>>
+	
+<<elseif !$worn.upper.type.includes("naked") and $upperwetstage gte 3 and !$worn.under_upper.type.includes("naked") and $underupperwetstage gte 3 and $lowerwetstage gte 3 and !$worn.lower.type.includes("naked")>>
+	<<if $worn.upper.set is $worn.lower.set>>
+	<br>Your $worn.upper.name and $worn.under_upper.name are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<<else>>
+	<br>Your $worn.upper.name, $worn.lower.name and $worn.under_upper.name are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<</if>>	
+
 
 <<elseif !$worn.upper.type.includes("naked") and $upperwetstage gte 3 and $lowerwetstage gte 3 and !$worn.lower.type.includes("naked")>>
 	<<if $worn.upper.set is $worn.lower.set>>
-<br>Your $worn.upper.name and skirt are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+<br>Your $worn.upper.name is drenched, <span class="purple">revealing your <<undertop>> and <<undiesstop>></span><br>
 	<<else>>
-<br>Your $worn.upper.name and $worn.lower.name are drenched, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+<br>Your $worn.upper.name and $worn.lower.name are drenched, <span class="purple">revealing your <<undertop>> and <<undiesstop>></span><br>
 	<</if>>
+	
+
 
 <<elseif !$worn.upper.type.includes("naked") and $upperwetstage gte 3>>
 <br>Your $worn.upper.name <<upperplural>> drenched, <span class="purple">revealing your <<breastsstop>></span><br>
 
-<<elseif !$worn.lower.type.includes("naked") and $lowerwetstage gte 3 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underwetstage gte 3>>
+<<elseif !$worn.lower.type.includes("naked") and $lowerwetstage gte 3 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underlowerwetstage gte 3>>
 <br>Your $worn.lower.name and $worn.under_lower.name are drenched, <span class="pink">revealing your <<genitalsstop>></span><br>
 
 <<elseif !$worn.lower.type.includes("naked") and $lowerwetstage gte 3>>
 <br>Your $worn.lower.name <<lowerplural>> drenched, <span class="purple">revealing your <<undiesstop>></span><br>
 
-<<elseif !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underwetstage gte 3>>
+<<elseif !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $underlowerwetstage gte 3>>
 <br>Your $worn.under_lower.name <<underlowerplural>> drenched, <span class="pink">revealing your <<genitalsstop>></span><br>
+
+<<elseif !$worn.under_upper.type.includes("naked") and $underupperwetstage gte 3>>
+<br>Your $worn.under_upper.name <<underupperplural>> drenched, <span class="pink">revealing your <<breastsstop>></span><br>
+
+<<elseif !$worn.upper.type.includes("naked") and $worn.upper.exposed is 2 and !$worn.lower.type.includes("naked") and $worn.lower.exposed is 2 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_lower.state isnot "waist" and !$worn.under_upper.type.includes("naked") and $worn.under_upper.state isnot $worn.under_upper.state_base>>
+	<<if $worn.under_upper.set is $worn.under_lower.set>>
+		<<if $worn.upper.set is $worn.lower.set>>
+	<br>Your $worn.upper.name, skirt and $worn.under_upper.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<<else>>
+	<br>Your $worn.upper.name, $worn.lower.name and $worn.under_upper.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<</if>>	
+	<<else>>
+		<<if $worn.upper.set is $worn.lower.set>>
+	<br>Your $worn.upper.name, skirt, $worn.under_upper.name and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<<else>>
+	<br>Your $worn.upper.name, $worn.lower.name, $worn.under_upper.name and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+		<</if>>
+	<</if>>
 
 <<elseif !$worn.upper.type.includes("naked") and $worn.upper.exposed is 2 and !$worn.lower.type.includes("naked") and $worn.lower.exposed is 2 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_lower.state isnot "waist">>
 	<<if $worn.upper.set is $worn.lower.set>>
-<br>Your $worn.upper.name, skirt and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+<br>Your $worn.upper.name, skirt and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<undertop>> and <<genitalsstop>></span><br>
 	<<else>>
-<br>Your $worn.upper.name, $worn.lower.name and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<breasts>> and <<genitalsstop>></span><br>
+<br>Your $worn.upper.name, $worn.lower.name and $worn.under_lower.name have been pulled aside, <span class="pink">revealing your <<undertop>> and <<genitalsstop>></span><br>
+	<</if>>
+	
+<<elseif !$worn.upper.type.includes("naked") and $worn.upper.exposed is 2 and $worn.lower.exposed is 2 and !$worn.lower.type.includes("naked") and !$worn.under_upper.type.includes("naked") and $worn.under_upper.state isnot $worn.under_upper.state_base>>
+	<<if $worn.upper.set is $worn.lower.set>>
+<br>Your $worn.upper.name, skirt and $worn.under_upper.name have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+	<<else>>
+<br>Your $worn.upper.name, $worn.lower.name and $worn.under_upper.name have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
 	<</if>>
 
 <<elseif !$worn.upper.type.includes("naked") and $worn.upper.exposed is 2 and $worn.lower.exposed is 2 and !$worn.lower.type.includes("naked")>>
 	<<if $worn.upper.set is $worn.lower.set>>
-<br>Your $worn.upper.name and skirt have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+<br>Your $worn.upper.name and skirt have been pulled aside, <span class="purple">revealing your <<undertop>> and <<undiesstop>></span><br>
 	<<else>>
-<br>Your $worn.upper.name and $worn.lower.name have been pulled aside, <span class="purple">revealing your <<breasts>> and <<undiesstop>></span><br>
+<br>Your $worn.upper.name and $worn.lower.name have been pulled aside, <span class="purple">revealing your <<undertop>> and <<undiesstop>></span><br>
 	<</if>>
 
 <<elseif !$worn.upper.type.includes("naked") and $worn.upper.exposed is 2>>
@@ -493,6 +581,10 @@ __Colour Key__<br>
 
 <<elseif !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_lower.state isnot "waist">>
 <br>Your $worn.under_lower.name <<underlowerhas>> been pulled down to your $worn.under_lower.state, <span class="pink">revealing your <<genitalsstop>></span><br>
+
+<<elseif !$worn.under_upper.type.includes("naked") and $worn.under_upper.state isnot "waist">>
+<br>Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.under_upper.state, <span class="pink">revealing your <<breastsstop>></span><br>
+
 <</if>>
 
 <</nobr>><</widget>>

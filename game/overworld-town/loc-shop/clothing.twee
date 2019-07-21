@@ -1,4 +1,5 @@
 :: Clothing Shop [nobr]
+<<if $tryOn.autoReset isnot false>><<tryOnReset>><</if>>													
 <<set $outside to 0>><<set $location to "town">><<effects>>
 
 You are in the clothing shop. It has a large selection of ordinary clothes, but you'll need to go elsewhere if you're looking for something exotic.<br><br>
@@ -14,6 +15,7 @@ It's closing time. Security is herding everyone outside.<<if $exposed gte 1>>Pan
 <<link [[Hide until it's over (1:00)|Clothing Shop]]>><<pass 1 hour>><</link>>
 <</if>>
 <<else>>
+<<tryOnStats>>			  
 
 <<if $daystate is "night">>
 You are alone in the darkness.<br><br>
@@ -50,10 +52,19 @@ You are hiding within a clothing stand to protect your dignity.<br><br>
 
 <br>
 
-[[Leave|Shopping Centre Top]]<br><br>
+<<if $daystate is "night" or $tryOn.value is 0>>
+    <<link[[Leave|Shopping Centre Top]]>><<ShowUnderEquip>><<set $tryOn.autoReset to true>><</link>><br><br>
+<<elseif $tryOn.value gt 0>>
+    <<link[[Return clothes|$passage]]>><<clothingReset>><</link>><br>
+    <<if $tryOn.value lt $money>>
+        <<link[[Buy clothes|$passage]]>><<buyTryOnClothes "wear">><</link>><br>
+        <<link[[Buy clothes and send to wardrobe|$passage]]>><<buyTryOnClothes "wardrobe">><</link>><br>
+    <</if>>
+    <<link[[Leave with stolen clothes|Stolen Clothing Shop Result]]>><</link>><br>
+<</if>>
+<</if>>
+<</if>>
 
-<</if>>
-<</if>>
 
 :: Clothing Shop Sneak [nobr]
 <<set $outside to 0>><<effects>><<set $lock to 0>>

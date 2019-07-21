@@ -682,6 +682,7 @@
 <<widget "upperruined">><<nobr>><<set $eventskipoverrule to 1>>
 <<if $worn.upper.cursed is 1 and !$worn.upper.type.includes("broken")>>
 <<else>>
+<<set $upperwet to 0>><<set $upperwetstage to 0>>
 	<<if $clothingrebuy is 1 and $worn.upper.one_piece isnot "broken" and ($worn.upper.shop.includes("clothing") or $worn.upper.shop.includes("forest"))>>
 		<<if $money gte Math.trunc($worn.upper.cost * 1.5)>>
 		<<uppersend $worn.upper.index "wardrobe" $worn.upper.colour $worn.upper.accessory_colour>>
@@ -702,6 +703,7 @@
 <<widget "lowerruined">><<nobr>><<set $eventskipoverrule to 1>>
 <<if $worn.lower.cursed is 1 and !$worn.lower.type.includes("broken")>>
 <<else>>
+<<set $lowerwet to 0>><<set $lowerwetstage to 0>>
 	<<if $clothingrebuy is 1 and $worn.lower.one_piece isnot "broken" and ($worn.lower.shop.includes("clothing") or $worn.lower.shop.includes("forest"))>>
 		<<if $money gte Math.trunc($worn.lower.cost * 1.5)>>
 		<<lowersend $worn.lower.index "wardrobe" $worn.lower.colour $worn.lower.accessory_colour>>
@@ -722,6 +724,7 @@
 <<widget "underupperruined">><<nobr>><<set $eventskipoverrule to 1>>
 <<if $worn.under_upper.cursed is 1 and !$worn.under_upper.type.includes("broken")>>
 <<else>>
+<<set $underupperwet to 0>><<set $underupperwetstage to 0>>
 	<<if $clothingrebuy is 1 and $worn.under_upper.one_piece isnot "broken" and ($worn.under_upper.shop.includes("clothing") or $worn.under_upper.shop.includes("forest"))>>
 		<<if $money gte Math.trunc($worn.under_upper.cost * 1.5)>>
 		<<underuppersend $worn.under_upper.index "wardrobe" $worn.under_upper.colour $worn.under_upper.accessory_colour>>
@@ -742,6 +745,7 @@
 <<widget "underlowerruined">><<nobr>><<set $eventskipoverrule to 1>>
 <<if $worn.under_lower.cursed is 1 and !$worn.under_lower.type.includes("broken")>>
 <<else>>
+<<set $underlowerwet to 0>><<set $underlowerwetstage to 0>>
 	<<if $clothingrebuy is 1 and $worn.under_lower.one_piece isnot "broken" and ($worn.under_lower.shop.includes("clothing") or $worn.under_lower.shop.includes("forest"))>>
 		<<if $money gte Math.trunc($worn.under_lower.cost * 1.5)>>
 		<<underlowersend $worn.under_lower.index "wardrobe" $worn.under_lower.colour $worn.under_lower.accessory_colour>>
@@ -1174,6 +1178,7 @@ You are conscious of your <<nuditystop>><br><br>
 <<if $worn.upper.cursed is 1>>
 
 <<else>>
+<<set $upperwet to 0>><<set $upperwetstage to 0>>
 	<<if $args[0] is "wardrobe">>
 		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
 			<<if $worn.upper.set is $worn.lower.set>>
@@ -1193,6 +1198,19 @@ You are conscious of your <<nuditystop>><br><br>
 			<<if $worn.upper.set is $worn.lower.set>>
 				<<for _u to 0; _u lt $store.lower.length; _u++>>
 					<<if $args[0] is $store.lower[_u].location>>
+						<<if $store.lower[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+							<<for _o to 0; _o lt $store.upper.length; _o++>>
+								<<if $args[0] is $store.upper[_o].location>>
+									<<if $store.upper[_o].name isnot "towel top" and $store.upper[_o].name isnot "large towel">>
+									<<set $wardrobe.upper.push(clone($store.upper[_o]))>>
+									<</if>>
+								<<set $store.upper.deleteAt(_o)>>
+								<</if>>
+							<</for>>
+						<</if>>
+						<<if $store.lower[_u].name isnot "towel skirt" and $store.lower[_u].name isnot "large towel bottom">>
+						<<set $wardrobe.lower.push(clone($store.lower[_u]))>>
+						<</if>>
 					<<set $store.lower.deleteAt(_u)>>
 					<</if>>
 				<</for>>			
@@ -1201,7 +1219,20 @@ You are conscious of your <<nuditystop>><br><br>
 			<<set $worn.lower to clone($clothes.lower[0])>>
 			<</if>>			
 			<<for _u to 0; _u lt $store.upper.length; _u++>>
-				<<if $args[0] is $store.upper[_u].location>>
+				<<if $args[0] is $store.upper[_u].location>>	
+					<<if $store.upper[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+						<<for _o to 0; _o lt $store.lower.length; _o++>>
+							<<if $args[0] is $store.lower[_o].location>>
+								<<if $store.lower[_o].name isnot "towel skirt" and $store.lower[_o].name isnot "large towel bottom">>
+								<<set $wardrobe.lower.push(clone($store.lower[_o]))>>
+								<</if>>
+							<<set $store.lower.deleteAt(_o)>>
+							<</if>>
+						<</for>>
+					<</if>>				
+					<<if $store.upper[_u].name isnot "towel top" and $store.upper[_u].name isnot "large towel">>
+					<<set $wardrobe.upper.push(clone($store.upper[_u]))>>
+					<</if>>
 				<<set $store.upper.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1217,6 +1248,7 @@ You are conscious of your <<nuditystop>><br><br>
 <<widget "lowerundress">><<nobr>>
 <<if $worn.lower.cursed is 1>>
 <<else>>
+<<set $lowerwet to 0>><<set $lowerwetstage to 0>>
 	<<if $args[0] is "wardrobe">>
 		<<if $worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom">>
 			<<if $worn.lower.set is $worn.upper.set>>
@@ -1236,6 +1268,19 @@ You are conscious of your <<nuditystop>><br><br>
 			<<if $worn.upper.set is $worn.lower.set>>
 				<<for _u to 0; _u lt $store.upper.length; _u++>>
 					<<if $args[0] is $store.upper[_u].location>>
+						<<if $store.upper[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+							<<for _o to 0; _o lt $store.lower.length; _o++>>
+								<<if $args[0] is $store.lower[_o].location>>
+									<<if $store.lower[_o].name isnot "towel skirt" and $store.lower[_o].name isnot "large towel bottom">>
+									<<set $wardrobe.lower.push(clone($store.lower[_o]))>>
+									<</if>>
+								<<set $store.lower.deleteAt(_o)>>
+								<</if>>
+							<</for>>
+						<</if>>		
+						<<if $store.upper[_u].name isnot "towel top" and $store.upper[_u].name isnot "large towel">>
+						<<set $wardrobe.upper.push(clone($store.upper[_u]))>>
+						<</if>>
 					<<set $store.upper.deleteAt(_u)>>
 					<</if>>
 				<</for>>			
@@ -1245,6 +1290,19 @@ You are conscious of your <<nuditystop>><br><br>
 			<</if>>		
 			<<for _u to 0; _u lt $store.lower.length; _u++>>
 				<<if $args[0] is $store.lower[_u].location>>
+					<<if $store.lower[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+						<<for _o to 0; _o lt $store.upper.length; _o++>>
+							<<if $args[0] is $store.upper[_o].location>>
+								<<if $store.upper[_o].name isnot "towel top" and $store.upper[_o].name isnot "large towel">>
+								<<set $wardrobe.upper.push(clone($store.upper[_o]))>>
+								<</if>>
+							<<set $store.upper.deleteAt(_o)>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $store.lower[_u].name isnot "towel skirt" and $store.lower[_u].name isnot "large towel bottom">>
+					<<set $wardrobe.lower.push(clone($store.lower[_u]))>>
+					<</if>>
 				<<set $store.lower.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1260,6 +1318,7 @@ You are conscious of your <<nuditystop>><br><br>
 <<widget "underupperundress">><<nobr>>
 <<if $worn.under_upper.cursed is 1>>
 <<else>>
+<<set $underupperwet to 0>><<set $underupperwetstage to 0>>
 	<<if $args[0] is "wardrobe">>
 		<<if $worn.under_upper.name isnot "naked">>
 			<<if $worn.under_upper.set is $worn.under_lower.set>>
@@ -1271,10 +1330,19 @@ You are conscious of your <<nuditystop>><br><br>
 		<</if>>
 	<<elseif $args[0]>>
 		<<if $worn.under_upper.name isnot "naked">>
-			<<if $worn.upper.set is $worn.lower.set>>
+			<<if $worn.under_upper.set is $worn.under_lower.set>>
 				<<for _u to 0; _u lt $store.under_lower.length; _u++>>
 					<<if $args[0] is $store.under_lower[_u].location>>
-					<<set $store.under_lower.deleteAt(_u)>>
+						<<if $store.under_lower[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+							<<for _o to 0; _o lt $store.under_upper.length; _o++>>
+								<<if $args[0] is $store.under_upper[_o].location>>
+								<<set $wardrobe.under_upper.push(clone($store.under_upper[_o]))>>
+								<<set $store.under_upper.deleteAt(_o)>>
+								<</if>>
+							<</for>>
+						<</if>>
+					<<set $wardrobe.under_lower.push(clone($store.under_lower[_u]))>>
+					<<set $store.under_upper.deleteAt(_u)>>
 					<</if>>
 				<</for>>			
 			<<set $store.under_lower.push(clone($worn.under_lower))>>
@@ -1283,6 +1351,15 @@ You are conscious of your <<nuditystop>><br><br>
 			<</if>>		
 			<<for _u to 0; _u lt $store.under_upper.length; _u++>>
 				<<if $args[0] is $store.under_upper[_u].location>>
+					<<if $store.under_upper[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+						<<for _o to 0; _o lt $store.under_lower.length; _o++>>
+							<<if $args[0] is $store.under_lower[_o].location>>
+							<<set $wardrobe.under_lower.push(clone($store.under_lower[_o]))>>
+							<<set $store.under_lower.deleteAt(_o)>>
+							<</if>>
+						<</for>>
+					<</if>>
+				<<set $wardrobe.under_upper.push(clone($store.under_upper[_u]))>>
 				<<set $store.under_upper.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1298,6 +1375,7 @@ You are conscious of your <<nuditystop>><br><br>
 <<widget "underlowerundress">><<nobr>>
 <<if $worn.under_lower.cursed is 1>>
 <<else>>
+<<set $underlowerwet to 0>><<set $underlowerwetstage to 0>>
 	<<if $args[0] is "wardrobe">>
 		<<if $worn.under_lower.name isnot "naked">>
 			<<if $worn.under_upper.set is $worn.under_lower.set and _strip_restrict isnot 1>>
@@ -1309,9 +1387,18 @@ You are conscious of your <<nuditystop>><br><br>
 		<</if>>
 	<<elseif $args[0]>>
 		<<if $worn.under_lower.name isnot "naked">>
-			<<if $worn.upper.set is $worn.lower.set>>
+			<<if $worn.under_upper.set is $worn.under_lower.set>>
 				<<for _u to 0; _u lt $store.under_upper.length; _u++>>
 					<<if $args[0] is $store.under_upper[_u].location>>
+						<<if $store.under_upper[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+							<<for _o to 0; _o lt $store.under_lower.length; _o++>>
+								<<if $args[0] is $store.under_lower[_o].location>>
+								<<set $wardrobe.under_lower.push(clone($store.under_lower[_o]))>>
+								<<set $store.under_lower.deleteAt(_o)>>
+								<</if>>
+							<</for>>
+						<</if>>
+					<<set $wardrobe.under_upper.push(clone($store.under_upper[_u]))>>
 					<<set $store.under_upper.deleteAt(_u)>>
 					<</if>>
 				<</for>>			
@@ -1321,6 +1408,15 @@ You are conscious of your <<nuditystop>><br><br>
 			<</if>>	
 			<<for _u to 0; _u lt $store.under_lower.length; _u++>>
 				<<if $args[0] is $store.under_lower[_u].location>>
+					<<if $store.under_lower[_u].one_piece is 1>>/*Checks if replaced stored item is an outfit, and moves the other half to the wardrobe if it is*/
+						<<for _o to 0; _o lt $store.under_upper.length; _o++>>
+							<<if $args[0] is $store.under_upper[_o].location>>
+							<<set $wardrobe.under_upper.push(clone($store.under_upper[_o]))>>
+							<<set $store.under_upper.deleteAt(_o)>>
+							<</if>>
+						<</for>>
+					<</if>>
+				<<set $wardrobe.under_lower.push(clone($store.under_lower[_u]))>>
 				<<set $store.under_lower.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1345,6 +1441,7 @@ You are conscious of your <<nuditystop>><br><br>
 		<<if $worn.head.name isnot "naked">>
 			<<for _u to 0; _u lt $store.head.length; _u++>>
 				<<if $args[0] is $store.head[_u].location>>
+				<<set $wardrobe.head.push(clone($store.head[_u]))>>
 				<<set $store.head.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1368,6 +1465,7 @@ You are conscious of your <<nuditystop>><br><br>
 		<<if $worn.face.name isnot "naked">>
 			<<for _u to 0; _u lt $store.face.length; _u++>>
 				<<if $args[0] is $store.face[_u].location>>
+				<<set $wardrobe.face.push(clone($store.face[_u]))>>
 				<<set $store.face.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1391,6 +1489,7 @@ You are conscious of your <<nuditystop>><br><br>
 		<<if $worn.neck.name isnot "naked">>
 			<<for _u to 0; _u lt $store.neck.length; _u++>>
 				<<if $args[0] is $store.neck[_u].location>>
+				<<set $wardrobe.neck.push(clone($store.neck[_u]))>>
 				<<set $store.neck.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1414,6 +1513,7 @@ You are conscious of your <<nuditystop>><br><br>
 		<<if $worn.legs.name isnot "naked">>
 			<<for _u to 0; _u lt $store.legs.length; _u++>>
 				<<if $args[0] is $store.legs[_u].location>>
+				<<set $wardrobe.legs.push(clone($store.legs[_u]))>>
 				<<set $store.legs.deleteAt(_u)>>
 				<</if>>
 			<</for>>
@@ -1437,6 +1537,7 @@ You are conscious of your <<nuditystop>><br><br>
 		<<if $worn.feet.name isnot "naked">>
 			<<for _u to 0; _u lt $store.feet.length; _u++>>
 				<<if $args[0] is $store.feet[_u].location>>
+				<<set $wardrobe.feet.push(clone($store.feet[_u]))>>
 				<<set $store.feet.deleteAt(_u)>>
 				<</if>>
 			<</for>>
