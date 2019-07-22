@@ -5,58 +5,58 @@ Config.history.maxStates = 1;
 State.initPRNG();
 
 window.statsConsole = function(){
-    console.log("PenisGrowthTimer",SugarCube.State.variables.penisgrowthtimer);
-    console.log("BreastGrowthTimer",SugarCube.State.variables.breastgrowthtimer);
+	console.log("PenisGrowthTimer",SugarCube.State.variables.penisgrowthtimer);
+	console.log("BreastGrowthTimer",SugarCube.State.variables.breastgrowthtimer);
 
 }
 
 window.overlayShowHide = function(elementId){
-    var div = document.getElementById(elementId);
-    if(div != undefined){
-        var menuItems = ["cha_cap","tra_cap","soc_cap","sta_cap","che_cap"];
-        if(menuItems.includes(elementId)){
-           for(var i = 0, l = menuItems.length; i < l; i++){
-                if(menuItems[i] != elementId){
-                    var div2 = document.getElementById(menuItems[i]);
-                    console.log(div2);
-                    if(div2 != undefined){
-                        div2.classList.add("hidden");   
-                    }
-                }
-           }
-        }
-        div.classList.toggle("hidden");
-        if(elementId === "debugOverlay"){
-           SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
-        }
-    }
+	var div = document.getElementById(elementId);
+	if(div != undefined){
+		var menuItems = ["cha_cap","tra_cap","soc_cap","sta_cap","che_cap"];
+		if(menuItems.includes(elementId)){
+			for(var i = 0, l = menuItems.length; i < l; i++){
+				if(menuItems[i] != elementId){
+					var div2 = document.getElementById(menuItems[i]);
+					console.log(div2);
+					if(div2 != undefined){
+						div2.classList.add("hidden");
+					}
+				}
+			}
+		}
+		div.classList.toggle("hidden");
+		if(elementId === "debugOverlay"){
+			SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+		}
+	}
 }
 
 window.overlayMenu = function(elementId, type){
-    switch(type){
-        case "debug":
-        var debug = ["debugMain", "debugCharacter", "debugEvents"]
-        for(var i = 0, l = debug.length; i < l; i++){
-            var div = document.getElementById(debug[i]);
-            if(div != undefined){
-                SugarCube.State.variables.debugMenu[1] = elementId;
-                if(elementId === debug[i]){
-                    div.classList.remove("hidden");
-                }else{
-                    div.classList.add("hidden");
-                }
-            }
-        }
-        break;
-    }
+	switch(type){
+		case "debug":
+		var debug = ["debugMain", "debugCharacter", "debugEvents"]
+		for(var i = 0, l = debug.length; i < l; i++){
+			var div = document.getElementById(debug[i]);
+			if(div != undefined){
+				SugarCube.State.variables.debugMenu[1] = elementId;
+				if(elementId === debug[i]){
+					div.classList.remove("hidden");
+				}else{
+					div.classList.add("hidden");
+				}
+			}
+		}
+		break;
+	}
 }
 
 importStyles("style.css")
 .then(function () {
-    console.log("External Style Sheet Active")
+	console.log("External Style Sheet Active")
 })
 .catch(function (err) {
-    console.log("External Style Sheet Missing");
+	console.log("External Style Sheet Missing");
 });
 
 
@@ -71,19 +71,19 @@ var yDown = null;
 
 
 function getTouches(evt) {
-  return evt.touches ||             // browser API
-         evt.originalEvent.touches; // jQuery
+	return evt.touches ||             // browser API
+			evt.originalEvent.touches; // jQuery
 }
 
 function handleTouchStart(evt) {
-    var firstTouch = getTouches(evt)[0];
-    xDown = firstTouch.clientX;
-    yDown = firstTouch.clientY;
+	var firstTouch = getTouches(evt)[0];
+	xDown = firstTouch.clientX;
+	yDown = firstTouch.clientY;
 };
 
 function handleTouchMove(evt) {
-    if ( ! xDown || ! yDown ) {
-        return;
+	if ( ! xDown || ! yDown ) {
+		return;
 	}
 
 	/**
@@ -102,28 +102,28 @@ function handleTouchMove(evt) {
 		}
 	}
 
-    var xUp = evt.touches[0].clientX;
-    var yUp = evt.touches[0].clientY;
+	var xUp = evt.touches[0].clientX;
+	var yUp = evt.touches[0].clientY;
 
-    var xDiff = xDown - xUp;
-    var yDiff = yDown - yUp;
+	var xDiff = xDown - xUp;
+	var yDiff = yDown - yUp;
 
-    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-        if ( xDiff > 0 ) {
-           UIBar.stow();/* left swipe */
-        } else {
-           UIBar.unstow();/* right swipe */
-        }
-    } else {
-        if ( yDiff > 0 ) {
-            /* up swipe */
-        } else {
-            /* down swipe */
-        }
-    }
-    /* reset values */
-    xDown = null;
-    yDown = null;
+	if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+		if ( xDiff > 0 ) {
+			UIBar.stow();/* left swipe */
+		} else {
+			UIBar.unstow();/* right swipe */
+		}
+	} else {
+		if ( yDiff > 0 ) {
+			/* up swipe */
+		} else {
+			/* down swipe */
+		}
+	}
+	/* reset values */
+	xDown = null;
+	yDown = null;
 };
 
 function isUIBarStowed() {
