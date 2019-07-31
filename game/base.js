@@ -13,18 +13,6 @@ window.statsConsole = function(){
 window.overlayShowHide = function(elementId){
     var div = document.getElementById(elementId);
     if(div != undefined){
-        var menuItems = ["cha_cap","tra_cap","soc_cap","sta_cap","che_cap"];
-        if(menuItems.includes(elementId)){
-           for(var i = 0, l = menuItems.length; i < l; i++){
-                if(menuItems[i] != elementId){
-                    var div2 = document.getElementById(menuItems[i]);
-                    console.log(div2);
-                    if(div2 != undefined){
-                        div2.classList.add("hidden");   
-                    }
-                }
-           }
-        }
         div.classList.toggle("hidden");
         if(elementId === "debugOverlay"){
            SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
@@ -65,6 +53,20 @@ document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
 
 window.SerializeGame = function () { return Save.serialize(); }; window.DeserializeGame = function (myGameState) { return Save.deserialize(myGameState) };
+
+
+window.getSaveData = function(){
+    var input = document.getElementById("saveDataInput");
+    input.value = Save.serialize();
+}
+
+window.loadSaveData = function(){
+    var input = document.getElementById("saveDataInput");
+    var result = Save.deserialize(input.value);
+    if (result === null) {
+        input.value = "Invalid Save."
+    }
+}
 
 var xDown = null;
 var yDown = null;
