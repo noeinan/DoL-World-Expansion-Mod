@@ -6,6 +6,7 @@ Third argument - item index*/
 
 <<widget "uppershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0]>><<ShowUnderEquip>><</if>>
 <<if $args[0] is "buy">>
@@ -16,6 +17,9 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "upper">>
 <<elseif $args[0] is "return">>
 <<clothingReset "upper">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -31,8 +35,8 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 		<<else>>
 		<<upperwear _shop_temp>>
 		<</if>>
-	<<updateOwned "upper">>
 	<</if>>
+    <<updateOwned "upper">>
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
@@ -49,9 +53,6 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -67,16 +68,28 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 
 	<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+        <<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.upper[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+        <<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -134,16 +147,28 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 
 	<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+        <<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.upper[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -195,6 +220,7 @@ You steal the $clothes.upper[_shop_temp].name.<br><br>
 
 <<widget "lowershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0]>><<ShowUnderEquip>><</if>>
 <<if $args[0] is "buy">>
@@ -205,6 +231,9 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "lower">>
 <<elseif $args[0] is "return">>
 <<clothingReset "lower">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -238,9 +267,6 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -255,16 +281,28 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 
 	<<if $clothes.lower[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.lower[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.lower[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -308,14 +346,9 @@ You steal the $clothes.lower[_shop_temp].name.<br><br>
 
 
 
-
-
-
-
-
-
 <<widget "underuppershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.under_upper[_shop_temp].name.<br><br>
@@ -325,6 +358,9 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "under_upper">>
 <<elseif $args[0] is "return">>
 <<clothingReset "under_upper">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -358,9 +394,6 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -376,16 +409,28 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 
 	<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.under_upper[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -439,16 +484,28 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 
 	<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.under_upper[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+	<br>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -492,12 +549,9 @@ You steal the $clothes.under_upper[_shop_temp].name.<br><br>
 
 
 
-
-
-
-
 <<widget "underlowershopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.under_lower[_shop_temp].name.<br><br>
@@ -507,6 +561,9 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "under_lower">>
 <<elseif $args[0] is "return">>
 <<clothingReset "under_lower">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -540,9 +597,6 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -557,16 +611,28 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 
 	<<if $clothes.under_lower[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.under_lower[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -610,10 +676,9 @@ You steal the $clothes.under_lower[_shop_temp].name.<br><br>
 
 
 
-
-
 <<widget "headshopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.head[_shop_temp].name.<br><br>
@@ -623,6 +688,9 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "head">>
 <<elseif $args[0] is "return">>
 <<clothingReset "head">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -656,9 +724,6 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -673,26 +738,30 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 
 	<<if $clothes.head[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.head[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.head[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
-
-	<<if $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.upper[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-		<</for>>
-	<br><br>
-	<</if>>
 
 	<</if>>
 	<<set _cost to clone($clothes.head[$clothes_choice].cost)>>
@@ -735,11 +804,9 @@ You steal the $clothes.head[_shop_temp].name.<br><br>
 
 
 
-
-
-
 <<widget "faceshopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.face[_shop_temp].name.<br><br>
@@ -749,6 +816,9 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "face">>
 <<elseif $args[0] is "return">>
 <<clothingReset "face">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -782,9 +852,6 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -799,16 +866,28 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 
 	<<if $clothes.face[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.face[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.face[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + $clothes.face[$clothes_choice].accessory_colour_options[_e] + '"> $clothes.face[$clothes_choice].accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + $clothes.face[$clothes_choice].accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -852,17 +931,9 @@ You steal the $clothes.face[_shop_temp].name.<br><br>
 
 
 
-
-
-
-
-
-
-
-
-
 <<widget "neckshopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.neck[_shop_temp].name.<br><br>
@@ -872,6 +943,9 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "neck">>
 <<elseif $args[0] is "return">>
 <<clothingReset "neck">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -905,9 +979,6 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -922,16 +993,28 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 
 	<<if $clothes.neck[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.neck[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.neck[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + $clothes.neck[$clothes_choice].accessory_colour_options[_e] + '"> $clothes.neck[$clothes_choice].accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + $clothes.neck[$clothes_choice].accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -974,22 +1057,9 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 <</nobr>><</widget>>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <<widget "legsshopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.legs[_shop_temp].name.<br><br>
@@ -999,6 +1069,9 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "legs">>
 <<elseif $args[0] is "return">>
 <<clothingReset "legs">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -1032,9 +1105,6 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -1049,16 +1119,28 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 
 	<<if $clothes.legs[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.legs[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.legs[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + $clothes.legs[$clothes_choice].accessory_colour_options[_e] + '"> $clothes.legs[$clothes_choice].accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + $clothes.legs[$clothes_choice].accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
@@ -1107,6 +1189,7 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 
 <<widget "feetshopbuy">><<nobr>>
 <<set _shop_temp to $args[2]>>
+<<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
 You buy the $clothes.feet[_shop_temp].name.<br><br>
@@ -1116,6 +1199,9 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 <<tryOnWear _shop_temp "feet">>
 <<elseif $args[0] is "return">>
 <<clothingReset "feet">>
+<<elseif $args[0] is "reset">>
+<<unset $colouraction>>
+<<unset $accessorycolouraction>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -1149,9 +1235,6 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 	<</if>>
 <</if>>
 
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-
 <</nobr>><</widget>>
 
 
@@ -1166,16 +1249,28 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 
 	<<if $clothes.feet[$clothes_choice].colour_options.length isnot 0>>
 	There's a range of colours to choose from: <br>
+		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-		<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+            <<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
 
 	<<if $clothes.feet[$clothes_choice].accessory_colour_options.length isnot 0>>
 	Secondary colour:<br>
-		<<for _e to 0; _e lt $clothes.feet[$clothes_choice].accessory_colour_options.length; _e++>>
-		<<print '<label><span class="' + $clothes.feet[$clothes_choice].accessory_colour_options[_e] + '"> $clothes.feet[$clothes_choice].accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + $clothes.feet[$clothes_choice].accessory_colour_options[_e] + '" checked>></label> |'>>
+		<<set _setChecked to false>>
+		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+                <<set _setChecked to true>>
+            <<else>>
+                <<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+            <</if>>
 		<</for>>
 	<br><br>
 	<</if>>
