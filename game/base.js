@@ -68,6 +68,10 @@ window.loadSaveData = function(){
     }
 }
 
+window.clearTextBox = function(id){
+    document.getElementById(id).value = "";
+}
+
 var xDown = null;
 var yDown = null;
 
