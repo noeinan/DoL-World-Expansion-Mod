@@ -11,13 +11,13 @@ window.statsConsole = function(){
 }
 
 window.overlayShowHide = function(elementId){
-    var div = document.getElementById(elementId);
-    if(div != undefined){
-        div.classList.toggle("hidden");
-        if(elementId === "debugOverlay"){
-           SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
-        }
-    }
+	var div = document.getElementById(elementId);
+	if(div != undefined){
+		div.classList.toggle("hidden");
+		if(elementId === "debugOverlay"){
+		   SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+		}
+	}
 }
 
 window.overlayMenu = function(elementId, type){
@@ -56,20 +56,20 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 
 
 window.getSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    input.value = Save.serialize();
+	var input = document.getElementById("saveDataInput");
+	input.value = Save.serialize();
 }
 
 window.loadSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    var result = Save.deserialize(input.value);
-    if (result === null) {
-        input.value = "Invalid Save."
-    }
+	var input = document.getElementById("saveDataInput");
+	var result = Save.deserialize(input.value);
+	if (result === null) {
+		input.value = "Invalid Save."
+	}
 }
 
 window.clearTextBox = function(id){
-    document.getElementById(id).value = "";
+	document.getElementById(id).value = "";
 }
 
 var xDown = null;
@@ -77,7 +77,7 @@ var yDown = null;
 
 
 function getTouches(evt) {
-	return evt.touches ||             // browser API
+	return evt.touches ||			 // browser API
 			evt.originalEvent.touches; // jQuery
 }
 
