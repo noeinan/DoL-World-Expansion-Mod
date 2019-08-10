@@ -39,6 +39,65 @@ window.overlayMenu = function(elementId, type){
 	}
 }
 
+//Checks for visual slot number
+window.canLoad = function(saveSlot){
+    if(saveSlot === "auto"){
+        return Save.autosave.has();
+    }else{
+        return Save.slots.has(saveSlot - 1);
+    }
+};
+
+//Checks for visual slot number
+window.getSaveDetails = function(saveSlot){
+    if(saveSlot === "auto"){
+        var details = SugarCube.Save.autosave.get();
+        return details.title;
+    }else{
+        var details = SugarCube.Save.slots.get(saveSlot - 1);
+        return details.title;
+    }
+};
+
+window.loadSave = function(saveSlot){
+    if(saveSlot === "auto"){
+        Save.autosave.load();
+    }else{
+        Save.slots.load(saveSlot - 1);
+    }
+}
+
+window.save = function(saveSlot){
+    if(saveSlot != undefined){
+        Save.slots.save(saveSlot - 1);
+        SugarCube.State.variables.currentOverlay = null;
+        overlayShowHide("customOverlay");
+    }
+}
+
+window.deleteSave = function(saveSlot){
+    if(saveSlot === "all"){
+        Save.clear()
+    }else if(saveSlot === "auto"){
+        Save.autosave.delete();
+    }else{
+        Save.slots.delete(saveSlot - 1); 
+    }
+    new Wikifier(null, '<<resetSaveMenu>>');
+}
+
+window.importSave = function(saveFile){
+    if(!window.FileReader) return; // Browser is not compatible
+
+    var reader = new FileReader();
+    
+    reader.onloadend = function(){
+        DeserializeGame(this.result);
+    }
+
+    reader.readAsText(saveFile[0]);
+}
+
 importStyles("style.css")
 .then(function () {
 	console.log("External Style Sheet Active")
