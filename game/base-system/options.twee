@@ -6,10 +6,62 @@
 <<button Close>>
     <<addclass "#customOverlay" "hidden">>
     <<set $currentOverlay to null>>
-<</button>><br><br>
+<</button>>
+<<button "Export/Import Save">>
+    <<overlayReplace "optionsExportImport">>
+    <<set $currentOverlay to null>>
+<</button>>
+<br><br>
+</div>
+
+<h3>Options</h3>
+
+<h4>Saves</h4>
+<div id="saveList">
+    <<saveList>>
+</div>
+
+<<if $passage isnot "Start">>
+    <<button "Restart Game">>
+        <<script>>
+            SugarCube.UI.restart();
+        <</script>>
+    <</button>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "optionsExportImport">><<nobr>>
+
+<div class="fixedClose">
+<<button Close>>
+    <<addclass "#customOverlay" "hidden">>
+    <<set $currentOverlay to null>>
+<</button>>
+<<button "Return to Options">>
+    <<overlayReplace "options">>
+    <<set $currentOverlay to "options">>
+<</button>>
+<br><br>
 </div>
 
 <h3>Saves Export/Import</h3>
+
+<h4>File Import/Export</h4>
+
+<<if SugarCube.Browser.isMobile.any() is true>>
+    Please note that file import/export does not work on android currently.
+<<else>>
+    Import: <input id="saveImport" type="file" value="Import Save" onchange="importSave(this.files)">
+    <br><br>
+    <<if $dancing is 0 and $combat is 0>>
+        <input type="button" value="Export Save" onclick="SugarCube.Save.export()">
+    <<else>>
+        Unable to export save currently.
+    <</if>>
+<</if>>
+
+<h4>Text Import/Export</h4>
 <<if $dancing is 0 and $combat is 0>>
     To save, click on "Get Save Data", then copy and paste the save data where required.<br>
     To load, paste in the save data then click "Load Save Data".<br>
@@ -22,7 +74,56 @@
     Unable to save currently.
 <</if>>
 <br><br>
+<</nobr>><</widget>>
 
 
+<<widget "saveList">><<nobr>>
+<table id="savesList">
+    <tbody>
+        <<for _i to 0; _i lt 10; _i++>>
+            <tr>
+                <<if _i is 0>>
+                    <td>A</td>  
+                    <<if canLoad("auto") is true>>
+                        <td><input type="button" class="saveMenuButton" value="Load" onclick="loadSave('auto')"/></td>        
+                        <td><<print getSaveDetails("auto")>></td>        
+                        <td><input type="button" class="saveMenuButton right" value="Delete Auto" onclick="deleteSave('auto')"/></td>     
+                    <<else>>
+                        <td><input type="button" value="Load" disabled/></td>
+                        <td></td>
+                        <td></td>
+                    <</if>>
+                <<elseif _i lt 9>>
+                    <td><<print _i>></td>
+                    <<if canLoad(_i) is true>>
+                        <td>
+                            <<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _i +')"/>'>>
+                            <<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _i +')"/>'>>
+                        </td>
+                        <td><<print getSaveDetails(_i)>></td>
+                        <td><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _i +')"/>'>></td>
+                    <<else>>
+                        <td><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _i +')"/>'>></td>
+                        <td></td>
+                        <td></td>
+                    <</if>>
+                <<else>>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><input type="button" class="saveMenuButton right" value="Delete All" onclick="deleteSave('all')"/></td>
+                <</if>>
+            </tr>
+        <</for>>
+    </tbody>
+</table>
+<br>
+<</nobr>><</widget>>
+
+<<widget "resetSaveMenu">><<nobr>>
+
+<<replace #saveList>>
+    <<saveList>>
+<</replace>>
 
 <</nobr>><</widget>>
