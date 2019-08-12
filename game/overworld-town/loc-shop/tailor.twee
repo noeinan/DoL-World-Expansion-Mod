@@ -1,7 +1,16 @@
 :: Tailor Shop[nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
 
-Your are in the tailor shop. It has cloth of various colors hanging on racks. The tailor is known for his ability to fix even the most tattered clothing.<br><br>
+You are in the tailor shop. It has cloth of various colours hanging on racks. The tailor is known for the ability to fix even the most tattered clothing, and for offering to repair the lower half of outfits for free.<br><br>
+<<set $tailor_cost to 0>>
+
+
+<<for _e to 0; _e lt $clothing_number; _e++>>
+<<activeclothes>>
+	<<if $worn[_active_clothes].integrity lt $worn[_active_clothes].integrity_max>>
+	<<set $tailor_cost += Math.trunc($worn[_active_clothes].cost * 0.3)>>
+	<</if>>
+<</for>>
 
 <<if $stress gte 10000>>
 	<<passoutshop>>
@@ -17,10 +26,25 @@ Your are in the tailor shop. It has cloth of various colors hanging on racks. Th
 	<<else>>
 		<<if $daystate is "night">>
 			You are alone in the darkness.<br><br>
+			
+			<<if $hour isnot 21 and $tailortheft isnot 1>>
+			<<link [[Examine the cash register|Tailor Register]]>><</link>><br>
+			<</if>>
+			
+			
+			
 		<<elseif $exposed gte 1>>
 			You are hiding behind bolts of cloth to protect your dignity.<br><br>
 		<<elseif $money gte 1000>>
-			<<link [[Fix Clothes (0:10) £10|Fix Clothes]]>> <<set $money -= 1000>> <<pass 10>> <</link>> <<if $images is 1>><img id="icon" src="img/misc/icon/tailorThread.png"><</if>><br>
+			<<if $tailor_cost gte 1>>
+			The tailor offers to fix your clothes for <span class="gold">£<<print ($tailor_cost / 100)>>.</span><br>
+			<<link [[Fix Clothes (0:10)|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass 10>><</link>> <<if $images is 1>>&nbsp;<img id="icon" src="img/misc/icon/tailorThread.png"><</if>>
+			<<elseif $worn.lower.integrity lt $worn.lower.integrity_max or $worn.under_lower.integrity lt $worn.under_lower.integrity_max>>
+			The tailor will repair the lower halves of outfits for free.<br>
+			<<link [[Fix Clothes (0:10)|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass 10>><</link>> <<if $images is 1>>&nbsp;<img id="icon" src="img/misc/icon/tailorThread.png"><</if>>
+			<<else>>
+			Your clothes are fully repaired already.<br><br>
+			<</if>>
 		<<else>>
 			You don't have enough cash (£10).<br>
 		<</if>>
@@ -33,7 +57,7 @@ Your are in the tailor shop. It has cloth of various colors hanging on racks. Th
 
 ::Fix Clothes[nobr]
 
-Your clothes have been fixed.<br>
+Your clothes have been fixed.<br><br>
 <<set $worn.upper.integrity = $worn.upper.integrity_max>>
 <<set $worn.lower.integrity = $worn.lower.integrity_max>>
 <<set $worn.under_upper.integrity = $worn.under_upper.integrity_max>>
