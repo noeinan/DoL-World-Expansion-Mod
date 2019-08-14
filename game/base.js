@@ -414,7 +414,7 @@ window.AvsAn = (function () {
  *
  * @type {boolean}
  */
-var enableLinkNumberify = true;
+var enableLinkNumberify = false;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
