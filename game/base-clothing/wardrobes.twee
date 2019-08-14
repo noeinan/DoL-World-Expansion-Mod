@@ -1,6 +1,9 @@
 :: Widgets Wardrobe [widget]
 <<widget "wardrobewear">><<nobr>>
 
+
+<<wardrobesanity>>
+
 <<if $wear is "strip">>
 You remove your clothing.<br><br>
 
@@ -37,7 +40,7 @@ You tie a towel around your chest.<br><br>
 	<<set $wardrobe.upper.deleteAt($wear_upper)>>
 		<<if $worn.upper.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
-				<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour>>
+				<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour and $wardrobe.lower[_e].one_piece is 1>>
 				<<set _strip_restrict to 1>>/*Stops lowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
 				<<lowerundress $wardrobe_location>>
 				<<set $worn.lower to clone($wardrobe.lower[_e])>>
@@ -69,7 +72,7 @@ You tie a towel around your waist.<br><br>
 	<<set $wardrobe.lower.deleteAt($wear_lower)>>
 		<<if $worn.lower.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
-				<<if $wardrobe.upper[_e].set is $worn.lower.set and $wardrobe.upper[_e].colour is $worn.lower.colour>>
+				<<if $wardrobe.upper[_e].set is $worn.lower.set and $wardrobe.upper[_e].colour is $worn.lower.colour and $wardrobe.upper[_e].one_piece is 1>>
 				<<upperundress $wardrobe_location>>
 				<<set $worn.upper to clone($wardrobe.upper[_e])>>
 				<<set $wardrobe.upper.deleteAt(_e)>>
@@ -101,7 +104,7 @@ You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>><b
 	<<set $wardrobe.under_upper.deleteAt($wear_under_upper)>>
 		<<if $worn.under_upper.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
-				<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour>>
+				<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour and $wardrobe.under_lower[_e].one_piece is 1>>
 				<<set _strip_restrict to 1>>/*Stops underlowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
 				<<underlowerundress $wardrobe_location>>
 				<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
@@ -132,7 +135,7 @@ You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_l
 	<<set $wardrobe.under_lower.deleteAt($wear_under_lower)>>
 		<<if $worn.under_lower.one_piece is 1>>
 			<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
-				<<if $wardrobe.under_upper[_e].set is $worn.under_lower.set and $wardrobe.under_upper[_e].colour is $worn.under_lower.colour>>
+				<<if $wardrobe.under_upper[_e].set is $worn.under_lower.set and $wardrobe.under_upper[_e].colour is $worn.under_lower.colour and $wardrobe.under_upper[_e].one_piece is 1>>
 				<<underupperundress $wardrobe_location>>
 				<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
 				<<set $wardrobe.under_upper.deleteAt(_e)>>
@@ -557,6 +560,38 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <<else>>
 (tattered)
 <</if>>
+<</nobr>><</widget>>
+
+<<widget "wardrobesanity">><<nobr>>
+/*Fixes invisible outfit bottoms caused by bugs in previous versions*/
+
+<<for _i to 0; _i lt $wardrobe.lower.length; _i++>>
+	<<if $wardrobe.lower[_i].one_piece is 1>><<set _lower_sane to 0>>
+		<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
+			<<if $wardrobe.upper[_e].one_piece is 1 and $wardrobe.upper[_e].set is $wardrobe.lower[_i].set and $wardrobe.upper[_e].colour is $wardrobe.lower[_i].colour>>
+			<<set _lower_sane to 1>>
+			<</if>>
+		<</for>>
+		<<if _lower_sane isnot 1>>
+		<<set $wardrobe.lower[_i].one_piece to "broken">>
+		<</if>>
+	<</if>>
+<</for>>
+
+
+<<for _i to 0; _i lt $wardrobe.under_lower.length; _i++>>
+	<<if $wardrobe.under_lower[_i].one_piece is 1>><<set _under_lower_sane to 0>>
+		<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
+			<<if $wardrobe.under_upper[_e].one_piece is 1 and $wardrobe.under_upper[_e].set is $wardrobe.under_lower[_i].set and $wardrobe.under_upper[_e].colour is $wardrobe.under_lower[_i].colour>>
+			<<set _under_lower_sane to 1>>
+			<</if>>
+		<</for>>
+		<<if _under_lower_sane isnot 1>>
+		<<set $wardrobe.under_lower[_i].one_piece to "broken">>
+		<</if>>
+	<</if>>
+<</for>>
+
 <</nobr>><</widget>>
 
 :: Wardrobe [nobr]
