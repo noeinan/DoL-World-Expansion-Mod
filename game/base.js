@@ -39,37 +39,22 @@ window.overlayMenu = function(elementId, type){
 	}
 }
 
-//Checks for visual slot number
-window.canLoad = function(saveSlot){
-    if(saveSlot === "auto"){
-        return Save.autosave.has();
-    }else{
-        return Save.slots.has(saveSlot - 1);
-    }
-};
+window.returnSaveDetails = function(){
+    return Save.get();
+}
 
-//Checks for visual slot number
-window.getSaveDetails = function(saveSlot){
-    if(saveSlot === "auto"){
-        var details = SugarCube.Save.autosave.get();
-        return details.title;
-    }else{
-        var details = SugarCube.Save.slots.get(saveSlot - 1);
-        return details.title;
-    }
-};
 
 window.loadSave = function(saveSlot){
     if(saveSlot === "auto"){
         Save.autosave.load();
     }else{
-        Save.slots.load(saveSlot - 1);
+        Save.slots.load(saveSlot);
     }
 }
 
 window.save = function(saveSlot){
     if(saveSlot != undefined){
-        Save.slots.save(saveSlot - 1);
+        Save.slots.save(saveSlot);
         SugarCube.State.variables.currentOverlay = null;
         overlayShowHide("customOverlay");
     }
@@ -81,7 +66,7 @@ window.deleteSave = function(saveSlot){
     }else if(saveSlot === "auto"){
         Save.autosave.delete();
     }else{
-        Save.slots.delete(saveSlot - 1); 
+        Save.slots.delete(saveSlot); 
     }
     new Wikifier(null, '<<resetSaveMenu>>');
 }
@@ -414,7 +399,7 @@ window.AvsAn = (function () {
  *
  * @type {boolean}
  */
-var enableLinkNumberify = true;
+var enableLinkNumberify = false;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
