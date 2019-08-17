@@ -40,47 +40,47 @@ window.overlayMenu = function(elementId, type){
 }
 
 window.returnSaveDetails = function(){
-    return Save.get();
+	return Save.get();
 }
 
 
 window.loadSave = function(saveSlot){
-    if(saveSlot === "auto"){
-        Save.autosave.load();
-    }else{
-        Save.slots.load(saveSlot);
-    }
+	if(saveSlot === "auto"){
+		Save.autosave.load();
+	}else{
+		Save.slots.load(saveSlot);
+	}
 }
 
 window.save = function(saveSlot){
-    if(saveSlot != undefined){
-        Save.slots.save(saveSlot);
-        SugarCube.State.variables.currentOverlay = null;
-        overlayShowHide("customOverlay");
-    }
+	if(saveSlot != undefined){
+		Save.slots.save(saveSlot);
+		SugarCube.State.variables.currentOverlay = null;
+		overlayShowHide("customOverlay");
+	}
 }
 
 window.deleteSave = function(saveSlot){
-    if(saveSlot === "all"){
-        Save.clear()
-    }else if(saveSlot === "auto"){
-        Save.autosave.delete();
-    }else{
-        Save.slots.delete(saveSlot); 
-    }
-    new Wikifier(null, '<<resetSaveMenu>>');
+	if(saveSlot === "all"){
+		Save.clear()
+	}else if(saveSlot === "auto"){
+		Save.autosave.delete();
+	}else{
+		Save.slots.delete(saveSlot);
+	}
+	new Wikifier(null, '<<resetSaveMenu>>');
 }
 
 window.importSave = function(saveFile){
-    if(!window.FileReader) return; // Browser is not compatible
+	if(!window.FileReader) return; // Browser is not compatible
 
-    var reader = new FileReader();
-    
-    reader.onloadend = function(){
-        DeserializeGame(this.result);
-    }
+	var reader = new FileReader();
 
-    reader.readAsText(saveFile[0]);
+	reader.onloadend = function(){
+		DeserializeGame(this.result);
+	}
+
+	reader.readAsText(saveFile[0]);
 }
 
 importStyles("style.css")
