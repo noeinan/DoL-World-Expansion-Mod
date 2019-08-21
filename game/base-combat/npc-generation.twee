@@ -1406,11 +1406,11 @@
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,5,5,8,3]>>
 		<<set _bhi to [4,4,4,4,4,4,7,7,7,7,8,8,8,8,8,11,11,12,10]>>
-	<<else>> <!-- male student -->
+	<<else>> <!-- male student, _blo and _bhi set penis size range  -->
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun1 is "f">> <!-- female adult -->
@@ -1418,23 +1418,30 @@
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","petite","trim","muscular","curvy","toned","plump","plush","shapely","robust","voluptuous","lush"]>>
 		<<set _blo to [0,0,0,0,2,2,2,2,2,5,5,5,5,5,5,5,8,8,9]>>
 		<<set _bhi to [4,4,4,4,4,4,7,7,8,9,9,9,9,12,10,11,10,11,11]>>
-	<<else>> <!-- male adult -->
+	<<else>> <!-- male adult, _blo and _bhi set penis size range -->
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
 <<set _brdes to ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"]>>
 
+
 <<set $npc_health_1 to _h[_i]>>
 <<set $description1 to _d[_i]>>
 /% DEBUG NPC1: $npc_health_1 , $description1<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender1 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -1443,8 +1450,8 @@
 	<<set $npc_breast_size_1 to 0>>
 	<<set $npc_breasts_1 to "nipples">>
 	<<set $npc_breast_1 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_1 to "tiny penis">>
 		<<set $npc_penis_size_1 to 1>>
 	<<case 5 6 7>>
@@ -1473,11 +1480,11 @@
 	<<set $npc_breast_size_1 to 0>>
 	<<set $npc_breasts_1 to "nipples">>
 	<<set $npc_breast_1 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_1 to "tiny penis">>
 		<<set $npc_penis_size_1 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_1 to "thick cock">>
 		<<set $npc_penis_size_1 to 3>>
 	<<default>>
@@ -1586,7 +1593,7 @@
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun2 is "f">> <!-- female adult -->
@@ -1598,7 +1605,7 @@
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
@@ -1608,9 +1615,15 @@
 <<set $description2 to _d[_i]>>
 /% DEBUG NPC2: $npc_health_2 , $description2<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender2 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -1619,8 +1632,8 @@
 	<<set $npc_breast_size_2 to 0>>
 	<<set $npc_breasts_2 to "nipples">>
 	<<set $npc_breast_2 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_2 to "tiny penis">>
 		<<set $npc_penis_size_2 to 1>>
 	<<case 5 6 7>>
@@ -1649,11 +1662,11 @@
 	<<set $npc_breast_size_2 to 0>>
 	<<set $npc_breasts_2 to "nipples">>
 	<<set $npc_breast_2 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_2 to "tiny penis">>
 		<<set $npc_penis_size_2 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_2 to "meaty cock">>
 		<<set $npc_penis_size_2 to 3>>
 	<<default>>
@@ -1761,7 +1774,7 @@
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun3 is "f">> <!-- female adult -->
@@ -1773,7 +1786,7 @@
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
@@ -1783,9 +1796,15 @@
 <<set $description3 to _d[_i]>>
 /% DEBUG NPC3: $npc_health_3 , $description3<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender3 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -1794,8 +1813,8 @@
 	<<set $npc_breast_size_3 to 0>>
 	<<set $npc_breasts_3 to "nipples">>
 	<<set $npc_breast_3 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_3 to "tiny penis">>
 		<<set $npc_penis_size_3 to 1>>
 	<<case 5 6 7>>
@@ -1824,11 +1843,11 @@
 	<<set $npc_breast_size_3 to 0>>
 	<<set $npc_breasts_3 to "nipples">>
 	<<set $npc_breast_3 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_3 to "tiny penis">>
 		<<set $npc_penis_size_3 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_3 to "veiny cock">>
 		<<set $npc_penis_size_3 to 3>>
 	<<default>>
@@ -1936,7 +1955,7 @@
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun4 is "f">> <!-- female adult -->
@@ -1948,7 +1967,7 @@
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
@@ -1958,9 +1977,15 @@
 <<set $description4 to _d[_i]>>
 /% DEBUG NPC4: $npc_health_4 , $description4<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender4 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -1969,8 +1994,8 @@
 	<<set $npc_breast_size_4 to 0>>
 	<<set $npc_breasts_4 to "nipples">>
 	<<set $npc_breast_4 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_4 to "tiny penis">>
 		<<set $npc_penis_size_4 to 1>>
 	<<case 5 6 7>>
@@ -1999,11 +2024,11 @@
 	<<set $npc_breast_size_4 to 0>>
 	<<set $npc_breasts_4 to "nipples">>
 	<<set $npc_breast_4 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_4 to "tiny penis">>
 		<<set $npc_penis_size_4 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_4 to "large cock">>
 		<<set $npc_penis_size_4 to 3>>
 	<<default>>
@@ -2111,7 +2136,7 @@
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun5 is "f">> <!-- female adult -->
@@ -2123,7 +2148,7 @@
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
@@ -2133,9 +2158,15 @@
 <<set $description5 to _d[_i]>>
 /% DEBUG NPC5: $npc_health_5 , $description5<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender5 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -2144,8 +2175,8 @@
 	<<set $npc_breast_size_5 to 0>>
 	<<set $npc_breasts_5 to "nipples">>
 	<<set $npc_breast_5 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_5 to "tiny penis">>
 		<<set $npc_penis_size_5 to 1>>
 	<<case 5 6 7>>
@@ -2174,11 +2205,11 @@
 	<<set $npc_breast_size_5 to 0>>
 	<<set $npc_breasts_5 to "nipples">>
 	<<set $npc_breast_5 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_5 to "tiny penis">>
 		<<set $npc_penis_size_5 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_5 to "big cock">>
 		<<set $npc_penis_size_5 to 3>>
 	<<default>>
@@ -2286,7 +2317,7 @@
 		<<set _h to [125,175,150,150,150,175,150,200,200,200,125,200,250,125,250,200,250,250,200]>>
 		<<set _d to ["slight","lithe","lean","thin","slender","lissome","slim","taut","graceful","trim","mousy","cute","fit","petite","toned","shapely","robust","plump","wide-eyed"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <<else>>
 	<<if $pronoun6 is "f">> <!-- female adult -->
@@ -2298,7 +2329,7 @@
 		<<set _h to [125,125,150,150,150,150,175,175,200,200,200,200,250,250,250,250,275,275,275]>>
 		<<set _d to ["petite","slight","slim","thin","slender","lanky","lissome","lithe","trim","lean","taut","plump","toned","bulky","broad","robust","rugged","muscular","burly"]>>
 		<<set _blo to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
-		<<set _bhi to [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]>>
+		<<set _bhi to [8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8]>>
 	<</if>>
 <</if>>
 
@@ -2308,9 +2339,15 @@
 <<set $description6 to _d[_i]>>
 /% DEBUG NPC5: $npc_health_6 , $description6<br> %/
 
-<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
-<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
-<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<<if $gender6 is "m">><!-- set boundarys on size based on MODs -->
+	<<if $penis_mod gte _blo[_i]>><<set _blo[_i] to $penis_mod>><</if>>
+	<<if $penis_mod gte _bhi[_i]>><<set _bhi[_i] to $penis_mod>><</if>>
+	<<if $penis_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$penis_mod, 0, 8)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$penis_mod, 0, 8)>><</if>>
+<<else>>
+	<<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+	<<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+<</if>>
 
 <<set _rng to random(_blo[_i], _bhi[_i])>>
 
@@ -2319,8 +2356,8 @@
 	<<set $npc_breast_size_6 to 0>>
 	<<set $npc_breasts_6 to "nipples">>
 	<<set $npc_breast_6 to "nipple">>
-	<<switch random(1, 8)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_6 to "tiny penis">>
 		<<set $npc_penis_size_6 to 1>>
 	<<case 5 6 7>>
@@ -2349,11 +2386,11 @@
 	<<set $npc_breast_size_6 to 0>>
 	<<set $npc_breasts_6 to "nipples">>
 	<<set $npc_breast_6 to "nipple">>
-	<<switch random(1, 7)>>
-	<<case 1>>
+	<<switch _rng>>
+	<<case 0>>
 		<<set $npc_penis_6 to "tiny penis">>
 		<<set $npc_penis_size_6 to 1>>
-	<<case 6 7>>
+	<<case 7 8>>
 		<<set $npc_penis_6 to "hefty cock">>
 		<<set $npc_penis_size_6 to 3>>
 	<<default>>
