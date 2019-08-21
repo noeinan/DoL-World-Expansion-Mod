@@ -11,13 +11,13 @@ window.statsConsole = function(){
 }
 
 window.overlayShowHide = function(elementId){
-    var div = document.getElementById(elementId);
-    if(div != undefined){
-        div.classList.toggle("hidden");
-        if(elementId === "debugOverlay"){
-           SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
-        }
-    }
+	var div = document.getElementById(elementId);
+	if(div != undefined){
+		div.classList.toggle("hidden");
+		if(elementId === "debugOverlay"){
+		   SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+		}
+	}
 }
 
 window.overlayMenu = function(elementId, type){
@@ -39,63 +39,48 @@ window.overlayMenu = function(elementId, type){
 	}
 }
 
-//Checks for visual slot number
-window.canLoad = function(saveSlot){
-    if(saveSlot === "auto"){
-        return Save.autosave.has();
-    }else{
-        return Save.slots.has(saveSlot - 1);
-    }
-};
+window.returnSaveDetails = function(){
+	return Save.get();
+}
 
-//Checks for visual slot number
-window.getSaveDetails = function(saveSlot){
-    if(saveSlot === "auto"){
-        var details = SugarCube.Save.autosave.get();
-        return details.title;
-    }else{
-        var details = SugarCube.Save.slots.get(saveSlot - 1);
-        return details.title;
-    }
-};
 
 window.loadSave = function(saveSlot){
-    if(saveSlot === "auto"){
-        Save.autosave.load();
-    }else{
-        Save.slots.load(saveSlot - 1);
-    }
+	if(saveSlot === "auto"){
+		Save.autosave.load();
+	}else{
+		Save.slots.load(saveSlot);
+	}
 }
 
 window.save = function(saveSlot){
-    if(saveSlot != undefined){
-        Save.slots.save(saveSlot - 1);
-        SugarCube.State.variables.currentOverlay = null;
-        overlayShowHide("customOverlay");
-    }
+	if(saveSlot != undefined){
+		Save.slots.save(saveSlot);
+		SugarCube.State.variables.currentOverlay = null;
+		overlayShowHide("customOverlay");
+	}
 }
 
 window.deleteSave = function(saveSlot){
-    if(saveSlot === "all"){
-        Save.clear()
-    }else if(saveSlot === "auto"){
-        Save.autosave.delete();
-    }else{
-        Save.slots.delete(saveSlot - 1); 
-    }
-    new Wikifier(null, '<<resetSaveMenu>>');
+	if(saveSlot === "all"){
+		Save.clear()
+	}else if(saveSlot === "auto"){
+		Save.autosave.delete();
+	}else{
+		Save.slots.delete(saveSlot);
+	}
+	new Wikifier(null, '<<resetSaveMenu>>');
 }
 
 window.importSave = function(saveFile){
-    if(!window.FileReader) return; // Browser is not compatible
+	if(!window.FileReader) return; // Browser is not compatible
 
-    var reader = new FileReader();
-    
-    reader.onloadend = function(){
-        DeserializeGame(this.result);
-    }
+	var reader = new FileReader();
 
-    reader.readAsText(saveFile[0]);
+	reader.onloadend = function(){
+		DeserializeGame(this.result);
+	}
+
+	reader.readAsText(saveFile[0]);
 }
 
 importStyles("style.css")
@@ -115,20 +100,20 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 
 
 window.getSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    input.value = Save.serialize();
+	var input = document.getElementById("saveDataInput");
+	input.value = Save.serialize();
 }
 
 window.loadSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    var result = Save.deserialize(input.value);
-    if (result === null) {
-        input.value = "Invalid Save."
-    }
+	var input = document.getElementById("saveDataInput");
+	var result = Save.deserialize(input.value);
+	if (result === null) {
+		input.value = "Invalid Save."
+	}
 }
 
 window.clearTextBox = function(id){
-    document.getElementById(id).value = "";
+	document.getElementById(id).value = "";
 }
 
 var xDown = null;
@@ -136,7 +121,7 @@ var yDown = null;
 
 
 function getTouches(evt) {
-	return evt.touches ||             // browser API
+	return evt.touches ||			 // browser API
 			evt.originalEvent.touches; // jQuery
 }
 
@@ -153,7 +138,7 @@ function handleTouchMove(evt) {
 
 	/**
 	 * Activate the swipe only when finger near the UI Bar.
-	 * 50px - +/- width of utowed UI Bar
+	 * 50px - +/- width of unstowed UI Bar
 	 * 280px - +/- width of unstowed UI bar
 	 */
 	if ( isUIBarStowed() ) {
@@ -414,7 +399,7 @@ window.AvsAn = (function () {
  *
  * @type {boolean}
  */
-var enableLinkNumberify = false;
+var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
@@ -509,4 +494,3 @@ $(document).on('keyup', function(ev) {
 			$(currentLinks[requestedLinkIndex]).click();
 	}
 });
-
