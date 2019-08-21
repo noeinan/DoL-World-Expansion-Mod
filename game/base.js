@@ -138,7 +138,7 @@ function handleTouchMove(evt) {
 
 	/**
 	 * Activate the swipe only when finger near the UI Bar.
-	 * 50px - +/- width of utowed UI Bar
+	 * 50px - +/- width of unstowed UI Bar
 	 * 280px - +/- width of unstowed UI bar
 	 */
 	if ( isUIBarStowed() ) {
