@@ -6,6 +6,7 @@ console.log("PenisGrowthTimer",SugarCube.State.variables.penisgrowthtimer);
 console.log("BreastGrowthTimer",SugarCube.State.variables.breastgrowthtimer);
 }
 window.overlayShowHide = function(elementId){
+<<<<<<< HEAD
 var div = document.getElementById(elementId);
 if(div != undefined){
 div.classList.toggle("hidden");
@@ -32,6 +33,80 @@ div.classList.add("hidden");
 break;
 }
 }
+=======
+	var div = document.getElementById(elementId);
+	if(div != undefined){
+		div.classList.toggle("hidden");
+		if(elementId === "debugOverlay"){
+		   SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+		}
+	}
+}
+
+window.overlayMenu = function(elementId, type){
+	switch(type){
+		case "debug":
+		var debug = ["debugMain", "debugCharacter", "debugEvents"]
+		for(var i = 0, l = debug.length; i < l; i++){
+			var div = document.getElementById(debug[i]);
+			if(div != undefined){
+				SugarCube.State.variables.debugMenu[1] = elementId;
+				if(elementId === debug[i]){
+					div.classList.remove("hidden");
+				}else{
+					div.classList.add("hidden");
+				}
+			}
+		}
+		break;
+	}
+}
+
+window.returnSaveDetails = function(){
+	return Save.get();
+}
+
+
+window.loadSave = function(saveSlot){
+	if(saveSlot === "auto"){
+		Save.autosave.load();
+	}else{
+		Save.slots.load(saveSlot);
+	}
+}
+
+window.save = function(saveSlot){
+	if(saveSlot != undefined){
+		Save.slots.save(saveSlot);
+		SugarCube.State.variables.currentOverlay = null;
+		overlayShowHide("customOverlay");
+	}
+}
+
+window.deleteSave = function(saveSlot){
+	if(saveSlot === "all"){
+		Save.clear()
+	}else if(saveSlot === "auto"){
+		Save.autosave.delete();
+	}else{
+		Save.slots.delete(saveSlot);
+	}
+	new Wikifier(null, '<<resetSaveMenu>>');
+}
+
+window.importSave = function(saveFile){
+	if(!window.FileReader) return; // Browser is not compatible
+
+	var reader = new FileReader();
+
+	reader.onloadend = function(){
+		DeserializeGame(this.result);
+	}
+
+	reader.readAsText(saveFile[0]);
+}
+
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
 importStyles("style.css")
 .then(function () {
 console.log("External Style Sheet Active")
@@ -44,21 +119,43 @@ document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
 window.SerializeGame = function () { return Save.serialize(); }; window.DeserializeGame = function (myGameState) { return Save.deserialize(myGameState) };
 window.getSaveData = function(){
+<<<<<<< HEAD
 var input = document.getElementById("saveDataInput");
 input.value = Save.serialize();
+=======
+	var input = document.getElementById("saveDataInput");
+	input.value = Save.serialize();
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
 }
 window.loadSaveData = function(){
+<<<<<<< HEAD
 var input = document.getElementById("saveDataInput");
 var result = Save.deserialize(input.value);
 if (result === null) {
 input.value = "Invalid Save."
 }
+=======
+	var input = document.getElementById("saveDataInput");
+	var result = Save.deserialize(input.value);
+	if (result === null) {
+		input.value = "Invalid Save."
+	}
+}
+
+window.clearTextBox = function(id){
+	document.getElementById(id).value = "";
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
 }
 var xDown = null;
 var yDown = null;
 function getTouches(evt) {
+<<<<<<< HEAD
 return evt.touches ||             // browser API
 evt.originalEvent.touches; // jQuery
+=======
+	return evt.touches ||			 // browser API
+			evt.originalEvent.touches; // jQuery
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
 }
 function handleTouchStart(evt) {
 var firstTouch = getTouches(evt)[0];
@@ -66,6 +163,7 @@ xDown = firstTouch.clientX;
 yDown = firstTouch.clientY;
 };
 function handleTouchMove(evt) {
+<<<<<<< HEAD
 if ( ! xDown || ! yDown ) {
 return;
 }
@@ -104,6 +202,50 @@ if ( yDiff > 0 ) {
 /* reset values */
 xDown = null;
 yDown = null;
+=======
+	if ( ! xDown || ! yDown ) {
+		return;
+	}
+
+	/**
+	 * Activate the swipe only when finger near the UI Bar.
+	 * 50px - +/- width of unstowed UI Bar
+	 * 280px - +/- width of unstowed UI bar
+	 */
+	if ( isUIBarStowed() ) {
+		if ( xDown > 50 ) {
+			return;
+		}
+	} else
+	{
+		if ( xDown > 280 ) {
+			return;
+		}
+	}
+
+	var xUp = evt.touches[0].clientX;
+	var yUp = evt.touches[0].clientY;
+
+	var xDiff = xDown - xUp;
+	var yDiff = yDown - yUp;
+
+	if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+		if ( xDiff > 0 ) {
+			UIBar.stow();/* left swipe */
+		} else {
+			UIBar.unstow();/* right swipe */
+		}
+	} else {
+		if ( yDiff > 0 ) {
+			/* up swipe */
+		} else {
+			/* down swipe */
+		}
+	}
+	/* reset values */
+	xDown = null;
+	yDown = null;
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
 };
 function isUIBarStowed() {
 return $( '#ui-bar' ).hasClass( 'stowed' );
@@ -356,6 +498,7 @@ $(currentLinks).each(function(i, el) {
 $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 });
 });
+<<<<<<< HEAD
 $(document).on('keyup', function(ev) {
 if (!State.variables.numberify_enabled || !enableLinkNumberify)
 return;
@@ -383,3 +526,5 @@ if ($(currentLinks).length >= requestedLinkIndex + 1)
 $(currentLinks[requestedLinkIndex]).click();
 }
 });
+=======
+>>>>>>> 7256c5f89c35d12945250231d056deec00c8b4e1
