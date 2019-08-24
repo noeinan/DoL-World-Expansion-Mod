@@ -72,339 +72,355 @@
 </div>
 <</nobr>><</widget>>
 
-
 <<widget "wateraction">><<nobr>>
-<<if $swimmingskill lt 100>><<set $seconds += 18>><<set $oxygen -= 180>>
-<<elseif $swimmingskill lt 200>><<set $seconds += 15>><<set $oxygen -= 150>>
-<<elseif $swimmingskill lt 300>><<set $seconds += 12>><<set $oxygen -= 120>>
-<<elseif $swimmingskill lt 400>><<set $seconds += 10>><<set $oxygen -= 100>>
-<<elseif $swimmingskill lt 500>><<set $seconds += 8>><<set $oxygen -= 80>>
-<<elseif $swimmingskill lt 600>><<set $seconds += 8>><<set $oxygen -= 80>>
-<<elseif $swimmingskill lt 700>><<set $seconds += 7>><<set $oxygen -= 70>>
-<<elseif $swimmingskill lt 800>><<set $seconds += 7>><<set $oxygen -= 70>>
-<<elseif $swimmingskill lt 900>><<set $seconds += 6>><<set $oxygen -= 60>>
-<<elseif $swimmingskill lt 1000>><<set $seconds += 6>><<set $oxygen -= 60>>
-<<else>><<set $seconds += 5>><<set $oxygen -= 50>>
-<</if>>
-
+	<<if $swimmingskill lt 100>>
+		<<set $seconds += 18>><<set $oxygen -= 180>>
+	<<elseif $swimmingskill lt 200>>
+		<<set $seconds += 15>><<set $oxygen -= 150>>
+	<<elseif $swimmingskill lt 300>>
+		<<set $seconds += 12>><<set $oxygen -= 120>>
+	<<elseif $swimmingskill lt 400>>
+		<<set $seconds += 10>><<set $oxygen -= 100>>
+	<<elseif $swimmingskill lt 500>>
+		<<set $seconds += 8>><<set $oxygen -= 80>>
+	<<elseif $swimmingskill lt 600>>
+		<<set $seconds += 8>><<set $oxygen -= 80>>
+	<<elseif $swimmingskill lt 700>>
+		<<set $seconds += 7>><<set $oxygen -= 70>>
+	<<elseif $swimmingskill lt 800>>
+		<<set $seconds += 7>><<set $oxygen -= 70>>
+	<<elseif $swimmingskill lt 900>>
+		<<set $seconds += 6>><<set $oxygen -= 60>>
+	<<elseif $swimmingskill lt 1000>>
+		<<set $seconds += 6>><<set $oxygen -= 60>>
+	<<else>>
+		<<set $seconds += 5>><<set $oxygen -= 50>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "underwater">><<nobr>>
-<<water>><<set $underwater to 1>><<set $underwatercheck to 1>>
-
-<<if $combat isnot 1>>
-	<<if $seconds gte 60>>
-	<<set $seconds -= 60>>
-	<<pass 1>>
+	<<water>><<set $underwater to 1>><<set $underwatercheck to 1>>
+	<<if $combat isnot 1>>
+		<<if $seconds gte 60>>
+			<<set $seconds -= 60>>
+			<<pass 1>>
+		<</if>>
+		<<if $oxygen lt 0 and $nooxygen is 1>>
+			<<set $stress += 1000>>
+		<<elseif $oxygen lt 0 and $nooxygen isnot 1>>
+			<<set $nooxygen to 1>>
+		<<else>>
+			<<set $nooxygen to 0>>
+		<</if>>
+		<span class="lblue">Air:</span>
+		<<if $oxygen lt 0>>
+			<span class="red">You can't breathe! Your stress will increase and you'll soon pass out if you can't find air.</span>
+		<</if>>
+		<<oxygencaption>>
+		<<if $underwaterintro isnot 1 and $combat isnot 1>>
+			<<set $underwaterintro to 1>>
+			<i>You can't hold your breath forever. You will pass less time and use less air per action with a higher swimming skill.</i>
+			<br><br>
+		<</if>>
 	<</if>>
-	<<if $oxygen lt 0 and $nooxygen is 1>>
-	<<set $stress += 1000>>
-	<<elseif $oxygen lt 0 and $nooxygen isnot 1>>
-	<<set $nooxygen to 1>>
-	<<else>>
-	<<set $nooxygen to 0>>
-	<</if>>
-	<span class="lblue">Air:</span>
-	<<if $oxygen lt 0>>
-	<span class="red">You can't breathe! Your stress will increase and you'll soon pass out if you can't find air.</span>
-	<</if>>
-	<<oxygencaption>>
-
-	<<if $underwaterintro isnot 1 and $combat isnot 1>><<set $underwaterintro to 1>>
-	<i>You can't hold your breath forever. You will pass less time and use less air per action with a higher swimming skill.</i><br><br>
-	<</if>>
-<</if>>
-
 <</nobr>><</widget>>
-
 
 <<widget "oxygenrefresh">><<nobr>>
-<<set $oxygen to $oxygenmax>>
+	<<set $oxygen to $oxygenmax>>
 <</nobr>><</widget>>
-
 
 <<widget "passwater">><<nobr>>
-
-<<if $outside is 1 and $weather is "clear">>
-	<<if $upperwet gte 1>>
-	<<set $upperwet -= ($pass * 2)>>
+	<<if $outside is 1 and $weather is "clear">>
+		<<if $upperwet gte 1>>
+			<<set $upperwet -= ($pass * 2)>>
+		<</if>>
+		<<if $lowerwet gte 1>>
+			<<set $lowerwet -= ($pass * 2)>>
+		<</if>>
+		<<if $underlowerwet gte 1>>
+			<<set $underlowerwet -= ($pass * 2)>>
+		<</if>>
+		<<if $underupperwet gte 1>>
+			<<set $underupperwet -= ($pass * 2)>>
+		<</if>>
+	<<elseif $outside is 1 and $weather is "rain">>
+		<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim")>>
+			<<set $upperwet += $pass>>
+		<</if>>
+		<<if !$worn.lower.type.includes("naked") and !$worn.lower.type.includes("swim")>>
+			<<set $lowerwet += $pass>>
+		<</if>>
+		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+			<<set $underlowerwet += $pass>>
+		<</if>>
+		<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("chastity")>>
+			<<set $underupperwet += $pass>>
+		<</if>>
+	<<else>>
+		<<if $upperwet gte 1>>
+			<<set $upperwet -= $pass>>
+		<</if>>
+		<<if $lowerwet gte 1>>
+			<<set $lowerwet -= $pass>>
+		<</if>>
+		<<if $underlowerwet gte 1>>
+			<<set $underlowerwet -= $pass>>
+		<</if>>
+		<<if $underupperwet gte 1>>
+			<<set $underupperwet -= $pass>>
+		<</if>>
 	<</if>>
-	<<if $lowerwet gte 1>>
-	<<set $lowerwet -= ($pass * 2)>>
-	<</if>>
-	<<if $underlowerwet gte 1>>
-	<<set $underlowerwet -= ($pass * 2)>>
-	<</if>>
-	<<if $underupperwet gte 1>>
-	<<set $underupperwet -= ($pass * 2)>>
-	<</if>>
-<<elseif $outside is 1 and $weather is "rain">>
-	<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim")>>
-<<set $upperwet += $pass>>
-	<</if>>
-	<<if !$worn.lower.type.includes("naked") and !$worn.lower.type.includes("swim")>>
-<<set $lowerwet += $pass>>
-	<</if>>
-	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
-<<set $underlowerwet += $pass>>
-	<</if>>
-	<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("chastity")>>
-<<set $underupperwet += $pass>>
-	<</if>>
-<<else>>
-	<<if $upperwet gte 1>>
-	<<set $upperwet -= $pass>>
-	<</if>>
-	<<if $lowerwet gte 1>>
-	<<set $lowerwet -= $pass>>
-	<</if>>
-	<<if $underlowerwet gte 1>>
-	<<set $underlowerwet -= $pass>>
-	<</if>>
-	<<if $underupperwet gte 1>>
-	<<set $underupperwet -= $pass>>
-	<</if>>
-<</if>>
-
-
 <</nobr>><</widget>>
 
-
 <<widget "pass">><<nobr>>
-<<if $args[1]>>
-	<<if $args[1].includes("h", 0)>> <<set $pass to ($args[0]*60)>>
-	<<elseif $args[1].includes("d", 0)>> <<set $pass to ($args[0]*1440)>> <</if>>
-<<elseif $args[0]>> <<set $pass to $args[0]>>
-<<else>> <<set $pass to 0>> <</if>>
-<<passwater>>
-<<if $controlled is 0 and $anxiety gte 2>>
-	<<set $stress += $pass>>
-	<<if $background is "crossdresser" and ($player.gender is $player.appearance)>>
+	<<if $args[1]>>
+		<<if $args[1].includes("h", 0)>>
+			<<set $pass to ($args[0]*60)>>
+		<<elseif $args[1].includes("d", 0)>>
+			<<set $pass to ($args[0]*1440)>>
+		<</if>>
+	<<elseif $args[0]>>
+		<<set $pass to $args[0]>>
+	<<else>>
+		<<set $pass to 0>>
+	<</if>>
+	<<passwater>>
+	<<if $controlled is 0 and $anxiety gte 2>>
 		<<set $stress += $pass>>
-	<</if>>
-<<elseif $controlled is 0 and $anxiety gte 1>>
-<<else>>
-	<<set $stress -= $pass>>
-	<<if $background is "crossdresser" and ($player.gender isnot $player.appearance)>>
+		<<if $background is "crossdresser" and ($player.gender is $player.appearance)>>
+			<<set $stress += $pass>>
+		<</if>>
+	<<elseif $controlled is 0 and $anxiety gte 1>>
+	<<else>>
 		<<set $stress -= $pass>>
+		<<if $background is "crossdresser" and ($player.gender isnot $player.appearance)>>
+			<<set $stress -= $pass>>
+		<</if>>
 	<</if>>
-<</if>>
-<<if $hallucinogen gt 0>><<set $hallucinogen -= $pass>><</if>>
-<<if $drunk gt 0>><<set $drunk -= $pass>><</if>>
+	<<if $hallucinogen gt 0>>
+		<<set $hallucinogen -= $pass>>
+	<</if>>
 	<<if $drunk gt 0>>
-	<<set $tiredness += ($pass * ($drunk / 200))>>
+		<<set $drunk -= $pass>>
+		<<set $tiredness += ($pass * ($drunk / 200))>>
 	<</if>>
-<<if $drugged gt 0>><<set $drugged -= $pass>><</if>>
-<<if $pain gt 0>><<set $pain -= $pass>><</if>>
-<<if $pass gt 1200>>
-	<<set $hunger to 0>><<set $thirst to 0>><<set $hygiene to 0>><<set $tiredness to 0>>
-<<else>>
-	<<set $hunger += $pass>> <<set $thirst += $pass>> <<set $hygiene += $pass>> <<set $tiredness += $pass>>
-<</if>>
-<<set $time += $pass>> <<set $minute += $pass>>
-<<set $arousal -= $pass*10>><<arousalpass>>
-<<if $daystate is "day" and $weather is "clear" and $outside is 1>><<tanned $pass/10>><</if>>
+	<<if $drugged gt 0>>
+		<<set $drugged -= $pass>>
+	<</if>>
+	<<if $pain gt 0>>
+		<<set $pain -= $pass>>
+	<</if>>
+	<<if $pass gt 1200>>
+		<<set $hunger to 0>><<set $thirst to 0>><<set $hygiene to 0>><<set $tiredness to 0>>
+	<<else>>
+		<<set $hunger += $pass>><<set $thirst += $pass>><<set $hygiene += $pass>><<set $tiredness += $pass>>
+	<</if>>
+	<<set $time += $pass>> <<set $minute += $pass>>
+	<<set $arousal -= $pass*10>><<arousalpass>>
+	<<if $daystate is "day" and $weather is "clear" and $outside is 1>>
+		<<tanned $pass/10>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "neutral">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-		<<if $drunk gte 480>>
-		<<set $stress += ($args[0] * 3)>>
-		<<elseif $drunk gte 360>>
-		<<set $stress += ($args[0] * 4)>>
-		<<elseif $drunk gte 240>>
-		<<set $stress += ($args[0] * 6)>>
-		<<elseif $drunk gte 120>>
-		<<set $stress += ($args[0] * 8)>>
-		<<elseif $drunk gte 1>>
-		<<set $stress += ($args[0] * 9)>>
-		<<else>>
-		<<set $stress += ($args[0] * 10)>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<if $drunk gte 480>>
+				<<set $stress += ($args[0] * 3)>>
+			<<elseif $drunk gte 360>>
+				<<set $stress += ($args[0] * 4)>>
+			<<elseif $drunk gte 240>>
+				<<set $stress += ($args[0] * 6)>>
+			<<elseif $drunk gte 120>>
+				<<set $stress += ($args[0] * 8)>>
+			<<elseif $drunk gte 1>>
+				<<set $stress += ($args[0] * 9)>>
+			<<else>>
+				<<set $stress += ($args[0] * 10)>>
+			<</if>>
+			<<combattrauma $args[0]>>
 		<</if>>
-	<<combattrauma $args[0]>>
+		<<set $arousal += 20 * $args[0]>>
+		<<set $enemyarousal += $args[0]>>
 	<</if>>
-	<<set $arousal += 20 * $args[0]>>
-	<<set $enemyarousal += $args[0]>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "neutralbreast">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-		<<if $drunk gte 480>>
-		<<set $stress += ($args[0] * 3)>>
-		<<elseif $drunk gte 360>>
-		<<set $stress += ($args[0] * 4)>>
-		<<elseif $drunk gte 240>>
-		<<set $stress += ($args[0] * 6)>>
-		<<elseif $drunk gte 120>>
-		<<set $stress += ($args[0] * 8)>>
-		<<elseif $drunk gte 1>>
-		<<set $stress += ($args[0] * 9)>>
-		<<else>>
-		<<set $stress += ($args[0] * 10)>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<if $drunk gte 480>>
+				<<set $stress += ($args[0] * 3)>>
+			<<elseif $drunk gte 360>>
+				<<set $stress += ($args[0] * 4)>>
+			<<elseif $drunk gte 240>>
+				<<set $stress += ($args[0] * 6)>>
+			<<elseif $drunk gte 120>>
+				<<set $stress += ($args[0] * 8)>>
+			<<elseif $drunk gte 1>>
+				<<set $stress += ($args[0] * 9)>>
+			<<else>>
+				<<set $stress += ($args[0] * 10)>>
+			<</if>>
+			<<combattrauma $args[0]>>
 		<</if>>
-	<<combattrauma $args[0]>>
+		<<set $arousal += 20 * $args[0] * $breastsensitivity>>
+		<<set $enemyarousal += $args[0]>>
 	<</if>>
-	<<set $arousal += 20 * $args[0] * $breastsensitivity>>
-	<<set $enemyarousal += $args[0]>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "neutralgenitals">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-		<<if $drunk gte 480>>
-		<<set $stress += ($args[0] * 3)>>
-		<<elseif $drunk gte 360>>
-		<<set $stress += ($args[0] * 4)>>
-		<<elseif $drunk gte 240>>
-		<<set $stress += ($args[0] * 6)>>
-		<<elseif $drunk gte 120>>
-		<<set $stress += ($args[0] * 8)>>
-		<<elseif $drunk gte 1>>
-		<<set $stress += ($args[0] * 9)>>
-		<<else>>
-		<<set $stress += ($args[0] * 10)>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<if $drunk gte 480>>
+				<<set $stress += ($args[0] * 3)>>
+			<<elseif $drunk gte 360>>
+				<<set $stress += ($args[0] * 4)>>
+			<<elseif $drunk gte 240>>
+				<<set $stress += ($args[0] * 6)>>
+			<<elseif $drunk gte 120>>
+				<<set $stress += ($args[0] * 8)>>
+			<<elseif $drunk gte 1>>
+				<<set $stress += ($args[0] * 9)>>
+			<<else>>
+				<<set $stress += ($args[0] * 10)>>
+			<</if>>
+			<<combattrauma $args[0]>>
 		<</if>>
-	<<combattrauma $args[0]>>
+		<<set $arousal += 20 * $args[0] * $genitalsensitivity>>
+		<<set $enemyarousal += $args[0]>>
 	<</if>>
-	<<set $arousal += 20 * $args[0] * $genitalsensitivity>>
-	<<set $enemyarousal += $args[0]>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "sex">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-		<<if $drunk gte 480>>
-		<<set $stress += ($args[0] * 3)>>
-		<<elseif $drunk gte 360>>
-		<<set $stress += ($args[0] * 4)>>
-		<<elseif $drunk gte 240>>
-		<<set $stress += ($args[0] * 6)>>
-		<<elseif $drunk gte 120>>
-		<<set $stress += ($args[0] * 8)>>
-		<<elseif $drunk gte 1>>
-		<<set $stress += ($args[0] * 9)>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<if $drunk gte 480>>
+				<<set $stress += ($args[0] * 3)>>
+			<<elseif $drunk gte 360>>
+				<<set $stress += ($args[0] * 4)>>
+			<<elseif $drunk gte 240>>
+				<<set $stress += ($args[0] * 6)>>
+			<<elseif $drunk gte 120>>
+				<<set $stress += ($args[0] * 8)>>
+			<<elseif $drunk gte 1>>
+				<<set $stress += ($args[0] * 9)>>
+			<<else>>
+				<<set $stress += ($args[0] * 10)>>
+			<</if>>
+			<<combattrauma $args[0]>>
 		<<else>>
-		<<set $stress += ($args[0] * 10)>>
+			<<set $stress -= 10 * $args[0]>>
 		<</if>>
-	<<combattrauma $args[0]>>
-	<<else>>
-	<<set $stress -= 10 * $args[0]>>
+		<<set $arousal += 20 * $args[0]>>
+		<<set $enemyarousal += 2 * $args[0]>>
 	<</if>>
-	<<set $arousal += 20 * $args[0]>>
-	<<set $enemyarousal += 2 * $args[0]>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "violence">><<nobr>>
-<<if $args[0]>>
-	<<if $drunk gte 480>>
-	<<set $stress += ($args[0] * 3)>>
-	<<elseif $drunk gte 360>>
-	<<set $stress += ($args[0] * 4)>>
-	<<elseif $drunk gte 240>>
-	<<set $stress += ($args[0] * 6)>>
-	<<elseif $drunk gte 120>>
-	<<set $stress += ($args[0] * 8)>>
-	<<elseif $drunk gte 1>>
-	<<set $stress += ($args[0] * 9)>>
-	<<else>>
-	<<set $stress += ($args[0] * 10)>>
+	<<if $args[0]>>
+		<<if $drunk gte 480>>
+			<<set $stress += ($args[0] * 3)>>
+		<<elseif $drunk gte 360>>
+			<<set $stress += ($args[0] * 4)>>
+		<<elseif $drunk gte 240>>
+			<<set $stress += ($args[0] * 6)>>
+		<<elseif $drunk gte 120>>
+			<<set $stress += ($args[0] * 8)>>
+		<<elseif $drunk gte 1>>
+			<<set $stress += ($args[0] * 9)>>
+		<<else>>
+			<<set $stress += ($args[0] * 10)>>
+		<</if>>
+		<<combattrauma $args[0]>>
+		<<set $pain += $args[0]>>
+		<<if $args[0] gt 6>>
+			<<set $enemyanger -= 5>>
+		<<else>>
+			<<set $enemyanger -= $args[0]>>
+		<</if>>
 	<</if>>
-	<<combattrauma $args[0]>>
-	<<set $pain += $args[0]>>
-	<<if $args[0] gt 6>>
-	<<set $enemyanger -= 5>>
-	<<else>>
-	<<set $enemyanger -= $args[0]>>
-	<</if>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "submission">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-		<<if $drunk gte 480>>
-		<<set $stress += ($args[0] * 3)>>
-		<<elseif $drunk gte 360>>
-		<<set $stress += ($args[0] * 4)>>
-		<<elseif $drunk gte 240>>
-		<<set $stress += ($args[0] * 6)>>
-		<<elseif $drunk gte 120>>
-		<<set $stress += ($args[0] * 8)>>
-		<<elseif $drunk gte 1>>
-		<<set $stress += ($args[0] * 9)>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<if $drunk gte 480>>
+				<<set $stress += ($args[0] * 3)>>
+			<<elseif $drunk gte 360>>
+				<<set $stress += ($args[0] * 4)>>
+			<<elseif $drunk gte 240>>
+				<<set $stress += ($args[0] * 6)>>
+			<<elseif $drunk gte 120>>
+				<<set $stress += ($args[0] * 8)>>
+			<<elseif $drunk gte 1>>
+				<<set $stress += ($args[0] * 9)>>
+			<<else>>
+				<<set $stress += ($args[0] * 10)>>
+			<</if>>
+			<<set $submissive += 1>>
 		<<else>>
-		<<set $stress += ($args[0] * 10)>>
+			<<set $stress -= 10 * $args[0]>>
+			<<set $assertive += 1>>
 		<</if>>
-	<<set $submissive += 1>>
-	<<else>>
-	<<set $stress -= 10 * $args[0]>>
-	<<set $assertive += 1>>
+		<<set $arousal += 20 * $args[0]>>
+		<<set $enemyarousal += 3 * $args[0]>>
+		<<set $enemytrust += 2>>
 	<</if>>
-	<<set $arousal += 20 * $args[0]>>
-	<<set $enemyarousal += 3 * $args[0]>>
-	<<set $enemytrust += 2>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "defiance">><<nobr>>
-<<if $args[0]>>
-<<set _negargs = -$args[0]>>
-	<<set $stress -= 10 * $args[0]>>
-	<<combattrauma _negargs>>
-	<<set $enemyanger += 5 * $args[0]>>
-	<<set $enemyhealth -= (2 * $args[0] * ($physique / 4000))>>
-	<<set $submissive -= 1>>
-	<<set $enemytrust -= 4>>
-<</if>>
+	<<if $args[0]>>
+		<<set _negargs = -$args[0]>>
+		<<set $stress -= 10 * $args[0]>>
+		<<combattrauma _negargs>>
+		<<set $enemyanger += 5 * $args[0]>>
+		<<set $enemyhealth -= (2 * $args[0] * ($physique / 4000))>>
+		<<set $submissive -= 1>>
+		<<set $enemytrust -= 4>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "brat">><<nobr>>
-<<if $args[0]>>
-<<set _negargs = -$args[0]>>
-	<<if $drunk gte 480>>
-	<<set $stress += ($args[0] * 3)>>
-	<<elseif $drunk gte 360>>
-	<<set $stress += ($args[0] * 4)>>
-	<<elseif $drunk gte 240>>
-	<<set $stress += ($args[0] * 6)>>
-	<<elseif $drunk gte 120>>
-	<<set $stress += ($args[0] * 8)>>
-	<<elseif $drunk gte 1>>
-	<<set $stress += ($args[0] * 9)>>
-	<<else>>
-	<<set $stress += ($args[0] * 10)>>
+	<<if $args[0]>>
+		<<set _negargs = -$args[0]>>
+		<<if $drunk gte 480>>
+			<<set $stress += ($args[0] * 3)>>
+		<<elseif $drunk gte 360>>
+			<<set $stress += ($args[0] * 4)>>
+		<<elseif $drunk gte 240>>
+			<<set $stress += ($args[0] * 6)>>
+		<<elseif $drunk gte 120>>
+			<<set $stress += ($args[0] * 8)>>
+		<<elseif $drunk gte 1>>
+			<<set $stress += ($args[0] * 9)>>
+		<<else>>
+			<<set $stress += ($args[0] * 10)>>
+		<</if>>
+		<<combattrauma _negargs>>
+		<<set $enemyanger += 5 * $args[0]>>
+		<<set $submissive -= 1>>
+		<<set $enemytrust -= 2>>
 	<</if>>
-	<<combattrauma _negargs>>
-	<<set $enemyanger += 5 * $args[0]>>
-	<<set $submissive -= 1>>
-	<<set $enemytrust -= 2>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "meek">><<nobr>>
-<<if $args[0]>>
-	<<if $consensual isnot 1>>
-	<<set $submissive += 1>>
-	<<else>>
-	<<set $assertive += 1>>
+	<<if $args[0]>>
+		<<if $consensual isnot 1>>
+			<<set $submissive += 1>>
+		<<else>>
+			<<set $assertive += 1>>
+		<</if>>
+		<<set $arousal += 20 * $args[0]>>
+		<<set $enemyarousal += $args[0]>>
+		<<set $enemytrust += 1>>
 	<</if>>
-	<<set $arousal += 20 * $args[0]>>
-	<<set $enemyarousal += $args[0]>>
-	<<set $enemytrust += 1>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "crimeup">><<nobr>>
-<<if $args[0]>>
-	<<set $crime += $args[0]>>
-	<<set $crimehistory += $args[0]>>
-<</if>>
+	<<if $args[0]>>
+		<<set $crime += $args[0]>>
+		<<set $crimehistory += $args[0]>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "seductionskilluse">><<set $enemyarousal += ($seductionskill / 100)>><<set $seductionskill += 5>><</widget>>
