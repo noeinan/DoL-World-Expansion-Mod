@@ -1,14 +1,25 @@
 :: Tailor Shop[nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
 
-You are in the tailor shop. It has cloth of various colours hanging on racks. The tailor is known for the ability to fix even the most tattered clothing, and for offering to repair the lower half of outfits for free.<br><br>
+You are in the tailor shop. It has cloth of various colours hanging on racks.<br>The tailor is known for the ability to fix even the most tattered clothing, and for offering to repair the lower half of outfits for free.<br><br>
+
+<<if $sewingKit isnot 1>>
+		Looks like the shop has a new machine for sale in the display.<br><br>
+	<</if>>
+	<<if $sewingBought is  1>>
+		"Thank you for your purchase. I'll have this delivered to your room by the time you get back" <br><br>
+		<<set $sewingBought to 0>>
+	<</if>>
+	
 <<set $tailor_cost to 0>>
 
 
 <<for _e to 0; _e lt $clothing_number; _e++>>
 <<activeclothes>>
-	<<if $worn[_active_clothes].integrity lt $worn[_active_clothes].integrity_max>>
-	<<set $tailor_cost += Math.trunc($worn[_active_clothes].cost * 0.3)>>
+	<<if _active_clothes isnot "lower" and _active_clothes isnot "under_lower">>
+		<<if $worn[_active_clothes].integrity lt $worn[_active_clothes].integrity_max>>
+			<<set $tailor_cost += Math.trunc($worn[_active_clothes].cost * 0.3)>>
+		<</if>>
 	<</if>>
 <</for>>
 
@@ -35,18 +46,23 @@ You are in the tailor shop. It has cloth of various colours hanging on racks. Th
 
 		<<elseif $exposed gte 1>>
 			You are hiding behind bolts of cloth to protect your dignity.<br><br>
-		<<elseif $money gte 1000>>
-			<<if $tailor_cost gte 1>>
-			The tailor offers to fix your clothes for <span class="gold">£<<print ($tailor_cost / 100)>>.</span><br>
-			<<link [[Fix Clothes (0:10)|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass 10>><</link>> <<if $images is 1>>&nbsp;<img id="icon" src="img/misc/icon/tailorThread.png"><</if>>
-			<<elseif $worn.lower.integrity lt $worn.lower.integrity_max or $worn.under_lower.integrity lt $worn.under_lower.integrity_max>>
-			The tailor will repair the lower halves of outfits for free.<br>
-			<<link [[Fix Clothes (0:10)|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass 10>><</link>> <<if $images is 1>>&nbsp;<img id="icon" src="img/misc/icon/tailorThread.png"><</if>>
-			<<else>>
-			Your clothes are fully repaired already.<br><br>
-			<</if>>
 		<<else>>
-			You don't have enough cash (£10).<br>
+			
+			<<if $tailor_cost gte 1 and $money gte $tailor_cost>>
+				The tailor offers to fix your clothes for <span class="gold">£<<print ($tailor_cost / 100)>>.</span><br>
+				<<link [[Fix Clothes (0:10)|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass 10>><</link>><br>
+			<<elseif $worn.lower.integrity lt $worn.lower.integrity_max or $worn.under_lower.integrity lt $worn.under_lower.integrity_max>>
+				The tailor will repair the lower halves of outfits for free.<br>
+				<<link [[Fix Clothes (0:10)|Fix Lower]]>><<pass 10>><</link>><br>
+			<<elseif $money lt $tailor_cost>>
+				You don't have enough cash to repair your clothes. (<span class="red">£<<print ($tailor_cost / 100)>>.</span>)<br><br>
+			<<else>>
+				Your clothes are fully repaired already.<br><br>
+			<</if>>
+						
+			<<if $sewingKit isnot 1>>
+					<<link [[Approach the Display Cabinet|Tailor Shop Sewing Machine]]>><</link>>
+			<</if>>
 		<</if>>
 
 		<br>[[Leave|Shopping Centre Top]]
@@ -70,6 +86,16 @@ Your clothes have been fixed.<br><br>
 [[Back|Tailor Shop]]
 
 
+
+::Fix Lower[nobr]
+
+Your lower clothes have been fixed.<br><br>
+<<set $worn.lower.integrity = $worn.lower.integrity_max>>
+<<set $worn.under_lower.integrity = $worn.under_lower.integrity_max>>
+[[Back|Tailor Shop]]
+
+
+
 :: Tailor Shop Sneak [nobr]
 <<set $outside to 0>><<effects>><<set $lock to 0>>
 
@@ -82,3 +108,32 @@ Your clothes have been fixed.<br><br>
 	<</if>>
 
 <<link [[Leave|Shopping Centre Top]]>><</link>><br>
+
+:: Tailor Shop Sewing Machine[nobr]
+
+	You approach the display, inside it lies a sewing machine. An advertisement poster hangs beside the display, it reads:
+	<br>
+	<br>	
+	THE SEWINATOR-9000 <sup>tm</sup>
+	<br>
+	<br>
+	- Dog Chewed Your Undies? <span class="pink">~Tentacles~</span> Tore Your Clothes? No Problem! 
+	<br>
+	<br>
+	- Can Fix Any Piece of Clothing in One minute!
+	<br>
+	<br>
+	- Requires <span class="green">No Skill</span>! Even Bailey Could Use It!
+	<br>
+	<br>
+	- Comes With a Lifetime Supply of Cloth For Repairs!
+	<br>
+	<br>
+	- Only <span class ="gold">£1000.00!</span>
+	<br>
+	<br>
+	
+	<<if $money gte 100000>>
+		<<link [[Purchase Sewing Machine - Repair your clothes in your room! £1000|Tailor Shop]]>><<set $money -= 100000>><<set $sewingKit to 1>><<set $sewingBought to 1>><</link>><br>
+	<</if>>
+		<<link [[Go Back|Tailor Shop]]>><</link>>
