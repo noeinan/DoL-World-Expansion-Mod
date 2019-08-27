@@ -180,8 +180,6 @@ function isUIBarStowed() {
 	return $( '#ui-bar' ).hasClass( 'stowed' );
 }
 
-
-
 jQuery(document).ready(function(){
 	jQuery('#sidetooltip').appendTo("body");
 });
