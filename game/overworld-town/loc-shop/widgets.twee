@@ -1038,12 +1038,14 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 
 
 <<set _temp_choice to clone($clothes.neck[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.neck[$clothes_choice].name. <<if $clothes.neck[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.neck[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.neck[$clothes_choice].description Costs <span class="gold">£<<print $clothes.neck[$clothes_choice].cost / 100>>.</span><br><br>
+<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.neck[$clothes_choice].name. <<if $clothes.neck[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.neck[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.neck[$clothes_choice].description Costs <span class="gold">£<<print $clothes.neck[$clothes_choice].cost / 100>>.</span>
+<br><br>
 
 <<shoptraits>>
 
 	<<if $clothes.neck[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from: <br>
+	There's a range of colours to choose from:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
@@ -1057,7 +1059,8 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 	<</if>>
 
 	<<if $clothes.neck[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:<br>
+	Secondary colour:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
@@ -1071,37 +1074,48 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 	<</if>>
 	<<set _cost to clone($clothes.neck[$clothes_choice].cost)>>
 		<<if $wardrobe.neck.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.neck.length / $wardrobe.space</i></span><br>
+		<span class="blue">Your wardrobe is full. <i>$wardrobe.neck.length / $wardrobe.space</i></span>
+		<br>
 		<<elseif $daystate is "night">>
 			<<if $worn.neck.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span>
+			<br>
 			<<else>>
-			<<link [[Steal and wear|$passage]]>><<neckshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and wear|$passage]]>><<neckshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 			<</if>>
-			<<link [[Steal and send home|$passage]]>><<neckshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and send home|$passage]]>><<neckshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 		<<elseif $money gte $clothes.neck[$clothes_choice].cost>>
 			<<if $worn.neck.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span>
+			<br>
 			<<else>>
 
-			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 		<<else>>
-		<span class="pink">You cannot afford this item.</span><br>
+		<span class="pink">You cannot afford this item.</span>
+		<br>
 		<</if>>
 		<<if $worn.neck.cursed>>
 		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<neckshopbuy "try" null $clothes_choice>><</link>><br>
+			<<link [[Try On|$passage]]>><<neckshopbuy "try" null $clothes_choice>><</link>>
+			<br>
 			<<if $tryOn.tryingOn.neck isnot null>>
-			<<link [[Return|$passage]]>><<neckshopbuy "return" null $clothes_choice>><</link>><br>
+			<<link [[Return|$passage]]>><<neckshopbuy "return" null $clothes_choice>><</link>>
+			<br>
 			<</if>>
 		<</if>>
 <</if>>
 <br>
 <<for _i to 0; _i lt $clothes.neck.length; _i++>>
 	<<if $clothes.neck[_i].shop.includes("clothing")>>
-	<<print '<<link [[$clothes.neck[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.neck[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.neck[_i].cost / 100>>.</span><br>
+	<<print '<<link [[$clothes.neck[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.neck[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.neck[_i].cost / 100>>.</span>
+	<br>
 	<</if>>
 <</for>>
 
@@ -1113,9 +1127,11 @@ You steal the $clothes.neck[_shop_temp].name.<br><br>
 <<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
-You buy the $clothes.legs[_shop_temp].name.<br><br>
+You buy the $clothes.legs[_shop_temp].name.
+<br><br>
 <<elseif $args[0] is "steal">>
-You steal the $clothes.legs[_shop_temp].name.<br><br>
+You steal the $clothes.legs[_shop_temp].name.
+<br><br>
 <<elseif $args[0] is "try">>
 <<tryOnWear _shop_temp "legs">>
 <<elseif $args[0] is "return">>
@@ -1164,12 +1180,14 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 
 
 <<set _temp_choice to clone($clothes.legs[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.legs[$clothes_choice].name. <<if $clothes.legs[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.legs[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.legs[$clothes_choice].description Costs <span class="gold">£<<print $clothes.legs[$clothes_choice].cost / 100>>.</span><br><br>
+<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.legs[$clothes_choice].name. <<if $clothes.legs[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.legs[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.legs[$clothes_choice].description Costs <span class="gold">£<<print $clothes.legs[$clothes_choice].cost / 100>>.</span>
+<br><br>
 
 <<shoptraits>>
 
 	<<if $clothes.legs[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from: <br>
+	There's a range of colours to choose from:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
@@ -1183,7 +1201,8 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 	<</if>>
 
 	<<if $clothes.legs[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:<br>
+	Secondary colour:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
@@ -1197,37 +1216,48 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 	<</if>>
 	<<set _cost to clone($clothes.legs[$clothes_choice].cost)>>
 		<<if $wardrobe.legs.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.legs.length / $wardrobe.space</i></span><br>
+		<span class="blue">Your wardrobe is full. <i>$wardrobe.legs.length / $wardrobe.space</i></span>
+		<br>
 		<<elseif $daystate is "night">>
 			<<if $worn.legs.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span>
+			<br>
 			<<else>>
-			<<link [[Steal and wear|$passage]]>><<legsshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and wear|$passage]]>><<legsshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 			<</if>>
-			<<link [[Steal and send home|$passage]]>><<legsshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and send home|$passage]]>><<legsshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 		<<elseif $money gte $clothes.legs[$clothes_choice].cost>>
 			<<if $worn.legs.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span>
+			<br>
 			<<else>>
 
-			<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 		<<else>>
-		<span class="pink">You cannot afford this item.</span><br>
+		<span class="pink">You cannot afford this item.</span>
+		<br>
 		<</if>>
 		<<if $worn.legs.cursed>>
 		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<legsshopbuy "try" null $clothes_choice>><</link>><br>
+			<<link [[Try On|$passage]]>><<legsshopbuy "try" null $clothes_choice>><</link>>
+			<br>
 			<<if $tryOn.tryingOn.legs isnot null>>
-			<<link [[Return|$passage]]>><<legsshopbuy "return" null $clothes_choice>><</link>><br>
+			<<link [[Return|$passage]]>><<legsshopbuy "return" null $clothes_choice>><</link>>
+			<br>
 			<</if>>
 		<</if>>
 <</if>>
 <br>
 <<for _i to 0; _i lt $clothes.legs.length; _i++>>
 	<<if $clothes.legs[_i].shop.includes("clothing")>>
-	<<print '<<link [[$clothes.legs[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.legs[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.legs[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.legs[_i].cost / 100>>.</span><br>
+	<<print '<<link [[$clothes.legs[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.legs[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.legs[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.legs[_i].cost / 100>>.</span>
+	<br>
 	<</if>>
 <</for>>
 
@@ -1243,9 +1273,11 @@ You steal the $clothes.legs[_shop_temp].name.<br><br>
 <<set $clothes_choice_previous to $clothes_choice>>
 
 <<if $args[0] is "buy">>
-You buy the $clothes.feet[_shop_temp].name.<br><br>
+You buy the $clothes.feet[_shop_temp].name.
+<br><br>
 <<elseif $args[0] is "steal">>
-You steal the $clothes.feet[_shop_temp].name.<br><br>
+You steal the $clothes.feet[_shop_temp].name.
+<br><br>
 <<elseif $args[0] is "try">>
 <<tryOnWear _shop_temp "feet">>
 <<elseif $args[0] is "return">>
@@ -1294,12 +1326,14 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 
 
 <<set _temp_choice to clone($clothes.feet[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.feet[$clothes_choice].name. <<if $clothes.feet[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.feet[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.feet[$clothes_choice].description Costs <span class="gold">£<<print $clothes.feet[$clothes_choice].cost / 100>>.</span><br><br>
+<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> $clothes.feet[$clothes_choice].name. <<if $clothes.feet[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif $clothes.feet[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> $clothes.feet[$clothes_choice].description Costs <span class="gold">£<<print $clothes.feet[$clothes_choice].cost / 100>>.</span>
+<br><br>
 
 <<shoptraits>>
 
 	<<if $clothes.feet[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from: <br>
+	There's a range of colours to choose from:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
@@ -1313,7 +1347,8 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 	<</if>>
 
 	<<if $clothes.feet[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:<br>
+	Secondary colour:
+	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
@@ -1327,30 +1362,40 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 	<</if>>
 	<<set _cost to clone($clothes.feet[$clothes_choice].cost)>>
 		<<if $wardrobe.feet.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.feet.length / $wardrobe.space</i></span><br>
+		<span class="blue">Your wardrobe is full. <i>$wardrobe.feet.length / $wardrobe.space</i></span>
+		<br>
 		<<elseif $daystate is "night">>
 			<<if $worn.feet.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span>
+			<br>
 			<<else>>
-			<<link [[Steal and wear|$passage]]>><<feetshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and wear|$passage]]>><<feetshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 			<</if>>
-			<<link [[Steal and send home|$passage]]>><<feetshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>><br>
+			<<link [[Steal and send home|$passage]]>><<feetshopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+			<br>
 		<<elseif $money gte $clothes.feet[$clothes_choice].cost>>
 			<<if $worn.feet.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span><br>
+			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span>
+			<br>
 			<<else>>
 
-			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>><br>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<br>
 		<<else>>
-		<span class="pink">You cannot afford this item.</span><br>
+		<span class="pink">You cannot afford this item.</span>
+		<br>
 		<</if>>
 		<<if $worn.feet.cursed>>
 		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<feetshopbuy "try" null $clothes_choice>><</link>><br>
+			<<link [[Try On|$passage]]>><<feetshopbuy "try" null $clothes_choice>><</link>>
+			<br>
 			<<if $tryOn.tryingOn.feet isnot null>>
-			<<link [[Return|$passage]]>><<feetshopbuy "return" null $clothes_choice>><</link>><br>
+			<<link [[Return|$passage]]>><<feetshopbuy "return" null $clothes_choice>><</link>>
+			<br>
 			<</if>>
 		<</if>>
 <</if>>
@@ -1364,21 +1409,27 @@ You steal the $clothes.feet[_shop_temp].name.<br><br>
 <</nobr>><</widget>>
 
 <<widget "shoptraits">><<nobr>>
-Traits:<br>
+Traits:
+<br>
 <<if _temp_choice.type.includes("normal")>>
-Normal - Suitable for everyday use.<br>
+Normal - Suitable for everyday use.
+<br>
 <</if>>
 <<if _temp_choice.type.includes("formal")>>
-Formal - Suitable for important occasions, and for good etiquette among certain company.<br>
+Formal - Suitable for important occasions, and for good etiquette among certain company.
+<br>
 <</if>>
 <<if _temp_choice.type.includes("school")>>
-School - Sanctioned uniform of the local school.<br>
+School - Sanctioned uniform of the local school.
+<br>
 <</if>>
 <<if _temp_choice.type.includes("glasses")>>
-Glasses - Helps you focus, increasing the rate school skills are improved.<br>
+Glasses - Helps you focus, increasing the rate school skills are improved.
+<br>
 <</if>>
 <<if _temp_choice.type.includes("cool")>>
-Fashionable - Increases the rate status improves at school, but some teachers may dislike it.<br>
+Fashionable - Increases the rate status improves at school, but some teachers may dislike it.
+<br>
 <</if>>
 <<if _temp_choice.type.includes("swim")>>
 Swimwear - Fares well underwater.<br>
