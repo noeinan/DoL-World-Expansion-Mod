@@ -187,6 +187,7 @@
 		<<set $pass to 0>>
 	<</if>>
 	<<passwater>>
+	<<pregProgressTime $pass>>
 	<<if $controlled is 0 and $anxiety gte 2>>
 		<<set $stress += $pass>>
 		<<if $background is "crossdresser" and ($player.gender is $player.appearance)>>
@@ -553,6 +554,7 @@
 	<<elseif $exposed is 1>>
 		<<set _temp *= 1.1>>
 	<</if>>
+	<<set $bottomgrowthtimer += 5 * _temp>>
 	<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
 	<<if $combat isnot 1>>
 		<span class="gold"> You get a good workout.</span>
@@ -986,7 +988,10 @@
 
 <<widget "raped">><<nobr>>
 <<if $rapeavoid is 1 and $consensual is 0 and $gamemode isnot "soft">>
-<<set $rapeavoid to 0>><<set $rapestat += 1>><<set $famerape += $enemyno>><<set $fame += $enemyno>>
+<<set $rapeavoid to 0>><<set $rapestat += 1>>
+	<<if $face isnot "covered" and !$worn.face.type.includes("mask")>>
+	<<set $famerape += $enemyno>><<set $fame += $enemyno>>
+	<</if>>
 	<<if $awareness lte 200>>
 	<<set $awareness += 5>>
 	<<elseif $awareness lte 400>>
@@ -1006,7 +1011,10 @@
 	<</if>>
 <<controlloss>>
 <<elseif $sexavoid is 1 and $consensual is 1>>
-<<set $sexavoid to 0>><<set $famesex += $enemyno>><<set $fame += $enemyno>>
+<<set $sexavoid to 0>>
+	<<if $face isnot "covered" and !$worn.face.type.includes("mask")>>
+	<<set $famesex += $enemyno>><<set $fame += $enemyno>>
+	<</if>>
 <<controlloss>>
 <</if>>
 <</nobr>><</widget>>
@@ -1428,7 +1436,7 @@
 <<set $breastindicator to 0>>
 
 <<if $worn.under_lower.exposed gte 1>>
-<<set $toplessgender to $player.sex>>
+<<set $toplessgender to $player.gender>>
 <<elseif $breastsize gte 8>>
 <<set $toplessgender to "f">>
 <<elseif $worn.under_upper.exposed gte 1>>
@@ -1445,7 +1453,7 @@
 			<<elseif $worn.lower.gender is "m">>
 			<<set $toplessgender to "m">>
 			<<else>>
-			<<set $toplessgender to $player.sex>>
+			<<set $toplessgender to $player.gender>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -1465,7 +1473,7 @@
 			<<elseif $worn.lower.gender is "m">>
 			<<set $toplessgender to "m">>
 			<<else>>
-			<<set $toplessgender to $player.sex>>
+			<<set $toplessgender to $player.gender>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -1503,10 +1511,11 @@
 <<set $libertine to 1>>
 <</if>>
 
-
 <<set $worn.upper.exposedcarry to $worn.upper.exposed>>
 <<set $worn.lower.exposedcarry to $worn.lower.exposed>>
 <<set $worn.under_lower.exposedcarry to $worn.under_lower.exposed>>
+<<set $worn.under_upper.exposedcarry to $worn.under_upper.exposed>>
+
 <<if $upperwetstage gte 3>>
 <<set $worn.upper.exposed to 2>>
 <</if>>
@@ -1559,6 +1568,7 @@
 <<set $worn.upper.exposed to $worn.upper.exposedcarry>>
 <<set $worn.lower.exposed to $worn.lower.exposedcarry>>
 <<set $worn.under_lower.exposed to $worn.under_lower.exposedcarry>>
+<<set $worn.under_upper.exposed to $worn.under_upper.exposedcarry>>
 
 <</nobr>><</widget>>
 
@@ -2090,13 +2100,13 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 <<if $analchastityparasite isnot 0>>
 <<set $arousal += ($pass * 10)>>
 <</if>>
-<<if $chestparasite isnot 0>>
+<<if $parasite.nipples.name>>
 <<set $arousal += ($pass * 10 * $breastsensitivity)>>
 <</if>>
-<<if $penisparasite isnot 0>>
+<<if $parasite.penis.name>>
 <<set $arousal += ($pass * 10 * $genitalsensitivity)>>
 <</if>>
-<<if $clitparasite isnot 0>>
+<<if $parasite.clit.name>>
 <<set $arousal += ($pass * 10 * $genitalsensitivity)>>
 <</if>>
 <</nobr>><</widget>>
@@ -2868,6 +2878,8 @@ __Map__<br>
 			tangerine
 		<<elseif $worn.upper.colour is "wetblack">>
 			black
+		<<elseif $worn.upper.colour is "wetbrown">>
+			brown
 		<</if>>
 	<<elseif $worn.upper.colour isnot 0>>
 		$worn.upper.colour
@@ -2894,6 +2906,8 @@ __Map__<br>
 			tangerine
 		<<elseif $worn.lower.colour is "wetblack">>
 			black
+		<<elseif $worn.lower.colour is "wetbrown">>
+			brown
 		<</if>>
 	<<elseif $worn.lower.colour isnot 0>>
 		$worn.lower.colour
@@ -2920,6 +2934,8 @@ __Map__<br>
 			tangerine
 		<<elseif $worn.under_lower.colour is "wetblack">>
 			black
+		<<elseif $worn.under_lower.colour is "wetbrown">>
+			brown
 		<</if>>
 	<<elseif $worn.under_lower.colour isnot 0>>
 		$worn.under_lower.colour
@@ -2946,6 +2962,8 @@ __Map__<br>
 			tangerine
 		<<elseif $worn.under_upper.colour is "wetblack">>
 			black
+		<<elseif $worn.under_upper.colour is "wetbrown">>
+			brown
 		<</if>>
 	<<elseif $worn.under_upper.colour isnot 0>>
 		$worn.under_upper.colour
