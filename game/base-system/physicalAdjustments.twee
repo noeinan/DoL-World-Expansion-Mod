@@ -1,33 +1,57 @@
 :: Widgets physicalAdjustmentsInit [widget]
 <<widget "physicalAdjustmentsInit">><<nobr>>
 
-<<set $sexStats to {
-	"breasts": {
-		"playedWith": 0
-	},
-	"creampie": {
-		"self": {
-			"anus":0,
-			"mouth":0,
-			"vagina":0
-		},
-		"npc":{
-			"anus":0,
-			"mouth":0,
-			"vagina":0,
-			"tentacle":0
-		}
-	},
-	"pills":{
-		"boughtOnce": false,
-		"autoName": ["breast", "penis"],
-		"autoApply": [1, 1],
-		"breastOwned": [0,0,0,null,0,0],
-		"breastState": 1,
-		"penisOwned": [0,0,0,null,0,0],
-		"penisState": 1
-	}
-}>>
+<<if $sexStats is undefined>>
+    <<set $sexStats to {
+        "breasts": {
+            "playedWith": 0
+        },
+        "creampie": {
+            "self": {
+                "anus":0,
+                "mouth":0,
+                "vagina":0
+            },
+            "npc":{
+                "anus":0,
+                "mouth":0,
+                "vagina":0,
+                "tentacle":0
+            }
+        },
+        "pills":{
+            "boughtOnce": false,
+            "autoName": ["breast", "penis"],
+            "autoApply": [1, 1],
+            "breastOwned": [0,0,0,null,0,0],
+            "breastState": 1,
+            "penisOwned": [0,0,0,null,0,0],
+            "penisState": 1
+        }
+    }>>
+<</if>>
+
+<<if $sexStats.anus is undefined>>
+    <<set $sexStats.anus to {
+        "pregnancy": {
+            0: null,
+            1: null,
+            2: null,
+            3: null,
+            "count": 0,
+            "maxCount": 1,
+            "fertile": false,
+            "fertilized": false,
+            "lowestDaysLeft": null,
+            "lowestTimeLeft": null,
+            "givenBirth": 0,
+            "motherStatus": 0,
+            "seenDoctor": 0,
+            "feltMovement": false,
+            "namesChildren": false
+        }
+    }>>
+<</if>>
 <</nobr>><</widget>>
 
 
@@ -38,7 +62,7 @@
 
 <<set _breastMulti to $sexStats.pills.breastState>>
 <<if _breastMulti isnot 0>>
-	<<switch $player.sex>>
+	<<switch $player.gender>>
 	<<case "m">>
 		<<set _breastMulti -= 1>>
 	<<case "f">>
@@ -59,21 +83,21 @@
 		<<set $breastgrowthtimer -= _breastMulti * 25 * _purityBoost>>
 	<</if>>
 	<<set $impurityBoost to _impurityBoost>>
-	<<if $chestparasite gte 1>>
+	<<if $parasite.chest.name is "urchin">>
 		<<set $breastgrowthtimer -= 300>>
 	<</if>>
-
-	<<set _breastCupSize to ["none", "budding", "AA", "B", "C", "D", "DD", "DDD", "F", "G", "H", "I", "J"]>>
+	<<if $parasite.chest.name is "slime">>
+		<<set $breastgrowthtimer += 300>>
+	<</if>>
+	
 	<<if $breastgrowthtimer lte 0 and $breastsize lt $breastsizemax>>
 		<<set $breastsize += 1>>
 		<<set $breastgrowthtimer += 700>>
 		<<set $breastgrowthmessage to $breastsize>><<set $effectsmessage to 1>>
-		<<set $breastcup to _breastCupSize[$breastsize]>>
 	<<elseif $breastgrowthtime gte 1000 and $breastsize gt 0>>
 		<<set $breastsize -= 1>>
 		<<set $breastgrowthtimer -= 700>>
 		<<set $breastshrinkmessage to $breastsize>><<set $effectsmessage to 1>>
-		<<set $breastcup to _breastCupSize[$breastsize]>>
 	<</if>>
 
 	<<set $breastgrowthtimer to Math.clamp($breastgrowthtimer, 0, 1000)>>
@@ -103,8 +127,11 @@
 		<<set $penisgrowthtimer -= 50>>
 	<</if>>
 
-	<<if $penisparasite gte 1>>
+	<<if $parasite.penis.name is "urchin">>
 		<<set $penisgrowthtimer -= 300>>
+	<</if>>
+	<<if $parasite.penis.name is "slime">>
+		<<set $penisgrowthtimer += 300>>
 	<</if>>
 	<<if $penisgrowthtimer lte 0 and $penissize lt $penissizemax>>
 		<<set $penissize += 1>>
@@ -123,6 +150,36 @@
 	<<set $penisgrowthtimer to Math.clamp($penisgrowthtimer, 0, 1000)>>
 
 <</if>>
+
+
+
+/*Bottom*/
+<<if $purity lt 1000>>
+<<set $bottomgrowthtimer -= ((1000 - $purity) / 2)>>
+<</if>>
+
+<<if $parasite.bottom.name is "urchin">>
+	<<set $bottomgrowthtimer -= 300>>
+<</if>>
+<<if $parasite.bottom.name is "slime">>
+	<<set $bottomgrowthtimer += 300>>
+<</if>>
+<<if $bottomgrowthtimer lte 0 and $bottomsize lt $bottomsizemax>>
+	<<set $bottomsize += 1>>
+	<<set $bottomgrowthtimer += 700>>
+	<<set $bottomgrowthmessage to $bottomsize>><<set $effectsmessage to 1>>
+<<elseif $bottomgrowthtimer gte 1000 and $bottomsize gt 0>>
+	<<set $bottomsize -= 1>>
+	<<set $bottomgrowthtimer -= 700>>
+	<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
+<<elseif $bottomgrowthtimer gte 1200 and $bottomsize lte 0 and $bottomsize gt $bottomsizemin>>
+	<<set $bottomsize -= 1>>
+	<<set $bottomgrowthtimer -= 1000>>
+	<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
+<</if>>
+<<set $bottomgrowthtimer to Math.clamp($bottomgrowthtimer, 0, 1000)>>
+
+
 
 
 /*Resetting of values*/
