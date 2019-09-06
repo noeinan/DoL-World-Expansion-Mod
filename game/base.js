@@ -60,9 +60,14 @@ window.save = function(saveSlot){
     }
 }
 
-window.deleteSave = function(saveSlot){
+window.deleteSave = function(saveSlot, confirm){
     if(saveSlot === "all"){
-        Save.clear()
+        if(confirm === undefined){
+            new Wikifier(null, '<<clearSaveMenu>>');
+            return;
+        }else if(confirm === true){
+            Save.clear();
+        }
     }else if(saveSlot === "auto"){
         Save.autosave.delete();
     }else{
@@ -411,7 +416,6 @@ var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
-	'#passage-start',
 	'#passage-wardrobe',
 	'#passage-cheats',
 	'#passage-changing-room',
