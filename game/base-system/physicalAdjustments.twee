@@ -20,13 +20,30 @@
 			}
 		},
 		"pills":{
+			"type": ["penis", "breast"],
+			"penis": {
+				"type": null,
+				"doseTaken": null,
+				"autoTake": null,
+				"overdose": false,
+				"owned": {
+					"growth": 0,
+					"reduction": 0,
+					"blocker": 0,
+				}
+			},
+			"breast": {
+				"type": null,
+				"doseTaken": null,
+				"autoTake": null,
+				"overdose": false,
+				"owned": {
+					"growth": 0,
+					"reduction": 0,
+					"blocker": 0,
+				}
+			},
 			"boughtOnce": false,
-			"autoName": ["breast", "penis"],
-			"autoApply": [1, 1],
-			"breastOwned": [0,0,0,null,0,0],
-			"breastState": 1,
-			"penisOwned": [0,0,0,null,0,0],
-			"penisState": 1
 		}
 	}>>
 <</if>>
@@ -52,6 +69,50 @@
 		}
 	}>>
 <</if>>
+
+<<if $sexStats.pills.type is undefined>>
+	<<set _quantity to [0,0,0,0,0,0]>>
+	<<if $sexStats.pills.breastOwned isnot undefined and $sexStats.pills.boughtOnce is true>>
+		<<set _quantity[0] to Math.floor($sexStats.pills.penisOwned[5] + ($sexStats.pills.penisOwned[4] / 2))>>
+		<<set _quantity[1] to Math.floor($sexStats.pills.penisOwned[0] + ($sexStats.pills.penisOwned[1] / 2))>>
+		<<set _quantity[2] to clone($sexStats.pills.penisOwned[2])>>
+		<<set _quantity[3] to Math.floor($sexStats.pills.breastOwned[5] + ($sexStats.pills.breastOwned[4] / 2))>>
+		<<set _quantity[4] to Math.floor($sexStats.pills.breastOwned[0] + ($sexStats.pills.breastOwned[1] / 2))>>
+		<<set _quantity[5] to clone($sexStats.pills.breastOwned[2])>>
+	<</if>>
+	<<if $sexStats.pills.boughtOnce is true>>
+		<<set _boughtOnce to true>>
+	<<else>>
+		<<set _boughtOnce to false>>
+	<</if>>
+
+	<<set $sexStats.pills to {
+		"type": ["penis", "breast"],
+		"penis": {
+			"type": null,
+			"doseTaken": null,
+			"autoTake": null,
+			"overdose": false,
+			"owned": {
+				"growth": clone(_quantity[0]),
+				"reduction": clone(_quantity[1]),
+				"blocker": clone(_quantity[2]),
+			}
+		},
+		"breast": {
+			"type": null,
+			"doseTaken": null,
+			"autoTake": null,
+			"overdose": false,
+			"owned": {
+				"growth": clone(_quantity[3]),
+				"reduction": clone(_quantity[4]),
+				"blocker": clone(_quantity[5]),
+			}
+		},
+		"boughtOnce": _boughtOnce,
+	}>>
+<</if>>
 <</nobr>><</widget>>
 
 
@@ -59,8 +120,17 @@
 <<widget "physicalAdjustments">><<nobr>>
 
 /*Breasts*/
+<<switch $sexStats.pills.breast.type>>
+	<<case "growth">>
+		<<set _breastMulti to 1 + (2.25 * $sexStats.pills.breast.doseTaken)>>
+	<<case "reduction">>
+		<<set _breastMulti to -1 + (-2.25 * $sexStats.pills.breast.doseTaken)>>
+	<<case "blocker">>
+		<<set _breastMulti to 0>>
+	<<default>>
+		<<set _breastMulti to 1>>
+<</switch>>
 
-<<set _breastMulti to $sexStats.pills.breastState>>
 <<if _breastMulti isnot 0>>
 	<<switch $player.gender>>
 	<<case "m">>
@@ -69,17 +139,19 @@
 		<<set _breastMulti += (Math.clamp($sexStats.creampie.self.vagina * 2, 0, 50) / 100)>>
 	<</switch>>
 
-	<<set _breastMulti += (Math.clamp($sexStats.breasts.playedWith, 0, 500) / 400)>>
+	<<set _breastMulti += (Math.clamp($sexStats.breasts.playedWith, 0, 500) / 250)>>
+
+	<<set _breastMulti += $sexStats.anus.pregnancy.count / 0.5>>
 
 	<<if $purity gte 990>>
 		<<set _breastMulti -= 1>>
 	<</if>>
 
 	<<if _breastMulti gt 0>>
-		<<set _impurityBoost to 1 + (100 - ($purity / 10))/ 100>>
+		<<set _impurityBoost to 1 + ((1000 - $purity) / 1000)>>
 		<<set $breastgrowthtimer -= _breastMulti * 25 * _impurityBoost>>
 	<<elseif _breastMulti lt 0>>
-		<<set _purityBoost to 1 + ($purity / 10)/ 100>>
+		<<set _purityBoost to 1 + ($purity / 1000)>>
 		<<set $breastgrowthtimer -= _breastMulti * 25 * _purityBoost>>
 	<</if>>
 	<<set $impurityBoost to _impurityBoost>>
@@ -105,23 +177,42 @@
 <</if>>
 
 /*Penis*/
-<<if $penisexist is 1 and $sexStats.pills.penisState isnot 0>>
-	<<set _totalReduction to $sexStats.creampie.self.anus + $sexStats.creampie.self.mouth>>
-	<<set _totalIncrease to $sexStats.creampie.npc.anus + $sexStats.creampie.npc.mouth + $sexStats.creampie.npc.vagina>>
+<<switch $sexStats.pills.penis.type>>
+	<<case "growth">>
+		<<set _penisMulti to 1 + (2.25 * $sexStats.pills.penis.doseTaken)>>
+	<<case "reduction">>
+		<<set _penisMulti to -1 + (-2.25 * $sexStats.pills.penis.doseTaken)>>
+	<<case "blocker">>
+		<<set _penisMulti to 0>>
+	<<default>>
+		<<set _penisMulti to 1>>
+<</switch>>
 
-	<<switch $sexStats.pills.penisState>>
-	<<case 2 3>><<set _totalIncrease += 3>><<set _totalIncrease *= $sexStats.pills.penisState>>
-	<<case -1 -2>><<set _totalReduction += 3>><<set _totalReduction *= ($sexStats.pills.penisState * -1) + 1>>
-	<</switch>>
+<<if $penisexist is 1 and _penisMulti isnot 0>>
+	<<set _totalReduction to ($sexStats.creampie.self.anus + $sexStats.creampie.self.mouth) * 2>>
+	<<set _totalIncrease to ($sexStats.creampie.npc.anus + $sexStats.creampie.npc.mouth + $sexStats.creampie.npc.vagina) * 2>>
+
+	<<if _penisMulti gt 1>>
+		<<set _totalIncrease += 10>>
+		<<set _totalIncrease *= _penisMulti>>
+	<<elseif _penisMulti lt 0>>
+		<<set _totalReduction += 10>>
+		<<set _totalReduction *= _penisMulti * -1>>
+	<</if>>
 
 	<<set _negativeChange to _totalReduction - _totalIncrease>>
 	<<set _positiveChange to _totalIncrease - _totalReduction>>
+
 	<<if _negativeChange gt 0>>
+		<<set _purityBoost to 1 + ($purity / 500)>>
+
 		<<set $penisgrowthtimer += _negativeChange>>
-		<<set $penisgrowthtimer += 1000 / ($purity + 40) * _negativeChange>>
+		<<set $penisgrowthtimer += _purityBoost * _negativeChange>>
 	<<elseif _positiveChange gt 0>>
+		<<set _impurityBoost to 1 + ((1000 - $purity) / 500)>>
+
 		<<set $penisgrowthtimer -= _positiveChange>>
-		<<set $penisgrowthtimer -= 1000 / ($purity + 40) * _positiveChange>>
+		<<set $penisgrowthtimer -= _impurityBoost * _positiveChange>>
 	<</if>>
 	<<if $penissize lt 0>>
 		<<set $penisgrowthtimer -= 50>>
@@ -193,28 +284,30 @@
 <<set $sexStats.creampie.self.vagina to 0>>
 <<set $sexStats.breasts.playedWith to 0>>
 
+<<set _pills to $sexStats.pills>>
 <<if $location is "home">>
-	<<for _i to 0; _i lt $sexStats.pills.autoApply.length; _i++>>
-		<<set _effects to $sexStats.pills.autoName[_i]>>
-		<<set _effectStrength to $sexStats.pills.autoApply[_i]>>
-		<<set _quantityLeft to $sexStats.pills[_effects + "Owned"][_effectStrength + 2]>>
-
-		<<if _quantityLeft isnot null and _effectStrength isnot 1>>
-			<<set $sexStats.pills[_effects + "State"] to _effectStrength>>
-			<<set $sexStats.pills[_effects + "Owned"][_effectStrength + 2] -= 1>>
-			<<set _quantityLeft-->>
-			<<set $pillsTaken to true>><<set $effectsmessage to 1>>
-			<<if _quantityLeft is 0>>
-				<<set $sexStats.pills.autoApply[_i] to 1>>
-				<<set $pillsTakenLast to true>>
+	<<for _i to 0; _i lt _pills.autoTake.length; _i++>>
+		<<set _autoTake to _pills[_pills.autoTake[_i]].autoTake>>
+		<<if _autoTake isnot null>>
+			<<if _pills[_pills.autoTake[_i]].owned[_autoTake] gt 0>>
+				<<set _pills[_pills.autoTake[_i]].owned[_autoTake]-->>
+				<<set _pills[_pills.autoTake[_i]].type to clone(_autoTake)>>
+				<<set _pills[_pills.autoTake[_i]].doseTaken to 1>>
+				<<set $pillsTaken to true>><<set $effectsmessage to 1>>
+				<<if _pills[_pills.autoTake[_i]].owned[_autoTake] is 0>>
+					<<set _pills[_pills.autoTake[_i]].autoTake to null>>
+					<<set $pillsTakenLast to true>>
+				<</if>>
+			<<else>>
+				<<set _pills[_pills.autoTake[_i]].autoTake to null>>
 			<</if>>
-		<<else>>
-			<<set $sexStats.pills[_effects + "State"] to 1>>
 		<</if>>
 	<</for>>
 <<else>>
-	<<set $sexStats.pills.breastState to 1>>
-	<<set $sexStats.pills.penisState to 1>>
+	<<set _pills.penis.type to null>>
+	<<set _pills.penis.doseTaken to null>>
+	<<set _pills.breast.type to null>>
+	<<set _pills.breast.doseTaken to null>>
 <</if>>
 <</nobr>><</widget>>
 

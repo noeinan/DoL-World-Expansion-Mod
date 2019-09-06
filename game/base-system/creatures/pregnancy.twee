@@ -1,6 +1,6 @@
 :: Pregnancy [widget]
 <<widget "impregnate">><<nobr>>
-<<if $args[0]>>
+<<if $args[0] and $analpregdisable is "f">>
 	<<set _pregnancy to $sexStats.anus.pregnancy>>
 	<<if _pregnancy.count lt _pregnancy.maxCount>>
 		<<set $calc to [$rng, (1 + $args[1]) / (_pregnancy.count + 1)]>>
@@ -78,7 +78,7 @@
 
 
 <<widget "fertilize">><<nobr>>
-<<if $sexStats.anus.pregnancy.fertile is true>>
+<<if $sexStats.anus.pregnancy.fertile is true and $analpregdisable is "f">>
 	<<set _pregnancy to $sexStats.anus.pregnancy>>
 	<<for _i to 0; _i lt _pregnancy.maxCount; _i++>>
 		<<if _pregnancy[_i] isnot null>>
@@ -110,40 +110,42 @@
 
 
 <<widget "pregProgressDay">><<nobr>>
-<<set _pregnancy to $sexStats.anus.pregnancy>>
-<<set _pregnancy.lowestDaysLeft to null>>
-<<if $deviancy gte 75>><<set _pregnancy.namesChildren to true>><<else>><<set _pregnancy.namesChildren to false>><</if>>
-<<for _i to 0; _i lt _pregnancy.maxCount; _i++>>
-	<<if _pregnancy[_i] isnot null>>
-		<<if _pregnancy[_i].daysLeft is 0 and _pregnancy[_i].fertilized is false>>
-			<<set _remove to true>>
-		<<else>>
-			<<if _pregnancy[_i].daysLeft gt 0>>
-				<<set _pregnancy[_i].daysLeft -= 1>>
+<<if $analpregdisable is "f">>
+	<<set _pregnancy to $sexStats.anus.pregnancy>>
+	<<set _pregnancy.lowestDaysLeft to null>>
+	<<if $deviancy gte 75>><<set _pregnancy.namesChildren to true>><<else>><<set _pregnancy.namesChildren to false>><</if>>
+	<<for _i to 0; _i lt _pregnancy.maxCount; _i++>>
+		<<if _pregnancy[_i] isnot null>>
+			<<if _pregnancy[_i].daysLeft is 0 and _pregnancy[_i].fertilized is false>>
+				<<set _remove to true>>
+			<<else>>
+				<<if _pregnancy[_i].daysLeft gt 0>>
+					<<set _pregnancy[_i].daysLeft -= 1>>
+				<</if>>
+				<<if _pregnancy[_i].daysLeft lt _pregnancy.lowestDaysLeft and _pregnancy.fertilized is true>>
+					<<set _pregnancy.lowestDaysLeft to _pregnancy[_i].daysLeft>>
+				<</if>>
 			<</if>>
-			<<if _pregnancy[_i].daysLeft lt _pregnancy.lowestDaysLeft and _pregnancy.fertilized is true>>
-				<<set _pregnancy.lowestDaysLeft to _pregnancy[_i].daysLeft>>
+			<<if _pregnancy[_i].stats.gender is "Futa" and _pregnancy[_i].daysLeft lte 3>>
+				<<if _pregnancy[_i].stats.lastEgg gt 0>>
+					<<set _pregnancy[_i].stats.lastEgg -= 1>>
+				<<elseif _pregnancy.count lt _pregnancy.maxCount>>
+					<<set _pregnancy[_i].stats.lastEgg to Math.floor(_pregnancy[_i].stats.growth / 3)>>
+					<<impregnate _pregnancy[_i].creature null _pregnancy[_i]>>
+				<</if>>
+			<</if>>
+			<<if _remove is true>>
+				<<set _pregnancy[_i] to null>>
+				<<set _pregnancy -= 1>>
 			<</if>>
 		<</if>>
-		<<if _pregnancy[_i].stats.gender is "Futa" and _pregnancy[_i].daysLeft lte 3>>
-			<<if _pregnancy[_i].stats.lastEgg gt 0>>
-				<<set _pregnancy[_i].stats.lastEgg -= 1>>
-			<<elseif _pregnancy.count lt _pregnancy.maxCount>>
-				<<set _pregnancy[_i].stats.lastEgg to Math.floor(_pregnancy[_i].stats.growth / 3)>>
-				<<impregnate _pregnancy[_i].creature null _pregnancy[_i]>>
-			<</if>>
-		<</if>>
-		<<if _remove is true>>
-			<<set _pregnancy[_i] to null>>
-			<<set _pregnancy -= 1>>
-		<</if>>
-	<</if>>
-<</for>>
+	<</for>>
+<</if>>
 <</nobr>><</widget>>
 
 
 <<widget "pregProgressTime">><<nobr>>
-<<if $args[0]>>
+<<if $args[0] and $analpregdisable is "f">>
 	<<set _pregnancy to $sexStats.anus.pregnancy>>
 	<<set _pregnancy.lowestDaysLeft to null>>
 	<<for _i to 0; _i lt _pregnancy.maxCount; _i++>>
