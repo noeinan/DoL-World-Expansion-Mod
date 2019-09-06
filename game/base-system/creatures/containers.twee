@@ -1,50 +1,50 @@
 :: Widgets containers [widget]
 <<widget "containersInit">><<nobr>>
 <<if $container is undefined>>
-    <<set $container to {
-        "lastLocation": null,
-        "list":["home", "lake"],
-        "home":{
-            "upgrades":{
-                "capacity":0,
-                "foodStorage":0,
-                "luxery":0
-            },
-            "name": "Tiny Fish Tank",
-            "count": 0,
-            "maxCount": 1,
-            "daysSinceFed": 0,
-            "maxDaysWithoutFood": 3,
-            "creatures":{
-                0: null
-            },
-            "deadCreatures": 0,
-            "visited": false,
-            "leaveLink": "Bedroom"
-        },
-        "portable":{
-            "creatures":[],
-            "value":0
-        },
-        "lake":{
-            "upgrades":{
-                "capacity":0,
-                "foodStorage":0,
-                "luxery":0
-            },
-            "name": "pond",
-            "count": 0,
-            "maxCount": 3,
-            "daysSinceFed": 0,
-            "maxDaysWithoutFood": 31,
-            "creatures":{
-                0: null
-            },
-            "deadCreatures": 0,
-            "visited": false,
-            "leaveLink": "Lake Waterfall"
-        },
-    }>>
+	<<set $container to {
+		"lastLocation": null,
+		"list":["home", "lake"],
+		"home":{
+			"upgrades":{
+				"capacity":0,
+				"foodStorage":0,
+				"luxery":0
+			},
+			"name": "Tiny Fish Tank",
+			"count": 0,
+			"maxCount": 1,
+			"daysSinceFed": 0,
+			"maxDaysWithoutFood": 3,
+			"creatures":{
+				0: null
+			},
+			"deadCreatures": 0,
+			"visited": false,
+			"leaveLink": "Bedroom"
+		},
+		"portable":{
+			"creatures":[],
+			"value":0
+		},
+		"lake":{
+			"upgrades":{
+				"capacity":0,
+				"foodStorage":0,
+				"luxery":0
+			},
+			"name": "pond",
+			"count": 0,
+			"maxCount": 3,
+			"daysSinceFed": 0,
+			"maxDaysWithoutFood": 31,
+			"creatures":{
+				0: null
+			},
+			"deadCreatures": 0,
+			"visited": false,
+			"leaveLink": "Lake Waterfall"
+		},
+	}>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -52,23 +52,23 @@
 
 <<widget "creatureActivity">><<nobr>>
 <<if $args[0]>>
-    <<if $args[0] lte 50>>
-    <span class="gold">Perfect activity</span>
-    <<elseif $args[0] lte 70>>
-    <span class="green">Amazing activity</span>
-    <<elseif $args[0] lte 100>>
-    <span class="teal">Good activity</span>
-    <<elseif $args[0] lte 150>>
-    <span class="lblue">Decent activity</span>
-    <<elseif $args[0] lte 200>>
-    <span class="blue">Okay activity</span>
-    <<elseif $args[0] lte 250>>
-    <span class="purple">Poor activity</span>
-    <<elseif $args[0] lte 300>>
-    <span class="pink">Rare activity</span>
-    <<elseif $args[0] gt 350>>
-    <span class="red">Very rare activity</span>
-    <</if>>
+	<<if $args[0] lte 50>>
+	<span class="gold">Perfect activity</span>
+	<<elseif $args[0] lte 70>>
+	<span class="green">Amazing activity</span>
+	<<elseif $args[0] lte 100>>
+	<span class="teal">Good activity</span>
+	<<elseif $args[0] lte 150>>
+	<span class="lblue">Decent activity</span>
+	<<elseif $args[0] lte 200>>
+	<span class="blue">Okay activity</span>
+	<<elseif $args[0] lte 250>>
+	<span class="purple">Poor activity</span>
+	<<elseif $args[0] lte 300>>
+	<span class="pink">Rare activity</span>
+	<<elseif $args[0] gt 350>>
+	<span class="red">Very rare activity</span>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -77,13 +77,13 @@
 <<widget "creatureContainersProgressDay">><<nobr>>
 <<set _list to $container.list>>
 <<for _i to 0; _i lt _list.length; _i++>>
-    <<set $container[_list[_i]].daysSinceFed += 1>>
-    <<if $container[_list[_i]].daysSinceFed gt $container[_list[_i]].maxDaysWithoutFood>>
-        <<set $container[_list[_i]].deadCreatures to $container[_list[_i]].count>>
-        <<set $container[_list[_i]].count to 0>>
-        <<set $container[_list[_i]].creatures to {}>>
-    <</if>>
-    <<set $container[_list[_i]].visited to false>>
+	<<set $container[_list[_i]].daysSinceFed += 1>>
+	<<if $container[_list[_i]].daysSinceFed gt $container[_list[_i]].maxDaysWithoutFood>>
+		<<set $container[_list[_i]].deadCreatures to $container[_list[_i]].count>>
+		<<set $container[_list[_i]].count to 0>>
+		<<set $container[_list[_i]].creatures to {}>>
+	<</if>>
+	<<set $container[_list[_i]].visited to false>>
 <</for>>
 <</nobr>><</widget>>
 
@@ -98,49 +98,49 @@
 <<set _boosts to [false,false,false,false,false]>>
 <<set _purityGain to 0>><<set _tenticles to 0>>
 <<for _i to 0; _i lt _container.maxCount; _i++>>
-    <<if _container.creatures[_i] is undefined>>
-        <<continue>>
-    <</if>>
-    <<if _container.creatures[_i] isnot null>>
-        <<set _value = Math.floor(5000 / _container.creatures[_i].stats.speed)>>
-        <<if _container.upgrades.luxery gt 0>>
-            <<set _value *= Math.floor(1 + (0.25 * _container.upgrades.luxery))>>
-        <</if>>
-        <<if _value gt 0>>
-            <<set $stress -= _value>>
-            <<set _boosts[0] to true>>
-        <</if>>
-        <<if Math.floor(_value / 8) gt 0>>
-            <<set $trauma -= Math.floor(_value / 8)>>
-            <<set _boosts[1] to true>>
-        <</if>>
-        <<if _container.creatures[_i].creature is "Slime">>
-            <<set _purityGain += 0.5>>
-        <</if>>
-        <<if _container.creatures[_i].creature is "Worm">>
-            <<set _purityGain -= 0.5>>
-        <</if>>
-        <<if _container.creatures[_i].creature is "Tentacle">>
-            <<if Math.floor(_value / 4) gt 0>>
-                <<set $tiredness -= Math.floor(_value / 4)>>
-                <<set _boosts[2] to true>>
-            <</if>>
-            <<set _tenticles += 0.5>>
-        <</if>>
-    <</if>>
+	<<if _container.creatures[_i] is undefined>>
+		<<continue>>
+	<</if>>
+	<<if _container.creatures[_i] isnot null>>
+		<<set _value = Math.floor(5000 / _container.creatures[_i].stats.speed)>>
+		<<if _container.upgrades.luxery gt 0>>
+			<<set _value *= Math.floor(1 + (0.25 * _container.upgrades.luxery))>>
+		<</if>>
+		<<if _value gt 0>>
+			<<set $stress -= _value>>
+			<<set _boosts[0] to true>>
+		<</if>>
+		<<if Math.floor(_value / 8) gt 0>>
+			<<set $trauma -= Math.floor(_value / 8)>>
+			<<set _boosts[1] to true>>
+		<</if>>
+		<<if _container.creatures[_i].creature is "Slime">>
+			<<set _purityGain += 0.5>>
+		<</if>>
+		<<if _container.creatures[_i].creature is "Worm">>
+			<<set _purityGain -= 0.5>>
+		<</if>>
+		<<if _container.creatures[_i].creature is "Tentacle">>
+			<<if Math.floor(_value / 4) gt 0>>
+				<<set $tiredness -= Math.floor(_value / 4)>>
+				<<set _boosts[2] to true>>
+			<</if>>
+			<<set _tenticles += 0.5>>
+		<</if>>
+	<</if>>
 <</for>>
 
 <<if _purityGain gt 0>>
-    <<set _purityGain += _tenticles>>
+	<<set _purityGain += _tenticles>>
 <<elseif _purityGain lt 0>>
-    <<set _purityGain -= _tenticles>>
+	<<set _purityGain -= _tenticles>>
 <</if>>
 <<if Math.floor(_purityGain) gt 0>>
-    <<set _purityGain to Math.floor(_purityGain)>>
-    <<set _boosts[3] to true>>
+	<<set _purityGain to Math.floor(_purityGain)>>
+	<<set _boosts[3] to true>>
 <<elseif Math.ceil(_purityGain) lt 0>>
-    <<set _purityGain to Math.ceil(_purityGain)>>
-    <<set _boosts[4] to true>>
+	<<set _purityGain to Math.ceil(_purityGain)>>
+	<<set _boosts[4] to true>>
 <</if>>
 <<set $purity += _purityGain>>
 
@@ -159,62 +159,62 @@
 <<set $checkboxResult to {}>>
 
 <<if _container.count is 0>>
-    <<if _container.deadCreatures is 0>>
-        You currently have no <<if _pregnancy.namesChildren is true>>children<<else>>parasites<</if>> inside the <<print _container.name>>.<br>
-    <<else>>
-        After not checking and feeding <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, it looks like some have died. You take your time in burying them. <<ggtrauma>><<set $trauma += 100 * _container.deadCreatures>>
-        
-        <<link [[Next (1:00)|$passage]]>><<set _container.deadCreatures to 0>><<pass 60>><</link>>
-    <</if>>
+	<<if _container.deadCreatures is 0>>
+		You currently have no <<if _pregnancy.namesChildren is true>>children<<else>>parasites<</if>> inside the <<print _container.name>>.<br>
+	<<else>>
+		After not checking and feeding <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, it looks like some have died. You take your time in burying them. <<ggtrauma>><<set $trauma += 100 * _container.deadCreatures>>
+
+		<<link [[Next (1:00)|$passage]]>><<set _container.deadCreatures to 0>><<pass 60>><</link>>
+	<</if>>
 <<else>>
-    <<if _container.visited is false>>
-        You check on <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, and make sure they have everything they need inside <<print _container.name>>. <br><<creatureVisit>>
-    <<else>>
-    You watch your <<if _pregnancy.namesChildren is true>>children<<else>>parasites<</if>>  inside <<print _container.name>>.
-    <</if>><br><br>
-    It has a max capacity of <<print _container.maxCount>> and <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>> can survive <<print _container.maxDaysWithoutFood>> without your attention<<if _container.feederName>>, thanks to your <<print _container.feederName>><</if>>. <<if _container.decorations>>You have <<print _container.decorations>> setup within the tank.<</if>>
+	<<if _container.visited is false>>
+		You check on <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, and make sure they have everything they need inside <<print _container.name>>. <br><<creatureVisit>>
+	<<else>>
+	You watch your <<if _pregnancy.namesChildren is true>>children<<else>>parasites<</if>>  inside <<print _container.name>>.
+	<</if>><br><br>
+	It has a max capacity of <<print _container.maxCount>> and <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>> can survive <<print _container.maxDaysWithoutFood>> without your attention<<if _container.feederName>>, thanks to your <<print _container.feederName>><</if>>. <<if _container.decorations>>You have <<print _container.decorations>> setup within the tank.<</if>>
 <</if>>
 
 <<if _container.count gt 0>>
-    <ul>
-        <<for _i to 0; _i lt _container.maxCount; _i++>>
-            <<if _container.creatures[_i] is undefined>>
-                <<continue>>
-            <</if>>
-            <<if _container.creatures[_i] isnot null>>
-                <li><label><<print '<<checkbox "$checkboxResult[' + clone(_i) + ']" false true>>'>> - <<print _container.creatures[_i].creature>> - <<print _container.creatures[_i].stats.gender>> - <<creatureActivity _container.creatures[_i].stats.speed>></label></li>
-            <</if>>
-        <</for>>
-    </ul>
+	<ul>
+		<<for _i to 0; _i lt _container.maxCount; _i++>>
+			<<if _container.creatures[_i] is undefined>>
+				<<continue>>
+			<</if>>
+			<<if _container.creatures[_i] isnot null>>
+				<li><label><<print '<<checkbox "$checkboxResult[' + clone(_i) + ']" false true>>'>> - <<print _container.creatures[_i].creature>> - <<print _container.creatures[_i].stats.gender>> - <<creatureActivity _container.creatures[_i].stats.speed>></label></li>
+			<</if>>
+		<</for>>
+	</ul>
 <</if>>
 
 <<if _container.deadCreatures is 0>>
-    <<if $sexStats.anus.pregnancy.feltMovement is true>>
-        <<if $worn.under_lower.anal_shield is 1>>
-            You're unable to deliver <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>> while you have an anal shield.
-        <<else>>
-            <<if _pregnancy.namesChildren is true>>
-                <<link [[Attempt to deliver you baby (1:00)|GiveBirth]]>><<pass 60>><</link>>
-            <<else>>
-                <<link [[Attempt to deliver the parasite (1:00)|GiveBirth]]>><<pass 60>><</link>>
-            <</if>><br>
-        <</if>>
-    <</if>>
-    <<if _container.count gt 0>>
-    <<link [[Transfer for selling|$passage]]>>
-        <<for _i to 0; _i lt _container.maxCount;_i++>>
-            <<if _container.creatures[_i] is undefined>>
-                <<continue>>
-            <</if>>
-            <<if _container[_i] isnot null>>
-                <<if $checkboxResult[_i] is true>>
-                    <<set $number to clone(_i)>>
-                    <<moveCreature $location "portable" _i>>
-                <</if>>
-            <</if>>
-        <</for>>
-    <</link>><br><br>
-    <</if>>
-    <<link [[Leave|$container[$location].leaveLink]]>><</link>>
+	<<if $sexStats.anus.pregnancy.feltMovement is true>>
+		<<if $worn.under_lower.anal_shield is 1>>
+			You're unable to deliver <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>> while you have an anal shield.
+		<<else>>
+			<<if _pregnancy.namesChildren is true>>
+				<<link [[Attempt to deliver you baby (1:00)|GiveBirth]]>><<pass 60>><</link>>
+			<<else>>
+				<<link [[Attempt to deliver the parasite (1:00)|GiveBirth]]>><<pass 60>><</link>>
+			<</if>><br>
+		<</if>>
+	<</if>>
+	<<if _container.count gt 0>>
+	<<link [[Transfer for selling|$passage]]>>
+		<<for _i to 0; _i lt _container.maxCount;_i++>>
+			<<if _container.creatures[_i] is undefined>>
+				<<continue>>
+			<</if>>
+			<<if _container[_i] isnot null>>
+				<<if $checkboxResult[_i] is true>>
+					<<set $number to clone(_i)>>
+					<<moveCreature $location "portable" _i>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</link>><br><br>
+	<</if>>
+	<<link [[Leave|$container[$location].leaveLink]]>><</link>>
 <</if>>
 
