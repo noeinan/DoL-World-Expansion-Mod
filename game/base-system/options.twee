@@ -60,36 +60,41 @@
 <h4>File Import/Export</h4>
 
 <<if SugarCube.Browser.isMobile.any() is true>>
-	Please note that file import/export does not work on android currently.
+	Note that saving and loading from file does not work on Android currently.
 <<else>>
-	Import: <input id="saveImport" type="file" value="Import Save" onchange="importSave(this.files)">
+	Load from file: <input id="saveImport" type="file" value="Load from file" onchange="importSave(this.files)">
 	<br><br>
 	<<if $dancing is 0 and $combat is 0>>
-		<input type="button" value="Export Save" onclick="SugarCube.Save.export()">
+		<input type="button" value="Save to file" onclick="SugarCube.Save.export()">
 	<<else>>
-		Unable to export save currently.
+		Unable to save to file currently.
 	<</if>>
 <</if>>
 
 <h4>Text Import/Export</h4>
 <<if $dancing is 0 and $combat is 0>>
-	This feature lets you transfer saves between devices when one or more does not allow access to save files, such as on Android.
-	<br>
-	To save, click on "Get Save Data", then copy and paste the save data where required.
-	<br>
-	To load, paste in the save data then click "Load Save Data".
-	<br>
-	To transfer to and from Android, it is recommended to use email or a service such as pastebin. Please ensure that the start and the end of the save is exact to prevent issues. 
-	<br><br>
-	<textarea id="saveDataInput" rows="4" cols="40" onClick="this.select();"></textarea>
-	<br>
+	This feature lets you transfer saves between devices when one or more does not allow access to save files, such as on Android.<br>
+	To save, click on "Get Save Data", then copy and paste the save data where required.<br>
+	To load, paste in the save data then click "Load Save Data".<br>
+	To transfer to and from Android, it is recommended to use email or a service such as pastebin. Please ensure that the start and the end of the save is exact to prevent issues. <br><br>
+	<textarea id="saveDataInput" rows="4" cols="40" onClick="if(SugarCube.State.variables.disableAutoSelect == false)this.select();"></textarea><br>
 	<input type="button" value="Clear Text Box" onclick="clearTextBox('saveDataInput')"/>
+	<input type="button" value="Top of Text Box" onclick="topTextArea('saveDataInput')"/>
+	<input type="button" value="Bottom of Text Box" onclick="bottomTextArea('saveDataInput')"/>
 	<input type="button" value="Get Save Data" onclick="getSaveData()"/>
 	<input type="button" value="Load Save Data" onclick="loadSaveData()"/>
 <<else>>
 	Unable to save currently.
 <</if>>
 <br><br>
+<label>
+	<<if $enabledOldSaveMenu is true>>
+		<<checkbox "$disableAutoSelect" false true checked>>
+	<<else>>
+		<<checkbox "$disableAutoSelect" false true>>
+	<</if>>
+	Disables auto select.
+</label><br><br>
 <</nobr>><</widget>>
 
 
@@ -103,7 +108,7 @@
 					<td>A</td>
 					<<if _saveDetails.autosave isnot null>>
 						<td><input type="button" class="saveMenuButton" value="Load" onclick="loadSave('auto')"/></td>
-						<td><<print _saveDetails.autosave.title>></td>
+						<td><<print _saveDetails.autosave.title>><br><span class="datestamp"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span></td>
 						<td><input type="button" class="saveMenuButton right" value="Delete Auto" onclick="deleteSave('auto')"/></td>
 					<<else>>
 						<td><input type="button" value="Load" disabled/></td>
@@ -118,7 +123,7 @@
 							<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +')"/>'>>
 							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
 						</td>
-						<td><<print _saveDetails.slots[_slot].title>></td>
+						<td><<print _saveDetails.slots[_slot].title>><br><span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span></td>
 						<td><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></td>
 					<<else>>
 						<td><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +')"/>'>></td>
@@ -138,10 +143,23 @@
 <br>
 <</nobr>><</widget>>
 
+<<widget "clearAllWarning">>
+<span class="red">Warning</span> - Are you sure you would like to delete all saves?
+
+<input type="button" class="close" value="Confirm Delete All" onclick="deleteSave('all', true)"/>
+
+<input type="button" class="saveMenuButton" value="Cancel" onclick="deleteSave('all', false)"/>
+
+<</widget>>
+
+
 <<widget "resetSaveMenu">><<nobr>>
-
-<<replace #saveList>>
-	<<saveList>>
-<</replace>>
-
+    <<replace #saveList>>
+        <<saveList>>
+    <</replace>>
+<</nobr>><</widget>>
+<<widget "clearSaveMenu">><<nobr>>
+    <<replace #saveList>>
+        <<clearAllWarning>>
+    <</replace>>
 <</nobr>><</widget>>
