@@ -416,15 +416,7 @@ var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
-	'#passage-wardrobe',
 	'#passage-cheats',
-	'#passage-changing-room',
-	'#passage-eden-wardrobe',
-	'#passage-asylum-wardrobe',
-	'#passage-strip-club-dressing-room',
-	'#passage-brothel-dressing-room',
-	'#passage-school-boy-wardrobe',
-	'#passage-school-girl-wardrobe',
 	'#passage-eden-mirror',
 	'#passage-eerie-mirror-5',
 	'#passage-mirror-stop',
