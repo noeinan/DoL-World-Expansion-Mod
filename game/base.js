@@ -71,7 +71,7 @@ window.deleteSave = function(saveSlot, confirm){
 	}else if(saveSlot === "auto"){
 		Save.autosave.delete();
 	}else{
-		Save.slots.delete(saveSlot); 
+		Save.slots.delete(saveSlot);
 	}
 	new Wikifier(null, '<<resetSaveMenu>>');
 }
@@ -80,7 +80,7 @@ window.importSave = function(saveFile){
 	if(!window.FileReader) return; // Browser is not compatible
 
 	var reader = new FileReader();
-	
+
 	reader.onloadend = function(){
 		DeserializeGame(this.result);
 	}
@@ -455,7 +455,7 @@ $(document).on(':passagerender', function(ev) {
 	if (passage() == "GiveBirth") {
 		$(ev.content).find("[type=checkbox]").on('propertychange change', function() { new Wikifier(null, '<<resetPregButtons>>');generateNumbers(ev); } );
 	}
-	
+
 	generateNumbers(ev);
 });
 
