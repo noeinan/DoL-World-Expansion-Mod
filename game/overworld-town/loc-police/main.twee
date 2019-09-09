@@ -148,3 +148,60 @@ You get the feeling the police aren't going to be helpful. At least you tried to
 <<set $headpolice to 1>><<control 25>>
 <<link [[Next|Police Station]]>><</link>>
 <br>
+
+:: Police Back Office [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+You find yourself in a small passage between a set of administrative back offices.
+<<if $daystate is "night">>
+	The rooms nearby are dark and empty. Further down the corridor, a few offices glow with light, however a thick, glass door bars your way.
+	You hear distant voices, the odd yelp and the occasional burst of loud laughter.<br>
+	The door to a nearby office is slightly open. The office behind is dark, lit only by the glow from the computer screen. The police computer is locked.
+	<<if ndef $police_access_card>><<set $police_access_card to 0>><</if>>
+	<<if ndef $police_hack>><<set $police_hack to 0>><</if>>
+	<<if $police_access_card is 0>>
+		<br>A Police access card lies on the desk. These are used to open security doors.<br><br>
+		<<link [[Steal Access card|Police Back Office]]>><<set $police_access_card to 1>><</link>>
+	<<else>><br><br>
+	<</if>>
+	<<if $police_hack lte 0>>
+		<span class="red">The login box taunts you. You have no way to access the computer.</span><br><span class="gold">You'll need help breaking in.</span>
+	<<elseif $police_hack is 1>>
+		<<link [[Install keylogger (0:05)|Police Back Office]]>><<pass 5>><<set $police_hack to 2>><<<<set $police_hack_day to $days>><</link>>
+	<<elseif $police_hack is 2>>
+		<span class="yellow">The keylogger is in place but you still need the password.</span>
+	<<elseif $police_hack is 3>>
+		<<link [[Access Police Computer (0:10)|Police Computer]]>><<pass 1>><<set $phase to 0>><</link>>
+	<<elseif $police_hack is 4>>
+		<<link [[Access Police Computer (0:10)|Police Computer]]>><<pass 10>><<set $phase to 1>><</link>>
+	<</if>>
+<<else>>
+	There are police everywhere. You cannot access anything. You will be caught in moments. You have no choice but to leave.<br>
+	It would probably be quieter at night.<br><br>
+<</if>>
+<<link [[Leave|Barb Street]]>><</link>>
+<br>
+
+:: Police Computer [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<if $phase is 0>>
+	The password you have no longer works. It must have been changed.
+	<span class="yellow">The keylogger is still in place - perhaps you can get the new password.</span>
+<<elseif $phase is 1>>
+	You access the police computer.
+	<<police_computer_action>>
+<<elseif $phase is 10>>
+	A messagebox tells you the software installed correctly. It should lock out everything within the next few hours.
+	<<set $police_hack to 3>>
+<<elseif $phase is 11>>
+	You transfer all the evidence of crimes to Whitney's profile. You are now squeaky clean.
+	<<set $police_hack to 3>><<set $framed to "whitney">>
+<<elseif $phase is 12>>
+	You transfer all the evidence of crimes to Leighton's profile. You are now squeaky clean.
+	<<set $police_hack to 3>><<set $framed to "leighton">>
+<<else>>/*invalid phase*/
+	The police computer has started updating. It's at 3%. Shouldn't take too long, right?<br>
+	<<link [[Wait (12:00)|Police Back Office]]>><<pass 720>><</link>>(Don't wait! This is an error, please report!)
+<</if>>
+
+<<link [[Leave|Barb Street]]>>
+<br>

@@ -2991,16 +2991,21 @@ __Map__<br>
 
 <<widget "setup_pillory">><<nobr>>
 	<<set $pillory_tenant to 	{person : clone($baseNPC), exists : 0, duration : 0, served : 0, startday: 0, starthour : 0, endday : 0, endhour : 0,
-								 crowd : 0, wet : 0, upperexposed : 0 , lowerexposed : 0, fruit : 0, face : 0, ass : 0, genital : 0, broken : 0, lastviewed : { day : 0, hour: 0}}>>
+								 crowd : 0, wet : 0, upperexposed : 0 , lowerexposed : 0, fruit : 0, face : 0, ass : 0, genital : 0, broken : 0,
+								 lastviewed : { day : 0, hour: 0}, special : {name : "", desc : ""}}>>
 <</nobr>><</widget>>
 
 
 <<widget "new_npc_pillory">><<nobr>>
-	<<if $rng gte 20>><<generate1>><<else>><<generatec1>><</if>>
+	<<if not $args[0]>>
+		<<if $rng gte 20>><<generate1>><<else>><<generatec1>><</if>>
+		<<set _already_served to random(0,2)>>
+	<<else>>
+		<<set _already_served to 0>>
+	<</if>>
 	<<set $pillory_tenant.exists to 1>>
 	<<set $pillory_tenant.person to clone($NPCList[0])>>
 	<<set $pillory_tenant.duration to random(4,27)>>
-	<<set _already_served to random(0,2)>>
 	<<set $pillory_tenant.startday to $days>>
 	<<set $pillory_tenant.starthour to ($hour - _already_served)>>
 	<<set _endhour to ($pillory_tenant.starthour + $pillory_tenant.duration)>>
@@ -3023,9 +3028,31 @@ __Map__<br>
 	<<set $pillory_tenant.lastviewed.day to $days>>
 	<<set $pillory_tenant.lastviewed.hour to $hour>>
 
-	<<person1>>A <<person>> <<if _already_served is 0>>is currently being locked into the pillory.<<else>>has recently been locked in the pillory.<</if>>
+	<<if $pillory_tenant.special.name is ''>>
+		<<person1>>A <<person>> <<if _already_served is 0>>is currently being locked into the pillory.<<else>>has recently been locked in the pillory.<</if>>
+	<</if>>
 	<<endevent>>
 	<<npc_pillory_release_schedule>><br><br>
+<</nobr>><</widget>>
+
+<<widget "imprison_whitney">><<nobr>>
+	<<setup_pillory>>
+	<<whitney>>
+	<<set $pillory_tenant.special.name to "Whitney">>
+	<<set $pillory_tenant.special.desc to "bully">>
+	<<new_npc_pillory $NPCList[0]>>
+<</nobr>><</widget>>
+
+<<widget "imprison_leighton">><<nobr>>
+	<<setup_pillory>>
+	<<leighton>>
+	<<set $pillory_tenant.special.name to "Leighton">>
+	<<if $NPCList[0].pronoun is "f">>
+		<<set $pillory_tenant.special.desc to "headmistress">>
+	<<else>>
+		<<set $pillory_tenant.special.desc to "headmaster">>
+	<</if>>
+	<<new_npc_pillory $NPCList[0]>>
 <</nobr>><</widget>>
 
 <<widget "get_pillory_npc">><<nobr>>
