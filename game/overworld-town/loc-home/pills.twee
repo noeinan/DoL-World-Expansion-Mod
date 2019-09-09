@@ -1,99 +1,167 @@
-:: Widgets printQuantity [widget]
-<<widget "printQuantity">><<nobr>>
-<<if $args[0] isnot null and $args[1] is $args[2]>>
-	[<<print $args[0]>>, auto]
-<<elseif $args[0] isnot null and $args[1] isnot $args[2]>>
-	[<<print $args[0]>>]
-<</if>>
-<</nobr>><</widget>>
-
-/*<<managePill "breast" "Strong Reduction" -1 true>> -- $sexStats.pills.breastOwned[0] -= 1, <<set $sexStats.pills.breastState to -2>>*/
 :: Widgets managePill [widget]
 <<widget "managePill">><<nobr>>
-
 <<if $args[0] and $args[1] and $args[2]>>
-	<<switch $args[1]>>
-		<<case "Strong Reduction">>
-			<<set $sexStats.pills[$args[0] + "Owned"][0] += $args[2]>>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to -2>><</if>>
-		<<case "Weak Reduction">>
-			<<set $sexStats.pills[$args[0] + "Owned"][1] += $args[2]>>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to -1>><</if>>
-		<<case "Stall">>
-			<<set $sexStats.pills[$args[0] + "Owned"][2] += $args[2]>>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to 0>><</if>>
-		<<case "None">>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to 1>><</if>>
-		<<case "Weak Increase">>
-			<<set $sexStats.pills[$args[0] + "Owned"][4] += $args[2]>>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to 2>><</if>>
-		<<case "Strong Increase">>
-			<<set $sexStats.pills[$args[0] + "Owned"][5] += $args[2]>>
-			<<if $args[3] is true>><<set $sexStats.pills[$args[0] + "State"] to 3>><</if>>
-	<</switch>>
+	<<set $managePill to [$args[0],$args[1],$args[2]]>>
+	<<set $sexStats.pills[$args[0]].owned[$args[1]] += $args[2]>>
+	<<if $args[3] is true>>
+		<<set $sexStats.pills[$args[0]].type to $args[1]>>
+		<<set $sexStats.pills[$args[0]].doseTaken++>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
+
 :: PillCollection [nobr]
-<<effects>>
-<<set _pillStrengthNames to ["Strong Reduction", "Weak Reduction", "Stall", "None", "Weak Increase", "Strong Increase"]>>
+<<set $outside to 0>><<set $location to "home">><<effects>>
+<<set _pills to $sexStats.pills>>
+<<set _pillNames to ["Growth", "Reduction", "Blocker", "None"]>>
+<<set _pillTypes to ["growth", "reduction", "blocker", null]>>
 
 Breast Pills
 <br>
-
-<<set _checked to 3>>
+<<if _pills.breast.owned[_pillTypes[0]] gt 0 or _pills.breast.owned[_pillTypes[1]] gt 0>>
+	There are warning labels on the <<if _pills.breast.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.breast.owned[_pillTypes[0]] gt 0 and _pills.breast.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.breast.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
+<</if>>
 <ul class="nostyle">
-<<for _i to 0; _i lt _pillStrengthNames.length; _i += 1>>
-<<set _quantity to $sexStats.pills.breastOwned[_i]>>
-<<set _strength to _i -2>>
-<<if _quantity isnot 0>>
-	<<if $sexStats.pills.breastState is _strength>>
-		<li><label><<radiobutton "_checked" _i checked>> <<print _pillStrengthNames[_i]>> <<printQuantity _quantity _strength $sexStats.pills.autoApply[0]>> </label></li>
-	<<else>>
-		<li><label><<radiobutton "_checked" _i>> <<print _pillStrengthNames[_i]>> <<printQuantity _quantity _strength $sexStats.pills.autoApply[0]>> </label></li>
-	<</if>>
-<<else>>
-	/*<li><<print _pillStrengthNames[_i]>><<printQuantity _quantity _strength $sexStats.pills.breastState>></li>*/
-<</if>>
-<</for>></ul>
+	<<for _i to 0; _i lt _pillNames.length; _i += 1>>
+		<<if _pills.breast.owned[_pillTypes[_i]] isnot 0>>
+			<li><label>
+				<<print '<<radiobutton "_checked" _i ' + (_pills.breast.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
+				<<print _pillNames[_i]>>
+				<<if _pills.breast.type is _pillTypes[_i] and _pillTypes[_i] isnot null>>
+					<<print '[Taken ' + _pills.breast.doseTaken + ' dose' + (_pills.breast.doseTaken gt 1 ? "s" : "") +']'>>
+				<</if>>
+				<<if _pills.breast.autoTake is _pillTypes[_i] and _pillTypes[_i] isnot null>>[Auto]<</if>>
+			</label></li>
+		<</if>>
+	<</for>>
+</ul>
 
-<<if $sexStats.pills.breastState is 1>>
-	<<link [[Take pills|PillCollection]]>><<managePill "breast" _pillStrengthNames[_checked] -1 true false>><</link>>
+<<if _pills.breast.type is null>>
+	<<link [[Take pills|PillCollection]]>><<managePill "breast" _pillTypes[_checked] -1 true false>><</link>>
+<<elseif _pills.breast.doseTaken is 1 and _pills.breast.type isnot "blocker" and _pills.breast.owned[_pills.breast.type] gt 0>>
+	<<print'<<link [[Take a second dose of '+ _pills.breast.type +' pills|PillCollectionSecondDose]]>><<managePill "breast" _pills.breast.type -1 true false>><<set $secondDose to "breast">><</link>>'>>
+<<elseif _pills.breast.type is "blocker" or _pills.breast.owned[_pills.breast.type] is 0>>
+	You have already taken a dose of breast growth <<print _pills.breast.type>> pills today.
 <<else>>
-	You have already taken a <<print _pillStrengthNames[$sexStats.pills.breastState + 2]>> pill today.
+	You have already taken 2 doses of breast <<print _pills.breast.type>> pills today.
 <</if>>
-<br><<link [[Take every morning|PillCollection]]>><<set $sexStats.pills.autoApply[0] to (_checked - 2)>><</link>>
+<br>
+<<link [[Take every morning|PillCollection]]>><<set _pills.breast.autoTake to clone(_pillTypes[_checked])>><</link>>
 
 
 <<if $penisexist is 1>>
-<br><br>
-Penis Pills
-<br>
-
-<<set _checked2 to 3>>
-<ul class="nostyle">
-<<for _i to 0; _i lt _pillStrengthNames.length; _i += 1>>
-<<set _quantity to $sexStats.pills.penisOwned[_i]>>
-<<set _strength to _i -2>>
-<<if _quantity isnot 0>>
-	<<if $sexStats.pills.penisState is _strength>>
-		<li><label><<radiobutton "_checked2" _i checked>> <<print _pillStrengthNames[_i]>> <<printQuantity _quantity _strength $sexStats.pills.autoApply[1]>> </label></li>
-	<<else>>
-		<li><label><<radiobutton "_checked2" _i>> <<print _pillStrengthNames[_i]>> <<printQuantity _quantity _strength $sexStats.pills.autoApply[1]>> </label></li>
+	<br><br>
+	Penis Pills
+	<br>
+	<<if _pills.penis.owned[_pillTypes[0]] gt 0 or _pills.penis.owned[_pillTypes[1]] gt 0>>
+		There are warning labels on the <<if _pills.penis.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.penis.owned[_pillTypes[0]] gt 0 and _pills.penis.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.penis.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
 	<</if>>
-<<else>>
-	/*<li><<print _pillStrengthNames[_i]>><<printQuantity _quantity _strength $sexStats.pills.penisState>></li>*/
-<</if>>
-<</for>></ul>
 
-<<if $sexStats.pills.penisState is 1>>
-	<<link [[Take pills|PillCollection]]>><<set $sexStats.pills.penisState to (_checked2 - 2)>><<set $sexStats.pills.penisOwned[_checked2]-->><</link>>
-<<else>>
-	You have already taken a <<print _pillStrengthNames[$sexStats.pills.penisState + 2]>> pill today.
-<</if>>
-<br>
-<<link [[Take every morning|PillCollection]]>><<set $sexStats.pills.autoApply[1] to (_checked2 - 2)>><</link>>
+	<ul class="nostyle">
+		<<for _i to 0; _i lt _pillNames.length; _i += 1>>
+			<<if _pills.penis.owned[_pillTypes[_i]] isnot 0>>
+				<li><label>
+				<<print '<<radiobutton "_checked2" _i ' + (_pills.penis.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
+				<<print _pillNames[_i]>>
+				<<if _pills.penis.type is _pillTypes[_i] and _pillTypes[_i] isnot null>>
+					<<print '[Taken ' + _pills.penis.doseTaken + ' dose' + (_pills.penis.doseTaken gt 1 ? "s" : "") +']'>>
+				<</if>>
+				<<if _pills.penis.autoTake is _pillTypes[_i] and _pillTypes[_i] isnot null>>[Auto]<</if>>
+			</label></li>
+			<</if>>
+		<</for>>
+	</ul>
+
+	<<if _pills.penis.type is null>>
+		<<link [[Take pills|PillCollection]]>><<managePill "penis" _pillTypes[_checked2] -1 true false>><</link>>
+	<<elseif _pills.penis.doseTaken is 1 and _pills.penis.type isnot "blocker" and _pills.penis.owned[_pills.penis.type] gt 0>>
+		<<print'<<link [[Take a second dose of '+ _pills.penis.type +' pills|PillCollectionSecondDose]]>><<managePill "penis" _pills.penis.type -1 true false>>><<set $secondDose to "penis">><</link>>'>>
+	<<elseif _pills.penis.type is "blocker" or _pills.penis.owned[_pills.penis.type] is 0>>
+		You have already taken a dose of penis growth <<print _pills.penis.type>> pills today.
+	<<else>>
+		You have already taken 2 doses of penis growth <<print _pills.penis.type>> pills today.
+	<</if>>
+	<br>
+	<<link [[Take every morning|PillCollection]]>><<set _pills.penis.autoTake to clone(_pillTypes[_checked2])>><</link>>
 
 <</if>>
+
 <br><br>
 <<link [[Step away|Bedroom]]>><</link>>
+
+
+:: PillCollectionSecondDose [nobr]
+<<set $outside to 0>><<set $location to "home">><<effects>>
+
+<<set _pills to $sexStats.pills>>
+<<if ($secondDose is "penis" and _pills.breast.doseTaken is 2) or $secondDose is "breast" and _pills.penis.doseTaken is 2>>
+	<<set _risk to random(5,20)>>
+<<else>>
+	<<set _risk to 0>>
+<</if>>
+Disregarding the warning label, you take a second dose of <<print $secondDose>> <<print _pills[$secondDose].type>> pills.
+<br>
+
+<<set _result to random(0, 100)>>
+<<if _result gte 80 + _risk>>
+	Despite the warning, nothing wrong seems to happen.
+<<elseif _result gte 70 + _risk>>
+	<<set $timePassed to 2>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> feel a little odd for a few minutes but feel fine afterwords.
+<<elseif _result gte 60 + _risk>>
+	<<set $timePassed to 10>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> feel a little warm for a few minutes but feel fine afterwords. <<garousal>><<set $arousal += 500>>
+<<elseif _result gte 40 + _risk>>
+	<<set $timePassed to 20>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> suddenly starts to feel really warm and itchy which makes you  unable to concentrate on anything else till it passes. <<garousal>><<gpain>><<set $pain += 10>><<set $arousal += 2000>>
+<<elseif _result gte 5 + _risk>>
+	<<set $timePassed to 30>>
+	You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : "penis")>><<if _risk gt 0>>, followed by another sharp pain in your <<print ($secondDose is "breast" ? "penis" : "breasts")>><<set $pain += 50>><<set $timePassed += 30>><</if>>. <<gpain>><<set $pain += 50>>
+	<br><br>
+	It takes some time but you gradually feel better.
+<<else>>
+	<<set $timePassed to random(120, 420)>>
+	You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : "penis")>><<if _risk gt 0>>, followed by another sharp pain in your <<print ($secondDose is "breast" ? "penis" : "breasts")>><<set $pain += 100>><<set $timePassed += 30>><</if>>. It continues to get worse until you pass out.<<ggstress>><<gtrauma>><<gpain>>
+	<<set $pain += 400>><<set $stress += 4000>><<set $trauma += 500>>
+	<<set _passout to true>>
+<</if>>
+
+<<set $hoursPassed to 0>>
+<<if $timePassed gte 60>>
+	<<set _hoursPassed to Math.floor($timePassed / 60)>>
+	<<set _minutesPassed to $hoursPassed * 60>>
+<</if>>
+
+<br><br>
+<<if _passout is true>>
+	<<link [[Next|PillCollectionPassOut]]>><<pass $timePassed>><</link>>
+<<else>>
+	<<print '<<link [[Next ('+_hoursPassed+':'+ (_minutesPassed lt 10 ? "0" : "") + _minutesPassed + ')|PillCollection]]>><<unset $secondDose>><<pass $timePassed>><<unset $timePassed>><</link>>'>>
+<</if>>
+
+:: PillCollectionPassOut[nobr]
+<<set $outside to 0>><<set $location to "home">><<effects>>
+<<set _pills to $sexStats.pills>><<set $pain += 300>>
+You end up waking in agony and wondering what had happened to you. After a brief feel around your body, you shriek in pain after briefly touching your <<print ($secondDose is "breast" ? "breasts" : "penis")>>. You end up spending more time lying down till you feel like you can move without something else happening to you.
+
+<br><br>
+As you get up, you check the time to find that<<if $timePassed gt 240>> many hours<<else>> only a couple<</if>> have passed since you took that pill.
+
+<<set _change to random(100, 500)>>
+<<if _change gte 200>>
+	You give your <<print ($secondDose is "breast" ? "breasts" : "penis")>> a check over, you think something might have changed about them.
+<</if>>
+<<if $secondDose is "breast">>
+	<<if _pills.breast.type is "growth">>
+		<<set $breastgrowthtimer -= _change>>
+	<<else>>
+		<<set $breastgrowthtimer += _change>>
+	<</if>>
+<<else>>
+	<<if _pills.penis.type is "growth">>
+		<<set $penisgrowthtimer -= _change>>
+	<<else>>
+		<<set $penisgrowthtimer += _change>>
+	<</if>>
+<</if>>
+
+<br><br>
+<<link [[Next (1:00)|PillCollection]]>><<unset $secondDose>><<pass 60>><<unset $timePassed>><</link>>

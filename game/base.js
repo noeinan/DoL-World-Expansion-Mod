@@ -11,13 +11,13 @@ window.statsConsole = function(){
 }
 
 window.overlayShowHide = function(elementId){
-    var div = document.getElementById(elementId);
-    if(div != undefined){
-        div.classList.toggle("hidden");
-        if(elementId === "debugOverlay"){
-           SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
-        }
-    }
+	var div = document.getElementById(elementId);
+	if(div != undefined){
+		div.classList.toggle("hidden");
+		if(elementId === "debugOverlay"){
+		   SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+		}
+	}
 }
 
 window.overlayMenu = function(elementId, type){
@@ -40,47 +40,52 @@ window.overlayMenu = function(elementId, type){
 }
 
 window.returnSaveDetails = function(){
-    return Save.get();
+	return Save.get();
 }
 
 
 window.loadSave = function(saveSlot){
-    if(saveSlot === "auto"){
-        Save.autosave.load();
-    }else{
-        Save.slots.load(saveSlot);
-    }
+	if(saveSlot === "auto"){
+		Save.autosave.load();
+	}else{
+		Save.slots.load(saveSlot);
+	}
 }
 
 window.save = function(saveSlot){
-    if(saveSlot != undefined){
-        Save.slots.save(saveSlot);
-        SugarCube.State.variables.currentOverlay = null;
-        overlayShowHide("customOverlay");
-    }
+	if(saveSlot != undefined){
+		Save.slots.save(saveSlot);
+		SugarCube.State.variables.currentOverlay = null;
+		overlayShowHide("customOverlay");
+	}
 }
 
-window.deleteSave = function(saveSlot){
-    if(saveSlot === "all"){
-        Save.clear()
-    }else if(saveSlot === "auto"){
-        Save.autosave.delete();
-    }else{
-        Save.slots.delete(saveSlot); 
-    }
-    new Wikifier(null, '<<resetSaveMenu>>');
+window.deleteSave = function(saveSlot, confirm){
+	if(saveSlot === "all"){
+		if(confirm === undefined){
+			new Wikifier(null, '<<clearSaveMenu>>');
+			return;
+		}else if(confirm === true){
+			Save.clear();
+		}
+	}else if(saveSlot === "auto"){
+		Save.autosave.delete();
+	}else{
+		Save.slots.delete(saveSlot);
+	}
+	new Wikifier(null, '<<resetSaveMenu>>');
 }
 
 window.importSave = function(saveFile){
-    if(!window.FileReader) return; // Browser is not compatible
+	if(!window.FileReader) return; // Browser is not compatible
 
-    var reader = new FileReader();
-    
-    reader.onloadend = function(){
-        DeserializeGame(this.result);
-    }
+	var reader = new FileReader();
 
-    reader.readAsText(saveFile[0]);
+	reader.onloadend = function(){
+		DeserializeGame(this.result);
+	}
+
+	reader.readAsText(saveFile[0]);
 }
 
 importStyles("style.css")
@@ -100,30 +105,30 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 
 
 window.getSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    input.value = Save.serialize();
+	var input = document.getElementById("saveDataInput");
+	input.value = Save.serialize();
 }
 
 window.loadSaveData = function(){
-    var input = document.getElementById("saveDataInput");
-    var result = Save.deserialize(input.value);
-    if (result === null) {
-        input.value = "Invalid Save."
-    }
+	var input = document.getElementById("saveDataInput");
+	var result = Save.deserialize(input.value);
+	if (result === null) {
+		input.value = "Invalid Save."
+	}
 }
 
 window.clearTextBox = function(id){
-    document.getElementById(id).value = "";
+	document.getElementById(id).value = "";
 }
 
 window.topTextArea = function(id){
-    var textArea = document.getElementById(id);
-    textArea.scroll(0, 0);
+	var textArea = document.getElementById(id);
+	textArea.scroll(0, 0);
 }
 
 window.bottomTextArea = function(id){
-    var textArea = document.getElementById(id);
-    textArea.scroll(0, textArea.scrollHeight);
+	var textArea = document.getElementById(id);
+	textArea.scroll(0, textArea.scrollHeight);
 }
 
 var xDown = null;
@@ -131,7 +136,7 @@ var yDown = null;
 
 
 function getTouches(evt) {
-	return evt.touches ||             // browser API
+	return evt.touches ||			 // browser API
 			evt.originalEvent.touches; // jQuery
 }
 
@@ -411,20 +416,6 @@ var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
-	'#passage-start',
-	'#passage-wardrobe',
-	'#passage-cheats',
-	'#passage-changing-room',
-	'#passage-eden-wardrobe',
-	'#passage-asylum-wardrobe',
-	'#passage-strip-club-dressing-room',
-	'#passage-brothel-dressing-room',
-	'#passage-school-boy-wardrobe',
-	'#passage-school-girl-wardrobe',
-	'#passage-eden-mirror',
-	'#passage-eerie-mirror-5',
-	'#passage-mirror-stop',
-	'#passage-mirror',
 	'#passage-testing-room',
 ];
 
@@ -456,15 +447,15 @@ function getPrettyKeyNumber(counter) {
 $(document).on(':passagerender', function(ev) {
 	currentLinks = [];
 
-    if (passage() == "GiveBirth") {
+	if (passage() == "GiveBirth") {
 		$(ev.content).find("[type=checkbox]").on('propertychange change', function() { new Wikifier(null, '<<resetPregButtons>>');generateNumbers(ev); } );
 	}
-    
+
 	generateNumbers(ev);
 });
 
 function generateNumbers(ev){
-    if (!State.variables.numberify_enabled || !enableLinkNumberify)
+	if (!State.variables.numberify_enabled || !enableLinkNumberify)
 		return;
 
 	for (var i = 0; i < disableNumberifyInVisibleElements.length; i++) {
