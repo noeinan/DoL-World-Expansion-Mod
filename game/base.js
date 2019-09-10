@@ -416,11 +416,6 @@ var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
 	'#passage-hairdressers-seat',
-	'#passage-cheats',
-	'#passage-eden-mirror',
-	'#passage-eerie-mirror-5',
-	'#passage-mirror-stop',
-	'#passage-mirror',
 	'#passage-testing-room',
 ];
 
