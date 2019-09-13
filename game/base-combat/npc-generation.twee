@@ -1,7 +1,7 @@
 :: Widgets NPC Generation [widget]
 <<widget "generateNPC">><<nobr>>
 <!-- Args are NPC#(1-6), Status, Pronoun, Gender, Level -->
-<!-- Example: <<generateNPC 1 a m m 18>> would generate NPC 1 as adult male/male "huge" -->
+<!-- Example: <<generateNPC 1 a m m 18>> would generate NPC 1 as adult male/male "burly" -->
 
 <!-- Checks if endevent was properly used after the last event -->
 <<if $enemyno gte 1>>
@@ -15,7 +15,7 @@
 <<set _gen to $args[3]>>
 <<set _lvl to $args[4]>>
 
-<<if _pro>>
+<<if _pro is "m" or _pro is "f">>
 	<<set $NPCList[_n].pronoun to _pro>>
 <<else>>
 	<<set $rng to random(1, 100)>>
@@ -1382,9 +1382,10 @@
 <<set _n to $args[0]>>
 <<set _gen to $args[1]>>
 <<set _lvl to $args[2]>>
-DEBUG _n _gen _lvl
+/% DEBUG _n _gen _lvl %/
+
 <!-- This sets transgender. This should be pushed up to npcgenerate later... should be established for generation-->
-<<if _gen>>
+<<if _gen is "m" or _gen is "f">>
 	<<set $NPCList[_n].gender to _gen>>
 	<<if _gen is "m">>
 		<<set $NPCList[_n].penis to "clothed">>
@@ -1449,7 +1450,7 @@ DEBUG _n _gen _lvl
 <</if>>
 
 <!-- Select NPC 1-18 Description/Strength pair. Breast size range bound to Description. NPC19 is Brute -->
-<<if _lvl>>
+<<if _lvl gte 0 and _lvl lte 19>>
 	<<set _i to _lvl>>
 <<else>>
 	<<set _i to random(0, 18)>>
@@ -1496,7 +1497,7 @@ DEBUG _n _gen _lvl
 <<set $NPCList[_n].health to _h[_i]>>
 <<set $NPCList[_n].description to _d[_i]>>
 
-DEBUG NPC _n : $NPCList[_n].pronoun , $NPCList[_n].gender $NPCList[_n].description<br>
+/% DEBUG NPC _n : $NPCList[_n].pronoun , $NPCList[_n].gender $NPCList[_n].description<br> %/
 
 <<if $NPCList[_n].gender is "m">><!-- set pp on size based on MODs for male genitals -->
 	<<if $penis_mod gte _plo[_i]>><<set _plo[_i] to $penis_mod>><</if>>
