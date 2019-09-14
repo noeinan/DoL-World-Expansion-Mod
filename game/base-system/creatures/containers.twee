@@ -46,6 +46,11 @@
 		},
 	}>>
 <</if>>
+<<if $container.home.kylarDelay is undefined>>
+    <<set $container.home.kylarDelay to 0>>
+    <<set $container.home.kylarFed to false>>
+    <<set $container.home.kylarHelp to false>>
+<</if>>
 <</nobr>><</widget>>
 
 
@@ -77,13 +82,33 @@
 <<widget "creatureContainersProgressDay">><<nobr>>
 <<set _list to $container.list>>
 <<for _i to 0; _i lt _list.length; _i++>>
-	<<set $container[_list[_i]].daysSinceFed += 1>>
-	<<if $container[_list[_i]].daysSinceFed gt $container[_list[_i]].maxDaysWithoutFood>>
-		<<set $container[_list[_i]].deadCreatures to $container[_list[_i]].count>>
-		<<set $container[_list[_i]].count to 0>>
-		<<set $container[_list[_i]].creatures to {}>>
+    <<set _container to $container[_list[_i]]>>
+    <<if _container.count is 0>>
+        <<set _container.daysSinceFed to 0>>
+        <<continue>>
+    <</if>>
+    <<if _list[_i] is "home">>
+        <<if $kylarlove gte 75 and $kylarstate is "active">>
+            <<set _container.kylarHelp to true>>
+        <<else>>
+            <<set _container.kylarHelp to false>>
+        <</if>>
+        <<if _container.kylarHelp is true and _container.kylarDelay is 0 and _container.daysSinceFed is _container.maxDaysWithoutFood>>
+            <<set $kylarlove -= 1>>
+            <<set _container.daysSinceFed -= 1>>
+            <<set _container.kylarFed to true>>
+        <<elseif _container.kylarHelp is true and _container.kylarDelay gt 0 and _container.daysSinceFed is 0>>
+            <<set _container.kylarDelay-->>
+            <<set _container.kylarFed to false>>
+        <</if>>
+    <</if>>
+	<<set _container.daysSinceFed += 1>>
+	<<if _container.daysSinceFed gt _container.maxDaysWithoutFood>>
+		<<set _container.deadCreatures to _container.count>>
+		<<set _container.count to 0>>
+		<<set _container.creatures to {}>>
 	<</if>>
-	<<set $container[_list[_i]].visited to false>>
+	<<set _container.visited to false>>
 <</for>>
 <</nobr>><</widget>>
 
@@ -163,7 +188,13 @@
 		You currently have no <<if _pregnancy.namesChildren is true>>children<<else>>parasites<</if>> inside the <<print _container.name>>.
 		<br>
 	<<else>>
-		After not checking and feeding <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, it looks like some have died. You take your time in burying them. <<ggtrauma>><<set $trauma += 100 * _container.deadCreatures>>
+		After not checking and feeding <<if _pregnancy.namesChildren is true>>your children<<else>>the parasites<</if>>, it looks like some have died. You take your time in burying them. <<ggtrauma>>
+        <<if _pregnancy.namesChildren is true>>
+            <<set _traumaMulti to 2>>
+        <<else>>
+            <<set _traumaMulti to 1>>
+        <</if>>
+        <<set $trauma += 100 * _traumaMulti * _container.deadCreatures>>
 
 		<<link [[Next (1:00)|$passage]]>><<set _container.deadCreatures to 0>><<pass 60>><</link>>
 	<</if>>
