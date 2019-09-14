@@ -105,10 +105,21 @@
 
 <<if _tentacle.head is "vaginaimminent">>
 	<<if $vaginalvirginity is 1>>
-		<span class="pink"> and thrusts into your <<pussycomma>></span><span class="red"> tearing your hymen and forever robbing you of your purity.</span>
+		<<switch _tentacle.size>>
+		<<case 3>>
+			<span class="pink">and thrusts into your <<pussycomma>></span><span class="red"> tearing your hymen and forever robbing you of your purity. You wimper as your <<pussy>> stretches to accommodate the _tentacle.desc tentacle.</span>
+			<<violence 100>>
+		<<default>>
+			<span class="pink"> and thrusts into your <<pussycomma>></span><span class="red"> tearing your hymen and forever robbing you of your purity.</span>
+		<</switch>>
 		<<set $vaginalvirginity to 0>><<violence 100>>
 	<<else>>
-		<span class="pink"> and thrusts into your <<pussystop>></span>
+		<<switch _tentacle.size>>
+		<<case 3>>
+			<span class="pink">and thrusts into your <<pussystop>></span><span class="red"> You wimper as your <<pussy>> stretches to accommodate the _tentacle.desc tentacle.</span>
+		<<default>>
+			<span class="pink"> and thrusts into your <<pussystop>></span>
+		<</switch>>
 	<</if>>
 	<br>
 	<<set $vaginastate to "tentacle">><<set _tentacle.head to "vagina">><<sex 5>><<raped>><<vaginaraped>><<vaginalstat>><<violence 1>>
@@ -185,10 +196,21 @@
 
 <<if _tentacle.head is "anusimminent">>
 	<<if $analvirginity is 1>>
-		<span class="pink"> and thrusts into your <<bottomcomma>></span><span class="red"> violating you in a way you hadn't conceived of.</span>
+		<<switch _tentacle.size>>
+			<<case 3>>
+				<span class="pink">and thrusts into your <<bottomcomma>></span><span class="red"> violating you in a way you hadn't conceived of. You shudder as your <<bottom>> stretches to accommodate the _tentacle.desc tentacle.</span>
+			<<violence 100>>
+			<<default>>
+				<span class="pink"> and thrusts into your <<bottomcomma>></span><span class="red"> violating you in a way you hadn't conceived of.</span>
+		<</switch>>
 		<<set $analvirginity to 0>><<violence 100>>
 	<<else>>
-		<span class="pink"> and thrusts into your <<bottomstop>></span>
+		<<switch _tentacle.size>>
+			<<case 3>>
+				<span class="pink">and thrusts into your <<bottomstop>></span><span class="red"> You shudder as your <<bottom>> stretches to accommodate the _tentacle.desc tentacle.</span>
+			<<default>>
+				<span class="pink"> and thrusts into your <<bottomstop>></span>
+		<</switch>>
 	<</if>>
 	<<set $anusstate to "tentacle">><<set _tentacle.head to "anus">>
 	<<sex 5>><<raped>><<analstat>><<violence 1>>
@@ -790,22 +812,16 @@
 <<widget "actionstentacleadvbottom">><<nobr>>
 	<<set _tentacle to $args[0] >>
 
-	<<if _tentacle.head is "bottomrub">>
-		<<set _action to "bottomrub"+_tentacle.id >>
-		<<actionstentacleadvcheckbox "sub" "Rub" "$bottomaction" _action $bottomactiondefault>>
-
-	<</if>>
+	<<set _action to "bottomrub"+_tentacle.id >>
+	<<actionstentacleadvcheckbox "sub" "Rub" "$bottomaction" _action $bottomactiondefault>>
 
 <</nobr>><</widget>>
 
 <<widget "actionstentacleadvchest">><<nobr>>
 	<<set _tentacle to $args[0] >>
 
-	<<if _tentacle.head is "chest">>
-		<<set _action to "chestrub"+_tentacle.id >>
-		<<actionstentacleadvcheckbox "sub" "Rub" "$chestaction" _action $chestactiondefault>>
-
-	<</if>>
+	<<set _action to "chestrub"+_tentacle.id >>
+	<<actionstentacleadvcheckbox "sub" "Rub" "$chestaction" _action $chestactiondefault>>
 
 <</nobr>><</widget>>
 
@@ -1002,74 +1018,54 @@
 		<<if $feetskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip.</span>
 			<<set $feetgoo += 1>><<set _tentacle.tentaclehealth -= 3>><<feetejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
-	<<if $feetaction is "showthighs"+_tentacle.id>>
+	<<if $feetaction is "showthighs"+_tentacle.id or $feetaction is "showbottom"+_tentacle.id>>
 		<<set $feetaction to 0>><<set $feetstate to 0>>
 		<<set $leftleg to 0>><<set $rightleg to 0>>
-		
+
 		<<submission 1>><br><<combatdeviancy5>><br>
-		You <<feettext>> guide the _tentacle.desc tentacle with your feet between your thighs.
+
+		<<if $feetaction is "showthighs"+_tentacle.id>>
+			<<set _dir to "thighs">>
+			You <<feettext>> guide the _tentacle.desc tentacle with your feet between your thighs.
+		<<else>>
+			<<set _dir to "bottom">>
+			You <<feettext>> guide the _tentacle.desc tentacle with your feet towards your <<bottomstop>>
+		<</if>>
 
 		<<if $rng lte 30>> /* Leg grapple? */
 			<<if $rng gte 15>>
-				<<set _leg to "left">>
-				<<set _tentacle.shaft to "leftleg">><<set $leftleg to "grappled">>
+				<<set _leg to "left">><<set _tentacle.shaft to "leftleg">><<set $leftleg to "grappled">>
 			<<else>>
-				<<set _leg to "right">>
-				<<set _tentacle.shaft to "rightleg">><<set $rightleg to "grappled">>
+				<<set _leg to "right">><<set _tentacle.shaft to "rightleg">><<set $rightleg to "grappled">>
 			<</if>>
 			<<neutral 1>><<feettentacledisable>>
 			The _tentacle.desc tentacle winds its way around your _leg leg, <span class="blue">restraining it.</span>
 		<<else>>
 			<<if _tentacle.shaft is 0>>
-				<<set _tentacle.shaft to (either("tummy","waist"))>>
+				<<if _dir is "thighs">>
+					<<set _tentacle.shaft to (either("tummy","waist"))>>
+				<<else>>
+					<<set _tentacle.shaft to (either("tummy","waist","thighs"))>>
+				<</if>>
 			<</if>>
 		<</if>>
 
-		<<if $penisexist is 1 and $penisuse is 0>>
-			<<set $penisuse to "tentaclerub">><<set _tentacle.head to "penisrub">>
-		<<elseif $vaginaexist is 1 and $vaginause is 0>>
-			<<set $vaginause to "tentaclerub">><<set _tentacle.head to "vaginarub">>
-		<</if>>
-
-		<<sex 3>><<thighstat>>
-		<<set $thighuse to "tentaclerub">>
-	<</if>>
-
-	<<if $feetaction is "showbottom"+_tentacle.id>>
-		<<set $feetaction to 0>><<set $feetstate to 0>>
-		<<set $leftleg to 0>><<set $rightleg to 0>>
-
-		<<submission 1>><br><<combatdeviancy5>><br>
-		You <<feettext>> guide the _tentacle.desc tentacle with your feet towards your <<bottomstop>>
-
-		<<if $rng lte 30>> /* Leg grapple? */
-			<<if $rng gte 15>>
-				<<set _leg to "left">>
-				<<set _tentacle.shaft to "leftleg">><<set $leftleg to "grappled">>
-			<<else>>
-				<<set _leg to "right">>
-				<<set _tentacle.shaft to "rightleg">><<set $rightleg to "grappled">>
+		<<if _dir is "thighs">>
+			<<if $penisexist is 1 and $penisuse is 0>>
+				<<set $penisuse to "tentaclerub">><<set _tentacle.head to "penisrub">>
+			<<elseif $vaginaexist is 1 and $vaginause is 0>>
+				<<set $vaginause to "tentaclerub">><<set _tentacle.head to "vaginarub">>
 			<</if>>
-			<<neutral 1>><<feettentacledisable>>
-			The _tentacle.desc tentacle winds its way around your _leg leg, <span class="blue">restraining it.</span>
+
+			<<sex 3>><<thighstat>>
+			<<set $thighuse to "tentaclerub">>
 		<<else>>
-			<<if _tentacle.shaft is 0>>
-				<<set _tentacle.shaft to (either("tummy","waist","thighs"))>>
-			<</if>>
+			<<set $bottomuse to "tentaclerub">><<set $anususe to "tentaclerub">>
+			<<set _tentacle.head to "bottomrub">><<sex 1>><<bottomstat>>
 		<</if>>
-
-		<<if $penisexist is 1 and $penisuse is 0>>
-			<<set $penisuse to "tentaclerub">><<set _tentacle.head to "penisrub">>
-		<<elseif $vaginaexist is 1 and $vaginause is 0>>
-			<<set $vaginause to "tentaclerub">><<set _tentacle.head to "vaginarub">>
-		<</if>>
-
-		<<set $bottomuse to "tentaclerub">><<set $anususe to "tentaclerub">>
-		<<set _tentacle.head to "bottomrub">><<sex 1>><<bottomstat>>
 	<</if>>
 
 	<<if $feetaction is "feetstop"+_tentacle.id>>
@@ -1085,7 +1081,6 @@
 		<<if $oralskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip, covering your face.</span>
 			<<set $facegoo += 1>><<set _tentacle.tentaclehealth -= 3>><<faceejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1096,7 +1091,6 @@
 		<<if $oralskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip, covering your face.</span>
 			<<set $facegoo += 1>><<set _tentacle.tentaclehealth -= 3>><<faceejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1107,7 +1101,6 @@
 		<<if $oralskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip and into your mouth.</span>
 			<<set _tentacle.tentaclehealth -= 3>><<set $drugged += 3>><<set $mouthgoo += 1>><<oralejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1133,7 +1126,6 @@
 		<<if $vaginalskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip.</span>
 			<<set $vaginaoutsidegoo += 1>><<set _tentacle.tentaclehealth -= 3>><<vaginalentranceejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1144,7 +1136,6 @@
 		<<if $vaginalskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip, flooding your womb with its warmth.</span>
 			<<set _tentacle.tentaclehealth -= 3>><<set $drugged += 3>><<set $vaginagoo += 1>><<vaginalejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1161,7 +1152,6 @@
 		<<if $penileskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip.</span>
 			<<set $penisgoo += 1>><<set _tentacle.tentaclehealth -= 3>><<penileejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
@@ -1172,7 +1162,6 @@
 		<<if $penileskill gte (800 - ($rng * 10))>>
 			<span class="lblue">Slimy fluid erupts from the tip, covering your groin.</span>
 			<<set _tentacle.tentaclehealth -= 3>><<set $penisgoo += 1>><<penileejacstat>><<ejacstat>>
-		<<else>>
 		<</if>>
 	<</if>>
 
