@@ -10,47 +10,49 @@ Third argument - item index*/
 
 <<if $args[0]>><<ShowUnderEquip>><</if>>
 <<if $args[0] is "buy">>
-You buy the $clothes.upper[_shop_temp].name.
-<br><br>
+	You buy the $clothes.upper[_shop_temp].name.
+	<br><br>
 <<elseif $args[0] is "steal">>
-You steal the $clothes.upper[_shop_temp].name.
-<br><br>
+	You steal the $clothes.upper[_shop_temp].name.
+	<br><br>
 <<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "upper">>
+	<<tryOnWear _shop_temp "upper">>
 <<elseif $args[0] is "return">>
-<<clothingReset "upper">>
+	<<clothingReset "upper">>
 <<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
+	<<unset $colouraction>>
+	<<unset $accessorycolouraction>>
+    <<set $shopDefaults.colorSet to null>>
+    <<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
-		<<upperwear _shop_temp $colouraction $accessorycolouraction>>
+			<<upperwear _shop_temp $colouraction $accessorycolouraction>>
 		<<else>>
-		<<upperwear _shop_temp $colouraction>>
+			<<upperwear _shop_temp $colouraction>>
 		<</if>>
 	<<else>>
 		<<if $accessorycolouraction isnot undefined>>
-		<<upperwear _shop_temp $accessorycolouraction>>
+			<<upperwear _shop_temp $accessorycolouraction>>
 		<<else>>
-		<<upperwear _shop_temp>>
+			<<upperwear _shop_temp>>
 		<</if>>
 	<</if>>
 	<<updateOwned "upper">>
 <<elseif $args[1] is "send">>
 	<<if $colouraction isnot undefined>>
 		<<if $accessorycolouraction isnot undefined>>
-		<<uppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<uppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
 		<<else>>
-		<<uppersend _shop_temp "wardrobe" $colouraction>>
+			<<uppersend _shop_temp "wardrobe" $colouraction>>
 		<</if>>
 	<<else>>
 		<<if $accessorycolouraction isnot undefined>>
-		<<uppersend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<uppersend _shop_temp "wardrobe" $accessorycolouraction>>
 		<<else>>
-		<<uppersend _shop_temp "wardrobe">>
+			<<uppersend _shop_temp "wardrobe">>
 		<</if>>
 	<</if>>
 <</if>>
@@ -70,10 +72,14 @@ You steal the $clothes.upper[_shop_temp].name.
 <<shoptraits>>
 
 	<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
+		There's a range of colours to choose from:
+		<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -81,14 +87,18 @@ You steal the $clothes.upper[_shop_temp].name.
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
 			<</if>>
 		<</for>>
-	<br><br>
+		<br><br>
 	<</if>>
 
 	<<if $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
+		Secondary colour:
+		<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -96,54 +106,51 @@ You steal the $clothes.upper[_shop_temp].name.
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
 			<</if>>
 		<</for>>
-	<br><br>
+		<br><br>
 	<</if>>
 	<<set _cost to clone($clothes.upper[$clothes_choice].cost)>>
-		<<if $wardrobe.upper.length gte $wardrobe.space>>
+	<<if $wardrobe.upper.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span>
 		<br>
-
-
-
-		<<elseif $daystate is "night">>
-			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
+	<<elseif $daystate is "night">>
+		<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>>.</span>
 			<br>
-			<<else>>
+		<<else>>
 			<<link [[Steal and wear|$passage]]>><<uppershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
 			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<uppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte $clothes.upper[$clothes_choice].cost>>
-			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
+		<</if>>
+		<<link [[Steal and send home|$passage]]>><<uppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost>><<unset $clothes_choice>><</link>><<crime>>
+		<br>
+	<<elseif $money gte $clothes.upper[$clothes_choice].cost>>
+		<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
 			<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>></span>
 			<br>
-			<<else>>
-
+		<<else>>
 			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-		<<else>>
+		<</if>>
+		<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+        <</link>>
+		<br>
+	<<else>>
 		<span class="pink">You cannot afford this item.</span>
 		<br>
-		<</if>>
-		<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.upper isnot null>>
+	<</if>>
+	<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
+	<<elseif $tryOn.tryingOn>>
+		<<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>>
+		<br>
+		<<if $tryOn.tryingOn.upper isnot null>>
 			<<link [[Return|$passage]]>><<uppershopbuy "return" null $clothes_choice>><</link>>
 			<br>
-			<</if>>
 		<</if>>
+	<</if>>
 <</if>>
 <br>
 <<for _i to 0; _i lt $clothes.upper.length; _i++>>
 	<<if $clothes.upper[_i].shop.includes("clothing") and $clothes.upper[_i].one_piece is 1>>
-	<<print '<<link [[$clothes.upper[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.upper[_i].cost / 100>>.</span>
+		<<print '<<link [[$clothes.upper[_i].name_cap|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone($clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to ($clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print $clothes.upper[_i].cost / 100>>.</span>
 	<br>
 	<</if>>
 <</for>>
@@ -163,10 +170,14 @@ You steal the $clothes.upper[_shop_temp].name.
 		<<shoptraits>>
 
 	<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
+		There's a range of colours to choose from:
+		<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -182,6 +193,10 @@ You steal the $clothes.upper[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -214,7 +229,9 @@ You steal the $clothes.upper[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -266,6 +283,8 @@ You steal the $clothes.lower[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -317,6 +336,10 @@ You steal the $clothes.lower[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -332,6 +355,10 @@ You steal the $clothes.lower[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -364,7 +391,9 @@ You steal the $clothes.lower[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -409,6 +438,8 @@ You steal the $clothes.under_upper[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -461,6 +492,10 @@ You steal the $clothes.under_upper[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -476,6 +511,10 @@ You steal the $clothes.under_upper[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -508,7 +547,9 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -550,6 +591,10 @@ You steal the $clothes.under_upper[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -564,6 +609,10 @@ You steal the $clothes.under_upper[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -596,7 +645,9 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -641,6 +692,8 @@ You steal the $clothes.under_lower[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -692,6 +745,10 @@ You steal the $clothes.under_lower[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -707,6 +764,10 @@ You steal the $clothes.under_lower[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -739,7 +800,9 @@ You steal the $clothes.under_lower[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_lower">><<underlowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice>><<clothingReset "under_lower">><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice>><<clothingReset "under_lower">><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -784,6 +847,8 @@ You steal the $clothes.head[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -836,6 +901,10 @@ You steal the $clothes.head[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -851,6 +920,10 @@ You steal the $clothes.head[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -884,7 +957,9 @@ You steal the $clothes.head[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -929,6 +1004,8 @@ You steal the $clothes.face[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -980,6 +1057,10 @@ You steal the $clothes.face[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -995,6 +1076,10 @@ You steal the $clothes.face[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1027,7 +1112,9 @@ You steal the $clothes.face[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1072,6 +1159,8 @@ You steal the $clothes.neck[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -1123,6 +1212,10 @@ You steal the $clothes.neck[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1138,6 +1231,10 @@ You steal the $clothes.neck[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1170,7 +1267,9 @@ You steal the $clothes.neck[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1214,6 +1313,8 @@ You steal the $clothes.legs[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -1265,6 +1366,10 @@ You steal the $clothes.legs[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1280,6 +1385,10 @@ You steal the $clothes.legs[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1312,7 +1421,9 @@ You steal the $clothes.legs[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1360,6 +1471,8 @@ You steal the $clothes.feet[_shop_temp].name.
 <<elseif $args[0] is "reset">>
 <<unset $colouraction>>
 <<unset $accessorycolouraction>>
+<<set $shopDefaults.colorSet to null>>
+<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
 <<if $args[1] is "wear">>
@@ -1411,6 +1524,10 @@ You steal the $clothes.feet[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
+            <<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
+                <<set $colouraction to $shopDefaults.color>>
+                <<set $shopDefaults.colorSet to $shopDefaults.color>>
+            <</if>>
 			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e] </span><<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1426,6 +1543,10 @@ You steal the $clothes.feet[_shop_temp].name.
 	<br>
 		<<set _setChecked to false>>
 		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
+            <<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
+                <<set $accessorycolouraction to $shopDefaults.secColor>>
+                <<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
+            <</if>>
 			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
 				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e] </span><<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 				<<set _setChecked to true>>
@@ -1458,7 +1579,9 @@ You steal the $clothes.feet[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+            <<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+            <</link>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1555,4 +1678,36 @@ Mask - Conceals your identity, stopping fame from increasing. Won't fool the pol
 	<</if>>
 <</for>>
 
+<</nobr>><</widget>>
+
+
+<<widget "shopDefaultOptions">><<nobr>>
+
+Where applicable, you can adjust the default colour options, when buying new clothing.
+<br>
+<<set _colorOptions to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow"]>>
+<<set _secondaryColorOptions to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow"]>>
+
+Primary Colour:
+<br>
+<<for _i to 0; _i lt _colorOptions.length; _i++>>
+    <label><<print '<span class="'+ _colorOptions[_i] +'">' + _colorOptions[_i] + '</span>'>>
+    <<print '<<radiobutton "$shopDefaults.color" "'+ _colorOptions[_i] +'" ' + ($shopDefaults.color is _colorOptions[_i] ? "checked" : "") + '>>'>></label>
+     | 
+<</for>>
+<br>
+Secondary Colour:
+<br>
+<<for _i to 0; _i lt _secondaryColorOptions.length; _i++>>
+    <label><<print '<span class="'+ _colorOptions[_i] +'">' + _secondaryColorOptions[_i] + '</span>'>>
+    <<print '<<radiobutton "$shopDefaults.secColor" "'+ _secondaryColorOptions[_i] +'" ' + ($shopDefaults.secColor is _secondaryColorOptions[_i] ? "checked" : "") + '>>'>></label>
+     | 
+<</for>>
+<br><br>
+<label><<print '<<checkbox "$shopDefaults.disableReturn" false true '+($shopDefaults.disableReturn is true? "checked" : "")+'>>'>> Make it easier to send multiple of the same item home.</label>
+
+<</nobr>><</widget>>
+
+<<widget "shopDefaultOptionsToggle">><<nobr>>
+<<toggleclass #shopDefault "hidden">>
 <</nobr>><</widget>>

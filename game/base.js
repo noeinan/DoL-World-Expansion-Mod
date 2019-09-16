@@ -131,6 +131,30 @@ window.bottomTextArea = function(id){
 	textArea.scroll(0, textArea.scrollHeight);
 }
 
+window.hairdressers = function(type, value){
+	switch(type){
+		case 1:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.hairlength = (100 * value);
+			SugarCube.State.variables.phase = 1;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 2:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.fringelength = (200 * value);
+			SugarCube.State.variables.phase = 2;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 3:
+			SugarCube.State.variables.money -= 6000;
+			SugarCube.State.variables.haircolour = SugarCube.State.variables.hairdressersHairColour[value];
+			SugarCube.State.variables.phase = 3;
+			new Wikifier(null, '<<pass 30>>');
+			break;
+	}
+	SugarCube.State.display(SugarCube.State.variables.passage);
+}
+
 var xDown = null;
 var yDown = null;
 
@@ -415,7 +439,6 @@ window.AvsAn = (function () {
 var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
-	'#passage-hairdressers-seat',
 	'#passage-testing-room',
 ];
 
