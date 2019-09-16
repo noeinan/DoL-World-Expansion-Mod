@@ -8,9 +8,9 @@
 	<<elseif $schoolstate is "afternoon">>
 	You are in the playground in front of the school. Some students are running around and playing, as the facilities stay open for a couple of hours.
 		<<if $weekday eq 6 and $framed is "whitney" and $pillory_tenant.special.name isnot "Whitney">>
-			You hear some shouts and arrive just in time to see Whitney being dragged away by police.<<imprison_whitney>>
+			<br>You hear some shouts and arrive just in time to see a scuffle as <span class="gold">Whitney is dragged out of the school in handcuffs by several police officers.</span><<imprison_whitney>>
 		<<elseif $weekday eq 6 and $framed is "leighton" and $pillory_tenant.special.name isnot "Leighton">>
-			You hear some shouts and arrive just in time to see Leighton being dragged away by police.<<imprison_leighton>>
+			<br>You hear some loud protests and arrive just in time to see <span class="gold">Leighton being led away by police.</span><<imprison_leighton>>
 		<<elseif $detention gte 1 and $detentionattended isnot 1 and $headnodetention isnot 1 and $pillory_tenant.special.name isnot "Leighton">>
 			<span class="purple">You see the head guarding the gate.</span> You're meant to be in detention, so if you leave that way, you'll be apprehended.
 		<<elseif $bullytimer gte 1 and $bullytimeroutside gte 1 and $initwhitney is 1 and $whitneystate isnot "dungeon" and $pillory_tenant.special.name isnot "Whitney">>
@@ -448,6 +448,10 @@ The office is empty.
 	<<link [[Break into computer|Head's Computer]]>><</link>>
 	<br>
 	<</if>>
+	<<if $pub_hack_job is 3 and not $mikka_tasks.includes("leighton")>>
+		<<link [[Break into strongbox|Head's Stash]]>><</link>>
+	<br>
+	<</if>>
 <<link [[Leave the office (0:01)|Hallways]]>><<pass 1>><</link>>
 <br>
 <</if>>
@@ -857,6 +861,57 @@ You copy the files. Now to decide what to do with them.
 <<set $headdrive to 1>>
 <<link [[Next|Hallways]]>><<endevent>><</link>>
 <br>
+
+:: Head's Stash [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+Looking under the head's desk you find a small but solid box with a door. It's almost a safe. You pull, but the door doesn't move. It's locked. The lock looks very solid:
+it will take some time to pick.<br><br>
+<<set $skulduggerydifficulty to 1000>>
+
+<<link [[Pick the Lock (0:30)|Head's Stash 2]]>><<pass 30>><</link>><<skulduggerydifficulty>><br>
+<<link [[Leave it alone|Head's Office]]>><<endevent>><</link>>
+<br>
+
+:: Head's Stash 2 [nobr]
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+You settle under the desk and set to work on the lock.
+<br><br>
+
+<<skulduggerycheck>><br><br>
+<<if $skulduggerysuccess is 1>><<set $mikka_tasks.pushUnique("leighton")>>
+	It takes some time and is far more complex than you expected. You are just about to give up when the door suddenly pops loose.
+	You open the drawer and find a number of cameras and lenses, as well as a box full of memory cards. Quite a collection.<br>
+	You scoop the memory cards into your bag.<br><br>
+
+		<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+		<<skulduggeryskilluse>>
+		<<else>>
+		<span class="blue">That was too easy. You didn't learn anything.</span>
+		<br><br>
+		<</if>>
+
+	<<if $mikka_tasks.length gte 2>><span class="green">You have completed Mikka's tasks - you now need to talk to Landry.</span><br><br><</if>>
+	<<link [[Next|Head's Office]]>><<endevent>><</link>>
+	<br>
+
+<<else>>
+	It is far more complex than you expected. After nearly half an hour of fruitless poking and prodding at the lock, you give up.
+	<span class="teal">Now you have a feel for the lock, you could try again.</span>
+	<br><br>
+
+		<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+		<<skulduggeryskilluse>>
+		<<else>>
+		<span class="blue">That was too easy. You didn't learn anything.</span>
+		<br><br>
+		<</if>>
+	
+	<<set $skulduggerydifficulty -= 200>>
+	<<link [[Try again (0:30)|Head's Stash 2]]>><<pass 30>><</link>><<skulduggerydifficulty>><br>
+	<<link [[Give up|Head's Office]]>><<endevent>><</link>><br>
+<</if>>
 
 
 :: Head's Office Blackmail [nobr]
