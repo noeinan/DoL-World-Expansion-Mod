@@ -132,27 +132,27 @@ window.bottomTextArea = function(id){
 }
 
 window.hairdressers = function(type, value){
-    switch(type){
-        case 1:
-            SugarCube.State.variables.money -= 3000;
-            SugarCube.State.variables.hairlength = (100 * value);
-            SugarCube.State.variables.phase = 1;
-            new Wikifier(null, '<<pass 20>>');
-            break;
-        case 2:
-            SugarCube.State.variables.money -= 3000;
-            SugarCube.State.variables.fringelength = (200 * value);
-            SugarCube.State.variables.phase = 2;
-            new Wikifier(null, '<<pass 20>>');
-            break;
-        case 3:
-            SugarCube.State.variables.money -= 6000;
-            SugarCube.State.variables.haircolour = SugarCube.State.variables.hairdressersHairColour[value];
-            SugarCube.State.variables.phase = 3;
-            new Wikifier(null, '<<pass 30>>');
-            break;
-    }
-    SugarCube.State.display(SugarCube.State.variables.passage);
+	switch(type){
+		case 1:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.hairlength = (100 * value);
+			SugarCube.State.variables.phase = 1;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 2:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.fringelength = (200 * value);
+			SugarCube.State.variables.phase = 2;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 3:
+			SugarCube.State.variables.money -= 6000;
+			SugarCube.State.variables.haircolour = SugarCube.State.variables.hairdressersHairColour[value];
+			SugarCube.State.variables.phase = 3;
+			new Wikifier(null, '<<pass 30>>');
+			break;
+	}
+	SugarCube.State.display(SugarCube.State.variables.passage);
 }
 
 var xDown = null;
