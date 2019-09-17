@@ -2,10 +2,10 @@ function colourContainerClasses() {
 	var V = State.variables;
 	return 'hair-'  + (V.haircolour||'').replace(/ /g,'-') +
 		' ' + 'eye-'   + (V.eyecolour||'').replace(/ /g,'-') +
-		' ' + 'upper-' + (V.worn.upper.colour||'').replace(/ /g,'-') +
-		' ' + 'lower-' + (V.worn.lower.colour||'').replace(/ /g,'-') +
-		' ' + 'under_lower-' + (V.worn.under_lower.colour||'').replace(/ /g,'-') +
-		' ' + 'under_upper-' + (V.worn.under_upper.colour||'').replace(/ /g,'-') +
+		' ' + 'upper-' + (V.upperwet > 100 ? 'wet' : '') + (V.worn.upper.colour||'').replace(/ /g,'-') +
+		' ' + 'lower-' + (V.lowerwet > 100 ? 'wet' : '') + (V.worn.lower.colour||'').replace(/ /g,'-') +
+		' ' + 'under_lower-' + (V.underlowerwet > 100 ? 'wet' : '') + (V.worn.under_lower.colour||'').replace(/ /g,'-') +
+		' ' + 'under_upper-' + (V.underupperwet > 100 ? 'wet' : '') + (V.worn.under_upper.colour||'').replace(/ /g,'-') +
 		' ' + 'head-' + (V.worn.head.colour||'').replace(/ /g,'-') +
 		' ' + 'face-' + (V.worn.face.colour||'').replace(/ /g,'-') +
 		' ' + 'neck-' + (V.worn.neck.colour||'').replace(/ /g,'-') +
