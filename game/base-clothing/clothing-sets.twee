@@ -5,14 +5,14 @@
 <br>
 
 <<for _i to 0; _i lt $outfit.length; _i++>>
-<<print '<<link [[$outfit[_i].name|$passage]]>><<set $wear_outfit to ' + _i + '>><</link>>'>> |
+<<print '<<link [['+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]")+'|$passage]]>><<set $wear_outfit to ' + _i + '>><</link>>'>> |
 <</for>>
 <</nobr>><</widget>>
 
 <<widget "listsleepoutfits">><<nobr>>
 <<for _i to 0; _i lt $outfit.length; _i++>>
 	<<if $outfit[_i].type.includes("sleep")>>
-	<<print 'Wear <<link [[$outfit[_i].name|Bed]]>><<set $wear_outfit to ' + _i + '>><<undress "bed">><</link>> and climb in bed'>>
+	<<print 'Wear <<link [['+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]")+'|Bed]]>><<set $wear_outfit to ' + _i + '>><<undress "bed">><</link>> and climb in bed'>>
 	<br>
 	<</if>>
 <</for>>
@@ -22,7 +22,7 @@
 <<set $wardrobe_location to $args[0]>>
 <<for _i to 0; _i lt $outfit.length; _i++>>
 	<<if $outfit[_i].type.includes("swim")>>
-	<<print 'Wear <<link [[$outfit[_i].name|$passage]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
+	<<print 'Wear <<link [['+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]")+'|$passage]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
 	<br>
 	<</if>>
 <</for>>
@@ -48,243 +48,71 @@
 <<deleteoutfit>>
 
 <<if $wear_outfit isnot "none">>
-	<<if $worn.upper.one_piece is 1 and $worn.lower.cursed is 1>>
+    <<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+    <<set _skip to false>>
+    <<for _i to 0; _i lt _equip.length; _i++>>
+        <<if _skip is true>>
+            <<set _skip to false>>
+            <<continue>>
+        <</if>>
+        <<if $worn[_equip[_i]].cursed is 0>>
+            <<if $outfit[$wear_outfit][_equip[_i]] is "naked">>
+                <<undressSwitch _equip[_i]>>
+            <<else>>
+                <<set _foundEquip to false>><<set _lastResort to null>>
+                <<undressSwitch _equip[_i]>>
+                <<for _j to 0; _j lt $wardrobe[_equip[_i]].length; _j++>>
+                    <<if $outfit[$wear_outfit][_equip[_i]] is $wardrobe[_equip[_i]][_j].name>>
+                        <<if $outfit[$wear_outfit].colors isnot false>>
+                            <<if $outfit[$wear_outfit].colors[_equip[_i]][0] isnot $wardrobe[_equip[_i]][_j].colour or $outfit[$wear_outfit].colors[_equip[_i]][1] isnot $wardrobe[_equip[_i]][_j].accessory_colour>>
+                                <<continue>>
+                            <</if>>
+                        <</if>>
 
-	<<elseif $worn.upper.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].upper is "naked">>
-	<<upperundress $wardrobe_location>>
-	<<elseif $worn.upper.name isnot $outfit[$wear_outfit].upper>>
-		<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
-			<<if $outfit[$wear_outfit].upper is $wardrobe.upper[_e].name and $outfit[$wear_outfit].upper isnot $worn.upper.name>>
-				<<if $worn.upper.one_piece is 1>>
-					<<for _j to 0; _j lt $wardrobe.lower.length; _j++>>
-						<<if $worn.upper.set is $wardrobe.lower[_j].set and $worn.upper.set isnot $worn.lower.set>>
-						<<lowerundress $wardrobe_location>>
-						<<set $worn.lower to clone($wardrobe.lower[_j])>>
-						<<set $wardrobe.lower.deleteAt(_j)>>
-						<</if>>
-					<</for>>
-				<</if>>
-			<<upperundress $wardrobe_location>>
-			<<set $worn.upper to clone($wardrobe.upper[_e])>>
-			<<set $wardrobe.upper.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
-			<<if $outfit[$wear_outfit].upper is $wardrobe.upper[_e].name and $outfit[$wear_outfit].upper isnot $worn.upper.name>>
-				<<if $worn.upper.one_piece is 1>>
-					<<for _j to 0; _j lt $wardrobe.lower.length; _j++>>
-						<<if $worn.upper.set is $wardrobe.lower[_j].set and $worn.upper.set isnot $worn.lower.set>>
-						<<lowerundress $wardrobe_location>>
-						<<set $worn.lower to clone($wardrobe.lower[_j])>>
-						<<set $wardrobe.lower.deleteAt(_j)>>
-						<</if>>
-					<</for>>
-				<</if>>
-			<<upperundress $wardrobe_location>>
-			<<set $worn.upper to clone($wardrobe.upper[_e])>>
-			<<set $wardrobe.upper.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-
-	<<if $worn.lower.one_piece is 1 and $worn.upper.cursed is 1>>
-
-	<<elseif $worn.lower.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].lower is "naked">>
-	<<lowerundress $wardrobe_location>>
-	<<elseif $worn.lower.name isnot $outfit[$wear_outfit].lower>>
-		<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
-			<<if $outfit[$wear_outfit].lower is $wardrobe.lower[_e].name and $outfit[$wear_outfit].lower isnot $worn.lower.name>>
-			<<lowerundress $wardrobe_location>>
-			<<set $worn.lower to clone($wardrobe.lower[_e])>>
-			<<set $wardrobe.lower.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
-			<<if $outfit[$wear_outfit].lower is $wardrobe.lower[_e].name and $outfit[$wear_outfit].lower isnot $worn.lower.name>>
-			<<lowerundress $wardrobe_location>>
-			<<set $worn.lower to clone($wardrobe.lower[_e])>>
-			<<set $wardrobe.lower.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-
-	<<if $worn.under_upper.one_piece is 1 and $worn.under_lower.cursed is 1>>
-
-	<<elseif $worn.under_upper.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].under_upper is "naked">>
-	<<underupperundress $wardrobe_location>>
-	<<elseif $worn.under_upper.name isnot $outfit[$wear_outfit].under_upper>>
-		<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
-			<<if $outfit[$wear_outfit].under_upper is $wardrobe.under_upper[_e].name and $outfit[$wear_outfit].under_upper isnot $worn.under_upper.name>>
-				<<if $worn.under_upper.one_piece is 1>>
-					<<for _j to 0; _j lt $wardrobe.under_lower.length; _j++>>
-						<<if $worn.under_upper.set is $wardrobe.under_lower[_j].set and $worn.under_upper.set isnot $worn.under_lower.set>>
-						<<underlowerundress $wardrobe_location>>
-						<<set $worn.under_lower to clone($wardrobe.under_lower[_j])>>
-						<<set $wardrobe.under_lower.deleteAt(_j)>>
-						<</if>>
-					<</for>>
-				<</if>>
-			<<underupperundress $wardrobe_location>>
-			<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
-			<<set $wardrobe.under_upper.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
-			<<if $outfit[$wear_outfit].under_upper is $wardrobe.under_upper[_e].name and $outfit[$wear_outfit].under_upper isnot $worn.under_upper.name>>
-				<<if $worn.under_upper.one_piece is 1>>
-					<<for _j to 0; _j lt $wardrobe.under_lower.length; _j++>>
-						<<if $worn.under_upper.set is $wardrobe.under_lower[_j].set and $worn.under_upper.set isnot $worn.under_lower.set>>
-						<<underlowerundress $wardrobe_location>>
-						<<set $worn.under_lower to clone($wardrobe.under_lower[_j])>>
-						<<set $wardrobe.under_lower.deleteAt(_j)>>
-						<</if>>
-					<</for>>
-				<</if>>
-			<<underupperundress $wardrobe_location>>
-			<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
-			<<set $wardrobe.under_upper.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-
-	<<if $worn.under_lower.one_piece is 1 and $worn.under_upper.cursed is 1>>
-
-	<<elseif $worn.under_lower.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].under_lower is "naked">>
-	<<underlowerundress $wardrobe_location>>
-	<<elseif $worn.under_lower.name isnot $outfit[$wear_outfit].under_lower>>
-		<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
-			<<if $outfit[$wear_outfit].under_lower is $wardrobe.under_lower[_e].name and $outfit[$wear_outfit].under_lower isnot $worn.under_lower.name>>
-			<<underlowerundress $wardrobe_location>>
-			<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
-			<<set $wardrobe.under_lower.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
-			<<if $outfit[$wear_outfit].under_lower is $wardrobe.under_lower[_e].name and $outfit[$wear_outfit].under_lower isnot $worn.under_lower.name>>
-			<<underlowerundress $wardrobe_location>>
-			<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
-			<<set $wardrobe.under_lower.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-	<<if $worn.head.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].head is "naked">>
-	<<headundress $wardrobe_location>>
-	<<else>>
-		<<for _e to 0; _e lt $wardrobe.head.length; _e++>>
-			<<if $outfit[$wear_outfit].head is $wardrobe.head[_e].name and $outfit[$wear_outfit].head isnot $worn.head.name>>
-			<<headundress $wardrobe_location>>
-			<<set $worn.head to clone($wardrobe.head[_e])>>
-			<<set $wardrobe.head.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.head.length; _e++>>
-			<<if $outfit[$wear_outfit].head is $wardrobe.head[_e].name and $outfit[$wear_outfit].head isnot $worn.head.name>>
-			<<headundress $wardrobe_location>>
-			<<set $worn.head to clone($wardrobe.head[_e])>>
-			<<set $wardrobe.head.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-	<<if $worn.face.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].face is "naked">>
-	<<faceundress $wardrobe_location>>
-	<<else>>
-		<<for _e to 0; _e lt $wardrobe.face.length; _e++>>
-			<<if $outfit[$wear_outfit].face is $wardrobe.face[_e].name and $outfit[$wear_outfit].face isnot $worn.face.name>>
-			<<faceundress $wardrobe_location>>
-			<<set $worn.face to clone($wardrobe.face[_e])>>
-			<<set $wardrobe.face.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.face.length; _e++>>
-			<<if $outfit[$wear_outfit].face is $wardrobe.face[_e].name and $outfit[$wear_outfit].face isnot $worn.face.name>>
-			<<faceundress $wardrobe_location>>
-			<<set $worn.face to clone($wardrobe.face[_e])>>
-			<<set $wardrobe.face.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-
-	<<if $worn.neck.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].neck is "naked">>
-	<<neckundress $wardrobe_location>>
-	<<else>>
-		<<for _e to 0; _e lt $wardrobe.neck.length; _e++>>
-			<<if $outfit[$wear_outfit].neck is $wardrobe.neck[_e].name and $outfit[$wear_outfit].neck isnot $worn.neck.name>>
-			<<neckundress $wardrobe_location>>
-			<<set $worn.neck to clone($wardrobe.neck[_e])>>
-			<<set $wardrobe.neck.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.neck.length; _e++>>
-			<<if $outfit[$wear_outfit].neck is $wardrobe.neck[_e].name and $outfit[$wear_outfit].neck isnot $worn.neck.name>>
-			<<neckundress $wardrobe_location>>
-			<<set $worn.neck to clone($wardrobe.neck[_e])>>
-			<<set $wardrobe.neck.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-	<<if $worn.legs.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].legs is "naked">>
-	<<legsundress $wardrobe_location>>
-	<<else>>
-		<<for _e to 0; _e lt $wardrobe.legs.length; _e++>>
-			<<if $outfit[$wear_outfit].legs is $wardrobe.legs[_e].name and $outfit[$wear_outfit].legs isnot $worn.legs.name>>
-			<<legsundress $wardrobe_location>>
-			<<set $worn.legs to clone($wardrobe.legs[_e])>>
-			<<set $wardrobe.legs.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.legs.length; _e++>>
-			<<if $outfit[$wear_outfit].legs is $wardrobe.legs[_e].name and $outfit[$wear_outfit].legs isnot $worn.legs.name>>
-			<<legsundress $wardrobe_location>>
-			<<set $worn.legs to clone($wardrobe.legs[_e])>>
-			<<set $wardrobe.legs.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
-	<<if $worn.feet.cursed is 1>>
-
-	<<elseif $outfit[$wear_outfit].feet is "naked">>
-	<<feetundress $wardrobe_location>>
-	<<else>>
-		<<for _e to 0; _e lt $wardrobe.feet.length; _e++>>
-			<<if $outfit[$wear_outfit].feet is $wardrobe.feet[_e].name and $outfit[$wear_outfit].feet isnot $worn.feet.name>>
-			<<feetundress $wardrobe_location>>
-			<<set $worn.feet to clone($wardrobe.feet[_e])>>
-			<<set $wardrobe.feet.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-		<<for _e to 0; _e lt $wardrobe.feet.length; _e++>>
-			<<if $outfit[$wear_outfit].feet is $wardrobe.feet[_e].name and $outfit[$wear_outfit].feet isnot $worn.feet.name>>
-			<<feetundress $wardrobe_location>>
-			<<set $worn.feet to clone($wardrobe.feet[_e])>>
-			<<set $wardrobe.feet.deleteAt(_e)>>
-			<</if>>
-		<</for>>
-	<</if>>
-
+                        <<if _equip[_i] is "upper" or _equip[_i] is "under_upper">>
+                            <<if $wardrobe[_equip[_i]][_j].one_piece is 1>>
+                                <<if _equip[_i] is "upper">>
+                                    <<set _lowerEquip to "lower">>
+                                <<else>>
+                                    <<set _lowerEquip to "under_lower">>
+                                <</if>>
+                                <<if $worn[_lowerEquip].cursed is 1>>
+                                    <<set _skip to true>>
+                                    <<break>>
+                                <</if>>
+                                <<undressSwitch _lowerEquip>>
+                                <<for _k to 0; _k lt $wardrobe[_lowerEquip].length; _k++>>
+                                    <<if $wardrobe[_equip[_i]][_j].set is $wardrobe[_lowerEquip][_k].set>>
+                                        <<if $wardrobe[_equip[_i]][_j].colour isnot $wardrobe[_lowerEquip][_k].colour or $wardrobe[_equip[_i]][_j].accessory_colour isnot $wardrobe[_lowerEquip][_k].accessory_colour>>
+                                            <<continue>>
+                                        <</if>>
+                                        <<set $worn[_lowerEquip] to clone($wardrobe[_lowerEquip][_k])>>
+                                        <<set $wardrobe[_lowerEquip].deleteAt(_k)>>
+                                        <<set _skip to true>>
+                                        <<break>>
+                                    <</if>>
+                                <</for>>
+                            <<elseif $wardrobe[_equip[_i]][_j].one_piece is "broken">>
+                                <<if _lastResort is null>>
+                                    <<set _lastResort to clone(_j)>>
+                                <</if>>
+                                <<continue>>
+                            <</if>>
+                        <</if>>
+                        <<set $worn[_equip[_i]] to clone($wardrobe[_equip[_i]][_j])>>
+                        <<set $wardrobe[_equip[_i]].deleteAt(_j)>>
+                        <<set _foundEquip to true>>
+                        <<break>>
+                    <</if>>
+                <</for>>
+                <<if _foundEquip is false and _lastResort isnot null>>
+                    <<set $worn[_equip[_i]] to clone($wardrobe[_equip[_i]][_lastResort])>>
+                    <<set $wardrobe[_equip[_i]].deleteAt(_lastResort)>>
+                    <<set _skip to true>>
+                <</if>>
+            <</if>>
+        <</if>>
+    <</for>>
 <</if>>
 
 <<if $wear_outfit isnot "none">>
@@ -298,10 +126,24 @@
 	$worn.legs.name is $outfit[$wear_outfit].legs and
 	$worn.feet.name is $outfit[$wear_outfit].feet>>
 	<<else>>
-	<span class="purple">Part of the set could not be worn as it is missing from your wardrobe.</span>
+	<span class="purple">Part of the set could not be worn as it is missing from your wardrobe or you could not put it on.</span>
 	<br>
 	<</if>>
 <</if>>
 
 <<set $wear_outfit to "none">>
+<</nobr>><</widget>>
+
+<<widget "undressSwitch">><<nobr>>
+<<switch $args[0]>>
+    <<case "upper">><<upperundress $wardrobe_location>>
+    <<case "lower">><<lowerundress $wardrobe_location>>
+    <<case "under_upper">><<underupperundress $wardrobe_location>>
+    <<case "under_lower">><<underlowerundress $wardrobe_location>>
+    <<case "head">><<headundress $wardrobe_location>>
+    <<case "face">><<faceundress $wardrobe_location>>
+    <<case "neck">><<neckundress $wardrobe_location>>
+    <<case "legs">><<legsundress $wardrobe_location>>
+    <<case "feet">><<feetundress $wardrobe_location>>
+<</switch>>
 <</nobr>><</widget>>
