@@ -24,6 +24,26 @@ You are on Cliff Street. Several civic buildings are located here, including the
 		<br><br>
 	<</if>>
 <</if>>
+
+<<if ndef $pillory_tenant>><<setup_pillory>><</if>>
+<<if $pillory_tenant.exists is 1>> /* If someone is in pillory... */
+	<<if $days gt $pillory_tenant.endday>>/* If sentence finished before today. */
+		<<setup_pillory>>
+	<<elseif ($days is $pillory_tenant.endday)>>
+		<<if $hour gt $pillory_tenant.endhour>> /* If ended earlier today */
+			<<setup_pillory>>
+		<<elseif $hour is $pillory_tenant.endhour>> /* If ending now? */
+			<<end_npc_pillory>>
+		<<else>> /* Sentence ongoing. */
+			<<npc_pillory>>
+		<</if>>
+	<<else>> /* Sentence ongoing to tomorrow. */
+		<<npc_pillory>>
+	<</if>>
+<<elseif $rng %10 is 0>> /* Pillory empty gives 10% chance of new person */
+	<<new_npc_pillory>>
+<</if>>
+
 <<if $arousal gte 10000>>
 	<<orgasmstreet>>
 <</if>>
@@ -42,6 +62,10 @@ You are on Cliff Street. Several civic buildings are located here, including the
 		<</if>>
 		<<if $mathsproject is "ongoing" and $mathsprojectdays is 0 and $daystate is "day" and $exposed lte 0>>
 			<<link [[Attend Maths Competition|Maths Competition]]>><</link>>
+			<br>
+		<</if>>
+		<<if $pillory_tenant.exists is 1 and $exposed lte 0>>
+			<<link [[Watch Pillory (0:10)|Cliff Street Pillory]]>><<pass 10>><</link>>
 			<br>
 		<</if>>
 		<<link [[Beach (0:05)|Beach]]>><<pass 5>><</link>>
@@ -89,3 +113,58 @@ You are on Cliff Street. Several civic buildings are located here, including the
 	<</if>>
 <</if>>
 <<set $eventskip to 0>>
+
+:: Cliff Street Pillory [nobr]
+<<set $outside to 1>><<set $location to "town">><<effects>><<set $bus to "cliff">>
+You join the crowd around the pillory on Cliff Street.
+<<npc_pillory_detail>>
+<<if $stress gte 4000>><span class="gold">You are stressed.</span> Things are getting on top of you.
+You watch some people throw fruit at <<the_pillory_person_stop>> It looks like fun. <span class="teal">You feel an urge to join in</span> - <<he>> probably deserves it.<br><br><</if>>
+<<if $daystate is "night">>
+	<<if $stress gte 3000>>
+		<<if $pillory_tenant.fruitstock gte 1>>
+			<<link [[Throw Fruit|Cliff Street Prisoner]]>><<pass 2>><<set $phase to 0>><<stress -6>><<set $pillory_tenant.fruitstock -= 1>><</link>><<lstress>><br>
+		<<else>>
+			<span class="red">There is no fruit left to throw right now.<br></span>
+		<</if>>
+	<</if>>
+	<<if $cat gte 6 and ($pillory_tenant.ass + $pillory_tenant.genital) gte 2>>
+		<<link [[Groom prisoner|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 1>><</link>><br>
+	<</if>>
+	<<if $pillory_tenant.lowerexposed gte 2 and ($stress gte 4000 or $trauma gte (($traumamax / 5) * 1))>>
+		<<link [[Spank prisoner|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 2>><</link>><<lstress>><<ltrauma>><br>
+	<</if>>
+<<else>>
+	<<if $stress gte 4000>>
+		<<if $pillory_tenant.fruitstock gte 1>>
+			<<link [[Throw Fruit|Cliff Street Prisoner]]>><<pass 2>><<set $phase to 0>><<stress -6>><<set $pillory_tenant.fruitstock -= 1>><</link>><<lstress>><br>
+		<<else>>
+			<span class="red">There is no fruit left to throw right now.<br></span>
+		<</if>>
+	<</if>>
+<</if>>
+<<endevent>>
+<<link [[Leave|Cliff Street]]>><</link>>
+<br>
+
+:: Cliff Street Prisoner [nobr]
+<<set $outside to 1>><<set $location to "town">><<effects>><<set $bus to "cliff">>
+<<get_pillory_npc>><<person1>>
+<<if $phase is 0>>
+	A box of rotten fruit lies nearby. You grab a piece and weigh it in your hand.<br>
+	You throw it at <<the_pillory_person>>
+	<<if $rng gte 75>><<set $pillory_tenant.fruit += 1>>
+		<span class="teal">hitting <<him>> full in the face.</span> <<His>> expression is hillarious.
+		<<if $physique gte ($physiquesize / 7) * 4>>You put a lot of strength behind it, it must have hurt.<</if>><<llstress>><<stress -12>><br>
+		The crowd cheer and laugh.
+	<<else>>
+		but miss entirely.<<if $physique lte ($physiquesize / 7) * 3>> Some people nearby mock your feeble throw.<</if>>
+	<</if>>
+<<elseif $phase is 1>>
+	You slurp up the cream from the <<the_pillory_persons>> ass and groin. The crowd watch, awed.<<set $famesex +=20>>
+<<else>><<set $pillory_tenant.spank += 1>><<control 10>><<stress -12>><<trauma -12>>
+	You viciously spank <<the_pillory_persons>> ass. It gives you a sense of control and well-being.
+<</if>>
+<<endevent>>
+<br><br><<link [[Next|Cliff Street Pillory]]>><</link>>
+<br>
