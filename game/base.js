@@ -155,6 +155,16 @@ window.hairdressers = function(type, value){
 	SugarCube.State.display(SugarCube.State.variables.passage);
 }
 
+window.mapMove = function(moveTo){
+    var currentPassage = SugarCube.State.variables.passage;
+    var avaliable = SugarCube.State.variables.avaliableMaps;
+    
+    if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo)){
+        new Wikifier(null, '<<pass 5>>');
+        SugarCube.State.display(moveTo);
+    }
+}
+
 var xDown = null;
 var yDown = null;
 
@@ -489,7 +499,7 @@ function generateNumbers(ev){
 	currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
 
 	$(currentLinks).each(function(i, el) {
-		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+        if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 	});
 }
 

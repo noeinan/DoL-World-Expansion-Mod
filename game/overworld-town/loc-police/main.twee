@@ -148,3 +148,76 @@ You get the feeling the police aren't going to be helpful. At least you tried to
 <<set $headpolice to 1>><<control 25>>
 <<link [[Next|Police Station]]>><</link>>
 <br>
+
+:: Police Back Office [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<if ndef $police_access_card>><<set $police_access_card to 0>><</if>>
+<<if ndef $police_hack>><<set $police_hack to 0>><</if>>
+<<if $daystate is "night">>
+	<<if $police_intro is 0>>You find yourself in a small passage between a set of administrative back offices.
+	The rooms nearby are dark and empty. Further along the corridor a few offices glow with light, however a thick, glass door bars entry.
+	You hear distant voices, strange cries and grunts and the occasional burst of laughter.
+	<br>
+	The door to a nearby office is wide open. The office is dim, lit by the glow from a computer screen. Slipping inside,
+	you find a locked police computer.<<set $police_intro to 1>>
+	<<else>>The office is dim, lit by the glow from the locked computer screen.
+	<<print either("A sound like a whip-crack echoes down the hallway.","A muffled voice can be heard through the wall.","Drunken singing can be heard from further in the building.",
+		"Sinister laughter echoes through the halls.", "Sobbing can be heard from further in the building.","A door slams alarmingly nearby.")>>
+	<</if>>
+	<<if $police_hack lte 2>>
+		<span class="red">The login prompt taunts you.</span> You know no way to access the computer, <span class="teal">you'll need help from a hacker or a professional thief.</span>
+		<<if $police_hack is 0>><<set $police_hack to 1>><</if>>
+		<br>
+	<</if>>
+	<<if $police_access_card is 0 and ($rng % 3) is 0>>
+		<br><span class="gold">A police access card lies on the desk.</span> A note on it says "external access only."
+		<br><br>
+		<<link [[Steal Access card|Police Back Office]]>><<set $police_access_card to 1>><</link>>
+		<br>
+	<<else>>
+	<br><br>
+	<</if>>
+	<<if $police_hack is 4>>
+		<<link [[Access Police Computer (0:10)|Police Computer]]>><<pass 1>><<set $phase to 0>><</link>>
+		<br>
+	<<elseif $police_hack is 5>>
+		<<link [[Access Police Computer (0:10)|Police Computer]]>><<pass 10>><<set $phase to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	You find yourself amid a set of administrative back offices. There are police everywhere. You cannot go anywhere or access anything. About to be discovered you have no choice but to slip away.
+	<br>
+	<span class="gold">It would probably be quieter at night.</span>
+	<br><br>
+<</if>>
+<br>
+<<link [[Leave|Barb Street]]>><<set $police_intro to 0>><</link>>
+<br>
+
+:: Police Computer [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<if $phase is 0>>
+	The password you have no longer works. It must have been changed.
+	<span class="yellow">Landry can get you the new password.</span>
+<<elseif $phase is 1>>
+	You access the police computer.
+	<<police_computer_action>>
+<<elseif $phase is 10>>
+	You delete a number of crimes from your record, and randomly change several evidence reference numbers.
+<<elseif $phase is 11>>
+	A messagebox tells you the software installed correctly. It should lock out everything within the next few hours.
+	<<set $police_hack to 4>>
+<<elseif $phase is 12>>
+	You transfer all the evidence of crimes to Whitney's profile. <span class="teal">You are now squeaky clean.</span>
+	<<set $police_hack to 4>><<set $framed to "whitney">>
+<<elseif $phase is 13>>
+	You transfer all the evidence of crimes to Leighton's profile. <span class="teal">You are now squeaky clean.</span>
+	<<set $police_hack to 4>><<set $framed to "leighton">>
+<<else>>/*invalid phase*/
+	The police computer has started updating. It's at 3%. Shouldn't take too long...
+	<br>
+	<<link [[Wait (12:00)|Police Back Office]]>><<pass 720>><</link>>(Don't wait! This is an error, please report!)
+<</if>>
+
+<br><br><<link [[Leave|Police Back Office]]>><</link>>
+<br>

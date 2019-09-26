@@ -376,31 +376,19 @@ __Clothing sets__
 __Clothing__
 <br>
 
-	<<if $wear_delete is 0 or $wear_delete is undefined>>
-		<label>Wear <<radiobutton "$wear_delete" 0 checked>></label>
-	<<elseif $wear_delete is 2 and $location isnot "home">>
-		<label>Wear <<radiobutton "$wear_delete" 0 checked>></label>
-	<<else>>
-		<label>Wear <<radiobutton "$wear_delete" 0 checked>></label>
-	<</if>>
+<<if $wardrobeRepeat isnot true or ($wear_delete is 2 and $location isnot "home")>><<set $wear_delete to 0>><</if>>
+<label> Wear <<print '<<radiobutton "$wear_delete" 0 '+($wear_delete is 0 or $wardrobeRepeat is false ? "checked" : "")+'>>'>></label> |
+<label> Discard <<print '<<radiobutton "$wear_delete" 1 '+($wear_delete is 1 and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
+<<if $sewingKit is 1 and $location is "home">>
+	<label> Repair <<print '<<radiobutton "$wear_delete" 2 '+($wear_delete is 2 and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
+<</if>>
+<label> Repeat Actions <<print '<<checkbox "$wardrobeRepeat" false true '+($wardrobeRepeat ? "checked" : "")+'>>'>></label>
 
-	<<if $wear_delete is 1>>
-		| <label> Discard <<if $images is 1>><<binicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 1 checked>></label>
-	<<else>>
-		| <label> Discard <<if $images is 1>><<binicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 1 >></label>
-	<</if>>
-
-	<<if $sewingKit is 1 and $location is "home">>
-		<<if $wear_delete is 2>>
-			| <label> Repair <<if $images is 1>><<wrenchicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 2 checked>></label>
-			<br><br>
-		<<else>>
-			| <label> Repair <<if $images is 1>><<wrenchicon>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<</if>><<radiobutton "$wear_delete" 2>></label>
-			<br><br>
-		<</if>>
-	<<else>>
-		<br><br>
-	<</if>>
+<<if $wear_delete is 1 and $wardrobeRepeat is true>>
+	<h2 class="red">Discard On Repeat</h2>
+<<else>>
+	<br><br>
+<</if>>
 
 <<set _wardrobe_list to "upper">>
 <div class="clothingBox">
@@ -648,30 +636,49 @@ Name: <<textbox "$outfit_name" Custom>>
 <br>
 Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>Sleep<<radiobutton "$outfit_type" "sleep">></label> | <label>Swimming<<radiobutton "$outfit_type" "swim">></label>
 <br>
+<label>
+	Save Clothes Colours in Set
+	<<print '<<checkbox "$saveColor" false true '+($saveColor is true ? "checked" : "")+'>>'>>
+</label>
+<br>
 <<link [[Add current clothes as new set|$passage]]>>
-<<set $outfit.push(
-	{index: $outfit.length,
-	name: $outfit_name,
-	upper: clone($worn.upper.name),
-	lower: clone($worn.lower.name),
-	under_upper: clone($worn.under_upper.name),
-	under_lower: clone($worn.under_lower.name),
-	head: clone($worn.head.name),
-	face: clone($worn.face.name),
-	neck: clone($worn.neck.name),
-	legs: clone($worn.legs.name),
-	feet: clone($worn.feet.name),
-	type: ["normal"]
+	<<set $outfit.push(
+		{index: $outfit.length,
+		name: $outfit_name,
+		upper: clone($worn.upper.name),
+		lower: clone($worn.lower.name),
+		under_upper: clone($worn.under_upper.name),
+		under_lower: clone($worn.under_lower.name),
+		head: clone($worn.head.name),
+		face: clone($worn.face.name),
+		neck: clone($worn.neck.name),
+		legs: clone($worn.legs.name),
+		feet: clone($worn.feet.name),
+		type: ["normal"]
+		},
+	)>>
 
-},
-
-)>>
-
-
-<<if $outfit_name is "" or $outfit_name is "Custom">><<print '<<set $outfit_name to "Custom ' + $outfit.length + '">>'>><</if>>
-<<set $outfit.last().name to $outfit_name>>
+	<<if $outfit_name is "" or $outfit_name is "Custom">><<print '<<set $outfit_name to "Custom ' + $outfit.length + '">>'>><</if>>
+	<<set $outfit.last().name to $outfit_name>>
 	<<if $outfit_type>>
-	<<set $outfit.last().type.push($outfit_type)>>
+		<<set $outfit.last().type.push($outfit_type)>>
+	<</if>>
+
+	<<if $saveColor is true>>
+		<<set _colors to {
+			upper: [clone($worn.upper.colour),clone($worn.upper.accessory_colour)],
+			lower: [clone($worn.lower.colour),clone($worn.lower.accessory_colour)],
+			under_upper: [clone($worn.under_upper.colour),clone($worn.under_upper.accessory_colour)],
+			under_lower: [clone($worn.under_lower.colour),clone($worn.under_lower.accessory_colour)],
+			head: [clone($worn.head.colour),clone($worn.head.accessory_colour)],
+			face: [clone($worn.face.colour),clone($worn.face.accessory_colour)],
+			neck: [clone($worn.neck.colour),clone($worn.neck.accessory_colour)],
+			legs: [clone($worn.legs.colour),clone($worn.legs.accessory_colour)],
+			feet: [clone($worn.feet.colour),clone($worn.feet.accessory_colour)]
+		}>>
+		<<set $outfit.last().colors to clone(_colors)>>
+	<<else>>
+		<<set $outfit.last().colors to false>>
 	<</if>>
 <</link>>
 
@@ -681,16 +688,11 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 
 
 
-
-
-
 <<set $upperoff to 0>>
 <<set $loweroff to 0>>
 <<set $underloweroff to 0>>
 <<set $underupperoff to 0>>
 <<exposure>>
-
-
 
 <</nobr>><</widget>>
 
@@ -744,7 +746,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 You look in your wardrobe.
 <br><br>
 <<wardrobewear>>
-[[Close wardrobe|Bedroom]]
+<<link [[Close wardrobe|Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <<wardrobe>>
 
@@ -755,7 +757,7 @@ You are in a small wooden changing room.
 <br><br>
 <<wardrobewear>>
 <<if $exposed lte 1>>
-[[Leave|Beach]]
+<<link[[Leave|Beach]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <<else>>
 You can't go out like this!
@@ -771,7 +773,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
-	<<link [[Done|Eden Cabin]]>><<pass 1>><</link>>
+	<<link [[Done|Eden Cabin]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't remain undressed like this!
@@ -779,7 +781,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 	<</if>>
 <<else>>
 	<<if $exposed lte 1>>
-	<<link [[Done|Eden Cabin]]>><</link>>
+	<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't remain undressed like this!
@@ -796,7 +798,7 @@ You look through the cupboard containing your clothes.
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
-	<<link [[Done|Asylum Cell]]>><<pass 1>><</link>>
+	<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't remain undressed like this!
@@ -807,7 +809,7 @@ You look through the cupboard containing your clothes.
 <br><br>
 <<else>>
 	<<if $exposed lte 1>>
-	<<link [[Done|Asylum Cell]]>><</link>>
+	<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't remain undressed like this!
@@ -824,18 +826,18 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
-	<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><</link>>
+	<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't go out like this!
 	<br><br>
 	<</if>>
 <<elseif $exhibitionism gte 95>>
-<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><</link>>
+<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <<else>>
 	<<if $exposed lte 1>>
-	<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><</link>>
+	<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't go out like this!
@@ -852,18 +854,18 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
-	<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><</link>>
+	<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't go out like this!
 	<br><br>
 	<</if>>
 <<elseif $exhibitionism gte 95>>
-<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><</link>>
+<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <<else>>
 	<<if $exposed lte 1>>
-	<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><</link>>
+	<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 	<br><br>
 	<<else>>
 	You can't go out like this!
@@ -883,7 +885,7 @@ You stand in front of your open locker.
 You can't go out like this!
 <br><br>
 <<else>>
-[[Leave|School Boy Changing Room]]
+<<link [[Leave|School Boy Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <</if>>
 
@@ -900,7 +902,7 @@ You stand in front of your open locker.
 You can't go out like this!
 <br><br>
 <<else>>
-[[Leave|School Girl Changing Room]]
+<<link [[Leave|School Girl Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><</link>>
 <br><br>
 <</if>>
 
