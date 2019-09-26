@@ -155,6 +155,15 @@ window.hairdressers = function(type, value){
 	SugarCube.State.display(SugarCube.State.variables.passage);
 }
 
+window.mapMove = function(moveTo){
+    var currentPassage = SugarCube.State.variables.passage;
+    var avaliable = SugarCube.State.variables.avaliableMaps;
+    
+    if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo)){
+        SugarCube.State.display(moveTo);
+    }
+}
+
 var xDown = null;
 var yDown = null;
 
