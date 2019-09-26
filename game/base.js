@@ -160,6 +160,7 @@ window.mapMove = function(moveTo){
     var avaliable = SugarCube.State.variables.avaliableMaps;
     
     if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo)){
+        new Wikifier(null, '<<pass 5>>');
         SugarCube.State.display(moveTo);
     }
 }
