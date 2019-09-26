@@ -489,7 +489,7 @@ function generateNumbers(ev){
 	currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
 
 	$(currentLinks).each(function(i, el) {
-		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+        if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 	});
 }
 
