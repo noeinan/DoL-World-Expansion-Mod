@@ -60,9 +60,14 @@ window.save = function(saveSlot){
 	}
 }
 
-window.deleteSave = function(saveSlot){
+window.deleteSave = function(saveSlot, confirm){
 	if(saveSlot === "all"){
-		Save.clear()
+		if(confirm === undefined){
+			new Wikifier(null, '<<clearSaveMenu>>');
+			return;
+		}else if(confirm === true){
+			Save.clear();
+		}
 	}else if(saveSlot === "auto"){
 		Save.autosave.delete();
 	}else{
@@ -114,6 +119,50 @@ window.loadSaveData = function(){
 
 window.clearTextBox = function(id){
 	document.getElementById(id).value = "";
+}
+
+window.topTextArea = function(id){
+	var textArea = document.getElementById(id);
+	textArea.scroll(0, 0);
+}
+
+window.bottomTextArea = function(id){
+	var textArea = document.getElementById(id);
+	textArea.scroll(0, textArea.scrollHeight);
+}
+
+window.hairdressers = function(type, value){
+	switch(type){
+		case 1:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.hairlength = (100 * value);
+			SugarCube.State.variables.phase = 1;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 2:
+			SugarCube.State.variables.money -= 3000;
+			SugarCube.State.variables.fringelength = (200 * value);
+			SugarCube.State.variables.phase = 2;
+			new Wikifier(null, '<<pass 20>>');
+			break;
+		case 3:
+			SugarCube.State.variables.money -= 6000;
+			SugarCube.State.variables.haircolour = SugarCube.State.variables.hairdressersHairColour[value];
+			SugarCube.State.variables.phase = 3;
+			new Wikifier(null, '<<pass 30>>');
+			break;
+	}
+	SugarCube.State.display(SugarCube.State.variables.passage);
+}
+
+window.mapMove = function(moveTo){
+    var currentPassage = SugarCube.State.variables.passage;
+    var avaliable = SugarCube.State.variables.avaliableMaps;
+    
+    if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo)){
+        new Wikifier(null, '<<pass 5>>');
+        SugarCube.State.display(moveTo);
+    }
 }
 
 var xDown = null;
@@ -400,22 +449,7 @@ window.AvsAn = (function () {
 var enableLinkNumberify = true;
 
 var disableNumberifyInVisibleElements = [
-	'#passage-hairdressers-seat',
-	'#passage-start',
-	'#passage-wardrobe',
-	'#passage-cheats',
-	'#passage-changing-room',
-	'#passage-eden-wardrobe',
-	'#passage-asylum-wardrobe',
-	'#passage-strip-club-dressing-room',
-	'#passage-brothel-dressing-room',
-	'#passage-school-boy-wardrobe',
-	'#passage-school-girl-wardrobe',
-	'#passage-eden-mirror',
-	'#passage-eerie-mirror-5',
-	'#passage-mirror-stop',
-	'#passage-mirror',
-	'#passage-testing-room'
+	'#passage-testing-room',
 ];
 
 // Number-ify links
@@ -446,6 +480,14 @@ function getPrettyKeyNumber(counter) {
 $(document).on(':passagerender', function(ev) {
 	currentLinks = [];
 
+	if (passage() == "GiveBirth") {
+		$(ev.content).find("[type=checkbox]").on('propertychange change', function() { new Wikifier(null, '<<resetPregButtons>>');generateNumbers(ev); } );
+	}
+
+	generateNumbers(ev);
+});
+
+function generateNumbers(ev){
 	if (!State.variables.numberify_enabled || !enableLinkNumberify)
 		return;
 
@@ -457,9 +499,9 @@ $(document).on(':passagerender', function(ev) {
 	currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
 
 	$(currentLinks).each(function(i, el) {
-		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+        if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 	});
-});
+}
 
 $(document).on('keyup', function(ev) {
 	if (!State.variables.numberify_enabled || !enableLinkNumberify)

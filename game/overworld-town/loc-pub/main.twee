@@ -1,85 +1,103 @@
 :: Widgets Pub [widget]
+
 <<widget "landryoptions">><<nobr>>
-<<if $blackmoney gte 1>>
-<<link [[Sell Stolen Goods|Pub Sell]]>><</link>>
-<br>
-<</if>>
-<<if $spray lt $spraymax and $money gte 250000>>
-<<link [[Buy pepper spray charge (£2500)|Pub Spray]]>><<spray 1>><<set $money -= 250000>><</link>>
-<br>
-<</if>>
-<<if $crime gte 500 and $pubtask isnot 1>>
-<<link [[Ask for help covering your tracks|Pub Task]]>><</link>>
-<br>
-<</if>>
-<<if $pubtask2 is 1>>
-<<link [[Hand over the black box|Pub Box]]>><</link>>
-<br>
-<</if>>
+	<<if $blackmoney gte 1>>
+		<<link [[Sell Stolen Goods|Pub Sell]]>><</link>>
+		<br>
+	<</if>>
+	<<if $spray lt $spraymax and $money gte 250000>>
+		<<link [[Buy pepper spray charge (£2500)|Pub Spray]]>><<spray 1>><<set $money -= 250000>><</link>>
+		<br>
+	<</if>>
+	<<if $crime gte 500 and $pubtask isnot 1>>
+		<<link [[Ask for help covering your tracks|Pub Task]]>><</link>>
+		<br>
+	<</if>>
+	<<if $police_hack is 1>>
+		<<link [[Ask for help breaking into the police computer|Pub Hack]]>><</link>><br>
+	<<elseif $pub_hack_job is 3 and $hacker_tasks.length gte 2>>
+		<<link [[Pass on the hacker's message|Pub Hack]]>><<set $pub_hack_job to 4>><</link>><br>
+	<<elseif $police_hack is 4>>
+		<<link [[Ask for updated police password (£300)|Pub Hack]]>><<set $money -= 30000>><</link>><br>
+	<</if>>
+	<<if $pubtask2 is 1>>
+		<<link [[Hand over the black box|Pub Box]]>><</link>>
+		<br>
+	<</if>>
 <</nobr>><</widget>>
+
+
 :: Pub [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
-<<if $pubbooze is "herbal">><<set $pubbooze to 0>>
-The bartender pours a glass of a locally produced spirit. The pub seems more colourful after drinking it.
-<<elseif $pubbooze is "booze">><<set $pubbooze to 0>>
-The bartender pours a glass of a cheap and popular beverage.
+<<if $pubbooze is "herbal">>
+	<<set $pubbooze to 0>>
+	The bartender pours a glass of a locally produced spirit. The pub seems more colourful after drinking it.
+<<elseif $pubbooze is "booze">>
+	<<set $pubbooze to 0>>
+	The bartender pours a glass of a cheap and popular beverage.
 <<else>>
-You enter the pub. It's busy as always.
+	You enter the pub. It's busy as always.
 <</if>>
 <br><br>
-<<if $pubwhore gte 10 and $pubattack isnot 1>><<set $pubattack to 1>>
-A black sack is thrown over your head and two pairs of arms grab you from behind. They drag you out of the pub and into a waiting van.
-<br><br>
-<<link [[Next|Brothel Punishment]]>><</link>>
-<br>
-<<elseif $pubwhore gte 20>><<set $pubwhore to 10>>
-<<generate1>><<generate2>><<person1>> A <<person>> shoves you against the wall. A <<person2>><<person>> stands beside <<person1>><<himstop>> The pub staff and clientele look away. "Boss sent us," the <<person1>><<person>> says. "Says you've been naughty. We're gonna bring you in." <<He>> glances at the bar. "And don't try nothing. No one's gonna help you."
-<br><br>
-<<if $money gte 50000>>
-<<link [[Bribe (£500)|Pub Accost]]>><<set $phase to 0>><</link>>
-<br>
-<</if>>
-<<link [[Fight|Pub Accost Fight]]>><<set $fightstart to 1>><</link>>
-<br>
-<<link [[Go with them|Pub Accost]]>><<set $phase to 1>><</link>>
-<br>
+<<if $pubwhore gte 10 and $pubattack isnot 1>>
+	<<set $pubattack to 1>>
+	A black sack is thrown over your head and two pairs of arms grab you from behind. They drag you out of the pub and into a waiting van.
+	<br><br>
+	<<link [[Next|Brothel Punishment]]>><</link>>
+	<br>
+<<elseif $pubwhore gte 20>>
+	<<set $pubwhore to 10>>
+	<<generate1>><<generate2>><<person1>> A <<person>> shoves you against the wall. A <<person2>><<person>> stands beside <<person1>><<himstop>> The pub staff and clientele look away. "Boss sent us," the <<person1>><<person>> says. "Says you've been naughty. We're gonna bring you in." <<He>> glances at the bar. "And don't try nothing. No one's gonna help you."
+	<br><br>
+	<<if $money gte 50000>>
+		<<link [[Bribe (£500)|Pub Accost]]>><<set $phase to 0>><</link>>
+		<br>
+	<</if>>
+	<<link [[Fight|Pub Accost Fight]]>><<set $fightstart to 1>><</link>>
+	<br>
+	<<link [[Go with them|Pub Accost]]>><<set $phase to 1>><</link>>
+	<br>
 <<else>>
-<<link [[Ask for Landry|Pub Landry]]>><<endevent>><</link>>
-<br>
-<<if $money gte 1000>>
-<<link [[Drink booze (£10 0:05)|Pub]]>><<endevent>><<set $money -= 1000>><<set $pubbooze to "booze">><<set $drunk += 120>><<pass 5>><</link>> | <span class="red">+ + Alcohol</span>
-<br>
+	<<link [[Ask for Landry|Pub Landry]]>><<endevent>><</link>>
+	<br>
+	<<if $money gte 1000>>
+		<<link [[Drink booze (£10 0:05)|Pub]]>><<endevent>><<set $money -= 1000>><<set $pubbooze to "booze">><<set $drunk += 120>><<pass 5>><</link>> | <span class="red">+ + Alcohol</span>
+		<br>
+	<</if>>
+	<<if $money gte 2000>>
+		<<link [[Drink herbal booze (£20 0:05)|Pub]]>><<endevent>><<set $money -= 2000>><<set $pubbooze to "herbal">><<pass 10>><<set $drunk += 60>><<set $hallucinogen += 20>><</link>> | <span class="red">+ Alcohol</span> | <span class="red">+ Hallucinogen</span>
+		<br>
+	<</if>>
+	<br>
+	<<generate1>><<person1>>You see a <<person>> sitting alone.
+	<br>
+	<<link [[Flirt (0:05)|Pub Flirt]]>><<pass 5>><<set $pubdrink to 0>><</link>><<promiscuous1>>
+	<br>
+	<<link [[Look for someone else (0:01)|Pub]]>><<endevent>><<pass 1>><</link>>
+	<br><br>
+	<<link [[Leave|Harvest Street]]>><<endevent>><</link>>
+	<br>
 <</if>>
-<<if $money gte 2000>>
-<<link [[Drink herbal booze (£20 0:05)|Pub]]>><<endevent>><<set $money -= 2000>><<set $pubbooze to "herbal">><<pass 10>><<set $drunk += 60>><<set $hallucinogen += 20>><</link>> | <span class="red">+ Alcohol</span> | <span class="red">+ Hallucinogen</span>
-<br>
-<</if>>
-<br>
-<<generate1>><<person1>>You see a <<person>> sitting alone.
-<br>
-<<link [[Flirt (0:05)|Pub Flirt]]>><<pass 5>><<set $pubdrink to 0>><</link>><<promiscuous1>>
-<br>
-<<link [[Look for someone else (0:01)|Pub]]>><<endevent>><<pass 1>><</link>>
-<br><br>
-<<link [[Leave|Harvest Street]]>><<endevent>><</link>>
-<br>
-<</if>>
+
+
 :: Pub Intro [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 You enter the pub. The interior has a cosy, rustic look. Old farm tools decorate the walls, a nod to the long-standing agricultural businesses nearby.
 <<if $daystate is "night">>
-Despite the hour, the place teems with activity. Getting a table must be difficult.
+	Despite the hour, the place teems with activity. Getting a table must be difficult.
 <<else>>
-The place teems with activity. Getting a table must be difficult.
+	The place teems with activity. Getting a table must be difficult.
 <</if>>
 <br><br>
 <<landry>><<person1>>
 <<if $pronoun is "m">>
-"I've not seen you around," says a man's voice beside you. <<He>> has short black hair, a grey sweater and dark trousers. Not someone you'd normally look twice at, least of all in a place like this. "Would you like to join me? I have a proposition for you."
-<br><br>
+	"I've not seen you around," says a man's voice beside you. <<He>> has short black hair, a grey sweater and dark trousers. Not someone you'd normally look twice at, least of all in a place like this. "Would you like to join me? I have a proposition for you."
+	<br><br>
 <<else>>
-"I've not seen you around," says a woman's voice beside you. <<He>> has shoulder-length black hair, a grey cardigan and dark trousers. Not someone you'd normally look twice at, least of all in a place like this. "Would you like to join me? I have a proposition for you."
-<br><br>
+	"I've not seen you around," says a woman's voice beside you. <<He>> has shoulder-length black hair, a grey cardigan and dark trousers. Not someone you'd normally look twice at, least of all in a place like this. "Would you like to join me? I have a proposition for you."
+	<br><br>
 <</if>>
 Deciding there's no chance of danger in public like this, you agree. <<He>> leads you to a small area adjacent to the main room, partially shielded from view. Oddly the tables here are empty. <<He>> sits at a small table, and you follow suit. You realise <<he>> has a slender build, concealed by <<his>> somewhat plain and baggy clothing.
 <br><br>
@@ -89,7 +107,10 @@ Deciding there's no chance of danger in public like this, you agree. <<He>> lead
 <br><br>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+
 :: Pub Landry [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 <<landry>><<person1>>You ask the bartender for Landry, who nods and beckons you over to your usual table. You've barely sat down when Landry arrives and sits opposite you.
 <br><br>
@@ -98,35 +119,45 @@ Deciding there's no chance of danger in public like this, you agree. <<He>> lead
 <<landryoptions>>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+
 :: Pub Spray [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 You put the money on the table. Landry swaps it with a small cannister. <<gspray>>
 <br><br>
-<<if $pubspray isnot 1>><<set $pubspray to 1>>
-"Sorry about the cost," <<he>> says. "Ingredients are hard to find."
-<br><br>
+<<if $pubspray isnot 1>>
+	<<set $pubspray to 1>>
+	"Sorry about the cost," <<he>> says. "Ingredients are hard to find."
+	<br><br>
 <</if>>
 <<landryoptions>>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+
 :: Pub Sell [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 <<if $blackmoney lt 100>>
-You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "Good job. You know where to find me if you get anything else."
-<br><br>
+	You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "Good job. You know where to find me if you get anything else."
+	<br><br>
 <<elseif $blackmoney lt 500>>
-You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "Quite the haul. You know where to find me if you get anything else."
-<br><br>
+	You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "Quite the haul. You know where to find me if you get anything else."
+	<br><br>
 <<else>>
-You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "This is quite the haul, I hope you haven't bitten off more than you can chew. You know where to find me if you need help covering your tracks."
-<br><br>
+	You put the goods on the table. Landry appraises them with the relaxed demeanour of someone accustomed to their work. "This is quite the haul, I hope you haven't bitten off more than you can chew. You know where to find me if you need help covering your tracks."
+	<br><br>
 <</if>>
-You make £$blackmoney.
+You make £<<print $blackmoney>>.
 <<set $money += $blackmoney * 100>><<set $blackmoney to 0>>
 <br><br>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+
 :: Pub Task [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 "I can help you," Landry says, reclining. "But I need you to do something for me. And no, It's not money related. I was expecting a package that never arrived, I need you to find it for me. Good thing I know exactly where to find it, it had a GPS tracker. It's deep in the forest beside the town."
 <br><br>
@@ -135,7 +166,10 @@ You make £$blackmoney.
 <<set $pubtask to 1>>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+
 :: Pub Box [nobr]
+
 <<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
 "That's it! You're a lifesaver." <<He>> examines the box more closely. "I hope it wasn't too much trouble. Don't worry, I'll fulfil my side of things. You'll be clean as can be." <<He>> stands. "Now if you'll excuse me, I've some favours to call in."
 <br><br>
@@ -145,3 +179,68 @@ You make £$blackmoney.
 <<set $crime to 0>>
 <<link [[Leave|Pub]]>><<endevent>><</link>>
 <br>
+
+:: Pub Hack [nobr]
+<<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">><<set $phase to 1>>
+<<landry>><<person1>>
+<<if $police_hack is 1>>
+	"Hacking a Police computer?!" Landry nods, reclining. "I like your style. But if you're looking for my help you're out of luck.
+	Never been into all that cyber stuff."
+	<br><br>
+	Landry sits forward, rubs <<his>> chin thoughtfully. "Times change though. And they all keep telling me that's where the money is nowadays. Tell you what -
+	they say there's this kid in town, <span class="teal">some orphan kid at the home on Domus.</span> Some kind of computers whiz. Makes stuff, breaks stuff.
+	I think the kid's called Mickey or McKay or something like that."
+	<br><br>
+	You think of the other orphans. One face leaps to mind.
+	<br>
+	"Whatever," Landry sits back. "Best hope is to go to the orphanage on Domus and find this kid. Just watch out. Person who runs the place is called Bailey.
+	Nasty piece of work. Makes Briar look like a bleeding-heart humanitarian. You know Briar? Well anyway, Bailey's protective. If you get caught, you're on your own.
+	Bailey's connected. My name won't help. But if you can get this kid to come work with me there'll be money in it for you."
+	<br><br>
+
+	<<link [[Deal|Pub Hack Deal]]>><<set $police_hack to 2>><<set $pub_hack_job to 1>><<set $phase to 1>><</link>>
+	<br>
+	<<link [[No Deal|Pub Hack Deal]]>><<set $phase to 2>><</link>>
+	<br>
+<<elseif $police_hack is 4>>
+	"Sure," Landry says. "Give me 10 minutes."
+	<br><br>
+
+	You watch the other bar customers for a while. Landry soon returns.
+	<br>
+	"Here you are," Landry says. One new police master password. And our mutual friend says hi."
+	<br><br>
+	<<set $police_hack to 5>>
+	<<link [[Leave|Pub]]>><<endevent>><</link>>
+	<br>
+<<elseif $pub_hack_job is 4>>
+	"Yeah, the kid turned up already," Landry rubs <<his>> head. "Strange one. Won't even tell me his name? Her name? I can't even tell. Smart as you like though.
+	Said you'd have a bunch of Esty cards for me to take?"
+	<br>
+	You hand over the SD memory cards. In return Landry gives you an envelope. Inside is money and a card with a word scrawled on it.
+	<br><br>
+	"Thanks. And that there's the police master password along with a £500 thank you for bringing in some talent. I may have new kinds of work in the future.
+	There's also this."
+	<br>
+	Landry hands you a USB stick.
+	<br><br>
+
+	"Some kind of virus. Spreads over an eye-pee network? Wipes every computer clean. To quote our mutual friend: 'it will most certainly ruin someone's day.'
+	Should be able to cause some trouble with that one. Or make old trouble disappear. Right? Maybe next thing I'll be asking you to clear up my past misdeeds.
+	Happy hunting."
+	<br><br>
+	<<set $money += 50000>><<set $police_hack to 5>>
+	<<link [[Leave|Pub]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Pub Hack Deal [nobr]
+<<set $outside to 0>><<set $location to "pub">><<effects>><<set $bus to "harvest">>
+
+<<if $phase is 1>>
+	"Excellent. Good hunting."
+<<elseif $phase is 2>>
+	"Then I can't really help you. Good luck with that computer."
+<</if>>
+<br><br>
+<<link [[Next|Pub]]>><<endevent>><</link>>
