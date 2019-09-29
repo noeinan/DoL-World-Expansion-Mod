@@ -157,9 +157,17 @@ window.hairdressers = function(type, value){
 
 window.mapMove = function(moveTo){
 	var currentPassage = SugarCube.State.variables.passage;
+	var destination_table = [];
+	for(var i=1; i < SugarCube.State.variables.link_table.length; i++) {
+		var temp = SugarCube.State.variables.link_table[i].split("|")[1];
+		if(temp) {
+			destination_table[destination_table.length] = temp.split("]]")[0];
+		}
+	}
 	var avaliable = SugarCube.State.variables.avaliableMaps;
 
-	if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo)){
+	if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
+	{
 		new Wikifier(null, '<<pass 5>>');
 		SugarCube.State.display(moveTo);
 	}
