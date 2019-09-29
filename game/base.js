@@ -156,7 +156,7 @@ window.hairdressers = function(type, value){
 }
 
 window.mapMove = function(moveTo){
-    var currentPassage = SugarCube.State.variables.passage;
+	var currentPassage = SugarCube.State.variables.passage;
 	var destination_table = [];
 	for(var i=1; i < SugarCube.State.variables.link_table.length; i++) {
 		var temp = SugarCube.State.variables.link_table[i].split("|")[1];
@@ -164,13 +164,13 @@ window.mapMove = function(moveTo){
 			destination_table[destination_table.length] = temp.split("]]")[0];
 		}
 	}
-    var avaliable = SugarCube.State.variables.avaliableMaps;
+	var avaliable = SugarCube.State.variables.avaliableMaps;
 
-    if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
+	if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
 	{
-        new Wikifier(null, '<<pass 5>>');
-        SugarCube.State.display(moveTo);
-    }
+		new Wikifier(null, '<<pass 5>>');
+		SugarCube.State.display(moveTo);
+	}
 }
 
 var xDown = null;
@@ -507,7 +507,7 @@ function generateNumbers(ev){
 	currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
 
 	$(currentLinks).each(function(i, el) {
-        if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+		if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 	});
 }
 
