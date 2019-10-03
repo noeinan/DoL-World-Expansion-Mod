@@ -4,6 +4,12 @@ Config.history.maxStates = 1;
 
 State.initPRNG();
 
+window.versionUpdateCheck = true;
+
+Config.saves.onLoad = function (save) {
+    window.versionUpdateCheck = true;
+}
+
 window.statsConsole = function(){
 	console.log("PenisGrowthTimer",SugarCube.State.variables.penisgrowthtimer);
 	console.log("BreastGrowthTimer",SugarCube.State.variables.breastgrowthtimer);
@@ -164,9 +170,10 @@ window.mapMove = function(moveTo){
 			destination_table[destination_table.length] = temp.split("]]")[0];
 		}
 	}
-	var avaliable = SugarCube.State.variables.avaliableMaps;
+	var avaliable = SugarCube.State.variables.map.avaliable;
 
 	if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
+	//if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo))
 	{
 		new Wikifier(null, '<<pass 5>>');
 		SugarCube.State.display(moveTo);
