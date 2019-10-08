@@ -492,6 +492,10 @@ function getPrettyKeyNumber(counter) {
 	return str;
 }
 
+$(document).on(':passagestart', function (ev) {
+    $(ev.content).wiki("<<set $link_table = []>>");
+})
+
 $(document).on(':passagerender', function(ev) {
 	currentLinks = [];
 

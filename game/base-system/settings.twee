@@ -52,7 +52,6 @@
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
 	<<case "npcSettings">><<replace #settingsDiv>><<npcSettings>><</replace>>
-	<<case "attitudesSettings">><<replace #settingsDiv>><<attitudes>><</replace>>
 	<<case "generalSettings">><<replace #settingsDiv>><<generalSettings>><</replace>>
 	<<default>><<replace #settingsDiv>><<gameSettings>><</replace>>
 <</switch>>
@@ -74,11 +73,7 @@
 	<<button "NPC">>
 		<<displaySettings "npcSettings">>
 	<</button>>
-	<<if $passage isnot "Start">>
-	<<button "Attitudes">>
-		<<displaySettings "attitudesSettings">>
-	<</button>>
-	<</if>>
+
 	<<button "General">>
 		<<displaySettings "generalSettings">>
 	<</button>>
@@ -102,7 +97,7 @@
 <</nobr>><</widget>>
 
 <<widget "characterSettings">><<nobr>>
-	<span class="red">This settings tab can only be accessed at the beginning.</span>
+	<span class="red">The Character tab can only be accessed at the beginning.</span>
 	<br><br>
 
 	<<if $dev is 1>>
@@ -114,7 +109,7 @@
 		<br><br>
 	<<else>>
 		<span class="gold">Body size</span> - A smaller body makes you inflict less damage during encounters, making defiance harder.
-		<br>
+		<br><<set $devlevel to 12>>
 		<label>Tiny <<print '<<radiobutton "$devlevel" 6 ' + ($devlevel is 6 ? "checked" : "") + '>>'>></label> |
 		<label>Small <<print '<<radiobutton "$devlevel" 10 ' + ($devlevel is 10 ? "checked" : "") + '>>'>></label> |
 		<label>Normal <<print '<<radiobutton "$devlevel" 12 ' + ($devlevel is 12 ? "checked" : "") + '>>'>></label> |
@@ -137,7 +132,7 @@
 	<</if>>
 
 	<span class="gold">Penis size</span> - if applicable
-	<br>
+	<br><<set $penissize to 1>>
 	<label>Tiny <<print '<<radiobutton "$penissize" 0 ' + ($penissize is 0 ? "checked" : "") + '>>'>></label> |
 	<label>Small <<print '<<radiobutton "$penissize" 1 ' + ($penissize is 1 ? "checked" : "") + '>>'>></label> |
 	<label>Normal <<print '<<radiobutton "$penissize" 2 ' + ($penissize is 2 ? "checked" : "") + '>>'>></label>
@@ -200,7 +195,7 @@
 	<br><br>
 
 	<span class="gold">Hair length</span>
-	<br>
+	<br><<set $hairlength to 200>>
 	<label>Ear <<print '<<radiobutton "$hairlength" 0 ' + ($hairlength is 0 ? "checked" : "") + '>>'>></label> |
 	<label>Neck <<print '<<radiobutton "$hairlength" 200 ' + ($hairlength is 200 ? "checked" : "") + '>>'>></label> |
 	<label>Chest <<print '<<radiobutton "$hairlength" 400 ' + ($hairlength is 400 ? "checked" : "") + '>>'>></label>
@@ -340,7 +335,7 @@
 	<<print '<<checkbox "$breastfeedingdisable" "t" "f" ' + ($breastfeedingdisable is "f" ? "checked" : "") + '>>'>> Enable breastfeeding
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$analpregdisable" "t" "f" ' + ($analpregdisable is "f" ? "checked" : "") + '>>'>> Enable anal pregnancy
+	<<print '<<checkbox "$analpregdisable" "t" "f" ' + ($analpregdisable is "f" ? "checked" : "") + '>>'>> Enable anal parasitic pregnancy
 	</div></label>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$watersportsdisable" "t" "f" ' + ($watersportsdisable is "f" ? "checked" : "") + '>>'>> Enable watersports
@@ -349,7 +344,7 @@
 <</nobr>><</widget>>
 
 <<widget "sizeLimitsSettings">><<nobr>>
-	<span class="gold">Maximum player character breast size</span> - Breasts already above this size won't automatically shrink. Your breasts will grow regardless of gender, however, males and those that are pure will have reduction in their natural growth. Surgery, pills and parasites can influence growth in both directions. Actions such as having breasts played with or pregnancy will only increase their growth.
+	<span class="gold">Maximum player character breast size</span> - Breasts already above this size won't automatically shrink. Your breasts will grow regardless of gender. Males and those with high purity experience slower growth. Surgery, pills and parasites can influence growth in both directions. Having breasts played with and hosting internal parasites increase growth.
 	<br>
 	<<set _name to ["Flat", "Budding", "Tiny", "Small", "Pert", "Modest", "Full", "Large", "Ample", "Massive", "Huge", "Gigantic", "Enormous"]>>
 	<<for _i to 0; _i lt _name.length; _i++>>
@@ -365,7 +360,7 @@
 	<</for>>
 	<br><br>
 
-	<span class="gold">Maximum player character penis size</span> - Penises already above this size won't automatically shrink. Surgery, pills and parasites can influence growth in both directions. Using the penis inside someone will increase it's size on climax, being used by someone will decrease it's size on climax.
+	<span class="gold">Maximum player character penis size</span> - Penises already above this size won't automatically shrink. Surgery, pills and parasites can influence growth in both directions.
 	<br>
 	<<set _name to ["Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
 	<<for _i to 0; _i lt _name.length; _i++>>
@@ -433,10 +428,7 @@
 
 <<widget "npcSettings">><<nobr>>
 <<set _penisNames to ["Tiny", "Average", "Thick", "Huge"]>>
-<<if $passage is "Start">>
-<span class="red">Any setting left alone will be automatically generated for you. Initial manual buttons click will change everything</span>
-<br>
-<</if>>
+<<if $passage is "Start">><span class="red">Untouched options will be automatically generated for you.</span><br><</if>>
 <<link "Generate all genders based on game settings">>
 	<<initnpcgender "genders">>
 	<<displaySettings>>
@@ -470,6 +462,7 @@ Penis size - if applicable:
 <br>
 <label>Vagina <<print '<<radiobutton "$baileygenitals" "vagina" ' + ($baileygenitals is "vagina" ? "checked" : "") + '>>'>></label> |
 <label>Penis <<print '<<radiobutton "$baileygenitals" "penis" ' + ($baileygenitals is "penis" ? "checked" : "") + '>>'>></label>
+
 <br>
 
 Penis size - if applicable:
@@ -658,6 +651,21 @@ Penis size - if applicable:
 <</for>>
 <br><br>
 
+<span class="gold">Gwylan the keeper</span>
+<br>
+<label>Female <<print '<<radiobutton "$gwylangender" "f" ' + ($gwylangender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$gwylangender" "m" ' + ($gwylangender is "m" ? "checked" : "") + '>>'>></label>
+<br>
+<label>Vagina <<print '<<radiobutton "$gwylangenitals" "vagina" ' + ($gwylangenitals is "vagina" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$gwylangenitals" "penis" ' + ($gwylangenitals is "penis" ? "checked" : "") + '>>'>></label>
+<br>
+
+Penis size - if applicable:
+<<for _i to 0; _i lt _penisNames.length; _i++>>
+	<label><<print _penisNames[_i]>> <<print '<<radiobutton "$gwylan_penis_size" ' + (_i + 1) + ' ' + ($gwylan_penis_size is (_i + 1) ? "checked" : "") + '>>'>></label> |
+<</for>>
+<br><br>
+
 <span class="gold">The Black Wolf</span>
 <br>
 <label>Female <<print '<<radiobutton "$blackwolfgender" "f" ' + ($blackwolfgender is "f" ? "checked" : "") + '>>'>></label> |
@@ -770,5 +778,12 @@ Penis size - if applicable:
 <<settings>>
 <br><br>
 
-<<link [[Back|Bedroom]]>><</link>>
+<<link [[Confirm|Bedroom]]>><</link>>
+<br>
+
+:: Attitudes [nobr]
+<<attitudes>>
+<br><br>
+
+<<link [[Confirm|Bedroom]]>><</link>>
 <br>
