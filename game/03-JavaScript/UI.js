@@ -129,7 +129,7 @@ $(document).on(':passagerender', function(ev) {
 
 	if (passage() == "GiveBirth") {
 		$(ev.content).find("[type=checkbox]").on('propertychange change', function() { new Wikifier(null, '<<resetPregButtons>>');
-        generateNumbers(ev);} );
+		generateNumbers(ev);} );
 	}
 
 	generateNumbers(ev);
