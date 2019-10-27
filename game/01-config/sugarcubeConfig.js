@@ -7,16 +7,16 @@ State.initPRNG();
 window.versionUpdateCheck = true;
 
 Config.saves.onLoad = function (save) {
-    window.versionUpdateCheck = true;
+	window.versionUpdateCheck = true;
 }
 
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
-    "debug": true,
-    "enableImages": true,
-    "enableLinkNumberify": true,
-    "version": "0.2.4.2 Folder Change",
+	"debug": true,
+	"enableImages": true,
+	"enableLinkNumberify": true,
+	"version": "0.2.4.2 Folder Change",
 }
 
 config.saves.autosave = "autosave";
