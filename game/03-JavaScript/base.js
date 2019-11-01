@@ -58,6 +58,8 @@ Macro.add('time', {
 	}
 });
 
+
+
 function DefineMacro(macroName, macroFunction) {
 	Macro.add(macroName, { isWidget: true, handler: function() {
 		var oldArgs = State.variables.args;
