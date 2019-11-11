@@ -1,9 +1,13 @@
 :: School Gloryhole Start[nobr]
-<!-- If you stay late, people quit showing up, so you have to wait (5 min at time, until PC gives up and leaves) -->
+<!-- If you stay late, people quit showing up, so you have to wait (10 min at time, until PC gives up and leaves) -->
 <!-- Getting customers is based on how much you're charging and how "good" the PC is (fame/skill/something) If you charge too much no-one shows up so you have to spend more time waiting than earning. 10 min time blocks.-->
-<!-- Random chance that janitor kicks you+queue out while this is going on, with sub-chance that he/she takes advantage of PC. Would make sense that the longer the queue, the more likely the janitor comes and kicks everyone out -->
-<!-- With high history perhaps you know other ways out that the janitor can't get to. If this is off the entrance of sewer (between the bathrooms) perhaps Morgan grabs you... maybe that's the other exit -->
-<!-- Or, in a twist, perhaps Morgan was always the school janitor... -->
+<!-- DONE Random chance that janitor kicks you+queue out while this is going on, with sub-chance that he/she takes advantage of PC. -->
+<!-- Make janitor outcome based on fame / deliquency -->
+<!-- Would make sense that the longer the queue, the more likely the janitor comes and kicks everyone out -->
+<!-- NOPE With high history perhaps you know other ways out that the janitor can't get to. If this is off the entrance of sewer (between the bathrooms) perhaps Morgan grabs you... maybe that's the other exit -->
+<!-- NOPE Or, in a twist, perhaps Morgan was always the school janitor... -->
+<!-- Save janitor NPC for re-use -->
+<!-- Sneaking out of the gloryhole should involve some more risk / complexity...? -->
 
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
 
@@ -18,27 +22,28 @@ You noticed before a large area of missing tile from the wall at waist level, wi
 <<else>>
 
 You wait until no-one else is around; now is your chance to set up.<br><br>
+You think about how much you should charge for your services, <span class="green">given your skills and reputation.</span><br><br>
 
-<<link [[Set up shop (0:10)|School Gloryhole]]>><<pass 10>><<set $phase to 1>><</link>><<promiscuous4>><br>
-<<link [[Leave the toilets (0:01)|Hallways]]>><<pass 1>><</link>><br>
+<<link [[Set up shop and charge £5 (0:10)|School Gloryhole]]>><<pass 10>><<set $school_gloryhole_price to 500>><<set $phase to 1>><</link>><<promiscuous4>><br>
+<<link [[Set up shop and charge £10 (0:10)|School Gloryhole]]>><<pass 10>><<set $school_gloryhole_price to 1000>><<set $phase to 1>><</link>><<promiscuous4>><br>
+<<link [[Set up shop and charge £20 (0:10)|School Gloryhole]]>><<pass 10>><<set $school_gloryhole_price to 2000>><<set $phase to 1>><</link>><<promiscuous4>><br>
+<<link [[Changed my mind; leave the toilets (0:01)|Hallways]]>><<pass 1>><</link>><br>
 
 <</if>>
 
-
 :: School Gloryhole [nobr]
 <<set $outside to 0>><<set $location to "school">><<effects>>
-
-<!-- Next, allow PC to set price as part of Phase 1 options, which influences attendance in combination with either fame or skill-->
-<<set $school_gloryhole_price to 500>>
 
 <<if $phase is 1>><<set $phase to 0>>
 	You scrawl out a sign "Oral Servicing, £<<print ($school_gloryhole_price / 100)>>" and tape it to the wall above the hole. You crawl into the space behind and wait.  
 <<else>>
 	You adjust your position in the gap behind the wall and wait for your next customer. 
 <</if>>
+<br><br>
 
-<<switch random(1, 2)>>
-<<case 1>>
+<!-- Base switch on time of day, with more customers before and after classes indexed on price and fame-->
+<<switch random(1, 10)>>
+<<case 1 2 3 4 5 6 7>>
 	<<generatec1>><<person1>>
 	You hear footsteps outside, then giggling. A
 	<<if $NPCList[0].penis isnot "none">>
@@ -49,6 +54,9 @@ You wait until no-one else is around; now is your chance to set up.<br><br>
 	<br><br>
 	<<link [[Engage|School Gloryhole Sex]]>><<set $sexstart to 1>><<tiredness 3>><</link>><<gtiredness>><br>
 	<<link [[Sneak out (0:05)|Hallways]]>><<pass 5>><<endevent>><</link>><br>
+<<case 10>>
+	You hear a sudden commotion outside, then a voice, "What's going on in here?" <span class="pink">The janitor reaches in and hauls you out of the spot.</span><br><br>
+	<<link [[Caught!|School Gloryhole Janitor Catch]]>><<gstress>><<stress 1>><</link>>
 <<default>>
 	You hear footsteps outside, and chatter, but no one approaches the hole. <br><br>
 	<<link [[Wait (0:10)|School Gloryhole]]>><<pass 10>><</link>><br>
@@ -100,7 +108,7 @@ You wait until no-one else is around; now is your chance to set up.<br><br>
 	pussy disappears.
 	<</if>>
 	<br><br>
-	<<tearful>> you adjust your position the hole.
+	<<tearful>> you adjust your position behind the hole.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
@@ -108,7 +116,7 @@ You wait until no-one else is around; now is your chance to set up.<br><br>
 <<else>>
 	You hear the <<person>> whining on the other side of the wall.
 	<br><br>
-	<<tearful>> you adjust your position the hole.
+	<<tearful>> you adjust your position behind the hole.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
@@ -119,3 +127,64 @@ You wait until no-one else is around; now is your chance to set up.<br><br>
 <<link [[Wait for another customer|School Gloryhole]]>><</link>><br>
 <<link [[Sneak out (0:05)|Hallways]]>><<pass 5>><</link>><br>
 
+:: School Gloryhole Janitor Catch [nobr]
+<<set $outside to 0>><<set $location to "school">><<effects>>
+<<generate1>><<person1>>
+
+<<He>> glares at you. "Look at the mess you're making in my bathrooms <<girlexclamation>> Do you know how long this will take to clean up all this spunk?"<br><br>
+
+<!-- Outcome here could be based on fame / deliquency or some combination of-->
+<!-- This NPC generation should be remembered and stored using the new functionality -->
+<<switch random(1, 10)>>
+<<case 1 2 3 4 5 6 7 8 9>>
+	<<He>> shakes his head. "You're getting detention for this. Now get out of here."<<gdelinquency>><br><br>
+	<<detention 1>>
+	<<tearful>> you run out of the bathroom.<br><br>
+	<<link [[Next|Hallways]]>><</link>>
+<<default>>
+	<<He>> grabs you by the ear and trots you into a nearby janitors closest. "Since you seem to like selling your body, you can share a piece with me."<br><br>
+	<<He>> lunges at you...<br><br>
+	<<link [[Next|Janitor Closet Rape]]>><<set $molestationstart to 1>><</link>>
+<</switch>>
+
+:: Janitor Closet Rape [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<set $event to "molestationhome">>
+	<<man1init>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Janitor Closet Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Janitor Closet Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Janitor Closet Rape]]>><</link>></span><<nexttext>>
+<</if>>
+
+
+:: Janitor Closet Rape Finish [nobr]
+
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	"Don't go whining to no one," the <<person1>><<person>> says. "Not that they'll believe you." <<He>> laughs as <<he>> pushes you out of the closet. <<tearful>> you stumble out into the hall.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Hallways]]>><</link>>
+<<else>>
+	<<person1>><<He>> recoils in pain, falling back into pile of mop buckets and brooms. <<tearful>> you use this as your chance to escape, slamming the door behind you.<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Hallways]]>><</link>>
+<</if>>
