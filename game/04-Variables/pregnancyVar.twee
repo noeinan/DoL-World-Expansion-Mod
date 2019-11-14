@@ -1,0 +1,92 @@
+:: Widgets pregnancyVar [widget]
+<<widget "pregnancyVar">><<nobr>>
+	<<containersInit>>
+	<<if $objectVersion.prenancyObjectRepair isnot 1>>
+		<<prenancyObjectRepair>>
+		<<set $objectVersion.prenancyObjectRepair to 1>>
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "containersInit">><<nobr>>
+<<if $container is undefined>>
+	<<set $container to {
+		"lastLocation": null,
+		"list":["home", "lake"],
+		"home":{
+			"upgrades":{
+				"capacity":0,
+				"foodStorage":0,
+				"luxury":0
+			},
+			"name": "Tiny Fish Tank",
+			"count": 0,
+			"maxCount": 1,
+			"daysSinceFed": 0,
+			"maxDaysWithoutFood": 3,
+			"creatures":{
+				0: null
+			},
+			"deadCreatures": 0,
+			"visited": false,
+			"leaveLink": "Bedroom"
+		},
+		"portable":{
+			"creatures":[],
+			"value":0
+		},
+		"lake":{
+			"upgrades":{
+				"capacity":0,
+				"foodStorage":0,
+				"luxury":0
+			},
+			"name": "pond",
+			"count": 0,
+			"maxCount": 3,
+			"daysSinceFed": 0,
+			"maxDaysWithoutFood": 31,
+			"creatures":{
+				0: null
+			},
+			"deadCreatures": 0,
+			"visited": false,
+			"leaveLink": "Lake Waterfall"
+		},
+	}>>
+<</if>>
+<<if $container.home.kylarDelay is undefined>>
+	<<set $container.home.kylarDelay to 0>>
+	<<set $container.home.kylarFed to false>>
+	<<set $container.home.kylarHelp to false>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "prenancyObjectRepair">><<nobr>>
+	<<set _pregnancy to $sexStats.anus.pregnancy>>
+	<<set _trueCount to 0>>
+	<<for _i to 0; _i lt 4; _i++>>
+		<<if _pregnancy[_i] isnot null>>
+			<<set _trueCount++>>
+			<<if _pregnancy[_i].creature is undefined>>
+				<<set _pregnancy[_i].creature to either("Tentacle","Spider","Fish","Snake","Eel")>>
+			<</if>>
+		<</if>>
+	<</for>>
+	<<if _trueCount isnot _pregnancy.count>>
+		<<set _pregnancy.count to clone(_trueCount)>>
+	<</if>>
+	<<set _list to ["home", "lake", "portable"]>>
+	<<for _i to 0; _i lt _list.length; _i++>>
+		<<set _container to $container[_list[_i]]>>
+		<<for _j to 0; _j lt _container.maxCount; _j++>>
+			<<if _container.creatures[_j] isnot undefined and _container.creatures[_j] isnot null>>
+				<<if _container.creatures[_j].creature is undefined>>
+					<<set _container.creatures[_j].creature to either("Tentacle","Spider","Fish","Snake","Eel")>>
+				<</if>>
+			<</if>>
+			<<if _container.upgrades.luxury is undefined>>
+				<<set _container.upgrades.luxury to 0>>
+			<</if>>
+		<</for>>
+	<</for>>
+<</nobr>><</widget>>

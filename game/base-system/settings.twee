@@ -2,26 +2,27 @@
 <<widget "initsettings">><<nobr>>
 <<set $player.gender to "f">>
 <<set $player.sex to "f">>
-<<set $devlevel to 6>>
+<<set $devlevel to 12>>
 <<set $breastsize to 0>>
 <<set $breastsensitivity to 1>>
-<<set $penissize to 0>>
+<<set $penissize to 1>>
 <<set $genitalsensitivity to 1>>
 <<set $eyeselect to "purple">>
 <<set $hairselect to "red">>
-<<set $hairlength to 0>>
+<<set $hairlength to 200>>
 <<set $awareselect to "innocent">>
 <<set $background to "waif">>
-<<if $textonly is 0>>
+<<if StartConfig.enableImages is true>>
 	<<set $images to 1>>
 	<<set $silhouettedisable to "f">>
 <</if>>
 <<set $numberify_enabled to 1>>
 <<set $gamemode to "normal">>
-<<set $whitechance to 100>>
-<<set $blackchance to 0>>
+<<set $whitechance to 90>>
+<<set $blackchance to 10>>
 <<set $bestialitydisable to "f">>
 <<set $swarmdisable to "f">>
+<<set $spiderdisable to "f">>
 <<set $parasitedisable to "f">>
 <<set $bestialitydisable to "f">>
 <<set $slimedisable to "f">>
@@ -35,6 +36,7 @@
 <<set $tipdisable to "f">>
 <<set $debugdisable to "t">>
 <<set $cheatdisable to "t">>
+<<set $watersportsdisable to "f">>
 <<set $timestyle to "military">>
 
 <</nobr>><</widget>>
@@ -51,7 +53,6 @@
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
 	<<case "npcSettings">><<replace #settingsDiv>><<npcSettings>><</replace>>
-	<<case "attitudesSettings">><<replace #settingsDiv>><<attitudes>><</replace>>
 	<<case "generalSettings">><<replace #settingsDiv>><<generalSettings>><</replace>>
 	<<default>><<replace #settingsDiv>><<gameSettings>><</replace>>
 <</switch>>
@@ -73,11 +74,7 @@
 	<<button "NPC">>
 		<<displaySettings "npcSettings">>
 	<</button>>
-	<<if $passage isnot "Start">>
-	<<button "Attitudes">>
-		<<displaySettings "attitudesSettings">>
-	<</button>>
-	<</if>>
+
 	<<button "General">>
 		<<displaySettings "generalSettings">>
 	<</button>>
@@ -101,7 +98,7 @@
 <</nobr>><</widget>>
 
 <<widget "characterSettings">><<nobr>>
-	<span class="red">This settings tab can only be accessed at the beginning.</span>
+	<span class="red">The Character tab can only be accessed at the beginning.</span>
 	<br><br>
 
 	<<if $dev is 1>>
@@ -236,6 +233,7 @@
 
 <<widget "gameSettings">><<nobr>>
 	<span class="gold">Game Mode</span>
+	<br>
 	<label>Normal mode <<print '<<radiobutton "$gamemode" "normal" ' + ($gamemode is "normal" ? "checked" : "") + '>>'>> - Survive in a dangerous world.</label>
 	<br>
 	<label>Soft mode
@@ -270,7 +268,7 @@
 	<<numberslider "$breast_mod" $breast_mod -12 12 1>>
 	<br><br>
 
-	<span class="gold">Average size of men's penises</span> - A bigger number means bigger penises in the world. At 8 everyone will have enormous penises. At -8 everyone will have tiny penises. Defaults to 0, which will result in a broad range of sizes.
+	<span class="gold">Average size of NPC penises</span> - A bigger number means bigger penises in the world. At 8 everyone will have enormous penises. At -8 everyone will have tiny penises. Defaults to 0, which will result in a broad range of sizes.
 	<br>
 	<<numberslider "$penis_mod" $penis_mod -8 8 1>>
 	<br><br>
@@ -339,13 +337,19 @@
 	<<print '<<checkbox "$breastfeedingdisable" "t" "f" ' + ($breastfeedingdisable is "f" ? "checked" : "") + '>>'>> Enable breastfeeding
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$analpregdisable" "t" "f" ' + ($analpregdisable is "f" ? "checked" : "") + '>>'>> Enable anal pregnancy
+	<<print '<<checkbox "$analpregdisable" "t" "f" ' + ($analpregdisable is "f" ? "checked" : "") + '>>'>> Enable anal parasitic pregnancy
+	</div></label>
+	<label><div class="settingsToggle">
+	<<print '<<checkbox "$watersportsdisable" "t" "f" ' + ($watersportsdisable is "f" ? "checked" : "") + '>>'>> Enable watersports
+	</div></label>
+	<label><div class="settingsToggle">
+	<<print '<<checkbox "$spiderdisable" "t" "f" ' + ($spiderdisable is "f" ? "checked" : "") + '>>'>> Enable spiders
 	</div></label>
 	<div style="clear:both;">/*Keep at end of toggles*/</div>
 <</nobr>><</widget>>
 
 <<widget "sizeLimitsSettings">><<nobr>>
-	<span class="gold">Maximum player character breast size</span> - Breasts already above this size won't automatically shrink. Your breasts will grow regardless of gender, however, males and those that are pure will have reduction in their natural growth. Surgery, pills and parasites can influence growth in both directions. Actions such as having breasts played with or pregnancy will only increase their growth.
+	<span class="gold">Maximum player character breast size</span> - Breasts already above this size won't automatically shrink. Your breasts will grow regardless of gender. Males and those with high purity experience slower growth. Surgery, pills and parasites can influence growth in both directions. Having breasts played with and hosting internal parasites increase growth.
 	<br>
 	<<set _name to ["Flat", "Budding", "Tiny", "Small", "Pert", "Modest", "Full", "Large", "Ample", "Massive", "Huge", "Gigantic", "Enormous"]>>
 	<<for _i to 0; _i lt _name.length; _i++>>
@@ -361,7 +365,7 @@
 	<</for>>
 	<br><br>
 
-	<span class="gold">Maximum player character penis size</span> - Penises already above this size won't automatically shrink. Surgery, pills and parasites can influence growth in both directions. Using the penis inside someone will increase it's size on climax, being used by someone will decrease it's size on climax.
+	<span class="gold">Maximum player character penis size</span> - Penises already above this size won't automatically shrink. Surgery, pills and parasites can influence growth in both directions.
 	<br>
 	<<set _name to ["Mini", "Tiny", "Small", "Normal", "Large", "Enormous"]>>
 	<<for _i to 0; _i lt _name.length; _i++>>
@@ -381,23 +385,29 @@
 
 
 <<widget "generalSettings">><<nobr>>
-	<<if $textonly is 0>>
 	<span class="gold">Images</span>
 	<br>
-	Images may not load properly on older Androids.
-	<br>
-	<label>Enable images <<print '<<radiobutton "$images" 1 ' + ($images is 1 ? "checked" : "") + '>>'>></label> |
-	<label>Disable images <<print '<<radiobutton "$images" 0 ' + ($images is 0 ? "checked" : "") + '>>'>></label>
-	<br><br>
+	<<if StartConfig.enableImages is true>>
+		Images may not load properly on older Androids.
+		<br>
+		<label>Enable images <<print '<<radiobutton "$images" 1 ' + ($images is 1 ? "checked" : "") + '>>'>></label> |
+		<label>Disable images <<print '<<radiobutton "$images" 0 ' + ($images is 0 ? "checked" : "") + '>>'>></label>
+		<br><br>
 
-	<label>Enable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Disable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "t" ' + ($silhouettedisable is "t" ? "checked" : "") + '>>'>></label>
+		<label>Enable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>></label> |
+		<label>Disable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "t" ' + ($silhouettedisable is "t" ? "checked" : "") + '>>'>></label>
+	<<else>>
+		Not Avaliable
+	<</if>>
 	<br><br>
-<</if>>
 	<span class="gold">Numbered link navigation</span>
 	<br>
+	<<if StartConfig.enableLinkNumberify is true>>
 	<label>Enable numbered link navigation <<print '<<radiobutton "$numberify_enabled" 1 ' + ($numberify_enabled is 1 ? "checked" : "") + '>>'>></label> |
 	<label>Disable numbered link navigation <<print '<<radiobutton "$numberify_enabled" 0 ' + ($numberify_enabled is 0 ? "checked" : "") + '>>'>></label>
+	<<else>>
+		Not Avaliable
+	<</if>>
 	<br><br>
 
 	<span class="gold">Time format</span>
@@ -411,7 +421,7 @@
 	<label>Disable hints and tips <<print '<<radiobutton "$tipdisable" "t" ' + ($tipdisable is "t" ? "checked" : "") + '>>'>></label>
 	<br><br>
 
-	<span class="gold">Additional error infromation</span> - Shows in the sidebar
+	<span class="gold">Additional error information</span> - Shows in the sidebar
 	<br>
 	<label>Enable additional error messages <<print '<<radiobutton "$debugdisable" "f" ' + ($debugdisable is "f" ? "checked" : "") + '>>'>></label> |
 	<label>Disable additional error messages <<print '<<radiobutton "$debugdisable" "t" ' + ($debugdisable is "t" ? "checked" : "") + '>>'>></label>
@@ -426,10 +436,57 @@
 
 <</nobr>><</widget>>
 
-
 <<widget "npcSettings">><<nobr>>
+<!-- New, tested and working -->
 <<set _penisNames to ["Tiny", "Average", "Thick", "Huge"]>>
-<<if $passage is "Start">><span class="red">Any setting left alone will be automatically generated for you. Initial manual buttons click will change everything</span><br><</if>>
+<<if $passage is "Start">><span class="red">Untouched options will be automatically generated for you.</span><br><</if>>
+<<link "Generate all genders based on game settings">>
+	<<initnpcgender "genders">>
+	<<displaySettings>>
+<</link>>
+<br>
+<<link "Generate all penis sizes based on game settings">>
+	<<initnpcgender "penis">>
+	<<displaySettings>>
+<</link>>
+<br><br>
+
+<<for _i to 0; _i lt $NPCName.length; _i++>>
+/% <<set _i to 0>> %/
+	<span class="gold">$NPCName[_i].nam the $NPCName[_i].title</span>
+	<br>
+	<label>Female <<print '<<radiobutton "$NPCName['+_i+'].pronoun" "f" ' + ($NPCName[_i].pronoun is "f" ? "checked" : "") + '>>'>></label> |
+	<label>Male <<print '<<radiobutton "$NPCName['+_i+'].pronoun" "m" ' + ($NPCName[_i].pronoun is "m" ? "checked" : "") + '>>'>></label>
+	<br>
+	<label>Vagina <<print '<<radiobutton "$NPCName['+_i+'].gender" "f" ' + ($NPCName[_i].gender is "f" ? "checked" : "") + '>>'>></label> |
+	<label>Penis <<print '<<radiobutton "$NPCName['+_i+'].gender" "m" ' + ($NPCName[_i].gender is "m" ? "checked" : "") + '>>'>></label>
+	<br>
+	Penis size - if applicable:
+	<<for _j to 0; _j lt _penisNames.length; _j++>>
+		<label><<print _penisNames[_j]>> <<print '<<radiobutton "$NPCName['+_i+'].penissize" ' + (_j + 1) + ' ' + ($NPCName[_i].penissize is (_j + 1) ? "checked" : "") + '>>'>></label> |
+	<</for>>
+	<br><br>
+
+<</for>>
+
+<span class="gold">The Black Wolf</span> - Unaffected by auto-generation buttons
+<br>
+<label>Female <<print '<<radiobutton "$blackwolfgender" "f" ' + ($blackwolfgender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$blackwolfgender" "m" ' + ($blackwolfgender is "m" ? "checked" : "") + '>>'>></label>
+<br>
+<label>Vagina <<print '<<radiobutton "$blackwolfgenitals" "vagina" ' + ($blackwolfgenitals is "vagina" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$blackwolfgenitals" "penis" ' + ($blackwolfgenitals is "penis" ? "checked" : "") + '>>'>></label>
+<br>
+<label>Always a beast <<print '<<radiobutton "$blackwolfmonster" 0 ' + ($blackwolfmonster is 0 ? "checked" : "") + '>>'>></label> |
+<label>Monster girl or boy when requirements met <<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>></label>
+<br><br>
+
+<</nobr>><</widget>>
+
+<<widget "npcSettings-OLD">><<nobr>>
+<!-- Delete this Widget on/after release 2.6-->
+<<set _penisNames to ["Tiny", "Average", "Thick", "Huge"]>>
+<<if $passage is "Start">><span class="red">Untouched options will be automatically generated for you.</span><br><</if>>
 <<link "Generate all genders based on game settings">>
 	<<initnpcgender "genders">>
 	<<displaySettings>>
@@ -443,11 +500,11 @@
 
 <span class="gold">Robin the orphan</span>
 <br>
-<label>Female <<print '<<radiobutton "$robingender" "f" ' + ($robingender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$robingender" "m" ' + ($robingender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$robinpronoun" "f" ' + ($robinpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$robinpronoun" "m" ' + ($robinpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$robingenitals" "vagina" ' + ($robingenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$robingenitals" "penis" ' + ($robingenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$robingender" "f" ' + ($robingender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$robingender" "m" ' + ($robingender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -458,11 +515,12 @@ Penis size - if applicable:
 
 <span class="gold">Bailey the caretaker</span>
 <br>
-<label>Female <<print '<<radiobutton "$baileygender" "f" ' + ($baileygender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$baileygender" "m" ' + ($baileygender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$baileypronoun" "f" ' + ($baileypronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$baileypronoun" "m" ' + ($baileypronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$baileygenitals" "vagina" ' + ($baileygenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$baileygenitals" "penis" ' + ($baileygenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$baileygender" "f" ' + ($baileygender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$baileygender" "m" ' + ($baileygender is "m" ? "checked" : "") + '>>'>></label>
+
 <br>
 
 Penis size - if applicable:
@@ -473,11 +531,11 @@ Penis size - if applicable:
 
 <span class="gold">Charlie the dance coach</span>
 <br>
-<label>Female <<print '<<radiobutton "$charliegender" "f" ' + ($charliegender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$charliegender" "m" ' + ($charliegender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$charliepronoun" "f" ' + ($charliepronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$charliepronoun" "m" ' + ($charliepronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$charliegenitals" "vagina" ' + ($charliegenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$charliegenitals" "penis" ' + ($charliegenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$charliegender" "f" ' + ($charliegender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$charliegender" "m" ' + ($charliegender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -488,11 +546,11 @@ Penis size - if applicable:
 
 <span class="gold">Darryl the club owner</span>
 <br>
-<label>Female <<print '<<radiobutton "$darrylgender" "f" ' + ($darrylgender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$darrylgender" "m" ' + ($darrylgender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$darrylpronoun" "f" ' + ($darrylpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$darrylpronoun" "m" ' + ($darrylpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$darrylgenitals" "vagina" ' + ($darrylgenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$darrylgenitals" "penis" ' + ($darrylgenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$darrylgender" "f" ' + ($darrylgender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$darrylgender" "m" ' + ($darrylgender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -503,11 +561,11 @@ Penis size - if applicable:
 
 <span class="gold">Harper the doctor</span>
 <br>
-<label>Female <<print '<<radiobutton "$harpergender" "f" ' + ($harpergender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$harpergender" "m" ' + ($harpergender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$harperpronoun" "f" ' + ($harperpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$harperpronoun" "m" ' + ($harperpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$harpergenitals" "vagina" ' + ($harpergenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$harpergenitals" "penis" ' + ($harpergenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$harpergender" "f" ' + ($harpergender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$harpergender" "m" ' + ($harpergender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -516,13 +574,13 @@ Penis size - if applicable:
 <</for>>
 <br><br>
 
-<span class="gold">Jordan the <<if $jordangender is "f">>nun<<else>>monk<</if>></span>
+<span class="gold">Jordan the Pious</span>
 <br>
-<label>Female <<print '<<radiobutton "$jordangender" "f" ' + ($jordangender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$jordangender" "m" ' + ($jordangender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$jordanpronoun" "f" ' + ($jordanpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$jordanpronoun" "m" ' + ($jordanpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$jordangenitals" "vagina" ' + ($jordangenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$jordangenitals" "penis" ' + ($jordangenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$jordangender" "f" ' + ($jordangender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$jordangender" "m" ' + ($jordangender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -533,11 +591,11 @@ Penis size - if applicable:
 
 <span class="gold">Briar the brothel owner</span>
 <br>
-<label>Female <<print '<<radiobutton "$briargender" "f" ' + ($briargender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$briargender" "m" ' + ($briargender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$briarpronoun" "f" ' + ($briarpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$briarpronoun" "m" ' + ($briarpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$briargenitals" "vagina" ' + ($briargenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$briargenitals" "penis" ' + ($briargenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$briargender" "f" ' + ($briargender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$briargender" "m" ' + ($briargender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -548,11 +606,11 @@ Penis size - if applicable:
 
 <span class="gold">Eden the hunter</span>
 <br>
-<label>Female <<print '<<radiobutton "$edengender" "f" ' + ($edengender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$edengender" "m" ' + ($edengender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$edenpronoun" "f" ' + ($edenpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$edenpronoun" "m" ' + ($edenpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$edengenitals" "vagina" ' + ($edengenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$edengenitals" "penis" ' + ($edengenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$edengender" "f" ' + ($edengender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$edengender" "m" ' + ($edengender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -563,11 +621,11 @@ Penis size - if applicable:
 
 <span class="gold">Sam the cafe owner</span>
 <br>
-<label>Female <<print '<<radiobutton "$samgender" "f" ' + ($samgender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$samgender" "m" ' + ($samgender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$sampronoun" "f" ' + ($sampronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$sampronoun" "m" ' + ($sampronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$samgenitals" "vagina" ' + ($samgenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$samgenitals" "penis" ' + ($samgenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$samgender" "f" ' + ($samgender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$samgender" "m" ' + ($samgender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -578,11 +636,11 @@ Penis size - if applicable:
 
 <span class="gold">Landry the criminal</span>
 <br>
-<label>Female <<print '<<radiobutton "$landrygender" "f" ' + ($landrygender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$landrygender" "m" ' + ($landrygender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$landrypronoun" "f" ' + ($landrypronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$landrypronoun" "m" ' + ($landrypronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$landrygenitals" "vagina" ' + ($landrygenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$landrygenitals" "penis" ' + ($landrygenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$landrygender" "f" ' + ($landrygender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$landrygender" "m" ' + ($landrygender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -593,11 +651,11 @@ Penis size - if applicable:
 
 <span class="gold">Whitney the bully</span>
 <br>
-<label>Female <<print '<<radiobutton "$whitneygender" "f" ' + ($whitneygender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$whitneygender" "m" ' + ($whitneygender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$whitneypronoun" "f" ' + ($whitneypronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$whitneypronoun" "m" ' + ($whitneypronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$whitneygenitals" "vagina" ' + ($whitneygenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$whitneygenitals" "penis" ' + ($whitneygenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$whitneygender" "f" ' + ($whitneygender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$whitneygender" "m" ' + ($whitneygender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -606,13 +664,13 @@ Penis size - if applicable:
 <</for>>
 <br><br>
 
-<span class="gold">Avery the <<if $averygender is "m">>businessman<<else>>businesswoman<</if>></span>
+<span class="gold">Avery the businessperson</span>
 <br>
-<label>Female <<print '<<radiobutton "$averygender" "f" ' + ($averygender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$averygender" "m" ' + ($averygender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$averypronoun" "f" ' + ($averypronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$averypronoun" "m" ' + ($averypronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$averygenitals" "vagina" ' + ($averygenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$averygenitals" "penis" ' + ($averygenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$averygender" "f" ' + ($averygender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$averygender" "m" ' + ($averygender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -623,11 +681,11 @@ Penis size - if applicable:
 
 <span class="gold">Morgan the sewer dweller</span>
 <br>
-<label>Female <<print '<<radiobutton "$morgangender" "f" ' + ($morgangender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$morgangender" "m" ' + ($morgangender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$morganpronoun" "f" ' + ($morganpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$morganpronoun" "m" ' + ($morganpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$morgangenitals" "vagina" ' + ($morgangenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$morgangenitals" "penis" ' + ($morgangenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$morgangender" "f" ' + ($morgangender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$morgangender" "m" ' + ($morgangender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -638,11 +696,11 @@ Penis size - if applicable:
 
 <span class="gold">Kylar the loner</span>
 <br>
-<label>Female <<print '<<radiobutton "$kylargender" "f" ' + ($kylargender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$kylargender" "m" ' + ($kylargender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$kylarpronoun" "f" ' + ($kylarpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$kylarpronoun" "m" ' + ($kylarpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$kylargenitals" "vagina" ' + ($kylargenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$kylargenitals" "penis" ' + ($kylargenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$kylargender" "f" ' + ($kylargender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$kylargender" "m" ' + ($kylargender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -651,13 +709,28 @@ Penis size - if applicable:
 <</for>>
 <br><br>
 
+<span class="gold">Gwylan the keeper</span>
+<br>
+<label>Female <<print '<<radiobutton "$gwylanpronoun" "f" ' + ($gwylanpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$gwylanpronoun" "m" ' + ($gwylanpronoun is "m" ? "checked" : "") + '>>'>></label>
+<br>
+<label>Vagina <<print '<<radiobutton "$gwylangender" "f" ' + ($gwylangender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$gwylangender" "m" ' + ($gwylangender is "m" ? "checked" : "") + '>>'>></label>
+<br>
+
+Penis size - if applicable:
+<<for _i to 0; _i lt _penisNames.length; _i++>>
+	<label><<print _penisNames[_i]>> <<print '<<radiobutton "$gwylan_penis_size" ' + (_i + 1) + ' ' + ($gwylan_penis_size is (_i + 1) ? "checked" : "") + '>>'>></label> |
+<</for>>
+<br><br>
+
 <span class="gold">The Black Wolf</span>
 <br>
-<label>Female <<print '<<radiobutton "$blackwolfgender" "f" ' + ($blackwolfgender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$blackwolfgender" "m" ' + ($blackwolfgender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$blackwolfpronoun" "f" ' + ($blackwolfpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$blackwolfpronoun" "m" ' + ($blackwolfpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$blackwolfgenitals" "vagina" ' + ($blackwolfgenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$blackwolfgenitals" "penis" ' + ($blackwolfgenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$blackwolfgender" "f" ' + ($blackwolfgender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$blackwolfgender" "m" ' + ($blackwolfgender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 <label>Always a beast <<print '<<radiobutton "$blackwolfmonster" 0 ' + ($blackwolfmonster is 0 ? "checked" : "") + '>>'>></label> |
 <label>Monster girl or boy when requirements met <<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>></label>
@@ -668,11 +741,11 @@ Penis size - if applicable:
 
 <span class="gold">Leighton the headteacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$leightongender" "f" ' + ($leightongender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$leightongender" "m" ' + ($leightongender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$leightonpronoun" "f" ' + ($leightonpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$leightonpronoun" "m" ' + ($leightonpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$leightongenitals" "vagina" ' + ($leightongenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$leightongenitals" "penis" ' + ($leightongenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$leightongender" "f" ' + ($leightongender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$leightongender" "m" ' + ($leightongender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -683,11 +756,11 @@ Penis size - if applicable:
 
 <span class="gold">Sirris the science teacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$sirrisgender" "f" ' + ($sirrisgender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$sirrisgender" "m" ' + ($sirrisgender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$sirrispronoun" "f" ' + ($sirrispronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$sirrispronoun" "m" ' + ($sirrispronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$sirrisgenitals" "vagina" ' + ($sirrisgenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$sirrisgenitals" "penis" ' + ($sirrisgenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$sirrisgender" "f" ' + ($sirrisgender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$sirrisgender" "m" ' + ($sirrisgender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -698,11 +771,11 @@ Penis size - if applicable:
 
 <span class="gold">River the maths teacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$rivergender" "f" ' + ($rivergender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$rivergender" "m" ' + ($rivergender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$riverpronoun" "f" ' + ($riverpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$riverpronoun" "m" ' + ($riverpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$rivergenitals" "vagina" ' + ($rivergenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$rivergenitals" "penis" ' + ($rivergenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$rivergender" "f" ' + ($rivergender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$rivergender" "m" ' + ($rivergender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -713,11 +786,11 @@ Penis size - if applicable:
 
 <span class="gold">Doren the English teacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$dorengender" "f" ' + ($dorengender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$dorengender" "m" ' + ($dorengender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$dorenpronoun" "f" ' + ($dorenpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$dorenpronoun" "m" ' + ($dorenpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$dorengenitals" "vagina" ' + ($dorengenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$dorengenitals" "penis" ' + ($dorengenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$dorengender" "f" ' + ($dorengender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$dorengender" "m" ' + ($dorengender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -728,11 +801,11 @@ Penis size - if applicable:
 
 <span class="gold">Winter the history teacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$wintergender" "f" ' + ($wintergender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$wintergender" "m" ' + ($wintergender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$winterpronoun" "f" ' + ($winterpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$winterpronoun" "m" ' + ($winterpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$wintergenitals" "vagina" ' + ($wintergenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$wintergenitals" "penis" ' + ($wintergenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$wintergender" "f" ' + ($wintergender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$wintergender" "m" ' + ($wintergender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -743,11 +816,11 @@ Penis size - if applicable:
 
 <span class="gold">Mason the swimming teacher</span>
 <br>
-<label>Female <<print '<<radiobutton "$masongender" "f" ' + ($masongender is "f" ? "checked" : "") + '>>'>></label> |
-<label>Male <<print '<<radiobutton "$masongender" "m" ' + ($masongender is "m" ? "checked" : "") + '>>'>></label>
+<label>Female <<print '<<radiobutton "$masonpronoun" "f" ' + ($masonpronoun is "f" ? "checked" : "") + '>>'>></label> |
+<label>Male <<print '<<radiobutton "$masonpronoun" "m" ' + ($masonpronoun is "m" ? "checked" : "") + '>>'>></label>
 <br>
-<label>Vagina <<print '<<radiobutton "$masongenitals" "vagina" ' + ($masongenitals is "vagina" ? "checked" : "") + '>>'>></label> |
-<label>Penis <<print '<<radiobutton "$masongenitals" "penis" ' + ($masongenitals is "penis" ? "checked" : "") + '>>'>></label>
+<label>Vagina <<print '<<radiobutton "$masongender" "f" ' + ($masongender is "f" ? "checked" : "") + '>>'>></label> |
+<label>Penis <<print '<<radiobutton "$masongender" "m" ' + ($masongender is "m" ? "checked" : "") + '>>'>></label>
 <br>
 
 Penis size - if applicable:
@@ -759,9 +832,106 @@ Penis size - if applicable:
 
 <</nobr>><</widget>>
 
+<<widget "nnpcsettings">><<nobr>>
+<!-- Delete this Widget on/after release 2.6, should be unused-->
+<<if $robinpronoun>><<set $NPCName[$NPCNameList.indexOf("Robin")].pronoun to $robinpronoun>><</if>>
+<<if $robingender>><<set $NPCName[$NPCNameList.indexOf("Robin")].gender to $robingender>><</if>>
+<<if $robin_penis_size>><<set $NPCName[$NPCNameList.indexOf("Robin")].penissize to $robin_penis_size>><</if>>
+
+<<if $baileypronoun>><<set $NPCName[$NPCNameList.indexOf("Bailey")].pronoun to $baileypronoun>><</if>>
+<<if $baileygender>><<set $NPCName[$NPCNameList.indexOf("Bailey")].gender to $baileygender>><</if>>
+<<if $bailey_penis_size>><<set $NPCName[$NPCNameList.indexOf("Bailey")].penissize to $bailey_penis_size>><</if>>
+
+<<if $charliepronoun>><<set $NPCName[$NPCNameList.indexOf("Charlie")].pronoun to $charliepronoun>><</if>>
+<<if $charliegender>><<set $NPCName[$NPCNameList.indexOf("Charlie")].gender to $charliegender>><</if>>
+<<if $charlie_penis_size>><<set $NPCName[$NPCNameList.indexOf("Charlie")].penissize to $charlie_penis_size>><</if>>
+
+<<if $darrylpronoun>><<set $NPCName[$NPCNameList.indexOf("Darryl")].pronoun to $darrylpronoun>><</if>>
+<<if $darrylgender>><<set $NPCName[$NPCNameList.indexOf("Darryl")].gender to $darrylgender>><</if>>
+<<if $darryl_penis_size>><<set $NPCName[$NPCNameList.indexOf("Darryl")].penissize to $darryl_penis_size>><</if>>
+
+<<if $harperpronoun>><<set $NPCName[$NPCNameList.indexOf("Harper")].pronoun to $harperpronoun>><</if>>
+<<if $harpergender>><<set $NPCName[$NPCNameList.indexOf("Harper")].gender to $harpergender>><</if>>
+<<if $harper_penis_size>><<set $NPCName[$NPCNameList.indexOf("Harper")].penissize to $harper_penis_size>><</if>>
+
+<<if $jordanpronoun>><<set $NPCName[$NPCNameList.indexOf("Jordan")].pronoun to $jordanpronoun>><</if>>
+<<if $jordangender>><<set $NPCName[$NPCNameList.indexOf("Jordan")].gender to $jordangender>><</if>>
+<<if $jordan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Jordan")].penissize to $jordan_penis_size>><</if>>
+
+<<if $briarpronoun>><<set $NPCName[$NPCNameList.indexOf("Briar")].pronoun to $briarpronoun>><</if>>
+<<if $briargender>><<set $NPCName[$NPCNameList.indexOf("Briar")].gender to $briargender>><</if>>
+<<if $briar_penis_size>><<set $NPCName[$NPCNameList.indexOf("Briar")].penissize to $briar_penis_size>><</if>>
+
+<<if $edenpronoun>><<set $NPCName[$NPCNameList.indexOf("Eden")].pronoun to $edenpronoun>><</if>>
+<<if $edengender>><<set $NPCName[$NPCNameList.indexOf("Eden")].gender to $edengender>><</if>>
+<<if $eden_penis_size>><<set $NPCName[$NPCNameList.indexOf("Eden")].penissize to $eden_penis_size>><</if>>
+
+<<if $sampronoun>><<set $NPCName[$NPCNameList.indexOf("Sam")].pronoun to $sampronoun>><</if>>
+<<if $samgender>><<set $NPCName[$NPCNameList.indexOf("Sam")].gender to $samgender>><</if>>
+<<if $sam_penis_size>><<set $NPCName[$NPCNameList.indexOf("Sam")].penissize to $sam_penis_size>><</if>>
+
+<<if $landrypronoun>><<set $NPCName[$NPCNameList.indexOf("Landry")].pronoun to $landrypronoun>><</if>>
+<<if $landrygender>><<set $NPCName[$NPCNameList.indexOf("Landry")].gender to $landrygender>><</if>>
+<<if $landry_penis_size>><<set $NPCName[$NPCNameList.indexOf("Landry")].penissize to $landry_penis_size>><</if>>
+
+<<if $whitneypronoun>><<set $NPCName[$NPCNameList.indexOf("Whitney")].pronoun to $whitneypronoun>><</if>>
+<<if $whitneygender>><<set $NPCName[$NPCNameList.indexOf("Whitney")].gender to $whitneygender>><</if>>
+<<if $whitney_penis_size>><<set $NPCName[$NPCNameList.indexOf("Whitney")].penissize to $whitney_penis_size>><</if>>
+
+<<if $averypronoun>><<set $NPCName[$NPCNameList.indexOf("Avery")].pronoun to $averypronoun>><</if>>
+<<if $averygender>><<set $NPCName[$NPCNameList.indexOf("Avery")].gender to $averygender>><</if>>
+<<if $avery_penis_size>><<set $NPCName[$NPCNameList.indexOf("Avery")].penissize to $avery_penis_size>><</if>>
+
+<<if $morganpronoun>><<set $NPCName[$NPCNameList.indexOf("Morgan")].pronoun to $morganpronoun>><</if>>
+<<if $morgangender>><<set $NPCName[$NPCNameList.indexOf("Morgan")].gender to $morgangender>><</if>>
+<<if $morgan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Morgan")].penissize to $morgan_penis_size>><</if>>
+
+<<if $kylarpronoun>><<set $NPCName[$NPCNameList.indexOf("Kylar")].pronoun to $kylarpronoun>><</if>>
+<<if $kylargender>><<set $NPCName[$NPCNameList.indexOf("Kylar")].gender to $kylargender>><</if>>
+<<if $kylar_penis_size>><<set $NPCName[$NPCNameList.indexOf("Kylar")].penissize to $kylar_penis_size>><</if>>
+
+<<if $gwylanpronoun>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].pronoun to $gwylanpronoun>><</if>>
+<<if $gwylangender>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].gender to $gwylangender>><</if>>
+<<if $gwylan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].penissize to $gwylan_penis_size>><</if>>
+
+
+
+<<if $leightonpronoun>><<set $NPCName[$NPCNameList.indexOf("Leighton")].pronoun to $leightonpronoun>><</if>>
+<<if $leightongender>><<set $NPCName[$NPCNameList.indexOf("Leighton")].gender to $leightongender>><</if>>
+<<if $leighton_penis_size>><<set $NPCName[$NPCNameList.indexOf("Leighton")].penissize to $leighton_penis_size>><</if>>
+
+<<if $sirrispronoun>><<set $NPCName[$NPCNameList.indexOf("Sirris")].pronoun to $sirrispronoun>><</if>>
+<<if $sirrisgender>><<set $NPCName[$NPCNameList.indexOf("Sirris")].gender to $sirrisgender>><</if>>
+<<if $sirris_penis_size>><<set $NPCName[$NPCNameList.indexOf("Sirris")].penissize to $sirris_penis_size>><</if>>
+
+<<if $riverpronoun>><<set $NPCName[$NPCNameList.indexOf("River")].pronoun to $riverpronoun>><</if>>
+<<if $rivergender>><<set $NPCName[$NPCNameList.indexOf("River")].gender to $rivergender>><</if>>
+<<if $river_penis_size>><<set $NPCName[$NPCNameList.indexOf("River")].penissize to $river_penis_size>><</if>>
+
+<<if $dorenpronoun>><<set $NPCName[$NPCNameList.indexOf("Doren")].pronoun to $dorenpronoun>><</if>>
+<<if $dorengender>><<set $NPCName[$NPCNameList.indexOf("Doren")].gender to $dorengender>><</if>>
+<<if $doren_penis_size>><<set $NPCName[$NPCNameList.indexOf("Doren")].penissize to $doren_penis_size>><</if>>
+
+<<if $winterpronoun>><<set $NPCName[$NPCNameList.indexOf("Winter")].pronoun to $winterpronoun>><</if>>
+<<if $wintergender>><<set $NPCName[$NPCNameList.indexOf("Winter")].gender to $wintergender>><</if>>
+<<if $winter_penis_size>><<set $NPCName[$NPCNameList.indexOf("Winter")].penissize to $winter_penis_size>><</if>>
+
+<<if $masonpronoun>><<set $NPCName[$NPCNameList.indexOf("Mason")].pronoun to $masonpronoun>><</if>>
+<<if $masongender>><<set $NPCName[$NPCNameList.indexOf("Mason")].gender to $masongender>><</if>>
+<<if $mason_penis_size>><<set $NPCName[$NPCNameList.indexOf("Mason")].penissize to $mason_penis_size>><</if>>
+
+<</nobr>><</widget>>
+
 :: Settings [nobr]
 <<settings>>
 <br><br>
 
-<<link [[Back|Bedroom]]>><</link>>
+<<link [[Confirm|Bedroom]]>><<initnpcgender>><</link>>
+<br>
+
+:: Attitudes [nobr]
+<<attitudes>>
+<br><br>
+
+<<link [[Confirm|Bedroom]]>><</link>>
 <br>

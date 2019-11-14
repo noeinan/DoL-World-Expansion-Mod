@@ -1,31 +1,42 @@
 :: Widgets Robin [widget]
 
 <<widget "robinroom">><<nobr>>
-	<<robin>><<person1>>
+	<<npc Robin>><<person1>>
 	<<if $robineventnote is 1>>
 		<<set $robineventnote to 0>>
 		<i>As long as Robin has to pay Bailey, <<hes>> going to keep getting hurt and ending up like this. Maybe you should speak to Bailey about it.</i>
 		<br><br>
 	<</if>>
-	<<if $robintrauma gte 95>>
+	<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 95>>
 		You knock on the door. There's a pause for a moment, then Robin opens it. <<He>> stares right through you, <<his>> eyes glazed.
 		<br><br>
 		<<He>> doesn't stop you entering and sitting on the bed. "Come sit with me," you say.
 		<br><br>
 		<<He>> sits beside you.
 		<br><br>
-		<<link [[Hug (0:30)|Robin Trauma Hug]]>><<set $robinlove += 1>><<set $robindom -= 1>><<set $robintrauma -= 6>><<pass 30>><</link>><<glove>><<ldom>>
+		<<link [[Hug (0:30)|Robin Trauma Hug]]>><<npcincr Robin love 1>><<npcincr Robin dom -1>><<npcincr Robin trauma -6>><<pass 30>><</link>><<glove>><<ldom>>
 		<br><br>
-	<<elseif $robintrauma gte 80>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 80>>
 		You knock on the door. Robin opens it and smiles. <<His>> eyes are red. "Hey," <<he>> says. "Come in." You enter and sit on the bed. <<He>> sits beside you.
 		<<His>> movements are awkward, as if <<hes>> in pain.
 		<br><br>
-		<<link [[Take Robin to the hospital (1:00)|Robin Hospital]]>><<pass 1 hour>><<set $robinlove += 1>><<set $robindom -= 1>><<set $robintrauma -= 16>><</link>><<glove>><<ldom>>
+		<<link [[Take Robin to the hospital (1:00)|Robin Hospital]]>><<pass 1 hour>><<npcincr Robin love 1>><<npcincr Robin dom -1>><<npcincr Robin trauma -16>><</link>><<glove>><<ldom>>
 		<br><br>
-	<<elseif $robintrauma gte 40>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
 		You knock on the door. Robin opens it and smiles. <<His>> eyes are red. "Hey," <<he>> says. "Come in." You enter and sit on the bed. <<He>> sits beside you.
 		<br><br>
-	<<elseif $robintrauma gte 10>>
+
+	<<elseif $halloween is 1 and !$halloween_robin>><<set $halloween_robin to 1>><<set $halloween_robin_costume to "ghost">>
+		You knock on the door. Robin throws it open and hugs you. "It's almost time," <<he>> says. "Halloween! Here's my costume." <<He>> leans over <<his>> bed and grabs the blanket, before hurling it over <<his>> head. "I'm a ghost."
+		<br><br>
+
+		<<He>> sits down. There's an open magazine beside <<himcomma>> advertising more impressive, but pricey, costumes. Some are circled in pen, but <<he>> moves it away to clear space before you get a good look.<br><br>
+
+		"I want to take some of the orphans trick-or-treating on the day," <<he>> continues through the sheet. "You can come too. If you like. I want to leave between <span class="gold"><<if $timestyle is "military">>16:00 and 19:00<<else>>4:00 pm and 7:00 pm<</if>>.</span> The orphans shouldn't be out late."
+		<br><br>
+
+
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 10>>
 		You knock on the door. Robin throws it open and hugs you. "Come in," <<he>> says. You enter and sit on the bed. <<He>> sits beside you.
 		<br><br>
 		<<if $robinthank isnot 1>>
@@ -57,7 +68,7 @@
 		<<elseif $robinconsole is 0>>
 			You knock on the door. Robin throws it open and hugs you. "Come in," <<he>> says, pulling you inside. <<He>> sits on the bed and stares at the spot <<his>> console used to fill.
 			<br><br>
-			<<else>>
+		<<else>>
 			You knock on the door. Robin throws it open and hugs you. "Come in," <<he>> says, pulling you inside. <<He>> sits on the bed beside the television and picks up the controller.
 			<br><br>
 		<</if>>
@@ -67,7 +78,7 @@
 
 <<widget "robinoptions">><<nobr>>
 	<<if $schoolday is 1 and $hour is 8>>
-		<<if $robintrauma gte 80>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 80>>
 			Robin looks at the clock on the wall. "It's school soon," <<he>> says. "I don't want to go."
 			<br><br>
 			You hug <<himstop>> "Everything will be fine," you say.
@@ -94,72 +105,91 @@
 	<<elseif $weekday is 7 and $hour gte 9 and $hour lte 16 or $weekday is 1 and $hour gte 9 and $hour lte 15>>
 		"I need to get my lemonade stand set up," <<he>> says. "Come see me on the beach if you like."
 		<br><br>
-		<<link [[Offer to help set up (0:30)|Robin's Lemonade Set]]>><<pass 30>><<set $robinlove += 1>><</link>><<glove>>
+		<<link [[Offer to help set up (0:30)|Robin's Lemonade Set]]>><<pass 30>><<npcincr Robin love 1>><</link>><<glove>>
 		<br>
 		<<link [[Leave|Orphanage]]>><<endevent>><</link>>
 		<br>
 	<<elseif $robinbaileyhelp is 1>><<set $robinbaileyhelp to 2>>
-		Robin turns to face you, <<his>> eyes downcast. "I'm sorry," <<he>> says. "I'm sorry I told Bailey. I thought <<endevent>><<bailey>><<person1>><<he>> would help. <<Hes>><<endevent>><<robin>><<person1>> meant to."
+		Robin turns to face you, <<his>> eyes downcast. "I'm sorry," <<he>> says. "I'm sorry I told Bailey. I thought <<endevent>><<npc Bailey>><<person1>><<he>> would help. <<Hes>><<endevent>><<npc Robin>><<person1>> meant to."
 		<br><br>
-		<<link [[Forgive|Robin Bailey Forgive]]>><<trauma -6>><<stress 6>><<set $robinlove += 1>><</link>><<gstress>><<glove>><<ltrauma>>
+		<<link [[Forgive|Robin Bailey Forgive]]>><<trauma -6>><<stress 6>><<npcincr Robin love 1>><</link>><<gstress>><<glove>><<ltrauma>>
 		<br>
 		<<link [[Change the subject|Robin Bailey Subject]]>><</link>>
 		<br>
+	<<elseif $halloween is 1 and $hour gte 16 and $hour lt 19 and $monthday is 31>>
+	Robin looks at the clock on the wall. "It's time," <<he>> says, jumping to <<his>> feet. "The orphans will be ready to trick-or-treat soon. I need to get dressed."
+	<br><br>
+		<<if $robinromance is 1>>
+		<<He>> hugs and pushes you towards the door. "I don't want you to see me dress," <<he>> says. "It will be more magical that way."<br><br>
+		<</if>>
+		<<if $worn.upper.type.includes("costume") or $worn.lower.type.includes("costume") or $transformed is 1>>
+		"I'll be in the main hall gathering the orphans once I'm ready."
+		<<else>>
+		"I'll be in the main hall gathering the orphans if you want to join in. I can't wait to see your costume!"
+		<</if>>
+	<br><br>
+	<<link [[Leave (0:01)|Bedroom]]>><<pass 1>><</link>>
+	<br>
+
 	<<else>>
-		<<if $robintrauma lt 80>>
-			<<if $robinlove gte 5 and $robinlovestage is undefined>>
-				<<set $robinlovestage to 0>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80>>
+			<<if $NPCName[$NPCNameList.indexOf("Robin")].love gte 5 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is undefined>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 0>>
 				"Thanks for spending time with me," <<he>> says. "It's less fun alone."
 				<br><br>
-			<<elseif $robinlove gte 10 and $robinlovestage is 0>>
-				<<set $robinlovestage to 1>>
+			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 10 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is 0>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 1>>
 				"I'll have to teach you how to make lemonade sometime," <<he>> says.
 				<br><br>
-			<<elseif $robinlove gte 20 and $robinlovestage is 1>>
-				<<set $robinlovestage to 2>>
-				"Let me know if there's a game you'd like to play," <<he>> says. "You always let me choose."
+			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 20 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is 1>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 2>>
+					<<if $robinconsole is 1>>
+					"Let me know if there's a game you'd like to play," <<he>> says. "You always let me choose."
+					<<else>>
+					"I like spending time with you." <<he>> says. "I'd choose your company over my console every day."
+					<</if>>
 				<br><br>
-			<<elseif $robinlove gte 40 and $robinlovestage is 2>>
-				<<set $robinlovestage to 3>>
+			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 40 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is 2>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 3>>
 				"It's good Bailey doesn't mind us meeting like this," <<he>> says.
 				<br><br>
-			<<elseif $robinlove gte 60 and $robinlovestage is 3>>
-				<<set $robinlovestage to 4>>
+			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 60 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is 3>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 4>>
 				"I'm so lucky to have you as a friend," <<he>> says out of nowhere.
 				<br><br>
-			<<elseif $robinlove gte 100 and $robinlovestage is 4>>
-				<<set $robinlovestage to 5>>
+			<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 100 and $NPCName[$NPCNameList.indexOf("Robin")].lovestage is 4>>
+				<<set $NPCName[$NPCNameList.indexOf("Robin")].lovestage to 5>>
 				<<He>> hugs you. "You're the best," <<he>> says.
 				<br><br>
 			<</if>>
 		<</if>>
-		<<if $robintrauma lt 80 and $robintrauma gte 10>>
-			<<link [[Talk (0:30)|Robin Trauma Talk]]>><<set $robinroomentered to 1>><<pass 30>><<stress 3>><<set $robintrauma -= 1>><<set $robinlove += 1>><<set $robindom -= 1>><</link>><<glove>><<ldom>><<gstress>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 10>>
+			<<link [[Talk (0:30)|Robin Trauma Talk]]>><<set $robinroomentered to 1>><<pass 30>><<stress 3>><<npcincr Robin trauma -1>><<npcincr Robin love 1>><<npcincr Robin dom -1>><</link>><<glove>><<ldom>><<gstress>>
 			<br>
 		<</if>>
 		<<if $robinnote is 1 and $robinromance isnot 1>>
 			<<link [[Kiss|Robin Romance]]>><<set $robinroomentered to 1>><<set $robinromance to 1>><</link>>
 			<br>
 		<</if>>
-		<<if $robintrauma lt 80 and $robinwalk isnot 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $robinwalk isnot 1>>
 			<<link [[Go somewhere together|Robin Walk]]>><<set $robinroomentered to 1>><<set $robinhugging to 0>><</link>>
 			<br>
 		<</if>>
 		<<if $robinconsole is 1>>
-			<<link [[Watch Robin play (0:30)|Robin Watch]]>><<set $robinroomentered to 1>><<stress -6>><<trauma -3>><<pass 30>><<set $robinlove += 1>><</link>><<glove>><<ltrauma>><<lstress>>
+			<<link [[Watch Robin play (0:30)|Robin Watch]]>><<set $robinroomentered to 1>><<stress -6>><<trauma -3>><<pass 30>><<npcincr Robin love 1>><</link>><<glove>><<ltrauma>><<lstress>>
 			<br>
-			<<link [[Play with Robin (0:30)|Robin Play]]>><<set $robinroomentered to 1>><<set $robinhugging to 0>><<trauma -3>><<pass 30>><<set $robinlove += 1>><</link>><<glove>><<ltrauma>>
+			<<link [[Play with Robin (0:30)|Robin Play]]>><<set $robinroomentered to 1>><<set $robinhugging to 0>><<trauma -3>><<pass 30>><<npcincr Robin love 1>><</link>><<glove>><<ltrauma>>
 			<br>
-		<<elseif $money gte 40000 and $robintrauma lt 80 and $robindebtknown is 1>>
-			<<link [[Buy Robin a new console (£400 0:30)|Robin Console]]>><<set $robinhugging to 0>><<pass 30>><<set $robinlove += 10>><<set $robindom -= 1>><<set $robinconsole to 1>><<set $money -= 40000>><</link>><<glove>><<ldom>>
-			<br>
-		<</if>>
-		<<if $robintrauma lt 80 and $trauma gte 1000 and $robinhugging isnot 1>>
-			<<link [[Hug (0:05)|Robin Hug]]>><<pass 5>><<trauma -1>><<stress -1>><<set $robinlove += 1>><</link>><<ltrauma>><<lstress>><<glove>>
+		<<elseif $money gte 40000 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $robindebtknown is 1>>
+			<<link [[Buy Robin a new console (£400 0:30)|Robin Console]]>><<set $robinhugging to 0>><<pass 30>><<npcincr Robin love 10>><<npcincr Robin dom -1>><<set $robinconsole to 1>><<set $money -= 40000>><</link>><<glove>><<ldom>>
 			<br>
 		<</if>>
-		<<if $robintrauma lt 20 and $cat gte 6>>
-			<<link [[Request headpats (0:20)|Robin Cat]]>><<pass 20>><<trauma -2>><<stress -2>><<set $robinlove += 1>><<set $robindom += 1>><</link>> | <span class="blue">Cat</span><<gdom>><<glove>><<ltrauma>><<lstress>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $trauma gte 1000 and $robinhugging isnot 1>>
+			<<link [[Hug (0:05)|Robin Hug]]>><<pass 5>><<trauma -1>><<stress -1>><<npcincr Robin love 1>><</link>><<ltrauma>><<lstress>><<glove>>
+			<br>
+		<</if>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 20 and $cat gte 6>>
+			<<link [[Request headpats (0:20)|Robin Cat]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>> | <span class="blue">Cat</span><<gdom>><<glove>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
 		<br>
@@ -176,23 +206,23 @@
 
 <<widget "robinhug">><<nobr>>
 	<<if $robinhugcry isnot 1 and $robinpaid isnot 1 and $trauma gte ($traumamax / 7) * 2>>
-		<<link [[Cry (0:05)|Robin Hug Cry]]>><<pass 5>><<set $robinhugcry to 1>><<stress -12>><<trauma -6>><<tearup>><<set $robinlove += 1>><<set $robindom += 1>><</link>><<lstress>><<ltrauma>><<glove>><<gdom>>
+		<<link [[Cry (0:05)|Robin Hug Cry]]>><<pass 5>><<set $robinhugcry to 1>><<stress -12>><<trauma -6>><<tearup>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>><<lstress>><<ltrauma>><<glove>><<gdom>>
 		<br>
 	<</if>>
 	<<if $robinhugcry isnot 1 and $trauma gte ($traumamax / 7) * 3>>
-		<<link [[Break down (0:30)|Robin Hug Break]]>><<set $robinhugcry to 1>><<stress -12>><<stress -12>><<trauma -6>><<trauma -6>><<pass 30>><<tearup>><<set $robinlove += 1>><<set $robindom += 1>><</link>><<llstress>><<lltrauma>><<glove>><<gdom>>
+		<<link [[Break down (0:30)|Robin Hug Break]]>><<set $robinhugcry to 1>><<stress -12>><<stress -12>><<trauma -6>><<trauma -6>><<pass 30>><<tearup>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>><<llstress>><<lltrauma>><<glove>><<gdom>>
 		<br>
 	<</if>>
 	<<if $robinhugcomplain isnot 1>>
 		<<link [[Complain (0:10)|Robin Hug Complain]]>><<set $robinhugcomplain to 1>><<stress -12>><<trauma -6>><<pass 10>><</link>><<ltrauma>><<lstress>>
 		<br>
 	<</if>>
-	<<if $robinlove gte 50>>
-		<<link [[Cuddle (0:10)|Robin Hug Cuddle]]>><<set $robinhugging to 1>><<pass 10>><<set $robinlove += 1>><<trauma -1>><<stress -1>><</link>><<ltrauma>><<lstress>><<glove>>
+	<<if $NPCName[$NPCNameList.indexOf("Robin")].love gte 50>>
+		<<link [[Cuddle (0:10)|Robin Hug Cuddle]]>><<set $robinhugging to 1>><<pass 10>><<npcincr Robin love 1>><<trauma -1>><<stress -1>><</link>><<ltrauma>><<lstress>><<glove>>
 		<br>
 	<</if>>
 	<<if $robinstunned isnot 1 and $robinconsole is 1>>
-		<<link [[Watch Robin play (0:30)|Robin Watch]]>><<set $robinhugging to 1>><<stress -6>><<trauma -3>><<pass 30>><<set $robinlove += 1>><</link>><<glove>><<ltrauma>><<lstress>>
+		<<link [[Watch Robin play (0:30)|Robin Watch]]>><<set $robinhugging to 1>><<stress -6>><<trauma -3>><<pass 30>><<npcincr Robin love 1>><</link>><<glove>><<ltrauma>><<lstress>>
 		<br>
 	<</if>>
 	<<link [[Stop hugging|Robin Hug Stop]]>><</link>>
@@ -206,11 +236,11 @@
 		<br>
 	<</if>>
 	<<if $robinblame isnot 1 and $trauma gte ($traumamax / 7) * 2>>
-		<<link [[Blame Robin|Robin Blame]]>><<set $robinroomentered to 1>><<set $phase to 1>><<set $robinblame to 1>><<trauma -6>><<stress -6>><<set $robinlove -= 1>><<set $robindom -= 1>><</link>><<ltrauma>><<lstress>><<llove>><<ldom>>
+		<<link [[Blame Robin|Robin Blame]]>><<set $robinroomentered to 1>><<set $phase to 1>><<set $robinblame to 1>><<trauma -6>><<stress -6>><<npcincr Robin love -1>><<npcincr Robin dom -1>><</link>><<ltrauma>><<lstress>><<llove>><<ldom>>
 		<br>
 	<</if>>
 	<<if $robinpersecute isnot 1 and $trauma gte ($traumamax / 7) * 3>>
-		<<link [[Persecute Robin|Robin Persecute]]>><<set $robinroomentered to 1>><<set $phase to 3>><<set $robinpersecute to 1>><<trauma -12>><<stress -12>><<set $robinlove -= 1>><<set $robindom -= 1>><</link>><<lltrauma>><<llstress>><<llove>><<ldom>>
+		<<link [[Persecute Robin|Robin Persecute]]>><<set $robinroomentered to 1>><<set $phase to 3>><<set $robinpersecute to 1>><<trauma -12>><<stress -12>><<npcincr Robin love -1>><<npcincr Robin dom -1>><</link>><<lltrauma>><<llstress>><<llove>><<ldom>>
 		<br>
 	<</if>>
 	<<if $robinmoney gt 0>>

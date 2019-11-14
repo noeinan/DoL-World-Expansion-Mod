@@ -1,27 +1,31 @@
 :: Widgets Named Npcs [widget]
 <<widget "endnpc">><<nobr>>
-<<if $npc is "Avery">><<set $npc to 0>><<averyend>><</if>>
-<<if $npc is "Bailey">><<set $npc to 0>><<baileyend>><</if>>
-<<if $npc is "Briar">><<set $npc to 0>><<briarend>><</if>>
-<<if $npc is "Charlie">><<set $npc to 0>><<charlieend>><</if>>
-<<if $npc is "Darryl">><<set $npc to 0>><<darrylend>><</if>>
-<<if $npc is "Doren">><<set $npc to 0>><<dorenend>><</if>>
-<<if $npc is "Eden">><<set $npc to 0>><<edenend>><</if>>
-<<if $npc is "Gwylan">><<set $npc to 0>><<gwylanend>><</if>>
-<<if $npc is "Harper">><<set $npc to 0>><<harperend>><</if>>
-<<if $npc is "Jordan">><<set $npc to 0>><<jordanend>><</if>>
-<<if $npc is "Kylar">><<set $npc to 0>><<kylarend>><</if>>
-<<if $npc is "Landry">><<set $npc to 0>><<landryend>><</if>>
-<<if $npc is "Leighton">><<set $npc to 0>><<leightonend>><</if>>
-<<if $npc is "Mason">><<set $npc to 0>><<masonend>><</if>>
-<<if $npc is "Morgan">><<set $npc to 0>><<morganend>><</if>>
-<<if $npc is "River">><<set $npc to 0>><<riverend>><</if>>
-<<if $npc is "Robin">><<set $npc to 0>><<robinend>><</if>>
-<<if $npc is "Sam">><<set $npc to 0>><<samend>><</if>>
-<<if $npc is "Sirris">><<set $npc to 0>><<sirrisend>><</if>>
-<<if $npc is "Whitney">><<set $npc to 0>><<whitneyend>><</if>>
-<<if $npc is "Winter">><<set $npc to 0>><<winterend>><</if>>
+<!-- NEW - Tested and Working. Replaces all NNPCend widgets -->
+<!-- This should probably be doing more cleanup... -->
+<<if $npc>>
+<<set _i to $NPCNameList.indexOf($npc)>>
+<<set $NPCName[_i].trust += ($enemytrust / 100)>>
+<</if>>
 <</nobr>><</widget>>
+
+<!-- DONE Should be able to set up all of below on an array, as objects. Use $NPCName[x].nam, etc. -->
+<!-- DONE $NPCNameList.indexOf("Eden") returns the index value of Eden array, allowing a lot of these calls to be collapsed. -->
+<!-- DONE <<eden>> becomes <<npc Eden>> Same for edenrelationship (to <<npcrelationship eden>> and edenend (to endnpc) -->
+<!-- DONE Values for $NPCName[x] can then be equated to $NPCList[0]. Note $npc is still a global variable noting Named NPC is in use. -->
+<!-- DONE Note that $NPCgender should be changed to $NPCName.pronoun, globally, to match other code -->
+<!-- DONE NPCName includes: pronoun(currently gender), gender(currently genitals), pp size, trust are common -->
+<!-- DONE Also used are: love, dom, lust, rage, trauma, state, sus. Avery/Whitney/Kylar/Robin have several others not included in this .twee file that can continue to be treated as global variables -->
+<!-- DONE Several of the NPCName variables are unique to NPC and ideally should be collapsed, e.g. Whitney.State used for all, replace Kylar.Sus with NPCName[Kylar].Rage -->
+<!-- LATER This work could be done as secondary task since collapsing these drives less improvement than other parts of work. -->
+<!-- FIXED Note breast size is always default set to nipple/flat. Not sure why this is. -->
+<!-- DONE All the NPCend functions just set trust: set $edentrust += ($enemytrust / 100). Could be replaced with single call e.g. edenend becomes <<end Eden>> -->
+<!-- DONE NPCRelationship widgets are much more complex and written custom to Named NPC. These need either simplified or perhaps collapsed to 1 large widget with an indexed call, which can be used in social.twee to process all the text with a <<for>> loop. -->
+<!-- Impacted files: social.twee <<NPCrelationship>>, settings.twee <<npcSettings>>, init.twee under base-system for initialization, this file -->
+<!-- DONE whitneystate to .state; robintrauma to .trauma; kylarsus to .rage. Kept .trauma mostly for future work since Robin is the only one that uses it, but others could too-->
+<!-- DONE Review variables like kylartimer to .timer, kylarstreettimer to .streettimer... makes more sense to just leave these as global variables under current names. Same with $robinromance and similar Whit/Avery variables -->
+<!-- MAYBE LATER robinromance to .state as "romance" value.-->
+<!-- DONE whitneystate and kylarstate are both switched to "active" at points in game. This should be set as call here, for all introduced NPC once intro'd. whitneystate can also be dungeon -->
+<!-- LATER <<npc Robin>> call is initilizing Robin/Kylar/Whitney/Avery/Eden as part of nightly variable decays... this is a problem as some NNPCs are initialized seperately, whereas minor NNPCs are intro'd once called. Fix variable decays at source.-->
 
 /*Gender neutral names for future reference
 Aiden
@@ -148,2301 +152,436 @@ Zia
 Zohar
 */
 
-<<widget "initnpcgender">><<nobr>>
-<<if $averygender is undefined or $args[0] is "genders">>
+<<widget "initnpcgender">><<nobr>><<set $test2 to 2>>
+<!-- NEW - Tested and Working. Replaces initnpcgender -->
+<<for _i to 0; _i lt $NPCName.length; _i++>>
+
+<!-- Set Pronoun -->
+<<if $NPCName[_i].pronoun is "none" or $args[0] is "genders">>
 	<<if $malechance lt random(1, 100)>>
-		<<set $averygender to "f">>
+		<<set $NPCName[_i].pronoun to "f">><<set $test to $NPCName[_i].pronoun>>
 	<<else>>
-		<<set $averygender to "m">>
+		<<set $NPCName[_i].pronoun to "m">>
 	<</if>>
 <</if>>
-<<if $averygenitals is undefined or $args[0] is "genders">>
-	<<if $averygender is "m">>
+<!-- Set Gender -->
+<<if $NPCName[_i].gender is "none" or $args[0] is "genders">>
+	<<if $NPCName[_i].pronoun is "m">>
 		<<if random(0, 99) gte $cbchance>>
-			<<set $averygenitals to "penis">>
+			<<set $NPCName[_i].gender to "m">>
 		<<else>>
-			<<set $averygenitals to "vagina">>
+			<<set $NPCName[_i].gender to "f">>
 		<</if>>
-	<<elseif $averygender is "f">>
+	<<elseif $NPCName[_i].pronoun is "f">>
 		<<if random(0, 99) gte $dgchance>>
-			<<set $averygenitals to "vagina">>
+			<<set $NPCName[_i].gender to "f">>
 		<<else>>
-			<<set $averygenitals to "penis">>
+			<<set $NPCName[_i].gender to "m">>
 		<</if>>
 	<</if>>
 <</if>>
-
-<<if $baileygender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $baileygender to "f">>
-	<<else>>
-		<<set $baileygender to "m">>
-	<</if>>
-<</if>>
-<<if $baileygenitals is undefined or $args[0] is "genders">>
-	<<if $baileygender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $baileygenitals to "penis">>
-		<<else>>
-			<<set $baileygenitals to "vagina">>
-		<</if>>
-	<<elseif $baileygender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $baileygenitals to "vagina">>
-		<<else>>
-			<<set $baileygenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $briargender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $briargender to "f">>
-	<<else>>
-		<<set $briargender to "m">>
-	<</if>>
-<</if>>
-<<if $briargenitals is undefined or $args[0] is "genders">>
-	<<if $briargender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $briargenitals to "penis">>
-		<<else>>
-			<<set $briargenitals to "vagina">>
-		<</if>>
-	<<elseif $briargender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $briargenitals to "vagina">>
-		<<else>>
-			<<set $briargenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $charliegender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $charliegender to "f">>
-	<<else>>
-		<<set $charliegender to "m">>
-	<</if>>
-<</if>>
-<<if $charliegenitals is undefined or $args[0] is "genders">>
-	<<if $charliegender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $charliegenitals to "penis">>
-		<<else>>
-			<<set $charliegenitals to "vagina">>
-		<</if>>
-	<<elseif $charliegender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $charliegenitals to "vagina">>
-		<<else>>
-			<<set $charliegenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $darrylgender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $darrylgender to "f">>
-	<<else>>
-		<<set $darrylgender to "m">>
-	<</if>>
-<</if>>
-<<if $darrylgenitals is undefined or $args[0] is "genders">>
-	<<if $darrylgender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $darrylgenitals to "penis">>
-		<<else>>
-			<<set $darrylgenitals to "vagina">>
-		<</if>>
-	<<elseif $darrylgender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $darrylgenitals to "vagina">>
-		<<else>>
-			<<set $darrylgenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $dorengender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $dorengender to "f">>
-	<<else>>
-		<<set $dorengender to "m">>
-	<</if>>
-<</if>>
-<<if $dorengenitals is undefined or $args[0] is "genders">>
-	<<if $dorengender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $dorengenitals to "penis">>
-		<<else>>
-			<<set $dorengenitals to "vagina">>
-		<</if>>
-	<<elseif $dorengender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $dorengenitals to "vagina">>
-		<<else>>
-			<<set $dorengenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $edengender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $edengender to "f">>
-	<<else>>
-		<<set $edengender to "m">>
-	<</if>>
-<</if>>
-<<if $edengenitals is undefined or $args[0] is "genders">>
-	<<if $edengender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $edengenitals to "penis">>
-		<<else>>
-			<<set $edengenitals to "vagina">>
-		<</if>>
-	<<elseif $edengender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $edengenitals to "vagina">>
-		<<else>>
-			<<set $edengenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $gwylangender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $gwylangender to "f">>
-	<<else>>
-		<<set $gwylangender to "m">>
-	<</if>>
-<</if>>
-<<if $gwylangenitals is undefined or $args[0] is "genders">>
-	<<if $gwylangender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $gwylangenitals to "penis">>
-		<<else>>
-			<<set $gwylangenitals to "vagina">>
-		<</if>>
-	<<elseif $gwylangender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $gwylangenitals to "vagina">>
-		<<else>>
-			<<set $gwylangenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $harpergender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $harpergender to "f">>
-	<<else>>
-		<<set $harpergender to "m">>
-	<</if>>
-<</if>>
-<<if $harpergenitals is undefined or $args[0] is "genders">>
-	<<if $harpergender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $harpergenitals to "penis">>
-		<<else>>
-			<<set $harpergenitals to "vagina">>
-		<</if>>
-	<<elseif $harpergender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $harpergenitals to "vagina">>
-		<<else>>
-			<<set $harpergenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $jordangender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $jordangender to "f">>
-	<<else>>
-		<<set $jordangender to "m">>
-	<</if>>
-<</if>>
-<<if $jordangenitals is undefined or $args[0] is "genders">>
-	<<if $jordangender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $jordangenitals to "penis">>
-		<<else>>
-			<<set $jordangenitals to "vagina">>
-		<</if>>
-	<<elseif $jordangender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $jordangenitals to "vagina">>
-		<<else>>
-			<<set $jordangenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $kylargender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $kylargender to "f">>
-	<<else>>
-		<<set $kylargender to "m">>
-	<</if>>
-<</if>>
-<<if $kylargenitals is undefined or $args[0] is "genders">>
-	<<if $kylargender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $kylargenitals to "penis">>
-		<<else>>
-			<<set $kylargenitals to "vagina">>
-		<</if>>
-	<<elseif $kylargender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $kylargenitals to "vagina">>
-		<<else>>
-			<<set $kylargenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $landrygender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $landrygender to "f">>
-	<<else>>
-		<<set $landrygender to "m">>
-	<</if>>
-<</if>>
-<<if $landrygenitals is undefined or $args[0] is "genders">>
-	<<if $landrygender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $landrygenitals to "penis">>
-		<<else>>
-			<<set $landrygenitals to "vagina">>
-		<</if>>
-	<<elseif $landrygender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $landrygenitals to "vagina">>
-		<<else>>
-			<<set $landrygenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $leightongender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $leightongender to "f">>
-	<<else>>
-		<<set $leightongender to "m">>
-	<</if>>
-<</if>>
-<<if $leightongenitals is undefined or $args[0] is "genders">>
-	<<if $leightongender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $leightongenitals to "penis">>
-		<<else>>
-			<<set $leightongenitals to "vagina">>
-		<</if>>
-	<<elseif $leightongender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $leightongenitals to "vagina">>
-		<<else>>
-			<<set $leightongenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $masongender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $masongender to "f">>
-	<<else>>
-		<<set $masongender to "m">>
-	<</if>>
-<</if>>
-<<if $masongenitals is undefined or $args[0] is "genders">>
-	<<if $masongender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $masongenitals to "penis">>
-		<<else>>
-			<<set $masongenitals to "vagina">>
-		<</if>>
-	<<elseif $masongender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $masongenitals to "vagina">>
-		<<else>>
-			<<set $masongenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $morgangender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $morgangender to "f">>
-	<<else>>
-		<<set $morgangender to "m">>
-	<</if>>
-<</if>>
-<<if $morgangenitals is undefined or $args[0] is "genders">>
-	<<if $morgangender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $morgangenitals to "penis">>
-		<<else>>
-			<<set $morgangenitals to "vagina">>
-		<</if>>
-	<<elseif $morgangender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $morgangenitals to "vagina">>
-		<<else>>
-			<<set $morgangenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $rivergender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $rivergender to "f">>
-	<<else>>
-		<<set $rivergender to "m">>
-	<</if>>
-<</if>>
-<<if $rivergenitals is undefined or $args[0] is "genders">>
-	<<if $rivergender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $rivergenitals to "penis">>
-		<<else>>
-			<<set $rivergenitals to "vagina">>
-		<</if>>
-	<<elseif $rivergender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $rivergenitals to "vagina">>
-		<<else>>
-			<<set $rivergenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $robingender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $robingender to "f">>
-	<<else>>
-		<<set $robingender to "m">>
-	<</if>>
-<</if>>
-<<if $robingenitals is undefined or $args[0] is "genders">>
-	<<if $robingender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $robingenitals to "penis">>
-		<<else>>
-			<<set $robingenitals to "vagina">>
-		<</if>>
-	<<elseif $robingender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $robingenitals to "vagina">>
-		<<else>>
-			<<set $robingenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $samgender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $samgender to "f">>
-	<<else>>
-		<<set $samgender to "m">>
-	<</if>>
-<</if>>
-<<if $samgenitals is undefined or $args[0] is "genders">>
-	<<if $samgender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $samgenitals to "penis">>
-		<<else>>
-			<<set $samgenitals to "vagina">>
-		<</if>>
-	<<elseif $samgender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $samgenitals to "vagina">>
-		<<else>>
-			<<set $samgenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $sirrisgender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $sirrisgender to "f">>
-	<<else>>
-		<<set $sirrisgender to "m">>
-	<</if>>
-<</if>>
-<<if $sirrisgenitals is undefined or $args[0] is "genders">>
-	<<if $sirrisgender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $sirrisgenitals to "penis">>
-		<<else>>
-			<<set $sirrisgenitals to "vagina">>
-		<</if>>
-	<<elseif $sirrisgender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $sirrisgenitals to "vagina">>
-		<<else>>
-			<<set $sirrisgenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $whitneygender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $whitneygender to "f">>
-	<<else>>
-		<<set $whitneygender to "m">>
-	<</if>>
-<</if>>
-<<if $whitneygenitals is undefined or $args[0] is "genders">>
-	<<if $whitneygender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $whitneygenitals to "penis">>
-		<<else>>
-			<<set $whitneygenitals to "vagina">>
-		<</if>>
-	<<elseif $whitneygender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $whitneygenitals to "vagina">>
-		<<else>>
-			<<set $whitneygenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $wintergender is undefined or $args[0] is "genders">>
-	<<if $malechance lt random(1, 100)>>
-		<<set $wintergender to "f">>
-	<<else>>
-		<<set $wintergender to "m">>
-	<</if>>
-	<</if>>
-<<if $wintergenitals is undefined or $args[0] is "genders">>
-	<<if $wintergender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $wintergenitals to "penis">>
-		<<else>>
-			<<set $wintergenitals to "vagina">>
-		<</if>>
-	<<elseif $wintergender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $wintergenitals to "vagina">>
-		<<else>>
-			<<set $wintergenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-
-<<if $blackwolfgender is undefined or $args[0] is "genders">>
-	<<set $rng to random(1, 100)>>
-	<<if $beastmalechance lt $rng>>
-		<<set $blackwolfgender to "f">>
-	<<else>>
-		<<set $blackwolfgender to "m">>
-	<</if>>
-<</if>>
-<<if $blackwolfgenitals is undefined or $args[0] is "genders">>
-	<<if $blackwolfgender is "m">>
-		<<if random(0, 99) gte $cbchance>>
-			<<set $blackwolfgenitals to "penis">>
-		<<else>>
-			<<set $blackwolfgenitals to "vagina">>
-		<</if>>
-	<<elseif $blackwolfgender is "f">>
-		<<if random(0, 99) gte $dgchance>>
-			<<set $blackwolfgenitals to "vagina">>
-		<<else>>
-			<<set $blackwolfgenitals to "penis">>
-		<</if>>
-	<</if>>
-<</if>>
-<<if $blackwolfmonster is undefined or $args[0] is "genders">>
-	<<set $rng to random(1, 100)>>
-	<<if $monsterchance gte $rng>>
-		<<set $blackwolfmonster to 1>>
-	<<else>>
-		<<set $blackwolfmonster to 0>>
-	<</if>>
-<</if>>
-
-<<if $avery_penis_size is undefined or $args[0] is "penis">>
-	<<set $avery_penis_size to 2>>
-<</if>>
-<<if $bailey_penis_size is undefined or $args[0] is "penis">>
-	<<set $bailey_penis_size to 2>>
-<</if>>
-<<if $briar_penis_size is undefined or $args[0] is "penis">>
-	<<set $briar_penis_size to 2>>
-<</if>>
-<<if $charlie_penis_size is undefined or $args[0] is "penis">>
-	<<set $charlie_penis_size to 2>>
-<</if>>
-<<if $darryl_penis_size is undefined or $args[0] is "penis">>
-	<<set $darryl_penis_size to 2>>
-<</if>>
-<<if $doren_penis_size is undefined or $args[0] is "penis">>
-	<<set $doren_penis_size to 2>>
-<</if>>
-<<if $eden_penis_size is undefined or $args[0] is "penis">>
-	<<set $eden_penis_size to 2>>
-<</if>>
-<<if $gwylan_penis_size is undefined or $args[0] is "penis">>
-	<<set $gwylan_penis_size to 2>>
-<</if>>
-<<if $harper_penis_size is undefined or $args[0] is "penis">>
-	<<set $harper_penis_size to 2>>
-<</if>>
-<<if $jordan_penis_size is undefined or $args[0] is "penis">>
-	<<set $jordan_penis_size to 2>>
-<</if>>
-<<if $kylar_penis_size is undefined or $args[0] is "penis">>
-	<<set $kylar_penis_size to 2>>
-<</if>>
-<<if $landry_penis_size is undefined or $args[0] is "penis">>
-	<<set $landry_penis_size to 2>>
-<</if>>
-<<if $leighton_penis_size is undefined or $args[0] is "penis">>
-	<<set $leighton_penis_size to 2>>
-<</if>>
-<<if $mason_penis_size is undefined or $args[0] is "penis">>
-	<<set $mason_penis_size to 2>>
-<</if>>
-<<if $morgan_penis_size is undefined or $args[0] is "penis">>
-	<<set $morgan_penis_size to 2>>
-<</if>>
-<<if $river_penis_size is undefined or $args[0] is "penis">>
-	<<set $river_penis_size to 2>>
-<</if>>
-<<if $robin_penis_size is undefined or $args[0] is "penis">>
-	<<set $robin_penis_size to 2>>
-<</if>>
-<<if $sam_penis_size is undefined or $args[0] is "penis">>
-	<<set $sam_penis_size to 2>>
-<</if>>
-<<if $sirris_penis_size is undefined or $args[0] is "penis">>
-	<<set $sirris_penis_size to 2>>
-<</if>>
-<<if $whitney_penis_size is undefined or $args[0] is "penis">>
-	<<set $whitney_penis_size to 2>>
-<</if>>
-<<if $winter_penis_size is undefined or $args[0] is "penis">>
-	<<set $winter_penis_size to 2>>
-<</if>>
-
-
-
-<</nobr>><</widget>>
-
-
-<<widget "relationshiptext">><<nobr>>
-
-<<if $npctextlove gte $npclovehigh>>
-	<<if $npctextdom gte $npcdomhigh>>
-	$npctextname the $npctextdescription thinks you're <span class="green">adorable.</span>
-	<<elseif $npctextdom lte $npcdomlow>>
-	$npctextname the $npctextdescription thinks you're <span class="green">inspiring.</span>
-	<<else>>
-	$npctextname the $npctextdescription thinks you're <span class="green">delightful.</span>
-	<</if>>
-<<elseif $npctextlove lte $npclovelow>>
-	<<if $npctextdom gte $npcdomhigh>>
-	$npctextname the $npctextdescription thinks you're <span class="red">pathetic.</span>
-	<<elseif $npctextdom lte $npcdomlow>>
-	$npctextname the $npctextdescription thinks you're <span class="red">irritating.</span>
-	<<else>>
-	$npctextname the $npctextdescription thinks you're <span class="red">terrible.</span>
-	<</if>>
+<!-- Set breast defaults-->
+<<if $NPCName[_i].pronoun is "f">>
+	<<set _brdes to ["small","pert","modest","full","large"]>>
+	<<set _rnd to random(4, 8)>>
+	<<set $NPCName[_i].breastsize to _rnd>>
+	<<set $NPCName[_i].breastsdesc to _brdes[_rnd-4]+" breasts">>
+	<<set $NPCName[_i].breastdesc to _brdes[_rnd-4]+" breast">>
 <<else>>
-	<<if $npctextdom gte $npcdomhigh>>
-	$npctextname the $npctextdescription thinks you're <span class="pink">cute.</span>
-	<<elseif $npctextdom lte $npcdomlow>>
-	$npctextname the $npctextdescription <span class="teal">looks up to you.</span>
+	<<set $NPCName[_i].breastsize to 0>>
+	<<set $NPCName[_i].breastsdesc to "nipples">>
+	<<set $NPCName[_i].breastdesc to "nipple">>
+<</if>>
+<!-- Set pp to defaults-->
+
+<<if $penis_mod is 8>>/*Clumsy way to get average penis size setting working for NNPCs.*/
+<<set _p_mod_upper to 8>><<set _p_mod_lower to 8>>
+<<elseif $penis_mod gte 6>>
+<<set _p_mod_upper to 8>><<set _p_mod_lower to 7>>
+<<elseif $penis_mod gte 4>>
+<<set _p_mod_upper to 8>><<set _p_mod_lower to 5>>
+<<elseif $penis_mod gte 2>>
+<<set _p_mod_upper to 8>><<set _p_mod_lower to 3>>
+<<elseif $penis_mod gte 0>>
+<<set _p_mod_upper to 8>><<set _p_mod_lower to 1>>
+<<elseif $penis_mod gte -2>>
+<<set _p_mod_upper to 7>><<set _p_mod_lower to 1>>
+<<elseif $penis_mod gte -4>>
+<<set _p_mod_upper to 5>><<set _p_mod_lower to 1>>
+<<elseif $penis_mod gte -6>>
+<<set _p_mod_upper to 3>><<set _p_mod_lower to 1>>
+<<else>>
+<<set _p_mod_upper to 1>><<set _p_mod_lower to 1>>
+<</if>>
+
+<<if $NPCName[_i].penissize is 0 or $args[0] is "penis">>
+	<<if $NPCName[_i].gender is "m">>
+		<<switch random (_p_mod_lower, _p_mod_upper)>>
+		<<case 5 6 7>>
+			<<set $NPCName[_i].penisdesc to either("thick cock","hefty cock","big cock","large cock","veiny cock","meaty cock")>>
+			<<set $NPCName[_i].penissize to 3>>
+		<<case 8>>
+			<<set $NPCName[_i].penisdesc to either("massive cock","huge cock","humongous cock","immense cock","gigantic cock","enormous cock")>>
+			<<set $NPCName[_i].penissize to 4>>
+		<<case 2 3 4 5>>
+			<<set $NPCName[_i].penisdesc to "penis">>
+			<<set $NPCName[_i].penissize to 2>>
+		<<default>>
+			<<set $NPCName[_i].penisdesc to either("tiny penis","pathetic cock","little penis","small penis","mini penis","micro penis")>>
+			<<set $NPCName[_i].penissize to 1>>
+		<</switch>>
 	<<else>>
-	$npctextname the $npctextdescription has no strong opinion of you.
+		<<set $NPCName[_i].penissize to 0>>
+		<<set $NPCName[_i].penisdesc to "none">>
 	<</if>>
 <</if>>
-<</nobr>><</widget>>
-
-
-<<widget "initcharlie">><<nobr>>
-<<set $initcharlie to 1>>
-
-<<set $charlietrust to 0>>
-<<set $charlielove to 0>>
-<<set $charliedom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "charlie">><<nobr>>
-<<if $initcharlie isnot 1>>
-<<initcharlie>>
+<!-- Set pp to size in case PC selected it-->
+<<if $NPCName[_i].penissize isnot 0>>
+	<<switch $NPCName[_i].penissize>>
+	<<case 4>>
+		<<set $NPCName[_i].penisdesc to either("massive cock","huge cock","humongous cock","immense cock","gigantic cock","enormous cock")>>
+	<<case 3>>
+		<<set $NPCName[_i].penisdesc to either("thick cock","hefty cock","big cock","large cock","veiny cock","meaty cock")>>
+	<<case 1>>
+		<<set $NPCName[_i].penisdesc to either("tiny penis","pathetic cock","little penis","small penis","mini penis","micro penis")>>
+	<<default>>
+		<<set $NPCName[_i].penisdesc to "penis">>
+	<</switch>>
 <</if>>
 
-<<set $enemyno += 1>>
+<</for>>
 
-<<set $npc to "Charlie">>
+<</nobr>><</widget>>
 
-<<set $NPCList[0].pronoun to $charliegender>>
+<<widget "initnpc">><<nobr>>
+<!-- NEW - Tested and working. Replaces all NNPCinit widgets -->
+<<set _nam to $args[0]>>
+<<set _i to $NPCNameList.indexOf(_nam)>>
+<<if $NPCName[_i].init is 0>> <!-- This prevents double-init from wiping variables -->
+	<<set $NPCName[_i].init to 1>>
 
+	<<set $NPCName[_i].trust to 0>>
+	<<set $NPCName[_i].love to 0>>
+	<<set $NPCName[_i].dom to 0>>
+	<<set $NPCName[_i].lust to 0>>
+	<<set $NPCName[_i].trauma to 0>>
+	<<set $NPCName[_i].rage to 0>>
+	<<set $NPCName[_i].state to "active">>
 
+	<!-- Special Cases NNPC Variables, Introductions, Adjustments -->
+	<<switch _nam>>
+	<<case Kylar>>
+		<<set $kylartimer to 0>>
+		<<set $kylarstreettimer to 0>>
+		<<set $kylarraped to 0>>
+		<<set $NPCName[$NPCNameList.indexOf("Kylar")].state to 0>>
+
+	<<case River>>
+		<<if $NPCName[_i].pronoun is "m">>
+			//River teaches maths at the local school. His short brown hair is flecked with grey and his piercing blue eyes scrutinize his surroundings. Students tend to be well-behaved in his class.//
+		<<else>>
+			//River teaches maths at the local school. Her long brown hair is flecked with grey and her piercing blue eyes scrutinize her surroundings. Students tend to be well-behaved in her class.//
+		<</if>>
+	<<case Leighton>>
+		<<if $NPCName[_i].pronoun is "m">>
+			<<set $NPCName[_i].title to "headmaster">>
+			//Leighton is the headmaster of the local school. He has green eyes and well-kept greying black hair. Tall and stately, he has a firm attitude towards the students at his school.//
+		<<else>>
+			<<set $NPCName[_i].title to "headmistress">>
+			//Leighton is the headmistress of the local school. She has green eyes and greying black hair, held behind her head in a bun. Tall and stately, she has a firm attitude towards the students at her school.//
+		<</if>>
+	<<case Mason>>
+		<<if $NPCName[_i].pronoun is "m">>
+			//Mason is the swimming teacher at the local school. He's the youngest teacher, only a few years older than some of the students. His toned body is naturally shown off during class, but if he notices the way he's leered at, he gives no indication.//
+		<<else>>
+			//Mason is the swimming teacher at the local school. She's the youngest teacher, only a few years older than some of the students. Her toned body is naturally shown off during class, but if she notices the way she's leered at, she gives no indication.//
+		<</if>>
+	<<case Winter>>
+		<<if $NPCName[_i].pronoun is "m">>
+			//Winter teaches history at the local school. He's an older gentleman, well-groomed and sophisticated.//
+		<<else>>
+			//Winter teaches history at the local school. She's an older lady, well-groomed and sophisticated.//
+		<</if>>
+	<<case Doren>>
+		<<if $NPCName[_i].pronoun is "m">>
+			//Doren teaches English at the local school. His shaggy red hair and beard give him a savage look.//
+		<<else>>
+			//Doren teaches English at the local school. Her shaggy red hair gives her a savage look.//
+		<</if>>
+	<<case Sirris>>
+		<<if $NPCName[_i].pronoun is "m">>
+			//Sirris teaches science at the local school. He's calm and patient, which sometimes leads to a disordered classroom.//
+		<<else>>
+			//Sirris teaches science at the local school. She's calm and patient, which sometimes leads to a disordered classroom.//
+		<</if>>
+	<<case Eden>>
+		<<if $NPCName[_i].pronoun is "m">>
+			<<set $NPCName[_i].title to "hunter">>
+		<<else>>
+			<<set $NPCName[_i].title to "huntress">>
+		<</if>>
+	<<case Avery>>
+		<<if $NPCName[_i].pronoun is "m">>
+			<<set $NPCName[_i].title to "businessman">>
+		<<else>>
+			<<set $NPCName[_i].title to "businesswoman">>
+		<</if>>
+	<<case Jordan>>
+		<<if $NPCName[_i].pronoun is "m">>
+			<<set $NPCName[_i].title to "monk">>
+		<<else>>
+			<<set $NPCName[_i].title to "nun">>
+		<</if>>
+	<<default>>
+	<</switch>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "npc">><<nobr>>
+<!-- NEW - Tested and Working. Replaces all named-NNPC widgets -->
+<<set _nam to $args[0]>>
+<<set _i to $NPCNameList.indexOf(_nam)>>
+
+<<if $NPCName[_i].init isnot 1>>
+	<<switch $NPCName[_i].nam>>
+	<<case Robin Whitney Eden Kylar>>
+		/% <!-- Do nothing option, as these NNPCs are initialized seperate from their first call using <<initnpc "name">>. This is done as seperate call b/c these NPCs are called prior to introduction on daily decay rates. Instead fix daily decay rates... NPCs should be intro'd on first call. --> %/
+	<<default>>
+	<<initnpc _nam>>
+	<</switch>>
+<</if>>
+
+<!-- Set global variables -->
+<<set $npc to _nam>>
+<<set $npcnum to _i>>
+<<set $pronoun to $NPCName[_i].pronoun>>
+
+<!-- Set combat variables -->
+<<set $NPCList[0].pronoun to $NPCName[_i].pronoun>>
+<<set $NPCList[0].gender to $NPCName[_i].gender>>
 <<set $NPCList[0].lefthand to 0>>
 <<set $NPCList[0].righthand to 0>>
 <<set $NPCList[0].mouth to 0>>
 <<set $NPCList[0].anus to 0>>
 <<set $NPCList[0].chest to 0>>
 
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
+<<set $NPCList[0].breastsize to $NPCName[_i].breastsize>>
+<<set $NPCList[0].breastsdesc to $NPCName[_i].breastsdesc>>
+<<set $NPCList[0].breastdesc to $NPCName[_i].breastdesc>>
 
-<<if $charliegenitals is "penis">>
-<<set $NPCList[0].penis to "clothed">>
-<<set $NPCList[0].penissize to $charlie_penis_size>>
-	<<if $charlie_penis_size is 1>>
-	<<set $NPCList[0].penisdes to "tiny penis">>
-	<<elseif $charlie_penis_size is 3>>
-	<<set $NPCList[0].penisdes to "thick penis">>
-	<<elseif $charlie_penis_size is 4>>
-	<<set $NPCList[0].penisdes to "huge penis">>
-	<<else>>
-	<<set $NPCList[0].penisdes to "penis">>
-	<</if>>
-<<elseif $charliegenitals is "vagina">>
-<<set $NPCList[0].vagina to "clothed">>
-<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "dance coach">>
-<<else>>
-<<set $npcdescription to "dance coach">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "charlierelationship">><<nobr>>
-<<if $initcharlie is 1>>
-<<set $npctextlove to $charlielove>>
-<<set $npctextdom to $charliedom>>
-<<set $npctextname to "Charlie">>
-<<set $npctextdescription to "dance coach">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "charlieend">><<nobr>>
-<<set $charlietrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initdarryl">><<nobr>>
-<<set $initdarryl to 1>>
-
-<<set $darryltrust to 0>>
-<<set $darryllove to 0>>
-<<set $darryldom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "darryl">><<nobr>>
-<<if $initdarryl isnot 1>>
-<<initdarryl>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Darryl">>
-
-<<set $NPCList[0].pronoun to $darrylgender>>
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $darrylgenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $darryl_penis_size>>
-			<<if $darryl_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $darryl_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $darryl_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $darrylgenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "club owner">>
-<<else>>
-<<set $npcdescription to "club owner">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "darrylrelationship">><<nobr>>
-<<if $initdarryl is 1>>
-<<set $npctextlove to $darryllove>>
-<<set $npctextdom to $darryldom>>
-<<set $npctextname to "Darryl">>
-<<set $npctextdescription to "club owner">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "darrylend">><<nobr>>
-<<set $darryltrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initharper">><<nobr>>
-<<set $initharper to 1>>
-
-<<set $harpertrust to 0>>
-<<set $harperlove to 0>>
-<<set $harperdom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "harper">><<nobr>>
-<<if $initharper isnot 1>>
-<<initharper>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Harper">>
-
-<<set $NPCList[0].pronoun to $harpergender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-		<<if $harpergenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $harper_penis_size>>
-			<<if $harper_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $harper_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $harper_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $harpergenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "skill">>
-
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "doctor">>
-<<else>>
-<<set $npcdescription to "doctor">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "harperrelationship">><<nobr>>
-<<if $initharper is 1>>
-<<set $npctextlove to $harperlove>>
-<<set $npctextdom to $harperdom>>
-<<set $npctextname to "Harper">>
-<<set $npctextdescription to "doctor">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "harperend">><<nobr>>
-<<set $harpertrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initjordan">><<nobr>>
-<<set $initjordan to 1>>
-
-<<set $jordantrust to 0>>
-<<set $jordanlove to 0>>
-<<set $jordandom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "jordan">><<nobr>>
-<<if $initjordan isnot 1>>
-<<initjordan>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Jordan">>
-
-<<set $NPCList[0].pronoun to $jordangender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-<<if $jordangenitals is "penis">>
+<<if $NPCName[_i].gender is "m">>
 	<<set $NPCList[0].penis to "clothed">>
-	<<set $NPCList[0].penissize to $jordan_penis_size>>
-	<<if $jordan_penis_size is 1>>
-		<<set $NPCList[0].penisdes to "tiny penis">>
-	<<elseif $jordan_penis_size is 3>>
-		<<set $NPCList[0].penisdes to "thick penis">>
-	<<elseif $jordan_penis_size is 4>>
-		<<set $NPCList[0].penisdes to "huge penis">>
-	<<else>>
-		<<set $NPCList[0].penisdes to "penis">>
-	<</if>>
-<<elseif $jordangenitals is "vagina">>
+	<<set $NPCList[0].penissize to $NPCName[_i].penissize>>
+	<<set $NPCList[0].penisdesc to $NPCName[_i].penisdesc>>
+<<else>>
 	<<set $NPCList[0].vagina to "clothed">>
 <</if>>
 
-<<set $NPCList[0].insecurity to "ethics">>
+<<set $NPCList[0].insecurity to $NPCName[_i].insecurity>>
+<<set $npcdescription to $NPCName[_i].description>>
 
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "priestess">>
-<<else>>
-<<set $npcdescription to "priest">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "jordanrelationship">><<nobr>>
-<<if $initjordan is 1>>
-<<set $npctextlove to $jordanlove>>
-<<set $npctextdom to $jordandom>>
-<<set $npctextname to "Jordan">>
-	<<if $jordangender is "f">>
-	<<set $npctextdescription to "priestess">>
-	<<else>>
-	<<set $npctextdescription to "priest">>
-	<</if>>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "jordanend">><<nobr>>
-<<set $jordantrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initbriar">><<nobr>>
-<<set $initbriar to 1>>
-
-<<set $briartrust to 0>>
-<<set $briarlove to 0>>
-<<set $briardom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "briar">><<nobr>>
-<<if $initbriar isnot 1>>
-<<initbriar>>
-<</if>>
+<<set $NPCList[0].adult to $NPCName[_i].adult>>
+<<set $NPCList[0].teen to $NPCName[_i].teen>>
 
 <<set $enemyno += 1>>
 
-<<set $npc to "Briar">>
+<</nobr>><</widget>>
 
-<<set $NPCList[0].pronoun to $briargender>>
+<<widget "npcrelationship">><<nobr>>
+<!-- NEW - Tested and working. Replaces most NNPCrelationship widgets -->
+<!-- Robin, Avery, Kylar are unique and should be folded into <<relationshiptext>> as special cases -->
+<<set _nam to $args[0]>>
+<<set _i to $NPCNameList.indexOf(_nam)>>
+<<if $NPCName[_i].init is 1>>
+	<<set $npctextlove to $NPCName[_i].love>>
+	<<set $npctextdom to $NPCName[_i].dom>>
+	<<set $npctextname to _nam>>
+	<<set $npctextdescription to $NPCName[_i].title>>
+	<<relationshiptext _nam>><br>
+<</if>>
+<</nobr>><</widget>>
 
+<<widget "npcincr">><<nobr>>
+<!-- NEW - Tested and Working. Increments selected NNPC variables using NNPC name-->
+<!-- Arguements passed are NNPC name, variable type, and value (+/-)-->
 
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
+<<set _nam to $args[0]>>
+<<set _var to $args[1]>>
+<<set _val to $args[2]>>
 
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
+<<set _i to $NPCNameList.indexOf(_nam)>>
 
+<<switch _var>>
+	<<case love>>
+		<<set $NPCName[_i].love += _val>>
+	<<case dom>>
+		<<set $NPCName[_i].dom += _val>>
+	<<case trust>>
+		<<set $NPCName[_i].trust += _val>>
+	<<case lust>>
+		<<set $NPCName[_i].lust += _val>>
+	<<case rage>>
+		<<set $NPCName[_i].rage += _val>>
+	<<case state>>
+		<<set $NPCName[_i].state to _val>>
+	<<case trauma>>
+		<<set $NPCName[_i].trauma += _val>>
+	<<default>>
+		<span class="red">NPCINCR error - Unknown variable _var</span><br><br>
+<</switch>>
 
-		<<if $briargenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $briar_penis_size>>
-			<<if $briar_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $briar_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $briar_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $briargenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
+<</nobr>><</widget>>
+
+<<widget "npcset">><<nobr>>
+<!-- NEW - Tested and working. Sets selected NNPC variables using NNPC name-->
+<!-- Arguements passed are NNPC name, variable type, value -->
+
+<<set _nam to $args[0]>>
+<<set _var to $args[1]>>
+<<set _val to $args[2]>>
+
+<<set _i to $NPCNameList.indexOf(_nam)>>
+
+<<switch _var>>
+	<<case love>>
+		<<set $NPCName[_i].love to _val>>
+	<<case dom>>
+		<<set $NPCName[_i].dom to _val>>
+	<<case trust>>
+		<<set $NPCName[_i].trust to _val>>
+	<<case lust>>
+		<<set $NPCName[_i].lust to _val>>
+	<<case rage>>
+		<<set $NPCName[_i].rage to _val>>
+	<<case state>>
+		<<set $NPCName[_i].state to _val>>
+	<<case trauma>>
+		<<set $NPCName[_i].trauma to _val>>
+	<<default>>
+		<span class="red">NPCSET error - Unknown value _var</span><br><br>
+<</switch>>
+
+<</nobr>><</widget>>
+
+<<widget "relationshiptext">><<nobr>>
+<!-- NEW Tested and working. Replaces old <<relationshiptext>> -->
+<<set _npc to $args[0]>>
+<<set _i to $NPCNameList.indexOf(_npc)>>
+<!-- Special cases for Robin, Avery, Kylar -->
+<<switch _npc>>
+	<<case Robin>>
+		Robin
+		<<if $robinromance is 1>>
+		<span class="lewd">loves you.</span>
+		<<elseif $NPCName[_i].trauma gte 80>>
+		<span class="red">is traumatised.</span>
+		<<elseif $NPCName[_i].trauma gte 40>>
+		<span class="red">is in pain.</span>
+		<<elseif $NPCName[_i].trauma gte 10>>
+		<span class="purple">is troubled.</span>
+		<<else>>
+		<span class="teal">looks up to you.</span>
 		<</if>>
-
-<<set $NPCList[0].insecurity to "looks">>
-
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "brothel owner">>
-<<else>>
-<<set $npcdescription to "brothel owner">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "briarrelationship">><<nobr>>
-<<if $initbriar is 1>>
-<<set $npctextlove to $briarlove>>
-<<set $npctextdom to $briardom>>
-<<set $npctextname to "Briar">>
-<<set $npctextdescription to "brothel owner">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "briarend">><<nobr>>
-<<set $briartrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initriver">><<nobr>>
-<<set $initriver to 1>>
-
-<<set $rivertrust to 0>>
-<<set $riverlove to 0>>
-<<set $riverdom to 0>>
-
-<<if $rivergender is "m">>
-//River teaches maths at the local school. His short brown hair is flecked with grey and his piercing blue eyes scrutinize his surroundings. Students tend to be well-behaved in his class.//
-<<else>>
-//River teaches maths at the local school. Her long brown hair is flecked with grey and her piercing blue eyes scrutinize her surroundings. Students tend to be well-behaved in her class.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "river">><<nobr>>
-<<if $initriver isnot 1>>
-<<initriver>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "River">>
-
-<<set $NPCList[0].pronoun to $rivergender>>
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $rivergenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $river_penis_size>>
-			<<if $river_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $river_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $river_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<br>
+	<<case Avery>>
+		Avery
+		<<if $NPCName[_i].love gte 60>>
+			<<if $NPCName[_i].rage gte 60>>
+			<span class="red">is infuriated by you.</span>
+			<<elseif $NPCName[_i].rage gte 20>>
+			<span class="blue">wants you on a tighter leash.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="green">prizes you.</span>
 			<</if>>
-		<<elseif $rivergenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "maths teacher">>
-<<else>>
-<<set $npcdescription to "maths teacher">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "riverrelationship">><<nobr>>
-<<if $initriver is 1>>
-<<set $npctextlove to $riverlove>>
-<<set $npctextdom to $riverdom>>
-<<set $npctextname to "River">>
-<<set $npctextdescription to "maths teacher">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "riverend">><<nobr>>
-<<set $rivertrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initleighton">><<nobr>>
-<<set $initleighton to 1>>
-
-<<set $leightontrust to 0>>
-<<set $leightonlove to 0>>
-<<set $leightondom to 0>>
-
-<<if $leightongender is "m">>
-//Leighton is the headmaster of the local school. He has green eyes and well-kept greying black hair. Tall and stately, he has a firm attitude towards the students at his school.//
-<<else>>
-//Leighton is the headmistress of the local school. She has green eyes and greying black hair, held behind her head in a bun. Tall and stately, she has a firm attitude towards the students at her school.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "leighton">><<nobr>>
-<<if $initleighton isnot 1>>
-<<initleighton>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Leighton">>
-
-<<set $NPCList[0].pronoun to $leightongender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $leightongenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $leighton_penis_size>>
-			<<if $leighton_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $leighton_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $leighton_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<elseif $NPCName[_i].love gte 20>>
+			<<if $NPCName[_i].rage gte 60>>
+			<span class="red">is furious with you.</span>
+			<<elseif $NPCName[_i].rage gte 20>>
+			<span class="purple">sees you as a possession.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="teal">thinks you're cute.</span>
 			<</if>>
-		<<elseif $leightongenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "skill">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "headmistress">>
-<<else>>
-<<set $npcdescription to "headmaster">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "leightonrelationship">><<nobr>>
-<<if $initleighton is 1>>
-<<set $npctextlove to $leightonlove>>
-<<set $npctextdom to $leightondom>>
-<<set $npctextname to "Leighton">>
-	<<if $leightongender is "f">>
-	<<set $npctextdescription to "headmistress">>
-	<<else>>
-	<<set $npctextdescription to "headmaster">>
-	<</if>>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "leightonend">><<nobr>>
-<<set $leightontrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initmason">><<nobr>>
-<<set $initmason to 1>>
-
-<<set $masontrust to 0>>
-<<set $masonlove to 0>>
-<<set $masondom to 0>>
-
-<<if $masongender is "m">>
-//Mason is the swimming teacher at the local school. He's the youngest teacher, only a few years older than some of the students. His toned body is naturally shown off during class, but if he notices the way he's leered at, he gives no indication.//
-<<else>>
-//Mason is the swimming teacher at the local school. She's the youngest teacher, only a few years older than some of the students. Her toned body is naturally shown off during class, but if she notices the way she's leered at, she gives no indication.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "mason">><<nobr>>
-<<if $initmason isnot 1>>
-<<initmason>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Mason">>
-
-<<set $NPCList[0].pronoun to $masongender>>
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $masongenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $mason_penis_size>>
-			<<if $mason_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $mason_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $mason_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<else>>
+			<<if $NPCName[_i].rage gte 60>>
+			<span class="red">thinks you're insolent.</span>
+			<<elseif $NPCName[_i].rage gte 20>>
+			<span class="pink">thinks you're a brat.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			has no strong opinion of you.
 			<</if>>
-		<<elseif $masongenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
 		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "swimming teacher">>
-<<else>>
-<<set $npcdescription to "swimming teacher">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "masonrelationship">><<nobr>>
-<<if $initmason is 1>>
-<<set $npctextlove to $masonlove>>
-<<set $npctextdom to $masondom>>
-<<set $npctextname to "Mason">>
-<<set $npctextdescription to "swimming teacher">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "masonend">><<nobr>>
-<<set $masontrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initwinter">><<nobr>>
-<<set $initwinter to 1>>
-
-<<set $wintertrust to 0>>
-<<set $winterlove to 0>>
-<<set $winterdom to 0>>
-
-
-<<if $wintergender is "m">>
-//Winter teaches history at the local school. He's an older gentleman, well-groomed and sophisticated.//
-<<else>>
-//Winter teaches history at the local school. She's an older lady, well-groomed and sophisticated.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "winter">><<nobr>>
-<<if $initwinter isnot 1>>
-<<initwinter>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Winter">>
-
-<<set $NPCList[0].pronoun to $wintergender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $wintergenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $winter_penis_size>>
-			<<if $winter_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $winter_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $winter_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+	<br>
+	<<case Kylar>>
+		Kylar the loner
+		<<if $NPCName[_i].love gte 90>>
+			<<if $NPCName[_i].rage gte 90>>
+			<span class="red">is hysteric.</span>
+			<<elseif $NPCName[_i].rage gte 60>>
+			<span class="pink">is obsessed with you.</span>
+			<<elseif $NPCName[_i].rage gte 30>>
+			<span class="blue">is obsessed with you.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="green">is obsessed with you.</span>
 			<</if>>
-		<<elseif $wintergenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "skill">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "history teacher">>
-<<else>>
-<<set $npcdescription to "history teacher">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "winterrelationship">><<nobr>>
-<<if $initwinter is 1>>
-<<set $npctextlove to $winterlove>>
-<<set $npctextdom to $winterdom>>
-<<set $npctextname to "Winter">>
-<<set $npctextdescription to "history teacher">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "winterend">><<nobr>>
-<<set $wintertrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initdoren">><<nobr>>
-<<set $initdoren to 1>>
-
-<<set $dorentrust to 0>>
-<<set $dorenlove to 0>>
-<<set $dorendom to 0>>
-
-<<if $dorengender is "m">>
-//Doren teaches English at the local school. His shaggy red hair and beard give him a savage look.//
-<<else>>
-//Doren teaches English at the local school. Her shaggy red hair gives her a savage look.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "doren">><<nobr>>
-<<if $initdoren isnot 1>>
-<<initdoren>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Doren">>
-
-<<set $NPCList[0].pronoun to $dorengender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $dorengenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $doren_penis_size>>
-			<<if $doren_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $doren_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $doren_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<elseif $NPCName[_i].love gte 60>>
+			<<if $NPCName[_i].rage gte 90>>
+			<span class="red">is hysteric.</span>
+			<<elseif $NPCName[_i].rage gte 60>>
+			<span class="pink">is enamoured with you.</span>
+			<<elseif $NPCName[_i].rage gte 30>>
+			<span class="purple">is enamoured with you.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="teal">is enamoured with you.</span>
 			<</if>>
-		<<elseif $dorengenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "english teacher">>
-<<else>>
-<<set $npcdescription to "english teacher">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "dorenrelationship">><<nobr>>
-<<if $initdoren is 1>>
-<<set $npctextlove to $dorenlove>>
-<<set $npctextdom to $dorendom>>
-<<set $npctextname to "Doren">>
-<<set $npctextdescription to "english teacher">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "dorenend">><<nobr>>
-<<set $dorentrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initsirris">><<nobr>>
-<<set $initsirris to 1>>
-
-<<set $sirristrust to 0>>
-<<set $sirrislove to 0>>
-<<set $sirrisdom to 0>>
-
-<<if $sirrisgender is "m">>
-//Sirris teaches science at the local school. He's calm and patient, which sometimes leads to a disordered classroom.//
-<<else>>
-//Sirris teaches science at the local school. She's calm and patient, which sometimes leads to a disordered classroom.//
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "sirris">><<nobr>>
-<<if $initsirris isnot 1>>
-<<initsirris>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Sirris">>
-
-<<set $NPCList[0].pronoun to $sirrisgender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $sirrisgenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $sirris_penis_size>>
-			<<if $sirris_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $sirris_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $sirris_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<elseif $NPCName[_i].love gte 30>>
+			<<if $NPCName[_i].rage gte 90>>
+			<span class="red">is hysteric.</span>
+			<<elseif $NPCName[_i].rage gte 60>>
+			<span class="pink">is infatuated with you.</span>
+			<<elseif $NPCName[_i].rage gte 30>>
+			<span class="purple">is infatuated with you.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="lblue">is infatuated with you.</span>
 			<</if>>
-		<<elseif $sirrisgenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "science teacher">>
-<<else>>
-<<set $npcdescription to "science teacher">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "sirrisrelationship">><<nobr>>
-<<if $initsirris is 1>>
-<<set $npctextlove to $sirrislove>>
-<<set $npctextdom to $sirrisdom>>
-<<set $npctextname to "Sirris">>
-<<set $npctextdescription to "science teacher">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "sirrisend">><<nobr>>
-<<set $sirristrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initeden">><<nobr>>
-<<set $initeden to 1>>
-
-<<set $edentrust to 0>>
-<<set $edenlove to 0>>
-<<set $edendom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "eden">><<nobr>>
-<<if $initeden isnot 1>>
-<<initeden>>
-<</if>>
-
-<<set $npc to "Eden">>
-
-<<set $NPCList[0].pronoun to $edengender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $edengenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $eden_penis_size>>
-			<<if $eden_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $eden_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $eden_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<else>>
+			<<if $NPCName[_i].rage gte 90>>
+			<span class="red">is hysteric.</span>
+			<<elseif $NPCName[_i].rage gte 60>>
+			<span class="pink">is fixated on you.</span>
+			<<elseif $NPCName[_i].rage gte 30>>
+			<span class="purple">is fixated on you.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			<span class="blue">is fixated on you.</span>
 			<</if>>
-		<<elseif $edengenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
 		<</if>>
-
-<<set $NPCList[0].insecurity to "looks">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "huntress">>
-<<else>>
-<<set $npcdescription to "hunter">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-<<set $enemyno += 1>>
-
-<</nobr>><</widget>>
-
-<<widget "edenrelationship">><<nobr>>
-<<if $initeden is 1>>
-<<set $npctextlove to $edenlove>>
-<<set $npctextdom to $edendom>>
-<<set $npctextname to "Eden">>
-	<<if $edengender is "f">>
-	<<set $npctextdescription to "huntress">>
-	<<else>>
-	<<set $npctextdescription to "hunter">>
-	<</if>>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "edenend">><<nobr>>
-<<set $edentrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initsam">><<nobr>>
-<<set $initsam to 1>>
-
-<<set $samtrust to 0>>
-<<set $samlove to 0>>
-<<set $samdom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "sam">><<nobr>>
-<<if $initsam isnot 1>>
-<<initsam>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Sam">>
-
-<<set $NPCList[0].pronoun to $samgender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $samgenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $sam_penis_size>>
-			<<if $sam_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $sam_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $sam_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<br>
+<!-- Default cases for all other NNPCs -->
+	<<default>>
+		<<if $npctextlove gte $npclovehigh>>
+			<<if $npctextdom gte $npcdomhigh>>
+			$npctextname the $npctextdescription thinks you're <span class="green">adorable.</span>
+			<<elseif $npctextdom lte $npcdomlow>>
+			$npctextname the $npctextdescription thinks you're <span class="green">inspiring.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			$npctextname the $npctextdescription thinks you're <span class="green">delightful.</span>
 			<</if>>
-		<<elseif $samgenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "cafe owner">>
-<<else>>
-<<set $npcdescription to "cafe owner">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "samrelationship">><<nobr>>
-<<if $initsam is 1>>
-<<set $npctextlove to $samlove>>
-<<set $npctextdom to $samdom>>
-<<set $npctextname to "Sam">>
-<<set $npctextdescription to "cafe owner">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "samend">><<nobr>>
-<<set $samtrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initlandry">><<nobr>>
-<<set $initlandry to 1>>
-
-<<set $landrytrust to 0>>
-<<set $landrylove to 0>>
-<<set $landrydom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "landry">><<nobr>>
-<<if $initlandry isnot 1>>
-<<initlandry>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Landry">>
-
-<<set $NPCList[0].pronoun to $landrygender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $landrygenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $landry_penis_size>>
-			<<if $landry_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $landry_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $landry_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<elseif $npctextlove lte $npclovelow>>
+			<<if $npctextdom gte $npcdomhigh>>
+			$npctextname the $npctextdescription thinks you're <span class="red">pathetic.</span>
+			<<elseif $npctextdom lte $npcdomlow>>
+			$npctextname the $npctextdescription thinks you're <span class="red">irritating.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			$npctextname the $npctextdescription thinks you're <span class="red">terrible.</span>
 			<</if>>
-		<<elseif $landrygenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "skill">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "criminal">>
-<<else>>
-<<set $npcdescription to "criminal">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "landryrelationship">><<nobr>>
-<<if $initlandry is 1>>
-<<set $npctextlove to $landrylove>>
-<<set $npctextdom to $landrydom>>
-<<set $npctextname to "Landry">>
-<<set $npctextdescription to "criminal">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "landryend">><<nobr>>
-<<set $landrytrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initbailey">><<nobr>>
-<<set $initbailey to 1>>
-
-<<set $baileytrust to 0>>
-<<set $baileylove to 0>>
-<<set $baileydom to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "bailey">><<nobr>>
-<<if $initbailey isnot 1>>
-<<initbailey>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Bailey">>
-
-<<set $NPCList[0].pronoun to $baileygender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $baileygenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $bailey_penis_size>>
-			<<if $bailey_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $bailey_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $bailey_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
+		<<else>>
+			<<if $npctextdom gte $npcdomhigh>>
+			$npctextname the $npctextdescription thinks you're <span class="pink">cute.</span>
+			<<elseif $npctextdom lte $npcdomlow>>
+			$npctextname the $npctextdescription <span class="teal">looks up to you.</span>
 			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
+			$npctextname the $npctextdescription has no strong opinion of you.
 			<</if>>
-		<<elseif $baileygenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
 		<</if>>
-
-<<set $NPCList[0].insecurity to "weak">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "caretaker">>
-<<else>>
-<<set $npcdescription to "caretaker">>
-<</if>>
-<<set $NPCList[0].adult to 1>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "baileyrelationship">><<nobr>>
-<<if $initbailey is 1>>
-<<set $npctextlove to $baileylove>>
-<<set $npctextdom to $baileydom>>
-<<set $npctextname to "Bailey">>
-<<set $npctextdescription to "caretaker">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "baileyend">><<nobr>>
-<<set $baileytrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initwhitney">><<nobr>>
-<<set $initwhitney to 1>>
-
-<<set $whitneytrust to 0>>
-<<set $whitneylove to 0>>
-<<set $whitneydom to 10>>
-<<set $whitneylust to 0>>
-<<set $whitneystate to "active">>
-
-
-<</nobr>><</widget>>
-
-<<widget "whitney">><<nobr>>
-<<if $initwhitney isnot 1>>
-<<initwhitney>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Whitney">>
-
-<<set $NPCList[0].pronoun to $whitneygender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $whitneygenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $whitney_penis_size>>
-			<<if $whitney_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $whitney_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $whitney_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $whitneygenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "looks">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "bully">>
-<<else>>
-<<set $npcdescription to "bully">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "whitneyrelationship">><<nobr>>
-<<if $initwhitney is 1>>
-<<set $npctextlove to $whitneylove>>
-<<set $npctextdom to $whitneydom>>
-<<set $npctextname to "Whitney">>
-<<set $npctextdescription to "bully">>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "whitneyend">><<nobr>>
-<<set $whitneytrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initrobin">><<nobr>>
-<<set $initrobin to 1>>
-
-<<set $robintrust to 0>>
-<<set $robinlove to 0>>
-<<set $robindom to 0>>
-<<set $robinlust to 0>>
-<<set $robintrauma to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "robin">><<nobr>>
-<<if $initrobin isnot 1>>
-<<initrobin>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Robin">>
-
-<<set $NPCList[0].pronoun to $robingender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $robingenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $robin_penis_size>>
-			<<if $robin_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $robin_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $robin_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $robingenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "ethics">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "orphan">>
-<<else>>
-<<set $npcdescription to "orphan">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "robinrelationship">><<nobr>>
-Robin
-<<if $robinromance is 1>>
-<span class="lewd">loves you.</span>
-<<elseif $robintrauma gte 80>>
-<span class="red">is traumatised.</span>
-<<elseif $robintrauma gte 40>>
-<span class="red">is in pain.</span>
-<<elseif $robintrauma gte 10>>
-<span class="purple">is troubled.</span>
-<<else>>
-<span class="teal">looks up to you.</span>
-<</if>>
-<br>
-<</nobr>><</widget>>
-
-<<widget "robinend">><<nobr>>
-<<set $robintrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-<<widget "initavery">><<nobr>>
-<<set $initavery to 1>>
-
-<<set $averytrust to 0>>
-<<set $averylove to 0>>
-<<set $averydom to 0>>
-<<set $averylust to 0>>
-<<set $averyrage to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "avery">><<nobr>>
-<<if $initavery isnot 1>>
-<<initavery>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Avery">>
-
-<<set $NPCList[0].pronoun to $averygender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $averygenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $avery_penis_size>>
-			<<if $avery_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $avery_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $avery_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $averygenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "weak">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "businesswoman">>
-<<else>>
-<<set $npcdescription to "businessman">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "averyrelationship">><<nobr>>
-Avery
-<<if $averylove gte 60>>
-	<<if $averyrage gte 60>>
-	<span class="red">is infuriated by you.</span>
-	<<elseif $averyrage gte 20>>
-	<span class="blue">wants you on a tighter leash.</span>
-	<<else>>
-	<span class="green">prizes you.</span>
-	<</if>>
-<<elseif $averylove gte 20>>
-	<<if $averyrage gte 60>>
-	<span class="red">is furious with you.</span>
-	<<elseif $averyrage gte 20>>
-	<span class="purple">sees you as a possession.</span>
-	<<else>>
-	<span class="teal">thinks you're cute.</span>
-	<</if>>
-<<else>>
-	<<if $averyrage gte 60>>
-	<span class="red">thinks you're insolent.</span>
-	<<elseif $averyrage gte 20>>
-	<span class="pink">thinks you're a brat.</span>
-	<<else>>
-	has no strong opinion of you.
-	<</if>>
-<</if>>
-<br>
-<</nobr>><</widget>>
-
-<<widget "averyend">><<nobr>>
-<<set $averytrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-
-<<widget "initmorgan">><<nobr>>
-<<set $initmorgan to 1>>
-
-<<set $morgantrust to 0>>
-<<set $morganlove to 0>>
-<<set $morgandom to 0>>
-<<set $morganlust to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "morgan">><<nobr>>
-<<if $initmorgan isnot 1>>
-<<initmorgan>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Morgan">>
-
-<<set $NPCList[0].pronoun to $morgangender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $morgangenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $morgan_penis_size>>
-			<<if $morgan_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $morgan_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $morgan_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $morgangenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "weak">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "sewer dweller">>
-<<else>>
-<<set $npcdescription to "sewer dweller">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "morganrelationship">><<nobr>>
-<<if $initmorgan is 1>>
-<<set $npctextlove to $morganlove>>
-<<set $npctextdom to $morgandom>>
-<<set $npctextname to "Morgan">>
-	<<if $morgangender is "m">>
-	<<set $npctextdescription to "sewer dweller">>
-	<<else>>
-	<<set $npctextdescription to "sewer dweller">>
-	<</if>>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "morganend">><<nobr>>
-<<set $morgantrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-
-<<widget "initkylar">><<nobr>>
-<<set $initkylar to 1>>
-
-<<set $kylartrust to 0>>
-<<set $kylarlove to 0>>
-<<set $kylardom to 0>>
-<<set $kylarlust to 0>>
-<<set $kylarsus to 0>>
-<<set $kylartimer to 0>>
-<<set $kylarstreettimer to 0>>
-<<set $kylarraped to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "kylar">><<nobr>>
-<<if $initkylar isnot 1>>
-<<initkylar>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Kylar">>
-
-<<set $NPCList[0].pronoun to $kylargender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $kylargenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $kylar_penis_size>>
-			<<if $kylar_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $kylar_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $kylar_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $kylargenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "weak">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "loner">>
-<<else>>
-<<set $npcdescription to "loner">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "kylarrelationship">><<nobr>>
-Kylar the loner
-<<if $kylarlove gte 90>>
-	<<if $kylarsus gte 90>>
-	<span class="red">is hysteric.</span>
-	<<elseif $kylarsus gte 60>>
-	<span class="pink">is obsessed with you.</span>
-	<<elseif $kylarsus gte 30>>
-	<span class="blue">is obsessed with you.</span>
-	<<else>>
-	<span class="green">is obsessed with you.</span>
-	<</if>>
-<<elseif $kylarlove gte 60>>
-	<<if $kylarsus gte 90>>
-	<span class="red">is hysteric.</span>
-	<<elseif $kylarsus gte 60>>
-	<span class="pink">is enamoured with you.</span>
-	<<elseif $kylarsus gte 30>>
-	<span class="purple">is enamoured with you.</span>
-	<<else>>
-	<span class="teal">is enamoured with you.</span>
-	<</if>>
-<<elseif $kylarlove gte 30>>
-	<<if $kylarsus gte 90>>
-	<span class="red">is hysteric.</span>
-	<<elseif $kylarsus gte 60>>
-	<span class="pink">is infatuated with you.</span>
-	<<elseif $kylarsus gte 30>>
-	<span class="purple">is infatuated with you.</span>
-	<<else>>
-	<span class="lblue">is infatuated with you.</span>
-	<</if>>
-<<else>>
-	<<if $kylarsus gte 90>>
-	<span class="red">is hysteric.</span>
-	<<elseif $kylarsus gte 60>>
-	<span class="pink">is fixated on you.</span>
-	<<elseif $kylarsus gte 30>>
-	<span class="purple">is fixated on you.</span>
-	<<else>>
-	<span class="blue">is fixated on you.</span>
-	<</if>>
-<</if>>
-<br>
-<</nobr>><</widget>>
-
-<<widget "kylarend">><<nobr>>
-<<set $kylartrust += ($enemytrust / 100)>>
-<</nobr>><</widget>>
-
-
-<<widget "initgwylan">><<nobr>>
-<<set $initgwylan to 1>>
-
-<<set $gwylantrust to 0>>
-<<set $gwylanlove to 0>>
-<<set $gwylandom to 0>>
-<<set $gwylanlust to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "gwylan">><<nobr>>
-<<if $initgwylan isnot 1>>
-<<initgwylan>>
-<</if>>
-
-<<set $enemyno += 1>>
-
-<<set $npc to "Gwylan">>
-
-<<set $NPCList[0].pronoun to $gwylangender>>
-
-
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
-
-<<set $NPCList[0].breastsdesc to "chest">>
-<<set $NPCList[0].breastdesc to "nipple">>
-
-
-		<<if $gwylangenitals is "penis">>
-		<<set $NPCList[0].penis to "clothed">>
-		<<set $NPCList[0].penissize to $gwylan_penis_size>>
-			<<if $gwylan_penis_size is 1>>
-			<<set $NPCList[0].penisdes to "tiny penis">>
-			<<elseif $gwylan_penis_size is 3>>
-			<<set $NPCList[0].penisdes to "thick penis">>
-			<<elseif $gwylan_penis_size is 4>>
-			<<set $NPCList[0].penisdes to "huge penis">>
-			<<else>>
-			<<set $NPCList[0].penisdes to "penis">>
-			<</if>>
-		<<elseif $gwylangenitals is "vagina">>
-		<<set $NPCList[0].vagina to "clothed">>
-		<</if>>
-
-<<set $NPCList[0].insecurity to "weak">>
-
-<<if $NPCList[0].pronoun is "f">>
-<<set $npcdescription to "tailor">>
-<<else>>
-<<set $npcdescription to "tailor">>
-<</if>>
-<<set $NPCList[0].adult to 0>>
-<<set $NPCList[0].teen to 0>>
-
-<</nobr>><</widget>>
-
-<<widget "gwylanrelationship">><<nobr>>
-<<if $initgwylan is 1>>
-<<set $npctextlove to $gwylanlove>>
-<<set $npctextdom to $gwylandom>>
-<<set $npctextname to "Gwylan">>
-	<<if $gwylangender is "m">>
-	<<set $npctextdescription to "tailor">>
-	<<else>>
-	<<set $npctextdescription to "tailor">>
-	<</if>>
-<<relationshiptext>>
-<br>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "gwylanend">><<nobr>>
-<<set $gwylantrust += ($enemytrust / 100)>>
+<</switch>>
 <</nobr>><</widget>>

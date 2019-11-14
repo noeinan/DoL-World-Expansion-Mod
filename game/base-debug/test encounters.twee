@@ -1,52 +1,85 @@
+:: NNPC Parade [nobr]
+<!-- NEW - Used to debug Named NPCs by displaying all attributes. Note that running this in Debug introduces all NNPCs to PC -->
+<!-- NNPC Parade introduces all NNPCs to PC. This is a feature not a bug ;) -->
+<span class="red">TOTAL NAMED NPCS: $NPCName.length<br></span>
+<!-- Example of introduction, varible set / increment, and put away of npc -->
+/% <<npc Robin>> %/
+/% In walks $npc, and takes a bow. <<He>> has more Trauma now. And out <<he>> goes.<br> %/
+/% <<npcset $npc trauma 80>> %/
+/% <<npcincr $npc trauma 100>> %/
+/% <<set $robinromance to 1>> %/
+/% <<npcrelationship Robin>> %/
+/% <<endnpc>> %/
+/% <br> %/
+/% <<npcrelationship Charlie>> %/
+/% <br> %/
+
+<<for _i = 0; _i lt $NPCName.length; _i++>>
+	<<npc $NPCName[_i].nam>>
+	<br>
+	Introducing NPC Number <<print _i>>: <span class="green">$NPCName[_i].nam the $NPCName[_i].title</span><br>
+	PRONOUN: <span class="red">$NPCName[_i].pronoun</span> GENDER: <span class="red">$NPCName[_i].gender</span><br>
+	PPSize,Desc: <span class="gold">$NPCName[_i].penissize, $NPCName[_i].penisdesc</span> BREASTSize,Desc: <span class="gold">$NPCName[_i].breastsize, $NPCName[_i].breastsdesc</span><br>
+	TYPE: <span class="red"><<if $NPCName[_i].adult>>Adult<<elseif $NPCName[_i].teen>>Teen<<else>>???<</if>></span>  INSECURITY: <span class="red">$NPCName[_i].insecurity<br></span>
+	TRUST: $NPCName[_i].trust LOVE: $NPCName[_i].love DOM: $NPCName[_i].dom LUST $NPCName[_i].lust RAGE: $NPCName[_i].rage TRAUMA $NPCName[_i].trauma<br>
+	STATE: $NPCName[_i].state<br>
+	You have <<if $NPCName[_i].init is 1>>been introduced to <<himstop>><<else>>not been introduced to <<himstop>><</if>><br>
+	<<endnpc $NPCName[_i].nam>>
+<</for>>
+
+/% <<npcSettings-ALT>> %/
+
+[[Next|Bedroom]]
+
 :: Water Balloon [nobr]
+
 <!-- Keeping this only as an example on how to use Widget as Event for debug -->
 <<street10>>
 [[Next|Domus Street]]
 
+
 :: Abomination [nobr]
+
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
-<<set $event to "abomination">>
-<<abomination>>
-You awaken to find yourself being assaulted by a strange beast!
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<set $event to "abomination">>
+	<<abomination>>
+	You awaken to find yourself being assaulted by a strange beast!
 <</if>>
-
-
 <<effects>>
 <<effectsmult>><<man>>
-
 <<stateman>>
 <br><br>
 <<actionsmult>>
-<span id="next">
-	<<if $alarm is 1>>
-		<<if $rescue is 1>>
-		[[Next->Abomination]]
-		<<else>>
+<<if $alarm is 1>>
+	<<if $rescue is 1>>
+		<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
+	<<else>>
 		No one comes to your aid.
 		<<set $alarm to 0>>
 		<<if $drugged gte 1>>Intoxicated as you are, you couldn't cry very convincingly.<</if>>
 		<br><br>
-			<<if $enemyarousal gte $enemyarousalmax>>
-			[[Next->Abomination]]
-			<<else>>
-			[[Next->Abomination]]
-			<</if>>
+		<<if $enemyarousal gte $enemyarousalmax>>
+			<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
+		<<else>>
+			<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
 		<</if>>
-	<<elseif $enemyarousal gte $enemyarousalmax>>
-	[[Next->Abomination]]
-	<<elseif $enemyhealth lte 0>>
-	[[Next->Abomination]]
-	<<else>>
-	[[Next->Abomination]]
 	<</if>>
-</span>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next->Abomination]]>><</link>></span><<nexttext>>
+<</if>>
+
 
 :: Monster Test [nobr]
+
 <<set $outside to 1>><<set $location to "sea">><<effects>>
 
 <<if $molestationstart is 1>><<set $molestationstart to 0>>
@@ -174,26 +207,26 @@ You awaken to find yourself surrounded by a pack of stray dogs!
 
 	<<if $alarm is 1>>
 		<<if $rescue is 1>>
-		[[Next->Wolf Pack Alarm]]
+		<span id="next"><<link [[Next->Wolf Pack Alarm]]>><</link>></span><<nexttext>>
 		<<else>>
 		No one comes to your aid.
 		<<set $alarm to 0>>
 		<<if $drugged gte 1>>Intoxicated as you are, you couldn't cry very convincingly.<</if>>
 		<br><br>
 			<<if $enemyarousal gte $enemyarousalmax>>
-			[[Next|Wolf Pack Ejaculation]]
+			<span id="next"><<link [[Next|Wolf Pack Ejaculation]]>><</link>></span><<nexttext>>
 			<<elseif $enemyhealth lte 0>>
-			[[Next->Wolf Pack Escape]]
+			<span id="next"><<link [[Next->Wolf Pack Escape]]>><</link>></span><<nexttext>>
 			<<else>>
-			[[Next|Wolf Pack]]
+			<span id="next"><<link [[Next|Wolf Pack]]>><</link>></span><<nexttext>>
 			<</if>>
 		<</if>>
 	<<elseif $enemyarousal gte $enemyarousalmax>>
-	[[Next->Wolf Pack Ejaculation]]
+	<span id="next"><<link [[Next->Wolf Pack Ejaculation]]>><</link>></span><<nexttext>>
 	<<elseif $enemyhealth lte 0>>
-	[[Next->Wolf Pack Escape]]
+	<span id="next"><<link [[Next->Wolf Pack Escape]]>><</link>></span><<nexttext>>
 	<<else>>
-	[[Next->Wolf Pack]]
+	<span id="next"><<link [[Next->Wolf Pack]]>><</link>></span><<nexttext>>
 	<</if>>
 
 :: Wolf Pack Escape [nobr]

@@ -1,0 +1,127 @@
+:: Brothel Basement [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $brothel_basement_intro is undefined>><<set $brothel_basement_intro to 1>>
+
+<<generate1>><<person1>>
+
+A <<person>> emerges from a nearby door. <<He>> wears a black mask that covers the top half of <<his>> face.<br><br>
+
+"You look lost," <<he>> chuckles. "These rooms are for employees."
+
+<<He>> points at a sign near the stairs. It reads <span class="gold">£<<print ($brothel_basement_price / 100)>></span>.
+	<<if $brothel_basement_price gte 2000>>
+	"Expensive today.
+	<<else>>
+	"That's a typical price.
+	<</if>>
+
+Not as much as using a stage, but this way no one needs to know who you are."
+<br><br>
+<<link [[Next|Brothel Basement]]>><<endevent>><</link>><br>
+
+<<else>>
+
+You are in the brothel basement. A row of small rooms lines one wall. Inside each is a single <<if $awareness gte 200>>gloryhole<<else>>hole<</if>>.
+<br><br>
+
+A sign by the stairs reads <span class="gold">£<<print ($brothel_basement_price / 100)>></span>.
+<br><br>
+
+<<if $promiscuity gte 55>>
+<<link [[Occupy a room (0:10)|Brothel Gloryhole]]>><<pass 10>><<set $phase to 1>><</link>><<promiscuous4>><br>
+<<else>>
+You aren't promiscuous enough to work at the gloryholes.<br>
+<</if>>
+<<link [[Leave|Brothel]]>><</link>><br>
+
+<</if>>
+
+
+:: Brothel Gloryhole [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<generate1>><<person1>>
+<<if $phase is 1>><<set $phase to 0>>
+
+You enter one of the rooms and close the door behind you. A green light flickers on above.
+
+<<else>>
+<</if>>
+
+You wait for several minutes, and the light turns red. A
+<<if $NPCList[0].penis isnot "none">>
+$NPCList[0].penisdesc pokes through the hole.
+<<else>>
+pussy appears at the hole.
+<</if>>
+<br><br>
+<<link [[Engage|Brothel Basement Sex]]>><<set $sexstart to 1>><<tiredness 3>><</link>><<gtiredness>><br>
+<<link [[Leave|Brothel Basement]]>><<endevent>><</link>><br>
+
+
+:: Brothel Basement Sex [nobr]
+
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<set $event to "molestationhome">>
+	<<man1init>>
+	<<npcgloryhole>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Brothel Basement Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Brothel Basement Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Brothel Basement Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Brothel Basement Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Brothel Basement Sex Finish [nobr]
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>><<set $gloryholestat += 1>><<set $prostitutionstat += 1>>
+	<<tearful>> you count the money <<he>> pushes through the hole. You've gained <span class="gold">£<<print ($brothel_basement_price / 100)>></span>.<<set $money += $brothel_basement_price>>
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+<<elseif $enemyhealth lte 0>>
+	You hear a shout of pain from behind the wall, and the
+	<<if $NPCList[0].penis isnot "none">>
+	$NPCList[0].penisdesc disappears.
+	<<else>>
+	pussy disappears.
+	<</if>>
+	<br><br>
+	<<tearful>> you rise to your feet.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+<<else>>
+	You hear the <<person>> grumble on the other side of the wall.
+	<br><br>
+	<<tearful>> you rise to your feet.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+<</if>>
+
+
+<<link [[Wait for another customer|Brothel Gloryhole]]>><</link>><br>
+<<link [[Leave|Brothel Basement]]>><</link>><br>
+
+

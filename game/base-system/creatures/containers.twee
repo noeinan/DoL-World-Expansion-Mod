@@ -1,60 +1,4 @@
 :: Widgets containers [widget]
-<<widget "containersInit">><<nobr>>
-<<if $container is undefined>>
-	<<set $container to {
-		"lastLocation": null,
-		"list":["home", "lake"],
-		"home":{
-			"upgrades":{
-				"capacity":0,
-				"foodStorage":0,
-				"luxury":0
-			},
-			"name": "Tiny Fish Tank",
-			"count": 0,
-			"maxCount": 1,
-			"daysSinceFed": 0,
-			"maxDaysWithoutFood": 3,
-			"creatures":{
-				0: null
-			},
-			"deadCreatures": 0,
-			"visited": false,
-			"leaveLink": "Bedroom"
-		},
-		"portable":{
-			"creatures":[],
-			"value":0
-		},
-		"lake":{
-			"upgrades":{
-				"capacity":0,
-				"foodStorage":0,
-				"luxury":0
-			},
-			"name": "pond",
-			"count": 0,
-			"maxCount": 3,
-			"daysSinceFed": 0,
-			"maxDaysWithoutFood": 31,
-			"creatures":{
-				0: null
-			},
-			"deadCreatures": 0,
-			"visited": false,
-			"leaveLink": "Lake Waterfall"
-		},
-	}>>
-<</if>>
-<<if $container.home.kylarDelay is undefined>>
-	<<set $container.home.kylarDelay to 0>>
-	<<set $container.home.kylarFed to false>>
-	<<set $container.home.kylarHelp to false>>
-<</if>>
-<</nobr>><</widget>>
-
-
-
 <<widget "creatureActivity">><<nobr>>
 <<if $args[0]>>
 	<<if $args[0] lte 50>>
@@ -88,13 +32,13 @@
 		<<continue>>
 	<</if>>
 	<<if _list[_i] is "home">>
-		<<if $kylarlove gte 75 and $kylarstate is "active">>
+		<<if $NPCName[$NPCNameList.indexOf("Kylar")].love gte 75 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active">>
 			<<set _container.kylarHelp to true>>
 		<<else>>
 			<<set _container.kylarHelp to false>>
 		<</if>>
 		<<if _container.kylarHelp is true and _container.kylarDelay is 0 and _container.daysSinceFed is _container.maxDaysWithoutFood>>
-			<<set $kylarlove -= 1>>
+			<<npcincr Kylar love -1>>
 			<<set _container.daysSinceFed -= 1>>
 			<<set _container.kylarFed to true>>
 		<<elseif _container.kylarHelp is true and _container.kylarDelay gt 0 and _container.daysSinceFed is 0>>
