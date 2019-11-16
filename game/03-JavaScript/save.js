@@ -2,20 +2,32 @@ window.returnSaveDetails = function(){
 	return Save.get();
 }
 
-window.loadSave = function(saveSlot){
-	if(saveSlot === "auto"){
-		Save.autosave.load();
-	}else{
-		Save.slots.load(saveSlot);
-	}
+window.resetSaveMenu = function(){
+	new Wikifier(null, '<<resetSaveMenu>>');
 }
 
-window.save = function(saveSlot){
-	if(saveSlot != undefined){
-		Save.slots.save(saveSlot);
-		SugarCube.State.variables.currentOverlay = null;
-		overlayShowHide("customOverlay");
-	}
+window.loadSave = function(saveSlot, confirm){
+    if(SugarCube.State.variables.confirmLoad === true && confirm === undefined){
+        new Wikifier(null, '<<loadConfirm '+saveSlot+'>>');
+    }else{
+        if(saveSlot === "auto"){
+            Save.autosave.load();
+        }else{
+            Save.slots.load(saveSlot);
+        }
+    }
+}
+
+window.save = function(saveSlot, confirm){
+    if(SugarCube.State.variables.confirmLoad === true && confirm === undefined){
+        new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
+    }else{
+        if(saveSlot != undefined){
+            Save.slots.save(saveSlot);
+            SugarCube.State.variables.currentOverlay = null;
+            overlayShowHide("customOverlay");
+        }
+    }
 }
 
 window.deleteSave = function(saveSlot, confirm){
@@ -27,9 +39,19 @@ window.deleteSave = function(saveSlot, confirm){
 			Save.clear();
 		}
 	}else if(saveSlot === "auto"){
-		Save.autosave.delete();
+        if(SugarCube.State.variables.confirmDelete === true && confirm === undefined){
+            new Wikifier(null, '<<deleteConfirm '+saveSlot+'>>');
+			return;
+        }else{
+           Save.autosave.delete();
+        }
 	}else{
-		Save.slots.delete(saveSlot);
+        if(SugarCube.State.variables.confirmDelete === true && confirm === undefined){
+            new Wikifier(null, '<<deleteConfirm '+saveSlot+'>>');
+			return;
+        }else{
+		  Save.slots.delete(saveSlot);
+        }
 	}
 	new Wikifier(null, '<<resetSaveMenu>>');
 }
