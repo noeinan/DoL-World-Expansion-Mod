@@ -201,6 +201,24 @@
 	<label>Neck <<print '<<radiobutton "$hairlength" 200 ' + ($hairlength is 200 ? "checked" : "") + '>>'>></label> |
 	<label>Chest <<print '<<radiobutton "$hairlength" 400 ' + ($hairlength is 400 ? "checked" : "") + '>>'>></label>
 	<br><br>
+    
+    <span class="gold">Skin Colour</span>
+    <br>
+    Colour base:
+    <label>Light <<print '<<radiobutton "$skinColor.natural" "light" ' + ($skinColor.natural is "light" ? "checked" : "") + '>>'>></label> | 
+    <label>Medium <<print '<<radiobutton "$skinColor.natural" "medium" ' + ($skinColor.natural is "medium" ? "checked" : "") + '>>'>></label> | 
+    <label>Dark <<print '<<radiobutton "$skinColor.natural" "dark" ' + ($skinColor.natural is "dark" ? "checked" : "") + '>>'>></label>
+    <br><br>
+    
+    <label>Initial Tan Value: <<numberslider "$skinColor.range" $skinColor.range 0 100 1>></label>
+    <br>
+    <<link "Test Colour">>
+        <<replace #test>>
+            <<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>
+        <</replace>>
+    <</link>> <span class="red">(approximate)</span>
+    <div id="test">/*<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>*/</div>
+    <br><br>
 
 	<span class="gold">Awareness</span> - Whether your character knows a thing or two about sex despite their lack of experience.
 	<br>
@@ -396,6 +414,49 @@
 
 		<label>Enable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>></label> |
 		<label>Disable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "t" ' + ($silhouettedisable is "t" ? "checked" : "") + '>>'>></label>
+        <br><br>
+        
+        Enabled Tanned Images - May hinder performance on devices with weak graphical capabilities
+        <br>
+        <<if $skinColor.init is false and $passage isnot "Start">>
+            <div id="skinColorDiv"><img class="" src="img/bodyRed/baseReColorTest.png"></div>
+            <span class="red">These settings can not be changed after Confirming.</span>
+            <br><br>
+            Colour base:
+            <label>Light <<print '<<radiobutton "$naturalSkinColor" "light" ' + ($naturalSkinColor is "light" ? "checked" : "") + '>>'>></label> | 
+            <label>Medium <<print '<<radiobutton "$naturalSkinColor" "medium" ' + ($naturalSkinColor is "medium" ? "checked" : "") + '>>'>></label> | 
+            <label>Dark <<print '<<radiobutton "$naturalSkinColor" "dark" ' + ($naturalSkinColor is "dark" ? "checked" : "") + '>>'>></label>
+            <br><br>
+    
+            <label>Initial Tan Value: <<print '<<numberslider "$range" '+($range isnot undefined? $range:0)+' 0 100 1>>'>></label>
+            
+            <<link Test>>
+                <<if $range isnot undefined and $naturalSkinColor isnot undefined>>
+                    <<replace #skinColorDiv>><<SkinColorImgTest $range $naturalSkinColor>><</replace>>
+                <</if>>
+            <</link>>
+            
+            <br><br>
+            <<link [[Confirm|$passage]]>>
+                <<if $range isnot undefined and $naturalSkinColor isnot undefined>>
+                    <<set $skinColor.range to $range>>
+                    <<set $skinColor.natural to $naturalSkinColor>>
+                    <<set $skinColor.tanningEnabled to true>>
+                    <<set $skinColor.tanImgEnabled to "t">>
+                    <<setSkinColorBase>>
+                    <<unset $naturalSkinColor>>
+                    <<unset $range>>
+                <</if>>            
+            <</link>>
+        <<else>>
+            <label>On <<print '<<radiobutton "$skinColor.tanImgEnabled" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>></label> | 
+            <label>Off <<print '<<radiobutton "$skinColor.tanImgEnabled" "f" ' + ($skinColor.tanImgEnabled is "f" ? "checked" : "") + '>>'>></label>
+            <br><br>
+            In game tanning - Initial Tan will not be adjusted ingame automatically <span class="red">(May be removed at a later date)</span>
+            <br>
+            <label>On <<print '<<radiobutton "$skinColor.tanningEnabled" true ' + ($skinColor.tanningEnabled is true ? "checked" : "") + '>>'>></label> | 
+            <label>Off <<print '<<radiobutton "$skinColor.tanningEnabled" false ' + ($skinColor.tanningEnabled is false ? "checked" : "") + '>>'>></label>
+        <</if>>
 	<<else>>
 		Not Avaliable
 	<</if>>
@@ -926,7 +987,7 @@ Penis size - if applicable:
 <<settings>>
 <br><br>
 
-<<link [[Confirm|Bedroom]]>><<initnpcgender>><</link>>
+<<link [[Confirm|Bedroom]]>><<initnpcgender>><<tanned 0 true>><</link>>
 <br>
 
 :: Attitudes [nobr]
