@@ -1,31 +1,14 @@
 :: Widgets Named Npcs [widget]
 <<widget "endnpc">><<nobr>>
-<!-- NEW - Tested and Working. Replaces all NNPCend widgets -->
-<!-- This should probably be doing more cleanup... -->
 <<if $npc>>
 <<set _i to $NPCNameList.indexOf($npc)>>
 <<set $NPCName[_i].trust += ($enemytrust / 100)>>
 <</if>>
 <</nobr>><</widget>>
 
-<!-- DONE Should be able to set up all of below on an array, as objects. Use $NPCName[x].nam, etc. -->
-<!-- DONE $NPCNameList.indexOf("Eden") returns the index value of Eden array, allowing a lot of these calls to be collapsed. -->
-<!-- DONE <<eden>> becomes <<npc Eden>> Same for edenrelationship (to <<npcrelationship eden>> and edenend (to endnpc) -->
-<!-- DONE Values for $NPCName[x] can then be equated to $NPCList[0]. Note $npc is still a global variable noting Named NPC is in use. -->
-<!-- DONE Note that $NPCgender should be changed to $NPCName.pronoun, globally, to match other code -->
-<!-- DONE NPCName includes: pronoun(currently gender), gender(currently genitals), pp size, trust are common -->
-<!-- DONE Also used are: love, dom, lust, rage, trauma, state, sus. Avery/Whitney/Kylar/Robin have several others not included in this .twee file that can continue to be treated as global variables -->
-<!-- DONE Several of the NPCName variables are unique to NPC and ideally should be collapsed, e.g. Whitney.State used for all, replace Kylar.Sus with NPCName[Kylar].Rage -->
-<!-- LATER This work could be done as secondary task since collapsing these drives less improvement than other parts of work. -->
-<!-- FIXED Note breast size is always default set to nipple/flat. Not sure why this is. -->
-<!-- DONE All the NPCend functions just set trust: set $edentrust += ($enemytrust / 100). Could be replaced with single call e.g. edenend becomes <<end Eden>> -->
-<!-- DONE NPCRelationship widgets are much more complex and written custom to Named NPC. These need either simplified or perhaps collapsed to 1 large widget with an indexed call, which can be used in social.twee to process all the text with a <<for>> loop. -->
-<!-- Impacted files: social.twee <<NPCrelationship>>, settings.twee <<npcSettings>>, init.twee under base-system for initialization, this file -->
-<!-- DONE whitneystate to .state; robintrauma to .trauma; kylarsus to .rage. Kept .trauma mostly for future work since Robin is the only one that uses it, but others could too-->
-<!-- DONE Review variables like kylartimer to .timer, kylarstreettimer to .streettimer... makes more sense to just leave these as global variables under current names. Same with $robinromance and similar Whit/Avery variables -->
-<!-- MAYBE LATER robinromance to .state as "romance" value.-->
-<!-- DONE whitneystate and kylarstate are both switched to "active" at points in game. This should be set as call here, for all introduced NPC once intro'd. whitneystate can also be dungeon -->
-<!-- LATER <<npc Robin>> call is initilizing Robin/Kylar/Whitney/Avery/Eden as part of nightly variable decays... this is a problem as some NNPCs are initialized seperately, whereas minor NNPCs are intro'd once called. Fix variable decays at source.-->
+<!-- Named NPC aka NNPC notes -->
+<!-- $NPCNameList.indexOf("Eden") returns the index value of Eden array, allowing name-friendly calls -->
+<!-- To call NNPC Eden, use <<npc Eden>>, and <<endnpc>> to put them away. -->
 
 /*Gender neutral names for future reference
 Aiden
@@ -153,7 +136,6 @@ Zohar
 */
 
 <<widget "initnpcgender">><<nobr>><<set $test2 to 2>>
-<!-- NEW - Tested and Working. Replaces initnpcgender -->
 <<for _i to 0; _i lt $NPCName.length; _i++>>
 
 <!-- Set Pronoun -->
@@ -254,7 +236,6 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "initnpc">><<nobr>>
-<!-- NEW - Tested and working. Replaces all NNPCinit widgets -->
 <<set _nam to $args[0]>>
 <<set _i to $NPCNameList.indexOf(_nam)>>
 <<if $NPCName[_i].init is 0>> <!-- This prevents double-init from wiping variables -->
@@ -339,17 +320,12 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "npc">><<nobr>>
-<!-- NEW - Tested and Working. Replaces all named-NNPC widgets -->
 <<set _nam to $args[0]>>
 <<set _i to $NPCNameList.indexOf(_nam)>>
 
+<!-- Initialize NNPC on first time called, introducing them to PC -->
 <<if $NPCName[_i].init isnot 1>>
-	<<switch $NPCName[_i].nam>>
-	<<case Robin Whitney Eden Kylar>>
-		/% <!-- Do nothing option, as these NNPCs are initialized seperate from their first call using <<initnpc "name">>. This is done as seperate call b/c these NPCs are called prior to introduction on daily decay rates. Instead fix daily decay rates... NPCs should be intro'd on first call. --> %/
-	<<default>>
 	<<initnpc _nam>>
-	<</switch>>
 <</if>>
 
 <!-- Set global variables -->
@@ -389,8 +365,7 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "npcrelationship">><<nobr>>
-<!-- NEW - Tested and working. Replaces most NNPCrelationship widgets -->
-<!-- Robin, Avery, Kylar are unique and should be folded into <<relationshiptext>> as special cases -->
+<!-- Robin, Avery, Kylar are unique and are treated differently -->
 <<set _nam to $args[0]>>
 <<set _i to $NPCNameList.indexOf(_nam)>>
 <<if $NPCName[_i].init is 1>>
@@ -403,7 +378,6 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "npcincr">><<nobr>>
-<!-- NEW - Tested and Working. Increments selected NNPC variables using NNPC name-->
 <!-- Arguements passed are NNPC name, variable type, and value (+/-)-->
 
 <<set _nam to $args[0]>>
@@ -434,7 +408,7 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "npcset">><<nobr>>
-<!-- NEW - Tested and working. Sets selected NNPC variables using NNPC name-->
+<!-- Sets selected NNPC variables using NNPC name-->
 <!-- Arguements passed are NNPC name, variable type, value -->
 
 <<set _nam to $args[0]>>
@@ -465,7 +439,6 @@ Zohar
 <</nobr>><</widget>>
 
 <<widget "relationshiptext">><<nobr>>
-<!-- NEW Tested and working. Replaces old <<relationshiptext>> -->
 <<set _npc to $args[0]>>
 <<set _i to $NPCNameList.indexOf(_npc)>>
 <!-- Special cases for Robin, Avery, Kylar -->
