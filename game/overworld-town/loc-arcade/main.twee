@@ -1,0 +1,324 @@
+:: Arcade Lock [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>><<set $lock to 300>>
+The arcade is closed. A glowing sign beside the door reads "Opens: <span class="gold"><<if $timestyle is "ampm">>9:00 am<<else>>9:00<</if>></span>"
+<br><br>
+<<if $skulduggery gte $lock>>
+	<span class="green">The lock looks easy to pick.</span>
+	<br><br>
+	<<link [[Pick it (0:10)|Arcade]]>><<pass 10>><<crimeup 20>><</link>><<crime>>
+	<br>
+<<else>>
+	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+	<br><br>
+<</if>>
+<<link [[Leave|Starfish Street]]>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Arcade [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<set $kylar_play to 0>>
+You are in the amusement arcade on Starfish Street. 
+<<set $NPCName[$NPCNameList.indexOf("Kylar")].state to "active">><<print $NPCName[$NPCNameList.indexOf("Kylar")].state>>
+<<if $daystate is "day" or $daystate is "evening">>
+The games and gambling machines beep and whirr.
+<<else>>
+The games and gambling machines lie silent.
+<</if>>
+<br><br>
+<<if $stress gte 10000>>
+<<passoutshop>>
+<<else>>
+	<<if $hour is 21>>
+	It's closing time. Security is herding everyone outside.<<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
+	<br><br>
+
+		<<if $exposed lte 0>>
+		<<link [[Go Outside|Starfish Street]]>><</link>>
+		<br>
+		<<else>>
+		<<link [[Hide until it's over (1:00)|Arcade]]>><<pass 1 hour>><</link>>
+		<</if>>
+	<<else>>
+
+
+		<<if $daystate is "night">>
+		You are alone in the darkness.
+		<br><br>
+		<<elseif $exposed gte 1>>
+		You hide beneath a pinball machine to protect your dignity.
+		<br><br>
+		<</if>>
+		<<if $money gte 500 and ($daystate is "day" or $daystate is "evening")>>
+			<<link [[Play (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+			<br>
+		<</if>>
+		<<if $exposed lte 0 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "active" and $weather is "rain" and $daystate is "day">>
+			<<if $schoolday isnot 1 or $hour lte 8 or $hour gte 15>>
+				<br>
+				You see Kylar playing on one of the cabinets.
+				<br>
+				<<link [[Approach|Kylar Arcade]]>><</link>>
+				<br><br>
+			<</if>>
+		<</if>>
+		
+		<<link [[Leave|Starfish Street]]>><</link>><br>
+	<</if>>
+<</if>>
+
+
+:: Arcade Play [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $rng gte 51>>
+You play a shooter, and kill lots of <<print either("zombies", "pirates", "aliens", "soldiers", "criminals", "mutants")>>.
+<br><br>
+	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $danger gte (9900 - $allure) and $eventskip is 0>>
+	<<generatey1>><<person1>>
+	A <<person>> walks beside you. <<He>> enables the second player, and starts shooting. <<He>> doesn't say anything.
+	<br><br>
+	
+	<<link [[Keep playing|Arcade Keep Playing]]>><</link>>
+	<br>
+	<<link [[Shove and dual wield|Arcade Shove]]>><<set $submissive -= 1>><<trauma -2>><</link>><<ltrauma>>
+	<br>
+	<<set $skulduggerydifficulty to 400>>
+	<<link [[Steal|Arcade Steal]]>><<crimeup 30>><</link>><<skulduggerydifficulty>><<gcrime>>
+	<br>
+	<<link [[Stop|Arcade]]>><<endevent>><</link>>
+	<br>
+	<<else>>
+		<<set $rng to random(1, 100)>>
+		<<if $rng gte 71>>
+		You blow the final boss' head off with a satisfying squelch.<<ltrauma>><<trauma -2>>
+		<<elseif $rng gte 31>>
+		You manage to get to that one part of the game everyone complains about. You're reminded why.
+		<<else>>
+		You swear the gun isn't working properly. You try to shoot an enemy attack out of the air, but instead take it to the face.
+		<</if>>
+		<br><br>
+		<<if $money gte 500 and $daystate isnot "night">>
+			<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+			<br>
+		<</if>>
+			<<link [[Stop|Arcade]]>><</link>>
+			<br>
+	<</if>>
+<<else>>
+You play a fast-paced shmup.
+<br><br>
+	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $danger gte (9900 - $allure) and $eventskip is 0>>
+		<<generate1>><<person1>>A <<person>> stands beside you, and watches. <<He>> offers tips of dubious wisdom.
+		<br><br>
+		<<Hes>> standing very close.
+		<br><br>
+		<<link [[Stop|Arcade Watched Stop]]>><<stress 6>><</link>><<gstress>><br>
+		<<link [[Keep playing|Arcade Watched Play]]>><</link>><br>
+	<<else>>
+		<<set $rng to random(1, 100)>>
+		<<if $rng gte 71>>
+		Luck is on your side. The right powerup drops at the right moment, and you blaze through to victory.<<ltrauma>><<trauma -2>>
+		<<elseif $rng gte 31>>
+		It's a little too fast for you, and you're shot down halfway through the game.
+		<<else>>
+		You almost make it, but the final boss proves too tough.
+		<</if>>
+		<br><br>
+		<<if $money gte 500 and $daystate isnot "night">>
+			<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+			<br>
+		<</if>>
+			<<link [[Stop|Arcade]]>><</link>>
+			<br>
+	<</if>>
+<</if>>
+
+
+:: Arcade Watched Stop [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You move away from the <<personstop>> Better safe than sorry.
+<br><br>
+<<endevent>>
+	<<if $money gte 500 and $daystate isnot "night">>
+		<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+		<br>
+	<</if>>
+		<<link [[Stop|Arcade]]>><</link>>
+		<br>
+
+:: Arcade Watched Play [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $rng gte 81>>
+You keep playing. The <<person>> creeps closer, until <<he>> presses against your back. <<His>> hands reach out.
+<br><br>
+<<link [[Next|Arcade Watched Rape]]>><<set $molestationstart to 1>><</link>>
+<br>
+
+<<else>>
+You decide you're being paranoid, and keep playing. The <<person>> soon wanders away to offer advice to someone else.
+<br><br>
+<<endevent>>
+	<<if $money gte 500 and $daystate isnot "night">>
+		<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+		<br>
+	<</if>>
+		<<link [[Stop|Arcade]]>><</link>>
+		<br>
+
+<</if>>
+
+
+:: Arcade Watched Rape [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+
+	<<man1init>>
+	<<set $rescue to 1>>
+<</if>>
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Arcade Watched Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Arcade Watched Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+<span id="next"><<link [[Next|Arcade Watched Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Arcade Watched Rape]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Arcade Watched Rape Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+
+The <<person1>><<person>> shoves you against the cabinet, before wandering off.
+<br><br>
+
+<<tearful>> you gather yourself.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Arcade]]>><</link>>
+
+<<elseif $enemyhealth lte 0>>
+
+You shove the <<person>> to the ground.
+<br><br>
+
+<<tearful>> you take cover beneath a pinball machine.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Arcade]]>><</link>>
+
+<<else>>
+<<set $rescued += 1>>
+
+Your cry attracts attention. People look over, including a member of staff. The <<person1>><<person>> steps away from you, claiming that <<he>> wasn't doing anything. <<He>> doesn't try anything else.
+<br><br>
+
+<<tearful>> you gather yourself.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Arcade]]>><</link>>
+
+<</if>>
+
+
+:: Arcade Keep Playing [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+Having a second player does help, and you make it to the end of the game. <<He>> leaves without a word.
+<br><br>
+<<endevent>>
+<<if $money gte 500 and $daystate isnot "night">>
+	<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+	<br>
+<</if>>
+	<<link [[Stop|Arcade]]>><</link>>
+	<br>
+
+
+:: Arcade Shove [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You shoulder barge <<him>> aside and grab <<his>> gun. <<He>> takes the hint.
+<br><br>
+The rest of the game is easier with the extra weapon, but you do need to manage your lives more carefully.
+<br><br>
+
+<<endevent>>
+<<if $money gte 500 and $daystate isnot "night">>
+	<<link [[Keep playing (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
+	<br>
+<</if>>
+	<<link [[Stop|Arcade]]>><</link>>
+	<br>
+
+:: Arcade Steal [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You drop your gun and walk away. The <<person>> picks it up. <<Hes>> distracted managing both, so you reach for the money sticking out of <<his>> pocket.
+<br><br>
+
+<<skulduggerycheck>>
+<<if $skulduggerysuccess is 1>>
+
+<span class="green"><<He>> doesn't notice.</span> <span class="gold">You've gained £30.</span><<set $money += 3000>>
+<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+	<<skulduggeryskilluse>>
+	<<else>>
+	<span class="blue">That was too easy. You didn't learn anything.</span>
+	<br><br>
+	<</if>>
+<<endevent>>
+<<link [[Next|Arcade]]>><</link>>
+<br>
+
+<<else>>
+
+<span class="red"><<He>> turns and spots you.</span> "Oi," <<he>> says. "Keep your mitts to yourself." <<He>> tucks the money further into <<his>> pocket, well beyond easy reach.
+<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+	<<skulduggeryskilluse>>
+	<<else>>
+	<span class="blue">That was too easy. You didn't learn anything.</span>
+	<br><br>
+	<</if>>
+<<endevent>>
+<<link [[Next|Arcade]]>><</link>>
+<br>
+
+<</if>>
+
+
+
+
+

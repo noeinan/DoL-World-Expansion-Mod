@@ -23,7 +23,7 @@ window.save = function(saveSlot, confirm){
         new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
     }else{
         if(saveSlot != undefined){
-            Save.slots.save(saveSlot);
+            Save.slots.save(saveSlot, null, {saveId:SugarCube.State.variables.saveId});
             SugarCube.State.variables.currentOverlay = null;
             overlayShowHide("customOverlay");
         }

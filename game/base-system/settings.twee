@@ -212,13 +212,16 @@
     
     <label>Initial Tan Value: <<numberslider "$skinColor.range" $skinColor.range 0 100 1>></label>
     <br>
-    <<link "Test Colour">>
-        <<replace #test>>
-            <<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>
-        <</replace>>
-    <</link>> <span class="red">(approximate)</span>
-    <div id="test">/*<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>*/</div>
-    <br><br>
+	<<if StartConfig.enableImages is true>>
+		<<link "Test Colour">>
+			<<replace #test>>
+				<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>
+			<</replace>>
+		<</link>> (approximate) - <span class="red">Visual representation of the PC's skin colour and tanning changes must be enabled through the General tab of this Settings menu before they will function. They are disabled by default due to performance issues on some devices.</span>
+		<div id="test">/*<<print '<div style="height: 30px; width: 50px; background-color: red; filter: '+skinColor($skinColor.range,setup.skinColor[$skinColor.natural])+';"></div>'>>*/</div>
+		<br>
+	<</if>>
+	<br>
 
 	<span class="gold">Awareness</span> - Whether your character knows a thing or two about sex despite their lack of experience.
 	<br>
@@ -416,27 +419,28 @@
 		<label>Disable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "t" ' + ($silhouettedisable is "t" ? "checked" : "") + '>>'>></label>
         <br><br>
         
-        Enabled Tanned Images - May hinder performance on devices with weak graphical capabilities
-        <br>
+      
+        
         <<if $skinColor.init is false and $passage isnot "Start">>
+			<span class="gold">You can now choose your character's skin colour. Click "Test" to preview the setting on the paperdolls. Click "Confirm" when you've made your selection.</span> This can cause performance issues on some devices. Should this be an issue, the option to disable the new skin system will appear here.<br>
             <div id="skinColorDiv"><img class="" src="img/bodyRed/baseReColorTest.png"></div>
-            <span class="red">These settings can not be changed after Confirming.</span>
-            <br><br>
-            Colour base:
+            
+            
+            Skin colour:
             <label>Light <<print '<<radiobutton "$naturalSkinColor" "light" ' + ($naturalSkinColor is "light" ? "checked" : "") + '>>'>></label> | 
             <label>Medium <<print '<<radiobutton "$naturalSkinColor" "medium" ' + ($naturalSkinColor is "medium" ? "checked" : "") + '>>'>></label> | 
             <label>Dark <<print '<<radiobutton "$naturalSkinColor" "dark" ' + ($naturalSkinColor is "dark" ? "checked" : "") + '>>'>></label>
             <br><br>
     
-            <label>Initial Tan Value: <<print '<<numberslider "$range" '+($range isnot undefined? $range:0)+' 0 100 1>>'>></label>
-            
+            <label>Initial Tan: <<print '<<numberslider "$range" '+($range isnot undefined? $range:0)+' 0 100 1>>'>></label>
+            <br>
             <<link Test>>
                 <<if $range isnot undefined and $naturalSkinColor isnot undefined>>
                     <<replace #skinColorDiv>><<SkinColorImgTest $range $naturalSkinColor>><</replace>>
                 <</if>>
             <</link>>
             
-            <br><br>
+            <br>
             <<link [[Confirm|$passage]]>>
                 <<if $range isnot undefined and $naturalSkinColor isnot undefined>>
                     <<set $skinColor.range to $range>>
@@ -447,15 +451,19 @@
                     <<unset $naturalSkinColor>>
                     <<unset $range>>
                 <</if>>            
-            <</link>>
+            <</link>> - <span class="red">These settings can not be changed after Confirming.</span>
         <<else>>
+		Visual representation of the player character's skin colour - <span class="pink">May hinder performance on some devices</span>
+		<br>
             <label>On <<print '<<radiobutton "$skinColor.tanImgEnabled" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>></label> | 
             <label>Off <<print '<<radiobutton "$skinColor.tanImgEnabled" "f" ' + ($skinColor.tanImgEnabled is "f" ? "checked" : "") + '>>'>></label>
+			
             <br><br>
-            In game tanning - Initial Tan will not be adjusted ingame automatically <span class="red">(May be removed at a later date)</span>
+            Tanning changes - Whether tan will change due to sun exposure, or the lack of it.
             <br>
             <label>On <<print '<<radiobutton "$skinColor.tanningEnabled" true ' + ($skinColor.tanningEnabled is true ? "checked" : "") + '>>'>></label> | 
             <label>Off <<print '<<radiobutton "$skinColor.tanningEnabled" false ' + ($skinColor.tanningEnabled is false ? "checked" : "") + '>>'>></label>
+			-  <span class="red">(Option to disable may be removed at a later date)</span>
         <</if>>
 	<<else>>
 		Not Avaliable
