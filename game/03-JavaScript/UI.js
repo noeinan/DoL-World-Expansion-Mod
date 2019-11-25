@@ -184,7 +184,7 @@ $(document).on('keyup', function(ev) {
 });
 
 window.skinColor = function(percent, overwrite){
-    if(SugarCube.State.variables.skinColor.tanImgEnabled != "t"){
+    if(SugarCube.State.variables.skinColor.tanImgEnabled === "f"){
        return "";
     }
     var result = "";

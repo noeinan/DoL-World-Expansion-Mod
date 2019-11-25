@@ -19,7 +19,7 @@ window.loadSave = function(saveSlot, confirm){
 }
 
 window.save = function(saveSlot, confirm){
-    if(SugarCube.State.variables.confirmLoad === true && confirm === undefined){
+    if(SugarCube.State.variables.confirmSave === true && confirm === undefined){
         new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
     }else{
         if(saveSlot != undefined){
