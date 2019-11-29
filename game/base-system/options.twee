@@ -153,7 +153,7 @@ These require a passage (move location, enter/exit a wardrobe, etc) change to ap
 					<td><<print _i>></td>
 					<<if _saveDetails.slots[_slot] isnot null>>
 						<td>
-							<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +')"/>'>>
+							<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+_saveDetails.slots[_slot].metadata.saveId+')"/>'>>
 							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
 						</td>
 						<td><<print _saveDetails.slots[_slot].title>>
@@ -161,7 +161,7 @@ These require a passage (move location, enter/exit a wardrobe, etc) change to ap
 						<span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span></td>
 						<td><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></td>
 					<<else>>
-						<td><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +')"/>'>></td>
+						<td><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,'+$saveId+')"/>'>></td>
 						<td></td>
 						<td></td>
 					<</if>>
@@ -192,13 +192,26 @@ These require a passage (move location, enter/exit a wardrobe, etc) change to ap
 <<widget "saveWarning">><<nobr>>
 <div class="saveBorder">
     <<set _saveDetails = returnSaveDetails()>>
+    <<if _saveDetails.slots[$args[0]] isnot null>>
+        <<if _saveDetails.slots[$args[0]].metadata.saveId isnot $saveId>>
+            <<set _showSaveId to true>>
+        <</if>>
+    <</if>>
     <<if _saveDetails.slots[$args[0]] is null>>
         <h4 class="red">Save on slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>></h4>
+        <<if _showSaveId is true>><span class="red">Save Id does not match, continue with overwrite?</span><br><</if>>
     <<else>>
         <h4 class="red">Overwrite Save on slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>></h4>
+        <<if _showSaveId is true>><span class="red">Save Id does not match, continue with overwrite?</span><br><</if>>
         Old Save: <<print _saveDetails.slots[$args[0]].title>>
         <br>
         <<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
+        <br>
+    <</if>>
+    <<if _showSaveId is true>>  
+        Older Save Id:  <<print _saveDetails.slots[$args[0]].metadata.saveId>>
+        <br>
+        Current Save Id: <<print $saveId>>
         <br>
     <</if>>
     <<print '<input type="button" class="saveMenuButton saveMenuConfirm" value="Save" onclick="save('+ $args[0] +', true)"/>'>>
