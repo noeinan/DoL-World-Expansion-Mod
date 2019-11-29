@@ -15,7 +15,7 @@ Config.saves.onLoad = function (save) {
 window.StartConfig = {
     "debug": false,
     "enableImages": true,
-    "enableLinkNumberify": false,
+    "enableLinkNumberify": true,
     "version": "0.2.6.2",
 }
 
