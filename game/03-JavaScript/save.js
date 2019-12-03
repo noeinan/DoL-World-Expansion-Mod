@@ -19,7 +19,9 @@ window.loadSave = function(saveSlot, confirm){
 }
 
 window.save = function(saveSlot, confirm, saveId){
-    if(!confirm && (SugarCube.State.variables.confirmSave === true || SugarCube.State.variables.saveId != saveId)){
+    if (saveId == null){
+        new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
+    } else if(SugarCube.State.variables.confirmSave === true && confirm === undefined || (SugarCube.State.variables.saveId != saveId && saveId != null)){
         new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
     }else{
         if(saveSlot != undefined){
