@@ -149,6 +149,11 @@ an
 <<if $worn.under_upper.word is "n">><</if>>
 <</nobr>><</widget>>
 
+<<widget "genitalsword">><<nobr>>
+<<if $worn.genitals.word is "a">>a <</if>>
+<<if $worn.genitals.word is "n">><</if>>
+<</nobr>><</widget>>
+
 <<widget "upperplural">><<nobr>>
 <<if $worn.upper.plural is 1>>are
 <<else>>is<</if>>
@@ -166,6 +171,11 @@ an
 
 <<widget "underupperplural">><<nobr>>
 <<if $worn.under_upper.plural is 1>>are
+<<else>>is<</if>>
+<</nobr>><</widget>>
+
+<<widget "genitalsplural">><<nobr>>
+<<if $worn.genitals.plural is 1>>are
 <<else>>is<</if>>
 <</nobr>><</widget>>
 
@@ -1807,58 +1817,29 @@ boy
 
 <<widget "genitals">><<nobr>>
 
-<<if $penisexist is 1>>
-	<<if $penilevirginity is 1>>
-	virgin penis
-	<<else>>
-	penis
-	<</if>>
-<</if>>
-<<if $penisexist is 1 and $vaginaexist is 1>>
-and
-<</if>>
-<<if $vaginaexist is 1>>
-	<<if $vaginalvirginity is 1>>
-	virgin pussy
-	<<else>>
-	pussy
-	<</if>>
+<<if $worn.genitals.type.includes("chastity") and $args[0] is undefined>>
+	$worn.genitals.name
+<<else>>
+	<<if $penisexist is 1>><<if $penilevirginity is 1>>virgin <</if>>penis<</if>><<if $penisexist is 1 and $vaginaexist is 1>> and <</if>><<if $vaginaexist is 1>><<if $vaginalvirginity is 1>>virgin <</if>>pussy<</if>>
 <</if>>
 
 <</nobr>><</widget>>
 
 <<widget "genitalsstop">><<nobr>>
-
-<<if $penisexist is 1>>
-	<<if $penilevirginity is 1>>
-	virgin penis.
-	<<else>>
-	penis.
-	<</if>>
-<<elseif $vaginaexist is 1>>
-	<<if $vaginalvirginity is 1>>
-	virgin pussy.
-	<<else>>
-	pussy.
-	<</if>>
+<<if $worn.genitals.type.includes("chastity") and $args[0] is undefined>>
+	$worn.genitals.name.
+<<else>>
+	<<if $penisexist is 1>><<if $penilevirginity is 1>>virgin <</if>>penis<</if>><<if $penisexist is 1 and $vaginaexist is 1>> and <</if>><<if $vaginaexist is 1>><<if $vaginalvirginity is 1>>virgin <</if>>pussy<</if>>.
 <</if>>
 
 <</nobr>><</widget>>
 
 <<widget "genitalscomma">><<nobr>>
 
-<<if $penisexist is 1>>
-	<<if $penilevirginity is 1>>
-	virgin penis,
-	<<else>>
-	penis,
-	<</if>>
-<<elseif $vaginaexist is 1>>
-	<<if $vaginalvirginity is 1>>
-	virgin pussy,
-	<<else>>
-	pussy,
-	<</if>>
+<<if $worn.genitals.type.includes("chastity") and $args[0] is undefined>>
+	$worn.genitals.name,
+<<else>>
+	<<if $penisexist is 1>><<if $penilevirginity is 1>>virgin <</if>>penis<</if>><<if $penisexist is 1 and $vaginaexist is 1>> and <</if>><<if $vaginaexist is 1>><<if $vaginalvirginity is 1>>virgin <</if>>pussy<</if>>,
 <</if>>
 
 <</nobr>><</widget>>
@@ -2780,6 +2761,8 @@ $worn.under_lower.name,
 <<widget "undies">><<nobr>>
 <<if !$worn.under_lower.type.includes("naked")>>
 $worn.under_lower.name
+<<elseif !$worn.genitals.type.includes("naked")>>
+$worn.genitals.name
 <<else>>
 <<genitals>>
 <</if>>
@@ -2788,6 +2771,8 @@ $worn.under_lower.name
 <<widget "undiesstop">><<nobr>>
 <<if !$worn.under_lower.type.includes("naked")>>
 $worn.under_lower.name.
+<<elseif !$worn.genitals.type.includes("naked")>>
+$worn.genitals.name.
 <<else>>
 <<genitalsstop>>
 <</if>>
@@ -2796,16 +2781,10 @@ $worn.under_lower.name.
 <<widget "undiescomma">><<nobr>>
 <<if !$worn.under_lower.type.includes("naked")>>
 $worn.under_lower.name,
+<<elseif !$worn.genitals.type.includes("naked")>>
+$worn.genitals.name,
 <<else>>
 <<genitalscomma>>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "undiesstop">><<nobr>>
-<<if !$worn.under_lower.type.includes("naked")>>
-$worn.under_lower.name.
-<<else>>
-<<genitalsstop>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -2918,21 +2897,21 @@ $worn.upper.name and $worn.lower.name,<<set $stripset to 0>>
 <<widget "nuditystop">><<nobr>><<exposure>>
 <<if $worn.under_lower.type.includes("naked") and $worn.lower.type.includes("naked")>>
 	<<if !$worn.upper.type.includes("naked")>>
-	<span class="lewd">exposed <<genitals>></span> Your covered chest makes your bare lower half feel more conspicuous.
+	<span class="lewd">exposed <<if $worn.genitals.type.includes("chastity")>>$worn.genitals.name<<else>><<genitals>><</if></span> Your covered chest makes your bare lower half feel more conspicuous.
 	<<elseif !$worn.under_upper.type.includes("naked")>>
-	<span class="lewd">exposed <<genitals>> and <<undertopstop>></span> Your somewhat covered chest makes your bare lower half feel more conspicuous.
+	<span class="lewd">exposed <<if $worn.genitals.type.includes("chastity")>>$worn.genitals.name<<else>><<genitals>><</if> and <<undertopstop>></span> Your somewhat covered chest makes your bare lower half feel more conspicuous.
 	<<else>>
 	<span class="lewd">exposed</span>
 		<<if $breastsize gte 3>>
 			<<if $player.gender is "m">>
-			<span class="lewd"><<genitals>> and <<breastsstop>></span>
+			<span class="lewd"><<if $worn.genitals.type.includes("chastity")>>$worn.genitals.name<<else>><<genitals>><</if>> and <<breastsstop>></span>
 			<<else>>
-			<span class="lewd"><<genitals>> and <<breastsstop>></span>
+			<span class="lewd"><<if $worn.genitals.type.includes("chastity")>>$worn.genitals.name<<else>><<genitals>><</if>> and <<breastsstop>></span>
 			<</if>>
 		<<else>>
 			<<if $player.gender is "m">>
 				<<if $player.appearance is "f">>
-				<span class="lewd"><<genitals>> and <<breastscomma>> made salacious by your feminine demeanor.</span>
+				<span class="lewd"><<if $worn.genitals.type.includes("chastity")>>$worn.genitals.name<<else>><<genitals>><</if>> and <<breastscomma>> made salacious by your feminine demeanor.</span>
 				<<else>>
 				<<genitalsstop>>
 				<</if>>
@@ -2993,10 +2972,8 @@ With your arms bound, you can't even cover yourself, leaving you feeling utterly
 <</if>>
 <<if $worn.under_lower.name isnot "naked">>
 	<<if $worn.under_lower.integrity lte 0>>
-		<<if $worn.under_lower.type.includes("chastity")>>
 		<<set $worn.under_lower.type.push("broken")>>
-		<</if>>
-	<<underlowerruined>><<clothesruinstat>><<set $underloweroff to 0>>
+		<<underlowerruined>><<clothesruinstat>><<set $underloweroff to 0>>
 	<</if>>
 <</if>>
 <<if $worn.under_upper.name isnot "naked">>
@@ -4308,20 +4285,32 @@ a teacher
 <</nobr>><</widget>>
 
 <<widget "skincolourtext">><<nobr>>
-	<<if $tanned gte 480>>dark tan.
-	<<elseif $tanned gte 240>>medium tan.
-	<<elseif $tanned gte 180>>tan.
-	<<elseif $tanned gte 60>>light tan.
-	<<else>>
-	<<switch $haircolour>>
-		<<case "black" "blue" "deepblue" "purple">>
-		ivory glow.
-		<<default>>
-		pink glow.
+	<<switch $skinColor.natural>>
+		<<case "light">>
+			light
+		<<case "medium">>
+			medium
+		<<case "dark">>
+			dark
 	<</switch>>
-<</if>>
+
+	<<if $skinColor.tanValues[0] gte 80>> skin colour with a dark tan.
+	<<elseif $skinColor.tanValues[0] gte 60>> skin colour with a medium tan.
+	<<elseif $skinColor.tanValues[0] gte 30>> skin colour with a tan.
+	<<elseif $skinColor.tanValues[0] gte 10>> skin colour with a light tan.
+	<<else>> skin colour.
+	<</if>>
 <</nobr>><</widget>>
 
-<<widget "gtanned">><<nobr>> |
+<<widget "gtanned">><<nobr>>
 <span class="green">+ Tan</span>
 <</nobr>><</widget>>
+
+<<widget "ggtanned">><<nobr>>
+<span class="green">++ Tan</span>
+<</nobr>><</widget>>
+
+<<widget "gggtanned">><<nobr>>
+<span class="green">+++ Tan</span>
+<</nobr>><</widget>>
+

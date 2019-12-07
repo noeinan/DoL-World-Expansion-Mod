@@ -10,6 +10,9 @@
 <<elseif $saveVersions.last() isnot StartConfig.version>>
 	<<set $saveVersions.push(StartConfig.version)>>
 <</if>>
+<<if $saveId is undefined>>
+	<<set $saveId to random(10000, 99999)>>
+<</if>>
 
 <<if $player is undefined>>
 	<<set $player to {}>>
@@ -754,10 +757,6 @@
 <<set $penis_mod to 0>>
 <</if>>
 
-<<if $tanned is undefined>>
-<<set $tanned to 0>>
-<</if>>
-
 <<if $avery_penis_size is undefined>>
 <<set $avery_penis_size to 2>>
 <<set $bailey_penis_size to 2>>
@@ -933,6 +932,12 @@
 <<initnpcgender>>
 <</if>>
 
+<<if $NPCName[$NPCNameList.indexOf("Kylar")].init is 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state is "">>
+<<set $NPCName[$NPCNameList.indexOf("Kylar")].init to 0>>
+<</if>>
+
+
+
 <<if ndef $pillory_tenant>><<setup_pillory>><</if>> /* Pillory related */
 <<if ndef $police_intro>>						   /* Police hack related*/
 	<<set $police_intro to 0>>
@@ -942,5 +947,25 @@
 	<<set $hacker_tasks to []>>
 <</if>>
 <<if ndef $framed>><<set $framed to 0>><</if>>
+
+<<if $objectVersion.skinColor is undefined>>
+	<<skinColorInitOldSave>>
+<</if>>
+
+<<if $objectVersion.chastity lt 3 or $objectVersion.chastity is undefined>>
+	<<if $worn.genitals is undefined>>
+		<<set $worn.genitals to clone($clothes.genitals[0])>>
+		<<set $carried.genitals to clone($clothes.genitals[0])>>
+	<</if>>
+	<<if $worn.under_lower.type.includes("chastity")>>
+		<<set $worn.genitals to clone($worn.under_lower)>>
+		<<set $worn.under_lower to clone($clothes.under_lower[0])>>
+	<</if>>
+	<<if $worn.genitals.name isnot "naked">>
+		<<set $worn.genitals.hideUnderLower to $clothes.genitals[1].hideUnderLower>>
+		<<set $worn.genitals.type to $clothes.genitals[1].type>>
+	<</if>>
+	<<set $objectVersion.chastity to 3>>
+<</if>>
 
 <</nobr>><</widget>>

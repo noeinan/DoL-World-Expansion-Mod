@@ -152,10 +152,10 @@
 		<<if !$worn.lower.type.includes("naked") and !$worn.lower.type.includes("swim")>>
 			<<set $lowerwet += $pass>>
 		<</if>>
-		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("swim") and !$worn.genitals.type.includes("chastity")>>
 			<<set $underlowerwet += $pass>>
 		<</if>>
-		<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("chastity")>>
+		<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("swim") and !$worn.under_upper.type.includes("chastity")>>
 			<<set $underupperwet += $pass>>
 		<</if>>
 	<<else>>
@@ -221,7 +221,7 @@
 	<<set $time += $pass>> <<set $minute += $pass>>
 	<<set $arousal -= $pass*10>><<arousalpass>>
 	<<if $daystate is "day" and $weather is "clear" and $outside is 1>>
-		<<tanned $pass/10>>
+		<<tanned $pass / 10>>
 	<</if>>
 <</nobr>><</widget>>
 
@@ -1514,9 +1514,17 @@
 
 <<if $crossdressing isnot 1>>
 <<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2>>
-<<set $player.appearance to $player.gender>>
+<<if $player.gender is "m" and $worn.genitals.type.includesAll("chastity", "hidden")>>
+	<<set $player.appearance to "f">>
+<<else>>
+	<<set $player.appearance to $player.gender>>
+<</if>>
 <<elseif $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1>>
-<<set $player.appearance to $player.gender>>
+<<if $player.gender is "m" and $worn.genitals.type.includesAll("chastity", "hidden")>>
+	<<set $player.appearance to "f">>
+<<else>>
+	<<set $player.appearance to $player.gender>>
+<</if>>
 <<elseif $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 and $breastsize gte 3>>
 <<set $player.appearance to "f">><<set $breastindicator to 1>>
 <<elseif $worn.lower.gender isnot "n">>
@@ -1625,29 +1633,36 @@
 	<</if>>
 <</if>>
 <<if $worn.under_lower.name isnot "naked">>
-	<<if $worn.under_lower.integrity lte 0>><span class="lewd">Your $worn.under_lower.name <<underlowerplural>> ripped into scraps, exposing your <<genitalsstop>></span>
+	<<if $worn.under_lower.integrity lte 0>><span class="lewd">Your $worn.under_lower.name <<underlowerplural>> ripped into scraps, exposing your <<if $worn.genitals.name isnot "naked">>$worn.genitals.name.<<else>><<genitalsstop>><</if>></span>
 	<br>
-		<<if $worn.under_lower.type.includes("chastity")>>
-		<<set $worn.under_lower.type.push("broken")>>
+	<<underlowerruined>><<clothesruinstat>><<set $underloweroff to 0>>
+	<</if>>
+<</if>>
+<<if $worn.genitals.name isnot "naked">>
+	<<if $worn.genitals.integrity lte 0>>
+		<span class="lewd">Your $worn.genitals.name <<genitalsplural>> breaks, exposing your <<genitalsstop>></span>
+		<<if $worn.genitals.type.includes("chastity")>>
+			<<set $worn.genitals.type.push("broken")>>
 			<<if $vaginalchastityparasite isnot 0>>
-<span class="pink">With the chastity belt gone, the $vaginalchastityparasite fall out of your vagina.</span>
-<br>
-<<set $vaginalchastityparasite to 0>>
+				<span class="pink">With the chastity belt gone, the $vaginalchastityparasite fall out of your vagina.</span>
+				<br>
+				<<set $vaginalchastityparasite to 0>>
 			<</if>>
 			<<if $penilechastityparasite isnot 0>>
-			<span class="pink">With the chastity belt gone, the $penilechastityparasite fall off of your penis.</span>
-			<br>
-			<<set $penilechastityparasite to 0>>
+				<span class="pink">With the chastity belt gone, the $penilechastityparasite fall off of your penis.</span>
+				<br>
+				<<set $penilechastityparasite to 0>>
 			<</if>>
 			<<if $analchastityparasite isnot 0>>
-			<span class="pink">With the chastity belt gone, the $analchastityparasite fall out of your anus.</span>
-			<br>
-			<<set $analchastityparasite to 0>>
+				<span class="pink">With the chastity belt gone, the $analchastityparasite fall out of your anus.</span>
+				<br>
+				<<set $analchastityparasite to 0>>
 			<</if>>
-			<<if $worn.under_lower.anal_shield is 1>><<set $worn.under_lower.anal_shield to 0>>
+			<<if $worn.genitals.anal_shield is 1>>
+				<<set $worn.genitals.anal_shield to 0>>
 			<</if>>
 		<</if>>
-	<<underlowerruined>><<clothesruinstat>><<set $underloweroff to 0>>
+		<<genitalsruined>><<clothesruinstat>>
 	<</if>>
 <</if>>
 <</nobr>><</widget>>
@@ -1684,7 +1699,7 @@
 
 <<set $lowerwet to 200>>
 <</if>>
-<<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+<<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity")>>
 
 <<set $underlowerwet to 200>>
 <</if>>
@@ -1776,11 +1791,11 @@
 
 <<if $action_unclad_under_upper is 1>><<set $action_unclad_under_upper to 0>>
 	<<if _temp_strip is "wolfcave">>
-	You remove your $worn.under_upper.name. They may be animals, but stripping in front of them makes your skin and <<genitals>> tingle.
+	You remove your $worn.under_upper.name. They may be animals, but stripping in front of them makes your skin and <<genitals 1>> tingle.
 	<br>
 	<<elseif $location is "pool">>
 	<<else>>
-	You check to make sure no one is around, then slowly remove your $worn.under_upper.name. Despite being alone, doing this in a public space makes your skin and <<genitals>> tingle.
+	You check to make sure no one is around, then slowly remove your $worn.under_upper.name. Despite being alone, doing this in a public space makes your skin and <<genitals 1>> tingle.
 	<br>
 	<</if>>
 	<<underupperundress _temp_strip>>
@@ -1788,11 +1803,11 @@
 
 <<if $action_unclad_under_lower is 1>><<set $action_unclad_under_lower to 0>>
 	<<if _temp_strip is "wolfcave">>
-	You remove your $worn.under_lower.name. They may be animals, but stripping in front of them makes your skin and <<genitals>> tingle.
+	You remove your $worn.under_lower.name. They may be animals, but stripping in front of them makes your skin and <<genitals 1>> tingle.
 	<br>
 	<<elseif $location is "pool">>
 	<<else>>
-	You check to make sure no one is around, then slowly remove your $worn.under_lower.name. Despite being alone, doing this in a public space makes your skin and <<genitals>> tingle.
+	You check to make sure no one is around, then slowly remove your $worn.under_lower.name. Despite being alone, doing this in a public space makes your skin and <<genitals 1>> tingle.
 	<br>
 	<</if>>
 	<<underlowerundress _temp_strip>>
@@ -1816,7 +1831,7 @@
 
 
 <<if $worn.upper.cursed isnot 1 and $worn.lower.cursed isnot 1>>
-	<<if $worn.under_lower.exposed lte 0 and !$worn.under_lower.type.includes("chastity")>>
+	<<if $worn.under_lower.exposed lte 0 and !$worn.genitals.type.includes("chastity")>>
 		<<if $worn.upper.set is $worn.lower.set>>
 	Remove and hide your <<link [[$worn.upper.name|$passage]]>><<set $eventskip to 1>><<set $action_unclad_outfit to 1>><</link>>
 	<br>
@@ -1842,7 +1857,7 @@
 <</if>>
 
 <<if $worn.lower.cursed isnot 1>>
-	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+	<<if !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity")>>
 		<<if $worn.upper.set isnot $worn.lower.set and !$worn.lower.type.includes("naked")>>
 	Remove and hide your <<link [[$worn.lower.name|$passage]]>><<set $eventskip to 1>><<set $action_unclad_lower to 1>><</link>>
 	<br>
@@ -1875,7 +1890,7 @@
 <</if>>
 
 <<if $worn.under_lower.cursed isnot 1>>
-	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_upper.set isnot $worn.under_lower.set and $exhibitionism gte 15 and ($worn.lower.skirt is 1 or $worn.lower.exposed gte 2)>>
+	<<if !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity") and $worn.under_upper.set isnot $worn.under_lower.set and $exhibitionism gte 15 and ($worn.lower.skirt is 1 or $worn.lower.exposed gte 2)>>
 	Remove and hide your <<link [[$worn.under_lower.name|$passage]]>><<set $eventskip to 1>><<set $action_unclad_under_lower to 1>><</link>>
 	<br>
 	<</if>>
@@ -2073,7 +2088,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 
 
 	<<if !$worn.lower.type.includes("naked") and $worn.upper.set isnot $worn.lower.set>>
-		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+		<<if !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity")>>
 			<<if $exhibitionism gte 35>>
 			<label><span class="meek">Strip $worn.lower.name</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "lowerstripunder">></label> |
 			<</if>>
@@ -2123,7 +2138,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 		<</if>>
 	<</if>>
 
-	<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity") and $worn.under_upper.set isnot $worn.under_lower.set>>
+	<<if !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity") and $worn.under_upper.set isnot $worn.under_lower.set>>
 		<<if !$worn.lower.type.includes("naked") and $worn.lower.skirt is 1>>
 			<<if $exhibitionism gte 35>>
 			<label><span class="meek">Strip $worn.under_lower.name</span> <<combatexhibitionist3>> <<radiobutton "$danceaction" "understripskirt">></label> |
@@ -2173,7 +2188,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 <</nobr>><</widget>>
 
 <<widget "undiestrauma">><<nobr>>
-<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("chastity")>>
+<<if !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity")>>
 <<gtrauma>><<gstress>><<trauma 1>><<stress 1>>
 <<else>>
 <<gtrauma>><<gstress>><<trauma 3>><<stress 3>>
@@ -3290,9 +3305,9 @@ __Map__<br>
 	<<set $pillory_tenant.special.name to "Whitney">>
 	<<set $pillory_tenant.special.desc to "bully">>
 	<<new_npc_pillory $NPCList[0]>>
-	<<set $pillory_tenant.person.pronoun to $NPCName[$npcnum].pronoun>>
-	<<set $pillory_tenant.person.gender to $NPCName[$npcnum].pronoun>>
-	<<if $NPCName[$npcnum].pronoun is "f">><<set $pillory_tenant.person.breastdesc to "breast">><<set $pillory_tenant.person.breastsdesc to "breasts">><</if>>
+	<<set $pillory_tenant.person.pronoun to $NPCName[0].pronoun>>
+	<<set $pillory_tenant.person.gender to $NPCName[0].pronoun>>
+	<<if $NPCName[0].pronoun is "f">><<set $pillory_tenant.person.breastdesc to "breast">><<set $pillory_tenant.person.breastsdesc to "breasts">><</if>>
 	<<endevent>>
 	<<set $framed to 0>>
 <</nobr>><</widget>>
@@ -3307,9 +3322,9 @@ __Map__<br>
 		<<set $pillory_tenant.special.desc to "headmaster">>
 	<</if>>
 	<<new_npc_pillory $NPCList[0]>>
-	<<set $pillory_tenant.person.pronoun to $NPCName[$npcnum].pronoun>>
-	<<set $pillory_tenant.person.gender to $NPCName[$npcnum].pronoun>>
-	<<if $NPCName[$npcnum].pronoun is "f">><<set $pillory_tenant.person.breastdesc to "breast">><<set $pillory_tenant.person.breastsdesc to "breasts">><</if>>
+	<<set $pillory_tenant.person.pronoun to $NPCName[0].pronoun>>
+	<<set $pillory_tenant.person.gender to $NPCName[0].pronoun>>
+	<<if $NPCName[0].pronoun is "f">><<set $pillory_tenant.person.breastdesc to "breast">><<set $pillory_tenant.person.breastsdesc to "breasts">><</if>>
 	<<endevent>>
 	<<set $framed to 0>>
 <</nobr>><</widget>>
@@ -3676,4 +3691,53 @@ __Map__<br>
 	<br><br>
 	<<setup_pillory>>
 	<<endevent>>
+<</nobr>><</widget>>
+
+<<widget "drench">><<nobr>>
+<!-- Drench PC in semen and/or goo. First argument sets filth type: semen (default), goo, both. Second sets level 1-5 -->
+<<set $hygiene to 3000>>
+<<set _i = Math.clamp($args[1], 0, 5)>>
+
+<<if $args[0] is "goo" or $args[0] is "both">>
+	<<set $neckgoo += _i>>
+	<<set $rightarmgoo += _i>>
+	<<set $leftarmgoo += _i>>
+	<<set $thighgoo += _i>>
+	<<set $bottomgoo += _i>>
+	<<set $tummygoo += _i>>
+	<<set $chestgoo += _i>>
+	<<set $facegoo += _i>>
+	<<set $hairgoo += _i>>
+	<<set $feetgoo += _i>>
+	<<if $player.gender is "f">>
+		<<set $vaginagoo += _i>>
+		<<set $vaginaoutsidegoo += _i>>
+	<<elseif $player.gender if "m">>
+		<<set $penisgoo += _i>>
+	<</if>>
+	<<set $anusgoo += _i>>
+	<<set $mouthgoo += _i>>
+<</if>>
+
+<<if $args[0] isnot "goo">>
+	<<set $necksemen += _i>>
+	<<set $rightarmsemen += _i>>
+	<<set $leftarmsemen += _i>>
+	<<set $thighsemen += _i>>
+	<<set $bottomsemen += _i>>
+	<<set $tummysemen += _i>>
+	<<set $chestsemen += _i>>
+	<<set $facesemen += _i>>
+	<<set $hairsemen += _i>>
+	<<set $feetsemen += _i>>
+	<<if $player.gender is "f">>
+		<<set $vaginasemen += _i>>
+		<<set $vaginaoutsidesemen += _i>>
+	<<elseif $player.gender is "f">>
+		<<set $penissemen += _i>>
+	<</if>>
+	<<set $anussemen += _i>>
+	<<set $mouthsemen += _i>>
+<</if>>
+
 <</nobr>><</widget>>
