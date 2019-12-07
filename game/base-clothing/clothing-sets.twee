@@ -1,7 +1,7 @@
 :: Widgets Outfits [widget]
 <<widget "listoutfits">><<nobr>>
 
-<label>Wear <<radiobutton "$delete_outfit" "none" checked>></label> | <label> Delete <<radiobutton "$delete_outfit" 1>></label>
+<label>Wear <<radiobutton "$delete_outfit" "none" checked>></label> | <label> Delete <<radiobutton "$delete_outfit" 1>></label> | <label> Overwrite <<radiobutton "$delete_outfit" 2>></label>
 <br>
 
 <<for _i to 0; _i lt $outfit.length; _i++>>
@@ -41,11 +41,12 @@
 <<set $outfit.deleteAt($wear_outfit)>>
 <<set $wear_outfit to "none">>
 <</if>>
-<<set $delete_outfit to "none">>
 <</nobr>><</widget>>
 
 <<widget "wearoutfit">><<nobr>>
 <<deleteoutfit>>
+<<overwriteoutfit>>
+<<set $delete_outfit to "none">>
 
 <<if $wear_outfit isnot "none">>
 	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
@@ -146,4 +147,18 @@
 	<<case "legs">><<legsundress $wardrobe_location>>
 	<<case "feet">><<feetundress $wardrobe_location>>
 <</switch>>
+<</nobr>><</widget>>
+
+<<widget "overwriteoutfit">><<nobr>>
+<<if $delete_outfit is 2 and $wear_outfit isnot "none">>
+	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+	<<set _outfit to $outfit[$wear_outfit]>>
+	<<for _i to 0; _i lt _equip.length;_i++>>
+		<<set _outfit[_equip[_i]] to $worn[_equip[_i]].name>>
+		<<if _outfit.colors isnot false>>
+			<<set _outfit.colors[_equip[_i]] to [clone($worn[_equip[_i]].colour),clone($worn[_equip[_i]].accessory_colour)]>>
+		<</if>>
+	<</for>>	
+	<<set $wear_outfit to "none">>
+<</if>>
 <</nobr>><</widget>>
