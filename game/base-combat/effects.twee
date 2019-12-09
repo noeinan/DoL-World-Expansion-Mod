@@ -22,9 +22,6 @@
 <</if>>
 <</if>>
 
-<<if $enemyno gte 1>>
-<<set $pronoun to "i">>
-<</if>>
 
 <<for _i = 0; _i < $NPCList.length; _i++>>
 	<<set $NPCList[_i].intro to 1>>
@@ -302,11 +299,29 @@ You rest your right arm.
 <</if>>
 
 <<if $leftaction is "lefthit">>
-<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">><<actionshit>><<defiance 2>><<set $speechhit to 1>><<set $attackstat += 1>>
+	<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">>
+	<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+		<<if $corruption_slime gte ($willpower / 10)>>
+		You try to hit the <<if $enemytype is "beast">>$beasttype<<else>><<person1>><<person>><</if>> with your left hand, <span class="red">but the slime immobilises your limb.</span><<gwillpower>><<willpower 1>>
+		<<else>>
+		The slime tries to immobilise your left arm, <span class="green">but you wrestle control away from it.</span> <<actionshit>><<defiance 2>><<set $speechhit to 1>><<set $attackstat += 1>>
+		<</if>>
+	<<else>>
+	<<actionshit>><<defiance 2>><<set $speechhit to 1>><<set $attackstat += 1>>
+	<</if>>
 <</if>>
 
 <<if $rightaction is "righthit">>
-<<set $rightaction to 0>><<set $rightactiondefault to "righthit">><<actionshit>><<set $speechhit to 1>><<defiance 2>><<set $attackstat += 1>>
+<<set $rightaction to 0>><<set $rightactiondefault to "righthit">>
+	<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+		<<if $corruption_slime gte ($willpower / 10)>>
+		You try to hit the <<if $enemytype is "beast">>$beasttype<<else>><<person1>><<person>><</if>> with your right hand, <span class="red">but the slime immobilises your limb.</span><<gwillpower>><<willpower 1>>
+		<<else>>
+		The slime tries to immobilise your right arm, <span class="green">but you wrestle control away from it.</span> <<actionshit>><<defiance 2>><<set $speechhit to 1>><<set $attackstat += 1>>
+		<</if>>
+	<<else>>
+	<<actionshit>><<set $speechhit to 1>><<defiance 2>><<set $attackstat += 1>>
+	<</if>>
 <</if>>
 
 <<if $leftaction is "leftcoverface" and $rightaction is "rightcoverface">>
@@ -995,8 +1010,18 @@ You stop covering you anus with your right hand.
 <<set $feetaction to 0>><<set $feetactiondefault to "rest">><<neutral 1>>You rest your legs.
 <</if>>
 
+
 <<if $feetaction is "kick">>
-<<set $feetaction to 0>><<set $feetactiondefault to "kick">><<defiance 5>><<actionskick>><<set $attackstat += 1>>
+<<set $feetaction to 0>><<set $feetactiondefault to "kick">>
+	<<if $parasite.left_ear.name is "slime" and random(1, 3) is 3 or $parasite.right_ear.name is "slime" and random(1, 3) is 3>>
+		<<if $corruption_slime gte ($willpower / 10)>>
+		You try to kick the <<if $enemytype is "beast">>$beasttype<<else>><<person1>><<personcomma>><</if>> <span class="red">but the slime immobilises your legs.</span><<gwillpower>><<willpower 1>>
+		<<else>>
+		The slime tries to immobilise your legs, <span class="green">but you wrestle control away from it.</span> <<defiance 5>><<actionskick>><<set $attackstat += 1>>
+		<</if>>
+	<<else>>
+	<<defiance 5>><<actionskick>><<set $attackstat += 1>>
+	<</if>>
 <</if>>
 
 <<if $feetaction is "rub">>
@@ -1520,7 +1545,21 @@ You keep your mouth closed.
 
 
 <<if $mouthaction is "scream">><<set $mouthaction to 0>>
-	<<if $drugged lte 0>>
+	<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
+		<<if $corruption_slime gte ($willpower / 10)>>
+			You open your mouth to scream for help, <span class="red">but your voice catches in your throat.</span> You feel the slime steal your breath away.<<gwillpower>><<willpower 1>>
+		<<else>>
+			You open your mouth to scream for help. Your breath catches in your throat as the slime tries to stop you, <span class="green">but you manage to overpower it</span>. You scream.
+			<<brat 10>><<set $alarm to 1>><<set $mouthactiondefault to "scream">><<set $speechscream to 1>>
+			<<if $NPCList[0].lefthand is 0 and $mouthuse is 0>>
+			<<set $NPCList[0].lefthand to "mouth">><<He>> clasps <<his>> hand over your mouth to silence you.
+			<<set $enemytrust -= 40>><<set $mouthuse to "lefthand">>
+			<<elseif $NPCList[0].righthand is 0 and $mouthuse is 0>>
+			<<set $NPCList[0].righthand to "mouth">><<He>> clasps <<his>> hand over your mouth to silence you.
+			<<set $enemytrust -= 40>><<set $mouthuse to "lefthand">>
+			<</if>>
+		<</if>>
+	<<elseif $drugged lte 0>>
 	You scream for help.
 	<<brat 10>><<set $alarm to 1>><<set $mouthactiondefault to "scream">><<set $speechscream to 1>>
 		<<if $NPCList[0].lefthand is 0 and $mouthuse is 0>>

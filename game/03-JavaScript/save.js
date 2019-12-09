@@ -21,7 +21,7 @@ window.loadSave = function(saveSlot, confirm){
 window.save = function(saveSlot, confirm, saveId){
 	if (saveId == null){
 		new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
-	} else if(SugarCube.State.variables.confirmSave === true && confirm === undefined || (SugarCube.State.variables.saveId != saveId && saveId != null)){
+	} else if((SugarCube.State.variables.confirmSave === true && confirm != true) || (SugarCube.State.variables.saveId != saveId && saveId != null)){
 		new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
 	}else{
 		if(saveSlot != undefined){

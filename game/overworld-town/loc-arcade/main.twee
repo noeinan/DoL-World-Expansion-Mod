@@ -19,14 +19,14 @@ The arcade is closed. A glowing sign beside the door reads "Opens: <span class="
 <<set $kylar_play to 0>>
 You are in the amusement arcade on Starfish Street.
 
-<<if $daystate is "day" or $daystate is "evening">>
+<<if $daystate is "day" or $daystate is "dusk">>
 The games and gambling machines beep and whirr.
 <<else>>
 The games and gambling machines lie silent.
 <</if>>
 <br><br>
 <<if $stress gte 10000>>
-<<passoutshop>>
+<<passoutarcade>>
 <<else>>
 	<<if $hour is 21>>
 	It's closing time. Security is herding everyone outside.<<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
@@ -41,14 +41,14 @@ The games and gambling machines lie silent.
 	<<else>>
 
 
-		<<if $daystate is "night">>
+		<<if $daystate is "night" or $daystate is "dawn">>
 		You are alone in the darkness.
 		<br><br>
 		<<elseif $exposed gte 1>>
 		You hide beneath a pinball machine to protect your dignity.
 		<br><br>
 		<</if>>
-		<<if $money gte 500 and ($daystate is "day" or $daystate is "evening") and $exposed lte 0>>
+		<<if $money gte 500 and ($daystate is "day" or $daystate is "dusk") and $exposed lte 0>>
 			<<link [[Play (£5 0:20)|Arcade Play]]>><<set $money -= 500>><<pass 20>><<stress -2>><</link>><<lstress>>
 			<br>
 		<</if>>
@@ -317,6 +317,358 @@ You drop your gun and walk away. The <<person>> picks it up. <<Hes>> distracted 
 <br>
 
 <</if>>
+
+
+:: Passout Arcade [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You've pushed yourself too much.
+<br><br>
+<<passout>>
+<<set $danger to random(1, 10000)>>
+<<if $danger gte (9900 - $allure)>>
+	<<if $exposed gte 1 or $daystate is "night" or $daystate is "dawn">>
+	<<link [[Wake up|Arcade Trash]]>><</link>>
+	<<else>>
+	<<link [[Wake up|Arcade Crane]]>><</link>>
+	<</if>>
+<<else>>
+<<ambulance>>
+<</if>>
+
+<<pass 1 hour>>
+
+<<set $trauma +=10>><<set $stress -= 2000>>
+
+
+
+:: Arcade Crane [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<generatey1>><<generatey2>><<generatey3>><<generatey4>><<generatey5>><<generatey6>><<person1>>
+You awaken on something soft yet bumpy. It's a bed of plush toys. Your wrists and ankles are tied down. A metal claw hovers above you.
+<br><br>
+Your eyes adjust to the light, and you see a <<person>> behind a pane of glass, watching you. <<He>> has friends with <<himstop>>
+<br><br>
+"I got it this time," <<he>> says, looking determined. <<He>> pushes a coin into the machine, and pushes a lever. The claw moves above you.
+<br><br>
+
+<<link [[Next|Arcade Crane 2]]>><<set $phase to 0>><</link>>
+<br>
+
+:: Arcade Crane 2 [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+
+
+<<if !$worn.upper.type.includes("naked")>>
+
+The claw rests above your chest, then plunges down toward your $worn.upper.name. It hooks the fabric, and begins to rise. The <<person>> and <<his>> friends watch intently.
+
+<br><br>
+	<<if $rng gte 51>>
+		The claw loosens its grip, dropping your $worn.upper.name back against your body. The crowd sigh in frustration.
+		<br><br>
+		
+		<<if $phase is 0>>
+			"Idiot," a <<person2>><<person>> says, shoving <<his>> friend aside. "I'll show you how it's done."
+			<br><br>
+			
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+				
+		<<elseif $phase is 1>>
+			"My turn," a <<person3>><<person>> says, taking over the lever. "This can't be hard."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 2>>
+			"You guys must be new to this," a <<person4>><<person>> says. "Watch."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 3>>
+			"This is taking too long," a <<person5>><<person>> says. "Someone will catch us soon. Give me a go."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<else>>
+			<<endevent>><<generate1>><<person1>>
+			"What you kids up to over there?" a <<person>> shouts from somewhere out of view. The crowd turn and flee.
+			<br><br>
+			The <<person>> walks into view. <<He>> gapes at the sight of you. Snapping to attention, <<he>> crouches beside the machine. A hatch opens after a few moments of <<his>> fiddling. <<He>> reaches in, and unties the cables that bind you.
+			<br><br>
+			You crawl through the hole, escaping into the arcade proper.
+				<<if $exposed gte 1>>
+				Blushing, <<he>> wraps some towels around you. "Not much, but better than nothing aye?"<<towelup>>
+				<</if>>
+			<br><br>
+			"I can't believe how cruel some kids can be," <<he>> says, shaking <<his>> head. "You go careful now."
+			<br><br>
+			
+			<<endevent>>
+			<<link [[Next|Arcade]]>><</link>>
+			<br>
+			
+		<</if>>
+	<<else>>
+		<<if $worn.upper.set is $worn.lower.set>>
+		<<set $worn.upper.integrity to 0>><<set $worn.lower.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.upper.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+		<br><br>
+		
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+		<<else>>
+		<<set $worn.upper.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.upper.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+		<br><br>
+		
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+		<</if>>
+	<</if>>
+
+<<elseif !$worn.lower.type.includes("naked")>>
+The claw rests above your thighs, then plunges down toward your $worn.lower.name. It hooks the fabric, and begins to rise. The <<person>> and <<his>> friends watch intently.
+
+<br><br>
+
+	<<if $rng gte 51>>
+		The claw loosens its grip, dropping your $worn.lower.name back against your body. The crowd sigh in frustration.
+		<br><br>
+		
+		<<if $phase is 0>>
+			"Idiot," a <<person2>><<person>> says, shoving <<his>> friend aside. "I'll show you how it's done."
+			<br><br>
+			
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+				
+		<<elseif $phase is 1>>
+			"My turn," a <<person3>><<person>> says, taking over the lever. "This can't be hard."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 2>>
+			"You guys must be new to this," a <<person4>><<person>> says. "Watch."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 3>>
+			"This is taking too long," a <<person5>><<person>> says. "Someone will catch us soon. Give me a go."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<else>>
+			<<endevent>><<generate1>><<person1>>
+			"What you kids up to over there?" a <<person>> shouts from somewhere out of view. The crowd turn and flee.
+			<br><br>
+			The <<person>> walks into view. <<He>> gapes at the sight of you. Snapping to attention, <<he>> crouches beside the machine. A hatch opens after a few moments of <<his>> fiddling. <<He>> reaches in, and unties the cables that bind you.
+			<br><br>
+			You crawl through the hole, escaping into the arcade proper.
+				<<if $exposed gte 1>>
+				Blushing, <<he>> wraps some towels around you. "Not much, but better than nothing aye?"<<towelup>>
+				<</if>>
+			<br><br>
+			"I can't believe how cruel some kids can be," <<he>> says, shaking <<his>> head. "You go careful now."
+			<br><br>
+			
+			<<endevent>>
+			<<link [[Next|Arcade]]>><</link>>
+			<br>
+			
+		<</if>>
+	<<else>>
+		<<set $worn.upper.integrity to 0>><<set $worn.lower.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.upper.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+
+	<</if>>
+	
+<<elseif !$worn.under_upper.type.includes("naked")>>		
+The claw rests above your thighs, then plunges down toward your $worn.under_upper.name. It hooks the fabric, and begins to rise. The <<person>> and <<his>> friends watch intently.
+	<br><br>
+	
+	<<if $rng gte 51>>
+		The claw loosens its grip, dropping your $worn.under_lower.name back against your body. The crowd sigh in frustration.
+		<br><br>
+		
+		<<if $phase is 0>>
+			"Idiot," a <<person2>><<person>> says, shoving <<his>> friend aside. "I'll show you how it's done."
+			<br><br>
+			
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+				
+		<<elseif $phase is 1>>
+			"My turn," a <<person3>><<person>> says, taking over the lever. "This can't be hard."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 2>>
+			"You guys must be new to this," a <<person4>><<person>> says. "Watch."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 3>>
+			"This is taking too long," a <<person5>><<person>> says. "Someone will catch us soon. Give me a go."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<else>>
+			<<endevent>><<generate1>><<person1>>
+			"What you kids up to over there?" a <<person>> shouts from somewhere out of view. The crowd turn and flee.
+			<br><br>
+			The <<person>> walks into view. <<He>> gapes at the sight of you. Snapping to attention, <<he>> crouches beside the machine. A hatch opens after a few moments of <<his>> fiddling. <<He>> reaches in, and unties the cables that bind you.
+			<br><br>
+			You crawl through the hole, escaping into the arcade proper.
+				<<if $exposed gte 1>>
+				Blushing, <<he>> wraps some towels around you. "Not much, but better than nothing aye?"<<towelup>>
+				<</if>>
+			<br><br>
+			"I can't believe how cruel some kids can be," <<he>> says, shaking <<his>> head. "You go careful now."
+			<br><br>
+			
+			<<endevent>>
+			<<link [[Next|Arcade]]>><</link>>
+			<br>
+			
+		<</if>>
+	<<else>>
+		<<if $worn.under_upper.set is $worn.under_lower.set>>
+		<<set $worn.under_upper.integrity to 0>><<set $worn.under_lower.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.upper.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+		<br><br>
+		
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+		<<else>>
+		<<set $worn.under_upper.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.under_upper.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+		<br><br>
+		
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+		<</if>>
+	<</if>>
+
+<<elseif !$worn.under_lower.type.includes("naked")>>
+The claw rests above your thighs, then plunges down toward your $worn.under_lower.name. It hooks the fabric, and begins to rise. The <<person>> and <<his>> friends watch intently.
+
+
+	<br><br>
+
+	<<if $rng gte 51>>
+		The claw loosens its grip, dropping your $worn.lower.name back against your body. The crowd sigh in frustration.
+		<br><br>
+		
+		<<if $phase is 0>>
+			"Idiot," a <<person2>><<person>> says, shoving <<his>> friend aside. "I'll show you how it's done."
+			<br><br>
+			
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+				
+		<<elseif $phase is 1>>
+			"My turn," a <<person3>><<person>> says, taking over the lever. "This can't be hard."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 2>>
+			"You guys must be new to this," a <<person4>><<person>> says. "Watch."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<elseif $phase is 3>>
+			"This is taking too long," a <<person5>><<person>> says. "Someone will catch us soon. Give me a go."
+			<br><br>
+			<<link [[Next|Arcade Crane 2]]>><<set $phase += 1>><</link>>
+		<<else>>
+			<<endevent>><<generate1>><<person1>>
+			"What you kids up to over there?" a <<person>> shouts from somewhere out of view. The crowd turn and flee.
+			<br><br>
+			The <<person>> walks into view. <<He>> gapes at the sight of you. Snapping to attention, <<he>> crouches beside the machine. A hatch opens after a few moments of <<his>> fiddling. <<He>> reaches in, and unties the cables that bind you.
+			<br><br>
+			You crawl through the hole, escaping into the arcade proper.
+				<<if $exposed gte 1>>
+				Blushing, <<he>> wraps some towels around you. "Not much, but better than nothing aye?"<<towelup>>
+				<</if>>
+			<br><br>
+			"I can't believe how cruel some kids can be," <<he>> says, shaking <<his>> head. "You go careful now."
+			<br><br>
+			
+			<<endevent>>
+			<<link [[Next|Arcade]]>><</link>>
+			<br>
+			
+		<</if>>
+	<<else>>
+		<<set $worn.under_lower.integrity to 0>>
+		The claw tugs at your fabric, pulling it off your body. With a tear, your $worn.under_lower.name is torn from you.<<integritycheck>><<exposure>>
+		<br>
+		
+		The <<person>> and <<his>> friends gape in awe and excitement, leering at your <<lewdnessstop>>
+		<br><br>
+		<<link [[Next|Arcade Crane 2]]>><</link>>
+
+	<</if>>	
+	
+<<else>>
+	You lie helpless as the <<person>> and <<his>> friends pull phones from pockets and take pictures. You continue to test your bindings, but it's no use.
+	<<fameexhibitionism 20>>
+	<br><br>
+	<<endevent>><<generate1>><<person1>>
+	"What you kids up to over there?" a <<person>> shouts from somewhere out of view. The crowd turn and flee.
+	<br><br>
+	The <<person>> walks into view. <<He>> gapes at the sight of you. Snapping to attention, <<he>> crouches beside the machine. A hatch opens after a few moments of <<his>> fiddling. <<He>> reaches in, and unties the cables that bind you.
+	<br><br>
+	You crawl through the hole, escaping into the arcade proper. Blushing, <<he>> wraps some towels around you. "Not much, but better than nothing aye?"<<towelup>>
+	<br><br>
+	
+	"I can't believe how cruel some kids can be," <<he>> says, shaking <<his>> head. "You go careful now."
+	<br><br>
+	
+	<<endevent>>
+	<<link [[Next|Arcade]]>><</link>>
+	<br>
+
+
+<</if>>
+
+
+
+:: Arcade Trash [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You awaken on something hard and bumpy. Just in time to see a door slam shut above you, plunging you into darkness. You drift back into unconsciousness.
+<br><br>
+
+<<link [[Next|Trash Intro]]>><</link>>
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

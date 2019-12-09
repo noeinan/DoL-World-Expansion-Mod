@@ -1175,6 +1175,8 @@
 		<img id="location" src="img/misc/cabinday.gif">
 		<<elseif $location is "pool">>
 		<img id="location" src="img/misc/poolday.gif">
+		<<elseif $location is "landfill">>
+		<img id="location" src="img/misc/landfillday.gif">
 		<</if>>
 	<<elseif $daystate is "night">>
 		<<if $location is "tentworld">>
@@ -1227,6 +1229,8 @@
 		<img id="location" src="img/misc/cabinnight.gif">
 		<<elseif $location is "pool">>
 		<img id="location" src="img/misc/poolnight.gif">
+		<<elseif $location is "landfill">>
+		<img id="location" src="img/misc/landfillnight.gif">
 		<</if>>
 	<<elseif $daystate is "dawn">>
 		<<if $location is "tentworld">>
@@ -1277,6 +1281,8 @@
 		<img id="location" src="img/misc/cabindawn.gif">
 		<<elseif $location is "pool">>
 		<img id="location" src="img/misc/pooldawn.gif">
+		<<elseif $location is "landfill">>
+		<img id="location" src="img/misc/landfilldawn.gif">
 		<</if>>
 	<<elseif $daystate is "dusk">>
 		<<if $location is "tentworld">>
@@ -1327,6 +1333,8 @@
 		<img id="location" src="img/misc/cabindusk.gif">
 		<<elseif $location is "pool">>
 		<img id="location" src="img/misc/pooldusk.gif">
+		<<elseif $location is "landfill">>
+		<img id="location" src="img/misc/landfilldusk.gif">
 		<</if>>
 	<</if>>
 
@@ -1416,18 +1424,27 @@
 <</nobr>><</widget>>
 
 <<widget "plantupper">><<nobr>>
-<<if $worn.upper.exposed gte 2 or $upperwetstage gte 3>>
+<<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
+or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
+or $upperwetstage gte 3 and $worn.under_upper.exposed gte 1
+or $upperwetstage gte 3 and $underupperwetstage gte 3>>
 <<upperwear 6>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "plantlower">><<nobr>>
-<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1 or $lowerwetstage gte 3 and $underlowerwetstage gte 3 or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1>>
+<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
+or $worn.lower.exposed gte 2 and $underlowerwetstage gte 3
+or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1
+or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <<lowerwear 8>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "plantup">><<nobr>>
+
+
+
 <<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 or $upperwetstage gte 3 and $underupperwetstage gte 3>>
 <<upperwear 6>>
 <</if>>
@@ -1514,12 +1531,6 @@
 
 <<if $crossdressing isnot 1>>
 <<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2>>
-<<if $player.gender is "m" and $worn.genitals.type.includesAll("chastity", "hidden")>>
-	<<set $player.appearance to "f">>
-<<else>>
-	<<set $player.appearance to $player.gender>>
-<</if>>
-<<elseif $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1>>
 <<if $player.gender is "m" and $worn.genitals.type.includesAll("chastity", "hidden")>>
 	<<set $player.appearance to "f">>
 <<else>>
@@ -2177,6 +2188,27 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 <<if $parasite.bottom.name>>
 <<set $arousal += ($pass * 10)>>
 <</if>>
+<<if $parasite.tummy.name>>
+	<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $parasite.left_arm.name>>
+	<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $parasite.right_arm.name>>
+	<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $parasite.left_thigh.name>>
+	<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $parasite.right_thigh.name>>
+	<<set $arousal += ($pass * 10)>>
+<</if>>
+<<if $parasite.left_ear.name is "slime" and random(1, 100) gte 90>>
+	<<set $drugged += $pass>>
+<</if>>
+<<if $parasite.right_ear.name is "slime" and random(1, 100) gte 90>>
+	<<set $drugged += $pass>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "swimmingcheck">><<nobr>>
@@ -2595,6 +2627,24 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 	<<set $penissemen to 0>>
 	<<set $anussemen to 0>>
 	<<set $mouthsemen to 0>>
+	<<if $parasite.right_thigh.name is "maggot">>
+	<<removeparasite right_thigh>>
+	<</if>>
+	<<if $parasite.left_thigh.name is "maggot">>
+	<<removeparasite left_thigh>>
+	<</if>>
+	<<if $parasite.right_arm.name is "maggot">>
+	<<removeparasite right_arm>>
+	<</if>>
+	<<if $parasite.left_arm.name is "maggot">>
+	<<removeparasite left_arm>>
+	<</if>>
+	<<if $parasite.tummy.name is "maggot">>
+	<<removeparasite tummy>>
+	<</if>>
+	<<if $parasite.bottom.name is "maggot">>
+	<<removeparasite bottom>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "tipset">><<nobr>>
@@ -3615,7 +3665,7 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget "drench">><<nobr>>
-<!-- Drench PC in semen and/or goo. First argument sets filth type: semen (default), goo, both. Second sets level 1-5 -->
+<!-- Drench PC in semen and/or goo. First argument sets filth type: semen (default), goo, both. Second sets level 1-5. Body interiors will be ignored if third argument is set to "outside". -->
 <<set $hygiene to 3000>>
 <<set _i = Math.clamp($args[1], 0, 5)>>
 
@@ -3631,13 +3681,17 @@ __Map__<br>
 	<<set $hairgoo += _i>>
 	<<set $feetgoo += _i>>
 	<<if $player.gender is "f">>
-		<<set $vaginagoo += _i>>
+		<<if $args[2] isnot "outside">>
+			<<set $vaginagoo += _i>>
+		<</if>>
 		<<set $vaginaoutsidegoo += _i>>
 	<<elseif $player.gender if "m">>
 		<<set $penisgoo += _i>>
 	<</if>>
-	<<set $anusgoo += _i>>
-	<<set $mouthgoo += _i>>
+	<<if $args[2] isnot "outside">>
+		<<set $anusgoo += _i>>
+		<<set $mouthgoo += _i>>
+	<</if>>
 <</if>>
 
 <<if $args[0] isnot "goo">>
@@ -3652,13 +3706,17 @@ __Map__<br>
 	<<set $hairsemen += _i>>
 	<<set $feetsemen += _i>>
 	<<if $player.gender is "f">>
-		<<set $vaginasemen += _i>>
+		<<if $args[2] isnot "outside">>
+			<<set $vaginasemen += _i>>
+		<</if>>
 		<<set $vaginaoutsidesemen += _i>>
 	<<elseif $player.gender is "f">>
 		<<set $penissemen += _i>>
 	<</if>>
-	<<set $anussemen += _i>>
-	<<set $mouthsemen += _i>>
+	<<if $args[2] isnot "outside">>
+		<<set $anussemen += _i>>
+		<<set $mouthsemen += _i>>
+	<</if>>
 <</if>>
 
 <</nobr>><</widget>>

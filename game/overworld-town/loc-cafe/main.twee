@@ -14,11 +14,65 @@ You are in the Ocean Breeze Cafe.
 <br><br>
 <<if $stress gte 10000>>
 	<<passoutshop>>
+	
+<<elseif $openinghours is 1 and $exposed lt 1 and $bunstat gte 100 and $chef_state is 1>><<set $chef_state to 2>><<set $bun_value to 10000>>
+<<npc Sam>><<person1>>Sam approaches you, wiping <<his>> hands on a towel and beaming. "I've made a decision," <<he>> says. "I wanted to keep the buns affordable, but we've attracted interest." <<He>> holds out a holiday brochure, opened on a page that advertises the town. There's a picture of the cafe with a caption that describes the buns as "world-class."
+<br><br>
+
+"World-class!" Sam beams. "I've decided to increase the price to <span class="gold">£100</span>. We have a limited supply after all, and can't keep up with demand as it is."
+<br><br>
+
+<<He>> returns to work, humming some tune.
+<br><br>
+<<endevent>>
+<<link [[Next|Ocean Breeze]]>><</link>>
+<br>
+
+<<elseif $openinghours is 1 and $exposed lt 1 and $bunstat gte 300 and $chef_state is 2>><<set $chef_state to 3>>
+<<npc Sam>><<person1>>
+Sam approaches you. "I was at a party," <<he>> says. "And I may have had one too many. Anyway, the topic of our buns came up. People were very curious about how they're made. When I told them I didn't know, that a young chef was responsible, they became even hungrier. I think a myth is building around you."
+<br><br>
+"Anyway," <<he>> continues. "It got me thinking. I'd like to use your image in our advertisements. Maybe redesign the front of the building. It's only fair people know who's responsible for these treats."
+<br><br>
+"I'm willing to increase your cut to <span class="gold">30%</span> of each bun sale," <<he>> adds, cleaning a vacated table. "I'm in talks with a professional photographer. Mull it over, then let me know what you think."
+<br><br>
+
+<<endevent>>
+
+<<link [[Next|Ocean Breeze]]>><</link>>
+<br>
+
+<<elseif $openinghours is 1 and $exposed lt 1 and $chef_state is 5>><<set $chef_state to 6>>
+<<npc Sam>>Sam approaches you. "The photographer sent the pictures over," <<he>> says. "They're fantastic! The new adverts are going to look great. You'll get <span class="gold">30%</span> of each bun sold from now on, as promised."<<set $bun_cut to 0.3>>
+<br><br>
+
+Sam returns to work, humming some tune.
+<br><br>
+<<endevent>>
+
+<<link [[Next|Ocean Breeze]]>><</link>>
+<br><br>
+
+<<elseif $openinghours is 1 and $exposed lt 1 and $bunstat gte 600 and $chef_state is 6>><<set $chef_state to 7>><<set $chef_rework to 37>>
+<<npc Sam>><<person1>>
+Sam approaches you, looking more serious than normal. "I've made a decision," <<he>> says. "The buns are our flagship, but people are more interested than ever in our other dishes too. Even when people know the chef is not in the building, they still queue for a chance to eat here. You've probably noticed."
+<br><br>
+"I've bought next-door," <<he>> continues. "The big one. I'm going to merge the buildings, make one huge cafe. One that can accomodate the numbers we're pulling. I'm giddy just thinking about it!"
+<br><br>
+<span class="pink">"We'll need to close for a month,"</span> <<he>> adds. "It's unfortunate, but the changes are so big. We'll have a grand opening event when its done, with you as the star."
+<br><br>
+"We're closing down in a week. I don't want you to be caught off guard. Drop by when we're finished and we'll discuss the opening event."
+<br><br>
+<<He>> returns work.
+<br><br>
+<<endevent>>
+<<link [[Next|Ocean Breeze]]>><</link>>
+<br>
 <<else>>
 
 <<if $closinghour is 1>>
 
-It's closing time. The proprietor is herding everyone outside.<<if $exposed gte 1>>You feel a twinge of panic as you realise how exposed you'll be should you be found in this state of dress.<</if>>
+It's closing time. Sam is herding everyone outside.<<if $exposed gte 1>>You feel a twinge of panic as you realise how exposed you'll be should you be found in this state of dress.<</if>>
 <br><br>
 
 <<elseif $openinghours is 0>>
@@ -39,7 +93,20 @@ You are hiding beneath a table to protect your dignity.
 	<</if>>
 <</if>>
 
+
+
 <<if $openinghours is 1 and $exposed lt 1 and $oceanbreezejob is 1>>
+	<<if $chef_state is 0>>
+	<<link [[Accept job offer|Chef Work Accept]]>><</link>>
+	<br>
+	<<elseif $chef_state gte 1>>
+	<<link [[Work as a chef (1:00)|Chef Work]]>><</link>>
+	<br>
+	<</if>>
+	<<if $chef_state is 3>>
+	<<link [[Accept Sam's offer|Chef Photographer]]>><</link>>
+	<br>
+	<</if>>
 	<<if $player.appearance is "m">>
 	<<link [[Work as a waiter (1:00)|Ocean Breeze Work]]>><<set $tablesservedstat += random(10,30)>><</link>>
 	<br>
@@ -141,7 +208,7 @@ You ask if <<he>> has any work for you. <<His>> smile broadens. "As a matter of 
 
 :: Ocean Breeze Work [nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
-
+<<set $NPCName[$NPCNameList.indexOf("Sam")].love = Math.clamp($NPCName[$NPCNameList.indexOf("Sam")].love, -50, 50)>>
 <<set $rng to random(1, 100)>>
 
 <<if $rng gte 81 and $weather isnot "rain">>
@@ -358,15 +425,15 @@ You ask if <<he>> has any work for you. <<His>> smile broadens. "As a matter of 
 	<<generate1>><<person1>>A <<if $pronoun is "m">>waiter<<else>>waitress<</if>> collides with you as you exit the kitchen, spilling warm soup over your <<if $worn.upper.type.includes("naked")>>chest<<else>>$worn.upper.name.<</if>> "I am so sorry," <<he>> says, reaching for a towel. Customers turn to watch.
 	<br><br>
 
-		<<link [[Ignore|Ocean Breeze Soup Ignore]]>><<npcincr Sam love 1>><<stress 6>><<pain 20>><</link>><<gpain>><<gstress>>
+		<<link [[Ignore|Ocean Breeze Soup Ignore]]>><<npcincr Sam love 1>><<stress 6>><<pain 20>><</link>><<glove>><<gpain>><<gstress>>
 		<br>
-		<<link [[Confront|Ocean Breeze Soup Confront]]>><<npcincr Sam love -1>><<stress -6>><<trauma -6>><</link>><<ltrauma>><<lstress>>
+		<<link [[Confront|Ocean Breeze Soup Confront]]>><<npcincr Sam love -1>><<stress -6>><<trauma -6>><</link>><<llove>><<ltrauma>><<lstress>>
 		<br>
 		<<if $player.appearance is "m" and $breastsize lte 2 and !$worn.upper.type.includes("naked")>>
-		<<link [[Remove top|Ocean Breeze Remove]]>><<npcincr Sam love 1>><</link>>
+		<<link [[Remove top|Ocean Breeze Remove]]>><<npcincr Sam love 1>><</link>><<glove>>
 		<br>
 		<<elseif $exhibitionism gte 55 and !$worn.upper.type.includes("naked")>>
-		<<link [[Remove top|Ocean Breeze Remove Lewd]]>><<npcincr Sam love 1>><</link>><<exhibitionist4>>
+		<<link [[Remove top|Ocean Breeze Remove Lewd]]>><<npcincr Sam love 1>><</link>><<glove>><<exhibitionist4>>
 		<br>
 		<</if>>
 	<<else>>
@@ -399,6 +466,28 @@ You ask if <<he>> has any work for you. <<His>> smile broadens. "As a matter of 
 	<<set $money += 500>><<pass 1 hour>>
 	<br><br>
 
+	<<link [[Next|Ocean Breeze]]>><<endevent>><</link>>
+	<</if>>
+
+<<elseif $rng gte 11>>	
+<<npc Sam>><<person1>>Sam rushes out of the kitchen, looking flustered. 
+
+	<<if $NPCName[$NPCNameList.indexOf("Sam")].love gte 10>>
+	
+	<<He>> glances in you direction, <span class="green">then hastens over.</span> "I'm in a bit of a pickle," <<he>> says. "Our chef's stormed off again. I need someone to fill in. Don't worry, it's not hard, and I'll pay you double. Will you help me out?"
+	<br><br>
+	
+	<<link [[Accept|Chef Help]]>><<npcincr Sam love 1>><</link>><<glove>><br>
+	<<link [[Refuse|Ocean Breeze Chef Refuse]]>><<npcincr Sam love -1>><</link>><<llove>><br>
+	
+	
+	<<else>>
+	<<He>> glances in your direction, <span class="red">but passes over you.</span> <<He>> approaches another member of staff, and offers them better pay to fill in for the chef this shift. <i>Perhaps Sam would be willing to give you a chance if <<he>> liked you more.</i>
+	<br><br>
+	
+	The rest of the shift passes uneventfully. You earn £5.
+	<br><br>
+	
 	<<link [[Next|Ocean Breeze]]>><<endevent>><</link>>
 	<</if>>
 
@@ -508,7 +597,7 @@ The rest of the shift passes uneventfully. Someone left you a tip.
 <<set $outside to 0>><<set $location to "town">><<effects>>
 <<npcincr Sam love -1>>
 
-You turn on the spot and glare at the <<person1>><<personstop>> The grin falls off <<his>> face. "Just having a laugh. No need to pout." Sam looks over at you disapprovingly.
+You turn on the spot and glare at the <<person1>><<personstop>> The grin falls off <<his>> face. "Just having a laugh. No need to pout." Sam looks over at you disapprovingly.<<llove>>
 <br><br>
 
 The rest of the shift passes uneventfully. You earn £5.
@@ -771,7 +860,7 @@ The rest of the shift passes uneventfully. You earn £5.
 <<set $outside to 0>><<set $location to "town">><<effects>>
 <<endevent>>
 <<npc Sam>><<person1>>You decide not to risk it and go back inside. Sam says <<he>> understands, but doesn't look happy.
-<<npcincr Sam love -1>>
+<<npcincr Sam love -1>><<llove>>
 <br><br>
 
 The rest of the shift passes uneventfully. You earn £5.
@@ -1124,7 +1213,6 @@ You take a seat outside and order a fruit salad. It arrives promptly; fresh stra
 
 :: Cafe Pancakes [nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
-
 <<if $weather is "rain">>
 You take a seat and order pancakes. It arrives soon arrives, along with a cup of coffee. It's tastier than anything you've had at the orphanage. You stare out the window at the rain-filled street, and feel comfy.
 <br><br>
@@ -1133,8 +1221,244 @@ You take a seat and order pancakes. It arrives soon arrives, along with a cup of
 <br><br>
 <</if>>
 
-<<link [[Next|Ocean Breeze]]>><</link>>
-<br>
+<<set $rng to random(0, 10)>>
+<<if $worn.lower.skirt is 1 and $rng gte 6>>
+	<<endevent>>
+	You notice a <<generate1>><<person1>><<person>> staring at you from across the cafe. Suddenly you realise you've let your legs drift apart slightly, and the <<person>> is trying to look up your skirt.
+	<<if $worn.under_lower.exposed>>You remember you arent wearing any underwear.<<arousal 5>><<garousal>><</if>>
+	<br><br>
+	/* check if we meet the basic requirements to expose ourselves */
+	<<if $exhibitionism gte 15>>
+		/* show our options depending on our possession of panties */
+		<<if $worn.under_lower.exposed>>
+			<<if $exhibitionism gte 75>> <<link [[Part your legs and wink at them|Cafe Exhibitionism Legs Part Pantiless Wink]]>><</link>> <<exhibitionist5>> <br> <</if>>
+			<<if $exhibitionism gte 55>>
+				<<link [[Pretend not to notice as you part your legs|Cafe Exhibitionism Legs Part Pantiless]]>><</link>> <<exhibitionist4>> <br>
+				<<link [[Ignore the pervert and finish your food|Ocean Breeze]]>><</link>> <br>
+			<</if>>
+			<<if $exhibitionism lte 54>>
+				You close your legs carefully so <<he>> doesnt see any more than <<he>> already has. As you carry on eating your delicious pancakes you can't help 
+				imagining what it would feel like to spread your legs and expose everything to <<his>> wandering eyes. <<arousal +15>><<garousal>>
+				<br><br>
+				<<link [[finish your food|Ocean Breeze]]>><</link>>
+			<</if>>
+		<<else>>
+			<<link [[Pretend not to notice as you part your legs|Cafe Exhibitionism Legs Part]]>><</link>><<exhibitionist2>> <br>
+			<<link [[Ignore the pervert and finish your food|Ocean Breeze]]>><</link>> <br>
+		<</if>>
+	<<else>>
+		/* we dont, so shut your legs you dirty normie */
+		You close your legs tightly, not wanting to give the pervert any more of a view than you already have.<<stress +5>><<gstress>>
+		<br><br>
+		<<link [[Ignore the pervert and finish your food|Ocean Breeze]]>><</link>>
+		<br>
+	<</if>>
+
+<<else>>
+	<<CafeExhibitionismLegsPartNormalTerminate>>
+<</if>>
+
+
+:: Cafe Exhibitionism Legs Part [nobr]
+You pretend to occupy yourself with your pancakes as you gently part your legs as naturally as you can. 
+
+/* are we stealthy enough to pretend not to be putting on a show? */
+<<set $rng to random(0, 50)>>
+<<if $skulduggery gte (300 + $rng)>>
+	<<CafeExhibitionimsmLegsPartSuccessS1>>
+
+/* are we good enough to at least not provoke mockery at our poor attempts at stealth exhibitionism? */
+<<elseif $skulduggery gte 100>>
+	Knowing you're exposing yourself sends a gentle shiver down your spine but you make sure not to give any indication of your building arousal. Noticing <<his>> increased interest you decide to tease a little. <<flashcrotchunderskirt>> giving <<him>> a clear view of your $worn.under_lower.name covered crotch. The <<person>> takes a sip of <<his>> drink and smirks a little to <<himself>>, it seems you weren't quite as subtle as you thought.
+	<br><br>
+	The act of exposing your underwear to a stranger in a cafe gives you a lewd thrill, and knowing <<he>> caught you doing it on purpose fills you with a mixture of nervousness and exhilaration.<<exhibitionism3>>
+	
+	You decide to stop before things get out of hand, finishing up your pancakes before carefully getting out of your seat and leaving. <<His>> eyes and knowing smirk follow you as you make your way to the door, but <<he>> seems happy to leave you alone.
+	<br><br>
+	<<CafeExhibitionismLegsPartNormalTerminate>>
+
+/* were bad at this and should feel bad */
+<<else>>
+	Knowing you're exposing yourself sends a gentle shiver down your spine but you try your best not to give any indication of your building arousal. The <<person>> takes a sip of <<his>> drink and smirks a little to <<himself>>, barely surpressing a chuckle. It seems you were nowhere near as subtle as you thought.
+	<br><br>						
+	The act of exposing your underwear to a stranger in a cafe gives you a lewd thrill, and knowing <<he>> caught you doing it on purpose fills you with a mixture of nervousness and exhilaration.<<exhibitionism2>>
+	
+	Embarrassed, you finish up your pancakes before getting out of your seat and leaving. <<His>> eyes and knowing smirk follow you as you make your way to the door, but <<he>> seems happy to leave you alone.
+	<br><br>
+	<<CafeExhibitionismLegsPartNormalTerminate>>
+<</if>>
+
+:: Cafe Exhibitionimsm Legs Part Success S1 [widget]
+<<widget "CafeExhibitionimsmLegsPartSuccessS1">><<nobr>>
+Knowing you're exposing yourself sends a gentle shiver down your spine but you make sure not to give any indication of your building arousal. Noticing <<his>> increased interest you decide to tease a little more. <<flashcrotchunderskirt>>, giving <<him>> a clear view of your $worn.under_lower.name covered crotch.
+<br><br>
+The act of exposing your underwear to a stranger in a cafe gives you a lewd thrill.<<exhibitionism2>>
+
+/* check for photo scene */
+<<set $rng to random(0, 10)>>
+<<if $rng gte 8>>
+	/* person attempts to take photo */
+	<<CafeExhibitionismLegsPartPhotoDecision>>
+
+/* else check for panties takeoff scene */
+<<elseif $exhibitionism gte 75>>
+	<<CafeExhibitionismLegsPartPantyTakeoffDecision>>
+/* else play end */
+<<else>>
+	<<CafeExhibitionismLegsPartEnd>>
+<</if>>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionimsm Legs Part Success S2 [widget]
+<<widget "CafeExhibitionimsmLegsPartSuccessS2">><<nobr>>
+/* else check for panties takeoff scene */
+<<if $exhibitionism gte 75>>
+	<<CafeExhibitionismLegsPartPantyTakeoffDecision>>
+/* else play end */
+<<else>>
+	<<CafeExhibitionismLegsPartEnd>>
+<</if>>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part Photo Decision [widget]
+<<widget "CafeExhibitionismLegsPartPhotoDecision">><<nobr>>
+The <<person>> carefully pulls out their phone and fiddles with it for a few moments, before slowly positioning it towards you and your exposed $worn.under_lower.name with obvious intent.
+<br><br>
+<<link [[Let them take it|Cafe Exhibitionism Legs Part Photo]]>><</link>> <br>
+<<link [[Don't let them|Cafe Exhibitionism Legs Part No Photo]]>><</link>> <br>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part Photo [nobr]
+With butterflies churning in your stomach you let the <<person>> snap a photo of your exposed $worn.under_lower.name with their phone, and then another, and then another. Revelling in the thrill of letting a stranger have such comprimising photos of you, you alter your leg positions a few times to give them a wide veriety of revealing shots. <<arousal +15>><<garousal>>
+<br><br>
+Eventually you decide the <<person>> has had enough photos for now and let your legs come to a natural close. A mildly disappointed but clearly aroused <<person>> pockets their phone while you ponder where exactly those lewd photos of you might eventually end up.
+<<set $rng to random(0, 5)>>
+<<fameexhibitionism $rng>>
+<<CafeExhibitionimsmLegsPartSuccessS2>>
+
+:: Cafe Exhibitionism Legs Part No Photo [nobr]
+Not wanting photos of your $worn.under_lower.name in the hands of a stranger you clasp your legs shut before <<he>> can take the photo. The <<person>> curses under their breath and pockets their phone, no doubt wondering if you caught them peeking or if luck is just not on their side today. You polish off the last of your pancakes before heading out the door.
+<br><br>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Legs Part Panty Takeoff Decision [widget]
+<<widget "CafeExhibitionismLegsPartPantyTakeoffDecision">><<nobr>>
+A naughty thought occurs to you. The cafe has a bathroom you could use to have a little more fun with the unsuspecting <<person>> if you wanted.
+<br><br>
+<<link [[Go take off your panties|Cafe Exhibitionism Legs Part Panty Takeoff]]>><</link>> <<exhibitionist5>> <br>
+<<link [[Fun's over|Cafe Exhibitionism Legs Part Premature End]]>><</link>> <br>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part End [widget]
+<<widget "CafeExhibitionismLegsPartEnd">><<nobr>>
+<<his>> attempts to hide his gaze get poorer as time goes on. You decide to finish up your plate and head off before <<he>> realises you're letting <<him>> look up your skirt on purpose.
+<<CafeExhibitionismLegsPartNormalTerminate>>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part Normal Terminate [widget]
+<<widget "CafeExhibitionismLegsPartNormalTerminate">><<nobr>>
+<<endevent>>
+<<link [[Next|Cliff Street]]>><</link>>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part Panty Takeoff [nobr]
+You carefully put your fork down before making your way to the cafe bathroom. With the door safely locked you reach under your clothes and remove your underwear, stopping for a moment to feel the thrill of what you're about to do. With your $worn.under_lower.name off you unlatch the door to head back to your plate and the unsuspecting <<personstop>>
+<br><br>
+The <<person>> looks up at you discreetly as you seat yourself, and not wanting to ruin the surprise you make sure your skirt hem is safely covering your exposed <<genitals>> as you take your seat. You decide to play a little at first, fidgeting with your legs as you slowly savour your pancakes. You want <<his>> full attention for what you plan next.
+<br><br>
+slowly, you part your knees a little. At first just enough to make <<him>> wonder if <<hes>> seeing things, and then as you lean down to help yourself to a particularly tasty looking piece of pancake you part them completely, giving <<him>> a complete unobstructed view of your inner thighs and everything in between. The <<persons>> eyes visibly widen in shock as <<he>> stares at your bare <<genitalscomma>> unsure of how to react to your clearly deliberate act of exhibitionism.<<if $player.appearance isnot $player.gender>> From the look on <<his>> face it's clear <<he>> was not expecting you to be a <<if $player.gender is "m">>boy"<<else>>girl"<</if>>.<</if>> Meeting <<his>> gaze with a wink and a stretch of your legs you place one last piece of pancake in your mouth before you make your exit, leaving the flabbergasted and visibly aroused <<person>> in your wake.
+<br><br>
+<<exhibitionism5>>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Legs Part Premature End [nobr]
+Seeing <<his>> attempts to hide <<his>> gaze get poorer as time goes on you decide to finish up your plate and head off before <<he>> realises you're deliberately putting on a show. With one last mouthful of your food you make your exit, passing the now rather disappointed looking <<person>> on the way.
+<br><br>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Legs Part Pantiless [nobr]
+You pretend to occupy yourself with your pancakes as you gently part your legs as naturally as you can. 
+
+/* are we stealthy enough to pretend not to be putting on a show? */
+<<set $rng to random(0, 50)>>
+<<if $skulduggery gte (350 + $rng)>>
+	Knowing you're exposing yourself sends a gentle shiver down your spine but you make sure not to give any indication of your building arousal. Noticing <<his>> increased interest you decide to tease a little more. <<flashcrotchunderskirt>>, giving <<him>> a clear view of your bare <<genitalsstop>>
+	<br><br>
+	The act of exposing your <<genitals>> to a stranger in a cafe gives you a lewd thrill.<<exhibitionism5>>
+
+	/* check for photo scene */
+	<<set $rng to random(0, 10)>>
+	<<if $rng gte 8>>
+		/* person attempts to take photo */
+		<<CafeExhibitionismLegsPartPantilessPhotoDecision>>
+	<<else>>
+		<<CafeExhibitionismLegsPartNormalTerminate>>
+	<</if>>
+
+/* are we good enough to at least not provoke mockery at our poor attempts at stealth exhibitionism? */
+<<elseif $skulduggery gte 100>>
+	Knowing you're exposing yourself sends a gentle shiver down your spine but you make sure not to give any indication of your building arousal. Noticing <<his>> increased interest you decide to tease a little. <<flashcrotchunderskirt>> giving <<him>> a clear view of your bare <<genitalsstop>> The <<person>> takes a sip of <<his>> drink and smirks a little to <<himself>>, it seems you weren't quite as subtle as you thought.
+	<br><br>
+	The act of exposing your <<gentials>> to a stranger in a cafe gives you a lewd thrill, and knowing <<he>> caught you doing it on purpose fills you with a mixture of nervousness and exhilaration.<<exhibitionism5>>
+	
+	You decide to stop before things get out of hand, finishing up your pancakes before carefully getting out of your seat and leaving. <<His>> eyes and knowing smirk follow you as you make your way to the door, but <<he>> seems happy to leave you alone.
+	<br><br>
+	<<CafeExhibitionismLegsPartNormalTerminate>>
+
+/* were bad at this and should feel bad */
+<<else>>
+	Knowing you're exposing yourself sends a gentle shiver down your spine but you try your best not to give any indication of your building arousal. The <<person>> takes a sip of <<his>> drink and smirks a little to <<himself>>, barely surpressing a chuckle. It seems you were nowhere near as subtle as you thought.
+	<br><br>						
+	The act of exposing your <<gentials>> to a stranger in a cafe gives you a lewd thrill, and knowing <<he>> caught you doing it on purpose fills you with a mixture of nervousness and exhilaration.<<exhibitionism4>>
+	
+	Embarrassed, you finish up your pancakes before getting out of your seat and leaving. <<His>> eyes and knowing smirk follow you as you make your way to the door, but <<he>> seems happy to leave you alone.
+	<br><br>
+	<<CafeExhibitionismLegsPartNormalTerminate>>
+<</if>>
+
+:: Cafe Exhibitionism Legs Part Pantiless Photo Decision [widget]
+<<widget "CafeExhibitionismLegsPartPantilessPhotoDecision">><<nobr>>
+The <<person>> carefully pulls out their phone and fiddles with it for a few moments, before slowly positioning it towards you and your exposed $worn.under_lower.name with obvious intent.
+<br><br>
+<<link [[Let them take it|Cafe Exhibitionism Legs Part Pantiless Photo]]>><</link>> <br>
+<<link [[Don't let them|Cafe Exhibitionism Legs Part Pantiless No Photo]]>><</link>> <br>
+<</nobr>><</widget>>
+
+:: Cafe Exhibitionism Legs Part Pantiless Photo [nobr]
+With butterflies churning in your stomach you let the <<person>> snap a photo of your exposed <<genitals>> with their phone, and then another, and then another. Revelling in the thrill of letting a stranger have such comprimising photos of you, you alter your leg positions a few times to give them a wide veriety of extremely revealing shots. <<arousal +35>><<garousal>>
+<br><br>
+Eventually you decide the <<person>> has had enough photos for now and let your legs come to a natural close. A mildly disappointed but clearly quite aroused <<person>> pockets their phone while you ponder where exactly those lewd photos of you and your exposed <<genitals>> might eventually end up.
+<<set $rng to random(0, 10)>>
+<<fameexhibitionism $rng>>
+<br><br>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Legs Part Pantiless No Photo [nobr]
+Not wanting photos of your <<genitals>> in the hands of a stranger you clasp your legs shut before <<he>> can take the photo. The <<person>> curses under their breath and pockets their phone, no doubt wondering if you caught them peeking or if luck is just not on their side today. You polish off the last of your pancakes before heading out the door.
+<br><br>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Legs Part Pantiless Wink [nobr]
+Bracing yourself for what you're about to do you look the <<person>> dead in the eye and deliberately spread your legs, giving them a wink as your legs settle far enough apart to leave absolutely nothing to the imagination. The <<persons>> jaw drops as they stare at your bare <<genitalscomma>> clearly not expecting their attempt at covert voyourism to be rewarded with such a brazen act of exhibitionism. <<flashcrotchunderskirt>>, giving <<him>> a nice long look at your bare <<genitalsstop>>
+<br><br>
+The act of blatantly exposing yourself to a total stranger in a cafe gives you a lewd thrill.<<exhibitionism5>>
+
+Eventually you decide the <<person>> has seen enough for now and let your legs come to a natural close. The mildly disappointed but clearly quite aroused <<person>> stares at you as you make your way out chewing the last of your pancakes.
+<br><br>
+<<CafeExhibitionismLegsPartNormalTerminate>>
+
+:: Cafe Exhibitionism Skirt Flashing Act [widget]
+<<widget "flashcrotchunderskirt">><<nobr>><<script>>
+let possibilities = [
+	"You stretch your leg, raising it up into the air and wiggling your foot a little to prolong your exposure",
+	"You part your knees a little as you stretch, bringing your feet a little closer together to widen the gap",
+	"You lift your feet up as you stretch, rocking yourself back a little in your seat and wiggling your feet a little as you \"accidentally\" part your legs",
+	"You reach down a little and move your foot to once side, reaching down to scratch a nonexistant itch on your leg and stabalising by moving your other leg even further apart",
+	"You act as if you have some particularly uncomfortable debris stuck on your foot, lifting it up and bringing it close to your body in search of a nonexistant pebble while"
+];
+let i = Math.floor(Math.random() * possibilities.length);
+$(output).wiki(possibilities[i]);
+<</script>><</nobr>><</widget>>
 
 :: Cafe Cream Bun [nobr]
 <<set $outside to 0>><<set $location to "town">><<effects>>
@@ -1318,3 +1642,130 @@ The rest of the shift passes uneventfully.
 	<br><br>
 <</if>>
 <<link [[Next|Ocean Breeze]]>><<endevent>><</link>>
+
+
+:: Ocean Breeze Chef Refuse [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+Sam nods, but looks exasperated. <<He>> approaches another member of staff, and asks them for help instead.
+<br><br>
+	
+The rest of the shift passes uneventfully. You earn £5.
+<br><br>
+	
+<<link [[Next|Ocean Breeze]]>><<endevent>><</link>>
+	
+	
+:: Ocean Breeze Rework [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<set $chef_state to 8>>
+<<npc Sam>><<person1>>
+You enter through the doors of the rebuilt Ocean Breeze. The main room is much wider and taller than before. You see more tables up on a second floor. They overhang the first. The rustic look is gone, replaced by an elegant deco design.
+<br><br>
+Sam stands in the middle, talking to another member of staff. <<Hes>> wearing a <<if $pronoun is "m">>suit and tie<<else>>red dress<</if>>.
+<br><br>
+<<He>> turns to you and beams. "It's the chef!" <<he>> says, rushing over and grasping your hands. "How do you like the new look?" <<he>> asks. "The building. Not me."
+<br><br>
+
+<<link [[Say it looks pretentious|Ocean Breeze Pretentious]]>><<set $NPCName[$NPCNameList.indexOf("Sam")].love -= 1>><</link>><<llove>>
+<br>
+<<link [[Say it looks wonderful|Ocean Breeze Wonderful]]>><<set $NPCName[$NPCNameList.indexOf("Sam")].love += 1>><</link>><<glove>>
+<br>
+<<link [[Say it looks okay|Ocean Breeze Okay]]>><</link>>
+
+
+:: Ocean Breeze Pretentious [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $submissive gte 1150>>
+You look at your feet. "I liked the old cafe more," you admit. "Sorry."
+<<elseif $submissive lte 850>>
+You scoff. "It's a big much for some cream buns," you say "Don't you think?"
+<<else>>
+"It's a little gaudy," you admit.
+<</if>>
+<br><br>
+
+Sam frowns, but it only lasts a moment. "You're underestimating your talent," <<he>> says. "I've always wanted a place like this."
+<br><br>
+
+<<He>> looks around the room. "I've begun preparations for the grand opening," <<he>> says. "I'd like you to make an appearance. Nothing big! Just a little speech. People from all over the world are coming, so the town's movers and shakers will want to make an appearance."
+<br><br>
+
+"There's no need to be shy," <<he>> adds. "You can say whatever you like, really. People just like to know who's making the food."
+<br><br>
+
+<<link [[Next|Ocean Breeze Rework 2]]>><</link>>
+<br>
+
+
+
+
+:: Ocean Breeze Wonderful [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $submissive gte 1150>>
+"It's wonderful," you say. "Like a dream."
+<<elseif $submissive lte 850>>
+"It's certainly an upgrade," you say.
+<<else>>
+"I like it a lot," you say. "Very fancy."
+<</if>>
+<br><br>
+
+Sam nods. "I know! I've always wanted a place like this."
+<br><br>
+
+<<He>> looks around the room. "I've begun preparations for the grand opening," <<he>> says. "I'd like you to make an appearance. Nothing big! Just a little speech. People from all over the world are coming, so the town's movers and shakers will want to make an appearance."
+<br><br>
+
+"There's no need to be shy," <<he>> adds. "You can say whatever you like, really. People just like to know who's making the food."
+<br><br>
+
+<<link [[Next|Ocean Breeze Rework 2]]>><</link>>
+<br>
+
+
+
+:: Ocean Breeze Okay [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $submissive gte 1150>>
+"I-I don't know," you say. "I'm not used to fancy things."
+<<elseif $submissive lte 850>>
+"As long as I can work in peace," you say. "It's fine."
+<<else>>
+"It looks okay," you say. "It does stand out."
+<</if>>
+
+<br><br>
+
+Sam nods. "I've always wanted a place like this."
+<br><br>
+
+
+<<He>> looks around the room. "I've begun preparations for the grand opening," <<he>> says. "I'd like you to make an appearance. Nothing big! Just a little speech. People from all over the world are coming, so the town's movers and shakers will want to make an appearance."
+<br><br>
+
+"There's no need to be shy," <<he>> adds. "You can say whatever you like, really. People just like to know who's making the food."
+<br><br>
+
+<<link [[Next|Ocean Breeze Rework 2]]>><</link>>
+<br>
+
+
+:: Ocean Breeze Rework 2 [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+"I'm eager to get started," Sam says. "But you're the star. We'll open when you're ready. Come along some time in the evening and we'll finalise things."
+<br><br>
+<<set $chef_state to 8>>
+
+<<endevent>>
+
+<<link [[Leave|Cliff Street]]>><<set $eventskip to 1>><</link>>
+<br>
+
+
+
+
