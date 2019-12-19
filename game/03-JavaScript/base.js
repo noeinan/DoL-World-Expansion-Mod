@@ -214,5 +214,3 @@ window.AvsAn = (function () {
 		}
 	};
 })();
-
-
