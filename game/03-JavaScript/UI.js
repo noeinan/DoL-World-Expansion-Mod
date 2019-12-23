@@ -184,25 +184,25 @@ $(document).on('keyup', function(ev) {
 });
 
 window.skinColor = function(percent, overwrite){
-    if(SugarCube.State.variables.skinColor.tanImgEnabled === "f"){
-       return "";
-    }
-    var result = "";
-    var v = null;
-    if(overwrite != null){
-        v = overwrite;
-    }else{
-        v = {
-            "hStart": 45, "hEnd": 45,
-            "sStart": 0.2, "sEnd": 0.4,
-            "bStart": 4.5, "bEnd": 0.7,
-        }
-    }
-    if(v != null){
-        var p = percent / 100;
-        result = "hue-rotate("+((v.hEnd - v.hStart) * p + v.hStart)+"deg)";
-        result += " saturate("+((v.sEnd - v.sStart) * p + v.sStart).toFixed(2)+")";
-        result += " brightness("+((v.bEnd - v.bStart) * p + v.bStart).toFixed(2)+")";
-    }
-    return result;
+	if(SugarCube.State.variables.skinColor.tanImgEnabled === "f"){
+	   return "";
+	}
+	var result = "";
+	var v = null;
+	if(overwrite != null){
+		v = overwrite;
+	}else{
+		v = {
+			"hStart": 45, "hEnd": 45,
+			"sStart": 0.2, "sEnd": 0.4,
+			"bStart": 4.5, "bEnd": 0.7,
+		}
+	}
+	if(v != null){
+		var p = percent / 100;
+		result = "hue-rotate("+((v.hEnd - v.hStart) * p + v.hStart)+"deg)";
+		result += " saturate("+((v.sEnd - v.sStart) * p + v.sStart).toFixed(2)+")";
+		result += " brightness("+((v.bEnd - v.bStart) * p + v.bStart).toFixed(2)+")";
+	}
+	return result;
 }
