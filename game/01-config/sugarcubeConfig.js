@@ -15,8 +15,8 @@ Config.saves.onLoad = function (save) {
 window.StartConfig = {
     "debug": false,
     "enableImages": true,
-    "enableLinkNumberify": true,
-    "version": "0.2.7.0",
+    "enableLinkNumberify": false,
+    "version": "0.2.7.1",
 }
 
 config.saves.autosave = "autosave";
