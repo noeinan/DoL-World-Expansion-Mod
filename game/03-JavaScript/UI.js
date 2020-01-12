@@ -152,7 +152,7 @@ function generateNumbers(ev){
 }
 
 $(document).on('keyup', function(ev) {
-	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify)
+	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
 		return;
 
 	if ((ev.keyCode >= 48 && ev.keyCode <= 57) || (ev.keyCode >= 96 && ev.keyCode <= 105)) {
