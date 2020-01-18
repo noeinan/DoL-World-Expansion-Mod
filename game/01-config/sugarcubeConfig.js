@@ -46,3 +46,5 @@ importStyles("style.css")
 .catch(function (err) {
 	console.log("External Style Sheet Missing");
 });
+
+console.log("Game Version:", StartConfig.version);
