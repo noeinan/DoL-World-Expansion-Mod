@@ -50,6 +50,8 @@
 
 <<if $wear_outfit isnot "none">>
 	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+	<<set _corruptionEquipSkip to ["upper", "lower", "under_upper", "under_lower"]>>
+	<<set _notEquipped to {}>>
 	<<set _skip to false>>
 	<<for _i to 0; _i lt _equip.length; _i++>>
 		<<if _skip is true>>
@@ -67,6 +69,13 @@
 						<<if $outfit[$wear_outfit].colors isnot false>>
 							<<if $outfit[$wear_outfit].colors[_equip[_i]][0] isnot $wardrobe[_equip[_i]][_j].colour or $outfit[$wear_outfit].colors[_equip[_i]][1] isnot $wardrobe[_equip[_i]][_j].accessory_colour>>
 								<<continue>>
+							<</if>>
+						<</if>>
+						<<if _corruptionEquipSkip.includes(_equip[_i])>>
+							<<if $corruption_slime gte 80 and $willpower lt 800 and $wardrobe[_equip[_i]][_j].reveal lt 500 and !$wardrobe[_equip[_i]][_j].type.includesAny("school", "event")>>
+								<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "corruption_slime_deny"}>>
+								<<set _foundEquip to true>>
+								<<break>>
 							<</if>>
 						<</if>>
 
@@ -110,6 +119,8 @@
 					<<set $worn[_equip[_i]] to clone($wardrobe[_equip[_i]][_lastResort])>>
 					<<set $wardrobe[_equip[_i]].deleteAt(_lastResort)>>
 					<<set _skip to true>>
+				<<elseif _foundEquip is false>>
+					<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found"}>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -117,18 +128,51 @@
 <</if>>
 
 <<if $wear_outfit isnot "none">>
-	<<if $worn.upper.name is $outfit[$wear_outfit].upper and
-	$worn.lower.name is $outfit[$wear_outfit].lower and
-	$worn.under_upper.name is $outfit[$wear_outfit].under_upper and
-	$worn.under_lower.name is $outfit[$wear_outfit].under_lower and
-	$worn.head.name is $outfit[$wear_outfit].head and
-	$worn.face.name is $outfit[$wear_outfit].face and
-	$worn.neck.name is $outfit[$wear_outfit].neck and
-	$worn.legs.name is $outfit[$wear_outfit].legs and
-	$worn.feet.name is $outfit[$wear_outfit].feet>>
-	<<else>>
-	<span class="purple">Part of the set could not be worn as it is missing from your wardrobe or you could not put it on.</span>
-	<br>
+	<<set _keys to Object.keys(_notEquipped)>>
+	<<if _keys.length gt 0>>
+		<<set _resultStrings to {}>>
+		<<for _i to 0; _i lt _keys.length; _i++>>
+			<<switch _notEquipped[_keys[_i]].reason>>
+				<<case "not found">>
+					<<if _resultStrings.notFound is undefined>>
+						<<set _resultStrings.notFound to {
+							"start": "You were unable to find your ",
+							"end": " in your wardrobe.",
+							"count": 0,
+							"color": "purple"
+						}>>
+					<</if>>
+					<<set _resultStrings.notFound[_resultStrings.notFound.count] to _notEquipped[_keys[_i]].name>>
+					<<set _resultStrings.notFound.count++>>
+				<<case "corruption_slime_deny">>
+					<<if _resultStrings.corruption_slime_deny is undefined>>
+						<<set _resultStrings.corruption_slime_deny to {
+							"start": "You were unable to equip your ",
+							"end": " as the slime in your ear did not permit it.",
+							"count": 0,
+							"color": "red"
+						}>>
+					<</if>>
+					<<set _resultStrings.corruption_slime_deny[_resultStrings.corruption_slime_deny.count] to _notEquipped[_keys[_i]].name>>
+					<<set _resultStrings.corruption_slime_deny.count++>>
+			<</switch>>
+		<</for>>
+		<<set _keys to Object.keys(_resultStrings)>>
+		<<for _i to 0; _i lt _keys.length; _i++>>
+			<<set _string to _resultStrings[_keys[_i]].start>>
+			<<for _j to 0; _j lt _resultStrings[_keys[_i]].count; _j++>>
+				<<if _j is 0>>
+					<<set _string += _resultStrings[_keys[_i]][_j]>>
+				<<elseif _j lt _resultStrings[_keys[_i]].count - 1 and _resultStrings[_keys[_i]].count gt 2>>
+					<<set _string += ", " + _resultStrings[_keys[_i]][_j]>>
+				<<elseif _resultStrings[_keys[_i]].count gte 2>>
+					<<set _string += " and " + _resultStrings[_keys[_i]][_j]>>
+				<</if>>
+			<</for>>			
+			<<set _string += _resultStrings[_keys[_i]].end>>
+			<span @class="_resultStrings[_keys[_i]].color">_string</span>
+			<br>
+		<</for>>
 	<</if>>
 <</if>>
 
