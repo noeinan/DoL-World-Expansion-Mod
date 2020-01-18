@@ -2,48 +2,65 @@
 <<widget "parasiteinit">><<nobr>>
 
 <<set $parasite to {}>>
+<<set $parasite.bodyparts to [
+	"nipples",
+	"bottom",
+	"penis",
+	"balls",
+	"clit",
+	"anus",
+	"vagina",
+	"labia",
+	"left_thigh", "right_thigh",
+	"left_foot", "right_foot",
+	"left_arm", "right_arm",
+	"left_hand", "right_hand",
+	"tummy",
+	"back",
+	"face",
+	"mouth",
+	"left_ear", "right_ear",
+	"hair"]>>
+<<set $parasite.types to [
+	"urchin",
+	"slime",
+	"maggot"]>>
+	
+<<for _part range $parasite.bodyparts>>
+	<<set $parasite[_part] to {}>>
+	/*<<set $parasite[_part].bodypart to _part.replace(/_/g, " ")>>*/
+<</for>>
 
-<<set $parasite.nipples to {}>>
-<<set $parasite.bottom to {}>>
-<<set $parasite.penis to {}>>
-<<set $parasite.balls to {}>>
-<<set $parasite.clit to {}>>
-<<set $parasite.anus to {}>>
-<<set $parasite.vagina to {}>>
-<<set $parasite.labia to {}>>
-<<set $parasite.right_thigh to {}>>
-<<set $parasite.left_thigh to {}>>
-<<set $parasite.left_foot to {}>>
-<<set $parasite.right_foot to {}>>
-<<set $parasite.right_arm to {}>>
-<<set $parasite.left_arm to {}>>
-<<set $parasite.right_hand to {}>>
-<<set $parasite.left_hand to {}>>
-<<set $parasite.tummy to {}>>
-<<set $parasite.back to {}>>
-<<set $parasite.face to {}>>
-<<set $parasite.mouth to {}>>
-<<set $parasite.left_ear to {}>>
-<<set $parasite.right_ear to {}>>
-<<set $parasite.hair to {}>>
-
+<<for _type range $parasite.types>>
+	<<set $parasite[_type] to []>> /*This seems a bit redundant but not having to iterate through every body part every time StoryCaption updates seems worth it*/
+<</for>>
 <</nobr>><</widget>>
 
 <<widget "parasite">><<nobr>>
 /*First argument is the body part you want to attach a parasite to, second argument is the type of parasite*/
 <<if $args[0] and $args[1]>>
-<<set _temp0 to $args[0]>>
-<<set _temp1 to $args[1]>>
+	<<set _temp0 to $args[0]>>
+	<<set _temp1 to $args[1]>>
 
-<<set $parasite[_temp0].name to _temp1>>
-<<set $parasitestat += 1>>
+	<<set $parasite[_temp0].name to _temp1>>
+	<<set $parasitestat += 1>>
+
+	<<if _temp0 isnot "left_ear" and _temp0 isnot "right_ear">> /*Keeps ears from 'sucking and massaging' in the StoryCaption*/
+		<<set _temp0 to _temp0.replace(/_/g, " ")>>
+		<<set $parasite[_temp1].push(_temp0)>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "removeparasite">><<nobr>>
 /*Argument is the body part you want to free from parasites*/
 <<if $args[0]>>
-<<set _temp0 to $args[0]>>
-<<set $parasite[_temp0] to {}>>
+	<<set _temp0 to $args[0]>>
+	
+	<<run delete $parasite[_temp0].name>>
+	
+	<<for _type range $parasite.types>>
+		<<set $parasite[_type].delete(_temp0)>>
+	<</for>>
 <</if>>
 <</nobr>><</widget>>
