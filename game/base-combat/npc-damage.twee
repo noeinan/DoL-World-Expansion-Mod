@@ -1,0 +1,90 @@
+:: Widgets NPC Damage [widget]
+<<widget "npcdamage">><<nobr>>
+<!-- Calculates damage inflicted by PC on NPCs and removes highest number NPC from group combat NG v2.8-->
+<!-- Only applies to group combat sitation. -->
+<!-- Issue is defeated attackers are still engaging with NPC. Also groups still impossible to defeat -->
+
+<<set _grphealth to 0>>
+<<set _damage to $enemyhealthmax-$enemyhealth>>
+
+<<for _i = 0; _i < $enemyno-1 ; _i++>>
+	<<set _grphealth to $NPCList[_i].health+_grphealth>>
+<</for>>
+	
+<<if $enemyhealth lte _grphealth>>
+	<<defeatnpc>>
+	<<npcdamage>>
+<</if>>	
+
+/% DEBUG: Total Damage Dealt is _damage<br> %/
+/% DEBUG: _grphealth $enemyhealth %/
+/% DEBUG: Enemys total: <span class="green">$enemyno left</span> of <span class="red">$enemynomax total</span><br> %/
+/% <<for _j = $enemynomax-1; _j gte 0; _j-->> %/
+	/% DEBUG: NPC _j has $NPCList[_j].health H.P. <br> %/
+/% <</for>> %/
+/% <br> %/
+
+<</nobr>><</widget>>
+
+<<widget "defeatnpc">><<nobr>>
+<!-- This knocks out and resets the last NPC on the list from 5 to 0 -->
+<!-- Resets PC variables so NPC is released -->
+<!-- Resets NPC variables as partial cleanup prior to cleannpc -->
+<!-- Gives PC stats uptick as side benefit to defeating NPCs. Likely will require play tuning -->
+
+<<set _i to $enemyno-1>>
+<<personselect _i>>
+<span class="blue">The <<person>> staggers back, defeated.</span><<llpain>><<llstress>><<lltrauma>><br><br>
+
+<!-- Check for Defeated NPC actions and reverse them out -->
+<!-- NPC penis in PC -->
+<<if $NPCList[_i].penis is "anus" or $NPCList[_i].penis is "anusimminent">><<set $anusstate to 0>><<set $anususe to 0>><</if>>
+<<if $NPCList[_i].penis is "vagina" or $NPCList[_i].penis is "vaginaimminent">><<set $vaginastate to 0>><<set $vaginause to 0>><</if>>
+<<if $NPCList[_i].penis is "mouth" or $NPCList[_i].penis is "mouthimminent">><<set $mouthstate to 0>><<set $mouthuse to 0>><</if>>
+<!-- PC penis in NPC -->
+<<if $NPCList[_i].vagina is "penis">><<set $penisstate to 0>><<set $penisuse to 0>><</if>>
+<<if $NPCList[_i].mouth is "penis">><<set $mouthstate to 0>><<set $mouthuse to 0>><</if>>
+<<if $NPCList[_i].vagina is "otheranus">><<set $penisstate to 0>><<set $penisuse to 0>><</if>>
+<<if $NPCList[_i].penis is "otheranus">><<set $penisstate to 0>><<set $penisuse to 0>><</if>>
+<!-- Genital other -->
+<<if $NPCList[_i].vagina is "vagina">><<set $vaginastate to 0>><<set $vaginause to 0>><</if>>
+<!-- NPC Mouth other -->
+<<if $NPCList[_i].mouth is "penisentrace">><<set $penisstate to 0>><<set $penisuse to 0>><</if>>
+<<if $NPCList[_i].mouth is "anusentrace">><<set $anusstate to 0>><<set $anususe to 0>><</if>>
+<<if $NPCList[_i].mouth is "vaginaentrace">><<set $vaginastate to 0>><<set $vaginause to 0>><</if>>
+<<if $NPCList[_i].mouth is "kiss">><<set $mouthstate to 0>><<set $mouthuse to 0>><</if>>
+<!-- PC using feet on NPC -->
+<<if $NPCList[_i].penis is "feet">><<set $feetstate to 0>><<set $feetuse to 0>><</if>>
+<<if $NPCList[_i].vagina is "feet">><<set $feetstate to 0>><<set $feetuse to 0>><</if>>
+<!-- NPC using feet on PC -->
+<<if $NPCList[_i].penis is "footjob" or $NPCList[_i].vagina is "footjob">>
+	<<if $penisexist is 1>>
+		<<set $penisstate to 0>>
+	<<else>>
+		<<set $vaginastate to 0>>
+	<</if>>
+<</if>>
+<!-- Probably still some missing... -->
+
+<!-- Reset Defeated NPC appendages -->
+<<set $NPCList[_i].lefthand to "none">>
+<<set $NPCList[_i].righthand to "none">>
+<<set $NPCList[_i].penis to "none">>
+<<set $NPCList[_i].vagina to "none">>
+<<set $NPCList[_i].mouth to "none">>
+<<set $NPCList[_i].chest to "none">>
+<<set $NPCList[_i].stance to "defeated">>
+
+<!-- Remove Defeated NPC from loops -->
+<<set $enemyno-->>
+<!-- Reset Group attributes-->
+<<set $enemyarousalmax to 500 * $enemyno>>
+<<set $enemyarousal to $enemyarousal - 500>>
+<<set $enemyhealthmax to $enemyhealthmax-$NPCList[_i].health>>
+<<set $NPCList[_i].health to 0>>
+
+<!-- Give PC stats uptick. Could be replaced with <<violence -xx>> call -->
+<<set $pain to 0>>
+<<stress -18>><<trauma -6>>
+
+<</nobr>><</widget>>
