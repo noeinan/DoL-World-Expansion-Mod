@@ -1,8 +1,6 @@
 :: Widgets NPC Damage [widget]
 <<widget "npcdamage">><<nobr>>
 <!-- Calculates damage inflicted by PC on NPCs and removes highest number NPC from group combat NG v2.8-->
-<!-- Only applies to group combat sitation. -->
-<!-- Issue is defeated attackers are still engaging with NPC. Also groups still impossible to defeat -->
 
 <<set _grphealth to 0>>
 <<set _damage to $enemyhealthmax-$enemyhealth>>
@@ -16,21 +14,11 @@
 	<<npcdamage>>
 <</if>>	
 
-/% DEBUG: Total Damage Dealt is _damage<br> %/
-/% DEBUG: _grphealth $enemyhealth %/
-/% DEBUG: Enemys total: <span class="green">$enemyno left</span> of <span class="red">$enemynomax total</span><br> %/
-/% <<for _j = $enemynomax-1; _j gte 0; _j-->> %/
-	/% DEBUG: NPC _j has $NPCList[_j].health H.P. <br> %/
-/% <</for>> %/
-/% <br> %/
-
 <</nobr>><</widget>>
 
 <<widget "defeatnpc">><<nobr>>
 <!-- This knocks out and resets the last NPC on the list from 5 to 0 -->
-<!-- Resets PC variables so NPC is released -->
-<!-- Resets NPC variables as partial cleanup prior to cleannpc -->
-<!-- Gives PC stats uptick as side benefit to defeating NPCs. Likely will require play tuning -->
+<!-- Resets PC variables to release PC from NPC actions, resets NPC variables as partial cleanup prior to cleannpc, gives PC stats uptick as side benefit to defeating NPCs. -->
 
 <<set _i to $enemyno-1>>
 <<personselect _i>>
@@ -68,7 +56,6 @@
 <</if>>
 
 <!-- NPC Mouth other -->
-/% <<if $NPCList[_i].mouth is "penisentrance">><<set $penisstate to 0>><<set $penisuse to 0>><</if>> %/
 <<if $NPCList[_i].mouth is "anus" or $NPCList[_i].mouth is "anusimminent" or $NPCList[_i].mouth is "anusentrance">>
 	<<set $anusstate to 0>><<set $anususe to 0>>
 <</if>>
@@ -101,7 +88,7 @@
 <<if $NPCList[_i].lefthand is "arms" or $NPCList[_i].righthand is "arms">>
 	<<set $leftarm to 0>><<set $rightarm to 0>>
 <</if>>
-<!-- Probably still some missing... -->
+<!-- Probably still some edge cases missing... -->
 
 <!-- Reset Defeated NPC appendages -->
 <<set $NPCList[_i].lefthand to "none">>
@@ -117,7 +104,6 @@
 <!-- Reset Group attributes-->
 <<set $enemyarousalmax to 500 * $enemyno>>
 <<set $enemyarousal to $enemyarousal * ($enemyno / ($enemyno +1))>>
-/% <<set $enemyarousal to Math.clamp($enemyarousal, 1)>> %/
 <<set $enemyhealthmax to $enemyhealthmax-$NPCList[_i].health>>
 <<set $NPCList[_i].health to 0>>
 
