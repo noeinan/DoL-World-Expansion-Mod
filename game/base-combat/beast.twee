@@ -1,45 +1,20 @@
 :: Widgets Combat Beast [widget]
-<!-- DEV NOTES NG v2.6 Beast to NPC notes. The <<beast>> widget is analogous to <<man>> (which calls <<man-combat>>) widget, otherwise combat is identical. -->
-<!-- Major variables: $beasttype $beaststance $beastgender $enemyno $enemynomax $enemytype = "beast" vs "man"-->
+<!-- DEV NOTES NG v2.7 Beast to NPC notes. The <<beast>> widget is analogous to <<man>> (which calls <<man-combat>>) widget, otherwise combat is identical. -->
 <!-- All beasts use $pronoun = "i". This will need to be commonized to m/f like other NPCs so will require cleanup. -->
-<!-- $semenpuddle is unique to beast combat as is $enemyno. Former only works in context of train combat, latter should move to $enemyno -->
-<!-- $enemyanger, etc are common calls and represent collective NPC stats. --> 
-<!-- $penisexist and $vaginaexist are PC variables, should really be converted to gender / pronoun for PC... fix later -->
+<!-- $semenpuddle is unique to beast combat, and only works in context of train combat. Effect is captured in this widget and could be expanded to man-combat -->
+<!-- $penisexist and $vaginaexist are PC variables, should really be converted to gender / pronoun checks for PC... fix later -->
 <!-- "Growling" should convert to widget to capture other beast types (sqawking, yowling, roaring, etc.), as well as a "wimpering" Dom/Pain. "Jaws" "Claws" "Teeth"-->
-<!-- Train combat mechanism is captured here. This should be changed to $combattype = train, group allowing this mechanism for all NPCs. $semenpuddle would get captured here as well for $combattype = train. Looping is picked up as part of combat calls and so may require rework to each current beast encounter... -->
 <!-- The "man" widget sets the gang combat dynamic (and handle gender surprise), then calls man-combat for each combatant. "beast" skips this step and sets up next combatant as part of attack calls during events. -->
-<!-- This should be reworked with "man" becoming "gang-combat" and new "train-combat" which can call either "man-combat" or "beast-combat" (renamed from "beast") with looping function put into "train-attack". Gender surprise can be worked into "train-attack" -->
-<!-- DONE review beastNinit widgets as part of work, this is setting the combat up along with beasttype and beastgenitalsselect-->
-<!-- DONE review beasttype and beastgenitalsselect for rework. Should be moved to other NPC generation code. Beasttype sets monsters though chance -->
-<!-- DONE look at dropping man2init and other beastNinit calls to just 1 -->
-<!-- DONE look at beastspeech which contains speech for monster types -->
-<!-- DONE-NO look at "person" widget, should this cover monster types, along with all the pronouns and personN calls. -->
-
-<!-- DONE $NPCList[x] and $NPCName[x] new variables: -->
-<!-- DONE .type (human, dog, cat, pig, wolf, dolphin, lizard) replacing $beasttype-->
-<!-- DONE .stance to replace $beaststance -->
-<!-- DONE .monster to "monster" replaceing $monster, monster variants lizardboy/girl dolphinboy/girl catboy/girl) are under $beasttype and will need seperated out, along with pronouns. -->
-<!-- SKIP .claws (0, 1) replacing $claws -->
-
-<!-- DONE NPCList[xx] collapsed/common variables -->
-<!-- DONE .description (small, large, huge) which is new usages. Could also used for subspecies e.g. doberman, pit bull, bottlenose etc. TBD -->
-<!-- DONE .gender (m, f) replacing $beastgender -->
-<!-- DONE .pronoun (m, f) for all beast NPCs from $pronoun = "i"-->
-<!-- DONE $enemyno for $beastno (this will be an index for train attacks), $enemynomax for $beastnomax -->
-
-<!-- DONE Generate beasts / monster types as done with NPCs -->
-<!-- DONE Edit NPC pronoun and person calls to conform -->
-<!-- DONE Remove all instances of $beasttype/stance/gender/pronoun/$basebeasttype from codebase and replace with $NPCList[xx] calls -->
-<!-- New widgets: growling, wimpering, jaws, claws, teeth -->
-<!-- Create new gang-combat and train-combat functionality -->
+<!-- This could be reworked with "man" becoming "gang-combat" and new "train-combat" which can call either "man-combat" or "beast-combat" (renamed from "beast") with looping function put into "train-attack". Gender surprise can be worked into "train-attack" -->
+<!-- SKIPPED .claws (0, 1) replacing $claws. Claws are rarely removed (only for dolphins). This could be revisited depending on new beast types added -->
+<!-- TODO New widgets: growling, wimpering, jaws, claws, teeth -->
+<!-- TODO Create train-combat functionality for human NPCs -->
 <<widget "beast">><<nobr>>
 <<if $args[0]>>
 	<<set _n to $args[0]-1>>
 <<else>>
 	<<set _n to 0>>
 <</if>>
-
-/% DEBUG PEN: $NPCList[_n].penis VAG: $NPCList[_n].vagina <br>  %/
 
 <<set $pronoun to "i">>
 
@@ -173,7 +148,7 @@ The semen on the ground makes you slip with every thrust.
 
 <<set $rng to random(1, 100)>>
 
-<!-- DEBUG syntax issue with this IF statement set NG -->
+<!-- DEBUG syntax issue with this IF statement set v2.7 (???) NG -->
 <<if $NPCList[_n].penis is "vaginaentrance">>
 	<<if $worn.lower.vagina_exposed is 0>>
 		<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.lower.name.<<sex 5>><<set $worn.lower.integrity -= 10>>
