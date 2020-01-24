@@ -54,6 +54,7 @@
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
 	<<case "npcSettings">><<replace #settingsDiv>><<npcSettings>><</replace>>
 	<<case "generalSettings">><<replace #settingsDiv>><<generalSettings>><</replace>>
+	<<case "exportsettings">><<replace #settingsDiv>><<exportsettings>><</replace>>
 	<<default>><<replace #settingsDiv>><<gameSettings>><</replace>>
 <</switch>>
 <</nobr>><</widget>>
@@ -74,9 +75,11 @@
 	<<button "NPC">>
 		<<displaySettings "npcSettings">>
 	<</button>>
-
 	<<button "General">>
 		<<displaySettings "generalSettings">>
+	<</button>>
+	<<button "Export/Import Settings">>
+		<<displaySettings "exportsettings">>
 	<</button>>
 </div>
 
@@ -575,93 +578,47 @@
 
 <</nobr>><</widget>>
 
-<<widget "nnpcsettings">><<nobr>>
-<!-- Delete this Widget on/after release 2.6, should be unused-->
-<<if $robinpronoun>><<set $NPCName[$NPCNameList.indexOf("Robin")].pronoun to $robinpronoun>><</if>>
-<<if $robingender>><<set $NPCName[$NPCNameList.indexOf("Robin")].gender to $robingender>><</if>>
-<<if $robin_penis_size>><<set $NPCName[$NPCNameList.indexOf("Robin")].penissize to $robin_penis_size>><</if>>
+<<widget "exportsettings">><<nobr>>
 
-<<if $baileypronoun>><<set $NPCName[$NPCNameList.indexOf("Bailey")].pronoun to $baileypronoun>><</if>>
-<<if $baileygender>><<set $NPCName[$NPCNameList.indexOf("Bailey")].gender to $baileygender>><</if>>
-<<if $bailey_penis_size>><<set $NPCName[$NPCNameList.indexOf("Bailey")].penissize to $bailey_penis_size>><</if>>
+<span class="red">Experimental, please report issues. As of current, NPC settings are uneffected by this. Please keep a save backup before importing.</span>
+<span class="yellow">Will also import/export settings found in the "SAVE/OPTIONS" overlay.</span>
 
-<<if $charliepronoun>><<set $NPCName[$NPCNameList.indexOf("Charlie")].pronoun to $charliepronoun>><</if>>
-<<if $charliegender>><<set $NPCName[$NPCNameList.indexOf("Charlie")].gender to $charliegender>><</if>>
-<<if $charlie_penis_size>><<set $NPCName[$NPCNameList.indexOf("Charlie")].penissize to $charlie_penis_size>><</if>>
+<h4>Settings File Import/Export</h4>
 
-<<if $darrylpronoun>><<set $NPCName[$NPCNameList.indexOf("Darryl")].pronoun to $darrylpronoun>><</if>>
-<<if $darrylgender>><<set $NPCName[$NPCNameList.indexOf("Darryl")].gender to $darrylgender>><</if>>
-<<if $darryl_penis_size>><<set $NPCName[$NPCNameList.indexOf("Darryl")].penissize to $darryl_penis_size>><</if>>
+<<if SugarCube.Browser.isMobile.any() is true>>
+	Note that saving and loading from file does not work on Android currently.
+<<else>>
+	Load from file: <input id="saveImport" type="file" value="Load from file" onchange="importSettings(this.files, 'file')">
+	<br><br>
+	<input type="button" value="Save to file" onclick="exportSettings(null,'file')">
+<</if>>
 
-<<if $harperpronoun>><<set $NPCName[$NPCNameList.indexOf("Harper")].pronoun to $harperpronoun>><</if>>
-<<if $harpergender>><<set $NPCName[$NPCNameList.indexOf("Harper")].gender to $harpergender>><</if>>
-<<if $harper_penis_size>><<set $NPCName[$NPCNameList.indexOf("Harper")].penissize to $harper_penis_size>><</if>>
+<h4>Settings Text Import/Export</h4>
 
-<<if $jordanpronoun>><<set $NPCName[$NPCNameList.indexOf("Jordan")].pronoun to $jordanpronoun>><</if>>
-<<if $jordangender>><<set $NPCName[$NPCNameList.indexOf("Jordan")].gender to $jordangender>><</if>>
-<<if $jordan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Jordan")].penissize to $jordan_penis_size>><</if>>
+To save your current settings, click on "Get Settings Data", then copy and paste the save data where required.
+<br>
+To load your current settings, paste in the settings data then click "Load Settings Data".
+<br>
+To transfer to and from Android, it is recommended to use email or a service such as pastebin. Please ensure that the start and the end of the save is exact to prevent issues.
+<br>
+Click on "Copy Text Area" to copy the current contents for you. The button name will change to "Copying Error" if your device or browser does not support it.
+<br><br>
+<textarea id="settingsDataInput" rows="4" cols="40" onClick="if(SugarCube.State.variables.disableAutoSelect == false)this.select();"></textarea>
+<br>
+<input type="button" value="Clear Text Box" onclick="clearTextBox('settingsDataInput')"/>
+<input type="button" value="Top of Text Box" onclick="topTextArea('settingsDataInput')"/>
+<input type="button" value="Bottom of Text Box" onclick="bottomTextArea('settingsDataInput')"/>
+<input type="button" value="Get Settings Data" onclick="exportSettings(null,'text')"/>
+<input type="button" value="Load Settings Data" onclick="importSettings(null,'text')"/>
+<input id="CopyTextArea" type="button" value="Copy Text Area" onclick="copySavedata('settingsDataInput')">
+<input id="LoadExternalExportFile" type="button" value="Load External Export File" onclick="loadExternalExportFile()">
 
-<<if $briarpronoun>><<set $NPCName[$NPCNameList.indexOf("Briar")].pronoun to $briarpronoun>><</if>>
-<<if $briargender>><<set $NPCName[$NPCNameList.indexOf("Briar")].gender to $briargender>><</if>>
-<<if $briar_penis_size>><<set $NPCName[$NPCNameList.indexOf("Briar")].penissize to $briar_penis_size>><</if>>
+<br><br>
 
-<<if $edenpronoun>><<set $NPCName[$NPCNameList.indexOf("Eden")].pronoun to $edenpronoun>><</if>>
-<<if $edengender>><<set $NPCName[$NPCNameList.indexOf("Eden")].gender to $edengender>><</if>>
-<<if $eden_penis_size>><<set $NPCName[$NPCNameList.indexOf("Eden")].penissize to $eden_penis_size>><</if>>
-
-<<if $sampronoun>><<set $NPCName[$NPCNameList.indexOf("Sam")].pronoun to $sampronoun>><</if>>
-<<if $samgender>><<set $NPCName[$NPCNameList.indexOf("Sam")].gender to $samgender>><</if>>
-<<if $sam_penis_size>><<set $NPCName[$NPCNameList.indexOf("Sam")].penissize to $sam_penis_size>><</if>>
-
-<<if $landrypronoun>><<set $NPCName[$NPCNameList.indexOf("Landry")].pronoun to $landrypronoun>><</if>>
-<<if $landrygender>><<set $NPCName[$NPCNameList.indexOf("Landry")].gender to $landrygender>><</if>>
-<<if $landry_penis_size>><<set $NPCName[$NPCNameList.indexOf("Landry")].penissize to $landry_penis_size>><</if>>
-
-<<if $whitneypronoun>><<set $NPCName[$NPCNameList.indexOf("Whitney")].pronoun to $whitneypronoun>><</if>>
-<<if $whitneygender>><<set $NPCName[$NPCNameList.indexOf("Whitney")].gender to $whitneygender>><</if>>
-<<if $whitney_penis_size>><<set $NPCName[$NPCNameList.indexOf("Whitney")].penissize to $whitney_penis_size>><</if>>
-
-<<if $averypronoun>><<set $NPCName[$NPCNameList.indexOf("Avery")].pronoun to $averypronoun>><</if>>
-<<if $averygender>><<set $NPCName[$NPCNameList.indexOf("Avery")].gender to $averygender>><</if>>
-<<if $avery_penis_size>><<set $NPCName[$NPCNameList.indexOf("Avery")].penissize to $avery_penis_size>><</if>>
-
-<<if $morganpronoun>><<set $NPCName[$NPCNameList.indexOf("Morgan")].pronoun to $morganpronoun>><</if>>
-<<if $morgangender>><<set $NPCName[$NPCNameList.indexOf("Morgan")].gender to $morgangender>><</if>>
-<<if $morgan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Morgan")].penissize to $morgan_penis_size>><</if>>
-
-<<if $kylarpronoun>><<set $NPCName[$NPCNameList.indexOf("Kylar")].pronoun to $kylarpronoun>><</if>>
-<<if $kylargender>><<set $NPCName[$NPCNameList.indexOf("Kylar")].gender to $kylargender>><</if>>
-<<if $kylar_penis_size>><<set $NPCName[$NPCNameList.indexOf("Kylar")].penissize to $kylar_penis_size>><</if>>
-
-<<if $gwylanpronoun>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].pronoun to $gwylanpronoun>><</if>>
-<<if $gwylangender>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].gender to $gwylangender>><</if>>
-<<if $gwylan_penis_size>><<set $NPCName[$NPCNameList.indexOf("Gwylan")].penissize to $gwylan_penis_size>><</if>>
-
-
-
-<<if $leightonpronoun>><<set $NPCName[$NPCNameList.indexOf("Leighton")].pronoun to $leightonpronoun>><</if>>
-<<if $leightongender>><<set $NPCName[$NPCNameList.indexOf("Leighton")].gender to $leightongender>><</if>>
-<<if $leighton_penis_size>><<set $NPCName[$NPCNameList.indexOf("Leighton")].penissize to $leighton_penis_size>><</if>>
-
-<<if $sirrispronoun>><<set $NPCName[$NPCNameList.indexOf("Sirris")].pronoun to $sirrispronoun>><</if>>
-<<if $sirrisgender>><<set $NPCName[$NPCNameList.indexOf("Sirris")].gender to $sirrisgender>><</if>>
-<<if $sirris_penis_size>><<set $NPCName[$NPCNameList.indexOf("Sirris")].penissize to $sirris_penis_size>><</if>>
-
-<<if $riverpronoun>><<set $NPCName[$NPCNameList.indexOf("River")].pronoun to $riverpronoun>><</if>>
-<<if $rivergender>><<set $NPCName[$NPCNameList.indexOf("River")].gender to $rivergender>><</if>>
-<<if $river_penis_size>><<set $NPCName[$NPCNameList.indexOf("River")].penissize to $river_penis_size>><</if>>
-
-<<if $dorenpronoun>><<set $NPCName[$NPCNameList.indexOf("Doren")].pronoun to $dorenpronoun>><</if>>
-<<if $dorengender>><<set $NPCName[$NPCNameList.indexOf("Doren")].gender to $dorengender>><</if>>
-<<if $doren_penis_size>><<set $NPCName[$NPCNameList.indexOf("Doren")].penissize to $doren_penis_size>><</if>>
-
-<<if $winterpronoun>><<set $NPCName[$NPCNameList.indexOf("Winter")].pronoun to $winterpronoun>><</if>>
-<<if $wintergender>><<set $NPCName[$NPCNameList.indexOf("Winter")].gender to $wintergender>><</if>>
-<<if $winter_penis_size>><<set $NPCName[$NPCNameList.indexOf("Winter")].penissize to $winter_penis_size>><</if>>
-
-<<if $masonpronoun>><<set $NPCName[$NPCNameList.indexOf("Mason")].pronoun to $masonpronoun>><</if>>
-<<if $masongender>><<set $NPCName[$NPCNameList.indexOf("Mason")].gender to $masongender>><</if>>
-<<if $mason_penis_size>><<set $NPCName[$NPCNameList.indexOf("Mason")].penissize to $mason_penis_size>><</if>>
+<label>
+	<<print '<<checkbox "$disableAutoSelect" false true '+($disableAutoSelect is true? "checked":"")+'>>'>>
+	Disables auto select.
+</label>
 
 <</nobr>><</widget>>
 
