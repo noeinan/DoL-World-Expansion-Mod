@@ -178,7 +178,7 @@ var importSettingsData = function(data){
 		if(S.general != undefined){
 			var listObject = settingsObjects("general");
 			var listKey = Object.keys(listObject);
-			var namedObjects = ["map"];
+			var namedObjects = ["map","skinColor"];
 						
 			for(var i = 0; i < listKey.length; i++){
 				if(namedObjects.contains(listKey[i]) && S.general[listKey[i]] != undefined){
@@ -203,7 +203,7 @@ var importSettingsData = function(data){
 }
 
 var validateValue = function(keys, value){
-	//console.log("validateValue",keys,value);
+	console.log("validateValue",keys,value);
 	var keyArray = Object.keys(keys);
 	var valid = false;
 	if(keyArray.length === 0){
@@ -242,6 +242,7 @@ window.exportSettings = function(data, type){
 	var S = {
 			general:{
 				map:{},
+				skinColor:{},
 			},
 			npc:{},
 		};
@@ -276,7 +277,7 @@ window.exportSettings = function(data, type){
 	
 	var listObject = settingsObjects("general");
 	var listKey = Object.keys(listObject);
-	var namedObjects = ["map"];
+	var namedObjects = ["map","skinColor"];
 	
 	for(var i = 0; i < listKey.length; i++){
 		if(namedObjects.contains(listKey[i]) && V[listKey[i]] != undefined){
@@ -366,8 +367,6 @@ var settingsObjects = function(type){
 				penissizemin: {min:-1,max:0,decimals:0},
 				images: {min:0,max:1,decimals:0},
 				silhouettedisable: {boolLetter:true},
-				tanImgEnabled: {boolLetter:true},
-				tanningEnabled: {bool:true},
 				numberify_enabled: {min:0,max:1,decimals:0},
 				timestyle: {strings:["military","ampm"]},
 				tipdisable: {boolLetter:true},
@@ -381,6 +380,10 @@ var settingsObjects = function(type){
 					movement: {bool:true},
 					top: {bool:true},
 					markers: {bool:true},
+				},
+				skinColor:{
+					tanImgEnabled: {boolLetter:true},
+					tanningEnabled: {bool:true},
 				}
 			};
 			break;
