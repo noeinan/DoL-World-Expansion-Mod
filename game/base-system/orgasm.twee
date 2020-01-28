@@ -166,7 +166,7 @@
 				<<if $penisstate is "penetrated">>
 					<<penileejacstat>>
 					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> womb.</span>
-					<<set $purity -= 1>><<internalejac>><<creampie "npc" "vagina">>
+					<<purity -1>><<internalejac>><<creampie "npc" "vagina">>
 				<<else>>
 					<span class="pink">You are overcome by sensation and ejaculate on <<his>> pussy.</span>
 				<</if>>
@@ -174,7 +174,7 @@
 				<<if $penisstate is "otheranus">>
 					<<penileejacstat>>
 					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> bowels.</span>
-					<<set $purity -= 1>><<internalejac>><<creampie "npc" "anus">>
+					<<purity -1>><<internalejac>><<creampie "npc" "anus">>
 				<<else>>
 					<span class="pink">You are overcome by sensation and ejaculate on <<his>> ass.</span>
 				<</if>>
@@ -182,7 +182,7 @@
 				<<if $penisstate is "othermouth">>
 					<<penileejacstat>>
 					<span class="pink">You are overcome by sensation and ejaculate into <<his>> mouth.</span>
-					<<set $purity -= 1>><<internalejac>><<creampie "npc" "mouth">>
+					<<purity -1>><<internalejac>><<creampie "npc" "mouth">>
 				<<else>>
 					<span class="pink">You are overcome by sensation and ejaculate on <<his>> face.</span>
 				<</if>>
@@ -190,7 +190,7 @@
 				<<if $penisstate isnot "tentacleentrance" and $penisstate isnot "tentacleimminent">>
 					<<penileejacstat>>
 					<span class="pink">You are overcome by sensation. The tentacle milks you of your semen.</span>
-					<<set $purity -= 1>><<internalejac>><<creampie "npc" "tentacle">>
+					<<purity -1>><<internalejac>><<creampie "npc" "tentacle">>
 				<<else>>
 					<span class="pink">You are overcome by sensation and ejaculate on the tentacle.</span>
 				<</if>>
@@ -218,23 +218,8 @@
 		<<set $masochism += 5>>
 	<</if>>
 	
-	<<if $masturbation_bowl is 1 and $semen_amount gte 1>>
-		<<if $semen_amount gte 30>>
-			<<set $masturbation_semen += 30>>
-		<<else>>
-			<<set $masturbation_semen += $semen_amount>>
-		<</if>>
-	<span class="gold">You've gathered $masturbation_semen ml of <<semenstop>></span>
-	<</if>>
-	<<if $semen_amount gte 30>>
-		<<set $semen_produced_stat += 30>>
-		<<set $semen_amount -= 30>>
-	<<else>>
-		<<set $semen_produced_stat += $semen_amount>>
-		<<set $semen_amount to 0>>
-	<</if>>
-	<<set $semen_amount -= 30>>
-	<<semenvolume 1>>
+	<<orgasmsemen>>/*Makes changes to semen values*/
+
 	
 	<<if $parasite.left_ear.name is "slime">>
 	<span class="blue">A soothing warmth fills you.</span> You almost forget the strife of the world. You can tell it's the slime in your left ear, rewarding you for having an orgasm.<<gcorruption>><<ltrauma>><<lstress>><<trauma -6>><<stress -6>><<set $corruption_slime += 1>>
@@ -382,6 +367,49 @@
 	<<else>>
 		<<set $orgasmcount -= 11>>
 	<</if>>
-	<<set $semen_amount += Math.floor(($semen_volume / 24))>>
+	<<if $arousal gte 8000>>
+		<<set $semen_amount += Math.floor(($semen_volume / 24) * 3)>>
+		<<if $semen_amount gte $semen_volume>>
+			<<semenvolume 2>>
+			<<set $semen_amount to $semen_volume>>
+		<</if>>
+	<<elseif $arousal gte 6000>>
+		<<set $semen_amount += Math.floor(($semen_volume / 24) * 2)>>
+		<<if $semen_amount gte $semen_volume>>
+			<<semenvolume 1>>
+			<<set $semen_amount to $semen_volume>>
+		<</if>>
+	<<else>>
+		<<set $semen_amount += Math.floor(($semen_volume / 24))>>
+	<</if>>
+	<<if $drugged gte 1>>
+		<<set $semen_amount += Math.floor(($semen_volume / 24))>>
+		<<if $semen_amount gte $semen_volume>>
+			<<semenvolume 1>>
+			<<set $semen_amount to $semen_volume>>
+		<</if>>
+	<</if>>
 	<<set $milk_amount += Math.floor(($milk_volume / 24))>>
+<</nobr>><</widget>>
+
+<<widget "orgasmsemen">><<nobr>>
+	<<set _temp_semen to 30>>
+	<<set _temp_semen += ($semen_volume / 30)>>
+	<<if $masturbation_bowl is 1 and $semen_amount gte 1>>
+		<<if $semen_amount gte _temp_semen>>
+			<<set $masturbation_semen += _temp_semen>>
+		<<else>>
+			<<set $masturbation_semen += $semen_amount>>
+		<</if>>
+	<span class="gold">You've gathered $masturbation_semen ml of <<semenstop>></span>
+	<</if>>
+	<<if $semen_amount gte _temp_semen>>
+		<<set $semen_produced_stat += _temp_semen>>
+		<<set $semen_amount -= _temp_semen>>
+	<<else>>
+		<<set $semen_produced_stat += $semen_amount>>
+		<<set $semen_amount to 0>>
+	<</if>>
+	
+	<<semenvolume 1>>
 <</nobr>><</widget>>

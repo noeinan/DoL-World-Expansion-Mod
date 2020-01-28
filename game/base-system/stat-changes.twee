@@ -63,7 +63,7 @@
 	<<if $args[0]>>
 		<<set $lactation_pressure += 1>>
 		<<if $lactating is 1>>
-			<<set $milk_volume += ($args[0] * 3)>>
+			<<set $milk_volume += ($args[0] * 2)>>
 			<<set $milk_volume = Math.clamp($milk_volume, 24, $milk_max)>>
 		<</if>>
 	<</if>>
@@ -182,8 +182,27 @@
 <<widget "awareness">><<nobr>>
 	<<if $args[0]>>
 		<<set $awareness += ($args[0])>>
+		<<for _e to 0; _e lt $clothing_number; _e++>>
+		<<activeclothes>>
+			<<if $worn[_active_clothes].type.includes("dark")>>
+				<<set $awareness += ($args[0])>>
+			<</if>>
+		<</for>>
 	<</if>>
 <</nobr>><</widget>>
+
+<<widget "purity">><<nobr>>
+	<<if $args[0]>>
+		<<set $purity += ($args[0])>>
+		<<for _e to 0; _e lt $clothing_number; _e++>>
+		<<activeclothes>>
+			<<if $worn[_active_clothes].type.includes("holy")>>
+				<<set $purity += ($args[0])>>
+			<</if>>
+		<</for>>
+	<</if>>
+<</nobr>><</widget>>
+
 
 <<widget "suspicion">><<nobr>>
 	<<if $args[0]>>
@@ -425,5 +444,32 @@
 <<widget "reb">><<nobr>>
 <<if $args[0]>>
 <<set $orphan_reb += ($args[0] * 2)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "grace">><<nobr>>/*Optional second variable is the rank of the NPC giving the order. Grace changes won't apply if the player's rank equals or exceeds the NPC's.*/
+<<if $args[0]>>
+	<<if $args[1] is "monk">>
+		<<if $temple_rank is "initiate">>
+			<<set $grace += $args[0]>>
+			<<set $grace = Math.clamp($grace, -100, 100)>>
+		<<else>>
+		<</if>>
+	<<elseif $args[1] is "priest">>
+		<<if $temple_rank is "initiate" or $temple_rank is "monk">>
+			<<set $grace += $args[0]>>
+			<<set $grace = Math.clamp($grace, -100, 100)>>
+		<<else>>
+		<</if>>
+	<<elseif $args[1] is "bishop">>
+		<<if $temple_rank is "initiate" or $temple_rank is "monk" or $temple_rank is "priest">>
+			<<set $grace += $args[0]>>
+			<<set $grace = Math.clamp($grace, -100, 100)>>
+		<<else>>
+		<</if>>
+	<<else>>
+		<<set $grace += $args[0]>>
+		<<set $grace = Math.clamp($grace, -100, 100)>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>

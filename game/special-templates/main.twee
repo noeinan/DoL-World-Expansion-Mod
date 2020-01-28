@@ -7,7 +7,12 @@
 <<link [[Street Follow Rape]]>><<set $molestationstart to 1>><</link>>
 <br>
 <<link [[Try to befriend it|StreetEx3]]>><<set $molestationstart to 1>><<set $phase to 1>><</link>>
-<<residentialex2>>
+<br>
+<br>
+<<streetrocks>>
+
+<<parasite nipples slime>>
+<<parasite clit urchin>>
 
 ::Test2 [nobr]
 <<set $NPCName[$NPCNameList.indexOf("Kylar")].state to "active">>
@@ -432,6 +437,106 @@ Insert text about being rescued.
 <</if>>
 
 
+:: Beast Gang [nobr]
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<beastNEWinit 3 wolf>>
+	<<set $rescue to 1>>/*optional*/
+<</if>>
+<<effects>>
+<<effectsman>>
+<br>
+<<beast $enemyno>>
+<br><br>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $alarm is 1 and $rescue is 1>>
+	<span id="next"><<link [[Next|Beast Gang End]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Beast Gang End]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Beast Gang End]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Beast Gang]]>><</link>></span><<nexttext>>
+<</if>>
+
+
+:: Beast Gang End [nobr]
+<<effects>>
+<<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $enemyno gte 3>>
+		The $beasttype recoils in pain and fear, but another is eager for a go.
+		<<set $enemyno -= 1>>
+		<br><br>
+		[[Next|Beast Gang]]
+	<<elseif $enemyno is 2>>
+		The $beasttype recoils in pain and fear, but the last is eager for a go.
+		<<set $enemyno -= 1>>
+		<br><br>
+		[[Next|Beast Gang]]
+	<<elseif $enemyno is 1>>
+		The $beasttype recoils in pain and fear.
+		<<set $enemyno -= 1>>
+		<br><br>
+		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $enemyno gte 3>>
+		Satisfied, the $beasttype moves and another takes its turn.
+		<<set $enemyno -= 1>>
+		<br><br>
+		[[Next|Beast Gang]]
+	<<elseif $enemyno is 2>>
+		Satisfied, the $beasttype moves and the last takes its turn.
+		<<set $enemyno -= 1>>
+		<br><br>
+		[[Next|Beast Gang]]
+	<<elseif $enemyno is 1>>
+		Satisfied, the $beasttype moves away from you.
+		<<set $enemyno -= 1>>
+		<br><br>
+		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $finish is 1>>
+	<<if $enemywounded is 1 and $enemyejaculated is 0>>
+		The $beasttype whimpers and flees.
+	<<elseif $enemywounded is 0 and $enemyejaculated is 1>>
+		Satisfied, the $beasttype leaves.
+	<<elseif $enemywounded gte 2 and $enemyejaculated is 0>>
+		Feeling that you're more trouble than you're worth, the beasts flee.
+	<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+		The beasts leave you spent and shivering.
+	<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+		The beasts leave you spent and shivering.
+	<</if>>
+	<br><br>
+	<<tearful>> you gather yourself.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<destinationeventend>>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<<set $rescued += 1>>
+	
+	You are rescued.
+	<br><br>
+	<<tearful>> you gather yourself.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<destinationeventend>>
+<</if>>
+
+
+
+
 :: Seduce [nobr]
 <<effects>>
 
@@ -704,10 +809,109 @@ You successfully pick the lock and enter the building.
 
 
 $NPCName[$NPCNameList.indexOf("Robin")].love
+<<npcincr Robin love 1>>
 
 <<for _i to 0; _i lt $NPCName.length; _i++>>
 
 <<set $antiquemoney += 40>><<if $antiqueforestdagger is undefined>><<set $antiqueforestdagger to "found">><</if>>
 
+
+
+:: Tentacles [nobr]
+<<effects>>
+
+<<if $molestationstart is 1>>
+<<set $molestationstart to 0>>
+<<set $combat to 1>>
+<<set $enemytype to "tentacles">>
+<<molested>>
+<<controlloss>>
+
+<<tentaclestart 8 15>>
+
+<</if>>
+
+<<statetentacles>>
+You count $tentacles.active tentacles surrounding you.
+
+<<effects>>
+<<effectstentacles>>
+<<tentacles>>
+<<actionstentacles>>
+
+
+<<if $tentacles.active lte ($tentacles.max / 2)>>
+<span id="next"><<link [[Next|Tentacles Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Tentacles]]>><</link>></span><<nexttext>>
+<</if>>
+
+
+:: Tentacles Finish [nobr]
+<<effects>>
+
+Description of escaping/being left alone by the tentacles.
+<br><br>
+
+<<tearful>> you escape.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Tentacles]]>><</link>>
+<br>
+
+
+/*How to destroy a cursed item, replacing "face" with the slot in question:*/
+<<set $worn.face.type.push("broken")>>
+<<faceruined>>
+
+:: Masturbation [nobr]
+
+<<effects>>
+<<if $masturbationstart is 1>>
+	<<set $masturbationstart to 0>>
+	<<set $masturbationstat += 1>>
+	<<masturbationstart>>
+<</if>>
+<<masturbationeffects>>
+<<masturbationactions>>
+<span id="next"><<link [[Continue|Masturbation]]>><</link>></span><<nexttext>>
+<br>
+<<link [[Stop|Masturbation Finish]]>><<set $finish to 1>><</link>>
+<br>
+
+
+:: Masturbation Finish [nobr]
+
+<<effects>>
+Optional text about finishing masturbating.
+<br><br>
+
+<<endmasturbation>>
+<<endcombat>>
+
+<<teaful>> you continue on your adventure.
+<br><br>
+
+<<link [[Next|Masturbation]]>><<clotheson>><</link>>
+<br>
+
+
+/*Splits text by NPC genitals and breastsize*/
+<<if $NPCList[0].penis isnot "none">>
+	<<if $NPCList[0].breastsize gte 3>>
+		They have a penis and reasonably sized breasts.
+	<<else>>
+		They have a penis and small/no breasts.
+	<</if>>
+<<else>>
+	<<if $NPCList[0].breastsize gte 3>>
+		They have no penis and reasonably sized breasts.
+	<<else>>
+		They have no penis and small/no breasts.
+	<</if>>
+<</if>>
 
 
