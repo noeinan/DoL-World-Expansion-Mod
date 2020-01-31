@@ -14,9 +14,9 @@ Config.saves.onLoad = function (save) {
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
     "debug": false,
-    "enableImages": true,
+    "enableImages": false,
     "enableLinkNumberify": true,
-    "version": "0.2.8.1",
+    "version": "0.2.8.2",
 }
 
 config.saves.autosave = "autosave";
