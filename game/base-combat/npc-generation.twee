@@ -370,10 +370,11 @@
 <</nobr>><</widget>>
 
 <<widget "npcattribute">><<nobr>>
-<!-- V2.4 Widget set NPC attributes. $arg[0] calls NPC number to be generated. NG-->
+<!-- V2.4 Widget set NPC attributes. $arg[0] calls NPC number (0 - 5) to be generated. NG-->
 <!-- For transgender, $NPCList.pronoun sets appearance, including breasts. NPCList.gender sets genitals, including pp -->
 <!-- Future work this should call addns args to set pronoun, gender, and size of NPC(0-18) where larger number is more robust. This would eliminate much of the NPC calls from above and push to code. -->
 <!-- Added thug Vulgar/Bruitish as NPC19, can only be called with $arg[2] -->
+<!-- Added strap-on functionality v2.8 -->
 
 <<nounderwearcheck>>
 
@@ -597,4 +598,36 @@
 	<</if>>
 <</if>>
 
+<!-- Sets females with strap-ons as adjustment-->
+<<if $NPCList[_n].gender is "f">>
+	<<if random(0, 99) lte $straponchance>>
+		<<npcstrapon _n>>
+	<</if>>
+<</if>>
+
 <</nobr>><</widget>>
+
+<<widget "npcstrapon">><<nobr>>
+<!-- NG Converts NPCs to strap-on -->
+<<switch $args[0]>>
+<<case 0 1 2 3 4 5>>
+	<<set _xx to $args[0]>>
+<<default>>
+	<span class="red">NPCSTRAPON Error: No NPC Identifier<br><br></span>
+<</switch>>
+
+<<set $NPCList[_n].penis to "clothed">>
+<<set $NPCList[_n].vagina to "none">>
+<<set $NPCList[_n].gender to "m">>
+
+<<switch random(1, 4)>>
+<<case 1 2 3>>
+		<<set $NPCList[_n].penisdesc to "large "+either("black","red","blue","pink","purple","fleshy")+" strap-on cock">>
+		<<set $NPCList[_n].penissize to 3>>
+<<default>>
+		<<set $NPCList[_n].penisdesc to "massive "+either("black","red","blue","pink","purple","fleshy")+" strap-on cock">>
+		<<set $NPCList[_n].penissize to 4>>
+<</switch>>
+
+<</nobr>><</widget>>
+
