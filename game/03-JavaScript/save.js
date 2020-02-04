@@ -149,12 +149,12 @@ var importSettingsData = function(data){
 	if(result != null && result != undefined){
 		//console.log("json",JSON.parse(result));
 		S = JSON.parse(result);
-		
+
 		if(V.passage === "Start" && S.starting != undefined){
 			var listObject = settingsObjects("starting");
 			var listKey = Object.keys(listObject);
 			var namedObjects = ["player","skinColor"];
-			
+
 			for(var i = 0; i < listKey.length; i++){
 				if(namedObjects.contains(listKey[i]) && S.starting[listKey[i]] != undefined){
 					var itemKey = Object.keys(listObject[listKey[i]]);
@@ -174,12 +174,12 @@ var importSettingsData = function(data){
 				}
 			}
 		}
-		
+
 		if(S.general != undefined){
 			var listObject = settingsObjects("general");
 			var listKey = Object.keys(listObject);
 			var namedObjects = ["map","skinColor"];
-						
+
 			for(var i = 0; i < listKey.length; i++){
 				if(namedObjects.contains(listKey[i]) && S.general[listKey[i]] != undefined){
 					var itemKey = Object.keys(listObject[listKey[i]]);
@@ -254,7 +254,7 @@ window.exportSettings = function(data, type){
 		var listObject = settingsObjects("starting");
 		var listKey = Object.keys(listObject);
 		var namedObjects = ["player","skinColor"];
-				
+
 		for(var i = 0; i < listKey.length; i++){
 			if(namedObjects.contains(listKey[i]) && V[listKey[i]] != undefined){
 				var itemKey = Object.keys(listObject[listKey[i]]);
@@ -274,11 +274,11 @@ window.exportSettings = function(data, type){
 			}
 		}
 	}
-	
+
 	var listObject = settingsObjects("general");
 	var listKey = Object.keys(listObject);
 	var namedObjects = ["map","skinColor"];
-	
+
 	for(var i = 0; i < listKey.length; i++){
 		if(namedObjects.contains(listKey[i]) && V[listKey[i]] != undefined){
 			var itemKey = Object.keys(listObject[listKey[i]]);
@@ -297,7 +297,7 @@ window.exportSettings = function(data, type){
 			}
 		}
 	}
-	
+
 	//console.log(S);
 	var result = JSON.stringify(S);
 	if(type === "text"){
