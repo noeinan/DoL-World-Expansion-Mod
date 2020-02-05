@@ -206,3 +206,23 @@ window.skinColor = function(percent, overwrite){
 	}
 	return result;
 }
+
+window.closeFeats = function(id){
+	var div1 = document.getElementById("feat-" + id);
+	var div2 = document.getElementById("closeFeat-" + id);
+	div1.style.display = "none";
+	div2.style.display = "none";
+}
+
+window.filterFeats = function(){
+	new Wikifier(null, '<<replace #featsList>><<featsList>><</replace>>');
+}
+
+window.getTimeNumber = function(t){
+	var time = new Date(t);
+	var result = time.getTime();
+	if(isNaN(result)){
+		return 9999999999999999;		
+	}
+	return result;
+}

@@ -23,6 +23,22 @@
 	<<unset $playergenderappearance>>
 <</if>>
 
+<<if $player.virginity is undefined>>
+	<<set $player.virginity to {anal:true,oral:true,penile:true,vaginal:true,temple:false}>>
+	<<if $analvirginity is 0>>
+		<<set $player.virginity.anal to false>>
+	<</if>>
+	<<if $oralvirginity is 0>>
+		<<set $player.virginity.oral to false>>
+	<</if>>
+	<<if $penilevirginity is 0>>
+		<<set $player.virginity.penile to false>>
+	<</if>>
+	<<if $vaginalvirginity is 0>>
+		<<set $player.virginity.vaginal to false>>
+	<</if>>
+<</if>>
+
 <<if $clothing_update is undefined>><<set $clothing_update to 1>>
 	<<clothinginit>>
 	<<givestartclothing>>
@@ -1031,10 +1047,6 @@
 	<<set $slimeSleepEvent to 0>>
 <</if>>
 
-<<if $cheatdisable is "f" and !$debug>>
-    <<set $locked to true>>
-<</if>>
-
 <<if $parasite.left_thigh.name is undefined>>
 <<removeparasite left_thigh>>
 <</if>>
@@ -1050,5 +1062,27 @@
 <<if $parasite.right_arm.name is undefined>>
 <<removeparasite right_arm>>
 <</if>>
+
+<<if $objectVersion.feats lt 1 or $objectVersion.feats is undefined>>
+	<<set $feats to {
+		"locked":false,
+		"soft":false,
+		"allSaves":{},
+		"currentSave":{},
+		"filter":"All"
+	}>>
+	<<set $objectVersion.feats to 1>>
+<</if>>
+
+<<if ($cheatdisable is "f" and !$debug) or $locked is true>>
+    <<unset $locked to true>>
+	<<set $feats.locked to true>>
+<</if>>
+
+<<if $gamemode is "soft" or $alluremod lt 1>>
+	<<set $feats.soft to true>>
+<</if>>
+
+<<updateFeats>>
 
 <</nobr>><</widget>>

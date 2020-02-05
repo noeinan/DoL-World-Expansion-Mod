@@ -1,0 +1,265 @@
+:: FeatsUI [widget]
+/*Overlay Menu*/
+<<widget "gameFeats">><<nobr>>
+<<updateFeats>>
+<div class="fixedClose">
+<<button Close>>
+	<<addclass "#customOverlay" "hidden">>
+	<<set $currentOverlay to null>>
+<</button>>
+<<button "Statistics">>
+	<<overlayReplace "statistics">>
+	<<set $currentOverlay to null>>
+<</button>>
+<br><br>
+</div>
+
+<<feats>>
+<</nobr>><</widget>>
+
+<<widget "startFeats">><<nobr>>
+<<updateFeats>>
+<div class="fixedClose">
+<<button Close>>
+	<<addclass "#customOverlay" "hidden">>
+	<<set $currentOverlay to null>>
+<</button>>
+<br><br>
+</div>
+
+<<feats>>
+<</nobr>><</widget>>
+
+<<widget "feats">><<nobr>>
+
+<h3>Feats</h3>
+
+Here you can earn VrelCoins from completing different tasks, each requiring you to meet the requirements in a single save. These will transfer between saves and allow optional bonuses when starting a new game. This will work even if cookies are cleared, however, you have to load your most recent save before starting a new game.
+<br><br>
+Playing on softmore or having the "The rate that events are triggered by allure" setting below 1 will prevent you from earning feats. Enabling cheats at any point will prevent you from earning feats permanantly in your current game. The other mentioned settings will also cause some feats to be locked permanantly for your current game.
+<<if $feats.locked is false>>
+	<<if $gamemode is "soft" or $alluremod lt 1>>
+		<span class="red">You are either on softmore or have the allure moddifier below 1.</span>
+		<<if $feats.soft is true>>
+			Some feats are locked in this current game.
+		<</if>>
+	<<elseif $debug is 1>>
+		<span class="red">Disabled by debug mode.</span>
+	<<else>>
+		<span class="green">You can earn feats.</span>
+	<</if>>
+<<else>>
+	<span class="red">You cant earn feats as you have enabled cheats at somepoint.</span>
+<</if>>
+<br><br>
+You currently have <<if $feats.allSaves.point is undefined>><<print $feats.allSaves.points>><<else>>0<</if>> VrelCoins.
+<br><br>
+<<set $feats.filter to "All">>
+Filter by: 
+<select name="Feat Types" onchange="SugarCube.State.variables.feats.filter = this.value; filterFeats()">
+	<option value="All" selected>All</option>
+	<option value="General">General</option>
+	<option value="Stats">Stats</option>
+	<option value="Social">Social</option>
+	<option value="Transformation">Transformation</option>
+	<option value="Special">Special</option>
+</select>
+<br><br>
+<div id="featsList">
+	<<featsList>>
+</div>
+
+<</nobr>><</widget>>
+
+<<widget "featsList">><<nobr>>
+<<featsData>>
+<<set _skip to []>>
+<<set _filter to "All">>
+<<for _feat range _feats>>
+	<<if (_skip.includes(_feat.series) and _feat.hint is undefined) or !_feat.filter.includes($feats.filter)>>
+		<<continue>>
+	<</if>>
+	<<if Object.keys($feats.currentSave).includes(_feat.title)>>
+		<<set _owned to 2>>
+	<<elseif Object.keys($feats.allSaves).includes(_feat.title)>>
+		<<set _owned to 1>>
+	<<else>>
+		<<set _owned to 0>>
+		<<if _feat.series isnot "">>
+			<<set _skip.push(_feat.series)>>
+		<</if>>
+	<</if>>
+	<div class="featList">
+		<div class="featImage">
+			<<if _owned gt 0>>
+				<<switch _feats[_feat.title].difficulty>>
+					<<case 1>><img src="img/ui/CopperCoin.png" class="featCoin">
+					<<case 2>><img src="img/ui/SilverCoin.png" class="featCoin">
+					<<case 3>><img src="img/ui/GoldCoin.png" class="featCoin">
+				<</switch>>
+			<<else>>
+				<span class="dot"></span>
+			<</if>>
+		</div>
+		<div class="featText">
+			<<if _owned gt 0 or _feat.hint is undefined>>
+				<span class="title"><<print _feats[_feat.title].title>></span>
+				<br>
+				<span class="text"><<print _feats[_feat.title].desc>></span>
+			<<else>>
+				<span class="title">?????</span>
+				<br>
+				<span class="text"><<print _feats[_feat.title].hint>></span>
+			<</if>>
+			<br>
+			<<if _owned is 2>>
+				<span class="text">Earned on: <<print new Date($feats.currentSave[_feat.title]).toLocaleString()>></span>
+			<<elseif _owned is 1>>
+				<span class="text">Originally Earned on: <<print new Date($feats.allSaves[_feat.title]).toLocaleString()>></span>
+			<</if>>
+		</div>
+	</div>
+<</for>>
+<div style="clear:both;"></div>
+<</nobr>><</widget>>
+
+
+
+/*Feat Popup*/
+<<widget "displayFeat">><<nobr>>
+<<silently>>
+	<<featsData>>
+	<<if _featsCount is undefined>>
+		<<set _featsCount to 0>>
+	<<else>>
+		<<set _featsCount++>>
+	<</if>>
+<</silently>>
+<div @id="'feat-' + _featsCount" class="feat">
+	<div class="featImage">
+		<span class="dot"></span>
+		<<switch _feats[$args[0]].difficulty>>
+			<<case 1>><img src="img/ui/CopperCoin.gif" class="featCoin">
+			<<case 2>><img src="img/ui/SilverCoin.gif" class="featCoin">
+			<<case 3>><img src="img/ui/GoldCoin.gif" class="featCoin">
+		<</switch>>
+	</div>
+	<div class="featText">
+		<span class="title"><<print _feats[$args[0]].title>></span>
+		<br>
+		<span class="text"><<print _feats[$args[0]].desc>></span>
+	</div>
+	<div @id="'closeFeat-' + _featsCount" class="closeFeat" @onclick="'closeFeats('+ _featsCount +')'"></div>
+</div>
+<</nobr>><</widget>>
+
+
+
+/*Feat Points Menu*/
+<<widget "featsPointsMenu">><<nobr>>
+<div id="featsStats">
+	<<featsPointsMenuStats>>
+</div>
+<<set _upgradeNames to Object.keys($featsBoosts.upgrades)>>
+<<for _i to 0; _i lt _upgradeNames.length; _i++>>
+	<div @id="'feats-' + _upgradeNames[_i]">
+		<<featsMenu _upgradeNames[_i]>>
+	</div>
+	<br>
+<</for>>
+
+<</nobr>><</widget>>
+
+<<widget "featsPointsMenuStats">><<nobr>>
+You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.pointsUsed>> VrelCoins</span> remaining. You have spent <<print $featsBoosts.pointsUsed>> so far.
+<br><br>
+<</nobr>><</widget>>
+
+<<widget "featsMenu">><<nobr>>
+<<set _name to $args[0]>>
+<<capture _name>>
+	<<set _details to $featsBoosts.upgradeDetails[_name]>>
+	<<set _count to _details.count>>
+	<<if _count gte _details.minCount -2>>
+		<<switch _name>>
+			<<case "money">>
+				<span class="gold">Starting Money:</span> £<<print $money/100 + $featsBoosts.upgrades.money * 50 * _count / _details.cost>>.00
+			<<case "grades">>
+				<span class="gold">Starting school grades:</span> +<<print $featsBoosts.upgrades.grades / _details.cost>>
+			<<case "purity" "impurity">>
+				<span class="gold">Daily _name boost:</span> +<<print $featsBoosts.upgrades.purity / _details.cost>>
+			<<case "newLife">>
+				<span class="gold">A new life, a new life:</span> +<<print $featsBoosts.upgrades.newLife / _details.cost>>
+			<<case "randomClothing">>
+				<span class="gold">Random clothing item:</span> +<<print 3 * $featsBoosts.upgrades.randomClothing / _details.cost>>
+			<<default>>
+				<span class="gold">Starting _name grade:</span> +<<print $featsBoosts.upgrades[_name] / _details.cost>>
+		<</switch>>
+		<br>
+		<span class="gold">VrelCoins per upgrade:</span> _details.cost
+		<br>
+		<span class="gold">Upgrades:</span> <<print $featsBoosts.upgrades[_name] / _details.cost>>/<<print _details.limit / _details.cost>>
+		<br>
+		<<if _name is "randomClothing">>
+			<span class="gold">Clothing Type: </span>
+			<label><<print '<<radiobutton "$featsBoosts.clothingGender" "Either" ' + ($featsBoosts.clothingGender is "Either" ? "checked" : "") + '>>'>>Either</label> | 
+			<label><<print '<<radiobutton "$featsBoosts.clothingGender" "Male" ' + ($featsBoosts.clothingGender is "Male" ? "checked" : "") + '>>'>>Male</label> | 
+			<label><<print '<<radiobutton "$featsBoosts.clothingGender" "Female" ' + ($featsBoosts.clothingGender is "Female" ? "checked" : "") + '>>'>>Female</label>
+			<br>
+		<</if>>
+		<<if _details.exclusive is "" or $featsBoosts.upgrades[_details.exclusive] is 0>>
+			<<featsPointsMenuButtons _name _details.cost _details.limit>>
+		<<else>>
+			Remove _details.exclusive upgrades to make use of this upgrade.
+		<</if>>
+	<<else>>
+		<span class="red"><<print $featsBoosts.missing[_name]>></span>
+	<</if>>
+<</capture>>
+<</nobr>><</widget>>
+
+<<widget "featsPointsMenuButtons">><<nobr>>
+<<set _type to $args[0]>>
+<<set _multi to $args[1]>>
+<<set _max to $args[2]>>
+<<capture _type _multi _max>>
+	<<if _multi is undefined>>
+		<<set _multi to 1>>
+	<</if>>
+	<<if _max is undefined>>
+		<<set _max to 20>>
+	<</if>>
+	<<if $featsBoosts.upgrades[_type] gte 5 * _multi>>
+		<<link "Decrease by 5">><<print "<<updateFeatsPointsMenu _type " + (-5 * _multi) +">>">><</link>> | 
+	<<else>>
+		Decrease by 5 |
+	<</if>>
+	<<if $featsBoosts.upgrades[_type] gte 1 * _multi>>
+	<<link Decrease>><<print "<<updateFeatsPointsMenu _type " + (-1 * _multi) +">>">><</link>> | 
+	<<else>>
+		Decrease |
+	<</if>>
+	<<if $featsBoosts.upgrades[_type] / _multi lt _max / _multi
+	and $feats.allSaves.points - $featsBoosts.pointsUsed gte 1 * _multi>>
+		<<link Increase>><<print "<<updateFeatsPointsMenu _type " + (1 * _multi) +">>">><</link>> |
+	<<else>>
+		Increase |
+	<</if>>
+	<<if $featsBoosts.upgrades[_type] / _multi lt (_max / _multi) - 4
+	and $feats.allSaves.points - $featsBoosts.pointsUsed gte 5 * _multi>>
+		<<link "Increase by 5">><<print "<<updateFeatsPointsMenu _type " + (5 * _multi) +">>">><</link>>
+	<<else>>
+		Increase by 5
+	<</if>>
+<</capture>>
+<</nobr>><</widget>>
+
+<<widget "updateFeatsPointsMenu">><<nobr>>
+<<if $feats.allSaves.points - $featsBoosts.pointsUsed gte $args[1] or $args[1] lt 0>>
+	<<set $featsBoosts.upgrades[$args[0]] += $args[1]>>
+	<<set $featsBoosts.pointsUsed += $args[1]>>
+<</if>>
+<<replace #featsPointsMenu>>
+	<<featsPointsMenu>>
+<</replace>>
+<</nobr>><</widget>>
