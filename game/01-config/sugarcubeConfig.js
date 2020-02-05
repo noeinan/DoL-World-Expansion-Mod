@@ -10,6 +10,10 @@ Config.saves.onLoad = function (save) {
 	window.versionUpdateCheck = true;
 }
 
+Config.saves.onSave = function (save) {
+	new Wikifier(null, '<<updateFeats>>');
+}
+
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
@@ -26,17 +30,6 @@ Config.saves.isAllowed = function () {
 		return false;
 	}
 	return true;
-};
-
-prehistory['version-update'] = function () {
-	if (Story.has('VersionUpdate')) {
-		try {
-			Wikifier.wikifyEval(Story.get('VersionUpdate').text);
-		}
-		catch (ex) {
-			Alert.error('VersionUpdate', ex.message);
-		}
-	}
 };
 
 importStyles("style.css")

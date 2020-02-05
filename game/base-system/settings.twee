@@ -50,11 +50,12 @@
 <<if $args[0]>>
 	<<set $currentSettings to $args[0]>>
 <</if>>
-<<if $passage isnot "Start" and $currentSettings is "characterSettings">>
+<<if $passage isnot "Start" and ($currentSettings is "characterSettings" or $currentSettings is "featSettings")>>
 	<<set $currentSettings to "gameSettings">>
 <</if>>
 <<switch $currentSettings>>
 	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>>
+	<<case "featSettings">><<replace #settingsDiv>><<featSettings>><</replace>>
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
 	<<case "npcSettings">><<replace #settingsDiv>><<npcSettings>><</replace>>
@@ -67,9 +68,12 @@
 <<widget "settings">><<nobr>>
 <div class="">
 	<<if $passage is "Start">>
-	<<button "Character">>
-		<<displaySettings "characterSettings">>
-	<</button>>
+		<<button "Character">>
+			<<displaySettings "characterSettings">>
+		<</button>>
+		<<button "Feat Boosts">>
+			<<displaySettings "featSettings">>
+		<</button>>
 	<</if>>
 	<<button "Game">>
 		<<displaySettings "gameSettings">>
@@ -274,6 +278,18 @@
 
 <</nobr>><</widget>>
 
+<<widget "featSettings">><<nobr>>
+	<span class="red">The Feat Boost's tab can only be accessed at the beginning.</span>
+	<br><br>
+	<<if $feats.allSaves.points is undefined or $feats.allSaves.points is 0>>
+		<span class="red">You have 0 VrelCoins to use on boosts at the moment. If this is incorrect, please load your last save and restart.</span>
+	<<else>>
+		<div id="featsPointsMenu">
+			<<featsPointsMenu>>
+		</div>
+	<</if>>
+<</nobr>><</widget>>
+
 <<widget "gameSettings">><<nobr>>
 	<span class="gold">Game Mode</span>
 	<br>
@@ -281,7 +297,7 @@
 	<br>
 	<label>Soft mode
 	<<print '<<radiobutton "$gamemode" "soft" ' + ($gamemode is "soft" ? "checked" : "") + '>>'>>
-	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future.</span></label>
+	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future. Leaving the settings with soft mode will prevent you from earning feats till it is set to normal mode. Doing this will permantely prevent some feats from being earned.</span></label>
 	<br>
 	<<if $intro is 1 or $gamemode is "hard">>
 		<label>Hard mode
@@ -332,6 +348,8 @@
 	<br><br>
 
 	<span class="gold">The rate that events are triggered by allure</span> - Default is 1.0.
+	<br>
+	<span class="red">Leaving the settings with this below 1 will prevent you from earning feats till it is increased. Doing this will permantely prevent some feats from being earned.</span>
 	<br>
 	<<numberslider "$alluremod" $alluremod 0.2 2 0.1>>
 	<br><br>
@@ -533,6 +551,8 @@
 
 	<span class="gold">Cheats menu</span> - Button shows in sidebar
 	<br>
+	<span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span>
+	<br>
 	<label>Enable cheats <<print '<<radiobutton "$cheatdisable" "f" ' + ($cheatdisable is "f" ? "checked" : "") + '>>'>></label> |
 	<label>Disable cheats <<print '<<radiobutton "$cheatdisable" "t" ' + ($cheatdisable is "t" ? "checked" : "") + '>>'>></label>
 	<br><br>
@@ -646,7 +666,10 @@ Click on "Copy Text Area" to copy the current contents for you. The button name 
 
 <<link [[Confirm|Bedroom]]>><<initnpcgender>>
 <<if $cheatdisable is "f" and !$debug>>
-    <<set $locked to true>>
+    <<set $feats.locked to true>>
+<</if>>
+<<if $gamemode is "soft" or $alluremod lt 1>>
+	<<set $feats.soft to true>>
 <</if>>
 <<tanned 0 true>><</link>>
 <br>
