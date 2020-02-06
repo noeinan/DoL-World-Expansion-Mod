@@ -17,10 +17,10 @@ Config.saves.onSave = function (save) {
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
-    "debug": false,
-    "enableImages": true,
-    "enableLinkNumberify": true,
-    "version": "0.2.8.3",
+	"debug": false,
+	"enableImages": true,
+	"enableLinkNumberify": true,
+	"version": "0.2.8.3",
 }
 
 config.saves.autosave = "autosave";
