@@ -226,3 +226,17 @@ window.getTimeNumber = function(t){
 	}
 	return result;
 }
+
+window.extendStats = function(){
+	SugarCube.State.variables.extendedStats = !SugarCube.State.variables.extendedStats;
+	var captionDiv = document.getElementById('storyCaptionDiv'),
+		statsDiv = document.getElementById('stats');
+	if(SugarCube.State.variables.extendedStats === true){
+		captionDiv.classList.add("storyCaptionDivExtended");
+		statsDiv.classList.add("statsExtended");
+	}else{
+		captionDiv.classList.remove("storyCaptionDivExtended");
+		statsDiv.classList.remove("statsExtended");
+	}
+	new Wikifier(null, '<<replace #stats>><<statsCaption>><</replace>>');
+}

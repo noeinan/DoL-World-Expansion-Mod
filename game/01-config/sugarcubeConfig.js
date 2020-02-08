@@ -41,3 +41,5 @@ importStyles("style.css")
 });
 
 console.log("Game Version:", StartConfig.version);
+
+l10nStrings.errorTitle = StartConfig.version + " Error";
