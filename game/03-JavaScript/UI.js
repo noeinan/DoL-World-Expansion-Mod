@@ -222,7 +222,7 @@ window.getTimeNumber = function(t){
 	var time = new Date(t);
 	var result = time.getTime();
 	if(isNaN(result)){
-		return 9999999999999999;		
+		return 9999999999999999;
 	}
 	return result;
 }
