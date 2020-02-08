@@ -1,4 +1,5 @@
 :: StoryCaption [nobr]
+<div id="storyCaptionDiv" @class="($extendedStats ? 'storyCaptionDivExtended' : '')">
 <<if $intro is 0>>
 <<weatherdisplay>>
 <<exposure>>
@@ -18,7 +19,7 @@
 
 <<if $endeventerror isnot undefined>>
 	<<if $debugdisable is "f">>
-<<if $images is 1>><img class="layer-sexmouth" src="img/ui/sym_awareness.png"><</if>><span class="red">Error: An NPC generated on the "$endeventerror" passage broke free. Please inform Vrelnir. <<if $cheatdisable is "f">>Disregard this if you've just used a cheat.<</if>></span>
+<<if $images is 1>><img class="layer-sexmouth" src="img/ui/sym_awareness.png"><</if>><span class="red"><<print StartConfig.version>> Error: An NPC generated on the "$endeventerror" passage broke free. Please inform Vrelnir. <<if $cheatdisable is "f">>Disregard this if you've just used a cheat.<</if>></span>
 <br><br>
 	<</if>>
 <<unset $endeventerror>>
@@ -49,30 +50,8 @@
 <br>
 <</if>>
 <<if $images is 1>>
-	<div id="stats">
-	<<if $dev is 1>>
-	<<set $money = Math.trunc($money)>>
-	£<<print ($money / 100)>>.
-	<<else>>
-	£<<print Math.trunc($money / 100)>>.<<if $money % 100 lte 9>>0<</if>><<print $money % 100>>
-	<</if>>
-	&nbsp;
-	<<effectstime>>
-	<img class="icon_ui" src="img/ui/icon_time.png">
-	<<if $timestyle is "ampm">>
-		<<if $hour gte 13>>
-		<<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm.
-		<<else>>
-		$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am.<</if>>
-		<</if>>
-	<<else>>
-	<<if $hour lt 10>>0<</if>>$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>>
-	<</if>>
-	&nbsp;
-	<img class="icon_ui" src="img/ui/icon_day.png">
-	<<switch $weekday>>
-	<<case 1>>Sun<<case 2>>Mon<<case 3>>Tue<<case 4>>Wed<<case 5>>Thu<<case 6>>Fri<<case 7>>Sat
-	<</switch>>
+	<div id="stats" @class="($extendedStats ? 'statsExtended' : '')" onclick="extendStats()">
+		<<statsCaption>>
 	</div>
 <<else>>
 	<<if $dev is 1>>
@@ -371,7 +350,7 @@ It is <<print ($hour).toString().padStart(2,"0")>>:<<print ($time - $hour * 60).
 <div id="customOverlay" class="customOverlay hidden">
 
 </div>
-
+</div>
 
 :: Widgets Clothing Caption [widget]
 <<widget "clothingcaption">><<nobr>>
@@ -696,6 +675,38 @@ Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.und
 
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "statsCaption">><<nobr>>
+	<<if $dev is 1>>
+		<<set $money = Math.trunc($money)>>
+		£<<print ($money / 100)>>.
+	<<else>>
+		£<<print Math.trunc($money / 100)>>.<<if $money % 100 lte 9>>0<</if>><<print $money % 100>>
+	<</if>>
+	&nbsp;
+	<<effectstime>>
+	<img class="icon_ui" src="img/ui/icon_time.png">
+	<<if $timestyle is "ampm">>
+		<<if $hour gte 13>>
+		<<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm.
+		<<else>>
+		$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am.<</if>>
+		<</if>>
+	<<else>>
+	<<if $hour lt 10>>0<</if>>$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>>
+	<</if>>
+	&nbsp;
+	<<if $extendedStats>>
+		<br>
+	<</if>>
+	<img class="icon_ui" src="img/ui/icon_day.png">
+	<<switch $weekday>>
+	<<case 1>>Sun<<case 2>>Mon<<case 3>>Tue<<case 4>>Wed<<case 5>>Thu<<case 6>>Fri<<case 7>>Sat
+	<</switch>>
+	<<if $extendedStats>>
+		$monthday<<monthday>> <<month true>>
+	<</if>>
 <</nobr>><</widget>>
 
 :: StoryRightSidebar
