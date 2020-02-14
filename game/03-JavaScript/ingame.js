@@ -40,3 +40,18 @@ window.mapMove = function(moveTo){
 		SugarCube.State.display(moveTo);
 	}
 }
+
+window.wikifier = function(widget, arg1, arg2, arg3){
+	if(arg3 !== undefined){
+	   new Wikifier(null, '<<'+widget+' '+ arg1 +' '+ arg2 +' '+ arg3 +'>>');
+	}
+	else if(arg2 !== undefined){
+		new Wikifier(null, '<<'+widget+' '+ arg1 +' '+ arg2 +'>>');
+	}
+	else if(arg1 !== undefined){
+		new Wikifier(null, '<<'+widget+' '+ arg1 +'>>');
+	}
+	else if(arg1 === undefined){
+		new Wikifier(null, '<<'+widget+'>>');
+	}
+}

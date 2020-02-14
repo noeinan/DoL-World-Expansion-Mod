@@ -75,6 +75,20 @@
 							<<if $outfit[$wear_outfit].colors[_equip[_i]][0] isnot $wardrobe[_equip[_i]][_j].colour or $outfit[$wear_outfit].colors[_equip[_i]][1] isnot $wardrobe[_equip[_i]][_j].accessory_colour>>
 								<<continue>>
 							<</if>>
+							<<if $wardrobe[_equip[_i]][_j].colour is "custom">>
+								<<if $wardrobe[_equip[_i]][_j].colourCustom isnot undefined or $outfit[$wear_outfit].colors[_equip[_i]+"custom"][0] isnot undefined>>
+									<<if $wardrobe[_equip[_i]][_j].colourCustom isnot $outfit[$wear_outfit].colors[_equip[_i]+"custom"][0]>>
+										<<continue>>
+									<</if>>
+								<</if>>
+							<</if>>
+							<<if $wardrobe[_equip[_i]][_j].accessory_colour is "custom">>
+								<<if $wardrobe[_equip[_i]][_j].colourCustom isnot undefined or $outfit[$wear_outfit].colors[_equip[_i]+"custom"][1] isnot undefined>>
+									<<if $wardrobe[_equip[_i]][_j].accessory_colourCustom isnot $outfit[$wear_outfit].colors[_equip[_i]+"custom"][1]>>
+										<<continue>>
+									<</if>>
+								<</if>>
+							<</if>>
 						<</if>>
 						<<if _corruptionEquipSkip.includes(_equip[_i])>>
 							<<if $corruption_slime gte 80 and $willpower lt 800 and $wardrobe[_equip[_i]][_j].reveal lt 500 and !$wardrobe[_equip[_i]][_j].type.includesAny("school", "event")>>
@@ -100,6 +114,20 @@
 									<<if $wardrobe[_equip[_i]][_j].set is $wardrobe[_lowerEquip][_k].set>>
 										<<if $wardrobe[_equip[_i]][_j].colour isnot $wardrobe[_lowerEquip][_k].colour or $wardrobe[_equip[_i]][_j].accessory_colour isnot $wardrobe[_lowerEquip][_k].accessory_colour>>
 											<<continue>>
+										<</if>>
+										<<if $wardrobe[_equip[_i]][_j].colour is "custom">>
+											<<if $wardrobe[_equip[_i]][_j].colourCustom isnot undefined or $wardrobe[_lowerEquip][_k].colourCustom isnot undefined>>
+												<<if $wardrobe[_equip[_i]][_j].colourCustom isnot $wardrobe[_lowerEquip][_k].colourCustom>>
+													<<continue>>
+												<</if>>
+											<</if>>
+										<</if>>
+										<<if $wardrobe[_equip[_i]][_j].accessory_colour is "custom">>
+											<<if $wardrobe[_equip[_i]][_j].colourCustom isnot undefined or $wardrobe[_lowerEquip][_k].accessory_colourCustom isnot undefined>>
+												<<if $wardrobe[_equip[_i]][_j].accessory_colourCustom isnot $wardrobe[_lowerEquip][_k].accessory_colourCustom>>
+													<<continue>>
+												<</if>>
+											<</if>>
 										<</if>>
 										<<set $worn[_lowerEquip] to clone($wardrobe[_lowerEquip][_k])>>
 										<<set $wardrobe[_lowerEquip].deleteAt(_k)>>
@@ -206,6 +234,9 @@
 		<<set _outfit[_equip[_i]] to $worn[_equip[_i]].name>>
 		<<if _outfit.colors isnot false>>
 			<<set _outfit.colors[_equip[_i]] to [clone($worn[_equip[_i]].colour),clone($worn[_equip[_i]].accessory_colour)]>>
+			<<if $worn[_equip[_i]].colour is "custom" or $worn[_equip[_i]].accessory_colour is "custom">>
+				<<run _outfit.colors[_equip[_i]+"custom"] to [clone($worn[_equip[_i]].colourCustom),clone($worn[_equip[_i]].accessory_colourCustom)]>>
+			<</if>>
 		<</if>>
 	<</for>>
 	<<set $wear_outfit to "none">>
