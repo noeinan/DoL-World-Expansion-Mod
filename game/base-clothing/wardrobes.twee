@@ -36,8 +36,30 @@ You remove your clothing.
 			<<if $wardrobe.upper[$wear_upper].one_piece is 1>>
 				<<for _d to 0; _d lt $wardrobe.lower.length; _d++>>
 					<<if $wardrobe.upper[$wear_upper].set is $wardrobe.lower[_d].set and $wardrobe.upper[$wear_upper].colour is $wardrobe.lower[_d].colour and $wardrobe.upper[$wear_upper].accessory_colour is $wardrobe.lower[_d].accessory_colour>>
-						<<set $wardrobe.lower.deleteAt(_d)>>
-						<<break>>
+						<<if $wardrobe.lower[_d].colour isnot "custom">>
+							<<set $wardrobe.lower.deleteAt(_d)>>
+							<<break>>
+						<<else>>
+							<<set _matched to 0>>
+							<<if $wardrobe.upper[$wear_upper].colourCustom isnot undefined and $wardrobe.lower[_d].colourCustom isnot undefined>>
+								<<if $wardrobe.upper[$wear_upper].colourCustom is $wardrobe.lower[_d].colourCustom>>
+									<<set _matched++>>
+								<</if>>
+							<<elseif $wardrobe.upper[$wear_upper].colourCustom is undefined and $wardrobe.lower[_d].colourCustom is undefined>>
+								<<set _matched++>>
+							<</if>>
+							<<if $wardrobe.upper[$wear_upper].accessory_colourCustom isnot undefined and $wardrobe.lower[_d].accessory_colourCustom isnot undefined>>
+								<<if $wardrobe.upper[$wear_upper].accessory_colourCustom is $wardrobe.lower[_d].accessory_colourCustom>>
+									<<set _matched++>>
+								<</if>>
+							<<elseif $wardrobe.upper[$wear_upper].accessory_colourCustom is undefined and $wardrobe.lower[_d].accessory_colourCustom is undefined>>
+								<<set _matched++>>
+							<</if>>
+							<<if _matched is 2>>
+								<<set $wardrobe.lower.deleteAt(_d)>>
+								<<break>>
+							<</if>>
+						<</if>>
 					<</if>>
 				<</for>>
 			<</if>>
@@ -63,10 +85,27 @@ You remove your clothing.
 				<<if $worn.upper.one_piece is 1>>
 					<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
 						<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour>>
-							<<set _strip_restrict to 1>>/*Stops lowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
-							<<lowerundress $wardrobe_location>>
-							<<set $worn.lower to clone($wardrobe.lower[_e])>>
-							<<set $wardrobe.lower.deleteAt(_e)>>
+							<<set _matched to 0>>
+							<<if $worn.upper.colourCustom isnot undefined and $wardrobe.lower[_e].colourCustom isnot undefined>>
+								<<if $worn.upper.colourCustom is $wardrobe.lower[_e].colourCustom>>
+									<<set _matched++>>
+								<</if>>
+							<<elseif $worn.upper.colourCustom is undefined and $wardrobe.lower[_e].colourCustom is undefined>>
+								<<set _matched++>>
+							<</if>>
+							<<if $worn.upper.accessory_colourCustom isnot undefined and $wardrobe.lower[_e].accessory_colourCustom isnot undefined>>
+								<<if $worn.upper.accessory_colourCustom is $wardrobe.lower[_e].accessory_colourCustom>>
+									<<set _matched++>>
+								<</if>>
+							<<elseif $worn.upper.accessory_colourCustom is undefined and $wardrobe.lower[_e].accessory_colourCustom is undefined>>
+								<<set _matched++>>
+							<</if>>
+							<<if _matched is 2 or $wardrobe.lower[_e].colour isnot "custom">>
+								<<set _strip_restrict to 1>>/*Stops lowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
+								<<lowerundress $wardrobe_location>>
+								<<set $worn.lower to clone($wardrobe.lower[_e])>>
+								<<set $wardrobe.lower.deleteAt(_e)>>
+							<</if>>
 						<</if>>
 					<</for>>
 				<</if>>
@@ -135,6 +174,30 @@ You remove your clothing.
 				<<if $wardrobe.under_upper[$wear_under_upper].set is $wardrobe.under_lower[_d].set and $wardrobe.under_upper[$wear_under_upper].colour is $wardrobe.under_lower[_d].colour and $wardrobe.under_upper[$wear_under_upper].accessory_colour is $wardrobe.under_lower[_d].accessory_colour>>
 					<<set $wardrobe.under_lower.deleteAt(_d)>>
 					<<break>>
+					<<if $wardrobe.under_lower[_d].colour isnot "custom">>
+						<<set $wardrobe.under_lower.deleteAt(_d)>>
+						<<break>>
+					<<else>>
+						<<set _matched to 0>>
+						<<if $wardrobe.under_upper[$wear_under_upper].colourCustom isnot undefined and $wardrobe.under_lower[_d].colourCustom isnot undefined>>
+							<<if $wardrobe.under_upper[$wear_under_upper].colourCustom is $wardrobe.under_lower[_d].colourCustom>>
+								<<set _matched++>>
+							<</if>>
+						<<elseif $wardrobe.under_upper[$wear_under_upper].colourCustom is undefined and $wardrobe.under_lower[_d].colourCustom is undefined>>
+							<<set _matched++>>
+						<</if>>
+						<<if $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom isnot undefined and $wardrobe.under_lower[_d].accessory_colourCustom isnot undefined>>
+							<<if $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom is $wardrobe.under_lower[_d].accessory_colourCustom>>
+								<<set _matched++>>
+							<</if>>
+						<<elseif $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom is undefined and $wardrobe.under_lower[_d].accessory_colourCustom is undefined>>
+							<<set _matched++>>
+						<</if>>
+						<<if _matched is 2>>
+							<<set $wardrobe.under_lower.deleteAt(_d)>>
+							<<break>>
+						<</if>>
+					<</if>>
 				<</if>>
 			<</for>>
 		<</if>>
@@ -158,10 +221,27 @@ You remove your clothing.
 			<<if $worn.under_upper.one_piece is 1>>
 				<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
 					<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour>>
-					<<set _strip_restrict to 1>>/*Stops underlowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
-					<<underlowerundress $wardrobe_location>>
-					<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
-					<<set $wardrobe.under_lower.deleteAt(_e)>>
+						<<set _matched to 0>>
+						<<if $worn.under_upper.colourCustom isnot undefined and $wardrobe.under_lower[_e].colourCustom isnot undefined>>
+							<<if $worn.under_upper.colourCustom is $wardrobe.under_lower[_e].colourCustom>>
+								<<set _matched++>>
+							<</if>>
+						<<elseif $worn.under_upper.colourCustom is undefined and $wardrobe.under_lower[_e].colourCustom is undefined>>
+							<<set _matched++>>
+						<</if>>
+						<<if $worn.under_upper.accessory_colourCustom isnot undefined and $wardrobe.under_lower[_e].accessory_colourCustom isnot undefined>>
+							<<if $worn.under_upper.accessory_colourCustom is $wardrobe.under_lower[_e].accessory_colourCustom>>
+								<<set _matched++>>
+							<</if>>
+						<<elseif $worn.under_upper.accessory_colourCustom is undefined and $wardrobe.under_lower[_e].accessory_colourCustom is undefined>>
+							<<set _matched++>>
+						<</if>>
+						<<if _matched is 2 or $wardrobe.under_lower[_e].colour isnot "custom">>
+							<<set _strip_restrict to 1>>/*Stops underlowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
+							<<underlowerundress $wardrobe_location>>
+							<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
+							<<set $wardrobe.under_lower.deleteAt(_e)>>
+						<</if>>
 					<</if>>
 				<</for>>
 			<</if>>
@@ -387,6 +467,59 @@ __Clothing sets__
 <hr>
 __Clothing__
 <br>
+
+
+<<if $newWardrobeStyle>>
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','head')">Head</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','face')">Face</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','neck')">Neck</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','upper')">Upper</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','lower')">Lower</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','under_upper')">Under Upper</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','under_lower')">Under Lower</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','legs')">Legs</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','feet')">Feet</a> |
+	<a onclick="wikifier('wardrobeNewOutfitDisplayer','NewOutfit')">New Outfit</a> |
+	<br>
+	<div id="wardrobeList">
+		<<if $lastWardrobeSlot is "NewOutfit">>
+			<<wardrobeNewOutfit>>
+		<<else>>
+			<<wardrobeList $lastWardrobeSlot>>
+		<</if>>
+	</div>
+<<else>>
+	<<oldWardrobeListDisplay>>
+<</if>>
+
+
+<<set $upperoff to 0>>
+<<set $loweroff to 0>>
+<<set $underloweroff to 0>>
+<<set $underupperoff to 0>>
+<<exposure>>
+
+<</nobr>><</widget>>
+
+
+<<widget "wardrobeNewOutfitDisplayer">><<nobr>>
+<<switch $args[0]>>
+	<<case "head">><<replace #wardrobeList>><<wardrobeList "head">><</replace>><<set $lastWardrobeSlot to "head">>
+	<<case "face">><<replace #wardrobeList>><<wardrobeList "face">><</replace>><<set $lastWardrobeSlot to "face">>
+	<<case "neck">><<replace #wardrobeList>><<wardrobeList "neck">><</replace>><<set $lastWardrobeSlot to "neck">>
+	<<case "upper">><<replace #wardrobeList>><<wardrobeList "upper">><</replace>><<set $lastWardrobeSlot to "upper">>
+	<<case "lower">><<replace #wardrobeList>><<wardrobeList "lower">><</replace>><<set $lastWardrobeSlot to "lower">>
+	<<case "under_upper">><<replace #wardrobeList>><<wardrobeList "under_upper">><</replace>><<set $lastWardrobeSlot to "under_upper">>
+	<<case "under_lower">><<replace #wardrobeList>><<wardrobeList "under_lower">><</replace>><<set $lastWardrobeSlot to "under_lower">>
+	<<case "legs">><<replace #wardrobeList>><<wardrobeList "legs">><</replace>><<set $lastWardrobeSlot to "legs">>
+	<<case "feet">><<replace #wardrobeList>><<wardrobeList "feet">><</replace>><<set $lastWardrobeSlot to "feet">>
+	<<case "NewOutfit">><<replace #wardrobeList>><<wardrobeNewOutfit>><</replace>><<set $lastWardrobeSlot to "NewOutfit">>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "wardrobeClothingOptions">><<nobr>>
+<br>
 <<if $wear_delete is undefined>><<set $wear_delete to 0>><</if>>
 <<if $wardrobeRepeat isnot true or ($wear_delete is 2 and $location isnot "home")>><<set $wear_delete to 0>><</if>>
 <label> Wear <<print '<<radiobutton "$wear_delete" 0 '+($wear_delete is 0 or $wardrobeRepeat is false ? "checked" : "")+'>>'>></label> |
@@ -401,247 +534,11 @@ __Clothing__
 <<else>>
 	<br><br>
 <</if>>
+<</nobr>><</widget>>
 
-<<set _wardrobe_list to "upper">>
-<div class="clothingBox">
-__Outfits__ <i>Outfits take up both a top and bottom slot</i>
+
+<<widget "wardrobeNewOutfit">><<nobr>>
 <br>
-<div>
-<ul>
-<<if $worn.upper.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_upper='strip';SugarCube.State.variables.wear_lower='strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<li><a onclick="SugarCube.State.variables.wear_upper='large_towel';SugarCube.State.display(SugarCube.State.variables.passage)">Towel</a></li>
-<<for _i to 0; _i lt $wardrobe.upper.length; _i++>>
-	<<if $wardrobe.upper[_i].one_piece is 1>>
-
-	<li><<clothingicon $wardrobe.upper[_i]>><<print '<a onclick="SugarCube.State.variables.wear_upper = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.upper[_i].name_cap + '</a>'>>
-		<<if $wardrobe.upper[_i].colour isnot 0>>
-		<<print '<span class="' + $wardrobe.upper[_i].colour + '">($wardrobe.upper[_i].colour)</span>'>>
-		<</if>>
-		<<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "upper">>
-<div class="clothingBox">
-__Tops__ <i>$wardrobe.upper.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.upper.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_upper = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<li><a onclick="SugarCube.State.variables.wear_upper = 'towel';SugarCube.State.display(SugarCube.State.variables.passage)">Towel</a></li>
-<<for _i to 0; _i lt $wardrobe.upper.length; _i++>>
-	<<if $wardrobe.upper[_i].one_piece isnot 1>>
-	<li><<clothingicon $wardrobe.upper[_i]>><<print '<a onclick="SugarCube.State.variables.wear_upper = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.upper[_i].name_cap + '</a>'>>
-		<<if $wardrobe.upper[_i].colour isnot 0>>
-			<<print '<span class="' + $wardrobe.upper[_i].colour + '">($wardrobe.upper[_i].colour)</span>'>>
-		<</if>>
-		<<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "lower">>
-<div class="clothingBox">
-__Bottoms__ <i>$wardrobe.lower.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.lower.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_lower = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<li><a onclick="SugarCube.State.variables.wear_lower = 'towel';SugarCube.State.display(SugarCube.State.variables.passage)">Towel</a></li>
-<<for _i to 0; _i lt $wardrobe.lower.length; _i++>>
-	<<if $wardrobe.lower[_i].one_piece isnot 1>>
-	<li><<clothingicon $wardrobe.lower[_i]>><<print '<a onclick="SugarCube.State.variables.wear_lower = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.lower[_i].name_cap + '</a>'>>
-		<<if $wardrobe.lower[_i].colour isnot 0>>
-		<<print '<span class="' + $wardrobe.lower[_i].colour + '">($wardrobe.lower[_i].colour)</span>'>>
-		<</if>><<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "under_upper">>
-<div class="clothingBox">
-__Under outfits__ <i>Outfits take up both a top and bottom slot</i>
-<div>
-<ul>
-<<if $worn.under_upper.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_under_upper = 'strip'; SugarCube.State.variables.wear_under_lower = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.under_upper.length; _i++>>
-	<<if $wardrobe.under_upper[_i].one_piece is 1>>
-	<li><<clothingicon $wardrobe.under_upper[_i]>><<print '<a onclick="SugarCube.State.variables.wear_under_upper = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.under_upper[_i].name_cap + '</a>'>>
-		<<if $wardrobe.under_upper[_i].colour isnot 0>>
-		<<print '<span class="' + $wardrobe.under_upper[_i].colour + '">($wardrobe.under_upper[_i].colour)</span>'>>
-		<</if>>
-		<<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "under_upper">>
-<div class="clothingBox">
-__Under tops__ <i>$wardrobe.under_upper.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.under_upper.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_under_upper = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.under_upper.length; _i++>>
-	<<if $wardrobe.under_upper[_i].one_piece isnot 1>>
-	<li><<clothingicon $wardrobe.under_upper[_i]>><<print '<a onclick="SugarCube.State.variables.wear_under_upper = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.under_upper[_i].name_cap + '</a>'>>
-		<<if $wardrobe.under_upper[_i].colour isnot 0>>
-		<<print '<span class="' + $wardrobe.under_upper[_i].colour + '">($wardrobe.under_upper[_i].colour)</span>'>>
-		<</if>>
-		<<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "under_lower">>
-<div class="clothingBox">
-__Under bottoms__ <i>$wardrobe.under_lower.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.under_lower.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_under_lower = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.under_lower.length; _i++>>
-
-	<<if $wardrobe.under_lower[_i].one_piece isnot 1>>
-	<li><<clothingicon $wardrobe.under_lower[_i]>><<print '<a onclick="SugarCube.State.variables.wear_under_lower = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.under_lower[_i].name_cap + '</a>'>>
-		<<if $wardrobe.under_lower[_i].colour isnot 0>>
-		<<print '<span class="' + $wardrobe.under_lower[_i].colour + '">($wardrobe.under_lower[_i].colour)</span>'>>
-		<</if>>
-		<<wardrobeintegrity _wardrobe_list>>
-	</li>
-	<</if>>
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "head">>
-<div class="clothingBox">
-__Head__ <i>$wardrobe.head.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.head.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_head = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.head.length; _i++>>
-	<li><<clothingicon $wardrobe.head[_i]>><<print '<a onclick="SugarCube.State.variables.wear_head = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.head[_i].name_cap + '</a>'>>
-	<<if $wardrobe.head[_i].colour isnot 0>>
-	<<print '<span class="' + $wardrobe.head[_i].colour + '">($wardrobe.head[_i].colour)</span>'>>
-	<<wardrobeintegrity _wardrobe_list>>
-	<</if>></li>
-
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "face">>
-<div class="clothingBox">
-__Face__ <i>$wardrobe.face.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.face.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_face = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.face.length; _i++>>
-
-	<li><<clothingicon $wardrobe.face[_i]>><<print '<a onclick="SugarCube.State.variables.wear_face = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.face[_i].name_cap + '</a>'>>
-	<<if $wardrobe.face[_i].colour isnot 0>>
-	<<print '<span class="' + $wardrobe.face[_i].colour + '">($wardrobe.face[_i].colour)</span>'>>
-	<</if>>
-	<<wardrobeintegrity _wardrobe_list>>
-	</li>
-
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "neck">>
-<div class="clothingBox">
-__Neck__ <i>$wardrobe.neck.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.neck.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_neck = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.neck.length; _i++>>
-
-	<li><<clothingicon $wardrobe.neck[_i]>><<print '<a onclick="SugarCube.State.variables.wear_neck = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.neck[_i].name_cap + '</a>'>>
-	<<if $wardrobe.neck[_i].colour isnot 0>>
-	<<print '<span class="' + $wardrobe.neck[_i].colour + '">($wardrobe.neck[_i].colour)</span>'>>
-	<</if>>
-	<<wardrobeintegrity _wardrobe_list>>
-	</li>
-
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "legs">>
-<div class="clothingBox">
-__Legs__ <i>$wardrobe.legs.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.legs.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_legs = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.legs.length; _i++>>
-
-	<li><<clothingicon $wardrobe.legs[_i]>><<print '<a onclick="SugarCube.State.variables.wear_legs = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.legs[_i].name_cap + '</a>'>>
-	<<if $wardrobe.legs[_i].colour isnot 0>>
-	<<print '<span class="' + $wardrobe.legs[_i].colour + '">($wardrobe.legs[_i].colour)</span>'>>
-	<</if>>
-	<<wardrobeintegrity _wardrobe_list>>
-	</li>
-
-<</for>>
-</ul>
-</div></div>
-<<set _wardrobe_list to "feet">>
-<div class="clothingBox">
-__Feet__ <i>$wardrobe.feet.length / $wardrobe.space</i>
-<br><br>
-<div>
-<ul>
-<<if $worn.feet.name isnot "naked">>
-<li><a onclick="SugarCube.State.variables.wear_feet = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)">Strip</a></li>
-<</if>>
-<<for _i to 0; _i lt $wardrobe.feet.length; _i++>>
-	<li><<clothingicon $wardrobe.feet[_i]>><<print '<a onclick="SugarCube.State.variables.wear_feet = ' + _i + ';SugarCube.State.display(SugarCube.State.variables.passage)">' + $wardrobe.feet[_i].name_cap + '</a>'>>
-	<<if $wardrobe.feet[_i].colour isnot 0>>
-	<<print '<span class="' + $wardrobe.feet[_i].colour + '">($wardrobe.feet[_i].colour)</span>'>>
-	<</if>>
-	<<wardrobeintegrity _wardrobe_list>>
-	</li>
-
-<</for>>
-</ul>
-</div></div>
-<div style="clear:both;"></div>
-<br>
-
-
-<br>
-
-
-
-
 Add new set:
 <br>
 Name: <input id="outfitName" type="text" value="Custom" onfocus="SugarCube.State.variables.tempDisable = true;">
@@ -680,35 +577,19 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 
 	<<if $saveColor is true>>
-		<<set _colors to {
-			upper: [clone($worn.upper.colour),clone($worn.upper.accessory_colour)],
-			lower: [clone($worn.lower.colour),clone($worn.lower.accessory_colour)],
-			under_upper: [clone($worn.under_upper.colour),clone($worn.under_upper.accessory_colour)],
-			under_lower: [clone($worn.under_lower.colour),clone($worn.under_lower.accessory_colour)],
-			head: [clone($worn.head.colour),clone($worn.head.accessory_colour)],
-			face: [clone($worn.face.colour),clone($worn.face.accessory_colour)],
-			neck: [clone($worn.neck.colour),clone($worn.neck.accessory_colour)],
-			legs: [clone($worn.legs.colour),clone($worn.legs.accessory_colour)],
-			feet: [clone($worn.feet.colour),clone($worn.feet.accessory_colour)]
-		}>>
+		<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+		<<set _colors to {}>>
+		<<for _i to 0; _i lt _equip.length; _i++>>
+			<<set _colors[_equip[_i]] to [clone($worn[_equip[_i]].colour),clone($worn[_equip[_i]].accessory_colour)]>>
+			<<if $worn[_equip[_i]].colour is "custom" or $worn[_equip[_i]].accessory_colour is "custom">>
+				<<run _colors[_equip[_i]+"custom"] to [clone($worn[_equip[_i]].colourCustom),clone($worn[_equip[_i]].accessory_colourCustom)]>>
+			<</if>>
+		<</for>>
 		<<set $outfit.last().colors to clone(_colors)>>
 	<<else>>
 		<<set $outfit.last().colors to false>>
 	<</if>>
 <</link>>
-
-
-
-<br><br>
-
-
-
-<<set $upperoff to 0>>
-<<set $loweroff to 0>>
-<<set $underloweroff to 0>>
-<<set $underupperoff to 0>>
-<<exposure>>
-
 <</nobr>><</widget>>
 
 <<widget "wardrobeintegrity">><<nobr>>
@@ -753,6 +634,279 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 <</for>>
 
+<</nobr>><</widget>>
+
+
+<<widget "wardrobeList">><<nobr>>
+<<wardrobeClothingOptions>>
+<<set _wardrobe_list to $args[0]>>
+<<set _errorPrevent to false>>
+<<switch _wardrobe_list>>
+	<<case "head">><<set _wear to "wear_head">>
+	<<case "face">><<set _wear to "wear_face">>
+	<<case "neck">><<set _wear to "wear_neck">>
+	<<case "upper">><<set _wear to "wear_upper">>
+	<<case "lower">><<set _wear to "wear_lower">>
+	<<case "under_upper">><<set _wear to "wear_under_upper">>
+	<<case "under_lower">><<set _wear to "wear_under_lower">>
+	<<case "legs">><<set _wear to "wear_legs">>
+	<<case "feet">><<set _wear to "wear_feet">>
+	<<default>><<set _errorPrevent to true>>
+<</switch>>
+<<set _outfitTypes to ["upper","lower","under_upper","under_lower"]>>
+<<set _loweroutfitCheck to ["lower","under_lower"]>>
+<<if _errorPrevent isnot true>>
+	__<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$wardrobe[_wardrobe_list].length / $wardrobe.space</i>
+	<br>
+	Order by: 
+	/*Undefined error for unknown reason*/
+	/*<a @onclick="`wikifier('wardrobeListReorder', '`+ $lastWardrobeSlot + `', 'name');`">Name</a> |*/
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name');">Name</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color');">Colour</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd');">Lewd</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity');">Integrity</a> |
+	<<if _outfitTypes.includes(_wardrobe_list)>>
+		<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit');">Outfit Status</a> |
+	<</if>>
+	<br>
+	Inverse Order by: 
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name', true);">Name</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color', true);">Colour</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd', true);">Lewd</a> |
+	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity', true);">Integrity</a> |
+	<<if _outfitTypes.includes(_wardrobe_list)>>
+		<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit', true);">Outfit Status</a> |
+	<</if>>
+	<br><br>
+
+	<<if $worn[_wardrobe_list].name isnot "naked">>
+		<div class="wardrobeItem"><a @onclick="`SugarCube.State.variables.`+_wear+` = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)`">Strip</a></div>
+	<</if>>
+	<<if _wardrobe_list is "upper">>
+		<div class="wardrobeItem"><a onclick="SugarCube.State.variables.wear_upper='large_towel';SugarCube.State.display(SugarCube.State.variables.passage)">Large Towel</a></div>
+	<</if>>
+	<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
+		<div class="wardrobeItem"><a @onclick="`SugarCube.State.variables.`+_wear+` = 'towel';SugarCube.State.display(SugarCube.State.variables.passage)`">Towel</a></div>
+	<</if>>
+
+	<<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
+		<<set _item to $wardrobe[_wardrobe_list][_i]>>
+		<<if _loweroutfitCheck.includes(_wardrobe_list)>>
+			<<if _item.one_piece is 1>>
+				<<continue>>
+			<</if>>
+		<</if>>
+		<div class="wardrobeItem">
+		<<clothingicon _item>><a @onclick="`SugarCube.State.variables.`+_wear+` = `+ _i +`;SugarCube.State.display(SugarCube.State.variables.passage)`">_item.name_cap</a>
+		<<if _item.gender is "m">>
+			| <span class="blue">♂</span> |
+		<<elseif _item.gender is "f">>
+			| <span class="pink">♀</span> |
+		<<else>>
+			|
+		<</if>>
+		<<if _item.colour isnot 0>>
+			<span @class="$wardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
+		<</if>>
+		<<if _outfitTypes.includes(_wardrobe_list)>>
+			<<if _item.one_piece is 1>>
+				<span class="gold">(Outfit)</span>
+			<<elseif _item.one_piece is "broken">>
+				<span class="red">(Broken)</span>
+			<</if>>
+		<</if>>
+		<<wardrobeintegrity _wardrobe_list>> |
+		<<reveal _item.reveal>>
+		</div>
+	<</for>>
+	<div style="clear:both;"></div>
+<<else>>
+	An error occured, please report and error about 'widget "wardrobeList"'.
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "oldWardrobeListDisplay">><<nobr>>
+<<wardrobeClothingOptions>>
+<<oldWardrobeList "upper" "outfits">>
+<<oldWardrobeList "upper" "non-outfits">>
+<<oldWardrobeList "lower">>
+<<oldWardrobeList "under_upper" "outfits">>
+<<oldWardrobeList "under_upper" "non-outfits">>
+<<oldWardrobeList "under_lower">>
+<<oldWardrobeList "head">>
+<<oldWardrobeList "face">>
+<<oldWardrobeList "neck">>
+<<oldWardrobeList "legs">>
+<<oldWardrobeList "feet">>
+<div style="clear:both;"></div>
+<<wardrobeNewOutfit>>
+<</nobr>><</widget>>
+
+<<widget "oldWardrobeList">><<nobr>>
+
+<<set _wardrobe_list to $args[0]>>
+<<set _showType to $args[1]>>
+<<switch _wardrobe_list>>
+	<<case "head">><<set _wear to "wear_head">>
+	<<case "face">><<set _wear to "wear_face">>
+	<<case "neck">><<set _wear to "wear_neck">>
+	<<case "upper">><<set _wear to "wear_upper">>
+	<<case "lower">><<set _wear to "wear_lower">>
+	<<case "under_upper">><<set _wear to "wear_under_upper">>
+	<<case "under_lower">><<set _wear to "wear_under_lower">>
+	<<case "legs">><<set _wear to "wear_legs">>
+	<<case "feet">><<set _wear to "wear_feet">>
+<</switch>>
+<<set _outfitTypes to ["upper","lower","under_upper","under_lower"]>>
+<<set _loweroutfitCheck to ["lower","under_lower"]>>
+
+<div class="clothingBox">
+__<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$wardrobe[_wardrobe_list].length / $wardrobe.space</i>
+<br><br>
+<div>
+<ul>
+<<if $worn[_wardrobe_list].name isnot "naked">>
+	<li><a @onclick="`SugarCube.State.variables.`+_wear+` = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)`">Strip</a></li>
+<</if>>
+<<if _wardrobe_list is "upper">>
+	<li><a onclick="SugarCube.State.variables.wear_upper='large_towel';SugarCube.State.display(SugarCube.State.variables.passage)">Large Towel</a></li>
+<</if>>
+<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
+	<li><a @onclick="`SugarCube.State.variables.`+_wear+` = 'towel';SugarCube.State.display(SugarCube.State.variables.passage)`">Towel</a></li>
+<</if>>
+<<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
+	<<set _item to $wardrobe[_wardrobe_list][_i]>>
+	<<if _loweroutfitCheck.includes(_wardrobe_list)>>
+		<<if _item.one_piece is 1>>
+			<<continue>>
+		<</if>>
+	<</if>>
+	<<if _outfitTypes.includes(_wardrobe_list)>>
+		<<if (_item.one_piece is 1 and _showType is "non-outfits") or (_item.one_piece isnot 1 and _showType is "outfits")>>
+			<<continue>>
+		<</if>>
+	<</if>>
+	<li>/*<<clothingicon _item>>*/<a @onclick="`SugarCube.State.variables.`+_wear+` = `+ _i +`;SugarCube.State.display(SugarCube.State.variables.passage)`">_item.name_cap</a>
+	<<if $wardrobe[_wardrobe_list][_i].colour isnot 0>>
+		<span @class="$wardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
+	<</if>>
+	<<wardrobeintegrity _wardrobe_list>>
+	</li>
+<</for>>
+</ul>
+</div></div>
+
+<</nobr>><</widget>>
+
+<<widget "wardrobeListReorder">><<nobr>>
+<<if $args[0] and $args[1]>>
+	<<set _slot to $args[0]>>
+	<<set _orderType to $args[1]>>
+	<<set _descending to $args[2]>>
+	
+	<<set _wardrobeItems to clone($wardrobe[_slot])>>
+	<<set _newWardrobeItems to []>>
+	<<switch _orderType>>
+	<<case "name">>
+		<<set _itemNames to []>>
+		<<for _i to 0; _i lt _wardrobeItems.length; _i++>>
+			<<run _itemNames.pushUnique(_wardrobeItems[_i].name)>>
+		<</for>>
+		<<if _descending>>
+			<<set _sortedItemNames to _itemNames.sort(function(a, b){return b.localeCompare(a)})>>
+		<<else>>
+			<<set _sortedItemNames to _itemNames.sort()>>
+		<</if>>
+		
+		<<for _i to 0; _i lt _sortedItemNames.length; _i++>>
+			<<for _j to 0; _j lt _wardrobeItems.length; _j++>>
+				<<if _wardrobeItems[_j].name is _sortedItemNames[_i]>>
+					<<run _newWardrobeItems.push(clone(_wardrobeItems[_j]))>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<<case "color">>
+		<<set _itemColors to []>>
+		<<for _i to 0; _i lt _wardrobeItems.length; _i++>>
+			<<run _itemColors.pushUnique(_wardrobeItems[_i].colour)>>
+		<</for>>
+		<<if _descending>>
+			<<set _sortedItemColors to _itemColors.sort(function(a, b){
+				if(a === 0){
+					return 0;
+				}
+				if(b === 0){
+					return 0;
+				}
+				return b.localeCompare(a);
+			})>>
+		<<else>>
+			<<set _sortedItemColors to _itemColors.sort()>>
+		<</if>>
+		
+		<<for _i to 0; _i lt _sortedItemColors.length; _i++>>
+			<<for _j to 0; _j lt _wardrobeItems.length; _j++>>
+				<<if _wardrobeItems[_j].colour is _sortedItemColors[_i]>>
+					<<run _newWardrobeItems.push(clone(_wardrobeItems[_j]))>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<<case "integrity">>
+		<<set _itemIntegrity to []>>
+		<<for _i to 0; _i lt _wardrobeItems.length; _i++>>
+			<<run _itemIntegrity.pushUnique((_wardrobeItems[_i].integrity / _wardrobeItems[_i].integrity_max))>>
+		<</for>>
+		<<if _descending>>
+			<<set _sortedItemIntegrity to _itemIntegrity.sort()>>
+		<<else>>
+			<<set _sortedItemIntegrity to _itemIntegrity.sort(function(a, b){return b-a})>>
+		<</if>>
+		
+		<<for _i to 0; _i lt _sortedItemIntegrity.length; _i++>>
+			<<for _j to 0; _j lt _wardrobeItems.length; _j++>>
+				<<if (_wardrobeItems[_j].integrity / _wardrobeItems[_j].integrity_max) is _sortedItemIntegrity[_i]>>
+					<<run _newWardrobeItems.push(clone(_wardrobeItems[_j]))>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<<case "outfit">>
+		<<if _descending>>
+			<<set _status to ["broken",0,1]>>
+		<<else>>
+			<<set _status to [1,0,"broken"]>>
+		<</if>>
+		<<for _i to 0; _i lt _status.length; _i++>>
+			<<for _j to 0; _j lt _wardrobeItems.length; _j++>>
+				<<if _wardrobeItems[_j].one_piece is _status[_i]>>
+					<<run _newWardrobeItems.push(clone(_wardrobeItems[_j]))>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<<case "lewd">>
+		<<set _itemReveal to []>>
+		<<for _i to 0; _i lt _wardrobeItems.length; _i++>>
+			<<run _itemReveal.pushUnique(_wardrobeItems[_i].reveal)>>
+		<</for>>
+		<<if _descending>>
+			<<set _sortedItemReveal to _itemReveal.sort()>>
+		<<else>>
+			<<set _sortedItemReveal to _itemReveal.sort(function(a, b){return b-a})>>
+		<</if>>
+		<<for _i to 0; _i lt _sortedItemReveal.length; _i++>>
+			<<for _j to 0; _j lt _wardrobeItems.length; _j++>>
+				<<if _wardrobeItems[_j].reveal is _sortedItemReveal[_i]>>
+					<<run _newWardrobeItems.push(clone(_wardrobeItems[_j]))>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<</switch>>
+	
+	<<if _newWardrobeItems isnot []>>
+		<<set $wardrobe[_slot] to clone(_newWardrobeItems)>>
+	<</if>>
+	<<replace #wardrobeList>><<wardrobeList $lastWardrobeSlot>><</replace>>
+<</if>>
 <</nobr>><</widget>>
 
 :: Wardrobe [nobr]
