@@ -219,7 +219,20 @@
 		<<set $hunger += $pass>><<set $thirst += $pass>><<set $hygiene += $pass>><<set $tiredness += $pass>>
 	<</if>>
 	<<set $time += $pass>> <<set $minute += $pass>>
-	<<set $arousal -= $pass*10>><<arousalpass>>
+	<<if $background is "lustful">>
+		<<set _arousalMult to 0.2 * (12 - Math.floor($purity / 80)) + 1>>
+		<<if $purity lte 50>>
+			<<set _arousalMult++>>
+			<<set _arousalmax to 10000>>
+		<<else>>
+			<<set _arousalmax to 9000>>
+		<</if>>
+		<<if $arousal lte _arousalmax>>
+			<<set $arousal += _arousalMult * $pass>><<arousalpass>>
+		<</if>>
+	<<else>>
+		<<set $arousal -= $pass*10>><<arousalpass>>
+	<</if>>
 	<<if $daystate is "day" and $weather is "clear" and $outside is 1>>
 		<<tanned $pass / 10>>
 	<</if>>
