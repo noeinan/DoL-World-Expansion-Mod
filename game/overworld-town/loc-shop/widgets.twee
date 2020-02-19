@@ -42,19 +42,25 @@ Third argument - item index*/
 	<</if>>
 	<<updateOwned "upper">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-			<<uppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-			<<uppersend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-			<<uppersend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-			<<uppersend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+				<<uppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+				<<uppersend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+				<<uppersend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+				<<uppersend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -108,11 +114,18 @@ Third argument - item index*/
 			<</for>>
 			<br><br>
 		<</if>>
-		<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0 or $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
-
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "upper" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "upper" $clothes.upper[$clothes_choice].name true>>
 		<<set _cost to clone($clothes.upper[$clothes_choice].cost)>>
 		<<if $wardrobe.upper.length gte $wardrobe.space>>
 			<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span>
@@ -135,8 +148,12 @@ Third argument - item index*/
 				<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 				<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.upper[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 			<span class="pink">You cannot afford this item.</span>
@@ -225,10 +242,18 @@ Third argument - item index*/
 			<</for>>
 		<br><br>
 		<</if>>
-		<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.upper[$clothes_choice].colour_options.length isnot 0 or $clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "upper" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "upper" $clothes.upper[$clothes_choice].name>>
 		<<set _cost to clone($clothes.upper[$clothes_choice].cost)>>
 		<<if $wardrobe.upper.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span>
@@ -252,9 +277,14 @@ Third argument - item index*/
 			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.upper[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -336,19 +366,25 @@ You steal the $clothes.lower[_shop_temp].name.
 	<</if>>
 	<<updateOwned "lower">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<lowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<lowersend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<lowersend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<lowersend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<lowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<lowersend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<lowersend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<lowersend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -401,10 +437,18 @@ You steal the $clothes.lower[_shop_temp].name.
 			<</for>>
 		<br><br>
 		<</if>>
-		<<if $clothes.lower[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.lower[$clothes_choice].colour_options.length isnot 0 or $clothes.lower[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "lower" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "lower" $clothes.lower[$clothes_choice].name>>
 		<<set _cost to clone($clothes.lower[$clothes_choice].cost)>>
 		<<if $wardrobe.lower.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.lower.length / $wardrobe.space</i></span>
@@ -428,9 +472,14 @@ You steal the $clothes.lower[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.lower[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -509,19 +558,25 @@ You steal the $clothes.under_upper[_shop_temp].name.
 	<</if>>
 	<<updateOwned "under_upper">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underuppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<underuppersend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underuppersend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<underuppersend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<underuppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<underuppersend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<underuppersend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<underuppersend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -575,10 +630,18 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<</for>>
 		<br><br>
 		<</if>>
-		<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0 or $clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_upper" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "under_upper" $clothes.under_upper[$clothes_choice].name true>>
 		<<set _cost to clone($clothes.under_upper[$clothes_choice].cost)>>
 		<<if $wardrobe.under_upper.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_upper.length / $wardrobe.space</i></span>
@@ -602,9 +665,14 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.under_upper[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -687,10 +755,18 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<</for>>
 		<br><br>
 		<</if>>
-		<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.under_upper[$clothes_choice].colour_options.length isnot 0 or $clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_upper" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "under_upper" $clothes.under_upper[$clothes_choice].name>>
 		<<set _cost to clone($clothes.under_upper[$clothes_choice].cost)>>
 		<<if $wardrobe.under_upper.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_upper.length / $wardrobe.space</i></span>
@@ -714,9 +790,14 @@ You steal the $clothes.under_upper[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.under_upper[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -791,19 +872,25 @@ You steal the $clothes.under_lower[_shop_temp].name.
 	<</if>>
 	<<updateOwned "under_lower">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underlowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<underlowersend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underlowersend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<underlowersend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<underlowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<underlowersend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<underlowersend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<underlowersend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -856,10 +943,18 @@ You steal the $clothes.under_lower[_shop_temp].name.
 			<</for>>
 		<br><br>
 		<</if>>
-		<<if $clothes.under_lower[$clothes_choice].colour_options.length isnot 0>>
+		<<if $clothes.under_lower[$clothes_choice].colour_options.length isnot 0 or $clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
+			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+			<br>
 			<<shopCustomColors>>
-			<br><br>
 		<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_lower" $clothes_choice>></div>
+			<br>
+		<</if>>
+		<<shopBuyItemStatus "under_lower" $clothes.under_lower[$clothes_choice].name>>
 		<<set _cost to clone($clothes.under_lower[$clothes_choice].cost)>>
 		<<if $wardrobe.under_lower.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_lower.length / $wardrobe.space</i></span>
@@ -883,9 +978,14 @@ You steal the $clothes.under_lower[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "under_lower">><<underlowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice>><<clothingReset "under_lower">><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice 1>><<clothingReset "under_lower">><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.under_lower[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice 5>><<clothingReset "under_lower">><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -964,19 +1064,25 @@ You steal the $clothes.head[_shop_temp].name.
 	<</if>>
 <<updateOwned "head">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<headsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<headsend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<headsend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<headsend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<headsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<headsend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<headsend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<headsend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -1031,10 +1137,18 @@ You steal the $clothes.head[_shop_temp].name.
 	<br><br>
 
 	<</if>>
-	<<if $clothes.head[$clothes_choice].colour_options.length isnot 0>>
+	<<if $clothes.head[$clothes_choice].colour_options.length isnot 0 or $clothes.head[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+		<br>
 		<<shopCustomColors>>
-		<br><br>
 	<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "head" $clothes_choice>></div>
+			<br>
+		<</if>>
+	<<shopBuyItemStatus "head" $clothes.head[$clothes_choice].name>>
 	<<set _cost to clone($clothes.head[$clothes_choice].cost)>>
 		<<if $wardrobe.head.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.head.length / $wardrobe.space</i></span>
@@ -1058,9 +1172,14 @@ You steal the $clothes.head[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.head[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1135,19 +1254,25 @@ You steal the $clothes.face[_shop_temp].name.
 	<</if>>
 	<<updateOwned "face">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<facesend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<facesend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<facesend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<facesend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<facesend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<facesend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<facesend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<facesend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -1200,10 +1325,18 @@ You steal the $clothes.face[_shop_temp].name.
 		<</for>>
 	<br><br>
 	<</if>>
-	<<if $clothes.face[$clothes_choice].colour_options.length isnot 0>>
+	<<if $clothes.face[$clothes_choice].colour_options.length isnot 0 or $clothes.face[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+		<br>
 		<<shopCustomColors>>
-		<br><br>
 	<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "face" $clothes_choice>></div>
+			<br>
+		<</if>>
+	<<shopBuyItemStatus "face" $clothes.face[$clothes_choice].name>>
 	<<set _cost to clone($clothes.face[$clothes_choice].cost)>>
 		<<if $wardrobe.face.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.face.length / $wardrobe.space</i></span>
@@ -1227,9 +1360,14 @@ You steal the $clothes.face[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.face[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1300,19 +1438,25 @@ You steal the $clothes.neck[_shop_temp].name.
 	<</if>>
 	<<updateOwned "neck">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<necksend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<necksend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<necksend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<necksend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<necksend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<necksend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<necksend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<necksend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -1365,10 +1509,18 @@ You steal the $clothes.neck[_shop_temp].name.
 		<</for>>
 	<br><br>
 	<</if>>
-	<<if $clothes.neck[$clothes_choice].colour_options.length isnot 0>>
+	<<if $clothes.neck[$clothes_choice].colour_options.length isnot 0 or $clothes.neck[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+		<br>
 		<<shopCustomColors>>
-		<br><br>
 	<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "neck" $clothes_choice>></div>
+			<br>
+		<</if>>
+	<<shopBuyItemStatus "neck" $clothes.neck[$clothes_choice].name>>
 	<<set _cost to clone($clothes.neck[$clothes_choice].cost)>>
 		<<if $wardrobe.neck.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.neck.length / $wardrobe.space</i></span>
@@ -1389,12 +1541,17 @@ You steal the $clothes.neck[_shop_temp].name.
 			<br>
 			<<else>>
 
-			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice 1>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.neck[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1468,19 +1625,25 @@ You steal the $clothes.legs[_shop_temp].name.
 	<</if>>
 	<<updateOwned "legs">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<legssend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<legssend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<legssend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<legssend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<legssend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<legssend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<legssend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<legssend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -1533,10 +1696,18 @@ You steal the $clothes.legs[_shop_temp].name.
 		<</for>>
 		<br><br>
 	<</if>>
-	<<if $clothes.legs[$clothes_choice].colour_options.length isnot 0>>
+	<<if $clothes.legs[$clothes_choice].colour_options.length isnot 0 or $clothes.legs[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+		<br>
 		<<shopCustomColors>>
-		<br><br>
 	<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "legs" $clothes_choice>></div>
+			<br>
+		<</if>>
+	<<shopBuyItemStatus "legs" $clothes.legs[$clothes_choice].name>>
 	<<set _cost to clone($clothes.legs[$clothes_choice].cost)>>
 		<<if $wardrobe.legs.length gte $wardrobe.space>>
 			<span class="blue">Your wardrobe is full. <i>$wardrobe.legs.length / $wardrobe.space</i></span>
@@ -1560,9 +1731,14 @@ You steal the $clothes.legs[_shop_temp].name.
 				<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 				<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.legs[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
 			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
 			<</link>>
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -1638,19 +1814,25 @@ You steal the $clothes.feet[_shop_temp].name.
 	<</if>>
 	<<updateOwned "feet">>
 <<elseif $args[1] is "send">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<feetsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-		<<else>>
-		<<feetsend _shop_temp "wardrobe" $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<feetsend _shop_temp "wardrobe" $accessorycolouraction>>
-		<<else>>
-		<<feetsend _shop_temp "wardrobe">>
-		<</if>>
+	<<set _loop to $args[3]>>
+	<<if _loop is undefined>>
+		<<set _loop to 1>>
 	<</if>>
+	<<for _i to 0; _i lt _loop; _i++>>
+		<<if $colouraction isnot undefined>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<feetsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
+			<<else>>
+			<<feetsend _shop_temp "wardrobe" $colouraction>>
+			<</if>>
+		<<else>>
+			<<if $accessorycolouraction isnot undefined>>
+			<<feetsend _shop_temp "wardrobe" $accessorycolouraction>>
+			<<else>>
+			<<feetsend _shop_temp "wardrobe">>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
@@ -1703,10 +1885,18 @@ You steal the $clothes.feet[_shop_temp].name.
 		<</for>>
 	<br><br>
 	<</if>>
-	<<if $clothes.feet[$clothes_choice].colour_options.length isnot 0>>
+	<<if $clothes.feet[$clothes_choice].colour_options.length isnot 0 or $clothes.feet[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
+		<br>
 		<<shopCustomColors>>
-		<br><br>
 	<</if>>
+		<<if $images is 1>>
+			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
+			<br>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "feet" $clothes_choice>></div>
+			<br>
+		<</if>>
+	<<shopBuyItemStatus "feet" $clothes.feet[$clothes_choice].name>>
 	<<set _cost to clone($clothes.feet[$clothes_choice].cost)>>
 		<<if $wardrobe.feet.length gte $wardrobe.space>>
 		<span class="blue">Your wardrobe is full. <i>$wardrobe.feet.length / $wardrobe.space</i></span>
@@ -1730,9 +1920,14 @@ You steal the $clothes.feet[_shop_temp].name.
 			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
 			<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
+			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
+				<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<<if $money gte $clothes.feet[$clothes_choice].cost * 5>>
+			<<link [[X 5|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
+				<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<</link>> |
+			<</if>>
 			<br>
 		<<else>>
 		<span class="pink">You cannot afford this item.</span>
@@ -2129,36 +2324,36 @@ Secondary Colour:
 <</for>>
 <br><br>
 <label><<print '<<checkbox "$shopDefaults.disableReturn" false true '+($shopDefaults.disableReturn is true? "checked" : "")+'>>'>> Make it easier to send multiple of the same item home.</label>
-
+<br>
+<label><<print '<<checkbox "$shopDefaults.invertCustomColorsHidden" false true '+($shopDefaults.invertCustomColorsHidden is true? "checked" : "")+'>>'>> Show custom colours by default.</label>
+<br>
+<<if $images is 1>>
+<label><<print '<<checkbox "$shopDefaults.invertImagesHidden" false true '+($shopDefaults.invertImagesHidden is true? "checked" : "")+'>>'>> Show clothes images by default.</label>
+<br>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "shopDefaultOptionsToggle">><<nobr>>
 <<toggleclass #shopDefault "hidden">>
 <</nobr>><</widget>>
 
+<<widget "shopCustomColorsToggle">><<nobr>>
+<<toggleclass #shopCustomColorsDisplay "hidden">>
+<<toggleclass #customColorBars "hidden">>
+<<toggleclass #ColorsPresets "hidden">>
+<</nobr>><</widget>>
+
 <<widget "shopCustomColors">><<nobr>>
-__Custom Colours__
 <br>
-<div id="shopCustomColorsDisplay"><<shopCustomColorsDisplay>></div>
-<div id="customColorBars"><<shopCustomColorsBars>></div>
-<div id="ColorsPresets"><<shopCustomColorsPresets>></div>
-<br>
-Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.variables.tempDisable = true;">
-<br>
-<<link [["Save Set"|$passage]]>>
-	<<script>>
-		SugarCube.State.temporary.colorName = document.getElementById("colorName").value;
-	<</script>>
-	<<set $customColors.presets[_colorName] to {
-		color: $customColors.color,
-		saturation: $customColors.saturation,
-		brightness: $customColors.brightness,
-	}>>
-<</link>>
+<div id="shopCustomColorsDisplay" @class="'shopCustomColors' + ($shopDefaults.invertCustomColorsHidden is true? '' : ' hidden')"><<shopCustomColorsDisplay>></div>
+<div id="customColorBars" @class="'shopCustomColors' + ($shopDefaults.invertCustomColorsHidden is true? '' : ' hidden')"><<shopCustomColorsBars>></div>
+<div style="clear:both;"></div>
+<div id="ColorsPresets" @class="($shopDefaults.invertCustomColorsHidden is true? '' : 'hidden')"><<shopCustomColorsPresets>></div>
 <</nobr>><</widget>>
 
 
 <<widget "shopCustomColorsDisplay">><<nobr>>
+__Custom Colours__
 <div id="customColor">
 	<div @style="'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')'"></div>
 	Primary - Colour: $customColors.color.primary | Saturation: $customColors.saturation.primary | Brightness: $customColors.brightness.primary
@@ -2204,6 +2399,7 @@ Brightness:
 <</nobr>><</widget>>
 
 <<widget "shopCustomColorsPresets">><<nobr>>
+<br>
 <label><<print '<<radiobutton "$customColors.action" "set" ' + ($customColors.action is "set" ? "checked" : "") + '>>'>> Set</label> |
 <label><<print '<<radiobutton "$customColors.action" "delete" ' + ($customColors.action is "delete" ? "checked" : "") + '>>'>> Delete</label>
 <<set _keys to Object.keys($customColors.presets)>>
@@ -2211,6 +2407,20 @@ Brightness:
 <<for _i to 0; _i lt _keys.length;_i++>>
 	<a @onclick="`wikifier('shopCustomColorsPresetsLoad',`+_i+`)`">_keys[_i]</a> |
 <</for>>
+<br>
+Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.variables.tempDisable = true;">
+<br>
+<<link [["Save Set"|$passage]]>>
+	<<script>>
+		SugarCube.State.temporary.colorName = document.getElementById("colorName").value;
+	<</script>>
+	<<set $customColors.presets[_colorName] to {
+		color: $customColors.color,
+		saturation: $customColors.saturation,
+		brightness: $customColors.brightness,
+	}>>
+<</link>>
+<br><br>
 <</nobr>><</widget>>
 
 <<widget "shopCustomColorsPresetsLoad">><<nobr>>
@@ -2235,4 +2445,71 @@ Brightness:
 	<<set $customColors.presets to clone(_newPresets)>>
 	<<replace #ColorsPresets>><<shopCustomColorsPresets>><</replace>>
 <</if>>
+<</nobr>><</widget>>
+
+/*Args: slot, itemName, outfit*/
+<<widget "shopBuyItemStatus">><<nobr>>
+<<if $args[0] and $args[1] isnot undefined>>
+	<<set _count to 0>>
+	<<for _i to 0; _i lt $wardrobe[$args[0]].length; _i++>>
+		<<if $wardrobe[$args[0]][_i].name is $args[1]>>
+			<<if $args[2] isnot true>>
+				<<set _count++>>
+			<<else>>
+				<<if $wardrobe[$args[0]][_i].one_piece is 1>>
+					<<set _count++>>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</for>>
+	Wardrobe <<print ($args[0]).replace("_"," ")>> slots used: <<print $wardrobe[$args[0]].length>> / 40. 
+	You own _count of this item<<if $args[2] is true>> that have not been broken<</if>>.
+	<br>
+<</if>>
+<</nobr>><</widget>>
+
+/*Args: slot, itemName, outfit*/
+<<widget "shopFullImage">><<nobr>>
+<<if $args[0] and $args[1] isnot undefined>>
+	<<if _shopFullImageVar is undefined>>
+		<<set _shopFullImageVar to [$args[0], $args[1]]>>
+	<</if>>
+	<a value="Refresh" onclick="SugarCube.Wikifier.wikifyEval('<<replace #shopFullImage>><<shopFullImage SugarCube.State.temporary.shopFullImageVar[0] SugarCube.State.temporary.shopFullImageVar[1]>><</replace>>');">Refresh</a>
+	<br>
+	<div class="hideImageOverflow">
+		<div @class="'shopImg ' + _shopFullImageVar[0] + '-'+$colouraction + ' ' + _shopFullImageVar[0] + '_acc-' + $accessorycolouraction">
+			<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/full.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')':'')">
+			<<if $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].accessory is 1>>
+				<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/acc.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')':'')">
+			<</if>>
+			<<if _shopFullImageVar[0] is "upper" or _shopFullImageVar[0] is "under_upper">>
+				<<if $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].one_piece is 1>>
+					<<if _shopFullImageVar[2] is undefined>>
+						<<if _shopFullImageVar[0] is "upper">>
+							<<run _shopFullImageVar.push("lower")>>
+						<<else>>
+							<<run _shopFullImageVar.push("under_lower")>>
+						<</if>>
+						<<for _i to 0; _i lt $clothes[_shopFullImageVar[2]].length; _i++>>
+							<<if $clothes[_shopFullImageVar[2]][_i].set is $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].set>>
+								<<set _shopFullImageVar.push(_i)>>
+								<<break>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if _shopFullImageVar[3]>>
+						<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/full.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')':'')">
+						<<if $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].accessory is 1>>
+							<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/acc.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')':'')">
+						<</if>>
+					<</if>>
+				<</if>>
+			<</if>>
+		</div>
+	</div>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "shopFullImageToggle">><<nobr>>
+<<toggleclass #shopFullImage "hidden">>
 <</nobr>><</widget>>
