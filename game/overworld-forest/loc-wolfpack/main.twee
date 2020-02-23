@@ -1,6 +1,6 @@
 :: Wolf Cave [nobr]
-
 <<set $outside to 0>><<set $location to "forest">><<effects>>
+
 <<set $wolfpackharmony = Math.clamp($wolfpackharmony, 0, 20)>>
 <<set $wolfpackferocity = Math.clamp($wolfpackferocity, 0, 20)>><<set $bus to "wolfcave">>
 You are in the wolf cave. The ceiling hangs low. There's a breeze blowing from the back.
@@ -41,6 +41,15 @@ You are in the wolf cave. The ceiling hangs low. There's a breeze blowing from t
 		<<link [[Cut your binds|Wolf Cave Unbind]]>><</link>>
 		<br>
 	<</if>>
+	<<if $breastfeedingdisable is "f" and $lactating is 1 and $deviancy gte 35>>
+		<<if $wolfcavebreast is 3>>
+			<span class="blue">The pups are full of milk.</span>
+			<br>
+		<<else>>
+			<<link [[Breastfeed the pups (0:05)|Wolf Cave Breastfeed]]>><<pass 5>><<set $phase to 0>><</link>><<deviant3>>
+			<br>
+		<</if>>
+	<</if>>
 	<<link [[Sleep|Wolf Cave Bed]]>><</link>>
 	<br>
 	<<link [[Go outside|Wolf Cave Clearing]]>><</link>>
@@ -52,8 +61,8 @@ You are in the wolf cave. The ceiling hangs low. There's a breeze blowing from t
 
 
 :: Wolf Cave Clearing [nobr]
-
 <<set $outside to 1>><<set $location to "forest">><<effects>>
+
 <<set $wolfpackharmony = Math.clamp($wolfpackharmony, 0, 20)>>
 <<set $wolfpackferocity = Math.clamp($wolfpackferocity, 0, 20)>><<set $bus to "wolfcaveclearing">>
 You are in the clearing outside the wolf cave. A stream runs by.
@@ -452,3 +461,56 @@ You wash in the stream. The water is cold but clean.
 <</if>>
 <<link [[Next|Wolf Cave Clearing]]>><</link>>
 <br>
+
+
+:: Wolf Cave Breastfeed [nobr]
+<<set $outside to 0>><<set $location to "forest">><<effects>>
+
+<<if $phase is 1>>
+
+You enourage the less assertive wolves to suckle too.
+
+<<else>>
+	<<if $worn.upper.exposed lte 0 or $worn.under_upper.exposed lte 0>>
+	<<upperstrip>><<underupperstrip>>You bare your <<breasts>> and encourage the wolf pups to suckle.
+	<<else>>
+	You encourage the wolf pups to suckle.
+	<</if>>
+<</if>>
+<<pass 5>>
+<<if $milk_amount gte 1>>
+	<<if $wolfcavebreast is undefined>>
+		<<set $wolfcavebreast to 1>>	
+	<<else>>
+		<<set $wolfcavebreast += 1>>
+	<</if>>
+
+	The wolves sniff at your milk. One takes over each nipple, teasing more from you with clumsy licks. <<deviancy3>>
+
+	<<if $wolfcavebreast is 3>>
+		The last of the pups are satisfied. They curl up to nap.<<gharmony>>
+	<<else>>
+		Other wolves jostle for a turn.
+	<</if>>
+	<br><br>
+	<<set $wolfbuild += 1>>
+	<<breastfeed>><<breastfeed>>
+	<<if $wolfcavebreast isnot 3>>
+		<<link [[Continue feeding (0:05)|Wolf Cave Breastfeed]]>><<set $phase to 1>><</link>><<deviant3>>
+		<br>
+	<</if>>
+	<<link [[Stop|Wolf Cave]]>><<clotheson>><<set $phase to 0>><</link>>
+	<br>
+<<else>>
+
+No milk will leak from your nipples. <span class="pink">You've run out.</span> The wolves get bitey in frustration.<<gpain>><<pain 6>>
+<br><br>
+
+<<link [[Next|Wolf Cave]]>><<clotheson>><<set $phase to 0>><</link>>
+<br>
+
+<</if>>
+
+
+
+
