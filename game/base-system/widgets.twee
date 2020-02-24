@@ -146,16 +146,16 @@
 			<<set $underupperwet -= ($pass * 2)>>
 		<</if>>
 	<<elseif $outside is 1 and $weather is "rain">>
-		<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim")>>
+		<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim") and !$worn.head.type.includes("rainproof")>>
 			<<set $upperwet += $pass>>
 		<</if>>
-		<<if !$worn.lower.type.includes("naked") and !$worn.lower.type.includes("swim")>>
+		<<if !$worn.lower.type.includes("naked") and !$worn.lower.type.includes("swim") and !$worn.head.type.includes("rainproof")>>
 			<<set $lowerwet += $pass>>
 		<</if>>
-		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("swim")>>
+		<<if !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("swim") and !$worn.head.type.includes("rainproof")>>
 			<<set $underlowerwet += $pass>>
 		<</if>>
-		<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("swim")>>
+		<<if !$worn.under_upper.type.includes("naked") and !$worn.under_upper.type.includes("swim") and !$worn.head.type.includes("rainproof")>>
 			<<set $underupperwet += $pass>>
 		<</if>>
 	<<else>>
@@ -450,9 +450,16 @@
 <</nobr>><</widget>>
 
 <<widget "crimeup">><<nobr>>
+<<set _crime_up to 1>>
+<<for _e to 0; _e lt $clothing_number; _e++>>
+<<activeclothes>>
+	<<if $worn[_active_clothes].type.includes("stealthy")>>
+		<<set _crime_up -= 0.05>>
+	<</if>>
+<</for>>
 	<<if $args[0]>>
-		<<set $crime += $args[0]>>
-		<<set $crimehistory += $args[0]>>
+		<<set $crime += ($args[0] * _crime_up)>>
+		<<set $crimehistory += ($args[0] * _crime_up)>>
 	<</if>>
 	<<if $slimeEvent is "steal something">>
 		<<unset $slimeEvent>>
@@ -1283,45 +1290,74 @@
 		<<elseif $weather is "rain">>
 <img id="weather" src="img/misc/rainday.gif">
 		<</if>>
-		<<if $location is "beach">>
+		<<switch $location>>
+		<<case beach>>
 		<img id="location" src="img/misc/beachday.gif">
-		<<elseif $location is "sea">>
+		<<case sea>>
 		<img id="location" src="img/misc/beachday.gif">
-		<<elseif $location is "home">>
+		<<case home>>
 		<img id="location" src="img/misc/homeday.gif">
-		<<elseif $location is "town">>
+		<<case town>>
 		<img id="location" src="img/misc/townday.gif">
-		<<elseif $location is "docks">>
-		<img id="location" src="img/misc/townday.gif">
-		<<elseif $location is "pub">>
+		<<case docks>>
+		<img id="location" src="img/misc/docks_day.png">
+		<<case pub>>
 		<img id="location" src="img/misc/pubday.png">
-		<<elseif $location is "forest">>
+		<<case forest>>
 		<img id="location" src="img/misc/forestday.png">
-		<<elseif $location is "lake">>
+		<<case lake>>
 		<img id="location" src="img/misc/lakeday.gif">
-		<<elseif $location is "asylum">>
+		<<case asylum>>
 			<<if $hallucinations gte 1>>
 			<img id="location" src="img/misc/asylumdayvfast.gif">
 			<<else>>
 			<img id="location" src="img/misc/asylumdayslow.gif">
 			<</if>>
-		<<elseif $location is "tentworld">>
+		<<case tentworld>>
 		<img id="location" src="img/misc/tentworldday.gif">
-		<<elseif $location is "underground">>
+		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "sewers">>
+		<<case sewers>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "school">>
+		<<case school>>
 		<img id="location" src="img/misc/schoolday.png">
-		<<elseif $location is "cabin">>
+		<<case cabin>>
 		<img id="location" src="img/misc/cabinday.gif">
-		<<elseif $location is "pool">>
+		<<case pool>>
 		<img id="location" src="img/misc/poolday.gif">
-		<<elseif $location is "landfill">>
+		<<case landfill>>
 		<img id="location" src="img/misc/landfillday.gif">
-		<<elseif $location is "temple">>
+		<<case temple>>
 		<img id="location" src="img/misc/templeday.png">
-		<</if>>
+		<<case strip_club>>
+		<img id="location" src="img/misc/strip_club_day.png">
+		<<case shopping_centre>>
+		<img id="location" src="img/misc/shopping_centre_day.png">
+		<<case police_station>>
+		<img id="location" src="img/misc/police_station_day.png">
+		<<case park>>
+		<img id="location" src="img/misc/park_day.png">
+		<<case museum>>
+		<img id="location" src="img/misc/museum_day.png">
+		<<case hospital>>
+		<img id="location" src="img/misc/hospital_day.png">
+		<<case dance_studio>>
+		<img id="location" src="img/misc/dance_studio_day.png">
+		<<case compound>>
+		<img id="location" src="img/misc/compound_day.gif">
+		<<case brothel>>
+		<img id="location" src="img/misc/brothel_day.png">
+		<<case cafe>>
+			<<if $chef_state gte 9>>
+				<img id="location" src="img/misc/cafe_renovated_day.png">
+			<<elseif $chef_state gte 7>>
+				<img id="location" src="img/misc/cafe_construction_day.png">
+			<<else>>
+				<img id="location" src="img/misc/cafe_day.png">
+			<</if>>
+		<<case arcade>>
+		<img id="location" src="img/misc/arcade_day.png">
+		<</switch>>
 	<<elseif $daystate is "night">>
 		<<if $location is "tentworld">>
 		<img id="daystate" src="img/misc/tentskynight.png">
@@ -1339,45 +1375,74 @@
 		<<elseif $weather is "rain">>
 <img id="weather" src="img/misc/rainnight.gif">
 		<</if>>
-		<<if $location is "beach">>
+		<<switch $location>>
+		<<case beach>>
 		<img id="location" src="img/misc/beachnight.gif">
-		<<elseif $location is "sea">>
+		<<case sea>>
 		<img id="location" src="img/misc/beachnight.gif">
-		<<elseif $location is "home">>
+		<<case home>>
 		<img id="location" src="img/misc/homenight.gif">
-		<<elseif $location is "town">>
+		<<case town>>
 		<img id="location" src="img/misc/townnight.gif">
-		<<elseif $location is "docks">>
-		<img id="location" src="img/misc/townnight.gif">
-		<<elseif $location is "pub">>
+		<<case docks>>
+		<img id="location" src="img/misc/docks_night.png">
+		<<case pub>>
 		<img id="location" src="img/misc/pubnight.png">
-		<<elseif $location is "forest">>
+		<<case forest>>
 		<img id="location" src="img/misc/forestnight.png">
-		<<elseif $location is "lake">>
+		<<case lake>>
 		<img id="location" src="img/misc/lakenight.gif">
-		<<elseif $location is "asylum">>
+		<<case asylum>>
 			<<if $hallucinations gte 1>>
 			<img id="location" src="img/misc/asylumnightvfast.gif">
 			<<else>>
 			<img id="location" src="img/misc/asylumnightslow.gif">
 			<</if>>
-		<<elseif $location is "tentworld">>
+		<<case tentworld>>
 		<img id="location" src="img/misc/tentworldnight.gif">
-		<<elseif $location is "underground">>
+		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "sewers">>
+		<<case sewers>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "school">>
+		<<case school>>
 		<img id="location" src="img/misc/schoolnight.png">
-		<<elseif $location is "cabin">>
+		<<case cabin>>
 		<img id="location" src="img/misc/cabinnight.gif">
-		<<elseif $location is "pool">>
+		<<case pool>>
 		<img id="location" src="img/misc/poolnight.gif">
-		<<elseif $location is "landfill">>
+		<<case landfill>>
 		<img id="location" src="img/misc/landfillnight.gif">
-		<<elseif $location is "temple">>
+		<<case temple>>
 		<img id="location" src="img/misc/templenight.png">
-		<</if>>
+		<<case strip_club>>
+		<img id="location" src="img/misc/strip_club_night.png">
+		<<case shopping_centre>>
+		<img id="location" src="img/misc/shopping_centre_night.png">
+		<<case police_station>>
+		<img id="location" src="img/misc/police_station_night.png">
+		<<case park>>
+		<img id="location" src="img/misc/park_night.png">
+		<<case museum>>
+		<img id="location" src="img/misc/museum_night.png">
+		<<case hospital>>
+		<img id="location" src="img/misc/hospital_night.png">
+		<<case dance_studio>>
+		<img id="location" src="img/misc/dance_studio_night.png">
+		<<case compound>>
+		<img id="location" src="img/misc/compound_night.gif">
+		<<case brothel>>
+		<img id="location" src="img/misc/brothel_night.png">
+		<<case cafe>>
+			<<if $chef_state gte 9>>
+				<img id="location" src="img/misc/cafe_renovated_night.png">
+			<<elseif $chef_state gte 7>>
+				<img id="location" src="img/misc/cafe_construction_night.png">
+			<<else>>
+				<img id="location" src="img/misc/cafe_night.png">
+			<</if>>
+		<<case arcade>>
+		<img id="location" src="img/misc/arcade_night.png">
+		<</switch>>
 	<<elseif $daystate is "dawn">>
 		<<if $location is "tentworld">>
 		<img id="daystate" src="img/misc/tentskydawn.png">
@@ -1393,45 +1458,74 @@
 		<<elseif $weather is "rain">>
 <img id="weather" src="img/misc/raindawn.gif">
 		<</if>>
-		<<if $location is "beach">>
+		<<switch $location>>
+		<<case beach>>
 		<img id="location" src="img/misc/beachdawn.gif">
-		<<elseif $location is "sea">>
+		<<case sea>>
 		<img id="location" src="img/misc/beachdawn.gif">
-		<<elseif $location is "home">>
+		<<case home>>
 		<img id="location" src="img/misc/homedawn.gif">
-		<<elseif $location is "town">>
+		<<case town>>
 		<img id="location" src="img/misc/towndawn.gif">
-		<<elseif $location is "docks">>
-		<img id="location" src="img/misc/towndawn.gif">
-		<<elseif $location is "pub">>
+		<<case docks>>
+		<img id="location" src="img/misc/docks_dawn.png">
+		<<case pub>>
 		<img id="location" src="img/misc/pubdawn.png">
-		<<elseif $location is "forest">>
+		<<case forest>>
 		<img id="location" src="img/misc/forestdawn.png">
-		<<elseif $location is "lake">>
+		<<case lake>>
 		<img id="location" src="img/misc/lakedawn.gif">
-		<<elseif $location is "asylum">>
+		<<case asylum>>
 			<<if $hallucinations gte 1>>
 			<img id="location" src="img/misc/asylumdawnvfast.gif">
 			<<else>>
 			<img id="location" src="img/misc/asylumdawnslow.gif">
 			<</if>>
-		<<elseif $location is "tentworld">>
+		<<case tentworld>>
 		<img id="location" src="img/misc/tentworlddawn.gif">
-		<<elseif $location is "underground">>
+		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "sewers">>
+		<<case sewers>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "school">>
+		<<case school>>
 		<img id="location" src="img/misc/schooldawn.png">
-		<<elseif $location is "cabin">>
+		<<case cabin>>
 		<img id="location" src="img/misc/cabindawn.gif">
-		<<elseif $location is "pool">>
+		<<case pool>>
 		<img id="location" src="img/misc/pooldawn.gif">
-		<<elseif $location is "landfill">>
+		<<case landfill>>
 		<img id="location" src="img/misc/landfilldawn.gif">
-		<<elseif $location is "temple">>
+		<<case temple>>
 		<img id="location" src="img/misc/templedawn.png">
-		<</if>>
+		<<case strip_club>>
+		<img id="location" src="img/misc/strip_club_dawn.png">
+		<<case shopping_centre>>
+		<img id="location" src="img/misc/shopping_centre_dawn.png">
+		<<case police_station>>
+		<img id="location" src="img/misc/police_station_dawn.png">
+		<<case park>>
+		<img id="location" src="img/misc/park_dawn.gif">
+		<<case museum>>
+		<img id="location" src="img/misc/museum_dawn.png">
+		<<case hospital>>
+		<img id="location" src="img/misc/hospital_dawn.png">
+		<<case dance_studio>>
+		<img id="location" src="img/misc/dance_studio_dawn.png">
+		<<case compound>>
+		<img id="location" src="img/misc/compound_dawn.gif">
+		<<case brothel>>
+		<img id="location" src="img/misc/brothel_dawn.png">
+		<<case cafe>>
+			<<if $chef_state gte 9>>
+				<img id="location" src="img/misc/cafe_renovated_dawn.png">
+			<<elseif $chef_state gte 7>>
+				<img id="location" src="img/misc/cafe_construction_dawn.png">
+			<<else>>
+				<img id="location" src="img/misc/cafe_dawn.png">
+			<</if>>
+		<<case arcade>>
+		<img id="location" src="img/misc/arcade_dawn.png">
+		<</switch>>
 	<<elseif $daystate is "dusk">>
 		<<if $location is "tentworld">>
 		<img id="daystate" src="img/misc/tentskydusk.png">
@@ -1447,45 +1541,74 @@
 		<<elseif $weather is "rain">>
 <img id="weather" src="img/misc/raindusk.gif">
 		<</if>>
-		<<if $location is "beach">>
+		<<switch $location>>
+		<<case beach>>
 		<img id="location" src="img/misc/beachdusk.gif">
-		<<elseif $location is "sea">>
+		<<case sea>>
 		<img id="location" src="img/misc/beachdusk.gif">
-		<<elseif $location is "home">>
+		<<case home>>
 		<img id="location" src="img/misc/homedusk.gif">
-		<<elseif $location is "town">>
+		<<case town>>
 		<img id="location" src="img/misc/towndusk.gif">
-		<<elseif $location is "docks">>
-		<img id="location" src="img/misc/towndusk.gif">
-		<<elseif $location is "pub">>
+		<<case docks>>
+		<img id="location" src="img/misc/docks_dusk.png">
+		<<case pub>>
 		<img id="location" src="img/misc/pubdusk.png">
-		<<elseif $location is "forest">>
+		<<case forest>>
 		<img id="location" src="img/misc/forestdusk.png">
-		<<elseif $location is "lake">>
+		<<case lake>>
 		<img id="location" src="img/misc/lakedusk.gif">
-		<<elseif $location is "asylum">>
+		<<case asylum>>
 			<<if $hallucinations gte 1>>
 			<img id="location" src="img/misc/asylumduskvfast.gif">
 			<<else>>
 			<img id="location" src="img/misc/asylumduskslow.gif">
 			<</if>>
-		<<elseif $location is "tentworld">>
+		<<case tentworld>>
 		<img id="location" src="img/misc/tentworlddusk.gif">
-		<<elseif $location is "underground">>
+		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "sewers">>
+		<<case sewers>>
 		<img id="location" src="img/misc/deepunderground.png">
-		<<elseif $location is "school">>
+		<<case school>>
 		<img id="location" src="img/misc/schooldusk.png">
-		<<elseif $location is "cabin">>
+		<<case cabin>>
 		<img id="location" src="img/misc/cabindusk.gif">
-		<<elseif $location is "pool">>
+		<<case pool>>
 		<img id="location" src="img/misc/pooldusk.gif">
-		<<elseif $location is "landfill">>
+		<<case landfill>>
 		<img id="location" src="img/misc/landfilldusk.gif">
-		<<elseif $location is "temple">>
+		<<case temple>>
 		<img id="location" src="img/misc/templedusk.png">
-		<</if>>
+		<<case strip_club>>
+		<img id="location" src="img/misc/strip_club_dusk.png">
+		<<case shopping_centre>>
+		<img id="location" src="img/misc/shopping_centre_dusk.png">
+		<<case police_station>>
+		<img id="location" src="img/misc/police_station_dusk.png">
+		<<case park>>
+		<img id="location" src="img/misc/park_dusk.png">
+		<<case museum>>
+		<img id="location" src="img/misc/museum_dusk.png">
+		<<case hospital>>
+		<img id="location" src="img/misc/hospital_dusk.png">
+		<<case dance_studio>>
+		<img id="location" src="img/misc/dance_studio_dusk.png">
+		<<case compound>>
+		<img id="location" src="img/misc/compound_dusk.gif">
+		<<case brothel>>
+		<img id="location" src="img/misc/brothel_dusk.png">
+		<<case cafe>>
+			<<if $chef_state gte 9>>
+				<img id="location" src="img/misc/cafe_renovated_dusk.png">
+			<<elseif $chef_state gte 7>>
+				<img id="location" src="img/misc/cafe_construction_dusk.png">
+			<<else>>
+				<img id="location" src="img/misc/cafe_dusk.png">
+			<</if>>
+		<<case arcade>>
+		<img id="location" src="img/misc/arcade_dusk.png">
+		<</switch>>
 	<</if>>
 
 <<else>>
@@ -1605,30 +1728,30 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<widget "schoolspareclothes">><<nobr>>
 <<if !$worn.upper.type.includes("school") and !$worn.lower.type.includes("school")>>
-<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
+<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
 	<<if $clothingselector is "m">>
-	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<<else>>
-	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<</if>>
 <<elseif !$worn.lower.type.includes("school")>>
 	<<if $clothingselector is "m">>
-	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<<else>>
-	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<</if>>
 <<elseif !$worn.upper.type.includes("school")>>
-<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
+<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "spareschoolswimsuit">><<nobr>>
-<<underupperwear 2>><<set $worn.under_upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.under_upper.integrity /= 2>>
+<<underupperwear 2>><<set $worn.under_upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.under_upper.integrity /= 2>>
 <<set $worn.under_lower.colour to clone($worn.under_upper.colour)>><<set $worn.under_lower.integrity /= 2>>
 <</nobr>><</widget>>
 
 <<widget "spareschoolswimshorts">><<nobr>>
-<<underlowerwear 7>><<set $worn.under_lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "white", "yellow")>><<set $worn.under_lower.integrity /= 2>>
+<<underlowerwear 7>><<set $worn.under_lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.under_lower.integrity /= 2>>
 <</nobr>><</widget>>
 
 <<widget "exposedcheck">><<nobr>>
@@ -1833,6 +1956,15 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <<set $leftboundcarry to 0>>
 <<set $leftarm to 0>>
 <<set $rightarm to 0>>
+<<if $worn.upper.type.includes("binding")>>
+	<<set _unbind_check to 1>>
+	<<if $worn.upper.set is $worn.lower.set>>
+		<<set $worn.lower.type.push("broken")>>
+		<<lowerruined>>		
+	<</if>>
+	<<set $worn.upper.type.push("broken")>>
+	<<upperruined>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "bind">><<nobr>>
@@ -2842,8 +2974,6 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 <<if $mathstrait gte 1>>
 <<set $tip *= (1 + ($mathstrait / 4))>>
 <</if>>
-
-
 
 <<set $tip to Math.trunc($tip)>>
 
@@ -3893,3 +4023,13 @@ __Map__<br>
 <</if>>
 
 <</nobr>><</widget>>
+
+<<widget "awarenessup">><<nobr>>
+<<set _awareness to $args[1]>>
+<<if $awareness gte $args[0]>>
+<span class="pink">It's nothing you weren't aware of.</span>
+<<else>>
+<<gawareness>><<awareness _awareness>>
+<</if>>
+<</nobr>><</widget>>
+

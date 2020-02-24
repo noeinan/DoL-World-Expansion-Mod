@@ -470,17 +470,9 @@ __Clothing__
 
 
 <<if $newWardrobeStyle>>
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','head')">Head</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','face')">Face</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','neck')">Neck</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','upper')">Upper</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','lower')">Lower</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','under_upper')">Under Upper</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','under_lower')">Under Lower</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','legs')">Legs</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','feet')">Feet</a> |
-	<a onclick="wikifier('wardrobeNewOutfitDisplayer','NewOutfit')">New Outfit</a> |
-	<br>
+	<div id="wardrobeLinks">
+		<<wardrobeLinks>>
+	</div>
 	<div id="wardrobeList">
 		<<if $lastWardrobeSlot is "NewOutfit">>
 			<<wardrobeNewOutfit>>
@@ -502,6 +494,19 @@ __Clothing__
 <</nobr>><</widget>>
 
 
+<<widget "wardrobeLinks">><<nobr>>
+<a @class="($lastWardrobeSlot is 'head'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','head')">Head</a> |
+<a @class="($lastWardrobeSlot is 'face'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','face')">Face</a> |
+<a @class="($lastWardrobeSlot is 'neck'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','neck')">Neck</a> |
+<a @class="($lastWardrobeSlot is 'upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','upper')">Upper</a> |
+<a @class="($lastWardrobeSlot is 'lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','lower')">Lower</a> |
+<a @class="($lastWardrobeSlot is 'under_upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','under_upper')">Under Upper</a> |
+<a @class="($lastWardrobeSlot is 'under_lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','under_lower')">Under Lower</a> |
+<a @class="($lastWardrobeSlot is 'legs'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','legs')">Legs</a> |
+<a @class="($lastWardrobeSlot is 'feet'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','feet')">Feet</a> |
+<a @class="($lastWardrobeSlot is 'NewOutfit'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','NewOutfit')">New Outfit</a> |
+<</nobr>><</widget>>
+
 <<widget "wardrobeNewOutfitDisplayer">><<nobr>>
 <<switch $args[0]>>
 	<<case "head">><<replace #wardrobeList>><<wardrobeList "head">><</replace>><<set $lastWardrobeSlot to "head">>
@@ -515,6 +520,7 @@ __Clothing__
 	<<case "feet">><<replace #wardrobeList>><<wardrobeList "feet">><</replace>><<set $lastWardrobeSlot to "feet">>
 	<<case "NewOutfit">><<replace #wardrobeList>><<wardrobeNewOutfit>><</replace>><<set $lastWardrobeSlot to "NewOutfit">>
 <</switch>>
+<<replace #wardrobeLinks>><<wardrobeLinks>><</replace>>
 <</nobr>><</widget>>
 
 
@@ -657,6 +663,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <<set _loweroutfitCheck to ["lower","under_lower"]>>
 <<if _errorPrevent isnot true>>
 	__<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$wardrobe[_wardrobe_list].length / $wardrobe.space</i>
+	<<if _wardrobe_list is "upper">>(Outfits will also take a lower slot)<</if>>
+	<<if _wardrobe_list is "under_upper">>(Outfits will also take an under lower slot)<</if>>
 	<br>
 	Order by: 
 	/*Undefined error for unknown reason*/
@@ -678,7 +686,13 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 		<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit', true);">Outfit Status</a> |
 	<</if>>
 	<br><br>
-
+	Currently equipped: 
+	<<if $worn[_wardrobe_list].name isnot "naked">>
+		$worn[_wardrobe_list].name
+	<<else>>
+		nothing
+	<</if>>
+	<br>
 	<<if $worn[_wardrobe_list].name isnot "naked">>
 		<div class="wardrobeItem"><a @onclick="`SugarCube.State.variables.`+_wear+` = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)`">Strip</a></div>
 	<</if>>
