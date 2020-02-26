@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## 0.2.9.2
+
+### Balance changes
+
+- The Anti-Social Moth feat is no longer available with the nerd background. Thanks to Lollipop Scythe.
+- Increased the allure required for the Alluring feat, and it now requires you be outside.
+
+### Bug Fixes
+
+- Fixed an error that would appear when NPCs orgasm while the PC is trapped in a pillory, trapped in a wall, or using a gloryhole.
+- Fixed a bug that caused an error when wearing the mesh shirt. Thanks to Lollipop Scythe.
+- Fixed an error found when competing for wealthy patron's attention while working as a bartender.
+- Fixed a bug that would prevent the Feat Boost tab from acknowledging the Angel and Fallen Angel Feats. Thanks to Lollipop Scythe.
+- Fixed an error found on the Feat Boost tab. Thanks to Lollipop Scythe.
+- Fixed an error found when playing volleyball at the beach.
+- The argyle sweater vest now has a price tag.
+
+## 0.2.9.1
+
+- Fixed the description of the "Being a Girl" Feat.
+- Fixed an error that would appear on the town's streets.
+
 ## 0.2.9.0
 
 - Added the option to "Attract VIPs" while bartending, giving a chance to find new events involving wealthier and more dangerous clientele.
@@ -32,7 +54,7 @@
 Thanks to Lollipop Scythe for the following additions and improvements:
 - Added a "Feats" system, which tracks accomplishments between saves and awards VrelCoins. Can be viewed from the Statistics/Feats tab.
 - VrelCoins can be used at the start of a new game to improve the PC's initial situation.
-- Feats are only awarded on saves that have not used cheats. Soft mode and reducing the allure slider below the default value will prevent feats from unlockoing, and permanently prevent some.
+- Feats are only awarded on saves that have not used cheats. Soft mode and reducing the allure slider below the default value will prevent feats from unlocking, and permanently prevent some.
 - Thanks to Anon for the Vrelcoin art.
 - The game now tracks which NPC took the PC's virginity. The game won't track the NPC if they took it prior to this update however.
 - The money/time/day information on the sidebar is now clickable, extended it and including the date.
@@ -87,11 +109,6 @@ Thanks to Lollipop Scythe for the following fixes:
 - Fixed a number points where chastity belts would not be properly detected.
 - Made a change that should reduce the occurrence of an error that could appear when NPCs ejaculate.
 - Chastity belts will no longer come alive.
-
-## 0.2.9.1
-
-- Fixed the description of the "Being a Girl" Feat.
-- Fixed an error that would appear on the town's streets.
 
 ## 0.2.8.3
 
@@ -2082,11 +2099,11 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 ### Balance Changes
 
-Robin and Bailey know your sex from the start.
-Robin will not attend their stand while injured.
-Slime and semen will now wash off in water, but not all at once. Increases the chance of an encounter based on how much washes off.
-The NPCs involved in the fight on the yacht should be a bit less aggressive at the start.
-Characters with high exhibitionism will no longer cover themselves when exposed. Characters with very high exhibitionism will no longer cover themselves even if naked.
+- Robin and Bailey know your sex from the start.
+- Robin will not attend their stand while injured.
+- Slime and semen will now wash off in water, but not all at once. Increases the chance of an encounter based on how much washes off.
+- The NPCs involved in the fight on the yacht should be a bit less aggressive at the start.
+- Characters with high exhibitionism will no longer cover themselves when exposed. Characters with very high exhibitionism will no longer cover themselves even if naked.
 
 ### Bug Fixes
 
