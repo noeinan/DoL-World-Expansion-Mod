@@ -55,6 +55,38 @@ A cheerful <<girl>>
 stares back.
 <br><br>
 
+<<if $debug is 1>>
+	<<set _total_femininity to 0>>
+<</if>>
+<<settextcolorfromgender $player.gender_appearance>>
+At the moment onlookers will assume that you are a <span @class="_text_color"><<girlstop>></span><br>
+The following factors contribute to this assumption:<br>
+<<for _x range $player.gender_appearance_factors>>
+	<<if _x.femininity is 0>>
+		<<continue>>
+	<</if>>
+	<<settextcolorfromfemininity _x.femininity>>
+	<span @class="_text_color">
+		_x.factor
+		<<if $debug is 1>>
+			_x.femininity
+			<<set _total_femininity += _x.femininity>>
+		<<else>>
+			<<print "+".repeat(
+				Math.trunc(Math.clamp(
+					Math.abs(_x.femininity) / 100, 0, 10
+				))
+			)>>
+		<</if>>
+	</span>
+	<br>
+<</for>>
+<<if $debug is 1>>
+	<<settextcolorfromfemininity _total_femininity>>
+	Total femininity: <span @class="_text_color">_total_femininity</span><br>
+<</if>>
+
+<br>
 
 <<mirrorwet $necksemen $neckgoo "neck">>
 <<mirrorwet $rightarmsemen $rightarmgoo "right arm">>
@@ -522,7 +554,27 @@ Changing your fringe from natural will set your sides to messy.
 <<for _i to 0; _i lt $mirrorVars.fringeVar.length;_i++>>
 	<<print '<a onclick="SugarCube.State.variables.fringetype=SugarCube.State.variables.mirrorVars.fringeVar['+_i+'];SugarCube.State.display(SugarCube.State.active.title, null);">'+$mirrorVars.fringe[_i]+'</a>'>> |
 <</for>>
+<br><br>
+
+__Behaviour__
 <br>
+<<if $player.gender_posture is "n">>
+	You turn around to get a look at yourself. You look like a <<girlstop>> Maybe if you
+	carried yourself differently you could change that.
+<<elseif $player.gender_posture is "f">>
+	You strike a few girly poses and put on your best feminine voice.<br>
+	<span class="pink">Others will be more likely to think that you're a girl.</span>
+<<elseif $player.gender_posture is "m">>
+	You flex your muscles and add some gruff to your voice.<br>
+	<span class="lblue">Others will be more likely to think that you're a boy.</span>
+<</if>>
+<br>
+<<linkradiogroup "$player.gender_posture" `{
+	"Act naturally": "n",
+	"Take a feminine posture": "f",
+	"Take a masculine posture": "m",
+}`>>
+<br><br>
 
 <<if $debug is 1>>
 <br>
