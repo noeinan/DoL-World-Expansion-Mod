@@ -2377,16 +2377,26 @@ Secondary Colour:
 <<widget "shopCustomColorsDisplay">><<nobr>>
 __Custom Colours__
 <div id="customColor">
-	<div @style="'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')'"></div>
-	Primary - Colour: $customColors.color.primary | Saturation: $customColors.saturation.primary | Brightness: $customColors.brightness.primary
-	<div @style="'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')'"></div>
-	Secondary - Colour: $customColors.color.secondary | Saturation: $customColors.saturation.secondary | Brightness: $customColors.brightness.secondary
+	<div @style="customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)"></div>
+	Primary - Colour: $customColors.color.primary | Saturation: $customColors.saturation.primary | Brightness: $customColors.brightness.primary | Contrast: $customColors.contrast.primary | Sepia: $customColors.sepia.primary
+	<div @style="customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)"></div>
+	Secondary - Colour: $customColors.color.secondary | Saturation: $customColors.saturation.secondary | Brightness: $customColors.brightness.secondary | Contrast: $customColors.contrast.secondary | Sepia: $customColors.sepia.secondary
 </div>
 <br>
 <label><<print '<<radiobutton "$customColors.currentType" "primary" ' + ($customColors.currentType is "primary" ? "checked" : "") + '>>'>> Primary</label> |
 <label><<print '<<radiobutton "$customColors.currentType" "secondary" ' + ($customColors.currentType is "secondary" ? "checked" : "") + '>>'>> Secondary</label>
-<<link "Refresh">>
+| <<link "Refresh">>
 	<<replace #customColorBars>><<shopCustomColorsBars>><</replace>>
+<</link>>
+<br><br><br>
+<<link "Reset selected to default">>
+	<<set $customColors.color[$customColors.currentType] to 0>>
+	<<set $customColors.saturation[$customColors.currentType] to 1>>
+	<<set $customColors.brightness[$customColors.currentType] to 1>>
+	<<set $customColors.contrast[$customColors.currentType] to 1>>
+	<<set $customColors.sepia[$customColors.currentType] to 0>>
+	<<replace #customColorBars>><<shopCustomColorsBars>><</replace>>
+	<<replace #shopCustomColorsDisplay>><<shopCustomColorsDisplay>><</replace>>
 <</link>>
 <</nobr>><</widget>>
 
@@ -2406,6 +2416,14 @@ Brightness:
 <div id="numberslider-body-customColor" class="macro-numberslider">
 	<input type="range" min="0.5" max="4" step="0.05" @value="$customColors.brightness[$customColors.currentType]" oninput="wikifier('shopCustomColorsSet','brightness', this.value)">
 </div>
+Contrast:
+<div id="numberslider-body-customColor" class="macro-numberslider">
+	<input type="range" min="0" max="2" step="0.05" @value="$customColors.contrast[$customColors.currentType]" oninput="wikifier('shopCustomColorsSet','contrast', this.value)">
+</div>
+Sepia:
+<div id="numberslider-body-customColor" class="macro-numberslider">
+	<input type="range" min="0" max="1" step="0.05" @value="$customColors.sepia[$customColors.currentType]" oninput="wikifier('shopCustomColorsSet','sepia', this.value)">
+</div>
 <</nobr>><</widget>>
 
 
@@ -2415,6 +2433,8 @@ Brightness:
 		<<case "color">><<set $customColors.color[$customColors.currentType] to $args[1]>>
 		<<case "saturation">><<set $customColors.saturation[$customColors.currentType] to $args[1]>>
 		<<case "brightness">><<set $customColors.brightness[$customColors.currentType] to $args[1]>>
+		<<case "contrast">><<set $customColors.contrast[$customColors.currentType] to $args[1]>>
+		<<case "sepia">><<set $customColors.sepia[$customColors.currentType] to $args[1]>>
 	<</switch>>
 	<<replace #shopCustomColorsDisplay>><<shopCustomColorsDisplay>><</replace>>
 <</if>>
@@ -2440,7 +2460,10 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 		color: $customColors.color,
 		saturation: $customColors.saturation,
 		brightness: $customColors.brightness,
+		contrast: $customColors.contrast,
+		sepia: $customColors.sepia,
 	}>>
+	<<unset $tempDisable>>
 <</link>>
 <br><br>
 <</nobr>><</widget>>
@@ -2455,6 +2478,14 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 	<<set $customColors.saturation.secondary to $customColors.presets[_preset].saturation.secondary>>
 	<<set $customColors.brightness.primary to $customColors.presets[_preset].brightness.primary>>
 	<<set $customColors.brightness.secondary to $customColors.presets[_preset].brightness.secondary>>
+	<<if $customColors.presets[_preset].contrast isnot undefined>>
+		<<set $customColors.contrast.primary to $customColors.presets[_preset].contrast.primary>>
+		<<set $customColors.contrast.secondary to $customColors.presets[_preset].contrast.secondary>>
+	<</if>>
+	<<if $customColors.presets[_preset].sepia isnot undefined>>
+		<<set $customColors.sepia.primary to $customColors.presets[_preset].sepia.primary>>
+		<<set $customColors.sepia.secondary to $customColors.presets[_preset].sepia.secondary>>
+	<</if>>
 	<<replace #shopCustomColorsDisplay>><<shopCustomColorsDisplay>><</replace>>
 	<<replace #customColorBars>><<shopCustomColorsBars>><</replace>>
 <<elseif $customColors.action is "delete">>>>
@@ -2500,9 +2531,9 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 	<br>
 	<div class="hideImageOverflow">
 		<div @class="'shopImg ' + _shopFullImageVar[0] + '-'+$colouraction + ' ' + _shopFullImageVar[0] + '_acc-' + $accessorycolouraction">
-			<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/full.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')':'')">
+			<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/full.png'" @style="($colouraction is 'custom'? customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary):'')">
 			<<if $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].accessory is 1>>
-				<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/acc.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')':'')">
+				<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/acc.png'" @style="($colouraction is 'custom'? customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary):'')">
 			<</if>>
 			<<if _shopFullImageVar[0] is "upper" or _shopFullImageVar[0] is "under_upper">>
 				<<if $clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].one_piece is 1>>
@@ -2520,9 +2551,9 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 						<</for>>
 					<</if>>
 					<<if _shopFullImageVar[3]>>
-						<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/full.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')':'')">
+						<img @class="'colour-'+_shopFullImageVar[0]" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/full.png'" @style="($colouraction is 'custom'? customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary):'')">
 						<<if $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].accessory is 1>>
-							<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/acc.png'" @style="($colouraction is 'custom'? 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')':'')">
+							<img @class="'colour-'+_shopFullImageVar[0] + '_acc'" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + $clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/acc.png'" @style="($colouraction is 'custom'? customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary):'')">
 						<</if>>
 					<</if>>
 				<</if>>
