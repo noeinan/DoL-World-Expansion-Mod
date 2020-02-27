@@ -144,10 +144,13 @@ function generateNumbers(ev){
 			return; // simply skip this render
 	}
 
-	currentLinks = $(ev.content).find(".link-internal"); // wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
+ 	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
+	currentLinks = $(ev.content)
+		.find(".link-internal")
+		.not(".no-numberify *, .no-numberify");
 
 	$(currentLinks).each(function(i, el) {
-		if(!$(el).hasClass('nonumberify')) $(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 	});
 }
 

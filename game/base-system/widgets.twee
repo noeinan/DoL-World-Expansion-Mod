@@ -190,13 +190,13 @@
 	<<pregProgressTime $pass>>
 	<<if $controlled is 0 and $anxiety gte 2>>
 		<<set $stress += $pass>>
-		<<if $background is "crossdresser" and ($player.gender is $player.appearance)>>
+		<<if $background is "crossdresser" and ($player.gender is $player.gender_appearance)>>
 			<<set $stress += $pass>>
 		<</if>>
 	<<elseif $controlled is 0 and $anxiety gte 1>>
 	<<else>>
 		<<set $stress -= $pass>>
-		<<if $background is "crossdresser" and ($player.gender isnot $player.appearance)>>
+		<<if $background is "crossdresser" and ($player.gender isnot $player.gender_appearance)>>
 			<<set $stress -= $pass>>
 		<</if>>
 	<</if>>
@@ -1754,77 +1754,180 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <<underlowerwear 7>><<set $worn.under_lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.under_lower.integrity /= 2>>
 <</nobr>><</widget>>
 
+<<widget "setfemininitymultiplierfromgender">><<nobr>>
+	<<if $args[0] is "f">>
+		<<set _femininity_multiplier to 1>>
+	<<elseif $args[0] is "m">>
+		<<set _femininity_multiplier to -1>>
+	<<else>>
+		<<set _femininity_multiplier to 0>>
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "addfemininityfromfactor">><<nobr>>
+	<<set _femininity_mod to $args[0]>>
+	<<set _factor_description to $args[1]>>
+
+	<<set _apparent_femininity += _femininity_mod>>
+	<<run _gender_appearance_factors.push({
+		femininity: _femininity_mod,
+		factor: _factor_description,
+	})>>
+<</nobr>><</widget>>
+
+<<widget "addfemininityofclothingarticle">><<nobr>>
+	<<set _clothing_article to $args[0]>>
+
+	<<if _clothing_article.femininity>>
+		<<addfemininityfromfactor `_clothing_article.femininity` `_clothing_article.name_cap`>>
+	<</if>>
+<</nobr>><</widget>>
+
+<!-- Calculate the player's gender appearance -->
+<<widget "genderappearancecheck">><<nobr>>
+	<<set _ignore_overwear to $args[0] and $args[0] is "ignoreoverwear">>
+
+	<!-- Calculate bluge size -->
+	<<set _penis_compressed to $penisexist and $worn.genitals.type.includes("hidden")>>
+	<<if $worn.genitals.type.includes("cage")>>
+		<<set _bulge_size to $penissize + 1>>
+	<<else>>
+		<<if !$penisexist>>
+			<<set _erection_state to 0>>
+		<<elseif _penis_compressed>>
+			<<set _erection_state to 0>>
+		<<elseif $arousal lt 6000>>
+			<<set _erection_state to 0>>
+		<<elseif $arousal lt 8000>>
+			<<set _erection_state to 1>>
+		<<else>>
+			<<set _erection_state to 2>>
+		<</if>>
+		<<set _bulge_size to ($penissize + 1) * _erection_state>>
+	<</if>>
+
+	<!-- Determine how visible the player's bottom is -->
+	<<if $worn.lower.skirt is 1 and $worn.lower.skirt_down is 1 and $worn.lower.state is "waist">>
+		<<set _bottom_visibility to 0>>
+	<<else>>
+		<<set _bottom_visibility to 1>>
+	<</if>>
+
+	<!-- Special handling to allow simulating removal of top clothing layer -->
+	<<set _under_lower_visible to _ignore_overwear or $worn.lower.exposed gte 2>>
+	<<set _under_upper_visible to _ignore_overwear or $worn.upper.exposed gte 2>>
+
+	<!-- Gender appearance factors -->
+	<<set _gender_appearance_factors to []>>
+	<<set _apparent_femininity to 0>>
+	<<set _breast_indicator to 0>>
+
+	<!-- Lower clothing, bulge, and genitals -->
+	<<addfemininityofclothingarticle $worn.lower>>
+	<<if _under_lower_visible>>
+		<!-- Lower underwear is visible -->
+		<<addfemininityofclothingarticle $worn.under_lower>>
+		<<if $worn.under_lower.exposed gte 1>>
+			<!-- Genitals slot is visible -->
+			<<addfemininityofclothingarticle $worn.genitals>>
+			<<if $worn.genitals.exposed gte 1>>
+				<!-- Bare genitals are visible -->
+				<<if $penisexist is 1>>
+					<<addfemininityfromfactor -100000 "Penis visible">>
+				<</if>>
+				<<if $vaginaexist is 1>>
+					<<addfemininityfromfactor 100000 "Vagina visible">>
+				<</if>>
+			<</if>>
+		<<else>>
+			<!-- Bottom visible through underwear -->
+			<<set _bottom_visibility *= 0.75>>
+			<!-- Bulge visible through underwear -->
+			<<addfemininityfromfactor `-Math.clamp(
+				(_bulge_size - 1) * 100, 0, Infinity
+			)` "Bulge visible through underwear">>
+		<</if>>
+	<<else>>
+		<!-- Bottom covered by lower clothes -->
+		<<set _bottom_visibility *= 0.75>>
+		<!-- Bluge covered by lower clothes -->
+		<<addfemininityfromfactor `-Math.clamp(
+			(_bulge_size - 4) * 100, 0, Infinity
+		)` "Bulge visible through clothing">>
+	<</if>>
+	<!-- Upper clothing and breasts -->
+	<<addfemininityofclothingarticle $worn.upper>>
+	<<if _under_upper_visible>>
+		<!-- Upper underwear is visible -->
+		<<addfemininityofclothingarticle $worn.under_upper>>
+		<<if $worn.under_upper.exposed gte 1>>
+			<!-- Exposed breasts -->
+			<<set _breast_indicator to 1>>
+			<<addfemininityfromfactor `($breastsize - 0.5) * 100` "Exposed breasts">>
+		<<else>>
+			<!-- Breasts covered by only underwear -->
+			<<addfemininityfromfactor `Math.clamp(
+				($breastsize - 2) * 100, 0, Infinity
+			)` "Breast size visible through underwear">>
+		<</if>>
+	<<else>>
+		<!-- Breast fully covered -->
+		<<addfemininityfromfactor `Math.clamp(
+			($breastsize - 4) * 100, 0, Infinity
+		)` "Breast size visible through clothing">>
+	<</if>>
+	<!-- Always visible clothing -->
+	<<addfemininityofclothingarticle $worn.head>>
+	<<addfemininityofclothingarticle $worn.face>>
+	<<addfemininityofclothingarticle $worn.neck>>
+	<<addfemininityofclothingarticle $worn.legs>>
+	<<addfemininityofclothingarticle $worn.feet>>
+	<!-- Hair length -->
+	<<addfemininityfromfactor `Math.trunc(($hairlength - 200) / 2)` "Hair length">>
+	<!-- Body structure -->
+	<<addfemininityfromfactor
+		`Math.trunc($bottomsize * _bottom_visibility * 50)`
+		`"Bottom size (" + Math.trunc(_bottom_visibility * 100) + "% visible)"`
+	>>
+	<<setfemininitymultiplierfromgender $player.gender>>
+	<<addfemininityfromfactor `_femininity_multiplier * 200` "Bone structure">>
+	<<addfemininityfromfactor
+		`Math.trunc((-1 * ($physique + $physiquesize / 2) / $physiquesize) * 100)`
+		"Musculature"
+	>>
+	<!-- Behaviour -->
+	<<setfemininitymultiplierfromgender $player.gender_posture>>
+	<<set _acting_multiplier to $englishtrait + 1>>
+	<<addfemininityfromfactor
+		`_femininity_multiplier * 100 * _acting_multiplier`
+		`"Adopted gender posture (x" + _acting_multiplier + " effectiveness due to English skill)"`
+	>>
+
+	<<if _apparent_femininity gt 0>>
+		<<set _gender_appearance to "f">>
+	<<elseif _apparent_femininity lt 0>>
+		<<set _gender_appearance to "m">>
+	<<else>>
+		<<set _gender_appearance to $player.gender>>
+	<</if>>
+<</nobr>><</widget>>
+
 <<widget "exposedcheck">><<nobr>>
 
 <<set $breastindicator to 0>>
 
-<<if $worn.under_lower.exposed gte 1>>
-<<set $toplessgender to $player.gender>>
-<<elseif $breastsize gte 8>>
-<<set $toplessgender to "f">>
-<<elseif $worn.under_upper.exposed gte 1>>
-	<<if $breastsize gte 3>>
-	<<set $toplessgender to "f">>
-	<<else>>
-		<<if $worn.under_lower.gender is "f">>
-		<<set $toplessgender to "f">>
-		<<elseif $worn.under_lower.gender is "m">>
-		<<set $toplessgender to "m">>
-		<<else>>
-			<<if $worn.lower.gender is "f">>
-			<<set $toplessgender to "f">>
-			<<elseif $worn.lower.gender is "m">>
-			<<set $toplessgender to "m">>
-			<<else>>
-			<<set $toplessgender to $player.gender>>
-			<</if>>
-		<</if>>
-	<</if>>
-<<else>>
-	<<if $worn.under_lower.gender is "f">>
-	<<set $toplessgender to "f">>
-	<<elseif $worn.under_lower.gender is "m">>
-	<<set $toplessgender to "m">>
-	<<else>>
-		<<if $worn.under_upper.gender is "f">>
-		<<set $toplessgender to "f">>
-		<<elseif $worn.under_upper.gender is "m">>
-		<<set $toplessgender to "m">>
-		<<else>>
-			<<if $worn.lower.gender is "f">>
-			<<set $toplessgender to "f">>
-			<<elseif $worn.lower.gender is "m">>
-			<<set $toplessgender to "m">>
-			<<else>>
-			<<set $toplessgender to $player.gender>>
-			<</if>>
-		<</if>>
-	<</if>>
-<</if>>
+<<genderappearancecheck "ignoreoverwear">>
+<<set $player.gender_appearance_without_overwear to _gender_appearance>>
+<<run _gender_appearance_factors.sort((a, b) => a.femininity > b.femininity)>>
+<<set $player.gender_appearance_without_overwear_factors to _gender_appearance_factors>>
+<<set $player.femininity_without_overwear to _apparent_femininity>>
 
-<<if $crossdressing isnot 1>>
-<<if $worn.under_lower.exposed gte 1 and $worn.lower.exposed gte 2>>
-<<if $player.gender is "m" and $worn.genitals.type.includesAll("chastity", "hidden")>>
-	<<set $player.appearance to "f">>
-<<else>>
-	<<set $player.appearance to $player.gender>>
-<</if>>
-<<elseif $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 and $breastsize gte 3>>
-<<set $player.appearance to "f">><<set $breastindicator to 1>>
-<<elseif $worn.lower.gender isnot "n">>
-<<set $player.appearance to $worn.lower.gender>>
-<<elseif $worn.upper.gender isnot "n">>
-<<set $player.appearance to $worn.upper.gender>>
-<<elseif $worn.under_lower.gender isnot "n" and $worn.lower.exposed gte 2>>
-<<set $player.appearance to $worn.under_lower.gender>>
-<<elseif $worn.under_upper.gender isnot "n" and $worn.upper.exposed gte 2>>
-<<set $player.appearance to $worn.under_upper.gender>>
-<<elseif $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 and $breastsize lte 2>>
-<<set $player.appearance to "m">>
-<<else>>
-<<set $player.appearance to $player.gender>>
-<</if>>
-<</if>>
+<<genderappearancecheck>>
+<<set $player.gender_appearance to _gender_appearance>>
+<<run _gender_appearance_factors.sort((a, b) => a.femininity > b.femininity)>>
+<<set $player.gender_appearance_factors to _gender_appearance_factors>>
+<<set $player.femininity to _apparent_femininity>>
+<<set $breastindicator to _breast_indicator>>
 
 <</nobr>><</widget>>
 
@@ -1859,13 +1962,13 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<set $exposed to 0>>
 <<if $worn.upper.exposed gte 1>>
-	<<if $player.appearance is "m">>
+	<<if $player.gender_appearance is "m">>
 	<<elseif $libertine gte 1>>
 	<<else>>
 	<<set $exposed to 1>>
 	<</if>>
 <</if>>
-<<if $worn.upper.exposed gte 2 and $player.appearance isnot "m">>
+<<if $worn.upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 	<<if $libertine is 1>>
 	<<set $topless to 1>>
 	<<else>>
@@ -2139,7 +2242,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<if $worn.upper.cursed isnot 1>>
 	<<if $worn.upper.set isnot $worn.lower.set and !$worn.upper.type.includes("naked")>>
-		<<if $worn.under_upper.type.includes("naked") and $toplessgender is "f" and $exhibitionism gte 15>>
+		<<if $worn.under_upper.type.includes("naked") and $player.gender_appearance_without_overwear is "f" and $exhibitionism gte 15>>
 		Remove and hide your <<link [[$worn.upper.name|$passage]]>><<set $eventskip to 1>><<set $action_unclad_upper to 1>><</link>>
 		<br>
 		<<else>>
@@ -2172,7 +2275,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<if $worn.under_upper.cursed isnot 1>>
 	<<if $worn.under_upper.set isnot $worn.under_lower.set and !$worn.under_upper.type.includes("naked") and $worn.upper.exposed gte 2>>
-		<<if $toplessgender isnot "f">>
+		<<if $player.gender_appearance_without_overwear isnot "f">>
 		Remove and hide your <<link [[$worn.under_upper.name|$passage]]>><<set $eventskip to 1>><<set $action_unclad_under_upper to 1>><</link>>
 		<br>
 		<<elseif $exhibitionism gte 15>>
@@ -2348,7 +2451,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 				<<if $exhibitionism gte 55>>
 				<label><span class="meek">Strip $worn.upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "outfitstripbreasts">></label> |
 				<</if>>
-			<<elseif $player.appearance isnot "m" and $worn.lower.gender isnot "m">>
+			<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
 				<<if $exhibitionism gte 55>>
 				<label><span class="meek">Strip $worn.upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "outfitstripchest">></label> |
 				<</if>>
@@ -2370,7 +2473,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 			<<if $exhibitionism gte 55>>
 			<label><span class="meek">Strip $worn.upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "upperstripbreasts">></label> |
 			<</if>>
-		<<elseif $player.appearance isnot "m" and $worn.lower.gender isnot "m">>
+		<<elseif $player.gender_appearance isnot "m" and $worn.lower.gender isnot "m">>
 			<<if $exhibitionism gte 55>>
 			<label><span class="meek">Strip $worn.upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "upperstripfchest">></label> |
 			<</if>>
@@ -2398,7 +2501,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 				<<if $exhibitionism gte 55>>
 				<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underoutfitstripbreasts">></label> |
 				<</if>>
-			<<elseif $player.appearance isnot "m" and $worn.under_lower.gender isnot "m">>
+			<<elseif $player.gender_appearance isnot "m" and $worn.under_lower.gender isnot "m">>
 				<<if $exhibitionism gte 55>>
 				<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underoutfitstripchest">></label> |
 				<</if>>
@@ -2422,7 +2525,7 @@ You gracefully remove your $worn.under_lower.name, exposing your <<genitalsstop>
 			<<if $exhibitionism gte 55>>
 			<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underupperstripbreasts">></label> |
 			<</if>>
-		<<elseif $player.appearance isnot "m" and $worn.under_lower.gender isnot "m">>
+		<<elseif $player.gender_appearance isnot "m" and $worn.under_lower.gender isnot "m">>
 			<<if $exhibitionism gte 55>>
 			<label><span class="meek">Strip $worn.under_upper.name</span> <<combatexhibitionist4>> <<radiobutton "$danceaction" "underupperstripfchest">></label> |
 			<</if>>
@@ -3057,11 +3160,11 @@ $mouthstate is "tentacledeep">>
 
 <<if $map.movement is true>>
 __Map__<br>
-|.....<a class="nonumberify mapmove" onclick="mapMove('Barb Street')" title="Barb Street">Ba</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Cliff Street')" title="Cliff Street">Cl</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Starfish Street')" title="Starfish Street">St</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Mer Street')" title="Mer Street">Me</a><br>
+|.....<a class="no-numberify mapmove" onclick="mapMove('Barb Street')" title="Barb Street">Ba</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Cliff Street')" title="Cliff Street">Cl</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Starfish Street')" title="Starfish Street">St</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Mer Street')" title="Mer Street">Me</a><br>
 |..╱ ╲ ╱ ╲ ╱ ╲ ╱ ╲<br>
-|<a class="nonumberify mapmove" onclick="mapMove('Domus Street')" title="Domus Street">Do</a> <a class="nonumberify mapmove" onclick="mapMove('Residential alleyways')" title="ResidentialAlley">─</a> <a class="nonumberif mapmove" onclick="mapMove('Connudatus Street')" title="Connudatus Street">Co</a> <a class="nonumberif mapmove" onclick="mapMove('Commercial alleyways')" title="CommercialAlley">─ </a><a class="nonumberif mapmove" onclick="mapMove('High Street')" title="High Street">Hi</a> <a class="nonumberif mapmove" onclick="mapMove('Park')" title="Park">─</a> <a class="nonumberif mapmove" onclick="mapMove('Oxford Street')" title="Oxford Street">Ox</a> <a class="nonumberif mapmove" onclick="mapMove('Industrial alleyways')" title="IndustrialAlley">─</a> <a class="nonumberif mapmove" onclick="mapMove('Harvest Street')" title="Harvest Street">Ha</a><br>
+|<a class="no-numberify mapmove" onclick="mapMove('Domus Street')" title="Domus Street">Do</a> <a class="no-numberify mapmove" onclick="mapMove('Residential alleyways')" title="ResidentialAlley">─</a> <a class="no-numberify mapmove" onclick="mapMove('Connudatus Street')" title="Connudatus Street">Co</a> <a class="no-numberify mapmove" onclick="mapMove('Commercial alleyways')" title="CommercialAlley">─ </a><a class="no-numberify mapmove" onclick="mapMove('High Street')" title="High Street">Hi</a> <a class="no-numberify mapmove" onclick="mapMove('Park')" title="Park">─</a> <a class="no-numberify mapmove" onclick="mapMove('Oxford Street')" title="Oxford Street">Ox</a> <a class="no-numberify mapmove" onclick="mapMove('Industrial alleyways')" title="IndustrialAlley">─</a> <a class="no-numberify mapmove" onclick="mapMove('Harvest Street')" title="Harvest Street">Ha</a><br>
 |..╲ ╱ ╲ ╱ ╲ ╱ ╲ ╱<br>
-|.....<a class="nonumberify mapmove" onclick="mapMove('Danube Street')" title="Danube Street">Da</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Wolf Street')" title="Wolf Street">Wo</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Nightingale Street')" title="Nightingale Street">Ni</a> ─ <a class="nonumberify mapmove" onclick="mapMove('Elk Street')" title="Elk Street">El</a><br>
+|.....<a class="no-numberify mapmove" onclick="mapMove('Danube Street')" title="Danube Street">Da</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Wolf Street')" title="Wolf Street">Wo</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Nightingale Street')" title="Nightingale Street">Ni</a> ─ <a class="no-numberify mapmove" onclick="mapMove('Elk Street')" title="Elk Street">El</a><br>
 <<else>>
 __Map__<br>
 |.....Ba ─ Cl ─ St ─ Me<br>
@@ -3158,23 +3261,23 @@ __Map__<br>
 	<<if $images is 1 and $map.movement is true>>
 		<!-- Image Map Generated by http://www.image-map.net/ -->
 		<map id="town-image-map" name="town-image-map">
-			<area class="nonumberify" alt="Barb Street" title="Barb Street" coords="62,20,39,42" shape="rect" onclick="mapMove('Barb Street')">
-			<area class="nonumberify" alt="Domus Street" title="Domus Street" coords="2,75,26,49" shape="rect" onclick="mapMove('Domus Street')">
-			<area class="nonumberify" alt="Danube Street" title="Danube Street" coords="33,110,70,84" shape="rect" onclick="mapMove('Danube Street')">
-			<area class="nonumberify" alt="Wolf Street" title="Wolf Street" coords="86,117,114,86" shape="rect" onclick="mapMove('Wolf Street')">
-			<area class="nonumberify" alt="High Street" title="High Street" coords="116,77,139,46" shape="rect" onclick="mapMove('High Street')">
-			<area class="nonumberify" alt="Connudatus Street" title="Connudatus Street" coords="64,77,88,49" shape="rect" onclick="mapMove('Connudatus Street')">
-			<area class="nonumberify" alt="Cliff Street" title="Cliff Street" coords="88,40,117,-1" shape="rect" onclick="mapMove('Cliff Street')">
-			<area class="nonumberify" alt="Starfish Street" title="Starfish Street" coords="147,41,172,12" shape="rect" onclick="mapMove('Starfish Street')">
-			<area class="nonumberify" alt="Nightingale Street" title="Nightingale Street" coords="143,115,170,82" shape="rect" onclick="mapMove('Nightingale Street')">
-			<area class="nonumberify" alt="Oxford Street" title="Oxford Street" coords="170,73,203,45" shape="rect" onclick="mapMove('Oxford Street')">
-			<area class="nonumberify" alt="Mer Street" title="Mer Street" coords="202,42,229,14" shape="rect" onclick="mapMove('Mer Street')">
-			<area class="nonumberify" alt="Elk Street" title="Elk Street" coords="197,111,238,77" shape="rect" onclick="mapMove('Elk Street')">
-			<area class="nonumberify" alt="Harvest Street" title="Harvest Street" coords="252,46,228,76" shape="rect" onclick="mapMove('Harvest Street')">
-			<area class="nonumberify" alt="Industrial Alley" title="Industrial Alley" coords="225,73,209,53" shape="rect" onclick="mapMove('Industrial alleyways')">
-			<area class="nonumberify" alt="Park" title="Park" coords="154,65,170,52" shape="rect" onclick="mapMove('Park')">
-			<area class="nonumberify" alt="Commercial Alley" title="Commercial Alley" coords="94,69,110,56" shape="rect" onclick="mapMove('Commercial alleyways')">
-			<area class="nonumberify" alt="Residential Alley" title="Residential Alley" coords="38,70,57,56" shape="rect" onclick="mapMove('Residential alleyways')">
+			<area class="no-numberify" alt="Barb Street" title="Barb Street" coords="62,20,39,42" shape="rect" onclick="mapMove('Barb Street')">
+			<area class="no-numberify" alt="Domus Street" title="Domus Street" coords="2,75,26,49" shape="rect" onclick="mapMove('Domus Street')">
+			<area class="no-numberify" alt="Danube Street" title="Danube Street" coords="33,110,70,84" shape="rect" onclick="mapMove('Danube Street')">
+			<area class="no-numberify" alt="Wolf Street" title="Wolf Street" coords="86,117,114,86" shape="rect" onclick="mapMove('Wolf Street')">
+			<area class="no-numberify" alt="High Street" title="High Street" coords="116,77,139,46" shape="rect" onclick="mapMove('High Street')">
+			<area class="no-numberify" alt="Connudatus Street" title="Connudatus Street" coords="64,77,88,49" shape="rect" onclick="mapMove('Connudatus Street')">
+			<area class="no-numberify" alt="Cliff Street" title="Cliff Street" coords="88,40,117,-1" shape="rect" onclick="mapMove('Cliff Street')">
+			<area class="no-numberify" alt="Starfish Street" title="Starfish Street" coords="147,41,172,12" shape="rect" onclick="mapMove('Starfish Street')">
+			<area class="no-numberify" alt="Nightingale Street" title="Nightingale Street" coords="143,115,170,82" shape="rect" onclick="mapMove('Nightingale Street')">
+			<area class="no-numberify" alt="Oxford Street" title="Oxford Street" coords="170,73,203,45" shape="rect" onclick="mapMove('Oxford Street')">
+			<area class="no-numberify" alt="Mer Street" title="Mer Street" coords="202,42,229,14" shape="rect" onclick="mapMove('Mer Street')">
+			<area class="no-numberify" alt="Elk Street" title="Elk Street" coords="197,111,238,77" shape="rect" onclick="mapMove('Elk Street')">
+			<area class="no-numberify" alt="Harvest Street" title="Harvest Street" coords="252,46,228,76" shape="rect" onclick="mapMove('Harvest Street')">
+			<area class="no-numberify" alt="Industrial Alley" title="Industrial Alley" coords="225,73,209,53" shape="rect" onclick="mapMove('Industrial alleyways')">
+			<area class="no-numberify" alt="Park" title="Park" coords="154,65,170,52" shape="rect" onclick="mapMove('Park')">
+			<area class="no-numberify" alt="Commercial Alley" title="Commercial Alley" coords="94,69,110,56" shape="rect" onclick="mapMove('Commercial alleyways')">
+			<area class="no-numberify" alt="Residential Alley" title="Residential Alley" coords="38,70,57,56" shape="rect" onclick="mapMove('Residential alleyways')">
 		</map>
 	<</if>>
 	<div id="divmap"><img id="map" src="img/misc/map.png"><img id="maparrow" usemap="#town-image-map" @src="'img/misc/maparrow' + $args[0] + '.png'"></div>
@@ -4033,3 +4136,57 @@ __Map__<br>
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "linkradiogroup">><<nobr>>
+	<<set _receiver_name to $args[0]>>
+	<<set _possible_values_by_label to $args[1]>>
+	<<set _set_value to State.getVar(_receiver_name)>>
+
+	<span class="no-numberify">
+		<<for _label, _value range _possible_values_by_label>>
+			<<capture _receiver_name, _value>>
+				<<link _label>>
+					<<run State.setVar(_receiver_name, _value)>>
+					<<run Engine.show()>>
+				<</link>>
+			<</capture>>
+			|
+		<</for>>
+	</span>
+<</nobr>><</widget>>
+
+<<widget "radiogroup">><<nobr>>
+	<<set _receiver_name to $args[0]>>
+	<<set _possible_values_by_label to $args[1]>>
+	<<set _set_value to State.getVar(_receiver_name)>>
+
+	<<for _label, _value range _possible_values_by_label>>
+		<label>
+		<<if _set_value is _value>>
+			<<radiobutton _receiver_name _value checked>>
+		<<else>>
+			<<radiobutton _receiver_name _value>>
+		<</if>>
+		_label
+		</label>
+	<</for>>
+<</nobr>><</widget>>
+
+<<widget "settextcolorfromfemininity">><<nobr>>
+	<<if $args[0] gt 0>>
+		<<set _text_color to "pink">>
+	<<elseif $args[0] lt 0>>
+		<<set _text_color to "lblue">>
+	<<else>>
+		<<set _text_color to "">>
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "settextcolorfromgender">><<nobr>>
+	<<if $args[0] is "f">>
+		<<set _text_color to "pink">>
+	<<elseif $args[0] is "m">>
+		<<set _text_color to "lblue">>
+	<<else>>
+		<<set _text_color to "">>
+	<</if>>
+<</nobr>><</widget>>
