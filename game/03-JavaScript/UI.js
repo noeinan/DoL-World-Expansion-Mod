@@ -243,3 +243,7 @@ window.extendStats = function(){
 	}
 	new Wikifier(null, '<<replace #stats>><<statsCaption>><</replace>>');
 }
+
+window.customColor = function(color, saturation, brightness, contrast, sepia){
+	return 'filter: hue-rotate('+color+'deg) saturate('+saturation+') brightness('+brightness+') contrast('+contrast+') sepia('+sepia+')';
+}
