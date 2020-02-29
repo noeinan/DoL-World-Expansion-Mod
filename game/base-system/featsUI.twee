@@ -44,24 +44,25 @@ Filter by:
 <<featsData>>
 <<set _skip to []>>
 <<set _filter to "All">>
-<<for _feat range _feats>>
-	<<if (_skip.includes(_feat.series) and _feat.hint is undefined) or !_feat.filter.includes($feats.filter)>>
+<<set _keys to Object.keys(_feats)>>
+<<for _i to 0; _i lt _keys.length; _i++>>
+	<<if (_skip.includes(_feats[_keys[_i]].series) and _feats[_keys[_i]].hint is undefined) or !_feats[_keys[_i]].filter.includes($feats.filter)>>
 		<<continue>>
 	<</if>>
-	<<if Object.keys($feats.currentSave).includes(_feat.title)>>
+	<<if Object.keys($feats.currentSave).includes(_keys[_i])>>
 		<<set _owned to 2>>
-	<<elseif Object.keys($feats.allSaves).includes(_feat.title)>>
+	<<elseif Object.keys($feats.allSaves).includes(_keys[_i])>>
 		<<set _owned to 1>>
 	<<else>>
 		<<set _owned to 0>>
-		<<if _feat.series isnot "">>
-			<<set _skip.push(_feat.series)>>
+		<<if _feats[_keys[_i]].series isnot "">>
+			<<set _skip.push(_feats[_keys[_i]].series)>>
 		<</if>>
 	<</if>>
 	<div class="featList">
 		<div class="featImage">
 			<<if _owned gt 0>>
-				<<switch _feats[_feat.title].difficulty>>
+				<<switch _feats[_keys[_i]].difficulty>>
 					<<case 1>><img src="img/ui/CopperCoin.png" class="featCoin">
 					<<case 2>><img src="img/ui/SilverCoin.png" class="featCoin">
 					<<case 3>><img src="img/ui/GoldCoin.png" class="featCoin">
@@ -71,20 +72,20 @@ Filter by:
 			<</if>>
 		</div>
 		<div class="featText">
-			<<if _owned gt 0 or _feat.hint is undefined>>
-				<span class="title"><<print _feats[_feat.title].title>></span>
+			<<if _owned gt 0 or _feats[_keys[_i]].hint is undefined>>
+				<span class="title"><<print _feats[_keys[_i]].title>></span>
 				<br>
-				<span class="text"><<print _feats[_feat.title].desc>></span>
+				<span class="text"><<print _feats[_keys[_i]].desc>></span>
 			<<else>>
 				<span class="title">?????</span>
 				<br>
-				<span class="text"><<print _feats[_feat.title].hint>></span>
+				<span class="text"><<print _feats[_keys[_i]].hint>></span>
 			<</if>>
 			<br>
 			<<if _owned is 2>>
-				<span class="text">Earned on: <<print new Date($feats.currentSave[_feat.title]).toLocaleString()>></span>
+				<span class="text">Earned on: <<print new Date($feats.currentSave[_keys[_i]]).toLocaleString()>></span>
 			<<elseif _owned is 1>>
-				<span class="text">Originally Earned on: <<print new Date($feats.allSaves[_feat.title]).toLocaleString()>></span>
+				<span class="text">Originally Earned on: <<print new Date($feats.allSaves[_keys[_i]]).toLocaleString()>></span>
 			<</if>>
 		</div>
 	</div>
