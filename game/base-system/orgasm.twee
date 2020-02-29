@@ -429,13 +429,23 @@
 <<for _i to 0; _i lt _length; _i++>>
 	<<set _totalArousal += $trackedArousal[_i] / ((_length - _i) * 2)>>
 <</for>>
+<<if $combat is 1>>
+	<<if $enemytype is "man">>
+		<<set $combatWetBoost to Math.floor($promiscuity /20)>>
+	<</if>>
+	<<if $enemytype is "tentacles" or $enemytype is "beast">>
+		<<set $combatWetBoost to Math.floor($deviancy /20)>>
+	<</if>>
+<<else>>
+	<<set $combatWetBoost to 0>>
+<</if>>
 
 <<set _exponential to Math.pow(0.99996,_totalArousal)>>
 <<if $vaginaexist is 1>>
 	<<set $vaginaWetness to Math.clamp((75 - Math.floor(_exponential * 75)) + $vaginagoo + $vaginasemen + Math.floor($vaginalskill / 40) + $combatWetBoost, 0, 100)>>
 <</if>>
 <<set $anusWetness to Math.clamp(60 - (Math.floor(_exponential * 60)) + $anusgoo + $anussemen + Math.floor($analskill / 40) + $combatWetBoost, 0, 100)>>
-<<if $combat is 1 or true>>
+<<if $combat is 1>>
 	<<combatWetnessCalculate>>
 <</if>>
 <</nobr>><</widget>>
@@ -443,21 +453,26 @@
 <<widget "combatWetnessCalculate">><<nobr>>
 <<set $vaginalPain to 0>>
 <<set $analPain to 0>>
-<<if $demon lt 6>>
+<<if $demon lt 6 and $gamemode isnot "soft">>
+	<<if $gamemode is "hard">>
+		<<set _diff to 2>>
+	<<else>>
+		<<set _diff to 1>>
+	<</if>>
 	<<if $vaginaexist is 1>>
 		<<if $consensual is 1>>
-			<<set _base to Math.floor(50 * Math.pow(0.4,$vaginaWetness/8))>>
+			<<set _base to Math.floor(3 * Math.pow(0.4,$vaginaWetness/8))>>
 		<<else>>
-			<<set _base to Math.floor(100 * Math.pow(0.5,$vaginaWetness/25))>>
+			<<set _base to Math.floor(6 * Math.pow(0.5,$vaginaWetness/25))>>
 		<</if>>
-		<<set $vaginalPain to _base>>
+		<<set $vaginalPain to _base * _diff>>
 	<</if>>
 	<<if $consensual is 1>>
-		<<set _base to Math.floor(50 * Math.pow(0.4,$anusWetness/8))>>
+		<<set _base to Math.floor(3 * Math.pow(0.4,$anusWetness/8))>>
 	<<else>>
-		<<set _base to Math.floor(100 * Math.pow(0.5,$anusWetness/25))>>
+		<<set _base to Math.floor(6 * Math.pow(0.5,$anusWetness/25))>>
 	<</if>>
-	<<set $analPain to _base>>
+	<<set $analPain to _base * _diff>>
 <</if>>
 <</nobr>><</widget>>
 
