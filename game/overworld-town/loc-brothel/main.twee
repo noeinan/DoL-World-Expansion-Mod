@@ -513,7 +513,11 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 <br><br>
 <<actionsman>>
 
-<<if $enemyarousal lte $enemyarousalmax and $enemyhealth gte 0 and $alarm lte 0 and $finish is 0>>
+<<set _chance to random(1, 200)>>
+/* 0.5% (1/200) chance per turn, only when crime is non-zero, when over 6 weeks into game, and gte 3 weeks from last raid*/
+<<if _chance is 13 and $crime gte 500 and $days gte 42 and (($days - $brothel_raid_day) gte 21)>>
+<span id="next"><<link [[Next|Brothel Raid]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal lte $enemyarousalmax and $enemyhealth gte 0 and $alarm lte 0 and $finish is 0>>
 <span id="next"><<link [[Next|Brothel Private Sex]]>><</link>></span><<nexttext>>
 <<else>>
 <span id="next"><<link [[Next|Brothel Private Sex Finish]]>><</link>></span><<nexttext>>
@@ -522,7 +526,7 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 
 :: Brothel Private Sex Finish [nobr]
 <<set $outside to 0>><<set $location to "brothel">><<effects>>
-
+<<if $stealstate is 3>><<set $brothel_thief += 1>><</if>>
 <<if $consensual is 1>>
 
 	<<if $enemyarousal gte $enemyarousalmax>>
@@ -576,7 +580,13 @@ After <<his>> thirty minutes are up, <<he>> pays you the agreed fee and thanks y
 <<clotheson>>
 
 <<endcombat>>
-<<link [[Next|Brothel]]>><</link>>
+<<set $rng to random(1, 100)>>
+<<if $crime gte 4500 and $brothel_raid gte 1 and $brothel_thief gte $rng>>
+/*If you're (a) very wanted and (b) Briar has been raided before, then the (c) chance of Briar selling you out increases the more you steal from their customers.*/
+	<<link [[Next|Brothel Arrest]]>><</link>>
+<<else>>
+	<<link [[Next|Brothel]]>><</link>>
+<</if>>
 
 
 :: Brothel Dance Rape [nobr]
@@ -1303,3 +1313,297 @@ You wash until you're squeaky clean.<<wash>><br><br>
 
 
 <<link [[Get out->Brothel Bathroom]]>><<clotheson>><</link>><br>
+
+
+:: Brothel Raid [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+/* Police raid in the middle of action */
+<<set $brothel_raid += 1>>
+<<set $brothel_raid_day to $days>>
+<span class="red">Suddenly there is a loud crash from outside, followed by shouts and screams.</span> The <<person>> freezes.
+<<set $enemyarousal to 0>><<set $enemytrust to -200>>
+<<set $enemyhealth to ($enemyhealthmax / 5) * 4>><<set $enemyanger to ($enemyangermax / 5) * 2>>
+<<if $images is 1>><<timed 100ms>><br><br><br>
+<<combatimg>>
+<br>
+<</timed>><</if>>
+<<stateman>>
+<br><br>
+Someone clearly shouts: "Everyone stop. This is the Police. Stop right where you are."
+<br>
+The <<person>> curses, extricates <<himself>> and clambers to dress.
+<br><br>
+<span id="next"><<link [[Straighten yourself up|Brothel Raid 2]]>><</link>></span><<nexttext>>
+
+
+
+:: Brothel Raid 2 [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+/* Police raid the place */
+The <<person>> rushes out.
+<<clotheson>>
+<<endcombat>>
+
+You peek through the door. The corridor outside is still quiet, but not far away you hear shouting, crashes and chaos.<br>
+The police will soon be back here.
+<br><br>
+<<if $skulduggery gte 200>><<set $skulduggerydifficulty to 800>><<link [[Attempt Escape|Brothel Raid Escape]]>><</link>><<skulduggerydifficulty>><br><</if>>
+<<link [[Wait to be Arrested|Brothel Raid Pre Arrest]]>><</link>><br>
+
+
+
+:: Brothel Raid Escape [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+<<generate1>><<person1>>Creeping into the empty hallway, you can hear the chaos getting closer. There are several empty rooms you could hide in, but they are likely to be searched.
+Suddenly a <<person>> bursts into the hallway looking frantically for somewhere to hide, whimpering:
+"No, no... What will <<if $pronoun is "m">>Mother say?! What will Mother<<else>>Father say?! What will Father<</if>> say!?"<br>
+"In here!" You say, pointing to an empty room. "Hide yourself here. And lock the door."<br>
+"Wha- what about you? What will you do?!"<br>
+"You're a customer," you say firmly. "I'll stand right here and make sure the bastards never get to you."
+<br><br>
+<<skulduggerycheck>><br><br>
+<<if $skulduggerysuccess is 1>>
+
+<<His>> eyes light up. "Thank you! Thank you!"<br>
+The doors slams shut and the lock clicks into place. You quickly scan the corridor and spot a pair of bright, <<print either("red","striped","yellow","pink","white")>>
+panties wedged under a nearby door. You hang them on the door-handle of the <<persons>> room before slipping into the empty room opposite.
+You leave your door wide open so anyone can see into the empty room and tuck yourself behind the door.
+<br><br>
+A moment later, police charge the corridor.<br>
+"Oi oi! Look at that. The door handle."<br>
+"Subtle."<br>
+You hear them try the door opposite.<br>
+"Open up!" You hear a loud knocking. "Police. We know you're in there."<br>
+A floorboard creaks in front of you as someone looks into your room. You press back against the wall.<br>
+"Any one in that one?"<br>
+"Empty," you hear just beyond the door in front of you. "They're probably already in the line up out front."<br>
+"Think this one's gonna need a kick."<br>
+"Okay," the floorboard creaks again as they move away.
+<br><br>
+A moment later you hear a loud crash, then a yell, then begging and whimpering as the <<person>> is hauled away.
+<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+	<<skulduggeryskilluse>>
+	<<else>>
+	<span class="blue">That was too easy. You didn't learn anything.</span>
+	<br><br>
+	<</if>>
+
+<<link [[Wait (0:40)|Brothel Raid Escape 2]]>><<pass 60>><</link>>
+<br>
+
+<<else>>
+
+"You lying scumbag," <<he>> shouts, shoving you over a chair.
+Moments later hands drag you to your feet.<br>
+"You're under arrest."
+
+<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+	<<skulduggeryskilluse>>
+	<<else>>
+	<span class="blue">That was too easy. You didn't learn anything.</span>
+	<br><br>
+	<</if>>
+
+<<link [[Next|Brothel Raid Arrest]]>><</link>>
+<br>
+<<endevent>>
+<</if>>
+
+
+
+:: Brothel Raid Escape 2 [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+You hide out for a long time as the police gather people up. After a while things go quiet. A while later, you cautiously emerge.<br>
+Briar double-takes as you stroll out of the private area.
+<br><br>
+"How?! Nicely done. They're still outside. Best wait there and have a drink. After all this, it's on me. Or make a few quid and help me straighten things out. Your call."
+<br><br>
+<<link [[Help out (£5, 0:30)|Brothel]]>><<pass 30>><<set $money += 500>><<tiredness 2>><</link>><<gtiredness>><br>
+<<link [[Wait to leave (0:30)|Harvest Street]]>><<pass 30>><</link>><br>
+
+
+
+:: Brothel Raid Pre Arrest [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+A few police find you near the private rooms. One puts a hand on your shoulder.<br>
+"You're under arrest."<br><br>
+
+<<link [[Next|Brothel Raid Arrest]]>><</link>>
+<br>
+<<endevent>>
+
+
+:: Brothel Raid Arrest [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+Two police officers lead you towards the main part of the brothel. They stop near a side exit.
+
+<<if $crime lte 900>>
+	One opens the door.<br><br>
+	"You seem like a decent kid." he says. "No need for you to get caught up in this. Get out of here."<<set _bribe to 0>>
+<<elseif $crime lte 2000>><<set _bribe to 800>>
+	One puts a hand on the door handle.
+	<br><br>
+	"We know who you are," she says. "You don't want to get caught up in this. Make a charitable donation of £_bribe and we never saw you."
+<<elseif $crime lte 4500>><<set _bribe to Math.trunc($crime)>>
+	One stands in front of the door.
+	<br><br>
+	"If we take you in it's gonna go badly for you," one says. "£_bribe cash would be enough to distract us while we leave you unattended by this door."
+<<else>><br><br>
+	"Ha! We've been after you for a while. You're not giving us the slip again."<<set _bribe to 500000>>
+<</if>><br><br>
+
+<<if _bribe is 0>>
+	<<link [[Leave|Brothel Raid Leave]]>><</link>>
+<<else>>
+	<<if _bribe lt 500000>>
+		<<if $money gte (_bribe * 100)>><<link [[Bribe|Brothel Raid Leave]]>><<set $money -= (_bribe * 100)>><</link>> | <span class="red">£_bribe</span><br>
+		<<else>>Bribe | <span class="red">£_bribe - insufficient money</span><br>
+		<</if>>
+	<</if>>
+	<<if $promiscuity gte 35>>
+		<<link [[Offer your body|Brothel Raid Arrest Sex]]>><<set $sexstart to 1>><<generate1>><<generate2>><</link>><<promiscuous3>>
+		<br>
+		<</if>>
+	<<link [[Get arrested|Brothel Raid Arrest 2]]>><</link>>
+<</if>><br>
+
+
+
+:: Brothel Raid Leave [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+You pass through the opened door and quietly slip away through a couple of alleyways.<br>
+Due to the high police presence, you have a to wait for things to calm down before you can get back to the main street.
+<br><br>
+<<link [[Next|Harvest Street]]>><<pass 40>><</link>>
+
+
+
+
+:: Brothel Raid Arrest Sex [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $enemytrust += 100>><<promiscuity5>>
+	You smile at them seductively.<br>
+	"If you're nice to me and let me go," you say. "I can be very nice to you."
+	<br><br>
+
+	<<person1>>"Okay," the <<person>> says.<br>
+	<<if $crime gte 4500>>
+		<<person2>>"This one's a slippery one," says the <<personstop>> "Cuff <<pher>> first so <<pshe>> doesn't try anything."<br>
+		"Okay."
+		<<set $leftarm to "bound">><<set $rightarm to "bound">>
+	<</if>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Brothel Raid Arrest Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Brothel Raid Arrest Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Brothel Raid Arrest Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Brothel Raid Arrest Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Brothel Raid Arrest Sex Finish [nobr]
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	They straighten up their clothes.
+	<br><br>
+	<<tearful>> you recover.
+	<br>
+	<<clotheson>>
+	<<if $crime lte 4000 or $rng % 2>>
+		<br>One opens the door.<br>
+		<span class="green">"Go on. Get out of here."</span><br><br>
+		<<endcombat>>
+		<<link [[Leave|Brothel Raid Leave]]>><</link>>
+	<<else>>
+		"Thanks for that, whore," says the <<personstop>><br>
+		"Yeah, that was good," says the <<person1>><<personstop>> <span class="red">"But you're still under arrest."</span><br><br>
+		<<endcombat>>
+		<<link [[Next|Brothel Raid Arrest 2]]>><</link>>
+	<</if>>
+<<elseif $enemyhealth lte 0>>
+	As they stagger back, you shove open the door to the alleyways.
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Brothel Raid Leave]]>><</link>>
+<<else>>
+	"Okay. Well whatever, you're still under arrest."<br>
+	A hand clamps on your shoulder. "This way."
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Brothel Raid Arrest 2]]>><</link>>
+<</if>>
+
+
+
+:: Brothel Raid Arrest 2 [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+<<set $leftarm to "bound">><<set $rightarm to "bound">>
+<<pass 45>>
+You are led out front where brothel staff are being cuffed and lined up against a wall. A crowd of passers by gawk.<br>
+You are left standing there for nearly an hour while the police process customers. The crowd jeer and wolf-whistle.<br><br><<famesex 2>><<fameprostitution 2>>
+<br><br>
+<<link [[Next|Brothel Raid Arrest 3]]>><</link>>
+
+
+:: Brothel Raid Arrest 3 [nobr]
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+Eventually, police vans turn up and you are all rounded into them. The police take you to the station and put you in a holding cell.<br>
+"With so many in today, this might take some time," the guard tells you. "They'll get to you in the end. Sit tight."<br><br>
+
+<<link [[Next|Police Cell]]>><<pass 2 hour>><</link>>
+
+
+
+:: Brothel Arrest [nobr]
+<<set $outside to 0>><<set $location to "brothel">><<effects>>
+<<set $brothel_thief to 0>>
+You walk out <span class="red">into the waiting arms of two police officers.</span><br>
+Briar stands beside them.
+<br><br>
+The police push you against the wall, pinning your arms.<br>
+"They wanted to raid me again," Briar explains. "Looking for you. They really want you this time."
+<br><br>
+Armlocked, the police drag you deeper into the back of the brothel. Briar strolls alongside.<br>
+"Raids cost a lot," Briar goes on. "Not just money either. Reputation. And me- I was still ready to protect you. I'm all heart right? Seriously, I look out for mine. I was ready to take the hit."
+<br><br>
+"Until," Briar growls. "I heard you've been STEALING from MY customers. Hurting the reputation of my establishment. Driving away my custom."
+<br><br>
+Briar opens a secluded delivery door in the rear, well out of sight of customers. Leads the police out. An unmarked car awaits you.
+<br><br>
+"There's a saying about the wisdom of shitting where you eat," Briar says. "Reflect on it."<br>
+The police throw you over the bonnet.
+<br><br><<generate1>><<generate2>>
+<<link [[Next|Hospital Arrest Journey]]>><</link>>
