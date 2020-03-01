@@ -58,7 +58,11 @@ Macro.add('time', {
 	}
 });
 
+window.ensureIsArray = function(x) {
+	if (Array.isArray(x)) return x;
 
+	return [x];
+}
 
 function DefineMacro(macroName, macroFunction) {
 	Macro.add(macroName, { isWidget: true, handler: function() {
