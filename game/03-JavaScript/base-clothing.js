@@ -22,3 +22,29 @@ function colourContainerClasses() {
 		' ' + 'feet_acc-' + (V.worn.feet.accessory_colour||'').replace(/ /g,'-')
 }
 window.colourContainerClasses = colourContainerClasses; // export function
+
+
+function debugColourContainerClasses(color) {
+	var V = State.variables;
+	return 'hair-'  + (color.hair||'').replace(/ /g,'-') +
+		' ' + 'eye-'   + (color.eyes||'').replace(/ /g,'-') +
+		' ' + 'upper-' + (color.upper[0]||'').replace(/ /g,'-') +
+		' ' + 'lower-' + (color.lower[0]||'').replace(/ /g,'-') +
+		' ' + 'under_lower-' + (color.under_lower[0]||'').replace(/ /g,'-') +
+		' ' + 'under_upper-' + (color.under_upper[0]||'').replace(/ /g,'-') +
+		' ' + 'head-' + (color.head[0]||'').replace(/ /g,'-') +
+		' ' + 'face-' + (color.face[0]||'').replace(/ /g,'-') +
+		' ' + 'neck-' + (color.neck[0]||'').replace(/ /g,'-') +
+		' ' + 'legs-' + (color.legs[0]||'').replace(/ /g,'-') +
+		' ' + 'feet-' + (color.feet[0]||'').replace(/ /g,'-') +
+		' ' + 'upper_acc-' + (color.upper[1]||'').replace(/ /g,'-') +
+		' ' + 'lower_acc-' + (color.lower[1]||'').replace(/ /g,'-') +
+		' ' + 'under_lower_acc-' + (color.under_lower[1]||'').replace(/ /g,'-') +
+		' ' + 'under_upper_acc-' + (color.under_upper[1]||'').replace(/ /g,'-') +
+		' ' + 'head_acc-' + (color.head[1]||'').replace(/ /g,'-') +
+		' ' + 'face_acc-' + (color.face[1]||'').replace(/ /g,'-') +
+		' ' + 'neck_acc-' + (color.neck[1]||'').replace(/ /g,'-') +
+		' ' + 'legs_acc-' + (color.legs[1]||'').replace(/ /g,'-') +
+		' ' + 'feet_acc-' + (color.feet[1]||'').replace(/ /g,'-')
+}
+window.debugColourContainerClasses = debugColourContainerClasses; // export function
