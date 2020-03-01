@@ -186,28 +186,39 @@ $(document).on('keyup', function(ev) {
 	}
 });
 
-window.skinColor = function(percent, overwrite){
-	if(SugarCube.State.variables.skinColor.tanImgEnabled === "f"){
-	   return "";
+const defaultSkinColorRanges = {
+	"hStart": 45, "hEnd": 45,
+	"sStart": 0.2, "sEnd": 0.4,
+	"bStart": 4.5, "bEnd": 0.7,
+};
+
+window.skinColor = function(percent, overwrite) {
+	if (SugarCube.State.variables.skinColor.tanImgEnabled === "f") {
+		return "";
 	}
-	var result = "";
-	var v = null;
-	if(overwrite != null){
-		v = overwrite;
-	}else{
-		v = {
-			"hStart": 45, "hEnd": 45,
-			"sStart": 0.2, "sEnd": 0.4,
-			"bStart": 4.5, "bEnd": 0.7,
-		}
-	}
-	if(v != null){
-		var p = percent / 100;
-		result = "hue-rotate("+((v.hEnd - v.hStart) * p + v.hStart)+"deg)";
-		result += " saturate("+((v.sEnd - v.sStart) * p + v.sStart).toFixed(2)+")";
-		result += " brightness("+((v.bEnd - v.bStart) * p + v.bStart).toFixed(2)+")";
-	}
-	return result;
+
+	const ranges = ensureIsArray(overwrite || defaultSkinColorRanges);
+	const totalProgress = percent / 100;
+
+	const scaledProgress = ranges.length * totalProgress;
+	const rangeIndex = totalProgress === 1
+		? ranges.length - 1
+		: Math.floor(scaledProgress);
+	const progress = totalProgress === 1
+		? 1
+		: scaledProgress - rangeIndex;
+
+	const {hStart, hEnd, sStart, sEnd, bStart, bEnd} = ranges[rangeIndex];
+
+	const hue = (hEnd - hStart) * progress + hStart;
+	const saturation = (sEnd - sStart) * progress + sStart;
+	const brightness = (bEnd - bStart) * progress + bStart;
+
+	const hueCss = `hue-rotate(${hue}deg)`;
+	const saturationCss = `saturate(${saturation.toFixed(2)})`;
+	const brightnessCss = `brightness(${brightness.toFixed(2)})`;
+
+	return `${hueCss} ${saturationCss} ${brightnessCss}`;
 }
 
 window.closeFeats = function(id){
