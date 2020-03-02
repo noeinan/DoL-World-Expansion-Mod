@@ -1445,9 +1445,32 @@
 			<<facestrip>><<clothesstripstat>><<set $NPCList[_n].righthand to 0>>
 		<</if>>
 	<</if>>
+	<<for _e to 0; _e lt $bodypart_number; _e++>>/*NPC draws on PC*/
+	<<activebodypart>>
+		<<if $NPCList[_n].lefthand is "pen" + "_" + _active_bodypart>>
+			<<He>> scrawls on your <<bodypart _active_bodypart>>:
+			<<bodywriting_npc _active_bodypart>>
+			<<set $NPCList[_n].lefthand to 0>>
+		<</if>>
+		<<if $NPCList[_n].righthand is "pen" + "_" + _active_bodypart>>
+			<<He>> scrawls on your <<bodypart _active_bodypart>>:
+			<<bodywriting_npc _active_bodypart>>
+			<<set $NPCList[_n].righthand to 0>>
+		<</if>>
+	<</for>>	
+	<<if $NPCList[_n].lefthand is "pen">>/*NPC chooses which bodypart to draw on*/
+		<<bodywriting_npc_bodypart left>>
+	<</if>>
+	<<if $NPCList[_n].righthand is "pen">>
+		<<bodywriting_npc_bodypart right>>
+	<</if>>
+	
 	<<set $rng to random(1, 100)>>
 	<<if $NPCList[_n].lefthand is 0>>
-		<<if $enemyanger + $rng lte 20>>
+		<<if $rng lte 100 and $consensual isnot 1>>
+			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<set $NPCList[_n].lefthand to "pen">><<neutral 1>>
+		<<elseif $enemyanger + $rng lte 20>>
 			<<if $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].lefthand to "lowerclothes">><<neutral 1>>
@@ -1885,7 +1908,10 @@
 	<</if>>
 	<<set $rng to random(1, 100)>>
 	<<if $NPCList[_n].righthand is 0>>
-		<<if $enemyanger + $rng lte 20>>
+		<<if $rng lte 100 and $consensual isnot 1>>
+			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<set $NPCList[_n].righthand to "pen">><<neutral 1>>
+		<<elseif $enemyanger + $rng lte 20>>
 			<<if $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].righthand to "lowerclothes">><<neutral 1>>
@@ -4015,63 +4041,117 @@
 				<<if $position is "wall">>
 					<<He>> <<admires>> your helpless <<bottomstop>>
 					<<neutral 1>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire right_bottom>>
+					<<else>>
+						<<bodypart_admire left_bottom>>
+					<</if>>
 				<<else>>
 					<<He>> <<admires>> your hair.
 					<<neutral 1>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_shoulder>>
+					<<else>>
+						<<bodypart_admire right_shoulder>>
+					<</if>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 30>>
 				<<if $position is "wall">>
 					<<He>> <<admires>> your helpless hips.
 					<<neutral 1>>
+					<<bodypart_admire pubic>>
 				<<else>>
 					<<He>> <<admires>> your chest.
 					<<neutral 1>>
+					<<bodypart_admire breasts>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 35>>
 				<<He>> <<admires>> your legs.
 				<<neutral 1>>
+				<<if random(1, 2) is 2>>
+					<<bodypart_admire left_thigh>>
+				<<else>>
+					<<bodypart_admire right_thigh>>
+				<</if>>
 			<<elseif $enemyanger + $rng lte 40>>
 				<<if $position is "wall">>
 					<<He>> <<admires>> your helpless legs.
 					<<neutral 1>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>					
 				<<else>>
 					<<set $NPCList[_n].mouth to "chestentrance">><<set $chestuse to "mouth">><<set $cheststate to "mouthentrance">><span class="blue"><<He>> moves <<his>> head to your chest.</span>
 					<<neutral 1>>
+					<<bodypart_admire breasts>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 45>>
 				<<if $position is "wall">>
 					<<He>> kisses your helpless thighs.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<else>>
 					<<He>> kisses you on the forehead.
 					<<neutral 3>>
+					<<bodypart_admire forehead>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 50>>
 				<<if $position is "wall">>
 					<<He>> kisses you on the hips.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_bottom>>
+					<<else>>
+						<<bodypart_admire right_bottom>>
+					<</if>>
 				<<elseif $NPCList[_n].penis is "mouth" or $NPCList[_n].vagina is "mouth">>
 					<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 					<<neutral 10>>
 				<<else>>
 					<<He>> kisses you on the cheek.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_cheek>>
+					<<else>>
+						<<bodypart_admire right_cheek>>
+					<</if>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 55>>
 				<<if $position is "wall">>
 					<<He>> licks your helpless thighs.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<elseif $NPCList[_n].penis is "mouth" or $NPCList[_n].vagina is "mouth">>
 					<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 					<<neutral 10>>
 				<<else>>
 					<<He>> kisses your neck.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire breasts>>
+					<<else>>
+						<<bodypart_admire breasts>>
+					<</if>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 60>>
 				<<if $position is "wall">>
 					<<He>> licks your helpless hips.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_bottom>>
+					<<else>>
+						<<bodypart_admire right_bottom>>
+					<</if>>
 				<<else>>
 					<<cheeklick _n>>
 				<</if>>
@@ -4080,6 +4160,11 @@
 				<<if $position is "wall">>
 					<<He>> licks your helpless legs.
 					<<neutral 3>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<else>>
 					<<if $mouthuse is 0>>
 						<<if $NPCList[_n].penis is "chest">>
@@ -4129,83 +4214,174 @@
 				<<if $position is "wall">>
 					<<He>> kisses and caresses your helpless thighs with <<his>> tongue.
 					<<neutral 10>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<else>>
 					<<He>> kisses and caresses your nipple with <<his>> tongue.
 					<<neutral 10>>
+					<<bodypart breasts>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 110>>
 				<<if $position is "wall">>
 					<<He>> kisses and gently bites your helpless <<bottomstop>>
 					<<neutral 10>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_bottom>>
+					<<else>>
+						<<bodypart_admire right_bottom>>
+					<</if>>
 				<<elseif $NPCList[_n].penis is "mouth" or $NPCList[_n].vagina is "mouth">>
 					<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 					<<neutral 10>>
 				<<else>>
 					<<He>> kisses and gently bites you on the neck.
 					<<neutral 10>>
+					<<bodypart_admire breasts>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 115>>
 				<<He>> spits on your <<genitalsstop>>
 				<<neutral 5>>
+				<<bodypart_admire pubic>>
 			<<elseif $enemyanger + $rng lte 120>>
 				<<He>> spits on your <<bottomstop>>
 				<<neutral 5>>
+				<<if random(1, 2) is 2>>
+					<<bodypart_admire left_bottom>>
+				<<else>>
+					<<bodypart_admire right_bottom>>
+				<</if>>
 			<<elseif $enemyanger + $rng lte 130>>
 				<<if $position is "wall">>
 					<<He>> spits on your tummy.
 					<<neutral 5>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire back>>
+					<<else>>
+						<<bodypart_admire back>>
+					<</if>>
 				<<else>>
 					<<set $NPCList[_n].mouth to "chestentrance">><<set $chestuse to "mouth">><<set $cheststate to "mouthentrance">><span class="blue"><<He>> moves <<his>> head to your chest.</span>
 					<<neutral 1>>
+					<<bodypart breasts>>
 				<</if>>
+			<<elseif $enemyanger + $rng lte 135>>
+				<<He>> runs <<his>> tongue up your inner thigh.
+				<<neutral 5>>
+				<<if random(1, 2) is 2>>
+					<<bodypart_admire left_thigh>>
+				<<else>>
+					<<bodypart_admire right_thigh>>
+				<</if>>				
 			<<elseif $enemyanger + $rng lte 140>>
 				<<if $position is "wall">>
 					<<He>> spits on your helpless thighs.
 					<<neutral 5>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<else>>
 					<<He>> spits on your face.
 					<<neutral 5>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_cheek>>
+					<<else>>
+						<<bodypart_admire right_cheek>>
+					<</if>>
 				<</if>>
+			<<elseif $enemyanger + $rng lte 145>>
+				<<He>> presses <<his>> mouth against your forehead.
+				<<neutral 5>>
+				<<bodypart_admire forehead>>
 			<<elseif $enemyanger + $rng lte 150>>
 				<<He>> bites your <<bottomstop>>
 				<<violence 10>><<hitstat>><<bruise bottom>>
+				<<if random(1, 2) is 2>>
+					<<bodypart_admire left_bottom>>
+				<<else>>
+					<<bodypart_admire right_bottom>>
+				<</if>>
+			<<elseif $enemyanger + $rng lte 155>>
+				<<He>> <<admires>> your groin, eyes full of thirst.
+				<<neutral 5>>
+				<<bodypart_admire pubic>>
 			<<elseif $enemyanger + $rng lte 160>>
 				<<if $position is "wall">>
 					<<He>> bites your thighs.
 					<<violence 10>><<hitstat>><<bruise thigh>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<else>>
 					<<He>> bites your shoulders.
 					<<violence 10>><<hitstat>><<bruise leftarm>><<bruise rightarm>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_shoulder>>
+					<<else>>
+						<<bodypart_admire right_shoulder>>
+					<</if>>
 				<</if>>
+			<<elseif $enemyanger + $rng lte 165>>
+				<<He>> bites your tummy.
+				<<violence 10>><<hitstat>><<bruise tummy>>
+				<<bodypart_admire back>>
 			<<elseif $enemyanger + $rng lte 170>>
 				<<if $position is "wall">>
 					<<He>> bites your hips.
 					<<violence 10>><<hitstat>><<bruise tummy>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire pubic>>
+					<<else>>
+						<<bodypart_admire pubic>>
+					<</if>>
 				<<elseif $NPCList[_n].penis is "mouth" or $NPCList[_n].vagina is "mouth">>
 					<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 					<<neutral 10>>
 				<<else>>
 					<<He>> bites your neck.
 					<<violence 10>><<hitstat>><<bruise neck>>
+					<<bodypart_admire breasts>>
 				<</if>>
 			<<elseif $enemyanger + $rng lte 180>>
 				<<if $position is "wall">>
 					<<He>> bites your thighs.
 					<<violence 10>><<hitstat>><<bruise thigh>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_thigh>>
+					<<else>>
+						<<bodypart_admire right_thigh>>
+					<</if>>
 				<<elseif $NPCList[_n].penis is "mouth" or $NPCList[_n].vagina is "mouth">>
 					<<He>> leans back, savouring the feel of your mouth on <<his>> genitals.
 					<<neutral 10>>
 				<<else>>
 					<<He>> bites your cheek.
 					<<violence 10>><<hitstat>><<bruise face>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_cheek>>
+					<<else>>
+						<<bodypart_admire right_cheek>>
+					<</if>>
 				<</if>>
 			<<elseif $enemyanger + $rng gte 190>>
 				<<if $position is "wall">>
 					<<He>> bites your <<bottomstop>>
 					<<violence 10>><<hitstat>><<bruise bottom>>
+					<<if random(1, 2) is 2>>
+						<<bodypart_admire left_bottom>>
+					<<else>>
+						<<bodypart_admire right_bottom>>
+					<</if>>
 				<<else>>
 					<<He>> bites your <<breastsstop>>
 					<<violence 10>><<hitstat>><<bruise chest>><<playWithBreasts>>
+					<<bodypart_admire breasts>>
 				<</if>>
 			<</if>>
 		<</if>>

@@ -1,0 +1,1102 @@
+:: Widgets Bodywriting [widget]
+<<widget "bodywriting_init">><<nobr>>
+<<set $skin to {}>>
+<<set $bodypart_number to 12>>
+<<for _e to 0; _e lt $bodypart_number; _e++>>
+	<<activebodypart>>
+	<<set $skin[_active_bodypart] to {}>>
+<</for>>
+<</nobr>><</widget>>
+
+<<widget "bodywriting_npc_bodypart_base">><<nobr>>
+<<set $rng to random(1, 3)>>
+<<if $rng is 1>>
+	<<set _bodypart to "forehead">>
+<<elseif $rng is 2>>
+	<<set _bodypart to "left_cheek">>
+<<else>>
+	<<set _bodypart to "right_cheek">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodywriting_npc_bodypart">><<nobr>>
+<<set $rng to random(1, $bodypart_number)>>
+<<switch $rng>>
+<<case 1>>
+	<<set _bodypart to "forehead">>
+<<case 2>>
+	<<set _bodypart to "left_cheek">>
+<<case 3>>
+	<<set _bodypart to "right_cheek">>
+<<case 4>>
+	<<if ($worn.upper.exposed gte 2 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1)>>
+		<<set _bodypart to "left_shoulder">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 5>>
+	<<if ($worn.upper.exposed gte 2 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1)>>
+		<<set _bodypart to "right_shoulder">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 6>>
+	<<if $worn.upper.exposed gte 2 and ($worn.under_upper.exposed gte 1 or $worn.under_upper.open is 1)>>
+		<<set _bodypart to "breasts">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 7>>
+	<<if ($worn.upper.exposed gte 2 or $worn.upper.state isnot "waist") and ($worn.under_upper.exposed gte 1 or $worn.under_upper.state isnot "waist")>>
+		<<set _bodypart to "back">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 8>>
+	<<if ($worn.lower.exposed gte 2 or $worn.lower.anus_exposed gte 1) and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic"))>>
+		<<set _bodypart to "left_bottom">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 9>>
+	<<if ($worn.lower.exposed gte 2 or $worn.lower.anus_exposed gte 1) and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic"))>>
+		<<set _bodypart to "right_bottom">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 10>>
+	<<if $worn.lower.exposed gte 1 and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic"))>>
+		<<set _bodypart to "pubic">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 11>>
+	<<if $worn.lower.vagina_exposed gte 1 and !$worn.under_lower.type.includes("athletic")>>
+		<<set _bodypart to "left_thigh">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<<case 12>>
+	<<if $worn.lower.vagina_exposed gte 1 and !$worn.under_lower.type.includes("athletic")>>
+		<<set _bodypart to "left_thigh">>
+	<<else>>
+		<<bodywriting_npc_bodypart_base>>
+	<</if>>
+<</switch>>
+
+<<if $args[0] is "left">>
+	<<for _bwn to 0; _bwn lt $enemyno; _bwn++>>
+		<<if _n isnot _bwn and ($NPCList[_bwn].lefthand is "pen" + "_" + _bodypart or $NPCList[_bwn].righthand is "pen" + "_" + _bodypart)>>
+			<<He>> tries to scrawl on your <<bodypart _bodypart>>, <span class="blue">but <<his>> colleague shoves <<him>> out of the way.</span>
+			<<set $NPCList[_n].lefthand to 0>>
+			<<set _bwn_stop to 1>>
+			<<break>>
+		<</if>>
+	<</for>>
+<<else>>
+	<<for _bwn to 0; _bwn lt $enemyno; _bwn++>>
+		<<if _n isnot _bwn and ($NPCList[_bwn].lefthand is "pen" + "_" + _bodypart or $NPCList[_bwn].righthand is "pen" + "_" + _bodypart)>>
+			<<He>> tries to scrawl on your <<bodypart _bodypart>>, <span class="blue">but <<his>> colleague shoves <<him>> out of the way.</span>
+			<<set $NPCList[_n].righthand to 0>>
+			<<set _bwn_stop to 1>>
+			<<break>>		
+		<</if>>
+	<</for>>		
+<</if>>
+<<if _bwn_stop isnot 1>>
+	<<if $skin[_bodypart].pen is "tattoo">>
+		<<He>> tries to rub the tattoo off your <<bodypart _bodypart>>. <span class="blue"><<He>> discards the pen in frustration.</span><<brat 1>>
+		<<if $args[0] is "left">>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<else>>
+			<<set $NPCList[_n].righthand to 0>>
+		<</if>>
+	<<elseif $skin[_bodypart].pen is "marker">>
+		<<He>> tries to rub the permanent ink off your <<bodypart _bodypart>>. <span class="blue"><<He>> discards the pen in frustration.</span><<brat 1>>
+		<<if $args[0] is "left">>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<else>>
+			<<set $NPCList[_n].righthand to 0>>
+		<</if>>
+	<<elseif $skin[_bodypart].pen is "pen">>
+		<<He>> looks thoughtful as <span class="lblue"><<he>> rubs off the ink scrawled on your <<bodypart _bodypart>>.</span>
+		<<bodywriting_clear _bodypart>>
+		<<if $args[0] is "left">>
+			<<set $NPCList[_n].lefthand to "pen" + "_" + _bodypart>>
+		<<else>>
+			<<set $NPCList[_n].righthand to "pen" + "_" + _bodypart>>
+		<</if>>
+	<<else>>
+		<<He>> looks thoughtful as <<he>> hovers the pen over your <<bodypart _bodypart>>.
+		<<if $args[0] is "left">>
+			<<set $NPCList[_n].lefthand to "pen" + "_" + _bodypart>>
+		<<else>>
+			<<set $NPCList[_n].righthand to "pen" + "_" + _bodypart>>
+		<</if>>
+	<</if>>
+<</if>>
+<<unset _bwn_stop>>
+<</nobr>><</widget>>
+
+<<widget "bodywriting_npc">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<if $rng gte 51>>
+	<<bodywriting_npc_special $args[0]>>
+<<else>>
+	<<bodywriting_npc_normal $args[0]>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "bodywriting_npc_normal">><<nobr>>
+<<set $rng to random(1, 20)>>
+<<switch $rng>>
+<<case 1>>
+	<<set $skin[$args[0]].writing to "Slut">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 2>>
+	<<set $skin[$args[0]].writing to "Fucktoy">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 3>>
+	<<set $skin[$args[0]].writing to "Worthless">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 4>>
+	<<set $skin[$args[0]].writing to "Free use">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "arrow">>
+<<case 5>>
+	<<set $skin[$args[0]].writing to "Slave">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 6>>
+	<<set $skin[$args[0]].writing to "Use me">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "arrow">>
+<<case 7>>
+	<<set $skin[$args[0]].writing to "Hit me">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "violence">>
+<<case 8>>
+	<<if $cbchance lt 100 or $dgchance gte 1>>
+		<<set $skin[$args[0]].writing to "Cum rag">>
+		<<set $skin[$args[0]].type to "text">>
+	<<else>>
+		<<set $skin[$args[0]].writing to "Walking dildo">>
+		<<set $skin[$args[0]].type to "text">>
+	<</if>>
+<<case 9>>
+	<<if $dgchance lt 100 or $cbchance gte 100>>
+		<<set $skin[$args[0]].writing to "Walking dildo">>
+		<<set $skin[$args[0]].type to "text">>
+	<<else>>
+		<<set $skin[$args[0]].writing to "Cum rag">>
+		<<set $skin[$args[0]].type to "text">>
+	<</if>>
+<<case 10>>
+	<<set $skin[$args[0]].writing to "Rape bait">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 11>>
+	<<set $skin[$args[0]].writing to "Bitch">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 12>>
+	<<set $skin[$args[0]].writing to "Fuck me">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "arrow">>
+<<case 13>>
+	<<set $skin[$args[0]].writing to "Hurt me">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].type to "violence">>
+<<case 14>>
+	<<set $skin[$args[0]].writing to "Enslave me">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 15>>
+	<<set $skin[$args[0]].writing to "Treat me bad">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "violence">>
+<<case 16>>
+	<<set $skin[$args[0]].writing to "Sex addict">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 17>>
+	<<set $skin[$args[0]].writing to "Rape addict">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 18>>
+	<<set $skin[$args[0]].writing to "Make me squeal">>
+	<<set $skin[$args[0]].type to "text">>
+	<<set $skin[$args[0]].special to "violence">>
+<<case 19>>
+	<<set $skin[$args[0]].writing to "Make me cum">>
+	<<set $skin[$args[0]].type to "text">>
+<<case 20>>
+	<<set $skin[$args[0]].writing to "Free sex">>
+	<<set $skin[$args[0]].type to "text">>
+<</switch>>
+
+<<bodywriting_finalisation $args[0]>>
+<</nobr>><</widget>>
+
+<<widget "bodywriting_finalisation">><<nobr>>
+<<if $skin[$args[0]].type is "text">>
+	<i><span class="pink">"<<print $skin[$args[0]].writing.toLocaleUpperFirst()>>"</span></i>.
+<<else>>
+	<i><span class="pink"><<print $skin[$args[0]].writing.toLocaleUpperFirst()>></span></i>.
+<</if>>
+<<if $skin[$args[0]].special is "arrow" or $skin[$args[0]].special is "whore">>
+	<<if $args[0] is "left_cheek">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your mouth.</span>
+	<<elseif $args[0] is "right_cheek">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your mouth.</span>
+	<<elseif $args[0] is "pubic">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<genitalsstop 1>></span>
+	<<elseif $args[0] is "left_thigh">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<genitalsstop 1>></span>
+	<<elseif $args[0] is "right_thigh">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<genitalsstop 1>></span>
+	<<elseif $args[0] is "back" and $analdisable is "f">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<bottomstop>></span>
+	<<elseif $args[0] is "left_bottom" and $analdisable is "f">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<bottomstop>></span>
+	<<elseif $args[0] is "right_bottom" and $analdisable is "f">>
+		<<He>> draws an arrow beside it, <span class="red">pointing at your <<bottomstop>></span>
+	<</if>>
+<</if>>
+<<if random(1, 5) is 5>>
+	<span class="purple"><<He>> used a permanent marker.</span>
+	<<set $skin[$args[0]].pen to "marker">>
+<<else>>
+	<<set $skin[$args[0]].pen to "pen">>
+<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "bodywriting_npc_special">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<if $rng gte 96>>
+	<<if $famerape gte random(1, 1000)>>
+		<<set $rng to random(1, 100)>>
+		<<if $rng gte 81>>
+			<<set $skin[$args[0]].writing to "Rape me">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "rape">>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Rapist's toy">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "rape">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "No means yes">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "rape"
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Public toy">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "rape">>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Public property">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "rape">>
+		<</if>>
+		<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<elseif $rng gte 91>>
+	<<if $famesex gte random(1, 1000)>>
+	<<set $rng to random(1, 100)>>
+		<<if $rng gte 81>>
+			<<set $skin[$args[0]].writing to "Promiscuous">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "sex">>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Town bicycle">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "sex">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Public slut">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "sex">>
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Wanton">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "sex">>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Insatiable slut">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "sex">>
+		<</if>>
+		<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>	
+<<elseif $rng gte 86>>
+	<<set $rng to random(1, 100)>>
+	<<if $famebestiality gte random(1, 1000)>>
+		<<if $rng gte 81>>
+			<<set $skin[$args[0]].writing to "Doggy slut">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "bestiality">>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Animal">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "bestiality">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Beast fucker">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "bestiality">>
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Brood mare">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "bestiality">>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Deviant">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "bestiality">>
+		<</if>>
+		<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<elseif $rng gte 81>>
+	<<set $rng to random(1, 100)>>
+	<<if $fameprostitution gte random(1, 1000)>>
+		<<if $rng gte 91>>
+			<<set $skin[$args[0]].writing to "£5 whore">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 500>>
+		<<elseif $rng gte 81>>
+			<<set $skin[$args[0]].writing to "£10 a pop">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 1000>>
+		<<elseif $rng gte 71>>
+			<<set $skin[$args[0]].writing to "£25 per fuck">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 2500>>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "£100">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 10000>>
+		<<elseif $rng gte 51>>
+			<<set $skin[$args[0]].writing to "It's not rape if you pay me">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 0>>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Whore">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 0>>
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Slut for hire">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 0>>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Body for sale">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "prostitution">>
+			<<set $skin[$args[0]].degree to 0>>
+		<</if>>
+		<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<elseif $rng gte 76>>
+	<<set $rng to random(1, 100)>>
+	<<if $fameexhibitionism gte random(1, 1000)>>
+		<<if $rng gte 81>>
+			<<set $skin[$args[0]].writing to "Pervert">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "exhibitionism">>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Attention whore">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "exhibitionism">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Flaunter">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "exhibitionism">>
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Object">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "exhibitionism">>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Strip me">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "exhibitionism">>
+		<</if>>
+		<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<elseif $rng gte 71>>
+	<<set $rng to random(1, 100)>>
+	<<if $beauty gte random(1, $beautymax)>>
+		<<if $rng gte 81>>
+			<<if $player.gender_appearance is "m">>
+				<<set $skin[$args[0]].writing to "Handsome">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "boyish">>
+			<<else>>
+				<<set $skin[$args[0]].writing to "Pretty">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "girly">>
+			<</if>>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Hot">>
+			<<set $skin[$args[0]].type to "text">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Beautiful">>
+			<<set $skin[$args[0]].type to "text">>
+		<<elseif $rng gte 21>>
+			<<if $player.gender_appearance is "m">>
+				<<set $skin[$args[0]].writing to "Cute boy">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "boyish">>
+			<<else>>
+				<<set $skin[$args[0]].writing to "Cute girl">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "girly">>
+			<</if>>
+		<<else>>
+			<<if $player.gender_appearance is "m">>
+				<<set $skin[$args[0]].writing to "Stud">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "boyish">>
+			<<else>>
+				<<set $skin[$args[0]].writing to "Beauty">>
+				<<set $skin[$args[0]].type to "text">>
+				<<set $skin[$args[0]].special to "girly">>
+			<</if>>
+		<</if>>
+	<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<elseif $rng gte 66>>
+	<<set $rng to random(1, 100)>>
+	<<if $famescrap gte random(1, 1000)>>
+		<<if $rng gte 81>>
+			<<set $skin[$args[0]].writing to "Whelp">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "combat">>
+		<<elseif $rng gte 61>>
+			<<set $skin[$args[0]].writing to "Brat">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "combat">>
+		<<elseif $rng gte 41>>
+			<<set $skin[$args[0]].writing to "Punish me">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "combat">>
+		<<elseif $rng gte 21>>
+			<<set $skin[$args[0]].writing to "Insolent">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "combat">>
+		<<else>>
+			<<set $skin[$args[0]].writing to "Naughty">>
+			<<set $skin[$args[0]].type to "text">>
+			<<set $skin[$args[0]].special to "combat">>
+		<</if>>
+	<<bodywriting_finalisation $args[0]>>
+	<<else>>
+		<<bodywriting_npc_normal $args[0]>>
+	<</if>>
+<<else>>
+	<<bodywriting_npc_normal $args[0]>>
+<</if>>
+
+<</nobr>><</widget>>
+
+
+
+<<widget "bodypart">><<nobr>>
+<<switch $args[0]>>
+<<case "forehead">>
+	<<set _text_output to "forehead">>
+<<case "left_cheek">>
+	<<set _text_output to "left cheek">> 
+<<case "right_cheek">>
+	<<set _text_output to "right cheek">>
+<<case "left_shoulder">>
+	<<set _text_output to "left shoulder">>
+<<case "right_shoulder">>
+	<<set _text_output to "right shoulder">>
+<<case "breasts">>
+	<<set _text_output to "<<breasts>>">> 
+<<case "back">>
+	<<set _text_output to "lower back">>
+<<case "left_bottom">>
+	<<set _text_output to "left ass cheek">>
+<<case "right_bottom">>
+	<<set _text_output to "right ass cheek">>
+<<case "pubic">>
+	<<set _text_output to "pubic area">>
+<<case "left_thigh">>
+	<<set _text_output to "left thigh">>
+<<case "right_thigh">>
+	<<set _text_output to "right thigh">>
+<</switch>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "bodywriting_clear">><<nobr>>
+<<set $skin[$args[0]].writing to undefined>>
+<<set $skin[$args[0]].type to undefined>>
+<<set $skin[$args[0]].special to undefined>>
+<<set $skin[$args[0]].pen to undefined>>
+<<set $skin[$args[0]].degree to undefined>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_prostitution">><<nobr>>
+<<if $NPCList[_n].paid is 1>>
+<<elseif $skin[$args[0]].degree lte 0>>
+	<<if (($enemyarousal + $enemytrust - $enemyanger + ($attractiveness / 10) * ($seductionskill / 200)) gte 1000>>
+		<<set $rng to random(1, 100)>><<set $enemyanger += 10>><<set $enemytrust -= 100>><<fameprostitution 1>>
+		<<if $rng gte 81>>
+			"Expensive. Fine."
+		<<elseif $rng gte 61>>
+			"I'll pay, but you better be worth it."
+		<<elseif $rng gte 41>>
+			"I'll pay this time, slut."
+		<<elseif $rng gte 21>>
+			"I've seen worse deals."
+		<<else>>
+			"I should pay you. I doubt you're good for anything else."
+		<</if>>
+		<<He>> drops a <span class="gold">£10</span> note atop you.<<set $money += 1000>>
+	<<elseif (($enemyarousal + $enemytrust - $enemyanger + ($attractiveness / 10) * ($seductionskill / 200)) gte 500>>
+		<<set $rng to random(1, 100)>><<set $enemyanger += 10>><<set $enemytrust -= 100>><<fameprostitution 1>>
+		<<if $rng gte 81>>
+			"You're lucky I'm giving you a thing." 
+		<<elseif $rng gte 61>>
+			"If only money could buy you dignity."
+		<<elseif $rng gte 41>>
+			"I've bought drinks more expensive than you."
+		<<elseif $rng gte 21>>
+			"Where should I insert it?"
+		<<else>>
+			"Cheap and dirty whores are the best."
+		<</if>>
+		<<He>> drops a <span class="gold">£5</span> note atop you.<<set $money += 500>>
+	<<else>><<set $enemytrust -= 20>>
+		<<set $rng to random(1, 100)>><<fameprostitution 1>>
+		<<if $rng gte 81>>
+			"Pay you? Don't make me laugh."
+		<<elseif $rng gte 61>>
+			"Getting to fuck me is payment enough."
+		<<elseif $rng gte 41>>
+			"Don't think you're worth anything."
+		<<elseif $rng gte 21>>
+			"I hope you're not expecting cash."
+		<<else>>
+			"Whores like you don't deserve anything."
+		<</if>>
+	<</if>>			
+<<elseif $skin[$args[0]].degree lte (($enemyarousal + $enemytrust - $enemyanger + ($attractiveness / 10) * ($seductionskill / 200))>>
+	<<set $rng to random(1, 100)>><<set $enemyanger += 10>><<set $enemytrust -= $skin[$args[0]].degree>><<fameprostitution 1>>
+	<<if $rng gte 81>>
+		"I'm paying, but you better be worth it."
+	<<elseif $rng gte 61>>
+		"You whores are so full of yourself."
+	<<elseif $rng gte 41>>
+		"Fine, but I'm getting my money's worth."
+	<<elseif $rng gte 21>>
+		"I'm gonna make you earn every penny."
+	<<else>>
+		"Fine, I'll pay. This time."
+	<</if>>
+	<<He>> drops <span class="gold">£<<print Math.floor($skin[$args[0]].degree / 100)>></span> atop you.<<set $money += $skin[$args[0]].degree>>
+<<else>>
+	<<set $rng to random(1, 100)>><<set $enemytrust -= 20>><<fameprostitution 1>>
+	<<if $rng gte 81>>
+		"You're fucking kidding me."
+	<<elseif $rng gte 61>>
+		"You're not getting a penny, slut."
+	<<elseif $rng gte 41>>
+		"You're not worth a penny."
+	<<elseif $rng gte 21>>
+		"I work hard for my cash. I'm not about to give it to some slut."
+	<<else>>
+		"Fucking me is the only reward you need."
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_arrow">><<nobr>>
+<<if $args[0] is "left_cheek">>
+	<<if $NPCList[_n].penis is 0 and $mouthuse is 0>>
+		<<He>> follows the arrow's instruction, <span class="blue">and positions <<his>> $NPCList[_n].penisdesc in front of your mouth.</span>
+		<<neutral 5>><<set $mouthuse to "penis">><<set $NPCList[_n].penis to "mouthentrance">><<set $mouthstate to "entrance">><<set $speechmouthentrance to 1>>
+	<<elseif $NPCList[_n].vagina is 0 and $mouthuse is 0>>
+		<<He>> follows the arrow's instruction, <span class="purple"><<He>> wraps <<his>> legs around your head and presses <<his>> pussy against your mouth.</span>
+		<<submission 5>><<set $mouthuse to "othervagina">><<set $NPCList[_n].vagina to "mouth">><<set $mouthstate to "othervagina">><<violence 3>><<bruise face>><<set $speechvaginamouth to 1>>	
+	<</if>>
+<<elseif $args[0] is "right_cheek">>
+	<<if $NPCList[_n].penis is 0 and $mouthuse is 0>>
+		<<He>> follows the arrow's instruction, <span class="blue">and positions <<his>> $NPCList[_n].penisdesc in front of your mouth.</span>
+		<<neutral 5>><<set $mouthuse to "penis">><<set $NPCList[_n].penis to "mouthentrance">><<set $mouthstate to "entrance">><<set $speechmouthentrance to 1>>
+	<<elseif $NPCList[_n].vagina is 0 and $mouthuse is 0>>
+		<<He>> follows the arrow's instruction, <span class="purple"><<He>> wraps <<his>> legs around your head and presses <<his>> pussy against your mouth.</span>
+		<<submission 5>><<set $mouthuse to "othervagina">><<set $NPCList[_n].vagina to "mouth">><<set $mouthstate to "othervagina">><<violence 3>><<bruise face>><<set $speechvaginamouth to 1>>	
+	<</if>>	
+<<elseif $args[0] is "back">>
+	<<if $worn.lower.anus_exposed gte 1 and $worn.under_lower.anus_exposed gte 1 and $NPCList[0].penis is 0 and $anususe is 0>>
+		<<He>> follows the arrow's instruction, <span class="blue">and positions <<his>> penis in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>	
+	<</if>>
+<<elseif $args[0] is "left_bottom">>
+	<<if $worn.lower.anus_exposed gte 1 and $worn.under_lower.anus_exposed gte 1 and $NPCList[0].penis is 0 and $anususe is 0>>
+		<<He>> follows the arrow's instruction, <span class="blue">and positions <<his>> penis in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
+	<</if>>
+<<elseif $args[0] is "right_bottom">>
+	<<if $worn.lower.anus_exposed gte 1 and $worn.under_lower.anus_exposed gte 1 and $NPCList[0].penis is 0 and $anususe is 0>>
+		<<He>> follows the arrow's instruction, <span class="blue">and positions <<his>> penis in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>	
+	<</if>>
+<<elseif $args[0] is "pubic">>
+	<<if $vaginaexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].penis is 0 and $vaginause is 0>>
+		<<He>> follows hte arrow's instruction, <span class="blue">and moves between your legs, positioning <<his>> $NPCList[_n].penisdesc in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
+	<<elseif $penisexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].vagina is 0 and $penisuse is 0>>
+		<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisentrance">><<set $penisstate to "entrance">>
+		<<He>> follows the arrow's instruction, <span class="blue">and straddles you, <<his>> pussy hovering close to your <<penisstop>></span>
+	<</if>>
+<<elseif $args[0] is "left_thigh">>
+	<<if $vaginaexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].penis is 0 and $vaginause is 0>>
+		<<He>> follows hte arrow's instruction, <span class="blue">and moves between your legs, positioning <<his>> $NPCList[_n].penisdesc in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
+	<<elseif $penisexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].vagina is 0 and $penisuse is 0>>
+		<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisentrance">><<set $penisstate to "entrance">>
+		<<He>> follows the arrow's instruction, <span class="blue">and straddles you, <<his>> pussy hovering close to your <<penisstop>></span>
+	<</if>>
+<<elseif $args[0] is "right_thigh">>
+	<<if $vaginaexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].penis is 0 and $vaginause is 0>>
+		<<He>> follows hte arrow's instruction, <span class="blue">and moves between your legs, positioning <<his>> $NPCList[_n].penisdesc in front of your <<bottomstop>></span>
+		<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
+	<<elseif $penisexist is 1 and $worn.lower.vagina_exposed gte 1 and $worn.under_lower.vagina_exposed gte 1 and $NPCList[0].vagina is 0 and $penisuse is 0>>
+		<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisentrance">><<set $penisstate to "entrance">>
+		<<He>> follows the arrow's instruction, <span class="blue">and straddles you, <<his>> pussy hovering close to your <<penisstop>></span>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_rape">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<set $enemytrust -= 20>><<famerape 1>>
+<<if $consensual is 1>>
+	<<if $rng gte 91>>
+		"Do you get off on being treated like filth?"
+	<<elseif $rng gte 81>>
+		"I didn't know you were that kind of <<girl>>."
+	<<elseif $rng gte 71>>
+		"You'd like it to be rougher, aye?"
+	<<elseif $rng gte 61>>
+		"You're a dirty one."
+	<<elseif $rng gte 51>>
+		"Do you get taken often?"
+	<<elseif $rng gte 41>>
+		"I'll treat you like you want, don't worry."
+	<<elseif $rng gte 31>>
+		"So you like being a victim?"
+	<<elseif $rng gte 21>>
+		"I bet you put that on yourself, slut."
+	<<else>>
+		"You're just asking for it."
+	<</if>>
+<<else>>
+	<<if $rng gte 91>>
+		"Hah! I knew you were a rape addict."
+	<<elseif $rng gte 81>>
+		"I'm just giving you what you want, after all."
+	<<elseif $rng gte 71>>
+		"Don't worry, you'll be treated how you deserve."
+	<<elseif $rng gte 61>>
+		"My my, what a slut."
+	<<elseif $rng gte 51>>
+		"Good to see you know your place."
+	<<elseif $rng gte 41>>
+		"You're just asking for it."
+	<<elseif $rng gte 31>>
+		"I knew you were a fucktoy."
+	<<elseif $rng gte 21>>
+		"I knew this was all you're good for."
+	<<else>>
+		"I'm giving you what you deserve."
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_exhibitionism">><<nobr>>
+<<set $rng to random(1, 100)>><<fameexhibitionism 1>>
+<<if $rng gte 91>>
+	"Don't worry. I'm getting a good look."
+<<elseif $rng gte 81>>
+	"Maybe I'll take some pictures."
+<<elseif $rng gte 71>>
+	"You're certainly a feast for the eyes."
+<<elseif $rng gte 61>>
+	"You're hot alright."
+<<elseif $rng gte 51>>
+	"You like being ogled at, slut?"
+<<elseif $rng gte 41>>
+	"Being leered at is all you're good for."
+<<elseif $rng gte 31>>
+	"You'd look great in a cage."
+<<elseif $rng gte 21>>
+	"Cuties like you shouldn't wear clothes."
+<<elseif $rng gte 11>>
+	"You're such an attention whore."
+<<else>>
+	"I bet half the town's seen that ass of yours."
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_bestiality">><<nobr>>
+<<set $rng to random(1, 100)>><<famebestiality 1>>
+<<if $rng gte 91>>
+	"You're disgusting."
+<<elseif $rng gte 81>>
+	"So you like fucking dogs? Doesn't surprise me."
+<<elseif $rng gte 71>>
+	"Maybe I'm not hairy enough for you."
+<<elseif $rng gte 61>>
+	"You belong in a kennel."
+<<elseif $rng gte 51>>
+	"Filthy bitch."
+<<elseif $rng gte 41>>
+	<<if $player.gender_appearance is "f">>
+		"You must be in heat."
+	<<else>>
+		"You must be rutting."
+	<</if>>
+<<elseif $rng gte 31>>
+	"You're such a dirty <<girl>>."
+<<elseif $rng gte 21>>
+	<<if $player.gender_appearance is "m">>
+		"Good dog."
+	<<else>>
+		"Good bitch."
+	<</if>>
+<<elseif $rng gte 11>>
+	"Someone should tie you up in the park, let the neighbourhood dogs take out their stress."
+<<else>>
+	"I knew you were a dog-fucker."
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_promiscuity">><<nobr>>
+<<set $rng to random(1, 100)>><<famepromiscuity 1>>
+<<if $rng gte 91>>
+	"You're such a slut."
+<<elseif $rng gte 81>>
+	"I bet you'd fuck anyone."
+<<elseif $rng gte 71>>
+	"I'll let my friends know who to see if they need a fucktoy."
+<<elseif $rng gte 61>>
+	"Have you no shame?"
+<<elseif $rng gte 51>>
+	"Self-respect must be an alien concept to you."
+<<elseif $rng gte 41>>
+	"Don't worry, I know how to satisfy a <<girl>>."
+<<elseif $rng gte 31>>
+	"I'm glad I could find such a slut."
+<<elseif $rng gte 21>>
+	"Fucking must be like breathing to you."
+<<elseif $rng gte 11>>
+	"I bet you can't go a single day without a good fuck."
+<<else>>
+	"Seems I'm giving you what you want."
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_girly">><<nobr>>
+<<if $player.gender_appearance is "m">>
+	<<set $rng to random(1, 100)>>
+	<<if $rng gte 91>>
+		"You want to be treated like a girl? Fine by me."
+	<<elseif $rng gte 81>>
+		"That's an odd thing for a boy to wear."
+	<<elseif $rng gte 71>>
+		"So girly."
+	<<elseif $rng gte 61>>
+		"Makes you look like a girl."
+	<<elseif $rng gte 51>>
+		"Don't worry, I'll treat you like a girl."
+	<<elseif $rng gte 41>>
+		"Aren't you embarrassed to be covered in such a girly thing?"
+	<<elseif $rng gte 31>>
+		"Cute."
+	<<elseif $rng gte 21>>
+		"I bet you like dressing up as a girl, slut."
+	<<elseif $rng gte 11>>
+		"I bet your friends make fun of you."
+	<<else>>
+		"Why would you wear such a thing?"
+	<</if>>	
+<<else>>
+	<<set $rng to random(1, 100)>>
+	<<if $rng gte 91>>
+		"Cute."
+	<<elseif $rng gte 81>>
+		"I bet you wanna be treated like a princess, but you're just a slut."
+	<<elseif $rng gte 71>>
+		"I'll treat you like a kidnapped princess."
+	<<elseif $rng gte 61>>
+		"So cute and feminine."
+	<<elseif $rng gte 51>>
+		"I think you need someone strong to protect you."
+	<<elseif $rng gte 41>>
+		"Most girls would be embarrassed to wear such a thing."
+	<<elseif $rng gte 31>>
+		"Do other girls wear marks like this?"
+	<<elseif $rng gte 21>>
+		"Advertising your femininity? Like anyone would mistake you for a boy."
+	<<elseif $rng gte 11>>
+		"You're fucking hot, that's for sure."
+	<<else>>
+		"So glad I get such a pretty girl to play with."
+	<</if>>	
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_boyish">><<nobr>>
+<<if $player.gender_appearance is "f">>
+	<<set $rng to random(1, 100)>>
+	<<if $rng gte 91>>
+		"So glad I get such a handsome boy to play with."
+	<<elseif $rng gte 81>>
+		"You're fucking hot, that's for sure."
+	<<elseif $rng gte 71>>
+		"Advertising your masculinity? Like anyone would mistake you for a boy."
+	<<elseif $rng gte 61>>
+		"Do other boys wear marks like this?"
+	<<elseif $rng gte 51>>
+		"Most boys would be embarrassed to wear such at thing."
+	<<elseif $rng gte 41>>
+		"I think you need someone strong to protect you."
+	<<elseif $rng gte 31>>
+		"So strong and masculine."
+	<<elseif $rng gte 21>>
+		"I'll treat you like a kidnapped prince."
+	<<elseif $rng gte 11>>
+		"You're a hot fucktoy alright."
+	<<else>>
+		"It's not wrong."
+	<</if>>
+<<else>>
+	<<set $rng to random(1, 100)>>
+	<<if $rng gte 91>>
+		"Why would you wear such a thing?"
+	<<elseif $rng gte 81>>
+		"I bet your friends make fun of you."
+	<<elseif $rng gte 71>>
+		"I bet you like dressing up as a boy, but you're just a slut."
+	<<elseif $rng gte 61>>
+		"Hot."
+	<<elseif $rng gte 51>>
+		"Aren't you embarrassed to be covered in such a boyish thing?"
+	<<elseif $rng gte 41>>
+		"Don't worry, I'll treat you like a boy."
+	<<elseif $rng gte 31>>
+		"Makes you look like a boy."
+	<<elseif $rng gte 21>>
+		"So boyish."
+	<<elseif $rng gte 11>>
+		"That's an odd thing for a girl to wear."
+	<<else>>
+		"You want to be treated ilke a boy? Fine by me."
+	<</if>>	
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_combat">><<nobr>>
+<<set $rng to random(1, 100)>><<famecombat 1>><<set $enemytrust -= 5>>
+<<if $rng gte 91>>
+	"I need to watch myself around you."
+<<elseif $rng gte 81>>
+	"I bet you like being treated badly really."
+<<elseif $rng gte 71>>
+	"Your brattiness is a front. I can see through it."
+<<elseif $rng gte 61>>
+	<<if $NPCList[_n].gender is "f">>
+		"Do I need to watch my purse?"
+	<<else>>
+		"Do I need to watch my wallet?"
+	<</if>>
+<<elseif $rng gte 51>>
+	"Try anything funny and you'll get beat."
+<<elseif $rng gte 41>>
+	"Like you could take me."
+<<elseif $rng gte 31>>
+	"You must have a high opinion of yourself."
+<<elseif $rng gte 21>>
+	"The people you've beaten must be real wimps."
+<<elseif $rng gte 11>>
+	"You don't look so tough."
+<<else>>
+	"Bratty little <<bitch>>."
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_violence">><<nobr>>
+<<set $rng to random(1, 100)>><<set $enemy_anger += 20>>
+<<if $rng gte 91>>
+	"So you like it rough."
+<<elseif $rng gte 81>>
+	"I'm just giving you what you want."
+<<elseif $rng gte 71>>
+	"I bet you're addicted to pain."
+<<elseif $rng gte 61>>
+	"Sluts like you do deserve beatings."
+<<elseif $rng gte 51>>
+	"I'll hurt you all you want, and then some."
+<<elseif $rng gte 41>>
+	"Like I need to be asked."
+<<elseif $rng gte 31>>
+	"It's a dream come true."
+<<elseif $rng gte 21>>
+	"I can be rougher."
+<<elseif $rng gte 11>>
+	"So that's how you like it."
+<<else>>
+	"Will you cum if I hit you hard enough?"
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bodypart_admire_lewd">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<if $skin[$args[0]].type is "text">>
+	<<if $rng gte 91>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"Such a lewd tattoo."
+		<<else>>
+			"Such lewd writing."
+		<</if>>
+	<<elseif $rng gte 81>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"Why would you have yourself tattooed so?"
+		<<else>>
+			"Did you write this?"
+		<</if>>
+	<<elseif $rng gte 71>>
+		"Suits you."
+	<<elseif $rng gte 61>>
+		"I like my sluts signposted."
+	<<elseif $rng gte 51>>
+		"You're a perfect canvas."
+	<<elseif $nrg gte 41>>
+		"I see others have marked their territory."
+	<<elseif $rng gte 31>>
+		"Short and to the point."
+	<<elseif $rng gte 21>>
+		"Good to see sluts come with instructions now."
+	<<elseif $rng gte 11>>
+		"Maybe I'll add my mark."
+	<<else>>
+		"I can think of worse things to write on you."
+	<</if>>
+<<else>>
+	<<if $rng gte 91>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"Such a lewd tattoo."
+		<<else>>
+			"Such a lewd drawing."
+		<</if>>
+	<<elseif $rng gte 81>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"Why would you have yourself tattooed so?"
+		<<else>>
+			"Did you draw this?"
+		<</if>>
+	<<elseif $rng gte 71>>
+		"Suits you."
+	<<elseif $rng gte 61>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"I love tattooed sluts."
+		<<else>>
+			"You should get that as a tattoo."
+		<</if>>
+	<<elseif $rng gte 51>>
+		"You're a perfect canvas."
+	<<elseif $rng gte 41>>
+		"I see others have marked their territory."
+	<<elseif $rng gte 31>>
+		"Someone's an artist."
+	<<elseif $rng gte 21>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"You should get more lewd tattoos."
+		<<else>>
+			"I might leave my own mark."
+		<</if>>
+	<<elseif $rng gte 11>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"Good use of ink."
+		<<else>>
+			"I can think of worse things to draw on you."
+		<</if>>
+	<<else>>
+		<<if $skin[$args[0]].pen is "tattoo">>
+			"I've seen lewder."
+		<<else>>
+			"I've seen lewder."
+		<</if>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "bodypart_admire">><<nobr>>
+<<if $args[0] is "forehead" or
+$args[0] is "left_cheek" and !$worn.face.type.includes("mask") or
+$args[0] is "right_cheek" and !$worn.face.type.includes("mask") or
+$args[0] is "left_shoulder" and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1) or
+$args[0] is "right_shoulder" and ($worn.upper.exposed gte 1 or $worn.upper.open is 1) and ($worn.under_upper.exposed gte 1 or $worn.under_open is 1) or
+$args[0] is "breasts" and $worn.upper.exposed gte 1 and ($worn.under_upper.exposed gte 1 or $worn.under_upper.open is 1) or
+$args[0] is "back" and ($worn.upper.exposed gte 1 or $worn.upper.state isnot "waist") and ($worn.under_upper.exposed gte 1 or $worn.under_upper.state isnot "waist") or
+$args[0] is "left_bottom" and ($worn.lower.exposed gte 1 or $worn.lower.anus_exposed gte 1) and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic")) or
+$args[0] is "right_bottom" and ($worn.lower.exposed gte 1 or $worn.lower.anus_exposed gte 1) and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic")) or
+$args[0] is "pubic" and $worn.lower.exposed gte 1 and ($worn.under_lower.exposed gte 1 or !$worn.under_lower.type.includes("athletic")) or
+$args[0] is "left_thigh" and $worn.lower.vagina_exposed gte 1 and !$worn.under_lower.type.includes("athletic") or
+$args[0] is "right_thigh" and $worn.lower.vagina_exposed gte 1 and !$worn.under_lower.type.includes("athletic")>>/*Makes sure bodywriting isn't seen if obstructed by clothing.*/
+	<<if $skin[$args[0]].type is "text">>
+		<<He>> reads the "<<print $skin.forehead.writing>>" writing on your <<bodypart $args[0]>>.
+	<<else>>
+		<<He>> examines the "<<print $skin.forehead.writing>>" image on your <<bodypart $args[0]>>.
+	<</if>>
+	<<if $skin[$args[0]].special is "arrow" and
+	($args[0] is "left_cheek" or
+	$args[0] is "right_cheek" or
+	$args[0] is "back" or
+	$args[0] is "left_bottom" or
+	$args[0] is "right_bottom" or
+	$args[0] is "pubic" or 
+	$args[0] is "left_thigh" or 
+	$args[0] is "right_thigh")>>
+		<<bodypart_admire_arrow $args[0]>>
+	<<elseif $skin[$args[0]].special is "prostitution">>
+		<<bodypart_admire_prostitution $args[0]>>
+	<<elseif $skin[$args[0]].special is "rape">>
+		<<bodypart_admire_rape $args[0]>>
+	<<elseif $skin[$args[0]].special is "exhibitionism">>
+		<<bodypart_admire_exhibitionism $args[0]>>
+	<<elseif $skin[$args[0]].special is "bestiality">>
+		<<bodypart_admire_bestiality $args[0]>>
+	<<elseif $skin[$args[0]].special is "sex">>
+		<<bodypart_admire_promiscuity $args[0]>>
+	<<elseif $skin[$args[0]].special is "girly">>
+		<<bodypart_admire_girly $args[0]>>
+	<<elseif $skin[$args[0]].special is "boyish">>
+		<<bodypart_admire_boyish $args[0]>>
+	<<elseif $skin[$args[0]].special is "combat">>
+		<<bodypart_admire_combat $args[0]>>
+	<<elseif $skin[$args[0]].special is "violence">>
+		<<bodypart_admire_violence $args[0]>>
+	<<elseif $skin[$args[0]].writing>>
+		<<bodypart_admire_lewd $args[0]>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+
+
