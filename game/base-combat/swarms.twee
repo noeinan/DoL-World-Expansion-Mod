@@ -5,18 +5,17 @@
 	/* <<swarminit type name move spill steady amountactive amountstored>> */
 
 	/* 
-		Define the swarm types here, maybe move this somewhere more organized?
-		Size is how large the individial swarm are, mult scales the amount of swarmers
-		(These are as of yet properly implemented)
+		Define Data to make each swarmer type unique
+		Milk: Sets of the swarm type is attracted to PC's chest when lactating
 	*/
 	<<set _swarmdats to {
-		"fish":{"size":10,"mult":4},
-		"eels":{"size":40,"mult":1},
-		"snakes":{"size":40,"mult":1},
-		"spiders":{"size":2,"mult":10},
-		"slimes":{"size":4,"mult":6},
-		"maggots":{"size":2,"mult":10},
-		"worms":{"size":2,"mult":10},
+		"fish":{"milk":1},
+		"eels":{"milk":1},
+		"snakes":{"milk":1},
+		"spiders":{"milk":0},
+		"slimes":{"milk":1},
+		"maggots":{"milk":0},
+		"worms":{"milk":0},
 	}>>
 	
 	/* This contains the persistant data we will use for the encounter. */
@@ -48,6 +47,7 @@
 	"chestintroclothed":0,
 	"chestclothed":0,
 	"chestmolest":0,
+	"chestmilk":0,
 
 	"buttintro":0,
 	"buttcovered":0,
@@ -83,23 +83,29 @@
 
 /* Chest related activities */
 <<if _swarmamounts.chest gt 0>> 
-	/* Swarms didnt do anything after going to the chest before */
+	/* Swarms didnt do much after going to the chest before */
 
 	<<if $lactating gte 1 and $breastfeedingdisable is "f">>
-		/*Milky, Maybe milk attacts swarmers to the breasts*/
+		<<if $milk_amount gte 1>>/*Milky, Maybe milk attacts swarmers to the breasts*/
+			<<set _swarmnote.chestmilk to 1>>
+			<<breastfeed>>
+			<<if $swarm.data["milk"] gt 0 >>
+				<<set _swarmchance["chest"] += 15>>/*Increase chest roll ratio since the swarm is attracted to milk*/
+			<</if>>
+		<</if>>
 	<</if>>
 
 <</if>>
 
 /* Butt related activities */
-<<if _swarmamounts.butt[1] gt 0>> <</if>>
+<<if _swarmamounts.butt[1] gt 0>> /* Inside Activities */ <</if>>
 <<if _swarmamounts.butt[0] gt 0>> 
 	<<set _swarmnote.buttinsideintro += _swarmamounts.butt[0]>>
 	<<set _swarmamounts.butt[1] += _swarmamounts.butt[0]>><<set _swarmamounts.butt[0] to 0>>
 <</if>>
 
 /* Genital related activities */
-<<if _swarmamounts.genital[1] gt 0>> <</if>>
+<<if _swarmamounts.genital[1] gt 0>> /* Inside Activities */ <</if>>
 <<if _swarmamounts.genital[0] gt 0>> 
 	<<set _swarmnote.genitalinsideintro += _swarmamounts.genital[0]>>
 	<<set _swarmamounts.genital[1] += _swarmamounts.genital[0]>><<set _swarmamounts.genital[0] to 0>>
@@ -113,7 +119,7 @@
 		<<if $rng lte _swarmchance["chest"]>>
 			<<if $chest is "covered">>
 				<<set _swarmnote.chestcovered += 1>>
-				<<set $arousal += 10>>
+				<<arousal 10>>
 			<<else>>
 				<<set $rng to random(1, 100)>>
 				<<if $rng lte _swarmactive * 20>>
@@ -142,7 +148,7 @@
 		<<elseif $rng gt _swarmchance["chest"] and $rng lte _swarmchance["chest"]+_swarmchance["butt"]>> /* Butt */
 			<<if $back is "covered">>
 				<<set _swarmnote.buttcovered += 1>>
-				<<set $arousal += 10>>
+				<<arousal 10>>
 			<<else>>
 				<<set $rng to random(1, 100)>>
 				<<if $rng lte _swarmactive * 20>>
@@ -187,8 +193,8 @@
 			<</if>>
 		<<elseif $rng gt _swarmchance["chest"]+_swarmchance["butt"]>> /* Genitals */
 			<<if $front is "covered">>
-				<<set $arousal += 10>>
 				<<set _swarmnote.genitalcovered += 1>>
+				<<arousal 10>>
 			<<else>>
 				<<set $rng to random(1, 100)>>
 				<<if $rng lte _swarmactive * 20>>
@@ -233,7 +239,7 @@
 			<</if>>
 		<</if>>
 	<<else>>
-		<<set $arousal += 10>>
+	<<arousal 10>>
 	<</if>>
 <</for>>
 
@@ -314,17 +320,28 @@
 <</if>>
 
 <<if _swarmnote.chestintro gte 1>><<set _swarmnote.chestintro to 0>>
-	<span class="purple">A number of them take a liking to your <<breastsstop>></span>
+	<<if _swarmamounts.chest gte 1>>
+		<span class="purple">More $swarm["type"] gather around your <<breastsstop>></span>
+	<<else>>
+		<span class="purple">A number of them take a liking to your <<breastsstop>></span>
+	<</if>>
 <</if>>
 
 <<if _swarmnote.chestintroclothed gte 1>><<set _swarmnote.chestintroclothed to 0>>
 	<span class="purple">Some of them wriggle their way into your $worn.upper.name, where they take a liking to your <<breastsstop>></span>
 <</if>>
 
-<<if _swarmamounts.chest[0] gte 1>>
-	<<playWithBreasts _swarmamounts.chest[0]>>
-	They twist and tease your nipples, keeping them firm.
-	<<neutral 5>><<set $arousal += _swarmamounts.chest[0] * 20>>
+<<if _swarmamounts.chest gte 1>>
+	<<playWithBreasts _swarmamounts.chest>>
+	<<arousal _swarmamounts.chest*20>>
+	<<neutral 5>>
+	<<if _swarmnote.chestmilk gte 1>>
+		<<set _swarmnote.chestmilk to 0>>
+		They twist and tease your nipples, <span class="purple">causing milk to leak out of the tips.</span>
+		/*Maybe put a notification here, about swarmers that are attracted to milk?*/
+	<<else>>
+		They twist and tease your nipples, keeping them firm.
+	<</if>>
 <</if>>
 
 /* -------- Butts --------*/
@@ -372,7 +389,7 @@
 	<<neutral 10>><<impregnate $swarm["type"] _swarmamounts.butt[1]>>
 	They writhe inside your lower intestine<<if $penisexist is 1>>, blindly teasing your prostate<</if>><<if $impreg is true>>, and <span class="red">attempt to move further inside you</span><</if>>.
 	<<set $impreg to false>>
-	<<set $arousal += _swarmamounts.butt[1] * 20>>
+	<<arousal _swarmamounts.butt[1]*20>>
 <</if>>
 
 /* -------- Genital -------- */
@@ -430,11 +447,11 @@
 <<if _swarmamounts.genital[1] gte 1>>
 	<<if $vaginaexist is 1>>
 		They writhe and squirm inside your vagina, probing and teasing without mercy.
-		<<set $arousal += _swarmamounts.genital[1] * 20 * $genitalsensitivity>>
+		<<arousal _swarmamounts.genital[1] * 20 * $genitalsensitivity>>
 		<<neutral 10>>
 	<<elseif $penisexist is 1>>
 		They writhe and squirm over your penis, rubbing and teasing the entire length.
-		<<set $arousal += _swarmamounts.genital[1] * 20 * $genitalsensitivity>>
+		<<arousal _swarmamounts.genital[1] * 20 * $genitalsensitivity>>
 		<<neutral 10>>
 	<</if>>
 <</if>>
