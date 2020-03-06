@@ -333,7 +333,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Adjusted hair colours. Thanks to Mookie.
 - You may now attract attention when eating pancakes at the cafe while wearing a skirt. The outcome involves your exhibitionism, skulduggery, and whether or not you're wearing panties. Thanks to gay skele.
 - Added an event to the orphanage. Unlocking requires the sequence started by the new cafe job to be resolved in a specific way.
-- Added "yellowish" skin tones. Labeled existing tones as "reddish", and adjusted them.
+- Added "yellowish" skin tones. Labelled existing tones as "reddish", and adjusted them.
 - Added a "Gyaru" tone for both reddish and yellowish skin. Gyaru skin ranges from pale with no tan, to very dark with full tan.
 - Added save confirmation when overwriting saves with different Ids. Thanks to Lollipop Scythe.
 - Added icons for most clothes at shops and wardrobes. Only newly generated clothes will have icons. Thanks to TaiwanSmurf for both the art and code.
@@ -1022,7 +1022,7 @@ Thanks to bsin for the following additions:
 
 ## 0.2.0.1
 
-###  Bug Fixes
+### Bug Fixes
 
 - Fixed an error message in the woman's restroom at the park.
 - Fixed a bug causing semen ejaculated into your ass to end up in your vagina, even if you didn't have one.
@@ -1497,7 +1497,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Added the missing genital description to female animals rubbing against you.
 - Fixed a couple of points in the forest where the location image would become the town's.
 - The gutter blackmailer will no longer increasingly distrust you after giving in to their demands.
-- Exposing yourself to the unnamed woodsman is now correctly labeled as an exhibitionist act.
+- Exposing yourself to the unnamed woodsman is now correctly labelled as an exhibitionist act.
 - Adjusted panties on the combat sprite so that they no longer clip through the top layer of clothing.
 - The person who gives you the note after leaving the strip club for the first time is now correctly described.
 - Delivering the letter to Danube Street should now pass ten minutes.
@@ -1516,7 +1516,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 ## 0.1.26.1
 
-###  Bug Fixes
+### Bug Fixes
 
 - Fixed a bug causing dark blue eyes to appear as hazel.
 - Fixed a bug causing male characters who read Raul and Janet to permanently transform into girls. Afflicted characters should be immediately cured upon loading the new version.
@@ -1651,7 +1651,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Restored the NPC relationship and breast size options to the cheat menu.
 - Fixed a bug causing Harper to attack you in your cell at the asylum.
 - Removed the large blank space that would appear during tentacle encounters.
-- Stripping while dancing is no longer incorrectly labeled as taking five minutes.
+- Stripping while dancing is no longer incorrectly labelled as taking five minutes.
 - The blackmailer on Domus Street will no longer refer to your pussy if you do not have one.
 - Fixed an issue preventing the pills prescribed in the asylum from being available once per day as intended.
 - Fixed a bug causing status losses in the school changing rooms and at the lake to have a smaller effect than intended.
@@ -2317,17 +2317,17 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 ## 0.1.7.1
 
-###  Balance Changes
+### Balance Changes
 
 - Hair now grows faster.
 
 ### Bug Fixes
 
-- Fixed a couple of bugs occuring if Eden finds you in town.
+- Fixed a couple of bugs occurring if Eden finds you in town.
 - Fixed a bug caused by crossdressing in the pool.
 - Fixed a bug causing hospital staff to send boys out in the cold without a shirt.
 - Fixed a bug involving being heckled while dancing.
-- Fixed a bug occuring if you frotted against someone's ass or pussy.
+- Fixed a bug occurring if you frotted against someone's ass or pussy.
 - Fixed some problems with wearing pjs to bed and choosing the "Dress like you were before bed" option not putting clothes on (or taking them off) as intended.
 - Falling off a building now hurts you as intended.
 - Having a bath with Eden should now always wash you.
@@ -2336,7 +2336,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Promiscuity 5 actions should now correctly exercise your promiscuity.
 - Fixed the hairpin being unbuyable with an old save.
 
-##  0.1.7
+## 0.1.7
 
 - Added socks, shoes, stockings, shades and a hat. Art by Castle Dev.
 - The clothing shop sells tights, art also courtesy of Castle Dev.
@@ -2452,16 +2452,16 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 ## 0.1.3
 
-- Added new actions to a few states that would previously incapacite the player character. Some of these actions can help the pc recover.
+- Added new actions to a few states that would previously incapacitate the player character. Some of these actions can help the pc recover.
 - Added new promiscuity actions and encounters in the pub.
-- Added a new potential event occuring when you pass out on the streets or in alleyways.
+- Added a new potential event occurring when you pass out on the streets or in alleyways.
 
 ### Balance Changes
 
 - Lowered the promiscuity requirement for whoring at the brothel and club.
 - Worked out some kinks in the breast growth system, and made low purity have a much bigger impact. Needs testing.
 - Greatly lowered the chance of encounters on the beach at night by adding the benign "wind blows in from the ocean" event to the pool.
-- Lowered the chance of the dog event occuring on the beach during the day.
+- Lowered the chance of the dog event occurring on the beach during the day.
 - Greatly lowered the chance of waking up in the industrial district if you pass out on a street. Increased the chance when passing out in an alleyway.
 
 ### Bug Fixes
@@ -2469,7 +2469,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Sealed some more herm portals that would open if you walked the streets bound, wearing a collar or wearing towels.
 - Fixed an issue preventing NPCs from generating properly if you wander the streets naked at night.
 - The bartending job now lasts an hour per shift as intended.
-- Fixed a promiscuous option in the club that wasn't labeled correctly.
+- Fixed a promiscuous option in the club that wasn't labelled correctly.
 - Covering your genitals should now correctly prevent them being licked directly.
 - Tentacles now decrease your purity when they cum inside you as intended.
 - Fixed an issue with emperor's sundresses.
@@ -2487,7 +2487,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 ### Balance Changes
 
 - Made the weekly payments ramp more slowly and cap at £2000.
-- Added a cap to allure, lowering the maximum chance of a lewd event occuring to 80%.
+- Added a cap to allure, lowering the maximum chance of a lewd event occurring to 80%.
 - Passing out now removes much more stress.
 - Made events more likely to trigger in the school.
 - Increased the speed at which your skulduggery and grades improve.
@@ -2497,7 +2497,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed a problem at school where some promiscuity actions were incorrectly - marked as exhibitionist.
 - Fixed a bug that made hermaphrodites. There may be more like it, be on the - lookout.
 - Fixed a bug where a specific event wouldn't pay out the intended amount.
-- Fixed an issue with wolf encounters occuring when they shouldn't.
+- Fixed an issue with wolf encounters occurring when they shouldn't.
 - Fixed an issue preventing physique from improving at the speed intended.
 - Fixed a bug that caused vaginas to be exiled from reality if you stopped licking them.
 

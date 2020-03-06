@@ -3,7 +3,7 @@ window.overlayShowHide = function(elementId){
 	if(div != undefined){
 		div.classList.toggle("hidden");
 		if(elementId === "debugOverlay"){
-		   SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+			SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
 		}
 	}
 }
