@@ -3200,46 +3200,131 @@ Your fall is broken by something slimy and soft. It flees before your eyes adjus
 
 :: Street Tentacle Sex [nobr]
 
-<<set $outside to 1>><<set $location to "town">><<effects>>
-<<if $phase is 1>>
-   You allow the tentacle to touch your <<pussystop>>
-   You feel horny, as it rubs and pulses against your clit.<<arousal 6>> <<deviancy5>>
-
-   You feel slime oozing from the tentacle as it prods your <<pussy>>. <<arousal 6>>
-   A few gentle prods make your opening slick and slimy, and with a sudden trust, the tentacle glides effortlessly into your <<pussy>>.
-   <br>
-   <span class="green">Slow and rhythmicly, it thrust into you.</span>
-   You feel it slowly slide deeper and deeper inside you, until it bottoms out, prodding your womb.
-   A lewd warmth spreads inside you, as the tentacle starts pulsing, stretching your <<pussy>> in all directions.<<arousal 6>>
-   <br><br>
-   The tentacle pulses even more strongly, and you instinctivly moan, due to by the warm, pleasureable feeling of the tentacle ejaculating deep inside your <<pussy>>.
-   <<set $drugged += 60>>
-   <<set $vaginagoo += 1>>
-<<else>>
-   You allow the tentacle to touch your anus.
-   You feel horny, as it rubs and teases your hole. <<arousal 3>> <<deviancy5>>
-
-   You feel slime oozing from the tentacle as it prods your anus. <<arousal 6>>
-   A few gentle prods make your hole slick and slimy, and with a sudden firm trust, the tentacle pushes itself into your ass.
-   <br>
-   <span class="green">Slow and rhythmicly, it thrust into you.</span> You feel it slowly slide deeper and deeper inside you.
-   A lewd warmth spreads inside you, as the tentacle starts pulsing, exploring deep in your bowels.<<arousal 6>>
-   <br><br>
-   The tentacle pulses even more strongly, and you indulge in the warm, pleasureable feeling of it ejaculating deep inside you.
-   <<set $drugged += 60>>
-   <<set $anusgoo += 1>>
+<!-- This scene assumes the player is wearing a type of skirt but no underwear, and that $phase is set to what the tentacle found under the skirt: -->
+<!-- $phase 0: anus -->
+<!-- $phase 1: pussy -->
+<!-- $phase 2: penis -->
+ 
+<<if $sexstart is 1>>
+   <!-- These variables keep track of anal and vaginal ejaculation. They are used at the end of the scene. -->
+   <<set $street_tantacle_ejac_vagina to false>>
+   <<set $street_tantacle_ejac_anus to false>>
+   <<if $phase is 0>>
+      You allow the tentacle to touch your anus.
+      You feel horny, as it rubs and teases your hole. <<arousal 3>> <<deviancy5>>
+   <<elseif $phase is 1>>
+      You allow the tentacle to touch your <<pussystop>>
+      You feel horny, as it rubs and pulses against your clit.<<arousal 6>> <<deviancy5>>
+   <<elseif $phase is 2>>
+      You allow the tentacle to touch your penis.
+      You feel horny, as it starts coiling around your <<penis>>. <<arousal 3>> <<deviancy5>>
+   <</if>>
+   
+   <<set $sexstart to 0>>
+   <<consensual>>
+   <<set $consensual to 1>>
+   <<neutral 1>>
+   <<set $enemytrust += 100>>
+   <<set $rng to random(1, 100)>>
+   <<if $rng lte 20>>
+      <!-- 20% chance of weak tentacle -->
+      <<tentaclestart 1 4>>
+   <<elseif $rng lte 40>>
+      <!-- 20% chance of strong tentacle -->
+      <<tentaclestart 1 20>>
+   <<else>>
+      <!-- 60% chance of above medium strength tentacle -->
+      <<tentaclestart 1 10>>
+   <</if>>
+   
+   <!-- overwrite the random tentacle -->
+   <<set $position to "doggy">>
+   <<set _tentacle to $tentacles[0]>>
+   <<set _tentacle.desc to "slimy">>
+   <<set _tentacle.size to random(1, 3)>>
+   <<set $rng to random(1, 100)>>
+   <<if $rng lte 5>>
+      <!-- 5% chance of impregnating tentacle -->
+      <<set _tentacle.size to 3>>
+      <<set _tentacle.baby to "tentacle">>
+   <<else>>
+       <<set _tentacle.baby to 0>>
+   <</if>>
+   
+   <!-- Make tentacle start at the target body part -->
+   <<if $phase is 0>>
+      <<set $anususe to "tentaclerub">><<set $bottomuse to "tentaclerub">><<set _tentacle.head to "bottomrub">>
+   <<elseif $phase is 1>>
+      <<set $vaginause to "tentaclerub">><<set $thighuse to "tentaclerub">><<set _tentacle.head to "vaginarub">>
+   <<elseif $phase is 2>>
+      <<set $penisuse to "tentaclerub">><<set $thighuse to "tentaclerub">><<set _tentacle.head to "penisrub">>
+   <</if>>
+   <<set _tentacle.shaft to "thighs">>
 <</if>>
 
-<br><br>
-Worn out, the slimy tentacle slides out of you and retracts, as several more tentacles emerge from the manhole, wrapping around your limbs and waist and pulling you underground. You prove too heavy even for their combined strength, and plummet several feet through darkness.
-<br><br>
-Your fall is broken by something slimy and soft. It flees before your eyes adjust to the dark, taking the tentacles with it. You're in the drains, surrounded by stolen clothing and handbags.
-<br><br>
-<<set $eventskip to 1>>
-<<link [[Search for valuables (0:10)|Street Tentacle Search]]>><<pass 10>><</link>>
-<br>
-<<destinationdrain>>
+<<statetentacles>>
+<<if $tentacles.active gte 1>>
+   <<effects>>
+   <<effectstentacles>>
+   <<tentacles>>
 
+   <!-- Show a flavour text for this specific scene, depending on if the action is going on underneath your skirt or not. -->
+   <<if $tentacles[0].head.includes("vagina") or $tentacles[0].head.includes("anus") or $tentacles[0].head.includes("penis") or $tentacles[0].head.includes("thigh") or $tentacles[0].head.includes("bottom")>>
+      <<if $tentacles[0].head is "vaginadeep" or $tentacles[0].head is "anusdeep" or $tentacles[0].head is "penisdeep" or $tentacles[0].head is "anus" or $tentacles[0].head is "vagina" or $tentacles[0].head is "penis">>
+         You're in the middle of the street, struggling to act normally.
+         You hope nobody will notice that beneath your $worn.lower.name you're being fucked by a tentacle.
+      <<else>>
+         You're in the middle of the street, trying to act normal. 
+         You hope nobody notices the what the slimy tentacle is doing underneath your $worn.lower.name.
+      <</if>>
+   <<else>>
+      You're in the middle of the street, amazed that what's happening is not drawing any attention.
+      Nobody seems to notice for now.
+   <</if>>
+   <br><br>
+
+   <<actionstentacles>>
+   <br>
+
+   <<set $street_tantacle_ejac_vagina to $street_tantacle_ejac_vagina or $tentacles[0].head is "vaginadeep" or $vaginafucked is 1>>
+   <<set $street_tantacle_ejac_anus to $street_tantacle_ejac_anus or $tentacles[0].head is "anusdeep">>
+
+   <span id="next"><<link [[Next|Street Tentacle Sex]]>><</link>></span><<nexttext>>
+<<else>>
+   Worn out, the slimy tentacle <<slithers>> back down your leg and disappears into the open manhole.
+   <br><br>
+
+   <<set $street_tantacle_ejac_vagina to $street_tantacle_ejac_vagina or $tentacles[0].head is "vaginadeep" or $vaginafucked is 1>>
+   <<set $street_tantacle_ejac_anus to $street_tantacle_ejac_anus or $tentacles[0].head is "anusdeep">>
+
+   <<if $street_tantacle_ejac_vagina>>
+      You feel a pleasurable warmth spreading deep in your womb.<br>
+      You instinctivly moan, despite still being in the middle of the street. 
+      Blushing you look around, but nobody seems to have noticed.
+      <<stress 2>><<trauma 2>><<gtrauma>><<gstress>>
+      <br><br>
+   <<elseif $street_tantacle_ejac_anus>>
+      You feel a pleasurable warmth spreading deep in your bowels.<br>
+      You instinctivly moan, despite still being in the middle of the street. 
+      Blushing you look around, but nobody seems to have noticed.
+      <<stress 2>><<trauma 2>><<gtrauma>><<gstress>>
+      <br><br>
+   <</if>>
+   <<clotheson>>
+   <<endcombat>>
+   <<set $outside to 1>><<set $location to "town">><<effects>>
+   
+   <<tearful>> you take a moment to gather yourself.
+   <br><br>
+   Just as you're about to leave, several more tentacles emerge from the manhole, wrapping around your limbs and waist and pulling you underground. You prove too heavy even for their combined strength, and plummet several feet through darkness.
+   <br><br>
+   Your fall is broken by something slimy and soft. It flees before your eyes adjust to the dark, taking the tentacles with it. You're in the drains, surrounded by stolen clothing and handbags.
+   <br><br>
+   <<set $eventskip to 1>>
+   <<link [[Search for valuables (0:10)|Street Tentacle Search]]>><<pass 10>><</link>>
+   <br>
+   <<destinationdrain>>
+<</if>>
 
 :: Street Tentacle Search [nobr]
 
