@@ -1648,7 +1648,7 @@ You reach out and pet the cat. It stretches into your hand and yawns. It turns i
 <<set $outside to 0>><<set $location to "town">><<effects>>
 
 <<if $enemyarousal gte $enemyarousalmax>>
-<<ejaculation>>
+<<ejaculation>><<set $forcedprostitutionstat += 1>><<fameprostitution 1>>
 
 The <<person>> climbs off the bed and leaves the room. Bailey stares at you for a moment, then slams the door shut.
 <br><br>
@@ -1829,10 +1829,179 @@ You grab your clothes and quickly dress.
 <<link [[Next|Orphanage]]>><<storeon "mickey">><<set $hacker_tasks to []>><</link>>
 
 :: Shave [nobr]
-
+<<effects>>
 You pick up some shaving cream, a razor and sit down.
 <br>
 You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals>> is now smooth and clean.
 
 <br><br>
 <<link [[Next|Bathroom]]>><<clotheson>><</link>>
+
+:: Mirror Bodywriting [nobr]
+<<effects>>
+
+<<if $writeaction and $writebodyaction>>
+	<<add_bodywriting $writebodyaction $writeaction pen>>
+	You write <span class="lewd">"<<print $skin[$writebodyaction].writing>>"</span> on your <<bodypart $writebodyaction>>.
+	
+	<<unset $writeaction>><<unset $writebodyaction>>
+<<elseif $writeaction>>
+	<span class="blue">You must choose a body part to write on.</span>
+	
+	<<unset $writeaction>>
+<<elseif $writebodyaction>>
+	<span class="blue">You must choose what to write.</span>
+	
+	<<unset $writebodyaction>>
+<<else>>
+	You hover the pen over your skin.
+<</if>>
+<br><br>
+
+Location:<br>
+<<for _e to 0; _e lt $bodypart_number; _e++>>
+	<<activebodypart>>
+		
+	<<if $skin[_active_bodypart].writing>>
+		
+	<<else>><<set _bodypart_detected to 1>>
+		<label>Write on your <<bodypart _active_bodypart>> <<capture _active_bodypart>><<radiobutton "$writebodyaction" _active_bodypart>><</capture>></label>
+		<br>
+	<</if>>
+<</for>>
+<<if _bodypart_detected isnot 1>>
+	There's no room on your skin.
+	<br>
+<</if>>
+<br>
+
+Text:
+<br>
+<label><span class="lewd">£5 whore <<radiobutton "$writeaction" "five_pound_whore">></span></label> | 
+<label><span class="lewd">£10 a pop <<radiobutton "$writeaction" "ten_pound_a_pop">></span></label> | 
+<label><span class="lewd">£25 per fuck <<radiobutton "$writeaction" "twenty_five_pound_per_fuck">></span></label> | 
+<label><span class="lewd">£100 <<radiobutton "$writeaction" "one_hundred_pound">></span></label> | 
+<label><span class="lewd">It's not rape if you pay me <<radiobutton "$writeaction" "its_not_rape_if_you_pay_me">></span></label> | 
+<label><span class="lewd">Whore <<radiobutton "$writeaction" "whore">></span></label> | 
+<label><span class="lewd">Slut for hire <<radiobutton "$writeaction" "slut_for_hire">></span></label> | 
+<label><span class="lewd">Body for sale <<radiobutton "$writeaction" "body_for_sale">></span></label> | 
+<br><br>
+
+<<link [[Write|Mirror Bodywriting]]>><</link>>
+<br>
+<<link [[Stop|$passage_mirror]]>><<unset $writeaction>><<unset $writebodyaction>><</link>>
+<br>
+
+
+
+:: Mirror Bodywriting Unused [nobr]
+<<effects>>
+
+<<set _skin_keys to Object.keys(setup.bodywriting)>>
+
+<<if $mirror_bodypart>>$mirror_bodypart<br><<print $writeaction>><br>
+	<<add_bodywriting $mirror_bodypart $writeaction pen>>
+	<<unset $mirror_bodypart>><<unset $writeaction>>
+<<else>>
+You hover the pen over your skin.
+<</if>>
+<br><br>
+
+<<for _e to 0; _e lt $bodypart_number; _e++>>
+	<<activebodypart>>
+	<<if $skin[_active_bodypart].writing>>
+		
+	<<else>>
+		<<capture _active_bodypart>><<link [[Write|Mirror Bodywriting]]>><<set $mirror_bodypart to _active_bodypart>><</link>><</capture>> on your <<bodypart _active_bodypart>>
+		<br>
+	<</if>>
+<</for>>
+<br>
+
+
+Something non-explicit:
+<<for _s to 0; _s lt _skin_keys.length; _s++>>
+	<<if setup.bodywriting[_skin_keys[_s]].lewd is 0>>
+	<label><<print setup.bodywriting[_skin_keys[_s]].writing>> <<radiobutton "$writeaction" clone(setup.bodywriting[_skin_keys[_s]].index)>></label>
+	 | 
+	
+	 <br>
+	<</if>>
+<</for>>
+<br><br>
+<<if $promiscuity gte 35>>
+	<span class="lewd">Something lewd</span>:
+	<<for _s to 0; _s lt _skin_keys.length; _s++>>
+		<<if setup.bodywriting[_skin_keys[_s]].special isnot "bestiality" and setup.bodywriting[_skin_keys[_s]].lewd is 1>>
+		<label><<print setup.bodywriting[_skin_keys[_s]].writing>> <<radiobutton "$writeaction" "clone(setup.bodywriting[_skin_keys[_s]].index)">></label>
+		 | 
+		<</if>>
+	<</for>>
+	<br>
+<<else>>
+	Something lewd: <span class="pink">You're not lewd enough.</span>
+	<br>
+<</if>>
+<br>
+<<if $deviancy gte 35>>
+	<span class="lewd">Something deviant</span>:
+	<<for _s to 0; _s lt _skin_keys.length; _s++>>
+		<<if setup.bodywriting[_skin_keys[_s]].special is "bestiality">>
+			<label><<print setup.bodywriting[_skin_keys[_s]].writing>> <<radiobutton "$writeaction" "clone(setup.bodywriting[_skin_keys[_s]].index)">></label>
+			 | 
+		<</if>>
+	<</for>>
+	<br>
+<<else>>
+	Something deviant: <span class="pink">You're not deviant enough.</span>
+	<br>
+<</if>>
+<br>
+
+<<link [[Stop|$passage_mirror]]>><</link>>
+<br>
+
+
+
+:: Mirror Bodywriting Choice [nobr]
+<<effects>>
+
+What do you want to write or draw on your $mirror_bodypart?
+<br><br>
+
+<<link [[Something deviant|Mirror Bodywriting Deviant]]>><</link>>
+<br>
+<<link [[Something lewd|Mirror Bodywriting Lewd]]>><</link>>
+<br>
+<<link [[Something normal|Mirror Bodywriting Normal]]>><</link>>
+<br>
+
+
+:: Mirror Bodywriting Deviant [nobr]
+<<effects>>
+
+<<set _skin_keys to Object.keys(setup.bodywriting)>>
+<<for _s to 0; _s lt _skin_keys.length; _s++>>
+	<<if setup.bodywriting[_skin_keys[_s]].special is "bestiality">>
+		<label><<print setup.bodywriting[_skin_keys[_s]].writing>> <<radiobutton "$writeaction" "clone(setup.bodywriting[_skin_keys[_s]])">></label>
+		 | 
+	<</if>>
+<</for>>
+<br><br>
+
+<<link [[Write|Mirror Bodywriting Deviant]]>><</link>>
+<br>
+
+
+:: Mirror Bodywriting Lewd [nobr]
+<<effects>>
+
+:: Mirror Bodywriting Normal [nobr]
+<<effects>>
+
+<<set _skin_keys to Object.keys(setup.bodywriting)>>
+<<for _s to 0; _s lt _skin_keys.length; _s++>>
+	<<print setup.bodywriting[_skin_keys[_s]].writing>>
+	<br>
+<</for>>
+
