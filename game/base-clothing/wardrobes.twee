@@ -5,432 +5,206 @@
 <<wardrobesanity>>
 
 <<if $wear is "strip">>
-You remove your clothing.
-<br><br>
-
-<<undress $wardrobe_location>>
+	You remove your clothing.
+	<br><br>
+	<<undress $wardrobe_location>>
 <</if>>
 
 <<wearoutfit>>
 
+<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
+<<set _slimePrevent to ["upper", "lower", "under_upper", "under_lower"]>>
+<<set _towelCheck to ["upper", "lower"]>>
+<<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "legs":false, "feet":false}>>
 
-	<<if $wear_upper gte 0 and $corruption_slime gte 80 and $willpower lt 800 and $wardrobe.upper[$wear_upper].reveal lt 500 and !$wardrobe.upper[$wear_upper].type.includesAny("school", "event") and $wear_delete is 0>>
-		<span class="red">You were unable to equip your $wardrobe.upper[$wear_upper].name as the slime in your ear did not permit it.</span>
-		<br><br>
-	<<elseif $wear_upper gte 0 and $worn.upper.cursed is 1 or $wear_upper gte 0 and $wardrobe.upper[$wear_upper].one_piece is 1 and $worn.lower.cursed is 1>>
-		You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>>
-		<br><br>
-	<<elseif $wear_upper is "strip">>
-		You remove the $worn.upper.name.<<upperundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_upper is "large_towel">>
-		<<upperundress $wardrobe_location>><<lowerundress $wardrobe_location>><<set $worn.upper to clone(setup.clothes.upper[14])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>><<set $worn.lower to clone(setup.clothes.lower[15])>><<set $worn.lower.colour to clone($worn.upper.colour)>>
-		You tie a large towel around your chest.
-		<br><br>
-	<<elseif $wear_upper is "towel">>
-		<<upperundress $wardrobe_location>><<set $worn.upper to clone(setup.clothes.upper[3])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>>
-		You tie a towel around your chest.
-		<br><br>
-	<<elseif $wear_upper isnot "none">>
-		<<if $wear_delete is 1>>
-			<<if $wardrobe.upper[$wear_upper].one_piece is 1>>
-				<<for _d to 0; _d lt $wardrobe.lower.length; _d++>>
-					<<if $wardrobe.upper[$wear_upper].set is $wardrobe.lower[_d].set and $wardrobe.upper[$wear_upper].colour is $wardrobe.lower[_d].colour and $wardrobe.upper[$wear_upper].accessory_colour is $wardrobe.lower[_d].accessory_colour>>
-						<<if $wardrobe.lower[_d].colour isnot "custom">>
-							<<set $wardrobe.lower.deleteAt(_d)>>
-							<<break>>
-						<<else>>
-							<<set _matched to 0>>
-							<<if $wardrobe.upper[$wear_upper].colourCustom isnot undefined and $wardrobe.lower[_d].colourCustom isnot undefined>>
-								<<if $wardrobe.upper[$wear_upper].colourCustom is $wardrobe.lower[_d].colourCustom>>
-									<<set _matched++>>
-								<</if>>
-							<<elseif $wardrobe.upper[$wear_upper].colourCustom is undefined and $wardrobe.lower[_d].colourCustom is undefined>>
-								<<set _matched++>>
-							<</if>>
-							<<if $wardrobe.upper[$wear_upper].accessory_colourCustom isnot undefined and $wardrobe.lower[_d].accessory_colourCustom isnot undefined>>
-								<<if $wardrobe.upper[$wear_upper].accessory_colourCustom is $wardrobe.lower[_d].accessory_colourCustom>>
-									<<set _matched++>>
-								<</if>>
-							<<elseif $wardrobe.upper[$wear_upper].accessory_colourCustom is undefined and $wardrobe.lower[_d].accessory_colourCustom is undefined>>
-								<<set _matched++>>
-							<</if>>
-							<<if _matched is 2>>
-								<<set $wardrobe.lower.deleteAt(_d)>>
-								<<break>>
-							<</if>>
-						<</if>>
-					<</if>>
-				<</for>>
-			<</if>>
-			You discard the $wardrobe.upper[$wear_upper].name.
-			<<set $wardrobe.upper.deleteAt($wear_upper)>>
+<<for _i to 0; _i lt _equip.length;_i++>>
+	<<if _equipSkip[_equip[_i]] is true>>
+		<<continue>>
+	<</if>>
+	<<unset _wearId>><<unset _item>>
+	<<switch _equip[_i]>>
+		<<case "over_upper">><<set _wearId to $wear_over_upper>>
+		<<case "over_lower">><<set _wearId to $wear_over_lower>>
+		<<case "upper">><<set _wearId to $wear_upper>>
+		<<case "lower">><<set _wearId to $wear_lower>>
+		<<case "under_upper">><<set _wearId to $wear_under_upper>>
+		<<case "under_lower">><<set _wearId to $wear_under_lower>>
+		<<case "over_head">><<set _wearId to $wear_over_head>>
+		<<case "head">><<set _wearId to $wear_head>>
+		<<case "face">><<set _wearId to $wear_face>>
+		<<case "neck">><<set _wearId to $wear_neck>>
+		<<case "legs">><<set _wearId to $wear_legs>>
+		<<case "feet">><<set _wearId to $wear_feet>>
+	<</switch>>
+	<<if _wearId is undefined>>
+		<<continue>>
+	<</if>>
+	<<if _wearId is "none">>
+		<<continue>>
+	<</if>>
+	<<if $wear_delete is 0>>
+		/*Checks for cursed equip*/
+		<<unset _cursedPrevent>><<unset _outfitPieceIds>>
+		<<set _wornOutfitPrimary to $worn[_equip[_i]].outfitPrimary>>
+		<<if $worn[_equip[_i]].cursed is 1>>
+			You try to remove the <<print $worn[_equip[_i]].name>>, but fail. <<print "<<cursedtext "+$worn[_equip[_i]].name+">>">>
 			<br>
-		<<elseif $wear_delete is 2>>
-			<<if $wardrobe.upper[$wear_upper].one_piece is 1>>
-				<<for _d to 0; _d lt $wardrobe.lower.length; _d++>>
-					<<if $wardrobe.upper[$wear_upper].set is $wardrobe.lower[_d].set and $wardrobe.upper[$wear_upper].colour is $wardrobe.lower[_d].colour and $wardrobe.upper[$wear_upper].accessory_colour is $wardrobe.lower[_d].accessory_colour>>
-						<<set $wardrobe.lower[_d].integrity=$wardrobe.lower[_d].integrity_max>>
-						<<break>>
-					<</if>>
-				<</for>>
-			<</if>>
-			You repair the $wardrobe.upper[$wear_upper].name.
-			<<set $wardrobe.upper[$wear_upper].integrity = $wardrobe.upper[$wear_upper].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<upperundress $wardrobe_location>>
-			<<set $worn.upper to clone($wardrobe.upper[$wear_upper])>>
-			<<set $wardrobe.upper.deleteAt($wear_upper)>>
-				<<if $worn.upper.one_piece is 1>>
-					<<for _e to 0; _e lt $wardrobe.lower.length; _e++>>
-						<<if $wardrobe.lower[_e].set is $worn.upper.set and $wardrobe.lower[_e].colour is $worn.upper.colour>>
-							<<set _matched to 0>>
-							<<if $worn.upper.colourCustom isnot undefined and $wardrobe.lower[_e].colourCustom isnot undefined>>
-								<<if $worn.upper.colourCustom is $wardrobe.lower[_e].colourCustom>>
-									<<set _matched++>>
-								<</if>>
-							<<elseif $worn.upper.colourCustom is undefined and $wardrobe.lower[_e].colourCustom is undefined>>
-								<<set _matched++>>
-							<</if>>
-							<<if $worn.upper.accessory_colourCustom isnot undefined and $wardrobe.lower[_e].accessory_colourCustom isnot undefined>>
-								<<if $worn.upper.accessory_colourCustom is $wardrobe.lower[_e].accessory_colourCustom>>
-									<<set _matched++>>
-								<</if>>
-							<<elseif $worn.upper.accessory_colourCustom is undefined and $wardrobe.lower[_e].accessory_colourCustom is undefined>>
-								<<set _matched++>>
-							<</if>>
-							<<if _matched is 2 or $wardrobe.lower[_e].colour isnot "custom">>
-								<<set _strip_restrict to 1>>/*Stops lowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
-								<<lowerundress $wardrobe_location>>
-								<<set $worn.lower to clone($wardrobe.lower[_e])>>
-								<<set $wardrobe.lower.deleteAt(_e)>>
-							<</if>>
-						<</if>>
-					<</for>>
+			<<set _cursedPrevent to true>>
+		<</if>>
+		<<if _wornOutfitPrimary isnot undefined>>
+			<<for _labelWW, _valueWW range _wornOutfitPrimary>>
+				<<if $worn[_labelWW].cursed is 1>>
+					<<print "<<cursedtext "+$worn[_labelWW].name+">>">>
+					<<set _cursedPrevent to true>>
 				<</if>>
-			You put on the $worn.upper.name.
-			<br><br>
+			<</for>>
 		<</if>>
-	<</if>>
-
-
-	<<if $wear_lower gte 0 and $corruption_slime gte 80 and $willpower lt 800 and $wardrobe.lower[$wear_lower].reveal lt 500 and !$wardrobe.lower[$wear_lower].type.includesAny("school", "event") and $wear_delete is 0>>
-		<span class="red">You were unable to equip your $wardrobe.lower[$wear_lower].name as the slime in your ear did not permit it.</span>
-		<br><br>
-	<<elseif $wear_lower gte 0 and $worn.lower.cursed is 1 or $wear_lower gte 0 and $wardrobe.lower[$wear_lower].one_piece is 1 and $worn.upper.cursed is 1>>
-		You try to remove the <<bottomscomma>> but fail. <<cursedtext $worn.upper.name $worn.lower.name>>
-		<br><br>
-	<<elseif $wear_lower is "strip">>
-		<<if $wear_upper isnot "strip">>
-			You remove the $worn.lower.name.<<lowerundress $wardrobe_location>>
-			<br><br>
+		<<if _cursedPrevent is true>>
+			<<continue>>
 		<</if>>
-	<<elseif $wear_lower is "towel">>
-		<<lowerundress $wardrobe_location>><<set $worn.lower to clone(setup.clothes.lower[3])>><<set $worn.lower.colour to clone($worn.lower.colour_options.random())>>
-		You tie a towel around your waist.
-		<br><br>
-	<<elseif $wear_lower isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.lower[$wear_lower].name.
-			<<set $wardrobe.lower.deleteAt($wear_lower)>>
+
+		/*Strips equip and puts it in the wardrobe*/
+		<<if _wearId is "strip">>
+			You remove the <<print $worn[_equip[_i]].name>>.<<generalUndress $wardrobe_location _equip[_i]>>
 			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.lower[$wear_lower].name.
-			<<set $wardrobe.lower[$wear_lower].integrity = $wardrobe.lower[$wear_lower].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<lowerundress $wardrobe_location>>
-			<<set $worn.lower to clone($wardrobe.lower[$wear_lower])>>
-			<<set $wardrobe.lower.deleteAt($wear_lower)>>
-				<<if $worn.lower.one_piece is 1>>
-					<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
-						<<if $wardrobe.upper[_e].set is $worn.lower.set and $wardrobe.upper[_e].colour is $worn.lower.colour>>
-							<<upperundress $wardrobe_location>>
-							<<set $worn.upper to clone($wardrobe.upper[_e])>>
-						<<set $wardrobe.upper.deleteAt(_e)>>
+			<<if _wornOutfitPrimary isnot undefined>>
+				<<for _labelWW, _valueWW range _wornOutfitPrimary>>
+					<<if _valueWW isnot "broken">>
+						You remove the <<print $worn[_labelWW].name>>.<<generalUndress $wardrobe_location _labelWW>>
 					<</if>>
 				<</for>>
 			<</if>>
+			<<continue>>
 		<</if>>
-		You put on the $worn.lower.name.
-		<br><br>
+		<<unset _wornOutfitPrimary>>
+
+		/*Strips equip, puts it in the wardrobe and equips a towl*/
+		<<if _wearId is "towel" and _towelCheck.includes(_equip[_i])>>
+			<<generalUndress $wardrobe_location _equip[_i]>>
+			<<set $worn[_equip[_i]] to clone($clothes[_equip[_i]][3])>><<set $worn[_equip[_i]].colour to clone($worn[_equip[_i]].colour_options.random())>>
+			<<if _equip[_i] is "upper">>
+				You tie a towel around your chest.
+			<<else>>
+				You tie a towel around your waist.
+			<</if>>
+			<br><br>
+			<<continue>>
+		<</if>>
+		<<if _wearId is "large_towel" and _equip[_i] is "upper">>
+			<<generalUndress $wardrobe_location "upper">><<generalUndress $wardrobe_location "lower">>
+			<<set $worn.upper to clone($clothes.upper[14])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>>
+			<<set $worn.lower to clone($clothes.lower[15])>><<set $worn.lower.colour to clone($worn.upper.colour)>>
+			You tie a large towel around your chest.
+			<br><br>
+			<<continue>>
+		<</if>>
 	<</if>>
 
-	<<if $wear_under_upper gte 0 and $corruption_slime gte 80 and $willpower lt 800 and $wardrobe.under_upper[$wear_under_upper].reveal lt 500 and !$wardrobe.under_upper[$wear_under_upper].type.includesAny("school", "event") and $wear_delete is 0>>
-		<span class="red">You were unable to equip your $wardrobe.under_upper[$wear_under_upper].name as the slime in your ear did not permit it.</span>
-		<br><br>
-	<<elseif $wear_under_upper gte 0 and $worn.under_upper.cursed is 1 or $wear_under_upper gte 0 and $wardrobe.under_upper[$wear_under_upper].one_piece is 1 and $worn.under_lower.cursed is 1>>
-		You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_upper.name $worn.under_lower.name>>
-		<br><br>
-	<<elseif $wear_under_upper is "strip">>
-		You remove the $worn.under_upper.name.<<underupperundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_under_upper isnot "none">>
-		<<if $wear_delete is 1>>
-		<<if $wardrobe.under_upper[$wear_under_upper].one_piece is 1>>
-			<<for _d to 0; _d lt $wardrobe.under_lower.length; _d++>>
-				<<if $wardrobe.under_upper[$wear_under_upper].set is $wardrobe.under_lower[_d].set and $wardrobe.under_upper[$wear_under_upper].colour is $wardrobe.under_lower[_d].colour and $wardrobe.under_upper[$wear_under_upper].accessory_colour is $wardrobe.under_lower[_d].accessory_colour>>
-					<<set $wardrobe.under_lower.deleteAt(_d)>>
-					<<break>>
-					<<if $wardrobe.under_lower[_d].colour isnot "custom">>
-						<<set $wardrobe.under_lower.deleteAt(_d)>>
-						<<break>>
-					<<else>>
+	/*Find the item to equip*/
+	<<set _item to $wardrobe[_equip[_i]][_wearId]>>
+	
+	/*Prevent equip when the ear slime doesnt allow it*/
+	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_i]) and $corruption_slime gte 80 and $wear_delete is 0>>
+		<<if $willpower lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
+			<span class="red">You were unable to equip your _item.name as the slime in your ear did not permit it.</span>
+			<br>
+			<<continue>>
+		<</if>>
+	<</if>>
+
+	/*Finds any outfit pieces and records the Ids*/
+	<<set _outfitPrimary to _item.outfitPrimary>>
+	<<set $outfitPrimary to clone(_outfitPrimary)>>
+	<<if _outfitPrimary isnot undefined>>
+		<<set _outfitPieceIds to {}>>
+		<<for _labelWW, _valueWW range _outfitPrimary>>
+			<<if _valueWW isnot "broken">>
+				<<for _j to 0; _j lt $wardrobe[_labelWW].length; _j++>>
+					<<if $wardrobe[_labelWW][_j].name is _valueWW and _item.colour is $wardrobe[_labelWW][_j].colour and _item.accessory_colour is $wardrobe[_labelWW][_j].accessory_colour>>
 						<<set _matched to 0>>
-						<<if $wardrobe.under_upper[$wear_under_upper].colourCustom isnot undefined and $wardrobe.under_lower[_d].colourCustom isnot undefined>>
-							<<if $wardrobe.under_upper[$wear_under_upper].colourCustom is $wardrobe.under_lower[_d].colourCustom>>
+						<<if $wardrobe[_labelWW][_j].colour isnot "custom">>
+							<<set _matched++>>
+						<<elseif _item.colourCustom isnot undefined and $wardrobe[_labelWW][_j].colourCustom isnot undefined>>
+							<<if _item.colourCustom is $wardrobe[_labelWW][_j].colourCustom>>
 								<<set _matched++>>
 							<</if>>
-						<<elseif $wardrobe.under_upper[$wear_under_upper].colourCustom is undefined and $wardrobe.under_lower[_d].colourCustom is undefined>>
-							<<set _matched++>>
 						<</if>>
-						<<if $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom isnot undefined and $wardrobe.under_lower[_d].accessory_colourCustom isnot undefined>>
-							<<if $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom is $wardrobe.under_lower[_d].accessory_colourCustom>>
+						<<if $wardrobe[_labelWW][_j].accessory_colour isnot "custom">>
+							<<set _matched++>>
+						<<elseif _item.accessory_colourCustom isnot undefined and $wardrobe[_labelWW][_j].accessory_colourCustom isnot undefined>>
+							<<if _item.accessory_colourCustom is $wardrobe[_labelWW][_j].accessory_colourCustom>>
 								<<set _matched++>>
 							<</if>>
-						<<elseif $wardrobe.under_upper[$wear_under_upper].accessory_colourCustom is undefined and $wardrobe.under_lower[_d].accessory_colourCustom is undefined>>
-							<<set _matched++>>
 						<</if>>
 						<<if _matched is 2>>
-							<<set $wardrobe.under_lower.deleteAt(_d)>>
+							<<set _outfitPieceIds[clone(_labelWW)] to clone(_j)>>
+							<<set _equipSkip[_labelWW] to true>>
 							<<break>>
 						<</if>>
 					<</if>>
-				<</if>>
+				<</for>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<<unset _outfitPrimary>>
+	<<if _outfitPieceIds is {}>>
+		<<unset _outfitPieceIds>>
+	<</if>>
+
+	<<set $outfitPieceIds to clone(_outfitPieceIds)>>
+	<<if $wear_delete is 1 and _wearId gte 0>>
+		/*Delete the relating items*/
+		<<if _outfitPieceIds isnot undefined>>
+			<<for _labelWW, _valueWW range _outfitPieceIds>>
+				<<set $wardrobe[_labelWW].deleteAt(_valueWW)>>
 			<</for>>
 		<</if>>
-		<<set $wardrobe.under_upper.deleteAt($wear_under_upper)>>
-		<<elseif $wear_delete is 2>>
-		<<if $wardrobe.under_upper[$wear_under_upper].one_piece is 1>>
-			<<for _d to 0; _d lt $wardrobe.under_lower.length; _d++>>
-				<<if $wardrobe.under_upper[$wear_under_upper].set is $wardrobe.under_lower[_d].set and $wardrobe.under_upper[$wear_under_upper].colour is $wardrobe.under_lower[_d].colour and $wardrobe.under_upper[$wear_under_upper].accessory_colour is $wardrobe.under_lower[_d].accessory_colour>>
-					<<set $wardrobe.under_lower[_d].integrity=$wardrobe.under_lower[_d].integrity_max>>
-					<<break>>
-				<</if>>
-			<</for>>
-		<</if>>
-		You repair the $wardrobe.under_upper[$wear_under_upper].name.
-		<<set $wardrobe.under_upper[$wear_under_upper].integrity = $wardrobe.under_upper[$wear_under_upper].integrity_max>><<pass 1>>
+		You discard the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+		<<set $wardrobe[_equip[_i]].deleteAt(_wearId)>>
 		<br>
-		<<else>>
-		<<underupperundress $wardrobe_location>>
-		<<set $worn.under_upper to clone($wardrobe.under_upper[$wear_under_upper])>>
-		<<set $wardrobe.under_upper.deleteAt($wear_under_upper)>>
-			<<if $worn.under_upper.one_piece is 1>>
-				<<for _e to 0; _e lt $wardrobe.under_lower.length; _e++>>
-					<<if $wardrobe.under_lower[_e].set is $worn.under_upper.set and $wardrobe.under_lower[_e].colour is $worn.under_upper.colour>>
-						<<set _matched to 0>>
-						<<if $worn.under_upper.colourCustom isnot undefined and $wardrobe.under_lower[_e].colourCustom isnot undefined>>
-							<<if $worn.under_upper.colourCustom is $wardrobe.under_lower[_e].colourCustom>>
-								<<set _matched++>>
-							<</if>>
-						<<elseif $worn.under_upper.colourCustom is undefined and $wardrobe.under_lower[_e].colourCustom is undefined>>
-							<<set _matched++>>
-						<</if>>
-						<<if $worn.under_upper.accessory_colourCustom isnot undefined and $wardrobe.under_lower[_e].accessory_colourCustom isnot undefined>>
-							<<if $worn.under_upper.accessory_colourCustom is $wardrobe.under_lower[_e].accessory_colourCustom>>
-								<<set _matched++>>
-							<</if>>
-						<<elseif $worn.under_upper.accessory_colourCustom is undefined and $wardrobe.under_lower[_e].accessory_colourCustom is undefined>>
-							<<set _matched++>>
-						<</if>>
-						<<if _matched is 2 or $wardrobe.under_lower[_e].colour isnot "custom">>
-							<<set _strip_restrict to 1>>/*Stops underlowerundress from removing the top should it be removing the lower half of an outfit identical to the previously worn outfit*/
-							<<underlowerundress $wardrobe_location>>
-							<<set $worn.under_lower to clone($wardrobe.under_lower[_e])>>
-							<<set $wardrobe.under_lower.deleteAt(_e)>>
-						<</if>>
-					<</if>>
-				<</for>>
-			<</if>>
+		<<continue>>
+	<<elseif $wear_delete is 2 and _wearId gte 0>>
+		/*Repair the relating items*/
+		<<if _outfitPieceIds isnot undefined>>
+			<<for _labelWW, _valueWW range _outfitPieceIds>>
+				<<set $wardrobe[_labelWW][_valueWW].integrity = $wardrobe[_labelWW][_valueWW].integrity_max>><<pass 1>>
+			<</for>>
 		<</if>>
-		You put on the $worn.under_upper.name.
+		<<set $wardrobe[_equip[_i]][_wearId].integrity = $wardrobe[_equip[_i]][_wearId].integrity_max>><<pass 1>>
+		You repair the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+		<br>
+		<<continue>>
+	<<elseif _wearId gte 0>>
+		/*Equip the relating items*/
+		<<generalUndress $wardrobe_location _equip[_i]>>
+		<<if _outfitPieceIds isnot undefined>>
+			<<for _labelWW, _valueWW range _outfitPieceIds>>
+				<<generalUndress $wardrobe_location _labelWW>>
+				<<set $worn[clone(_labelWW)] to clone($wardrobe[clone(_labelWW)][clone(_valueWW)])>>
+				<<set $wardrobe[_labelWW].deleteAt(_valueWW)>>
+			<</for>>
+		<</if>>
+		<<set $worn[_equip[_i]] to clone($wardrobe[_equip[_i]][_wearId])>>
+		You put on the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+		<<set $wardrobe[_equip[_i]].deleteAt(_wearId)>>
 		<br><br>
 	<</if>>
-
-	<<if $wear_under_lower gte 0 and $corruption_slime gte 80 and $willpower lt 800 and $wardrobe.under_lower[$wear_under_lower].reveal lt 500 and !$wardrobe.under_lower[$wear_under_lower].type.includesAny("school", "event") and $wear_delete is 0>>
-		<span class="red">You were unable to equip your $wardrobe.under_lower[$wear_under_lower].name as the slime in your ear did not permit it.</span>
-		<br><br>
-	<<elseif $wear_under_lower gte 0 and $worn.under_lower.cursed is 1 or $wear_under_lower gte 0 and $wardrobe.under_lower[$wear_under_lower].one_piece is 1 and $worn.under_upper.cursed is 1>>
-		You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>>
-		<br><br>
-	<<elseif $wear_under_lower is "strip">>
-		<<if $wear_under_upper isnot "strip">>
-			<<if $worn.under_lower.cursed is 1>>
-			You try to remove the <<underbottomscomma>> but fail. <<cursedtext $worn.under_lower.name $worn.under_upper.name>>
-			<br><br>
-			<<else>>
-			You remove the $worn.under_lower.name.
-			<<underlowerundress $wardrobe_location>>
-			<br><br>
-			<</if>>
-		<</if>>
-	<<elseif $wear_under_lower isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.under_lower[$wear_under_lower].name.
-			<<set $wardrobe.under_lower.deleteAt($wear_under_lower)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.under_lower[$wear_under_lower].name.
-			<<set $wardrobe.under_lower[$wear_under_lower].integrity = $wardrobe.under_lower[$wear_under_lower].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<underlowerundress $wardrobe_location>>
-			<<set $worn.under_lower to clone($wardrobe.under_lower[$wear_under_lower])>>
-			<<set $wardrobe.under_lower.deleteAt($wear_under_lower)>>
-			<<if $worn.under_lower.one_piece is 1>>
-				<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
-					<<if $wardrobe.under_upper[_e].set is $worn.under_lower.set and $wardrobe.under_upper[_e].colour is $worn.under_lower.colour>>
-						<<underupperundress $wardrobe_location>>
-						<<set $worn.under_upper to clone($wardrobe.under_upper[_e])>>
-						<<set $wardrobe.under_upper.deleteAt(_e)>>
-					<</if>>
-				<</for>>
-			<</if>>
-		<</if>>
-		You put on the $worn.under_lower.name.
-		<br><br>
-	<</if>>
-
-	<<if $wear_head isnot "none" and $worn.head.cursed is 1>>
-		You try to remove the $worn.head.name, but it won't budge. <<cursedtext $worn.head.name>>
-		<br><br>
-	<<elseif $wear_head is "strip">>
-		You remove the $worn.head.name.
-		<<headundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_head isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.head[$wear_head].name.
-			<<set $wardrobe.head.deleteAt($wear_head)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.head[$wear_head].name.
-			<<set $wardrobe.head[$wear_head].integrity = $wardrobe.head[$wear_head].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<headundress $wardrobe_location>>
-			<<set $worn.head to clone($wardrobe.head[$wear_head])>>
-			<<set $wardrobe.head.deleteAt($wear_head)>>
-			You put on the $worn.head.name.
-			<br><br>
-		<</if>>
-	<</if>>
-
-	<<if $wear_face isnot "none" and $worn.face.cursed is 1>>
-		You try to remove the $worn.face.name, but it won't budge. <<cursedtext $worn.face.name>>
-		<br><br>
-	<<elseif $wear_face is "strip">>
-		You remove the $worn.face.name.
-		<<faceundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_face isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.face[$wear_face].name.
-			<<set $wardrobe.face.deleteAt($wear_face)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.face[$wear_face].name.
-			<<set $wardrobe.face[$wear_face].integrity = $wardrobe.face[$wear_face].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<faceundress $wardrobe_location>>
-			<<set $worn.face to clone($wardrobe.face[$wear_face])>>
-			<<set $wardrobe.face.deleteAt($wear_face)>>
-			You put on the $worn.face.name.
-			<br><br>
-		<</if>>
-	<</if>>
-
-	<<if $wear_neck isnot "none" and $worn.neck.cursed is 1>>
-		You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>>
-		<br><br>
-	<<elseif $wear_neck is "strip">>
-		<<if $worn.neck.cursed is 1>>
-			You try to remove the $worn.neck.name, but it won't budge. <<cursedtext $worn.neck.name>>
-		<<else>>
-			You remove the $worn.neck.name.<<neckundress $wardrobe_location>>
-			<br><br>
-		<</if>>
-	<<elseif $wear_neck isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.neck[$wear_neck].name.
-			<<set $wardrobe.neck.deleteAt($wear_neck)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.neck[$wear_neck].name.
-			<<set $wardrobe.neck[$wear_neck].integrity = $wardrobe.neck[$wear_neck].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<neckundress $wardrobe_location>>
-			<<set $worn.neck to clone($wardrobe.neck[$wear_neck])>>
-			<<set $wardrobe.neck.deleteAt($wear_neck)>>
-			You put on the $worn.neck.name.
-			<br><br>
-		<</if>>
-	<</if>>
-
-	<<if $wear_legs isnot "none" and $worn.legs.cursed is 1>>
-		You try to remove the $worn.legs.name, but it won't budge. <<cursedtext $worn.legs.name>>
-		<br><br>
-	<<elseif $wear_legs is "strip">>
-		You remove the $worn.legs.name.<<legsundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_legs isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.legs[$wear_legs].name.
-			<<set $wardrobe.legs.deleteAt($wear_legs)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.legs[$wear_legs].name.
-			<<set $wardrobe.legs[$wear_legs].integrity = $wardrobe.legs[$wear_legs].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<legsundress $wardrobe_location>>
-			<<set $worn.legs to clone($wardrobe.legs[$wear_legs])>>
-			<<set $wardrobe.legs.deleteAt($wear_legs)>>
-			You put on the $worn.legs.name.
-			<br><br>
-		<</if>>
-	<</if>>
-
-	<<if $wear_feet isnot "none" and $worn.feet.cursed is 1>>
-		You try to remove the $worn.feet.name, but it won't budge. <<cursedtext $worn.feet.name>>
-		<br><br>
-	<<elseif $wear_feet is "strip">>
-		You remove the $worn.feet.name.<<feetundress $wardrobe_location>>
-		<br><br>
-	<<elseif $wear_feet isnot "none">>
-		<<if $wear_delete is 1>>
-			You discard the $wardrobe.feet[$wear_feet].name.
-			<<set $wardrobe.feet.deleteAt($wear_feet)>>
-			<br>
-		<<elseif $wear_delete is 2>>
-			You repair the $wardrobe.feet[$wear_feet].name.
-			<<set $wardrobe.feet[$wear_feet].integrity = $wardrobe.feet[$wear_feet].integrity_max>><<pass 1>>
-			<br>
-		<<else>>
-			<<feetundress $wardrobe_location>>
-			<<set $worn.feet to clone($wardrobe.feet[$wear_feet])>>
-			<<set $wardrobe.feet.deleteAt($wear_feet)>>
-			You put on the $worn.feet.name.
-			<br><br>
-		<</if>>
-	<</if>>
-
+<</for>>
 
 <<if $wear is "dry">><<set $wear to 0>>
-<<set $upperwet to 0>><<set $lowerwet to 0>><<set $underlowerwet to 0>><<set $underupperwet to 0>>
-You squeeze the water from your clothes.
-<br><br>
+	<<set $upperwet to 0>><<set $lowerwet to 0>><<set $underlowerwet to 0>><<set $underupperwet to 0>>
+	You squeeze the water from your clothes.
+	<br><br>
 <</if>>
 
 <<set $wear to 0>>
+<<set $wear_over_upper to "none">>
+<<set $wear_over_lower to "none">>
 <<set $wear_upper to "none">>
 <<set $wear_lower to "none">>
 <<set $wear_under_upper to "none">>
 <<set $wear_under_lower to "none">>
+<<set $wear_over_head to "none">>
 <<set $wear_head to "none">>
 <<set $wear_face to "none">>
 <<set $wear_neck to "none">>
@@ -492,9 +266,13 @@ __Clothing__
 
 
 <<widget "wardrobeLinks">><<nobr>>
+/*Commented out new slots as they are not ready*/
+/*<a @class="($lastWardrobeSlot is 'over_head'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_head')">Over Head</a> |*/
 <a @class="($lastWardrobeSlot is 'head'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','head')">Head</a> |
 <a @class="($lastWardrobeSlot is 'face'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','face')">Face</a> |
 <a @class="($lastWardrobeSlot is 'neck'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','neck')">Neck</a> |
+/*<a @class="($lastWardrobeSlot is 'over_upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_upper')">Over Upper</a> |*/
+/*<a @class="($lastWardrobeSlot is 'over_lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_lower')">Over Lower</a> |*/
 <a @class="($lastWardrobeSlot is 'upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','upper')">Upper</a> |
 <a @class="($lastWardrobeSlot is 'lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','lower')">Lower</a> |
 <a @class="($lastWardrobeSlot is 'under_upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','under_upper')">Under Upper</a> |
@@ -506,9 +284,12 @@ __Clothing__
 
 <<widget "wardrobeNewOutfitDisplayer">><<nobr>>
 <<switch $args[0]>>
+	<<case "over_head">><<replace #wardrobeList>><<wardrobeList "over_head">><</replace>><<set $lastWardrobeSlot to "over_head">>
 	<<case "head">><<replace #wardrobeList>><<wardrobeList "head">><</replace>><<set $lastWardrobeSlot to "head">>
 	<<case "face">><<replace #wardrobeList>><<wardrobeList "face">><</replace>><<set $lastWardrobeSlot to "face">>
 	<<case "neck">><<replace #wardrobeList>><<wardrobeList "neck">><</replace>><<set $lastWardrobeSlot to "neck">>
+	<<case "over_upper">><<replace #wardrobeList>><<wardrobeList "over_upper">><</replace>><<set $lastWardrobeSlot to "over_upper">>
+	<<case "over_lower">><<replace #wardrobeList>><<wardrobeList "over_lower">><</replace>><<set $lastWardrobeSlot to "over_lower">>
 	<<case "upper">><<replace #wardrobeList>><<wardrobeList "upper">><</replace>><<set $lastWardrobeSlot to "upper">>
 	<<case "lower">><<replace #wardrobeList>><<wardrobeList "lower">><</replace>><<set $lastWardrobeSlot to "lower">>
 	<<case "under_upper">><<replace #wardrobeList>><<wardrobeList "under_upper">><</replace>><<set $lastWardrobeSlot to "under_upper">>
@@ -580,7 +361,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 
 	<<if $saveColor is true>>
-		<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+		<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
 		<<set _colors to {}>>
 		<<for _i to 0; _i lt _equip.length; _i++>>
 			<<set _colors[_equip[_i]] to [clone($worn[_equip[_i]].colour),clone($worn[_equip[_i]].accessory_colour)]>>
@@ -619,6 +400,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 		<</for>>
 		<<if _lower_sane isnot 1>>
 		<<set $wardrobe.lower[_i].one_piece to "broken">>
+		<<set $wardrobe.lower[_i].outfitSecondary[1] to "broken">>
 		<</if>>
 	<</if>>
 <</for>>
@@ -633,6 +415,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 		<</for>>
 		<<if _under_lower_sane isnot 1>>
 		<<set $wardrobe.under_lower[_i].one_piece to "broken">>
+		<<set $wardrobe.under_lower[_i].outfitSecondary[1] to "broken">>
 		<</if>>
 	<</if>>
 <</for>>
@@ -645,9 +428,12 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <<set _wardrobe_list to $args[0]>>
 <<set _errorPrevent to false>>
 <<switch _wardrobe_list>>
+	<<case "over_head">><<set _wear to "wear_over_head">>
 	<<case "head">><<set _wear to "wear_head">>
 	<<case "face">><<set _wear to "wear_face">>
 	<<case "neck">><<set _wear to "wear_neck">>
+	<<case "over_upper">><<set _wear to "wear_over_upper">>
+	<<case "over_lower">><<set _wear to "wear_over_lower">>
 	<<case "upper">><<set _wear to "wear_upper">>
 	<<case "lower">><<set _wear to "wear_lower">>
 	<<case "under_upper">><<set _wear to "wear_under_upper">>
@@ -702,8 +488,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 
 	<<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
 		<<set _item to $wardrobe[_wardrobe_list][_i]>>
-		<<if _loweroutfitCheck.includes(_wardrobe_list)>>
-			<<if _item.one_piece is 1>>
+		<<if _item.outfitSecondary isnot undefined>>
+			<<if _item.outfitSecondary[1] isnot "broken">>
 				<<continue>>
 			<</if>>
 		<</if>>
@@ -719,12 +505,24 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 		<<if _item.colour isnot 0>>
 			<span @class="$wardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
 		<</if>>
-		<<if _outfitTypes.includes(_wardrobe_list)>>
-			<<if _item.one_piece is 1>>
+		<<if _item.outfitPrimary isnot undefined>>
+			<<set _keys to Object.keys(_item.outfitPrimary)>>
+			<<set _broken to 0>>
+			<<for _j to 0; _j lt _keys.length; _j++>>
+				<<if _item.outfitPrimary[_keys[_j]] is "broken">>
+					<<set _broken++>>
+				<</if>>
+			<</for>>
+			<<if _broken is 0>>
 				<span class="gold">(Outfit)</span>
-			<<elseif _item.one_piece is "broken">>
+			<<elseif _broken lt _keys.length>>
+				<span class="red">(Partly Broken)</span>
+			<<else>>
 				<span class="red">(Broken)</span>
 			<</if>>
+		<</if>>
+		<<if _item.outfitSecondary isnot undefined>>
+			<span class="red">(Broken)</span>
 		<</if>>
 		<<wardrobeintegrity _wardrobe_list>> |
 		<<reveal _item.reveal>>
@@ -732,19 +530,23 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</for>>
 	<div style="clear:both;"></div>
 <<else>>
-	An error occured, please report and error about 'widget "wardrobeList"'.
+	An error occured to 'widget "wardrobeList"', please report if you did not edit the save data manually in any way.
 <</if>>
 
 <</nobr>><</widget>>
 
 <<widget "oldWardrobeListDisplay">><<nobr>>
+/*Commented out new slots as they are not ready*/
 <<wardrobeClothingOptions>>
+/*<<oldWardrobeList "over_upper">>*/
+/*<<oldWardrobeList "over_lower">>*/
 <<oldWardrobeList "upper" "outfits">>
 <<oldWardrobeList "upper" "non-outfits">>
 <<oldWardrobeList "lower">>
 <<oldWardrobeList "under_upper" "outfits">>
 <<oldWardrobeList "under_upper" "non-outfits">>
 <<oldWardrobeList "under_lower">>
+/*<<oldWardrobeList "over_head">>*/
 <<oldWardrobeList "head">>
 <<oldWardrobeList "face">>
 <<oldWardrobeList "neck">>
@@ -759,9 +561,12 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <<set _wardrobe_list to $args[0]>>
 <<set _showType to $args[1]>>
 <<switch _wardrobe_list>>
+	<<case "over_head">><<set _wear to "wear_over_head">>
 	<<case "head">><<set _wear to "wear_head">>
 	<<case "face">><<set _wear to "wear_face">>
 	<<case "neck">><<set _wear to "wear_neck">>
+	<<case "over_upper">><<set _wear to "wear_over_upper">>
+	<<case "over_lower">><<set _wear to "wear_over_lower">>
 	<<case "upper">><<set _wear to "wear_upper">>
 	<<case "lower">><<set _wear to "wear_lower">>
 	<<case "under_upper">><<set _wear to "wear_under_upper">>
@@ -769,8 +574,6 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<case "legs">><<set _wear to "wear_legs">>
 	<<case "feet">><<set _wear to "wear_feet">>
 <</switch>>
-<<set _outfitTypes to ["upper","lower","under_upper","under_lower"]>>
-<<set _loweroutfitCheck to ["lower","under_lower"]>>
 
 <div class="clothingBox">
 __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$wardrobe[_wardrobe_list].length / $wardrobe.space</i>
@@ -788,15 +591,13 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 <</if>>
 <<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
 	<<set _item to $wardrobe[_wardrobe_list][_i]>>
-	<<if _loweroutfitCheck.includes(_wardrobe_list)>>
-		<<if _item.one_piece is 1>>
+	<<if _item.outfitSecondary isnot undefined>>
+		<<if _item.outfitSecondary[1] isnot "broken">>
 			<<continue>>
 		<</if>>
 	<</if>>
-	<<if _outfitTypes.includes(_wardrobe_list)>>
-		<<if (_item.one_piece is 1 and _showType is "non-outfits") or (_item.one_piece isnot 1 and _showType is "outfits")>>
-			<<continue>>
-		<</if>>
+	<<if (_item.outfitPrimary isnot undefined and _showType is "non-outfits") or (_item.outfitPrimary is undefined and _showType is "outfits")>>
+		<<continue>>
 	<</if>>
 	<li>/*<<clothingicon _item>>*/<a @onclick="`SugarCube.State.variables.`+_wear+` = `+ _i +`;SugarCube.State.display(SugarCube.State.variables.passage)`">_item.name_cap</a>
 	<<if $wardrobe[_wardrobe_list][_i].colour isnot 0>>
