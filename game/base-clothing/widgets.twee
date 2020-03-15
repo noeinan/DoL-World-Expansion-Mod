@@ -254,11 +254,15 @@
 
 <<widget "generalStrip">><<nobr>>
 <<if $args[0]>>
-	<<if $worn[$args[0]].outfitSecondary isnot undefined>>
+	<<if $worn[$args[0]].outfitSecondary isnot undefined and _repeatBypassStrip isnot true>>
 		<<if $worn[$worn[$args[0]].outfitSecondary[0]].name is $worn[$args[0]].outfitSecondary[1]>>
 			<<print '<<generalStrip "'+$worn[$args[0]].outfitSecondary[0]+'">>'>>
+		<<else>>
+			<<set _repeatBypassStrip to true>>
+			<<print '<<generalStrip "'+$args[0]+'">>'>>
 		<</if>>
 	<<else>>
+		<<unset _repeatBypassStrip>>
 		<<set _mainSlot to $args[0]>>
 		<<if $worn[_mainSlot].cursed is 1>>
 		<<elseif $worn[_mainSlot].name isnot "naked">>
@@ -518,11 +522,15 @@
 
 <<widget "generalOn">><<nobr>>
 <<if $args[0]>>
-	<<if $carried[$args[0]].outfitSecondary isnot undefined>>
+	<<if $carried[$args[0]].outfitSecondary isnot undefined and _repeatBypassOn isnot true>>
 		<<if $carried[$carried[$args[0]].outfitSecondary[0]].name is $carried[$args[0]].outfitSecondary[1]>>
 			<<print '<<generalOn "'+$carried[$args[0]].outfitSecondary[0]+'">>'>>
+		<<else>>
+			<<set _repeatBypassOn to true>>
+			<<print '<<generalOn "'+$args[0]+'">>'>>
 		<</if>>
 	<<else>>
+		<<unset _repeatBypassOn>>
 		<<set _slots to []>>
 		<<if $carried[$args[0]].name isnot "naked">>
 			<<run _slots.push($args[0])>>
@@ -781,13 +789,16 @@
 
 <<widget "generalUndress">><<nobr>>
 <<if $args[0] and $args[1]>>
-	<<if $worn[$args[1]].outfitSecondary isnot undefined>>
+	<<if $worn[$args[1]].outfitSecondary isnot undefined and _repeatBypassUndress isnot true>>
 		<<if $worn[$worn[$args[1]].outfitSecondary[0]].name is $worn[$args[1]].outfitSecondary[1]>>
 			<<print '<<generalUndress $wardrobe_location "'+$worn[$args[1]].outfitSecondary[0]+'">>'>>
+		<<else>>
+			<<set _repeatBypassUndress to true>>
+			<<print '<<generalUndress $wardrobe_location "'+$args[1]+'">>'>>
 		<</if>>
-	<<elseif $worn[$args[1]].cursed is 1 or $worn[$args[1]].name is "naked">>
+	<<elseif $worn[$args[1]].cursed is 1 or $worn[$args[1]].name is "naked">><<unset _repeatBypassUndress>>
 	<<else>>
-		<<unset _cursedPrevent>>
+		<<unset _cursedPrevent>><<unset _repeatBypassUndress>>
 		<<set _outfitPrimary to $worn[$args[1]].outfitPrimary>>
 		<<if _outfitPrimary isnot undefined>>
 			<<for _label, _value range _outfitPrimary>>
