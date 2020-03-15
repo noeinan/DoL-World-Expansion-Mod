@@ -3182,9 +3182,9 @@ You grab the tentacle and try to hold it still.<<deviancy1>>
 :: Street Tentacle Stroke [nobr]
 
 <<set $outside to 1>><<set $location to "town">><<effects>>
-You reach for the tentacle, and carefully touch it touch it with your fingers. For a moment it stiffens, but as you begin rubbing it, it quickly relaxes and starts pulsing against your hand. <<deviancy3>>
+You reach for the tentacle, and carefully touch it touch it with your fingers. For a moment it stiffens, but it relaxes as you rub it and and starts pulsing against your hand. <<deviancy3>>
 <br>
-You slowly wrap your hand around it and start stroking it. The tentacle throbs and pulses in rythm with your stokes. After a dozen of strokes, it pulses strongly as shivers run through it, and it ejaculates slime all over your hands.
+You wrap your fingers around it and start stroking. The tentacle throbs and pulses in rythm with your stokes. After a dozen strokes its pulses grow stronger, and shivers run through it. It ejaculates slime all over your hands.
 <<arousal 3>>
 <<set $leftarmgoo += 1>><<set $rightarmgoo += 1>>
 <br><br>
@@ -3210,13 +3210,13 @@ Your fall is broken by something slimy and soft. It flees before your eyes adjus
    <<set $street_tantacle_ejac_anus to false>>
    <<if $phase is 0>>
       You allow the tentacle to touch your anus.
-      You feel horny, as it rubs and teases your hole. <<arousal 3>> <<deviancy5>>
+      You feel horny as it rubs and teases your hole. <<arousal 3>> <<deviancy5>>
    <<elseif $phase is 1>>
       You allow the tentacle to touch your <<pussystop>>
-      You feel horny, as it rubs and pulses against your clit.<<arousal 6>> <<deviancy5>>
+      You feel horny as it rubs and pulses against your clit.<<arousal 6>> <<deviancy5>>
    <<elseif $phase is 2>>
       You allow the tentacle to touch your <<penisstop>>
-      You feel horny, as it starts coiling around your penis. <<arousal 3>> <<deviancy5>>
+      You feel horny as it starts coiling around your penis. <<arousal 3>> <<deviancy5>>
    <</if>>
    
    <<set $sexstart to 0>>
@@ -3283,7 +3283,7 @@ Your fall is broken by something slimy and soft. It flees before your eyes adjus
          You hope nobody notices the what the $tentacles[0].desc tentacle is doing underneath your $worn.lower.name.
       <</if>>
    <<else>>
-      You're in the middle of the street. You're amazed that what's happening has not drawn any attention yet.
+      You're in the middle of the street. You're amazed that what's happening has not drawn attention yet.
       You don't think it can be long before somebody notices.
    <</if>>
    <br><br>
@@ -3318,6 +3318,8 @@ Your fall is broken by something slimy and soft. It flees before your eyes adjus
    <</if>>
    <<clotheson>>
    <<endcombat>>
+   <<unset $street_tantacle_ejac_vagina>>
+   <<unset $street_tantacle_ejac_anus>>
    <<set $outside to 1>><<set $location to "town">><<effects>>
    
    <<tearful>> you take a moment to gather yourself.
@@ -4067,7 +4069,14 @@ You shove the <<person>> against a dumpster, where <<he>> falls to the ground.
 :: Street Slime Defy [nobr]
 <<set $outside to 0>><<effects>>
 
-<<if $corruption_slime gte ($willpower / 10)>>
+<<if $street_slime is 1>>
+You turn away from the <<personcomma>> and feel a jolt of pain as the slime punishes you for defiance. However, <span class="teal">it's still worn out from overpowering you earlier.</span> You feel it try, <span class="green">but fail,</span> to force your steps in the opposite direction. 
+<br><br>
+<<endevent>>
+
+<<destinationeventend>>
+
+<<elseif $corruption_slime gte ($willpower / 10)>><<set $street_slime to 1>>
 
 You turn away from the <<personcomma>> and feel a jolt of pain as the slime punishes you for defiance. It tries to force you to stay still, <span class="red">and you fail</span> to resist its influence.<<ggwillpower>><<willpower 3>>
 <br><br>
@@ -4221,7 +4230,14 @@ The crowd backs away as you scream. Others keep going, until they see the hesita
 :: Street Slime Extreme Defy [nobr]
 <<set $outside to 0>><<effects>>
 
-<<if $corruption_slime gte ($willpower / 10)>>
+<<if $street_slime is 1>>
+You turn away from the <<personcomma>> and feel a jolt of pain as the slime punishes you for defiance. However, <span class="teal">it's still worn out from overpowering you earlier.</span> You feel it try, <span class="green">but fail,</span> to force your steps in the opposite direction. 
+<br><br>
+<<endevent>>
+
+<<destinationeventend>>
+
+<<elseif $corruption_slime gte ($willpower / 10)>><<set $street_slime to 1>>
 <<clothesstrip>>
 You try to fight the slime, <span class="red">but it's too strong.</span> Your body moves unbidden, and you can only observe, helpless, as your arms strip the clothing from your body. You're left naked in the middle of the street.<<ggwillpower>><<willpower 3>>
 <br><br>
@@ -4644,23 +4660,106 @@ You travel for what feels like an hour, until you come to a stop. The <<person>>
 The <<person3>><<person>> tries to grab you.
 <br><br>
 
-<<link [[Fight|Street Van Fight]]>><<def 1>><</link>>
+<<link [[Fight|Street Van Fight]]>><<def 1>><<set $fightstart to 1>><</link>>
 <br>
 <<link [[Submit|Street Van Submit]]>><<sub 1>><<trauma 6>><<stress 6>><</link>><<gtrauma>><<gstress>>
 <br>
 
 :: Street Van Fight [nobr]
+<<if $fightstart is 1>>
+<<set $fightstart to 0>>
+
+<<neutral 1>>
+
+<<maninit>>
+<<set $enemytrust -= 100>>
+<<set $enemyanger += 200>>
+<<npcidlegenitals>>
+
+<</if>>
+
 <<effects>>
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Street Van Fight Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Street Van Fight Finish]]>><</link>></span><<nexttext>>
+<<elseif $pain gte 100 and $willpowerpain is 0>>
+<span id="next"><<link [[Next|Street Van Fight Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Street Van Fight]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Street Van Fight Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+<<ejaculation>>
+They're took weak to stop you as you dash towards the exit. <<tearful>> you run from the barn.
+<br><br>
+<<clotheson>>
+<<endcombat>>
+<<link [[Next|Street Van Escape]]>><</link>>
+<br>
+
+<<elseif $enemyhealth lte 0>>
+They back away from you, shocked by your aggression. You seize your chance, and dah towards the exit.
+<br><br>
+<<tearful>> you run from the barn.
+<br><br>
+<<clotheson>>
+<<endcombat>>
+<<link [[Next|Street Van Escape]]>><</link>>
+
+<<else>>
+You fall to the dirt, too hurt to continue fighting.
+<<clotheson>>
+<br><br>
+
+<<tearful>> you're powerless to stop them. They fix a collar and chain around your neck, pull you to your feet, and force you to walk behind them.
+<br><br>
+<<neckwear 1>>
+<<endcombat>>
+<<link [[Next|Livestock Intro]]>><</link>>
+
+<</if>>
+
+
+:: Street Van Escape [nobr]
+<<effects>>
+
+You're on the outskirts of a farm, though you don't have time to look around. You hear the rapid thud of footsteps behind you.
+<br><br>
+
+<<if $daystate is "night">>
+	You run through the darkness, unsure of your footing but lacking options.
+<<elseif $daystate is "dusk">>
+	You run through the dying light, unsure of your footing but lacking options.
+<<elseif $daystate is "dawn">>
+	You run through the morning gloom, unsure of your footing but lacking options.
+<<elseif $daystate is "day">>
+	You run away from the barn and into the surrounding wilderness.
+<</if>>
+You hear their footsteps stop, unwilling you follow into the wilds.
+<br><br>
+
+<<endevent>>
+<<link [[Next|Farmland]]>><</link>>
+<br>
 
 
 
 :: Street Van Submit [nobr]
 <<effects>>
-
+<<neckwear 1>>
 You submit to the collar placed around your neck. <<He>> tugs on the attached chain, forcing you along.
 <br><br>
 
-<<link [[Next|Livestock Intro]]>><</link>>
+<<link [[Next|Livestock Intro]]>><<endevent>><</link>>
 <br>
 
 
