@@ -42,20 +42,63 @@ A gust of wind blows in from the ocean, pleasantly caressing your skin.
 <<lstress>><<stress -2>>
 <br><br>
 <<if $worn.lower.skirt is 1>>
-	It flares up your skirt, laying bare your
-	<<if !$worn.under_lower.type.includes("naked")>>
-		$worn.under_lower.name for anyone to see.
-		<<garousal>><<arousal 100>>
+	/* variables */
+	<<set _helpless to 0>>
+	<<if $leftarm is "bound" and $rightarm is "bound">>
+		<<set _helpless to 1>>
+	<</if>>
+	<<set _nopan to 0>>
+	<<if $worn.under_lower.type.includes("naked")>>
+		<<set _nopan to 1>>
+	<</if>>
+	<<set _trauma_gain to 0>>
+	<<set _arousal_gain to 0>>
+
+	/* event */
+	It flares up your skirt, laying bare your 
+	<<if _nopan>>
+		<<set _arousal_gain += 200>>
+		<<genitals>>
 	<<else>>
-		<<genitals>>for anyone to see.
-		<<garousal>><<gtrauma>><<arousal 100>><<trauma 1>>
+		<<set _arousal_gain += 100>>
+		$worn.under_lower.name 
+	<</if>>for anyone to see.
+
+	<<if _helpless>>
+		<<set _arousal_gain += 100>>
+		With your arms bound you are utterly helpless against the wind, forced to endure the exposure until the wind abates and your skirt hem settles back where it should be.
 	<</if>>
+
+	<<if $exhibitionismaction is "embarrassed" and _nopan>>
+		You feel humiliated.
+		<<set _trauma_gain += 1>>
+	<</if>>
+
+	/* stats application */
+	<<if _arousal_gain>>
+		<<garousal>><<arousal _arousal_gain>>
+	<</if>>
+	<<if _trauma_gain>>
+		<<gtrauma>><<trauma _trauma_gain>>
+	<</if>>
+
+	/* choices */
 	<br><br>
-	<<link [[Try to hold your skirt down|Beach Skirt Flare Stop]]>><</link>>
-	<<if $exhibitionism gte 75>>
-		<br>
-		<<link [[Let it happen|Beach Skirt Flare Allow]]>><</link>><<exhibitionist4>>
+	<<if _helpless>>
+		<<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
+	<<else>>
+		<<link [[Try to hold your skirt down|Beach Skirt Flare Stop]]>><</link>>
+		<<if $exhibitionism gte 75>>
+			<br>
+			<<link [[Let it happen|Beach Skirt Flare Allow]]>><</link>><<exhibitionist4>>
+		<</if>>
 	<</if>>
+
+	/* cleanup */
+	<<unset _helpless>>
+	<<unset _nopan>>
+	<<unset _arousal_gain>>
+	<<unset _trauma_gain>>
 <<else>>
 	<<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
 <</if>>
