@@ -411,24 +411,22 @@
 		<</if>>
 
 		/*Other Pieces*/
-		<<set _outfitPrimary to $worn[$args[0]].outfitPrimary>>
-		<<if _outfitPrimary is undefined>>
-			<<set _outfitPrimary to $carried[$args[0]].outfitPrimary>>
+		<<set _outfitPrimaryRuined to $worn[$args[0]].outfitPrimary>>
+		<<if _outfitPrimaryRuined is undefined>>
+			<<set _outfitPrimaryRuined to $carried[$args[0]].outfitPrimary>>
 			<<set _carried to true>>
 		<</if>>
-		<<if _outfitPrimary isnot undefined>>
-			<<capture _outfitPrimary>>
-				<<if _carried is true>>
-					<<set _location to "$carried">>
-				<<else>>
-					<<set _location to "$worn">>
-				<</if>>
-				<<for _label, _value range _outfitPrimary>>
-					<<print '<<set '+_location+'["'+_label+'"].outfitSecondary[1] to "broken">>'>>
-					<<print '<<set '+_location+'["'+_label+'"].one_piece to "broken">>'>>
-					<<print '<<set '+_location+'["'+_label+'"].set to "'+_label+'">>'>>
-				<</for>>
-			<</capture>>
+		<<if _outfitPrimaryRuined isnot undefined>>
+			<<if _carried is true>>
+				<<set _location to "$carried">>
+			<<else>>
+				<<set _location to "$worn">>
+			<</if>>
+			<<for _labelR, _valueR range _outfitPrimaryRuined>>
+				<<print '<<set '+_location+'["'+_labelR+'"].outfitSecondary[1] to "broken">>'>>
+				<<print '<<set '+_location+'["'+_labelR+'"].one_piece to "broken">>'>>
+				<<print '<<set '+_location+'["'+_labelR+'"].set to "'+_labelR+'">>'>>
+			<</for>>
 		<</if>>
 		<<unset _outfitPrimary>>
 		<<set $worn[$args[0]] to clone(setup.clothes[$args[0]][0])>>
@@ -533,33 +531,29 @@
 		<<unset _repeatBypassOn>>
 		<<set _slots to []>>
 		<<if $carried[$args[0]].name isnot "naked">>
-			<<run _slots.push($args[0])>>
+			<<set _slots.push($args[0])>>
 			<<set $worn[$args[0]] to clone($carried[$args[0]])>>
 			<<set $carried[$args[0]] to clone(setup.clothes[$args[0]][0])>>
 			
-			<<set _outfitPrimary to $worn[$args[0]].outfitPrimary>>
+			<<set _outfitPrimaryOn to $worn[$args[0]].outfitPrimary>>
 
-			<<if _outfitPrimary isnot undefined>>
-				<<capture _outfitPrimary>>
-					<<for _label, _value range _outfitPrimary>>
-						<<set $test to _value>>
-						<<if _value isnot "broken">>
-							<<set $worn[_label] to clone($carried[_label])>>
-							<<set $carried[_label] to clone(setup.clothes[_label][0])>>
-							<<run _slots.push(_label)>>
-						<</if>>
-					<</for>>
-				<</capture>>
+			<<if _outfitPrimaryOn isnot undefined>>
+				<<for _labelOn, _valueOn range _outfitPrimaryOn>>
+					<<if _valueOn isnot "broken">>
+						<<set $worn[_labelOn] to clone($carried[_labelOn])>>
+						<<set $carried[_labelOn] to clone(setup.clothes[_labelOn][0])>>
+						<<set _slots.push(_labelOn)>>
+					<</if>>
+				<</for>>
 			<</if>>
-			<<unset _outfitPrimary>>
+			<<unset _outfitPrimaryOn>>
 		<</if>>
-
-		<<if _slots.includesAny("upper")>>
+		<<if _slots.includes("upper")>>
 			<<set $worn.upper.exposed to $worn.upper.exposed_base>>
 			<<set $worn.upper.state to $worn.upper.state_base>>
 			<<set $worn.upper.state_top to $worn.upper.state_top_base>>
 		<</if>>
-		<<if _slots.includesAny("lower")>>
+		<<if _slots.includes("lower")>>
 			<<set $worn.lower.exposed to $worn.lower.exposed_base>>
 			<<set $worn.lower.vagina_exposed to $worn.lower.vagina_exposed_base>>
 			<<set $worn.lower.anus_exposed to $worn.lower.anus_exposed_base>>
@@ -568,12 +562,12 @@
 				<<set $worn.lower.skirt_down to 1>>
 			<</if>>
 		<</if>>
-		<<if _slots.includesAny("under_upper")>>
+		<<if _slots.includes("under_upper")>>
 			<<set $worn.under_upper.exposed to $worn.under_upper.exposed_base>>
 			<<set $worn.under_upper.state to $worn.under_upper.state_base>>
 			<<set $worn.under_upper.state_stop to $worn.under_upper.state_top_base>>
 		<</if>>
-		<<if _slots.includesAny("under_lower")>>
+		<<if _slots.includes("under_lower")>>
 			<<set $worn.under_lower.state to $worn.under_lower.state_base>>
 			<<set $worn.under_lower.exposed to $worn.under_lower.exposed_base>>
 			<<set $worn.under_lower.vagina_exposed to $worn.under_lower.vagina_exposed_base>>
@@ -682,7 +676,7 @@
 
 <<widget "generalSteal">><<nobr>>
 <<if $args[0]>>
-	<<if $worn[$args[0]].name isnot "naked" and $worn[$args[0]].cursed isnot 1 and $args[0] is "strip">>
+	<<if $worn[$args[0]].name isnot "naked" and $worn[$args[0]].cursed isnot 1 and $args[1] is "strip">>
 		<<if $stealtextskip isnot 1>>
 			<<He>> tears your <<print $worn[$args[0]].name>> off your body.
 			<br>
@@ -697,7 +691,7 @@
 				<<print '<<generalSteal "'+$carried[$args[0]].outfitSecondary[0]+'">>'>>
 			<</if>>
 		<</if>>
-		<<set _outfitPrimarySteal to  $carried[$args[0]].outfitPrimary>>
+		<<set _outfitPrimarySteal to $carried[$args[0]].outfitPrimary>>
 	<</if>>
 	<<if _outfitPrimarySteal isnot undefined>>
 		<<capture _outfitPrimarySteal>>
@@ -714,51 +708,51 @@
 <</nobr>><</widget>>
 
 <<widget "overuppersteal">><<nobr>>
-<<generalSteal "over_upper">>
+<<generalSteal "over_upper" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "overlowersteal">><<nobr>>
-<<generalSteal "over_lower">>
+<<generalSteal "over_lower" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "uppersteal">><<nobr>>
-<<generalSteal "upper">>
+<<generalSteal "upper" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "lowersteal">><<nobr>>
-<<generalSteal "lower">>
+<<generalSteal "lower" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "underuppersteal">><<nobr>>
-<<generalSteal "under_upper">>
+<<generalSteal "under_upper" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "underlowersteal">><<nobr>>
-<<generalSteal "under_lower">>
+<<generalSteal "under_lower" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "overheadsteal">><<nobr>>
-<<generalSteal "over_head">>
+<<generalSteal "over_head" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "headsteal">><<nobr>>
-<<generalSteal "head">>
+<<generalSteal "head" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "facesteal">><<nobr>>
-<<generalSteal "face">>
+<<generalSteal "face" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "necksteal">><<nobr>>
-<<generalSteal "neck">>
+<<generalSteal "neck" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "legssteal">><<nobr>>
-<<generalSteal "legs">>
+<<generalSteal "legs" $args[0]>>
 <</nobr>><</widget>>
 
 <<widget "feetsteal">><<nobr>>
-<<generalSteal "feet">>
+<<generalSteal "feet" $args[0]>>
 <</nobr>><</widget>>
 
 /*The "...undress" widgets remove the player character's clothing. Where they end up depends on the argument supplied. "wardrobe" sends it to the bedroom wardrobe. Other arguments store the clothing elsewhere in the world. The "...storeon" widgets can retrieve those clothes.*/
