@@ -1,5 +1,147 @@
 # CHANGELOG
 
+## 0.2.10.3
+
+- Fixed a bug preventing arousal from decaying.
+- Added a check to make problems with pain less catastrophic.
+- The "Billboard" feat is now attainable.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a minor error relating to the traits menu.
+- Fixed a variable conflict that caused an infinite loops when buying five items in the sho.
+- Fixed several issues found when sending clothes to the wardrobe.
+- Fixed a number of errors and conflicts within the widgets responsible for equipping and removing clothes.
+- Fixed an error found when NPCs read body-writing.
+
+## 0.2.10.2
+
+- Added a "Body-writing and forced tattoos" toggle to settings.
+
+## Bug fixes
+
+- NPCs will no longer be able to see the PC's breasts on the street while the PC is properly clothed.
+- Fixed a bug that caused NPCs to notice non-existent tattoos and body writing.
+- Fixed a bug that prevented encounter sprites from displaying during tentacle encounters.
+- Fixed a bug that would prevent clothes from being adjusted back to their proper positions.
+- Fixed an error found when NPCs respond to "£100" written on the PC.
+- Fixed a bug preventing virginities being lost.
+- Fixed an error that could appear when the PC's skin was
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a couple of issues found when NPCs steal clothes from the PC.
+- Fixed an issue with legwear.
+- Fixed a bug that caused errors in shops.
+- Fixed a bug preventing forest clothing names from displaying properly.
+- Fixed an issue that could appear when clothes were ruined.
+- Fixed an issue causing a large number of errors on old saves.
+
+## 0.2.10.1
+
+- Restricted NPC body-writing dialogue to NPCs that make sense (not Robin).
+
+## 0.2.10.0
+
+- Added a body-writing and tattoo system.
+- NPCs will try to write degrading things on the PC during non-consensual encounters. What they write is influenced by the different lewd fame stats, combat fame, and beauty.
+- Pens can be whacked from the NPC's hand when they first pull them out as a bratty action.
+- NPCs will notice body-writing during encounters. Different lines have different effects on NPCs who read them:
+- Lines paired with an arrow pointing at a bodypart will encourage NPCs to fuck you there.
+- Some lines will encourage NPCs to give money. Success depends on the amount asked for, how the NPC feels and the PC's attractiveness. Will reduce NPC trust and increase anger, especially if it fails.
+- Some lines will make NPCs less inclined to play along with your requests.
+- Some lines will make NPCs more inclined to violence.
+- Some lines will make NPCs think the PC more girly or boyish.
+- Prostitution, sex, rape, beast, exhibitionism, and combat fame can be increased by NPCs reading certain lines.
+- NPCs will write in regular pen or permanent marker. Pen can be washed off, while marker will fade after an indeterminate length of time.
+- Added art to represent body-writing to the sidebar, doggy, and missionary sprites. Other tattoos don't yet have art, with the exception of the heart tattoo when placed on the pubic area. Art courtesy of PurityGuy.
+- Added a tattoo parlour to the High Street shopping centre. Text and objects drawn on the PC's body can be made permanent there. Lewd tattoos have a promiscuity or deviancy requirement, and tattoos in a lewd location have an exhibitionism requirement. They also have a selection of their own designs available.
+- Intentionally getting a tattoo restores control. Intentionally getting a lewd tattoo, whether lewd due to its location or the subject, restores more control.
+- Added information about current body-writing and tattoos to the Characteristics overlay.
+- Added a bit more variety to NPC behaviour during encounters, particularly when angry.
+- Added a simple event to the school hallways wherein students recognise visible lewd body-writing.
+- Robin can notice body-writing on the PC's face in the school canteen, and Kylar can notice exposed body-writing while chatting to the PC.
+- Whitney and their friends will write unique things on the PC given the opportunity.
+- Added a Whitney event to the school gates for characters in a relationship with them.
+- Added a Whitney event involving the shopping centre, which can trigger in the playground after school.
+- Tattoos can be removed at the hospital.
+- Renamed a couple of feats.
+- Added a couple of events to the town's streets for characters with visible body-writing. One requires the writing suggest the PC is a prostitute.
+- New victims of the underground brothel will now be tattooed with their status.
+- Added Stockholm syndrome development indictors to Eden's cabin and the wolf cave.
+- Added the ability to write lewd advertisements on your skin at your bedroom mirror.
+- Extended the street tentacle event with deviancy 3 and deviancy 5 options. The latter requires the PC be wearing a skirt with no undies. Thanks to larsrand.
+- Added visual representation to combat sprites for the angel, fallen angel, demon, and cat transformations. Thanks to sseshess and PurityGuy.
+- Angels and demons will now use their transformation assets to cover themselves on the sidebar sprite when exposed. Art courtesy of PurityGuy.
+- Added new horns and tail for the demon transformation. Art courtesy of PurityGuy.
+- The fallen angel halo now animates. Art also courtesy of PurityGuy.
+- Added damage states to the sidebar sprite for overalls and jeans. Thanks to KG.
+- Added seven feats: Top of the Food Chain, A Living Canvas, Billboard, Science Fair Winner, Maths Competition Winner, Illicit Science, and Mouth Sealed Shut.
+
+Thanks to pettan for reworking how gender appearance is determined:
+- Each visible garment and accessory now contributes to your overall appearance, rather than only the one the game deems the most "important". Bulges caused by penises and breasts also contribute, depending on size and coverage. Aroused big penises are hard to conceal. Hair level and physique contribute a little.
+- Visible genitals still have a big impact on appearance.
+- Added a gender section to the mirror, which breaks down the factors influencing your appearance.
+- You can now adopt a gender posture in front of the mirror, increasing your masculinity or femininity. Effectiveness depends on your English skill.
+- Improved gyaru skin tones, particularly around a middling tan.
+
+Thanks to Lollipop Scythe for the following additions and improvements:
+- Added contrast and sepia options to custom clothing colours.
+- Added a "Reset selected to default" option to the custom colours UI.
+- Added the ability to reset feats on the start passage. Can be reverted by loading a save.
+- Improvements to custom colour code.
+- Reworked and reintroduced lewd fluid for female characters. Should now be more authentic.
+- Improved overlay code so errors will tend to be less catastrophic.
+- Added an option to lighten the background behind the sidebar character sprite.
+- Significant performance improvements.
+- Adjustments and fixes for the new body-writing and tattoo system.
+- Incorporated body-writing and tattoos into the new gender appearance system.
+- Made the "Crossdresser" trait acquirable through play.
+- Reworked clothing code under the hood to prepare for future additions.
+
+Thanks to bsin for the following additions and improvements:
+- Unpopular, well behaved PCs now have a chance of being pranked in the history class dress up event. There are multiple ways of handling the situation.
+- Winter can now notice ears and horns in addition to collars.
+- Skulduggerous PCs may now have the opportunity to turn the tables on book-dropping bullies.
+- Briar's establishment can now suffer raids from the police. Multiple outcomes are possible and depend mostly on skulduggery and criminality.
+- Bringing Briar's fine establishment into disrepute may result in Briar inviting you to assist the police in their enquiries. Becomes increasingly likely when robbing customers at Briar's place, but will only happen after a raid and with very high crime.
+
+### Balance Changes
+
+- Split transformations into two categories. Wolf and cat belong to one. Angel, fallen angel and demon belong to the other. You can have a transformation from each category. Thanks to Lollipop Scythe.
+- Staying put while the wolf pack hunts will now increase their trust and progress towards developing Stockholm syndrome.
+- Failing to defy an ear slime on the town's streets will now cause subsequent attempts to automatically succeed for the rest of the day.
+
+### Bug Fixes
+
+- The belly dancer's top and bottoms now have the "Dance" trait.
+- Fixed an issue preventing virginity loss from functioning as intended.
+- Fixed an error message found when emphasising your breasts while in competition at the strip club bar.
+- Thanks to YetAnotherDeviant for fixing a host of typos.
+- Fixed a pronoun issue found when Bailey saves a resident from an intruder.
+- Fixed an error found when successfully punching your way through a gang outside the strip club.
+- Making Bailey cum at the hospital will now award the "Bailey's Trouble Maker" feat.
+- Fixed a couple of issues surrounding virginity during the Raul and Janet sequence. Thanks to Lollipop Scythe.
+- Fixed a bug causing overall school performance to desync from from performance in individual classes.
+- Fixed a bug causing a gang to cum immediately when molesting the PC during a maths class event.
+- Being whored out by Bailey at night will now increment the forced prostitution stat and increase prostitution fame as intended.
+- Fixed a bug that prevented semen and milk level descriptions from displaying. Thanks to YetAnotherDeviant.
+- Fighting the three bullies you meet on the streets will no increase stress as advertised.
+- Reaching max stress in the brothel showers will now cause the PC to pass out, rather than simply giving the option to.
+- Whitney will no longer escape the dungeon just to tell the PC they're becoming their boy/girlfriend, before disappearing again.
+- Getting stuck in a wall in the industrial alleyways will no longer teleport the PC to the commercial alleyways.
+- Fixed an issue causing arms to disappear behind tops when giving handjobs.
+- Fixed a bug causing the ends of tentacles to appear to turn into human penises when receiving handjobs from the PC in a missionary position.
+- Fixed a bug that could cause an error when wearing a long skirt, short cut skirt, or long cut skirt during an encounter.
+- Fixed a bug that would seemingly cause Robin to appear as a rapist after sharing milkshake with them.
+- Fixed a bug causing NPCs to be stunned to inactivity when faced with an anal shield while attempting to rim the PC.
+- Fixed a bug causing Kylar to escape prison with no memory of the PC.
+- Fixed a bug causing a patron to steal a member of staff's penis during one of the bartender VIP scenes.
+- Bras will now be removed when stripping for hospital procedures.
+- Fixed a bug that prevented the tentacle image from displaying when rubbing the PC's bottom or anus. Thanks to larsrand.
+- Fixed a bug causing tentacles to multiply when grabbed with your hand. Also thanks to larsrand.
+- Fixed a bug that prevented pills from resetting while at home with auto take off. Thanks to YetAnotherDeviant.
+- Fixed an issue allowing bun images to loop eternally.
+- Closed a futa portal activated by drinking coffee in the cafe.
+
 ## 0.2.9.2
 
 ### Balance changes
