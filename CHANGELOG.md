@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## 0.2.10.4
+
+- Fixed a game-breaking bug found when accosted after delivering a note during maths class.
+- Fixed a couple of errors found when NPCs examine body-writing.
+- Fixed an issue that broke encounters found when interrupted while bathing, and caused NPCs to unload before the end of the scene.
+- Giving or sharing a milkshake with Robin will no longer dump the PC at Robin's door.
+- Fixed a bug found when robbin homes on Domus Street that broke a few stats related to crime, including the value of held stolen goods. - Thanks to Lollipop Scythe for repairing the damage to old saves.
+- Fixed a bug that interfered with NPC data when giving a monk or nun a hand while cleaning the temple, breaking the scene.
+- Fixed an error found when clearing your chest of swarms.
+- Fixed a bug that caused angel and demon wings to materialise and cover the PC's nudity when they aren't meant to.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that broke the pain and arousal stats.
+- Fixed a problem with the witch skirt.
+- Fixed an error in the generalRuined widget.
+- Fixed an issue with demon and angel sidebar layers.
+
 ## 0.2.10.3
 
 - Fixed a bug preventing arousal from decaying.
