@@ -9,7 +9,7 @@ window.hairdressers = function(type, value){
 		case 2:
 			SugarCube.State.variables.money -= 3000;
 			SugarCube.State.variables.fringelength = (200 * value);
-			SugarCube.State.variables.phase = 2;
+			SugarCube.State.variables.phase = 1;
 			new Wikifier(null, '<<pass 20>>');
 			break;
 		case 3:
