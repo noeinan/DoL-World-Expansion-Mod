@@ -20,7 +20,7 @@
 	<<if _cursedPrevent isnot true>>
 		/*Primary Piece*/
 		<<if $worn[$args[0]] isnot "naked">>
-			<<generalUndress $wardrobe_location $args[0]>>
+			<<generalUndress "wardrobe" $args[0]>>
 		<</if>>
 		<<equipClothesItemFromDefault $args[0] $args[1] $args[2] $args[3]>>
 		
@@ -30,7 +30,7 @@
 			<<set _accessory_colour to $worn[$args[0]].accessory_colour>>
 			<<for _labelWear, _valueWear range _outfitPrimaryWear>>
 				<<if $worn[_labelWear] isnot "naked">>
-					<<generalUndress $wardrobe_location _labelWear>>
+					<<generalUndress "wardrobe" _labelWear>>
 				<</if>>
 				<<unset _pieceId>>
 				<<for _iWear to 0; _iWear lt setup.clothes[_labelWear].length; _iWear++>>
@@ -733,6 +733,7 @@
 			<<He>> tears your <<print $worn[$args[0]].name>> off your body.
 			<br>
 		<</if>>
+		<<generalRuined $args[0]>>
 	<<elseif $carried[$args[0]].name isnot "naked">>
 		<<if $stealtextskip isnot 1>>
 			<<He>> keeps your <<print $carried[$args[0]].name>> as a souvenir.
@@ -744,18 +745,16 @@
 			<</if>>
 		<</if>>
 		<<set _outfitPrimarySteal to $carried[$args[0]].outfitPrimary>>
-	<</if>>
-	<<if _outfitPrimarySteal isnot undefined>>
-		<<capture _outfitPrimarySteal>>
-			<<for _label, _value range _outfitPrimarySteal>>
-				<<if _value isnot "broken">>
-					<<generalRuined _label>>
+		<<if _outfitPrimarySteal isnot undefined>>
+			<<for _labelSteal, _valueSteal range _outfitPrimarySteal>>
+				<<if _valueSteal isnot "broken">>
+					<<generalRuined _labelSteal>>
 				<</if>>
 			<</for>>
-		<</capture>>
+		<</if>>
+		<<unset _outfitPrimarySteal>>
+		<<generalRuined $args[0]>>
 	<</if>>
-	<<unset _outfitPrimarySteal>>
-	<<generalRuined $args[0]>>
 <</if>>
 <</nobr>><</widget>>
 
