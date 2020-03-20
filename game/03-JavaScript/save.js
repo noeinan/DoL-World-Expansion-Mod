@@ -361,6 +361,7 @@ var settingsObjects = function(type){
 				analpregdisable: {boolLetter:true},
 				watersportsdisable: {boolLetter:true},
 				spiderdisable: {boolLetter:true},
+				bodywritingdisable: {boolLetter:true},
 				breastsizemax: {min:0,max:13,decimals:0},
 				bottomsizemax: {min:0,max:9,decimals:0},
 				penissizemax: {min:-1,max:4,decimals:0},
