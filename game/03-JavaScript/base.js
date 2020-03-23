@@ -24,11 +24,9 @@ arguments)}}(b))};e.init();p.Mousetrap=e;"undefined"!==typeof module&&module.exp
 
 }).call(window, window);
 
-
 Mousetrap.prototype.stopCallback = function(e, element, combo) {
 	return false;
 }
-
 
 Mousetrap.bind(["z", "n", "enter"], function () {
 	$("#passages #next a.macro-link").trigger("click");

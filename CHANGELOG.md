@@ -6,7 +6,7 @@
 - Fixed a couple of errors found when NPCs examine body-writing.
 - Fixed an issue that broke encounters found when interrupted while bathing, and caused NPCs to unload before the end of the scene.
 - Giving or sharing a milkshake with Robin will no longer dump the PC at Robin's door.
-- Fixed a bug found when robbin homes on Domus Street that broke a few stats related to crime, including the value of held stolen goods. - Thanks to Lollipop Scythe for repairing the damage to old saves.
+- Fixed a bug found when robbing homes on Domus Street that broke a few stats related to crime, including the value of held stolen goods. - Thanks to Lollipop Scythe for repairing the damage to old saves.
 - Fixed a bug that interfered with NPC data when giving a monk or nun a hand while cleaning the temple, breaking the scene.
 - Fixed an error found when clearing your chest of swarms.
 - Fixed a bug that caused angel and demon wings to materialise and cover the PC's nudity when they aren't meant to.
@@ -25,7 +25,7 @@ Thanks to Lollipop Scythe for the following fixes:
 
 Thanks to Lollipop Scythe for the following fixes:
 - Fixed a minor error relating to the traits menu.
-- Fixed a variable conflict that caused an infinite loops when buying five items in the sho.
+- Fixed a variable conflict that caused an infinite loops when buying five items in the shop.
 - Fixed several issues found when sending clothes to the wardrobe.
 - Fixed a number of errors and conflicts within the widgets responsible for equipping and removing clothes.
 - Fixed an error found when NPCs read body-writing.
@@ -2662,7 +2662,6 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 ## 0.1.1
 This small update fixes some bugs and makes a few improvements.
-
 
 - You can now spend the night in hospital instead of being thrown out onto the dangerous streets.
 - Added the "Take it" neutral action to some situations.

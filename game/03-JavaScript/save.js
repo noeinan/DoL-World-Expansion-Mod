@@ -45,14 +45,14 @@ window.deleteSave = function(saveSlot, confirm){
 			new Wikifier(null, '<<deleteConfirm '+saveSlot+'>>');
 			return;
 		}else{
-		   Save.autosave.delete();
+			Save.autosave.delete();
 		}
 	}else{
 		if(SugarCube.State.variables.confirmDelete === true && confirm === undefined){
 			new Wikifier(null, '<<deleteConfirm '+saveSlot+'>>');
 			return;
 		}else{
-		  Save.slots.delete(saveSlot);
+			Save.slots.delete(saveSlot);
 		}
 	}
 	new Wikifier(null, '<<resetSaveMenu>>');

@@ -1,6 +1,5 @@
 # Degrees of Lewdity
 
-
 ## How to build
 
 ### Prerequisites
@@ -21,5 +20,3 @@
 ### Build Android version (.apk)
 
 ?
-
-

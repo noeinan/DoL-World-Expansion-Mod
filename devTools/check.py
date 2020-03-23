@@ -28,7 +28,6 @@ def yield_line_and_islastline(f):
 
 pattern = re.compile(r'(<<(\/?) *(if|for|else|switch|case|replace|link)[^a-zA-Z][^<>]*)')
 
-
 tagfound = []
 try:
 	for line, isLastLine in yield_line_and_islastline(fileinput.input()):
@@ -62,7 +61,6 @@ try:
 					myprint("  ",linenumber,":", whole)
 					fileinput.nextfile()
 					break
-
 
 		if isLastLine:
 			if len(tagfound) != 0:

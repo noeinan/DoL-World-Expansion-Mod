@@ -23,7 +23,6 @@ function colourContainerClasses() {
 }
 window.colourContainerClasses = colourContainerClasses; // export function
 
-
 function debugColourContainerClasses(color) {
 	var V = State.variables;
 	return 'hair-'  + (color.hair||'').replace(/ /g,'-') +

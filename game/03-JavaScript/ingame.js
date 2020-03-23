@@ -43,7 +43,7 @@ window.mapMove = function(moveTo){
 
 window.wikifier = function(widget, arg1, arg2, arg3){
 	if(arg3 !== undefined){
-	   new Wikifier(null, '<<'+widget+' '+ arg1 +' '+ arg2 +' '+ arg3 +'>>');
+		new Wikifier(null, '<<'+widget+' '+ arg1 +' '+ arg2 +' '+ arg3 +'>>');
 	}
 	else if(arg2 !== undefined){
 		new Wikifier(null, '<<'+widget+' '+ arg1 +' '+ arg2 +'>>');
