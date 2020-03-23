@@ -325,10 +325,11 @@ var settingsObjects = function(type){
 				hairselect: {strings:["red","black","brown","lightbrown","blond","platinumblond","strawberryblond","ginger"]},
 				hairlength: {min:0,max:400,decimals:0},
 				awareselect: {strings:["innocent","knowledgeable"]},
-				background: {strings:["waif","nerd","athlete","delinquent","promiscuous","exhibitionist","deviant","beautiful","crossdresser"]},
+				background: {strings:["waif","nerd","athlete","delinquent","promiscuous","exhibitionist","deviant","beautiful","crossdresser", "lustful"]},
 				gamemode: {strings:["normal","soft","hard"]},
 				player:{
 					gender:{strings:["m","f"]},
+					gender:{strings:["m","f", "a"]}
 				},
 				skinColor:{
 					natural:{strings:["light","medium","dark","gyaru","ylight","ymedium","ydark","ygyaru"]},
@@ -345,6 +346,7 @@ var settingsObjects = function(type){
 				penis_mod: {min:-8,max:8,decimals:0},
 				whitechance: {min:0,max:100,decimals:0},
 				blackchance: {min:0,max:100,decimals:0},
+				straponchance: {min:0,max:100,decimals:0},
 				alluremod: {min:0.2,max:2,decimals:1},
 				beastmalechance: {min:0,max:100,decimals:0},
 				monsterchance: {min:0,max:100,decimals:0},
