@@ -1,5 +1,58 @@
 # CHANGELOG
 
+## 0.2.10.6
+
+- Having body-writing or tattoos noticed in the school hallways will no longer lead straight into another event.
+- Fixed an error found when attacked while delivering a note during maths class. Thanks to Lollipop Scythe.
+- Strap-ons can no longer appear with the slider set to 0, and will always appear if set to 100.
+- Fixed a bug that prevented crime and stolen goods from working properly on old saves.
+- Fixed a bug that preventing one of the events from triggering when interrupted while bathing at the orphanage.
+- NPCs will no longer refer to cages as belts during encounters.
+- Fixed a duplicate line of text found when having your virginity examined at the temple. Thanks to YetAnotherDeviant.
+- Fixed a mistake in the "£10 a pop" body-writing.
+- The "Strip all" option at wardrobes will no longer remove collars and other "cursed" items. Thanks to Lollipop Scythe.
+- Fixed an error found during the deviancy 5 tentacle encounter on the street.
+- Fixed a bug that prevented towels from being stripped at the lake and similar locations. Thanks to Lollipop Scythe.
+
+## 0.2.10.5
+
+- Added a "Natural features" option for new characters, letting you choose if your character's body is masculine, feminine or androgynous independent of gender selection.
+- Fallen angel wings will now cover the PC when exposed and embarrassed.
+- The mesh shirt and sou'wester now animate on the sidebar sprite. Art courtesy of KG.
+- Added punk shades to the clothing shop. Art courtesy of KG.
+- The normal and text only version now have a favicon. Thanks to shikiyoku.
+
+### Balance Changes
+
+- NPCs will now be slightly aroused by the violent acts they perform.
+- Flashbacks will now occur every two weeks at a minimum, rather than one week, for a given location.
+
+### Bug Fixes
+
+- Fixed an issue that caused markings on the PC's pubic area to be described improperly.
+- Fixed a bug that could cause catastrophic failure on some devices.
+- Body-writing and forced tattoos will now be enabled by default.
+- Fixed a problem with one of the sporty bra images.
+- Running into a dog while blindfolded with beast encounters disabled will no longer send you to a normal street passage.
+- Fixed a bug that caused money for cinema tickets to be deducted when inviting Robin to the cinema, even if they refuse.
+- Fixed a bug that caused Sirris to materialise as a rapist.
+- Fixed a bug that caused the Whitney panties event to repeat. Thanks to Lollipop Scythe.
+- Fixed a bug that caused NPCs to take clothes when they aren't meant to. Thanks to Lollipop Scythe.
+- Fixed a bug that caused outfits to split in half when equipping an item over one piece. Also thanks to Lollipop Scythe.
+- Fixed a bug that caused dyeing your hair to be output text as if you had it cut. Thanks to YetAnotherDeviant.
+- Thanks to YetAnotherDeviant for fixing a typo.
+- Fixed a capitalisation error on one of the body-writing options.
+- Fixed a bug that caused the PC to be described as "dressed only in their genitals" when modelling on Domus Street.
+- Fixed a bug that would prevent visible genitals from impacting gender appearance on old saves.
+- Fixed a small continuity error found when having your virginity examined at the temple.
+- Fixed an error found when NPCs try to write a deviant line on the PC.
+- Fixed a misalignment issue with missionary sprite shorts.
+- Fixed a bug that prevented flashbacks from triggering at school, and in the underground dungeon.
+- Fixed a bug that caused attacks to trigger flashbacks without the "Flashbacks" trait.
+- Fixed a bug that prevented flashbacks from triggering.
+- Fixed a bug that caused shops to be in the "closing" state all night, preventing nightly activities.
+- Fixed a bug causing encounter sprites to animate when they shouldn't.
+
 ## 0.2.10.4
 
 - Fixed a game-breaking bug found when accosted after delivering a note during maths class.
