@@ -7,6 +7,6 @@ fi
 
 VERSION="$(git describe --tags --always --dirty)"
 
-TWEEGO_PATH="./StoryFormats" tweego -o "Degrees of Lewdity $VERSION.html" game
+TWEEGO_PATH="./StoryFormats" tweego -o "Degrees of Lewdity $VERSION.html" --head "build/head.html" game
 cp "Degrees of Lewdity $VERSION.html" "Degrees of Lewdity.html"
 echo "Done: \"Degrees of Lewdity.html\""
