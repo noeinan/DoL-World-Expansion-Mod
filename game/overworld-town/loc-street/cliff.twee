@@ -170,10 +170,10 @@ There's a path leading down to the beach.
 <<set $outside to 1>><<set $location to "town">><<effects>><<set $bus to "cliff">>
 You join the crowd around the pillory on Cliff Street.
 <<npc_pillory_detail>>
-<<if $stress gte 4000>>
+<<if $stress gte 3000>>
 <span class="gold">You are stressed.</span> Things are getting on top of you.
 You watch some people throw fruit at <<the_pillory_person_stop>> It looks like fun. <span class="teal">You feel an urge to join in</span> - <<he>> probably deserves it.
-<br><br>
+<<if $daystate isnot "night">><br>When the decent people are all in bed - you might dare do lewder things.<</if>><br><br>
 <</if>>
 <<if $daystate is "night">>
 	<<if $stress gte 3000>>
@@ -189,8 +189,12 @@ You watch some people throw fruit at <<the_pillory_person_stop>> It looks like f
 		<<link [[Groom prisoner|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 1>><</link>>
 		<br>
 	<</if>>
-	<<if $pillory_tenant.lowerexposed gte 2 and ($stress gte 4000 or $trauma gte (($traumamax / 5) * 1))>>
-		<<link [[Spank prisoner|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 2>><</link>><<lstress>><<ltrauma>>
+	<<if $pillory_tenant.lowerexposed gte 2 and $stress gte 4000 and $trauma gte (($traumamax / 5) * 1)>>
+		<<link [[Spank prisoner|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 2>><</link>><<llstress>><<ltrauma>>
+		<br>
+	<</if>>
+	<<if $pillory_tenant.lowerexposed lte 1 or (($pronoun is "m" and $pillory_tenant.upperexposed lte 1) or ($pronoun is "f" and $pillory_tenant.upperexposed lte 2)) and $stress gte 7000 and $trauma gte (($traumamax / 5) * 2)>>
+		<<link [[Expose prisoner|Cliff Street Prisoner]]>><<pass 2>><<set $phase to 3>><</link>><<llstress>>
 		<br>
 	<</if>>
 <<else>>
@@ -202,6 +206,10 @@ You watch some people throw fruit at <<the_pillory_person_stop>> It looks like f
 			<span class="red">There is no fruit left to throw right now.</span>
 			<br>
 		<</if>>
+	<</if>>
+		<<if $pillory_tenant.lowerexposed lte 1 and ($stress gte 6000 or $trauma gte (($traumamax / 5) * 2))>>
+		<<link [[Wedgie|Cliff Street Prisoner]]>><<pass 5>><<set $phase to 4>><<stress -12>><</link>><<llstress>><<ltrauma>>
+		<br>
 	<</if>>
 <</if>>
 <<endevent>>
@@ -227,9 +235,49 @@ You watch some people throw fruit at <<the_pillory_person_stop>> It looks like f
 <<elseif $phase is 1>>
 	You slurp up the cream from the <<the_pillory_persons>> ass and groin. The crowd watch, awed.
 	<<set $famesex +=20>>
+<<elseif $phase is 2>>
+<<set $pillory_tenant.spank += 1>><<control 10>><<stress -24>><<trauma -12>>
+	You <<print either("viciously","resentfully","grimly","self-righteously","maniacally")>> spank <<the_pillory_persons>> ass. Somehow, 
+	<<print either("it gives you a sense of control and well-being.","it brings a growing sense of calm.","it makes the shadows draw back.")>><br>
+	Some of the crowd cheer you on.
+<<elseif $phase is 3>><<control 10>><<stress -24>><<trauma -12>>
+	Approaching <<the_pillory_person>> from behind, you <<print either("smoothly","awkwardly","quickly")>>
+	<<if $pronoun is "m">>
+		<<if $pillory_tenant.upperexposed lte 1>>
+			<<set $pillory_tenant.upperexposed to 2>>displace <<his>> top, fully exposing <<his>> chest
+			<<if $pillory_tenant.lowerexposed lte 1>>and then<</if>>
+		<</if>>
+		<<if $pillory_tenant.lowerexposed lte 1>>pull <<his>>
+			<<if $pillory_tenant.lowerexposed is 0>>trousers and<</if>>
+			underpants to the floor, exposing <<his>> ass and <<his>> $pillory_tenant.person.penisdesc
+			<<set $pillory_tenant.lowerexposed to 2>>
+		<</if>>
+	<<elseif $pronoun is "f">>
+		<<if $pillory_tenant.upperexposed lte 2>>
+			<<if $pillory_tenant.upperexposed lte 0>>displace <<his>> top and<</if>>
+			remove <<his>> bra, fully exposing <<his>> $pillory_tenant.person.breastsdesc
+			<<if $pillory_tenant.lowerexposed lte 1>>to all. Without hesitation, you then<</if>>
+			<<set $pillory_tenant.upperexposed to 3>>
+		<</if>>
+		<<if $pillory_tenant.lowerexposed lte 1>>
+			<<if $pillory_tenant.lowerexposed lte 0>>hitch up <<his>> skirt and pull <<his>> panties to the floor,
+			<<else>>pull <<the_pillory_persons>> panties to the floor,<</if>>
+			fully exposing <<his>> pussy and ass
+			<<set $pillory_tenant.lowerexposed to 2>>
+		<</if>>
+	<<else>> /* in case the game goes fully non binary */
+		tear off all their clothes, fully exposing them
+	<</if>>to the watching crowd. <<He>> yells in shock.<br>
+
+	Some people <<print either("gasp, but","laugh, and","complain, but","fall silent, but","whistle, and","jeer, and","make lewd threats, and")>> more than a few cheer.
+<<elseif $phase is 4>><<control 5>><<stress -20>><<trauma -4>><<set $pillory_tenant.broken += 1>>
+	Approaching from behind, you <<print either("cheekily","aggressively","quickly","vindictively","stealthily")>>
+	grab <<the_pillory_persons>> <<if $pronoun is "m">>underpants<<else>>panties<</if>> and hoist them up hard.<br>
+	<<His>> shocked squeal makes you laugh uncontrollably as you run off. As you rejoin the crowd, <<his>> sour expression makes you laugh again -
+	stuck in the pillory, <<he>> can't even fix it. <<He>> knows this and so does everyone watching.<br>
+	Many in the crowd seem to share in your amusement.
 <<else>>
-<<set $pillory_tenant.spank += 1>><<control 10>><<stress -12>><<trauma -12>>
-	You viciously spank <<the_pillory_persons>> ass. It gives you a sense of control and well-being.
+	You do something entirely unexpected. Few could explain what you have done. Fewer still could explain why. None will speak of this again. (Error: please report)
 <</if>>
 <<endevent>>
 <br><br>
