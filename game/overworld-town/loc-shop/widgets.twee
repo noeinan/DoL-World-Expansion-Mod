@@ -1,81 +1,81 @@
 :: Widgets Shop [widget]
 
-/*First argument - bought or stolen
-Second argument - worn or send
-Third argument - item index*/
+/*
+First argument - slot
+Second argument - bought or stolen
+Third argument - worn or send
+Forth argument - item index*/
 
-<<widget "uppershopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
+<<widget "shopbuy">><<nobr>>
+<<set _shop_temp to $args[3]>>
 <<set $clothes_choice_previous to $clothes_choice>>
 
-<<if $args[0]>><<ShowUnderEquip>><</if>>
-<<if $args[0] is "buy">>
-	You buy the <<print setup.clothes.upper[_shop_temp].name>>.
+<<if $args[0] is "upper" or $args[0] is "lower">>
+	<<ShowUnderEquip "normal">>
+<</if>>
+<<if $args[0] is "over_upper" or $args[0] is "over_lower" or $args[0] is "over_head">>
+	<<ShowUnderEquip "over">>
+<</if>>
+<<if $args[1] is "buy">>
+	You buy the <<print setup.clothes[$args[0]][_shop_temp].name>>.
 	<br><br>
-<<elseif $args[0] is "steal">>
-	You steal the <<print setup.clothes.upper[_shop_temp].name>>.
+<<elseif $args[1] is "steal">>
+	You steal the <<print setup.clothes[$args[0]][_shop_temp].name>>.
 	<br><br>
-<<elseif $args[0] is "try">>
-	<<tryOnWear _shop_temp "upper">>
-<<elseif $args[0] is "return">>
-	<<clothingReset "upper">>
-<<elseif $args[0] is "reset">>
+<<elseif $args[1] is "try">>
+	<<tryOnWear $args[0] _shop_temp>>
+<<elseif $args[1] is "return">>
+	<<clothingReset [$args[0]]>>
+<<elseif $args[1] is "reset">>
 	<<unset $colouraction>>
 	<<unset $accessorycolouraction>>
 	<<set $shopDefaults.colorSet to null>>
 	<<set $shopDefaults.secColorSet to null>>
 <</if>>
 
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-			<<upperwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-			<<upperwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-			<<upperwear _shop_temp $accessorycolouraction>>
-		<<else>>
-			<<upperwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "upper">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
+<<if $args[2] is "wear">>
+	<<generalWear $args[0] _shop_temp $colouraction $accessorycolouraction>>
+	<<updateOwned $args[0]>>
+<<elseif $args[2] is "send">>
+	<<set _loop to $args[4]>>
 	<<if _loop is undefined>>
 		<<set _loop to 1>>
 	<</if>>
 	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-				<<uppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-				<<uppersend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-				<<uppersend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-				<<uppersend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
+		<<generalSend "wardrobe" $args[0] _shop_temp $colouraction $accessorycolouraction>>
 	<</for>>
 <</if>>
 
 <</nobr>><</widget>>
 
-<<widget "outfitshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.upper[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.upper[$clothes_choice].name>>. <<if setup.clothes.upper[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.upper[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.upper[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.upper[$clothes_choice].cost / 100>>.</span>
+<<widget "clothingShop">><<nobr>>
+<<if $args[0]>>
+	<<set $clothingShopSlot to $args[0]>>
+<</if>>
+<input type="button" value="DEFAULT OPTIONS" onclick="SugarCube.Wikifier.wikifyEval('<<shopDefaultOptionsToggle>>');">
+<div id="shopDefault" class="hidden">
+	<<shopDefaultOptions>>
+</div>
 <br><br>
-
-<<shoptraits>>
-<br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-		<<if setup.clothes.upper[$clothes_choice].colour_options.length isnot 0>>
+<<if $clothes_choice>>
+	<<set _temp_choice to clone(setup.clothes[$clothingShopSlot][$clothes_choice])>>
+	<<if _temp_choice.plural is 1>>
+		<<integrity $clothes_choice_integrity "cap">>
+	<<else>>
+		A <<integrity $clothes_choice_integrity>>
+	<</if>>
+	and <<reveal $clothes_choice_reveal>> <<print _temp_choice.name>>.
+	<<if _temp_choice.gender is "m">>
+		<span class="lblue">For boys.</span>
+	<<elseif _temp_choice.gender is "f">>
+		<span class="pink">For girls.</span>
+	<</if>>
+	<<print _temp_choice.description>> Costs <span class="gold">£<<print _temp_choice.cost / 100>>.</span>
+	<br><br>
+	<<shoptraits>>
+	<<set _slimeSlots to ["over_upper","over_lower","upper","lower","under_upper","under_lower"]>>
+	<<if _slimeSlots.includes($clothingShopSlot) and ($willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80)>>
+		<<if _temp_choice.colour_options.length isnot 0>>
 			There's a range of colours to choose from:
 			<br>
 			<<set _setChecked to false>>
@@ -93,8 +93,7 @@ Third argument - item index*/
 			<</for>>
 			<br><br>
 		<</if>>
-
-		<<if setup.clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<<if _temp_choice.accessory_colour_options.length isnot 0>>
 			Secondary colour:
 			<br>
 			<<set _setChecked to false>>
@@ -112,7 +111,7 @@ Third argument - item index*/
 			<</for>>
 			<br><br>
 		<</if>>
-		<<if setup.clothes.upper[$clothes_choice].colour_options.length isnot 0 or setup.clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
+		<<if _temp_choice.colour_options.length isnot 0 or _temp_choice.accessory_colour_options.length isnot 0>>
 			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
 			<br>
 			<<shopCustomColors>>
@@ -120,178 +119,90 @@ Third argument - item index*/
 		<<if $images is 1>>
 			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
 			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "upper" $clothes_choice>></div>
+			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage $clothingShopSlot $clothes_choice>></div>
 			<br>
 		<</if>>
-		<<shopBuyItemStatus "upper" setup.clothes.upper[$clothes_choice].name true>>
-		<<set _cost to clone(setup.clothes.upper[$clothes_choice].cost)>>
-		<<if $wardrobe.upper.length gte $wardrobe.space>>
-			<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span>
+		<<set _cost to clone(_temp_choice.cost)>>
+		<<unset _cursedPrevent>>
+		<<set _outfitPrimaryShop to _temp_choice.outfitPrimary>>
+		<<set _preventSlots to []>>
+		<<set _wardrobeSlots to [$clothingShopSlot]>>
+		<<if $worn[$clothingShopSlot].cursed is 1>>
+			<<set _cursedPrevent to true>>
+			<<run _preventSlots.push($clothingShopSlot)>>
+		<</if>>
+		<<if _outfitPrimaryShop isnot undefined>>
+			<<for _labelShop, _valueShop range _outfitPrimaryShop>>
+				<<run _wardrobeSlots.push(_labelShop)>>
+				<<if $worn[_labelShop].cursed is 1>>
+					<<set _cursedPrevent to true>>
+					<<run _preventSlots.push(_labelShop)>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<shopBuyItemStatus _wardrobeSlots>>
+		<<if _spaceLeft lt 1>>
+			<span class="blue">Your wardrobe is full.</span>
 			<br>
 		<<elseif $daystate is "night">>
-			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
-				<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>>.</span>
+			<<if $worn[$clothingShopSlot].cursed is 1>>
+				<span class="blue">You can't wear this item without first removing your .</span>
 				<br>
 			<<else>>
-				<<link [[Steal and wear|$passage]]>><<uppershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
+				<<link [[Steal and wear|$passage]]>><<shopbuy $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
 				<br>
 			<</if>>
-			<<link [[Steal and send home|$passage]]>><<uppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
+			<<link [[Steal and send home|$passage]]>><<shopbuy $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
 			<br>
-		<<elseif $money gte setup.clothes.upper[$clothes_choice].cost>>
-			<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
-				<span class="blue">You can't wear this item without first removing your <<if $worn.upper.cursed is 1>>$worn.upper.name<<else>>$worn.lower.name<</if>></span>
+		<<elseif $money gte _cost>>
+			<<if _cursedPrevent is true>>
+				<span class="blue">You can't wear this item without first removing your
+				<<for _i to 0; _i lt _preventSlots.length; _i++>>
+					<<print _preventSlots[_i]>><<if _preventSlots.length gt 2 and _i lt _preventSlots.length - 2>>,
+					<<elseif _preventSlots.length gte 2 and _i is _preventSlots.length - 2>>
+						and
+					<</if>>
+				<</for>>
+				.</span>
 				<br>
 			<<else>>
-				<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
+				<<link [[Buy and wear|$passage]]>>
+					<<clothingReset $clothingShopSlot>>
+					<<shopbuy $clothingShopSlot "buy" "wear" $clothes_choice>>
+					<<set $money -= _cost>>
+					<<unset $clothes_choice>>
+				<</link>>
 				<br>
 			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.upper[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>><<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
+			<<link [[Buy and send home|$passage]]>>
+				<<clothingReset $clothingShopSlot>>
+				<<shopbuy $clothingShopSlot "buy" "send" $clothes_choice 1>>
+				<<set $money -= _cost>>
+				<<if $shopDefaults.disableReturn is false>>
+					<<unset $clothes_choice>>
+				<</if>>
 			<</link>>
+			<<if $money gte _cost * 5 and _spaceLeft gte 5>>
+				| <<link [[X 5|$passage]]>>
+					<<clothingReset $clothingShopSlot>>
+					<<shopbuy $clothingShopSlot "buy" "send" $clothes_choice 5>>
+					<<set $money -= _cost * 5>>
+					<<if $shopDefaults.disableReturn is false>>
+						<<unset $clothes_choice>>
+					<</if>>
+				<</link>>
 			<</if>>
 			<br>
 		<<else>>
 			<span class="pink">You cannot afford this item.</span>
 			<br>
 		<</if>>
-		<<if $worn.upper.cursed is 1 or $worn.lower.cursed is 1>>
+		<<if _cursedPrevent is true>>
 		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>>
+			<<link [[Try On|$passage]]>><<shopbuy $clothingShopSlot "try" null $clothes_choice>><</link>>
 			<br>
 			<<if $tryOn.tryingOn.upper isnot null>>
-				<<link [[Return|$passage]]>><<uppershopbuy "return" null $clothes_choice>><</link>>
-				<br>
-			<</if>>
-		<</if>>
-	<<else>>
-		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
-		<br>
-	<</if>>
-<</if>>
-<br>
-
-<<if $location is "forest">>
-<<outfitforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.upper.length; _i++>>
-		<<if setup.clothes.upper[_i].shop.includes("clothing") and setup.clothes.upper[_i].one_piece is 1>>
-			<<clothingicon setup.clothes.upper[_i]>><<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.upper[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "uppershop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.upper[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.upper[$clothes_choice].name>>. <<if setup.clothes.upper[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.upper[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.upper[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.upper[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-	<<shoptraits>>
-        <br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-		<<if setup.clothes.upper[$clothes_choice].colour_options.length isnot 0>>
-			There's a range of colours to choose from:
-			<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-				<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-					<<set $colouraction to $shopDefaults.color>>
-					<<set $shopDefaults.colorSet to $shopDefaults.color>>
-				<</if>>
-				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-
-		<<if setup.clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-			Secondary colour:
-			<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-				<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-					<<set $accessorycolouraction to $shopDefaults.secColor>>
-					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-				<</if>>
-				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-		<<if setup.clothes.upper[$clothes_choice].colour_options.length isnot 0 or setup.clothes.upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-			<br>
-			<<shopCustomColors>>
-		<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "upper" $clothes_choice>></div>
-			<br>
-		<</if>>
-		<<shopBuyItemStatus "upper" setup.clothes.upper[$clothes_choice].name>>
-		<<set _cost to clone(setup.clothes.upper[$clothes_choice].cost)>>
-		<<if $wardrobe.upper.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.upper.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.upper.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.upper.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<uppershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<uppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.upper[$clothes_choice].cost>>
-			<<if $worn.upper.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.upper.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.upper[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "upper">><<uppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.upper.cursed is 1>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<uppershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.upper isnot null>>
-			<<link [[Return|$passage]]>><<uppershopbuy "return" null $clothes_choice>><</link>>
+			<<link [[Return|$passage]]>><<shopbuy $clothingShopSlot "return" null $clothes_choice>><</link>>
 			<br>
 			<</if>>
 		<</if>>
@@ -302,1633 +213,50 @@ Third argument - item index*/
 <</if>>
 <br>
 
-<<if $location is "forest">>
-<<upperforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.upper.length; _i++>>
-		<<if setup.clothes.upper[_i].shop.includes("clothing") and setup.clothes.upper[_i].one_piece isnot 1>>
-			<<clothingicon setup.clothes.upper[_i]>><<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.upper[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
+<<switch $location>>
+	<<case "shopping_centre">><<set _shopLocation to "clothing">>
+	<<default>><<set _shopLocation to $location>>
+<</switch>>
+<<if _shopLocation>>
+	<<for _i to 0; _i lt setup.clothes[$clothingShopSlot].length; _i++>>
+		<<set _item to clone(setup.clothes[$clothingShopSlot][_i])>>
+		<<if !_item.shop.includes(_shopLocation) or _item.outfitSecondary isnot undefined>>
+			<<continue>>
 		<</if>>
+		<<if (_item.outfitPrimary is undefined and $args[1] is "outfits")
+		or (_item.outfitPrimary isnot undefined and $args[1] is "non-outfits")>>
+			<<continue>>
+		<</if>>
+		<<clothingicon _item>>
+		<<if $specialClothes[_item.name.replace(/ /g,"")] is "locked">>
+			<span class="lblue">_item.name_cap</span>
+		<<else>>
+			<<capture _item _i>>
+				<<link [[_item.name_cap|$passage]]>>
+					<<set $clothes_choice to _i>>
+					<<set $clothes_choice_reveal to clone(_item.reveal)>>
+					<<set $clothes_choice_integrity to (_item.integrity_max)>>
+				<</link>>
+			<</capture>>
+		<</if>>
+		| <span class="teal">£<<print _item.cost / 100>></span> |
+		<<if _item.gender is "m">>
+			<span class="blue">♂</span>
+		<<elseif _item.gender is "f">>
+			<span class="pink">♀</span>
+		<</if>>
+		<<if $specialClothes[_item.name.replace(/ /g,"")] isnot undefined>>
+			<<if $specialClothes[_item.name.replace(/ /g,"")] is "locked">>
+				<span class="black">Locked</span>
+			<<elseif $specialClothes[_item.name.replace(/ /g,"")] is "unlocked">>
+				<span class="gold">Unlocked</span>
+			<</if>>
+			<<specialClothesHint>>
+			- <<print _specialClothesHint[_item.name.replace(/ /g,"")]>>
+		<</if>>
+		<br>
 	<</for>>
 <</if>>
-<</nobr>><</widget>>
-
-<<widget "lowershopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0]>><<ShowUnderEquip>><</if>>
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.lower[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.lower[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "lower">>
-<<elseif $args[0] is "return">>
-<<clothingReset "lower">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<lowerwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<lowerwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<lowerwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<lowerwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "lower">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<lowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<lowersend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<lowersend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<lowersend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "lowershop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.lower[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.lower[$clothes_choice].name>>. <<if setup.clothes.lower[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.lower[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.lower[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.lower[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-	<<shoptraits>>
-        <br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-		<<if setup.clothes.lower[$clothes_choice].colour_options.length isnot 0>>
-			There's a range of colours to choose from:
-			<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-				<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-					<<set $colouraction to $shopDefaults.color>>
-					<<set $shopDefaults.colorSet to $shopDefaults.color>>
-				<</if>>
-				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-
-		<<if setup.clothes.lower[$clothes_choice].accessory_colour_options.length isnot 0>>
-			Secondary colour:
-			<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-				<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-					<<set $accessorycolouraction to $shopDefaults.secColor>>
-					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-				<</if>>
-				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-		<<if setup.clothes.lower[$clothes_choice].colour_options.length isnot 0 or setup.clothes.lower[$clothes_choice].accessory_colour_options.length isnot 0>>
-			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-			<br>
-			<<shopCustomColors>>
-		<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "lower" $clothes_choice>></div>
-			<br>
-		<</if>>
-		<<shopBuyItemStatus "lower" setup.clothes.lower[$clothes_choice].name>>
-		<<set _cost to clone(setup.clothes.lower[$clothes_choice].cost)>>
-		<<if $wardrobe.lower.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.lower.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.lower.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<lowershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<lowershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.lower[$clothes_choice].cost>>
-			<<if $worn.lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.lower.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.lower[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "lower">><<lowershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.lower.cursed is 1>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<lowershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.lower isnot null>>
-			<<link [[Return|$passage]]>><<lowershopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-	<<else>>
-		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
-		<br>
-	<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-	<<lowerforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.lower.length; _i++>>
-		<<if setup.clothes.lower[_i].shop.includes("clothing") and setup.clothes.lower[_i].one_piece isnot 1>>
-			<<clothingicon setup.clothes.lower[_i]>><<print '<<link [['+setup.clothes.lower[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.lower[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.lower[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.lower[_i].cost / 100>>.</span>
-			<<if setup.clothes.lower[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.lower[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "underuppershopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.under_upper[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.under_upper[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "under_upper">>
-<<elseif $args[0] is "return">>
-<<clothingReset "under_upper">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underupperwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<underupperwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underupperwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<underupperwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "under_upper">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<underuppersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<underuppersend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<underuppersend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<underuppersend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "underoutfitshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.under_upper[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.under_upper[$clothes_choice].name>>. <<if setup.clothes.under_upper[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.under_upper[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.under_upper[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.under_upper[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-	<<shoptraits>>
-        <br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-		<<if setup.clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
-		There's a range of colours to choose from:
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-				<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-					<<set $colouraction to $shopDefaults.color>>
-					<<set $shopDefaults.colorSet to $shopDefaults.color>>
-				<</if>>
-				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-
-		<<if setup.clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-		Secondary colour:
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-				<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-					<<set $accessorycolouraction to $shopDefaults.secColor>>
-					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-				<</if>>
-				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-		<<if setup.clothes.under_upper[$clothes_choice].colour_options.length isnot 0 or setup.clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-			<br>
-			<<shopCustomColors>>
-		<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_upper" $clothes_choice>></div>
-			<br>
-		<</if>>
-		<<shopBuyItemStatus "under_upper" setup.clothes.under_upper[$clothes_choice].name true>>
-		<<set _cost to clone(setup.clothes.under_upper[$clothes_choice].cost)>>
-		<<if $wardrobe.under_upper.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_upper.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night">>
-			<<if $worn.under_upper.cursed is 1 or $worn.under_lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your <<if $worn.under_upper.cursed is 1>>$worn.under_upper.name<<else>>$worn.under_lower.name<</if>>.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<underuppershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<underuppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.under_upper[$clothes_choice].cost>>
-			<<if $worn.under_upper.cursed is 1 or $worn.under_lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your <<if $worn.under_upper.cursed is 1>>$worn.under_upper.name<<else>>$worn.under_lower.name<</if>>.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.under_upper[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.under_upper.cursed is 1 or $worn.under_lower.cursed is 1>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<underuppershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.under_upper isnot null>>
-			<<link [[Return|$passage]]>><<underuppershopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-	<<else>>
-		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
-		<br>
-	<</if>>
-<</if>>
-<br>
-<<for _i to 0; _i lt setup.clothes.under_upper.length; _i++>>
-	<<if setup.clothes.under_upper[_i].shop.includes("clothing") and setup.clothes.under_upper[_i].one_piece is 1>>
-		<<clothingicon setup.clothes.under_upper[_i]>><<print '<<link [['+setup.clothes.under_upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.under_upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.under_upper[' + _i + '].integrity_max)>><</link>>'>>
-		| <span class="teal">£<<print setup.clothes.under_upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.under_upper[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.under_upper[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-	<br>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "underuppershop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.under_upper[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.under_upper[$clothes_choice].name>>. <<if setup.clothes.under_upper[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.under_upper[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.under_upper[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.under_upper[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-	<<shoptraits>>
-        <br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-		<<if setup.clothes.under_upper[$clothes_choice].colour_options.length isnot 0>>
-		There's a range of colours to choose from:
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-				<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-					<<set $colouraction to $shopDefaults.color>>
-					<<set $shopDefaults.colorSet to $shopDefaults.color>>
-				<</if>>
-				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-
-		<<if setup.clothes.under_upper[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-				<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-					<<set $accessorycolouraction to $shopDefaults.secColor>>
-					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-				<</if>>
-				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-		<<if setup.clothes.under_upper[$clothes_choice].colour_options.length isnot 0 or setup.clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
-			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-			<br>
-			<<shopCustomColors>>
-		<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_upper" $clothes_choice>></div>
-			<br>
-		<</if>>
-		<<shopBuyItemStatus "under_upper" setup.clothes.under_upper[$clothes_choice].name>>
-		<<set _cost to clone(setup.clothes.under_upper[$clothes_choice].cost)>>
-		<<if $wardrobe.under_upper.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_upper.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.under_upper.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.under_upper.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<underuppershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<underuppershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.under_upper[$clothes_choice].cost>>
-			<<if $worn.under_upper.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.under_upper.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.under_upper[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "under_upper">><<underuppershopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.under_upper.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<underuppershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.under_upper isnot null>>
-			<<link [[Return|$passage]]>><<underuppershopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-	<<else>>
-		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
-		<br>
-	<</if>>
-<</if>>
-<br>
-<<for _i to 0; _i lt setup.clothes.under_upper.length; _i++>>
-	<<if setup.clothes.under_upper[_i].shop.includes("clothing") and setup.clothes.under_upper[_i].one_piece isnot 1>>
-		<<clothingicon setup.clothes.under_upper[_i]>><<print '<<link [['+setup.clothes.under_upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.under_upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.under_upper[' + _i + '].integrity_max)>><</link>>'>>
-		| <span class="teal">£<<print setup.clothes.under_upper[_i].cost / 100>>.</span>
-		<<if setup.clothes.under_upper[_i].gender is "m">>
-			 | <span class="blue">♂</span>
-		<<elseif setup.clothes.under_upper[_i].gender is "f">>
-			 | <span class="pink">♀</span>
-		<</if>>
-	<br>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "underlowershopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.under_lower[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.under_lower[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "under_lower">>
-<<elseif $args[0] is "return">>
-<<clothingReset "under_lower">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underlowerwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<underlowerwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<underlowerwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<underlowerwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "under_lower">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<underlowersend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<underlowersend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<underlowersend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<underlowersend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "underlowershop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.under_lower[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.under_lower[$clothes_choice].name>>. <<if setup.clothes.under_lower[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.under_lower[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.under_lower[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.under_lower[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-	<<shoptraits>>
-        <br>
-	<<if $willpower gte 800 or _temp_choice.reveal gte 500 or _temp_choice.type.includesAny("school", "event") or $corruption_slime lt 80>>
-	<<if setup.clothes.under_lower[$clothes_choice].colour_options.length isnot 0>>
-		There's a range of colours to choose from:
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-				<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-					<<set $colouraction to $shopDefaults.color>>
-					<<set $shopDefaults.colorSet to $shopDefaults.color>>
-				<</if>>
-				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-
-		<<if setup.clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
-		Secondary colour:
-		<br>
-			<<set _setChecked to false>>
-			<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-				<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-					<<set $accessorycolouraction to $shopDefaults.secColor>>
-					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-				<</if>>
-				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-					<<set _setChecked to true>>
-				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-				<</if>>
-			<</for>>
-		<br><br>
-		<</if>>
-		<<if setup.clothes.under_lower[$clothes_choice].colour_options.length isnot 0 or setup.clothes.under_lower[$clothes_choice].accessory_colour_options.length isnot 0>>
-			<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-			<br>
-			<<shopCustomColors>>
-		<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "under_lower" $clothes_choice>></div>
-			<br>
-		<</if>>
-		<<shopBuyItemStatus "under_lower" setup.clothes.under_lower[$clothes_choice].name>>
-		<<set _cost to clone(setup.clothes.under_lower[$clothes_choice].cost)>>
-		<<if $wardrobe.under_lower.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.under_lower.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.under_lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.under_lower.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<underlowershopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<underlowershopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.under_lower[$clothes_choice].cost>>
-			<<if $worn.under_lower.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.under_lower.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "under_lower">><<underlowershopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice 1>><<clothingReset "under_lower">><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.under_lower[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<underlowershopbuy "buy" "send" $clothes_choice 5>><<clothingReset "under_lower">><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.under_lower.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<underlowershopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.under_lower isnot null>>
-			<<link [[Return|$passage]]>><<underlowershopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-	<<else>>
-		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
-		<br>
-	<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-<<underlowerforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.under_lower.length; _i++>>
-		<<if setup.clothes.under_lower[_i].shop.includes("clothing") and setup.clothes.under_lower[_i].one_piece isnot 1>>
-			<<clothingicon setup.clothes.under_lower[_i]>><<print '<<link [['+setup.clothes.under_lower[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.under_lower[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.under_lower[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.under_lower[_i].cost / 100>>.</span>
-			<<if setup.clothes.under_lower[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.under_lower[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "headshopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.head[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.head[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "head">>
-<<elseif $args[0] is "return">>
-<<clothingReset "head">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<headwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<headwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<headwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<headwear _shop_temp>>
-		<</if>>
-	<</if>>
-<<updateOwned "head">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<headsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<headsend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<headsend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<headsend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "headshop">><<nobr>>
-
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.head[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.head[$clothes_choice].name>>. <<if setup.clothes.head[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.head[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.head[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.head[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-<<shoptraits>>
-<br>
-
-	<<if setup.clothes.head[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-			<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-				<<set $colouraction to $shopDefaults.color>>
-				<<set $shopDefaults.colorSet to $shopDefaults.color>>
-			<</if>>
-			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-
-	<<if setup.clothes.head[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-			<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-				<<set $accessorycolouraction to $shopDefaults.secColor>>
-				<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-			<</if>>
-			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-
-	<</if>>
-	<<if setup.clothes.head[$clothes_choice].colour_options.length isnot 0 or setup.clothes.head[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-		<br>
-		<<shopCustomColors>>
-	<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "head" $clothes_choice>></div>
-			<br>
-		<</if>>
-	<<shopBuyItemStatus "head" setup.clothes.head[$clothes_choice].name>>
-	<<set _cost to clone(setup.clothes.head[$clothes_choice].cost)>>
-		<<if $wardrobe.head.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.head.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.head.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.head.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<headshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<headshopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.head[$clothes_choice].cost>>
-			<<if $worn.head.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.head.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.head[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "head">><<headshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.head.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<headshopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.head isnot null>>
-			<<link [[Return|$passage]]>><<headshopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-<<headforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.head.length; _i++>>
-		<<if setup.clothes.head[_i].shop.includes("clothing")>>
-			<<clothingicon setup.clothes.head[_i]>><<print '<<link [['+setup.clothes.head[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.head[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.head[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.head[_i].cost / 100>>.</span>
-			<<if setup.clothes.head[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.head[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "faceshopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.face[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.face[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "face">>
-<<elseif $args[0] is "return">>
-<<clothingReset "face">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<facewear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<facewear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<facewear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<facewear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "face">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<facesend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<facesend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<facesend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<facesend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "faceshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.face[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.face[$clothes_choice].name>>. <<if setup.clothes.face[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.face[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.face[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.face[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-<<shoptraits>>
-<br>
-
-	<<if setup.clothes.face[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-			<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-				<<set $colouraction to $shopDefaults.color>>
-				<<set $shopDefaults.colorSet to $shopDefaults.color>>
-			<</if>>
-			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-
-	<<if setup.clothes.face[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-			<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-				<<set $accessorycolouraction to $shopDefaults.secColor>>
-				<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-			<</if>>
-			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-	<<if setup.clothes.face[$clothes_choice].colour_options.length isnot 0 or setup.clothes.face[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-		<br>
-		<<shopCustomColors>>
-	<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "face" $clothes_choice>></div>
-			<br>
-		<</if>>
-	<<shopBuyItemStatus "face" setup.clothes.face[$clothes_choice].name>>
-	<<set _cost to clone(setup.clothes.face[$clothes_choice].cost)>>
-		<<if $wardrobe.face.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.face.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.face.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.face.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<faceshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<faceshopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.face[$clothes_choice].cost>>
-			<<if $worn.face.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.face.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.face[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "face">><<faceshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.face.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<faceshopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.face isnot null>>
-			<<link [[Return|$passage]]>><<faceshopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-<</if>>
-<br>
-<<for _i to 0; _i lt setup.clothes.face.length; _i++>>
-	<<if setup.clothes.face[_i].shop.includes("clothing")>>
-		<<clothingicon setup.clothes.face[_i]>><<print '<<link [['+setup.clothes.face[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.face[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.face[' + _i + '].integrity_max)>><</link>>'>>
-		| <span class="teal">£<<print setup.clothes.face[_i].cost / 100>>.</span>
-		<<if setup.clothes.face[_i].gender is "m">>
-			 | <span class="blue">♂</span>
-		<<elseif setup.clothes.face[_i].gender is "f">>
-			 | <span class="pink">♀</span>
-		<</if>>
-	<br>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "neckshopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.neck[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.neck[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "neck">>
-<<elseif $args[0] is "return">>
-<<clothingReset "neck">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<neckwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<neckwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<neckwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<neckwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "neck">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<necksend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<necksend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<necksend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<necksend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "neckshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.neck[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.neck[$clothes_choice].name>>. <<if setup.clothes.neck[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.neck[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.neck[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.neck[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-<<shoptraits>>
-<br>
-
-	<<if setup.clothes.neck[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-			<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-				<<set $colouraction to $shopDefaults.color>>
-				<<set $shopDefaults.colorSet to $shopDefaults.color>>
-			<</if>>
-			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-
-	<<if setup.clothes.neck[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-			<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-				<<set $accessorycolouraction to $shopDefaults.secColor>>
-				<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-			<</if>>
-			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-	<<if setup.clothes.neck[$clothes_choice].colour_options.length isnot 0 or setup.clothes.neck[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-		<br>
-		<<shopCustomColors>>
-	<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "neck" $clothes_choice>></div>
-			<br>
-		<</if>>
-	<<shopBuyItemStatus "neck" setup.clothes.neck[$clothes_choice].name>>
-	<<set _cost to clone(setup.clothes.neck[$clothes_choice].cost)>>
-		<<if $wardrobe.neck.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.neck.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.neck.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<neckshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<neckshopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.neck[$clothes_choice].cost>>
-			<<if $worn.neck.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.neck.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "wear" $clothes_choice 1>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.neck[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "neck">><<neckshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.neck.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<neckshopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.neck isnot null>>
-			<<link [[Return|$passage]]>><<neckshopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-<<neckforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.neck.length; _i++>>
-		<<if setup.clothes.neck[_i].shop.includes("clothing")>>
-			<<clothingicon setup.clothes.neck[_i]>><<print '<<link [['+setup.clothes.neck[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.neck[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>>.</span>
-			<<if setup.clothes.neck[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.neck[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "legsshopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.legs[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.legs[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "legs">>
-<<elseif $args[0] is "return">>
-<<clothingReset "legs">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<legswear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<legswear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<legswear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<legswear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "legs">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<legssend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<legssend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<legssend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<legssend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "legsshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.legs[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.legs[$clothes_choice].name>>. <<if setup.clothes.legs[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.legs[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.legs[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.legs[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-<<shoptraits>>
-<br>
-
-	<<if setup.clothes.legs[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-			<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-				<<set $colouraction to $shopDefaults.color>>
-				<<set $shopDefaults.colorSet to $shopDefaults.color>>
-			<</if>>
-			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-
-	<<if setup.clothes.legs[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-			<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-				<<set $accessorycolouraction to $shopDefaults.secColor>>
-				<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-			<</if>>
-			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-		<br><br>
-	<</if>>
-	<<if setup.clothes.legs[$clothes_choice].colour_options.length isnot 0 or setup.clothes.legs[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-		<br>
-		<<shopCustomColors>>
-	<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "legs" $clothes_choice>></div>
-			<br>
-		<</if>>
-	<<shopBuyItemStatus "legs" setup.clothes.legs[$clothes_choice].name>>
-	<<set _cost to clone(setup.clothes.legs[$clothes_choice].cost)>>
-		<<if $wardrobe.legs.length gte $wardrobe.space>>
-			<span class="blue">Your wardrobe is full. <i>$wardrobe.legs.length / $wardrobe.space</i></span>
-			<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.legs.cursed is 1>>
-				<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span>
-				<br>
-			<<else>>
-				<<link [[Steal and wear|$passage]]>><<legsshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-				<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<legsshopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.legs[$clothes_choice].cost>>
-			<<if $worn.legs.cursed is 1>>
-				<span class="blue">You can't wear this item without first removing your $worn.legs.name.</span>
-				<br>
-			<<else>>
-
-				<<link [[Buy and wear|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-				<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.legs[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "legs">><<legsshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-			<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>>
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.legs.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<legsshopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.legs isnot null>>
-			<<link [[Return|$passage]]>><<legsshopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-	<<legsforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.legs.length; _i++>>
-		<<if setup.clothes.legs[_i].shop.includes("clothing")>>
-			<<clothingicon setup.clothes.legs[_i]>><<print '<<link [['+setup.clothes.legs[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.legs[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.legs[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.legs[_i].cost / 100>>.</span>
-			<<if setup.clothes.legs[_i].gender is "m">>
-				 | <span class="blue">♂</span>
-			<<elseif setup.clothes.legs[_i].gender is "f">>
-				 | <span class="pink">♀</span>
-			<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "feetshopbuy">><<nobr>>
-<<set _shop_temp to $args[2]>>
-<<set $clothes_choice_previous to $clothes_choice>>
-
-<<if $args[0] is "buy">>
-You buy the <<print setup.clothes.feet[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "steal">>
-You steal the <<print setup.clothes.feet[_shop_temp].name>>.
-<br><br>
-<<elseif $args[0] is "try">>
-<<tryOnWear _shop_temp "feet">>
-<<elseif $args[0] is "return">>
-<<clothingReset "feet">>
-<<elseif $args[0] is "reset">>
-<<unset $colouraction>>
-<<unset $accessorycolouraction>>
-<<set $shopDefaults.colorSet to null>>
-<<set $shopDefaults.secColorSet to null>>
-<</if>>
-
-<<if $args[1] is "wear">>
-	<<if $colouraction isnot undefined>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<feetwear _shop_temp $colouraction $accessorycolouraction>>
-		<<else>>
-		<<feetwear _shop_temp $colouraction>>
-		<</if>>
-	<<else>>
-		<<if $accessorycolouraction isnot undefined>>
-		<<feetwear _shop_temp $accessorycolouraction>>
-		<<else>>
-		<<feetwear _shop_temp>>
-		<</if>>
-	<</if>>
-	<<updateOwned "feet">>
-<<elseif $args[1] is "send">>
-	<<set _loop to $args[3]>>
-	<<if _loop is undefined>>
-		<<set _loop to 1>>
-	<</if>>
-	<<for _s to 0; _s lt _loop; _s++>>
-		<<if $colouraction isnot undefined>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<feetsend _shop_temp "wardrobe" $colouraction $accessorycolouraction>>
-			<<else>>
-			<<feetsend _shop_temp "wardrobe" $colouraction>>
-			<</if>>
-		<<else>>
-			<<if $accessorycolouraction isnot undefined>>
-			<<feetsend _shop_temp "wardrobe" $accessorycolouraction>>
-			<<else>>
-			<<feetsend _shop_temp "wardrobe">>
-			<</if>>
-		<</if>>
-	<</for>>
-<</if>>
-
-<</nobr>><</widget>>
-
-<<widget "feetshop">><<nobr>>
-<<if $clothes_choice>>/*clothes_choice carries the index of the chosen item*/
-
-<<set _temp_choice to clone(setup.clothes.feet[$clothes_choice])>>/*Avoids using two variables as indices, as it didn't want to work.*/
-<<if _temp_choice.plural is 1>><<integrity $clothes_choice_integrity "cap">><<else>>A <<integrity $clothes_choice_integrity>><</if>> and <<reveal $clothes_choice_reveal>> <<print setup.clothes.feet[$clothes_choice].name>>. <<if setup.clothes.feet[$clothes_choice].gender is "m">><span class="lblue">For boys.</span><<elseif setup.clothes.feet[$clothes_choice].gender is "f">><span class="pink">For girls.</span><</if>> <<print setup.clothes.feet[$clothes_choice].description>> Costs <span class="gold">£<<print setup.clothes.feet[$clothes_choice].cost / 100>>.</span>
-<br><br>
-
-<<shoptraits>>
-<br>
-
-	<<if setup.clothes.feet[$clothes_choice].colour_options.length isnot 0>>
-	There's a range of colours to choose from:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.colour_options.length; _e++>>
-			<<if $shopDefaults.colorSet isnot $shopDefaults.color and _temp_choice.colour_options.includes($shopDefaults.color)>>
-				<<set $colouraction to $shopDefaults.color>>
-				<<set $shopDefaults.colorSet to $shopDefaults.color>>
-			<</if>>
-			<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-
-	<<if setup.clothes.feet[$clothes_choice].accessory_colour_options.length isnot 0>>
-	Secondary colour:
-	<br>
-		<<set _setChecked to false>>
-		<<for _e to 0; _e lt _temp_choice.accessory_colour_options.length; _e++>>
-			<<if $shopDefaults.secColorSet isnot $shopDefaults.secColor and _temp_choice.colour_options.includes($shopDefaults.secColor)>>
-				<<set $accessorycolouraction to $shopDefaults.secColor>>
-				<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
-			<</if>>
-			<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
-				<<set _setChecked to true>>
-			<<else>>
-				<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
-			<</if>>
-		<</for>>
-	<br><br>
-	<</if>>
-	<<if setup.clothes.feet[$clothes_choice].colour_options.length isnot 0 or setup.clothes.feet[$clothes_choice].accessory_colour_options.length isnot 0>>
-		<input type="button" value="Custom Colours" onclick="SugarCube.Wikifier.wikifyEval('<<shopCustomColorsToggle>>');">
-		<br>
-		<<shopCustomColors>>
-	<</if>>
-		<<if $images is 1>>
-			<input type="button" value="Image" onclick="SugarCube.Wikifier.wikifyEval('<<shopFullImageToggle>>');">
-			<br>
-			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage "feet" $clothes_choice>></div>
-			<br>
-		<</if>>
-	<<shopBuyItemStatus "feet" setup.clothes.feet[$clothes_choice].name>>
-	<<set _cost to clone(setup.clothes.feet[$clothes_choice].cost)>>
-		<<if $wardrobe.feet.length gte $wardrobe.space>>
-		<span class="blue">Your wardrobe is full. <i>$wardrobe.feet.length / $wardrobe.space</i></span>
-		<br>
-		<<elseif $daystate is "night" and $location isnot "forest">>
-			<<if $worn.feet.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span>
-			<br>
-			<<else>>
-			<<link [[Steal and wear|$passage]]>><<feetshopbuy "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-			<</if>>
-			<<link [[Steal and send home|$passage]]>><<feetshopbuy "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
-		<<elseif $money gte setup.clothes.feet[$clothes_choice].cost>>
-			<<if $worn.feet.cursed is 1>>
-			<span class="blue">You can't wear this item without first removing your $worn.feet.name.</span>
-			<br>
-			<<else>>
-
-			<<link [[Buy and wear|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "wear" $clothes_choice>><<set $money -= _cost>><<unset $clothes_choice>><</link>>
-			<br>
-			<</if>>
-			<<link [[Buy and send home|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice 1>><<set $money -= _cost>>
-				<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<<if $money gte setup.clothes.feet[$clothes_choice].cost * 5>>
-			<<link [[X 5|$passage]]>><<clothingReset "feet">><<feetshopbuy "buy" "send" $clothes_choice 5>><<set $money -= _cost * 5>>
-				<<if $shopDefaults.disableReturn is false>><<unset $clothes_choice>><</if>>
-			<</link>> |
-			<</if>>
-			<br>
-		<<else>>
-		<span class="pink">You cannot afford this item.</span>
-		<br>
-		<</if>>
-		<<if $worn.feet.cursed>>
-		<<elseif $tryOn.tryingOn>>
-			<<link [[Try On|$passage]]>><<feetshopbuy "try" null $clothes_choice>><</link>>
-			<br>
-			<<if $tryOn.tryingOn.feet isnot null>>
-			<<link [[Return|$passage]]>><<feetshopbuy "return" null $clothes_choice>><</link>>
-			<br>
-			<</if>>
-		<</if>>
-<</if>>
-<br>
-<<if $location is "forest">>
-	<<feetforestclothes>>
-<<else>>
-	<<for _i to 0; _i lt setup.clothes.feet.length; _i++>>
-		<<if setup.clothes.feet[_i].shop.includes("clothing")>>
-			<<clothingicon setup.clothes.feet[_i]>><<print '<<link [['+setup.clothes.feet[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.feet[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.feet[' + _i + '].integrity_max)>><</link>>'>>
-			| <span class="teal">£<<print setup.clothes.feet[_i].cost / 100>>.</span>
-				<<if setup.clothes.feet[_i].gender is "m">>
-					 | <span class="blue">♂</span>
-				<<elseif setup.clothes.feet[_i].gender is "f">>
-					 | <span class="pink">♀</span>
-				<</if>>
-		<br>
-		<</if>>
-	<</for>>
-<</if>>
-
 <</nobr>><</widget>>
 
 <<widget "shoptraits">><<nobr>>
@@ -2002,287 +330,12 @@ Stealthy - Makes your crimes harder to trace.
 Rainproof - Protects you from the rain.
 <br>
 <</if>>
+<br>
 <</nobr>><</widget>>
 
-<<widget "outfitforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.upper.length; _i++>>
-	<<if setup.clothes.upper[_i].shop.includes("forest") and setup.clothes.upper[_i].one_piece is 1>>
-		<<if setup.clothes.upper[_i].name is "witch dress">>
-			<<if $days gte 47>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 21st of October.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.upper[_i].name is "christmas dress">>
-			<<if $days gte 102>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 15th of December.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "upperforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.upper.length; _i++>>
-	<<if setup.clothes.upper[_i].shop.includes("forest") and setup.clothes.upper[_i].one_piece isnot 1>>
-		<<if setup.clothes.upper[_i].name is "serafuku">>
-			<<if $headdrive is 1>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Discover the headteacher's secret.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.upper[_i].name is "slut shirt">>
-			<<if $undergroundescape isnot undefined>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Survive slavery in an underground brothel.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.upper[_i].name is "vampire jacket">>
-			<<if $days gte 47>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 21st of October.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.upper[_i].name is "christmas shirt">>
-			<<if $days gte 102>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 15th of December.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.upper[_i].name is "belly dancer's top">>
-			<<if $brothelshowintro gte 1>>
-			<<print '<<link [['+setup.clothes.upper[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.upper[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.upper[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>>.</span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.upper[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.upper[_i].cost / 100>></span>
-			<<if setup.clothes.upper[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.upper[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Be offered the star role in a show at the brothel.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "lowerforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.lower.length; _i++>>
-	<<if setup.clothes.lower[_i].shop.includes("forest") and setup.clothes.lower[_i].one_piece isnot 1>>
-		<<if setup.clothes.lower[_i].name is "christmas trousers">>
-			<<if $days gte 102>>
-			<<print '<<link [['+setup.clothes.lower[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.lower[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.lower[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.lower[_i].cost / 100>>.</span>
-			<<if setup.clothes.lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.lower[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.lower[_i].cost / 100>></span>
-			<<if setup.clothes.lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 15th of December.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.lower[_i].name is "belly dancer's bottoms">>
-			<<if $brothelshowintro gte 1>>
-			<<print '<<link [['+setup.clothes.lower[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.lower[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.lower[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.lower[_i].cost / 100>>.</span>
-			<<if setup.clothes.lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.lower[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.lower[_i].cost / 100>></span>
-			<<if setup.clothes.lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Be offered the star role in a show at the brothel.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "underlowerforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.under_lower.length; _i++>>
-	<<if setup.clothes.under_lower[_i].shop.includes("forest") and setup.clothes.under_lower[_i].one_piece isnot 1>>
-		<<if setup.clothes.under_lower[_i].name is "loincloth">>
-			<<if $syndromeeden is 1 or $syndromewolves is 1>>
-			<<print '<<link [['+setup.clothes.under_lower[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.under_lower[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.under_lower[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.under_lower[_i].cost / 100>>.</span>
-			<<if setup.clothes.under_lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.under_lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.under_lower[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.under_lower[_i].cost / 100>></span>
-			<<if setup.clothes.under_lower[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.under_lower[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Befriend a lonely hunter. Or join a pack of wolves.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "headforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.head.length; _i++>>
-	<<if setup.clothes.head[_i].shop.includes("forest")>>
-		<<if setup.clothes.head[_i].name is "witch hat">>
-			<<if $days gte 47>>
-			<<print '<<link [['+setup.clothes.head[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.head[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.head[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>>.</span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.head[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>></span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 21st of October.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.head[_i].name is "christmas hat">>
-			<<if $days gte 102>>
-			<<print '<<link [['+setup.clothes.head[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.head[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.head[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>>.</span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.head[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>></span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 15th of December.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.head[_i].name is "chef hat">>
-			<<if $chef_state gte 9>>
-			<<print '<<link [['+setup.clothes.head[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.head[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.head[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>>.</span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.head[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>></span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Become famous for your cream buns.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.head[_i].name is "fedora">>
-			<<if $fedora_unlock is 1>>
-			<<print '<<link [['+setup.clothes.head[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.head[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.head[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>>.</span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.head[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.head[_i].cost / 100>></span>
-			<<if setup.clothes.head[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.head[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Eavesdrop as a bartender and learn about a criminal undertaking.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "neckforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.neck.length; _i++>>
-	<<if setup.clothes.neck[_i].shop.includes("forest")>>
-		<<if setup.clothes.neck[_i].name is "holy pendant">>
-			<<if $soup_kitchen_known is 1>>
-			<<print '<<link [['+setup.clothes.neck[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.neck[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>>.</span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.neck[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>></span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Discover the soup kitchen.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.neck[_i].name is "dark pendant">>
-			<<if $loft_known is 1>>
-			<<print '<<link [['+setup.clothes.neck[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.neck[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>>.</span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.neck[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>></span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Discover Bailey's fear.
-			<br>
-			<</if>>
-		<<elseif setup.clothes.neck[_i].name is "stone pendant">>
-			<<if $stone_pendant_found is 1>>
-			<<print '<<link [['+setup.clothes.neck[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.neck[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.neck[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>>.</span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.neck[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.neck[_i].cost / 100>></span>
-			<<if setup.clothes.neck[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.neck[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - Find beneath a loose stone at the temple.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "legsforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.legs.length; _i++>>
-	<<if setup.clothes.legs[_i].shop.includes("forest")>>
-		<<if setup.clothes.legs[_i].name is "christmas leg warmers">>
-			<<if $days gte 102>>
-			<<print '<<link [['+setup.clothes.legs[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.legs[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.legs[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.legs[_i].cost / 100>>.</span>
-			<<if setup.clothes.legs[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.legs[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.legs[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.legs[_i].cost / 100>></span>
-			<<if setup.clothes.legs[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.legs[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 15th of December.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "feetforestclothes">><<nobr>>
-
-<<for _i to 0; _i lt setup.clothes.feet.length; _i++>>
-	<<if setup.clothes.feet[_i].shop.includes("forest")>>
-		<<if setup.clothes.feet[_i].name is "witch shoes">>
-			<<if $days gte 47>>
-			<<print '<<link [['+setup.clothes.feet[_i].name_cap+'|$passage]]>><<set $clothes_choice to ' + _i + '>><<set $clothes_choice_reveal to clone(setup.clothes.feet[' + _i + '].reveal)>><<set $clothes_choice_integrity to (setup.clothes.feet[' + _i + '].integrity_max)>><</link>>'>> | <span class="teal">£<<print setup.clothes.feet[_i].cost / 100>>.</span>
-			<<if setup.clothes.feet[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.feet[_i].gender is "f">> | <span class="pink">♀</span><</if>> <span class="gold">Unlocked</span>
-			<br>
-			<<else>>
-			<span class="lblue"><<print setup.clothes.feet[_i].name_cap>></span> | <span class="teal">£<<print setup.clothes.feet[_i].cost / 100>></span>
-			<<if setup.clothes.feet[_i].gender is "m">> | <span class="blue">♂</span><<elseif setup.clothes.feet[_i].gender is "f">> | <span class="pink">♀</span><</if>> - <span class="black">Locked</span> - In stock from the 21st of October.
-			<br>
-			<</if>>
-		<<else>>
-		<</if>>
-	<</if>>
-<</for>>
-
-<</nobr>><</widget>>
 
 <<widget "shopDefaultOptions">><<nobr>>
+
 
 <br>
 <<set _colorOptions to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow", "custom"]>>
@@ -2331,6 +384,7 @@ Secondary Colour:
 <div style="clear:both;"></div>
 <div id="ColorsPresets" @class="($shopDefaults.invertCustomColorsHidden is true? '' : 'hidden')"><<shopCustomColorsPresets>></div>
 <</nobr>><</widget>>
+
 
 <<widget "shopCustomColorsDisplay">><<nobr>>
 __Custom Colours__
@@ -2383,6 +437,7 @@ Sepia:
 	<input type="range" min="0" max="1" step="0.05" @value="$customColors.sepia[$customColors.currentType]" oninput="wikifier('shopCustomColorsSet','sepia', this.value)">
 </div>
 <</nobr>><</widget>>
+
 
 <<widget "shopCustomColorsSet">><<nobr>>
 <<if $args[0] and $args[1]>>
@@ -2457,24 +512,38 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 <</if>>
 <</nobr>><</widget>>
 
-/*Args: slot, itemName, outfit*/
+/*Args: slots used in an array*/
 <<widget "shopBuyItemStatus">><<nobr>>
-<<if $args[0] and $args[1] isnot undefined>>
-	<<set _count to 0>>
-	<<for _i to 0; _i lt $wardrobe[$args[0]].length; _i++>>
-		<<if $wardrobe[$args[0]][_i].name is $args[1]>>
-			<<if $args[2] isnot true>>
-				<<set _count++>>
-			<<else>>
-				<<if $wardrobe[$args[0]][_i].one_piece is 1>>
-					<<set _count++>>
+<<if $args[0]>>
+	<<set _undamagedCount to 0>>
+	<<set _space to $wardrobe.space>>
+	<<set _spaceLeft to clone(_space)>>
+	<<for _i to 0; _i lt $args[0].length; _i++>>
+		<<if _i is 0>>
+			<<for _j to 0; _j lt $wardrobe[$args[0][0]]; _j++>>
+				<<if $wardrobe[$args[0][0]][_j].name is _temp_choice.name>>
+					<<set _undamagedCount++>>
+					<<if $wardrobe[$args[0][0]][_j].outfitPrimary isnot undefined>>
+						<<for _valueShop range $wardrobe[$args[0][0]][_j].outfitPrimary>>
+							<<if _valueShop is "broken">>
+								<<set _undamagedCount-->>
+								<<break>>
+							<</if>>
+						<</for>>
+					<</if>>
 				<</if>>
-			<</if>>
+			<</for>>
+		<</if>>
+		<<if _space - $wardrobe[$args[0][_i]].length lt _spaceLeft>>
+			<<set _spaceLeft to _space - $wardrobe[$args[0][_i]].length>>
+		<</if>>
+		Wardrobe <<print ($args[0][_i]).replace("_"," ")>> slots used: <<print $wardrobe[$args[0][_i]].length>> / _space.
+		<br>
+		<<if _i is $args[0].length - 1>>
+			You own _undamagedCount of this item<<if $args[0].length gt 1>> unbroken<</if>>.
+			<br>
 		<</if>>
 	<</for>>
-	Wardrobe <<print ($args[0]).replace("_"," ")>> slots used: <<print $wardrobe[$args[0]].length>> / 40.
-	You own _count of this item<<if $args[2] is true>> that have not been broken<</if>>.
-	<br>
 <</if>>
 <</nobr>><</widget>>
 
@@ -2522,4 +591,100 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 
 <<widget "shopFullImageToggle">><<nobr>>
 <<toggleclass #shopFullImage "hidden">>
+<</nobr>><</widget>>
+
+<<widget "specialClothesSetup">><<nobr>>
+<<if $specialClothes is undefined>>
+	<<set $specialClothes to {
+		"witchdress":"locked",
+		"christmasdress":"locked",
+		"serafuku":"locked",
+		"vampirejacket":"locked",
+		"slutshirt":"locked",
+		"christmasshirt":"locked",
+		"bellydancer'stop":"locked",
+		"christmastrousers":"locked",
+		"bellydancer'sbottoms":"locked",
+		"loincloth":"locked",
+		"witchhat":"locked",
+		"christmashat":"locked",
+		"chefhat":"locked",
+		"fedora":"locked",
+		"holypendant":"locked",
+		"darkpendant":"locked",
+		"stonependant":"locked",
+		"christmaslegwarmers":"locked",
+		"witchshoes":"locked"
+	}>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "specialClothesUpdate">><<nobr>>
+<<if $headdrive is 1>>
+	<<set $specialClothes["serafuku"] to "unlocked">>
+<</if>>
+<<if $undergroundescape isnot undefined>>
+	<<set $specialClothes["slutshirt"] to "unlocked">>
+<</if>>
+<<if $days gte 47>>
+	<<set $specialClothes["witchdress"] to "unlocked">>
+	<<set $specialClothes["vampirejacket"] to "unlocked">>
+	<<set $specialClothes["witchhat"] to "unlocked">>
+	<<set $specialClothes["witchshoes"] to "unlocked">>
+<</if>>
+<<if $days gte 102>>
+	<<set $specialClothes["christmasdress"] to "unlocked">>
+	<<set $specialClothes["christmasshirt"] to "unlocked">>
+	<<set $specialClothes["christmastrousers"] to "unlocked">>
+	<<set $specialClothes["christmashat"] to "unlocked">>
+	<<set $specialClothes["christmaslegwarmers"] to "unlocked">>
+<</if>>
+<<if $brothelshowintro gte 1>>
+	<<set $specialClothes["bellydancer'stop"] to "unlocked">>
+	<<set $specialClothes["bellydancer'sbottoms"] to "unlocked">>
+<</if>>
+<<if $syndromeeden is 1 or $syndromewolves is 1>>
+	<<set $specialClothes["loincloth"] to "unlocked">>
+<</if>>
+<<if $chef_state gte 9>>
+	<<set $specialClothes["chefhat"] to "unlocked">>
+<</if>>
+<<if $fedora_unlock is 1>>
+	<<set $specialClothes["fedora"] to "unlocked">>
+<</if>>
+<<if $soup_kitchen_known is 1>>
+	<<set $specialClothes["holypendant"] to "unlocked">>
+<</if>>
+<<if $loft_known is 1>>
+	<<set $specialClothes["darkpendant"] to "unlocked">>
+<</if>>
+<<if $stone_pendant_found is 1>>
+	<<set $specialClothes["stonependant"] to "unlocked">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "specialClothesHint">><<nobr>>
+<<if _specialClothesHint is undefined>>
+	<<set _specialClothesHint to {
+		"witchdress":"In stock from the 21st of October.",
+		"christmasdress":"In stock from the 15th of December.",
+		"serafuku":"Discover the headteacher's secret.",
+		"vampirejacket":"In stock from the 21st of October.",
+		"slutshirt":"Survive slavery in an underground brothel.",
+		"christmasshirt":"In stock from the 15th of December.",
+		"bellydancer'stop":"Be offered the star role in a show at the brothel.",
+		"christmastrousers":"In stock from the 15th of December.",
+		"bellydancer'sbottoms":"Be offered the star role in a show at the brothel.",
+		"loincloth":"Befriend a lonely hunter. Or join a pack of wolves.",
+		"witchhat":"In stock from the 21st of October.",
+		"christmashat":"In stock from the 15th of December.",
+		"chefhat":"Become famous for your cream buns.",
+		"fedora":"Eavesdrop as a bartender and learn about a criminal undertaking.",
+		"holypendant":"Discover the soup kitchen.",
+		"darkpendant":"Discover Bailey's fear.",
+		"stonependant":"Find beneath a loose stone at the temple.",
+		"christmaslegwarmers":"In stock from the 15th of December.",
+		"witchshoes":"In stock from the 21st of October.",
+	}>>
+<</if>>
 <</nobr>><</widget>>
