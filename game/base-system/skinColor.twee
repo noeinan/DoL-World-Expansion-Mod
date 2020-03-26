@@ -114,12 +114,11 @@
 
 <<widget "tanned">><<nobr>>
 <<if $skinColor.tanningEnabled is true>>
-	<!-- <<tanned # _coverageOverwrite>> is meant to represent minutes of sunbathing. PC can tan for up to 40 hrs / 2400 minutes for deep tan -->
-	/*ToDo: coverageCalc*/
 	<<set _coverage to [0,0,0,0,0,0,0,0,0]>>
-	/*<<set _coverage to [1,1,1,1,1,1,1,1,1]>>*/
-	<<if $args[1] is true>>
+	<<if $args[1] is "ignoreCoverage">>
 		<<set _coverage to [0,0,0,0,0,0,0,0,0]>>
+	<<elseif $args[1] is "tanLines">>
+		<<tannedCoverage>>
 	<</if>>
 	<<if $skinColor.sunBlock is true and $args[0] gt 0>>
 		<<set _tanChange to 0>>
@@ -156,5 +155,37 @@
 		<<set $skinColor.current[$skinColor.tanLoc[_s]] to skinColor($skinColor.tanValues[_s],$skinColor.overwrite)>>
 	<</for>>
 	<<set $skinColor.current.mouth to skinColor($skinColor.tanValues[0],$skinColor.overwrite)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "tannedCoverage">><<nobr>>
+<<if $worn.over_upper.name isnot "naked" or $worn.upper.name isnot "naked">>
+<<else>>
+	<<switch $worn.under_upper.name>>
+		<<case "bikini top">>
+			<<set _coverage[$skinColor.tanLoc.indexOf("bikiniTop")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("breasts")] to 1>>
+		<<case "school swimsuit" "foreign school swimsuit">>
+			<<set _coverage[$skinColor.tanLoc.indexOf("bikiniTop")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("swimsuitTop")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("breasts")] to 1>>
+	<</switch>>
+<</if>>
+<<if $worn.over_lower.name isnot "naked" or $worn.lower.name isnot "naked">>
+<<else>>
+	<<switch $worn.under_lower.name>>
+		<<case "bikini bottoms">>
+			<<set _coverage[$skinColor.tanLoc.indexOf("bikiniBottom")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("swimsuitBottom")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("penis")] to 1>>
+		<<case "school swimsuit bottom" "foreign school swimsuit bottom">>
+			<<set _coverage[$skinColor.tanLoc.indexOf("swimsuitBottom")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("bikiniBottom")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("penis")] to 1>>
+		<<case "school swim shorts">>
+			<<set _coverage[$skinColor.tanLoc.indexOf("swimshorts")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("bikiniBottom")] to 1>>
+			<<set _coverage[$skinColor.tanLoc.indexOf("penis")] to 1>>
+	<</switch>>
 <</if>>
 <</nobr>><</widget>>
