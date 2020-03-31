@@ -9,23 +9,19 @@
 <</nobr>><</widget>>
 
 <<widget "statbar">><<nobr>>
-	<<set _now to $args[0]>><<set _max to $args[1]>>
 	<div @class="($args[2] is true ? 'rightMeter' : 'meter')">
-		<<set _percent=Math.floor((_now/_max)*100)>>
-		<<if _now gte _max>>
-			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 4>>
-			<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 3>>
-			<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 2>>
-			<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 1>>
-			<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte 1>>
-			<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
+		<<if $args[0] is 0>>
 		<<else>>
-			<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
+			<<set _percent=Math.floor(($args[0]/$args[1])*100)>>
+			<<switch Math.floor(_percent/10)>>
+				<<case 8 9>><<set _statColor to "pinkbar">>
+				<<case 6 7>><<set _statColor to "purplebar">>
+				<<case 4 5>><<set _statColor to "bluebar">>
+				<<case 2 3>><<set _statColor to "lbluebar">>
+				<<case 0 1>><<set _statColor to "tealbar">>
+				<<default>><<set _statColor to "redbar">>
+			<</switch>>
+			<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
 		<</if>>
 	</div>
 <</nobr>><</widget>>
@@ -33,43 +29,18 @@
 <<widget "statbarinverted">><<nobr>>
 	<<set _now to $args[0]>><<set _max to $args[1]>>
 	<div @class="($args[2] is true ? 'rightMeter' : 'meter')">
-		<<set _percent=Math.floor((_now/_max)*100)>>
-		<<if _now gte _max>>
-			<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 4>>
-			<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 3>>
-			<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 2>>
-			<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte (_max / 5) * 1>>
-			<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now gte 1>>
-			<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
+		<<if $args[0] is 0>>
 		<<else>>
-			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
-		<</if>>
-	</div>
-<</nobr>><</widget>>
-
-<<widget "statbarinvertedneg">><<nobr>>
-	<<set _now to $args[0]>><<set _max to $args[1]>>
-	<div @class="($args[2] is true ? 'rightMeter' : 'meter')">
-		<<set _percent=Math.floor((_now/_max)*100)>>
-		<<if _now lte _max>>
-			<<print '<div class="greenbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now lte (_max / 5) * 4>>
-			<<print '<div class="tealbar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now lte (_max / 5) * 3>>
-			<<print '<div class="lbluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now lte (_max / 5) * 2>>
-			<<print '<div class="bluebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now lte (_max / 5) * 1>>
-			<<print '<div class="purplebar" style="width:' + _percent + '%"></div>'>>
-		<<elseif _now lte -1>>
-			<<print '<div class="pinkbar" style="width:' + _percent + '%"></div>'>>
-		<<else>>
-			<<print '<div class="redbar" style="width:' + _percent + '%"></div>'>>
+			<<set _percent=Math.floor(($args[0]/$args[1])*100)>>
+			<<switch Math.floor(_percent/10)>>
+				<<case 8 9>><<set _statColor to "tealbar">>
+				<<case 6 7>><<set _statColor to "lbluebar">>
+				<<case 4 5>><<set _statColor to "bluebar">>
+				<<case 2 3>><<set _statColor to "purplebar">>
+				<<case 0 1>><<set _statColor to "pinkbar">>
+				<<default>><<set _statColor to "greenbar">>
+			<</switch>>
+			<div @class="_statColor" @style="'width:' + _percent + '%'"></div>
 		<</if>>
 	</div>
 <</nobr>><</widget>>
@@ -871,7 +842,7 @@
 		<</if>>
 	</div>
 	<<set _showCaptionText to !$showCaptionText>>
-	<<statbarinvertedneg $awareness -200 _showCaptionText>>
+	<<statbarinverted $awareness -200 _showCaptionText>>
 	<div style="clear:both;"></div>
 </div>
 <</nobr>><</widget>>
