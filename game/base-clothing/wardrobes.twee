@@ -41,7 +41,7 @@
 	<<if _wearId is "none">>
 		<<continue>>
 	<</if>>
-	<<if $wear_delete is 0>>
+	<<if $wardrobeOption is "wear" or _wearId is "strip" or _wearId is "towel" or _wearId is "large_towel">>
 		/*Checks for cursed equip*/
 		<<unset _cursedPrevent>><<unset _outfitPieceIds>>
 		<<set _wornOutfitPrimary to $worn[_equip[_i]].outfitPrimary>>
@@ -100,10 +100,12 @@
 	<</if>>
 
 	/*Find the item to equip*/
-	<<set _item to $wardrobe[_equip[_i]][_wearId]>>
+	<<if _wearId gte 0>>
+		<<set _item to $wardrobe[_equip[_i]][_wearId]>>
+	<</if>>
 
 	/*Prevent equip when the ear slime doesnt allow it*/
-	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_i]) and $corruption_slime gte 80 and $wear_delete is 0>>
+	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_i]) and $corruption_slime gte 80 and $wardrobeOption is "wear">>
 		<<if $willpower lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
 			<span class="red">You were unable to equip your _item.name as the slime in your ear did not permit it.</span>
 			<br>
@@ -119,6 +121,9 @@
 			<<if _valueWW isnot "broken">>
 				<<for _j to 0; _j lt $wardrobe[_labelWW].length; _j++>>
 					<<if $wardrobe[_labelWW][_j].name is _valueWW and _item.colour is $wardrobe[_labelWW][_j].colour and _item.accessory_colour is $wardrobe[_labelWW][_j].accessory_colour>>
+						<<if $wardrobe[_labelWW][_j].outfitSecondary[1] isnot _item.name>>
+							<<continue>>
+						<</if>>
 						<<set _matched to 0>>
 						<<if $wardrobe[_labelWW][_j].colour isnot "custom">>
 							<<set _matched++>>
@@ -150,7 +155,7 @@
 	<</if>>
 
 	<<set $outfitPieceIds to clone(_outfitPieceIds)>>
-	<<if $wear_delete is 1 and _wearId gte 0>>
+	<<if $wardrobeOption is "delete" and _wearId gte 0>>
 		/*Delete the relating items*/
 		<<if _outfitPieceIds isnot undefined>>
 			<<for _labelWW, _valueWW range _outfitPieceIds>>
@@ -161,18 +166,37 @@
 		<<set $wardrobe[_equip[_i]].deleteAt(_wearId)>>
 		<br>
 		<<continue>>
-	<<elseif $wear_delete is 2 and _wearId gte 0>>
+	<</if>>
+
+	<<if $wardrobeOption is "repair" and _wearId gte 0>>
 		/*Repair the relating items*/
 		<<if _outfitPieceIds isnot undefined>>
 			<<for _labelWW, _valueWW range _outfitPieceIds>>
-				<<set $wardrobe[_labelWW][_valueWW].integrity = $wardrobe[_labelWW][_valueWW].integrity_max>><<pass 1>>
+				<<set $wardrobe[_labelWW][_valueWW].integrity = $wardrobe[_labelWW][_valueWW].integrity_max>>
+				<<pass 15>>
 			<</for>>
 		<</if>>
-		<<set $wardrobe[_equip[_i]][_wearId].integrity = $wardrobe[_equip[_i]][_wearId].integrity_max>><<pass 1>>
+		<<set $wardrobe[_equip[_i]][_wearId].integrity = $wardrobe[_equip[_i]][_wearId].integrity_max>>
+		<<pass 1>>
 		You repair the <<print $wardrobe[_equip[_i]][_wearId].name>>.
 		<br>
 		<<continue>>
-	<<elseif _wearId gte 0>>
+	<</if>>
+
+	<<if $wardrobeOption is "seperateOutfits" and _wearId gte 0>>
+		<<if _outfitPieceIds isnot undefined>>
+			<<for _labelWW, _valueWW range _outfitPieceIds>>
+				<<set $wardrobe[_labelWW][_valueWW].outfitSecondary[1] to "broken">>
+				<<set $wardrobe[_equip[_i]][_wearId].outfitPrimary[_labelWW] to "broken">>
+			<</for>>
+			You cut up the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+			<<pass 10>>
+			<br>
+		<</if>>
+		<<continue>>
+	<</if>>
+
+	<<if $wardrobeOption is "wear" and _wearId gte 0>>
 		/*Equip the relating items*/
 		<<generalUndress $wardrobe_location _equip[_i]>>
 		<<if _outfitPieceIds isnot undefined>>
@@ -296,16 +320,17 @@ __Clothing__
 
 <<widget "wardrobeClothingOptions">><<nobr>>
 <br>
-<<if $wear_delete is undefined>><<set $wear_delete to 0>><</if>>
-<<if $wardrobeRepeat isnot true or ($wear_delete is 2 and $location isnot "home")>><<set $wear_delete to 0>><</if>>
-<label> Wear <<print '<<radiobutton "$wear_delete" 0 '+($wear_delete is 0 or $wardrobeRepeat is false ? "checked" : "")+'>>'>></label> |
-<label> Discard <<print '<<radiobutton "$wear_delete" 1 '+($wear_delete is 1 and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
+<<if $wardrobeOption is undefined or $wardrobeOption is 0>><<set $wardrobeOption to "wear">><</if>>
+<<if $wardrobeRepeat isnot true or ($wardrobeOption is "repair" and $location isnot "home")>><<set $wardrobeOption to 0>><</if>>
+<label> Wear <<print '<<radiobutton "$wardrobeOption" "wear" '+($wardrobeOption is "wear" or $wardrobeRepeat is false ? "checked" : "")+'>>'>></label> |
+<label> Discard <<print '<<radiobutton "$wardrobeOption" "delete" '+($wardrobeOption is "delete" and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
 <<if $sewingKit is 1 and $location is "home">>
-	<label> Repair <<print '<<radiobutton "$wear_delete" 2 '+($wear_delete is 2 and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
+	<label> Repair <<print '<<radiobutton "$wardrobeOption" "repair" '+($wardrobeOption is "repair" and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
 <</if>>
+<label> Seperate Outfits <<print '<<radiobutton "$wardrobeOption" "seperateOutfits" '+($wardrobeOption is "seperateOutfits" and $wardrobeRepeat is true ? "checked" : "")+'>>'>></label> |
 <label> Repeat Actions <<print '<<checkbox "$wardrobeRepeat" false true '+($wardrobeRepeat ? "checked" : "")+'>>'>></label>
 
-<<if $wear_delete is 1 and $wardrobeRepeat is true>>
+<<if $wardrobeOption is "delete" and $wardrobeRepeat is true>>
 	<h2 class="red">Discard On Repeat</h2>
 <<else>>
 	<br><br>
@@ -338,7 +363,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 		lower: clone($worn.lower.name),
 		under_upper: clone($worn.under_upper.name),
 		under_lower: clone($worn.under_lower.name),
-		over_head: clone($worn.head.name),
+		over_head: clone($worn.over_head.name),
 		head: clone($worn.head.name),
 		face: clone($worn.face.name),
 		neck: clone($worn.neck.name),
