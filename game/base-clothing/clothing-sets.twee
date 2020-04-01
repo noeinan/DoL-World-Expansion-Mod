@@ -13,8 +13,8 @@
 <<if $alwaysSleepNaked isnot true>>
 	<<for _i to 0; _i lt $outfit.length; _i++>>
 		<<if $outfit[_i].type.includes("sleep")>>
-		<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|Bed]]>><<set $wear_outfit to ' + _i + '>><<undress "bed">><</link>>'>>
-		<br>
+			<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|Bed]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
+			<br>
 		<</if>>
 	<</for>>
 <<else>>
@@ -85,7 +85,11 @@
 		<</if>>
 
 		<<if _preventItemEquip is true>>
-			<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "cursed slot"}>>
+			<<if $outfit[$wear_outfit][_equip[_i]] is "naked">>
+				<<set _notEquipped[_equip[_i]] to {"name": $worn[_equip[_i]].name_cap, "reason": "cursed unequip"}>>
+			<<else>>
+				<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "cursed slot"}>>
+			<</if>>
 		<<else>>
 			<<if $outfit[$wear_outfit][_equip[_i]] is "naked">>
 				<<generalUndress $wardrobe_location _equip[_i]>>
@@ -108,7 +112,6 @@
 					<</switch>>
 				<</if>>
 			<<else>>
-				<<generalUndress $wardrobe_location _equip[_i]>>
 				<<set _foundEquip to null>><<set _lastResort to null>><<unset _outFitPieces>>
 				<<for _j to 0; _j lt $wardrobe[_equip[_i]].length; _j++>>
 					<<if $outfit[$wear_outfit][_equip[_i]] is $wardrobe[_equip[_i]][_j].name>>
@@ -185,13 +188,16 @@
 				
 				/*Ensure at this point, the main piece of clothing has been found*/
 				<<if _foundEquip isnot null>>
+					/*Undress equip*/
+					<<generalUndress $wardrobe_location _equip[_i]>>
+
 					/*Find all the outfit pieces now the main least damaged piece has been found if the clothing is part of an outfit*/
 					<<unset _outfitPrimaryWearOutfit>>
 					<<set _outfitPrimaryWearOutfit to $wardrobe[_equip[_i]][_foundEquip[_equip[_i]]].outfitPrimary>>
 					<<if _outfitPrimaryWearOutfit isnot undefined>>
 						<<for _labelWO, _valueWO range _outfitPrimaryWearOutfit>>
 							<<if _valueWO isnot "broken">>
-								<<undressSwitch _labelWO>>
+								<<generalUndress $wardrobe_location _labelWO>>
 								<<for _k to 0; _k lt $wardrobe[_labelWO].length; _k++>>
 									<<if _valueWO is $wardrobe[_labelWO][_k].name>>
 										/*Skip broken pieces*/
@@ -238,14 +244,8 @@
 					/*Equip all the clothing items*/
 				
 					<<for _labelWO, _valueWO range _foundEquip>>
-						<<if _equip[_i] is "upper">>
-							<<set $test3 to [clone(_labelWO),clone(_valueWO),clone(_foundEquip)]>>
-						<</if>>
 						<<set $worn[_labelWO] to clone($wardrobe[_labelWO][_valueWO])>>
 						<<set $wardrobe[_labelWO].deleteAt(_valueWO)>>
-						<<if _equip[_i] is "upper">>
-							<<set $testResult to clone($worn.upper)>>
-						<</if>>
 					<</for>>
 				<<else>>
 					<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found"}>>
@@ -294,6 +294,17 @@
 					<</if>>
 					<<set _resultStrings.cursed[_resultStrings.cursed.count] to _notEquipped[_keys[_i]].name>>
 					<<set _resultStrings.cursed.count++>>
+				<<case "cursed unequip">>
+					<<if _resultStrings.cursedUnequip is undefined>>
+						<<set _resultStrings.cursedUnequip to {
+							"start": "You were unable to unequip your ",
+							"end": " due to not being able to remove it on your own.",
+							"count": 0,
+							"color": "red"
+						}>>
+					<</if>>
+					<<set _resultStrings.cursedUnequip[_resultStrings.cursedUnequip.count] to _notEquipped[_keys[_i]].name>>
+					<<set _resultStrings.cursedUnequip.count++>>
 				<<case "not found piece">>
 					<<if _resultStrings.notFoundPiece is undefined>>
 						<<set _resultStrings.notFoundPiece to {
@@ -329,23 +340,9 @@
 <<set $wear_outfit to "none">>
 <</nobr>><</widget>>
 
-<<widget "undressSwitch">><<nobr>>
-<<switch $args[0]>>
-	<<case "upper">><<upperundress $wardrobe_location>>
-	<<case "lower">><<lowerundress $wardrobe_location>>
-	<<case "under_upper">><<underupperundress $wardrobe_location>>
-	<<case "under_lower">><<underlowerundress $wardrobe_location>>
-	<<case "head">><<headundress $wardrobe_location>>
-	<<case "face">><<faceundress $wardrobe_location>>
-	<<case "neck">><<neckundress $wardrobe_location>>
-	<<case "legs">><<legsundress $wardrobe_location>>
-	<<case "feet">><<feetundress $wardrobe_location>>
-<</switch>>
-<</nobr>><</widget>>
-
 <<widget "overwriteoutfit">><<nobr>>
 <<if $delete_outfit is 2 and $wear_outfit isnot "none">>
-	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+	<<set _equip to ["over_head","over_upper","over_lower","upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
 	<<set _outfit to $outfit[$wear_outfit]>>
 	<<for _i to 0; _i lt _equip.length;_i++>>
 		<<set _outfit[_equip[_i]] to $worn[_equip[_i]].name>>
