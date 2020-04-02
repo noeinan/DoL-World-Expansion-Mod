@@ -16,12 +16,12 @@
 <<set _towelCheck to ["upper", "lower"]>>
 <<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "legs":false, "feet":false}>>
 
-<<for _i to 0; _i lt _equip.length;_i++>>
-	<<if _equipSkip[_equip[_i]] is true>>
+<<for _ie to 0; _ie lt _equip.length;_ie++>>
+	<<if _equipSkip[_equip[_ie]] is true>>
 		<<continue>>
 	<</if>>
 	<<unset _wearId>><<unset _item>>
-	<<switch _equip[_i]>>
+	<<switch _equip[_ie]>>
 		<<case "over_upper">><<set _wearId to $wear_over_upper>>
 		<<case "over_lower">><<set _wearId to $wear_over_lower>>
 		<<case "upper">><<set _wearId to $wear_upper>>
@@ -44,9 +44,9 @@
 	<<if $wardrobeOption is "wear" or _wearId is "strip" or _wearId is "towel" or _wearId is "large_towel">>
 		/*Checks for cursed equip*/
 		<<unset _cursedPrevent>><<unset _outfitPieceIds>>
-		<<set _wornOutfitPrimary to $worn[_equip[_i]].outfitPrimary>>
-		<<if $worn[_equip[_i]].cursed is 1>>
-			You try to remove the <<print $worn[_equip[_i]].name>>, but fail. <<print "<<cursedtext "+$worn[_equip[_i]].name+">>">>
+		<<set _wornOutfitPrimary to $worn[_equip[_ie]].outfitPrimary>>
+		<<if $worn[_equip[_ie]].cursed is 1>>
+			You try to remove the <<print $worn[_equip[_ie]].name>>, but fail. <<print "<<cursedtext "+$worn[_equip[_ie]].name+">>">>
 			<br>
 			<<set _cursedPrevent to true>>
 		<</if>>
@@ -64,7 +64,7 @@
 
 		/*Strips equip and puts it in the wardrobe*/
 		<<if _wearId is "strip">>
-			You remove the <<print $worn[_equip[_i]].name>>.<<generalUndress $wardrobe_location _equip[_i]>>
+			You remove the <<print $worn[_equip[_ie]].name>>.<<generalUndress $wardrobe_location _equip[_ie]>>
 			<br>
 			<<if _wornOutfitPrimary isnot undefined>>
 				<<for _labelWW, _valueWW range _wornOutfitPrimary>>
@@ -78,10 +78,10 @@
 		<<unset _wornOutfitPrimary>>
 
 		/*Strips equip, puts it in the wardrobe and equips a towl*/
-		<<if _wearId is "towel" and _towelCheck.includes(_equip[_i])>>
-			<<generalUndress $wardrobe_location _equip[_i]>>
-			<<set $worn[_equip[_i]] to clone(setup.clothes[_equip[_i]][3])>><<set $worn[_equip[_i]].colour to clone($worn[_equip[_i]].colour_options.random())>>
-			<<if _equip[_i] is "upper">>
+		<<if _wearId is "towel" and _towelCheck.includes(_equip[_ie])>>
+			<<generalUndress $wardrobe_location _equip[_ie]>>
+			<<set $worn[_equip[_ie]] to clone(setup.clothes[_equip[_ie]][3])>><<set $worn[_equip[_ie]].colour to clone($worn[_equip[_ie]].colour_options.random())>>
+			<<if _equip[_ie] is "upper">>
 				You tie a towel around your chest.
 			<<else>>
 				You tie a towel around your waist.
@@ -89,7 +89,7 @@
 			<br><br>
 			<<continue>>
 		<</if>>
-		<<if _wearId is "large_towel" and _equip[_i] is "upper">>
+		<<if _wearId is "large_towel" and _equip[_ie] is "upper">>
 			<<generalUndress $wardrobe_location "upper">><<generalUndress $wardrobe_location "lower">>
 			<<set $worn.upper to clone(setup.clothes.upper[14])>><<set $worn.upper.colour to clone($worn.upper.colour_options.random())>>
 			<<set $worn.lower to clone(setup.clothes.lower[15])>><<set $worn.lower.colour to clone($worn.upper.colour)>>
@@ -101,11 +101,11 @@
 
 	/*Find the item to equip*/
 	<<if _wearId gte 0>>
-		<<set _item to $wardrobe[_equip[_i]][_wearId]>>
+		<<set _item to $wardrobe[_equip[_ie]][_wearId]>>
 	<</if>>
 
 	/*Prevent equip when the ear slime doesnt allow it*/
-	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_i]) and $corruption_slime gte 80 and $wardrobeOption is "wear">>
+	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_ie]) and $corruption_slime gte 80 and $wardrobeOption is "wear">>
 		<<if $willpower lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
 			<span class="red">You were unable to equip your _item.name as the slime in your ear did not permit it.</span>
 			<br>
@@ -154,7 +154,6 @@
 		<<unset _outfitPieceIds>>
 	<</if>>
 
-	<<set $outfitPieceIds to clone(_outfitPieceIds)>>
 	<<if $wardrobeOption is "delete" and _wearId gte 0>>
 		/*Delete the relating items*/
 		<<if _outfitPieceIds isnot undefined>>
@@ -162,8 +161,8 @@
 				<<set $wardrobe[_labelWW].deleteAt(_valueWW)>>
 			<</for>>
 		<</if>>
-		You discard the <<print $wardrobe[_equip[_i]][_wearId].name>>.
-		<<set $wardrobe[_equip[_i]].deleteAt(_wearId)>>
+		You discard the <<print $wardrobe[_equip[_ie]][_wearId].name>>.
+		<<set $wardrobe[_equip[_ie]].deleteAt(_wearId)>>
 		<br>
 		<<continue>>
 	<</if>>
@@ -176,9 +175,9 @@
 				<<pass 15>>
 			<</for>>
 		<</if>>
-		<<set $wardrobe[_equip[_i]][_wearId].integrity = $wardrobe[_equip[_i]][_wearId].integrity_max>>
+		<<set $wardrobe[_equip[_ie]][_wearId].integrity = $wardrobe[_equip[_ie]][_wearId].integrity_max>>
 		<<pass 1>>
-		You repair the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+		You repair the <<print $wardrobe[_equip[_ie]][_wearId].name>>.
 		<br>
 		<<continue>>
 	<</if>>
@@ -187,28 +186,35 @@
 		<<if _outfitPieceIds isnot undefined>>
 			<<for _labelWW, _valueWW range _outfitPieceIds>>
 				<<set $wardrobe[_labelWW][_valueWW].outfitSecondary[1] to "broken">>
-				<<set $wardrobe[_equip[_i]][_wearId].outfitPrimary[_labelWW] to "broken">>
+				<<set $wardrobe[_equip[_ie]][_wearId].outfitPrimary[_labelWW] to "broken">>
 			<</for>>
-			You cut up the <<print $wardrobe[_equip[_i]][_wearId].name>>.
+			You cut up the <<print $wardrobe[_equip[_ie]][_wearId].name>>.
 			<<pass 10>>
 			<br>
 		<</if>>
 		<<continue>>
 	<</if>>
-
+	<<if $test1 is undefined>>
+		<<set $test1 to {}>>
+		<<set $test2 to {}>>
+		<<set $test3 to {}>>
+	<</if>>
+	<<set $test1[_equip[_ie]] to [clone($worn.upper),clone($worn.lower)]>>
 	<<if $wardrobeOption is "wear" and _wearId gte 0>>
 		/*Equip the relating items*/
-		<<generalUndress $wardrobe_location _equip[_i]>>
+		<<generalUndress $wardrobe_location _equip[_ie]>>
+		<<set $test2[_equip[_ie]] to [clone($worn.upper),clone($worn.lower)]>>
 		<<if _outfitPieceIds isnot undefined>>
 			<<for _labelWW, _valueWW range _outfitPieceIds>>
-				<<generalUndress $wardrobe_location _labelWW>>
+				<<generalUndress $wardrobe_location `clone(_labelWW)`>>
+				<<set $test3[_equip[_ie]] to [clone($worn.upper),clone($worn.lower)]>>
 				<<set $worn[clone(_labelWW)] to clone($wardrobe[clone(_labelWW)][clone(_valueWW)])>>
 				<<set $wardrobe[_labelWW].deleteAt(_valueWW)>>
 			<</for>>
 		<</if>>
-		<<set $worn[_equip[_i]] to clone($wardrobe[_equip[_i]][_wearId])>>
-		You put on the <<print $wardrobe[_equip[_i]][_wearId].name>>.
-		<<set $wardrobe[_equip[_i]].deleteAt(_wearId)>>
+		<<set $worn[_equip[_ie]] to clone($wardrobe[_equip[_ie]][_wearId])>>
+		You put on the <<print $wardrobe[_equip[_ie]][_wearId].name>>.
+		<<set $wardrobe[_equip[_ie]].deleteAt(_wearId)>>
 		<br><br>
 	<</if>>
 <</for>>
@@ -382,10 +388,10 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<if $saveColor is true>>
 		<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
 		<<set _colors to {}>>
-		<<for _i to 0; _i lt _equip.length; _i++>>
-			<<set _colors[_equip[_i]] to [clone($worn[_equip[_i]].colour),clone($worn[_equip[_i]].accessory_colour)]>>
-			<<if $worn[_equip[_i]].colour is "custom" or $worn[_equip[_i]].accessory_colour is "custom">>
-				<<run _colors[_equip[_i]+"custom"] to [clone($worn[_equip[_i]].colourCustom),clone($worn[_equip[_i]].accessory_colourCustom)]>>
+		<<for _ie to 0; _ie lt _equip.length; _ie++>>
+			<<set _colors[_equip[_ie]] to [clone($worn[_equip[_ie]].colour),clone($worn[_equip[_ie]].accessory_colour)]>>
+			<<if $worn[_equip[_ie]].colour is "custom" or $worn[_equip[_ie]].accessory_colour is "custom">>
+				<<run _colors[_equip[_ie]+"custom"] to [clone($worn[_equip[_ie]].colourCustom),clone($worn[_equip[_ie]].accessory_colourCustom)]>>
 			<</if>>
 		<</for>>
 		<<set $outfit.last().colors to clone(_colors)>>

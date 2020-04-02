@@ -1,0 +1,201 @@
+:: Museum Look around [nobr]
+<<set $outside to 0>>
+<<museumAntiqueText>>
+You are looking around the museum.
+<<if $museumAntiques.museumCount is 0>>
+    Empty
+<<elseif $museumAntiques.museumCount lt $museumAntiques.maxCount / 3>>
+    Starting off
+<<elseif $museumAntiques.museumCount lt $museumAntiques.maxCount / 2>>
+    Looking Better
+<<elseif $museumAntiques.museumCount lt $museumAntiques.maxCount / 1.5>>
+    Starting to look good
+<<elseif $museumAntiques.museumCount lt $museumAntiques.maxCount / 1.25>>
+    Almost amazing
+<<elseif $museumAntiques.museumCount lt $museumAntiques.maxCount>>
+    Amazing
+<<elseif $museumAntiques.museumCount is $museumAntiques.maxCount>>
+    Found them All
+<</if>>
+<br><br>
+
+<<set _possibleHints to []>>
+<ul>
+<<for _labelM, _valueM range $museumAntiques.antiques>>
+    <<switch _valueM>>
+        <<case "museum">><li><<print _museumAntiqueText[_labelM].museum>></li>
+        <<case "found" "talk">><li>Maybe you should show the <<print _museumAntiqueText[_labelM].name>> to Winter.</li>
+        <<case "notFound">><li>An empty spot, maybe Winter has plans for it. <<run _possibleHints.push(_labelM)>></li>
+    <</switch>>
+<</for>>
+</ul>
+
+<<if _possibleHints.length gt 0>>
+    <<if $winterHint is "notGiven">>
+        <<set $winterHint to _possibleHints[random(0,_possibleHints.length - 1)]>>
+    <</if>>
+
+    <<if $winterHint isnot "seen">>
+        <<link [[Ask Winter about rumors of antiques|Winter Hint]]>><</link>>
+        <br>
+    <</if>>
+<</if>>
+
+<br>
+<<link [["Go back to the entrance"|Museum]]>><</link>>
+
+:: Winter Hint [nobr]
+<<set $outside to 0>>
+<<museumAntiqueText>>
+<<npc Winter>><<person1>>
+You find Winter polishing some antiques and mention the empty spot. <<He>> looks to the spot your pointing to and says "<<print _museumAntiqueText[$winterHint].hint>>"
+<<set $winterHint to "seen">>
+<br><br>
+<<link [[Next|Museum Look around]]>><<endevent>><</link>>
+
+:: MuseumAntiques [widget]
+<<widget "museumAntiqueStatus">><<nobr>>
+<<if $args[0] and $args[1]>>
+    <<if ($museumAntiques.antiques[$args[0]] is "notFound" and $args[1] is "found")
+    or ($museumAntiques.antiques[$args[0]] is "found" and $args[1] is "talk")
+    or ($museumAntiques.antiques[$args[0]] is "talk" and $args[1] is "museum")>>
+        <<set $museumAntiques.antiques[$args[0]] to $args[1]>>
+        <<if $args[1] is "museum">>
+            <<set $museumAntiques.museumCount++>>
+        <</if>>
+    <</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "museumAntiqueText">><<nobr>>
+<<if _museumAntiqueText is undefined>>
+    <<set _museumAntiqueText to {
+        "antiquebox":{
+            hint:"",
+            museum:"The Antique Box sits on a pedistal.",
+            name:"Antique Box"
+        },
+        "antiquesilverring":{
+            hint:"",
+            museum:"The Antique Silver Ring sits on a pedistal.",
+            name:"Antique Silver Ring"
+        },
+        "antiquegoldnecklace":{
+            hint:"",
+            museum:"The Antique Gold Necklace sits on a pedistal.",
+            name:"Antique Gold Necklace"
+        },
+        "antiqueivorynecklace":{
+            hint:"",
+            museum:"A spot for the Antique Ivory Necklace is looking bare as it was taken away at some point.",
+            name:"Antique Ivory Necklace"
+        },
+        "antiquecrystal":{
+            hint:"",
+            museum:"The Antique Crystal sits on a pedistal.",
+            name:"Antique Crystal"
+        },
+        "antiquehorn":{
+            hint:"",
+            museum:"The Antique Horn sits on a pedistal.",
+            name:"Antique Horn"
+        },
+        "antiquewatch":{
+            hint:"",
+            museum:"The Antique Watch sits on a pedistal.",
+            name:"Antique Watch"
+        },
+        "antiquedildo":{
+            hint:"",
+            museum:"The Antique Dildo sits on a pedistal.",
+            name:"Antique Dildo"
+        },
+        "antiquecandlestick":{
+            hint:"",
+            museum:"The Antique  Candle Stick sits on a pedistal.",
+            name:"Antique Candle Stick"
+        },
+        "antiqueforestarrow":{
+            hint:"",
+            museum:"The Antique Forest Arrow sits on a pedistal.",
+            name:"Antique Forest Arrow"
+        },
+        "antiqueforestdagger":{
+            hint:"",
+            museum:"The Antique Forest Dagger sits on a pedistal.",
+            name:"Antique Forest Dagger"
+        },
+        "antiqueforestgem":{
+            hint:"",
+            museum:"The Antique Forest Gem sits on a pedistal.",
+            name:"Antique Forest Gem"
+        },
+        "antiquesilverbrooch":{
+            hint:"test",
+            museum:"The Antique Silver Brooch sits on a pedistal.",
+            name:"Antique Silver Brooch"
+        },
+        "antiquetrashcup":{
+            hint:"",
+            museum:"The Antique Trash Cup sits on a pedistal.",
+            name:"Antique Trash Cup"
+        },
+        "antiquetrashburner":{
+            hint:"",
+            museum:"The Antique Trash Burner sits on a pedistal.",
+            name:"Antique Trash Burner"
+        },
+        "antiquebrassstatuette":{
+            hint:"",
+            museum:"The Antique Brass Statuette sits on a pedistal.",
+            name:"Antique Brass Statuette"
+        },
+        "antiquegoldchastitybelt":{
+            hint:"",
+            museum:"The Antique Gold Chastity Belt is wrapped around a female looking mannequin.",
+            name:"Antique Gold Chastity Belt"
+        },
+    }>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "updateMuseumAntiques">><<nobr>>
+<<if $museumAntiques is undefined>>
+    <<set $museumAntiques to {
+        antiques:{
+            "antiquebox":"notFound",
+            "antiquesilverring":"notFound",
+            "antiquegoldnecklace":"notFound",
+            "antiqueivorynecklace":"notFound",
+            "antiquecrystal":"notFound",
+            "antiquehorn":"notFound",
+            "antiquewatch":"notFound",
+            "antiquedildo":"notFound",
+            "antiquecandlestick":"notFound",
+            "antiqueforestarrow":"notFound",
+            "antiqueforestdagger":"notFound",
+            "antiqueforestgem":"notFound",
+            "antiquesilverbrooch":"notFound",
+            "antiquetrashcup":"notFound",
+            "antiquetrashburner":"notFound",
+            "antiquebrassstatuette":"notFound",
+            "antiquegoldchastitybelt":"notFound",
+        },
+        museumCount:0
+    }>>
+    <<for _labelM, _valueM range $museumAntiques.antiques>>
+        <<print '<<if $'+_labelM+' isnot undefined>>'+
+            '<<set $museumAntiques.antiques.'+_labelM+' to $'+_labelM+'>>'+
+        '<</if>>'>>
+        <<if $museumAntiques.antiques[_labelM] is "museum">>
+            <<set $museumAntiques.museumCount++>>
+        <</if>>
+    <</for>>
+<</if>>
+<<if $winterHint is undefined>>
+    <<set $winterHint to "notGiven">>
+<</if>>
+
+/*Should be the last to always run*/
+<<set $museumAntiques.maxCount to Object.keys($museumAntiques.antiques).length>>
+<</nobr>><</widget>>
