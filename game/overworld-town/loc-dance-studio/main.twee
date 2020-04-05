@@ -9,7 +9,15 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 <<else>>
 	<<if $hour is $closinghour>>
 		It's closing time. The receptionist is herding everyone outside.<<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should you be found in this state of dress.<</if>>
-		<br><br>
+		<br>
+		<<storeon "dance_studio" "check">>
+			<<if _store_check is 1>>
+				<br>
+				You remember you left your clothes in the changing room.
+				<br>
+				<<link [[Dress before leaving|Barb Street]]>><<storeon "dance_studio">><</link>>
+				<br>
+			<</if>>
 	<<elseif $openinghours is 0>>
 		You are alone in the darkness.
 		<br><br>
@@ -24,15 +32,95 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 	<</if>>
 	<<if $openinghours is 1 and $money gte 1200 and $exposed lt 1>>
 		<<link [[Take a lesson (1:00)|Dancing Lesson]]>><<set $phase to 0>><<set $money -= 1200>><<set $dancestage to 0>><</link>> Costs £12 <<gtiredness>>
+		<br>
+	<</if>>
+	<<if $hour isnot $closinghour>>
+		<<link [[Changing Room|Dance Studio Changing Room]]>><</link>>
+		<br>
 	<</if>>
 	<<if $openinghours is 0 and $hour isnot $closinghour and $dancestudiotheft isnot 1>>
 		<<link [[Examine the cash register|Dance Studio Register]]>><</link>>
 		<br>
 	<</if>>
 	<br>
-	[[Leave|Barb Street]]
-	<br><br>
+	<<storeon "dance_studio" "check">>
+	<<if _store_check is 1 and ($worn.upper.name is "naked" or $worn.lower.name is "naked") and $exposed is 1>>
+		You left clothes in the changing room. Your <span class="lewd"><<lewdness>></span> is fine in here, but would be considered lewd outside.
+		<br><br>
+		<<if $exhibitionism gte 15>>
+			<<link [[Go outside anyway|Dance Studio Outside Exhibitionism]]>><</link>><<if $ex_studio isnot 1>><<exhibitionist2>><</if>>
+			<br>
+		<</if>>
+	<<else>>
+		[[Leave|Barb Street]]
+		<br><br>
+	<</if>>
 <</if>>
+
+:: Dance Studio Changing Room [nobr]
+<<effects>>
+
+You are in the dance studio's changing room. Benches line the walls, with hooks for clothes hanging above.
+<br><br>
+
+You could strip down to a leotard or similar dance clothes here.
+<br><br>
+
+<<storeon "dance_studio" "check">>
+<<if _store_check is 1>>
+	You left your clothes here.<br>
+	<<link [[Wear|Dance Studio Changing Room]]>><<storeon "dance_studio">><</link>>
+	<br>
+<</if>>
+
+
+
+<<if $worn.under_upper.type.includes("dance") and $worn.under_lower.type.includes("dance")>>
+	<<if $worn.upper.name isnot "naked">>
+		<<link [[Strip down to your dance clothes|Dance Studio Change]]>><</link>>
+		<br>
+	<<elseif $worn.lower.name isnot "naked">>
+		<<link [[Strip down to your dance clothes|Dance Studio Change]]>><</link>>
+		<br>
+	<</if>>
+<</if>>
+<br>
+<<link [[Leave|Dance Studio]]>><</link>>
+<br>
+
+
+:: Dance Studio Change [nobr]
+<<effects>>
+
+<<if $worn.upper.name isnot "naked">>
+	<<if $worn.lower.name isnot "naked" and $worn.upper.set isnot $worn.lower.set>>
+		You remove your $worn.lower.name, and hang it on one of the hooks.
+		<<lowerundress "dance_studio">>
+	<<else>>
+		You remove your $worn.upper.name, and hang it on one of the hooks.
+		<<upperundress "dance_studio">>
+	<</if>>
+<<elseif $worn.lower.name isnot "naked">>
+	You remove your $worn.lower.name, and hang it on one of the hooks.
+	<<lowerundress "dance_studio">>
+<</if>>
+<br><br>
+
+<<link [[Next|Dance Studio Changing Room]]>><</link>>
+<br>
+
+:: Dance Studio Outside Exhibitionism [nobr]
+<<effects>>
+
+<<flaunting>> you step outside. You're not wearing normal outdoor attire. A few people glance over and look you up and down, examining your contours.<<if $ex_studio isnot 1>><<set $ex_studio to 1>><<exhibitionism3>><<else>><br><br><</if>>
+
+Your heart beats faster as you walk away from the dance studio, and away from relative safety.
+<br><br>
+
+
+<<link [[Next|Barb Street]]>><</link>>
+<br>
+
 
 :: Dance Studio Lock [nobr]
 
@@ -94,7 +182,7 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 	<<link [[Next|Dancing Lesson]]>><<endevent>><</link>>
 	<br>
 <<elseif $dancestage gte 2>>
-	<<tiredness 4>><<set $danceskill += 15>><<danceskilluse>><<wearandtear "dance">><<physique 2>>
+	<<tiredness 4>><<set $danceskill += 14>><<danceskilluse>><<wearandtear "dance">><<physique 2>>
 	The rest of the lesson passes uneventfully.
 	<br><br>
 	<<link [[Next|Dance Studio]]>><<endevent>><</link>>
@@ -113,7 +201,7 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 		<br><br>
 		<</if>>
 	<</if>>
-	<<tiredness 4>><<set $dancestage += 1>><<set $danceskill += 15>><<danceskilluse>><<wearandtear "dance">><<physique 2>><<npc Charlie>><<person1>>
+	<<tiredness 4>><<set $dancestage += 1>><<set $danceskill += 14>><<danceskilluse>><<wearandtear "dance">><<physique 2>><<npc Charlie>><<person1>>
 	<<if $rng lte 20>>
 		<<set $dancelesson to "barre">>
 		You stretch and work your muscles using a barre.
@@ -148,7 +236,7 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 		<</if>>
 		<br><br>
 		<<if $worn.lower.skirt is 1>>
-			You quickly realise it may have been a mistake to wear a skirt. Performing airborne exercises without displaying your <<undies>> for the whole class to see proves to be virtually impossible.
+			You realise it may have been a mistake to wear a skirt. Performing airborne exercises without displaying your <<undies>> for the whole class to see proves to be virtually impossible.
 					<<if $uncomfortable.nude is false>>
 					<span class="lewd">You don't mind people looking.</span><<garousal>><<arousal 600>>
 					<br><br>
@@ -210,7 +298,7 @@ You are in the dance studio. Here you can pay for lessons to improve your dancin
 				As you regain your bearings, you see your $worn.under_lower.name suspended in the air above you. You take your time and wear a confident smile as you retrieve them, despite the whispers and giggling all around you.
 				<<garousal>>
 				<<else>>
-				As you regain your bearings, you see your $worn.under_lower.name suspended in the air above you. Flustered at your <<undies>> being exposed in the middle of class like this, you hasten to recover your $worn.under_lower.name as quickly as you can, conscious of the whispers and giggling all around you.
+				As you regain your bearings, you see your $worn.under_lower.name suspended in the air above you. Flustered at your <<genitals>> being exposed in the middle of class like this, you hasten to recover your $worn.under_lower.name as quickly as you can, conscious of the whispers and giggling all around you.
 				<<gtrauma>><<gstress>><<garousal>>
 				<</if>>
 			<<else>>
