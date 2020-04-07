@@ -1,5 +1,154 @@
 # CHANGELOG
 
+## 0.2.11.1
+
+- Added art to represent the heart, paw print, flower, skull, flame, butterfly, unicorn, star and cross tattoos to the sidebar, doggy and missionary sprites. Art courtesy of PurityGuy.
+- Added more body-writing art to the sidebar and encounter sprites to better distinguish between writing accompanied by an arrow, and writing without an arrow. Art also courtesy of PurityGuy.
+- You can now ask Winter for hints on antique locations. Written by PurityGuy and coded by Lollipop Scythe.
+- Added the cheongsam, short cheongsam, cable knit turtleneck, turtleneck jumper, and v neck to the clothing shop. Art courtesy of KG.
+
+### Balance Changes
+
+- Made the regular turtleneck more revealing.
+
+### Bug Fixes
+
+- Fixed an error found in the brothel. Thanks to Lollipop Scythe and bsin.
+- Fixed an error found in the clothing shops.
+- Female NPCs will now longer mistake their hand for yours while masturbating.
+- Fixed a bug that hide some of the right shoulder body-writing on the sidebar sprite.
+- Fixed a bug that could make body-writing appear in the wrong spot while grappled in the missionary position.
+- Body-writing will no longer be concealed by the PC's blush.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that caused the ear slime to forbid clothing without being present.
+- Fixed a bug that prevented clothing shops from working.
+- Fixed a bug that caused the pain icon on thin screens to be red when it shouldn't
+- Fixed a bug that broke outfit set colours
+- Fixed a bug caused by test code that was left in by mistake.
+- Fixes and tidying of swimming events.
+- Angels will now keep their halos nice and clean.
+- Fixed skin colour description in characteristics.
+- The "Most Innocent" feat is no longer obtainable by sleeping through the first day.
+
+## 0.2.11.0
+
+- Added new events for exposed characters sneaking through the park and alleyways. Each area has a different event.
+- Avery will now sometimes take the PC to a party instead of a restaurant when out on a date. Skill in dancing will be useful, but the competition can be nasty.
+- Added more boats out at sea, the crews of which are less hostile than the existing ones. They're willing to help the PC back to shore, but may ask for something in return.
+- Added a potentially dangerous event for exposed characters sneaking through the town's streets at night.
+- Added an event that can trigger on the town's streets while exposed during the day.
+- Exposed characters can buy sweets from a service station on the High Street at night, with a couple of results. Requires exhibitionism 3 if wearing underwear or equivalent, and exhibitionism 5 if naked. The scenes are longer if naked.
+- The wardrobe will now display information about the items you're wearing, including their traits and description. Thanks to larsrand and Lollipop Scythe.
+- Exiting the orphanage at night is now considered an exhibitionism 2 act if wearing underwear or equivalent, and an exhibitionism 4 act if naked.
+- The orphanage can now be exited during the day while exposed as an exhibitionism 3 act while wearing underwear or equivalent, and an exhibitionism 5 act if naked.
+- The strip club and brothel can also be exited while exposed using similar rules to the orphanage. The strip club's security might try to stop you.
+- The strip club and brothel can now be accessed during active hours while exposed, though getting spotted is likely.
+- Added brief scenes for leaving the orphanage, club and brothel while undressed at night and at day.
+- Added changing rooms to the dance studio, where you can store your clothes if you're wearing a leotard beneath.
+- You can now leave the dance studio in just a leotard or similar as an Exhibitionism 2 act.
+- The exhibitionism boost from going outside undressed only applies once per day per location.
+- Added a bit more flavour when the PC is forced to cover themselves when exposed.
+- Swimming and physique checks out in the world now display a description of your chances of success, including a percentage.
+- Split some of physique's functionality into a separate skill, called athletics. Physique checks that involve running and similar now check athletics instead.
+- Athletics is unaffected by player size, and does not decay. Actions like running at the park or beach improve athletics. Actions that improve athletics also improve physique.
+- Actions that check athletics are marked as such, and display the percentage chance of success.
+- Added a short event to the forest outskirts.
+- The close-up sprites now show chastity belts. Art courtesy of PurityGuy, and coded by Lollipop Scythe with input from Airks.
+- Attending swimming class nude will slowly influence your classmates, resulting in new events and eventually making Leighton demand the entire class attend naked. Thanks to TreeFrogSoup.
+- Thanks to ivala for fixing several merge conflicts.
+- Thanks to 00c356 for adding a magical local scope object.
+- Added the "Neck Deep", "Ballroom Show-off", "Under the Table" and "Pub Crawl Victors" feats.
+
+Thanks to bsin for the following additions and improvements:
+- NPCs may now take advantage of NPCs locked in the pillory by milking them of lewd fluids, or actual milk.
+- Added a number of smaller events that can happen to NPCs trapped in the pillory.
+- A stressed, traumatised PC now has more ways to torment NPCs trapped in the pillory.
+- Robin now cares about your pleasure when you stay in their room at night, though they'll need enough confidence to act on it.
+- Playing arcade games with your arms bound is now hard.
+
+Thanks to Lollipop Scythe for the following additions and improvements:
+- Expanded the clothing system to enable coats and other "over" clothing in the future, and to allow attachments between different clothing slots.
+- Adjustments and additions to the skin colour system to enable tan lines.
+- Reworked the attitudes page.
+- Added a confirmation for the settings pages when feats would be disabled in some way.
+- Improved the code controlling the moon.
+- A legion of smaller clothing system improvements.
+- A minor performance improvement when time passes.
+- February can now have a leap year day, though it will not apply to old saves that have passed it.
+- Fixed an exploit that allowed players to control the weather like some sort of wizard.
+- General code improvements resulting in a small performance boost.
+- Improved transformation code, improving performance during end-of-day calculations.
+- Added stat icons to the sidebar when closed, which should help players with thin screens.
+- Added toggle to Save/Options, disabled by default.
+- Added the option to separate outfits into their component pieces at the wardrobe.
+- Improved the code responsible for tracking antiques.
+- Added a way to look around the museum to keep track of what's found and see how many antiques are missing.
+- Updated the requirement for the "It Belongs in a Museum!" feat.
+- Added a description of the PC's virginities to the Statistics overlay.
+- Added the "Extra Stats" tab to the Statistics overlay, which lists the exact values of various stats.
+
+### Balances Changes
+
+- Increased the chance NPCs will write fame or beauty-based lines on the PC should the requirements be met.
+- Leotards are no longer considered lewd within the dance studio.
+- Reduced the rate willpower decays.
+- Leaving your bedroom wearing just underwear or equivalent now requires level 2 exhibitionism acts unlocked, down from 3.
+- NPCs will no longer write on your cheeks while you wear a mask.
+- Swimming across the river in the forest now has a chance of success based on swimming skill, rather than automatically failing should the requirement not be met.
+- Swimming away from molesters in the school pool is now harder at lower skill, but easier at high skill.
+- The seas are now more treacherous for characters with poor swimming ability. The new sea event eases this somewhat, providing a way to be saved.
+- Many athletics skill checks are easier or harder than the physique checks they replaced, depending on your character's size.
+- Holding your breath in the fountain when robbing a mansion on Danube Street now checks swimming skill, instead of physique.
+- Lowered the exhibitionism required to leave the dressing rooms at the brothel and strip club while naked or wearing just underwear.
+- Praying and meditating on your insecurities can now only be done once per day, but is much more effective.
+- Reduced the chance of NPCs choosing to write on the PC.
+
+### Bug Fixes
+
+- Fixed a duplicate line of text found when having your virginity examined at the temple. Thanks to YetAnotherDeviant.
+- Fixed a bug that caused a rogue pair of breasts or nipples to intrude on the scene when NPCs lick the PC's nipple.
+- Fixed a couple of places where the PC would be described as dressing like a member of one sex while actually being dressed as the other.
+- Whitney will no longer give the PC a pass on wearing underwear if they're already wearing a chastity belt.
+- Fixed a bug that caused the journal entry about smuggled goods to linger after attempting to steal them.
+- Thanks to YetAnotherDeviant for fixing some typos.
+- Thanks to Klorpa for numerous spacing fixes.
+- Fixed a leak in the roof of the restaurant Avery takes you to.
+- Fixed a bug that caused NPCs seduced in the school changing rooms to cum immediately, if the PC was caught cross-dressing.
+- Fixed a typo during Briar's raid. Thanks to bsin.
+- Fixed errors found when NPCs are trapped in the pillory. Also thanks to bsin.
+- The forest shop will no longer give out belly dancer's bottoms for free.
+- Under tops will now be acknowledged when the PC covers their chest, or chooses not to.
+- The NPC who tries to steal the PC's clothes on the beach will no longer steal clothes they fail to remove during the encounter, and the encounter will no longer end prematurely.
+- Eating with Kylar will now be correctly marked as decreasing jealousy.
+- Fixed a number of inaccuracies in swimming difficulty descriptions while at sea.
+- Fixed a bug that caused the game to search for an image that doesn't exist.
+- Wolfboys and wolfgirls should now be able to transform the PC like regular wolves.
+- Fixed a bug that made Morgan's traps in the old sewers more dangerous than intended.
+- Fixed a game-breaking error that was caused by NPCs trying to write a specific line.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that prevented excited text from displaying when outside and exposed.
+- Fixed a large number of bugs in the clothing system.
+- Fixed a problem found when Eden ejaculations.
+- Fixed a couple of bugs that prevented clothing sets from working as intended.
+- Fixed a bug that caused problems with stripping/toweling with discard enabled.
+- Fixed a bug that prevented broken outfit pieces from discarding properly.
+- Fixed a bug that allowed "cursed" clothing like collars to be removed when not intended.
+- Fixed a bug that caused the PC to become naked when equipping your sleeping set should it be missing or already wearing part of it.
+- Fixed a variable conflict involving the wardrobe.
+- Fixed a bug found when deleting items of clothing.
+- Improved the accuracy of broken clothing checks.
+
+Thanks for bsin for the following fixes:
+- Whitney and Leighton should no longer adopt the gender of another NPC when entering the pillory.
+- Whitney no longer slips their cuffs to drag you places and bully you while being hauled away by police.
+- Leighton no longer slips their cuffs to go sit in their office and pretend nothing is wrong.
+- Whitney no longer slips out of the pillory to harass the player and hang out in the park.
+- Leighton no longer slips out of the pillory to hang out at Briar's place.
+- Fixed a glitch that allowed the PC to repeatedly frame someone in quick succession.
+- Some grammar fixes.
+
 ## 0.2.10.6
 
 - Having body-writing or tattoos noticed in the school hallways will no longer lead straight into another event.
