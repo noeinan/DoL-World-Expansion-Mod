@@ -105,6 +105,8 @@
 			randomClothing:"",
 		},
 		pointsUsed: 0,
+		clothingGender:"Either",
+		clothingCustomColors:false,
 	}>>
 <</if>>
 <</nobr>><</widget>>
@@ -195,41 +197,56 @@
 		<<set _index to _options[_slot].random()>>
 		<<set _item to clone(setup.clothes[_slot][_index])>>
 		<<if _item.colour_options.length gt 0>>
-			<<set _item.colour to _item.colour_options.random()>>
+			<<set _colors to clone(_item.colour_options)>>
+			<<if $featsBoosts.clothingCustomColors is false>>
+				<<run _colors.delete("custom")>>
+			<</if>>
+			<<set _item.colour to _colors.random()>>
+			<<if $featsBoosts.clothingCustomColors is true and _item.colour is "custom">>
+				<<set _item.colourCustom to customColor(random(0,360), (random(0,20)/10), (random(5,40)/10), (random(0,20)/10), (random(0,100)/100))>>
+			<</if>>
 		<</if>>
 		<<if _item.accessory_colour_options.length gt 0>>
-			<<set _item.accessory_colour to _item.accessory_colour_options.random()>>
-		<</if>>
-		<<if _slot is "upper" or _slot is "under_upper">>
-			<<if _slot is "upper">>
-				<<set _lowerSlot to "lower">>
-			<<else>>
-				<<set _lowerSlot to "under_lower">>
+			<<set _colors to clone(_item.accessory_colour_options)>>
+			<<if $featsBoosts.clothingCustomColors is false>>
+				<<run _colors.delete("custom")>>
 			<</if>>
-			<<if _item.one_piece is 1>>
-				<<for _j to 0; _j lt setup.clothes[_lowerSlot].length; _j++>>
-					<<if _item.set is setup.clothes[_lowerSlot][_j].set>>
-						<<set _lowerItem to clone(setup.clothes[_lowerSlot][_j])>>
-						<<set _lowerItem.colour to _item.colour>>
-						<<set _lowerItem.accessory_colour to _item.accessory_colour>>
+			<<set _item.accessory_colour to _colors.random()>>
+			<<if $featsBoosts.clothingCustomColors is true and _item.accessory_colour is "custom">>
+				<<set _item.accessory_colourCustom to customColor(random(0,360), (random(0,20)/10), (random(5,40)/10), (random(0,20)/10), (random(0,100)/100))>>
+			<</if>>
+		<</if>>
+
+		<<set $_.outfitPrimary to _item.outfitPrimary>>
+		<<set $_.items to {}>>
+		<<run $_.items[_slot] to clone(_item)>>
+		<<if $_.outfitPrimary isnot undefined>>
+			<<for _labelf, _valuef range $_.outfitPrimary>>
+				<<for _j to 0; _j lt setup.clothes[_labelf].length; _j++>>
+					<<if _valuef is setup.clothes[_labelf][_j].name>>
+						<<set $_.items[_labelf] to clone(setup.clothes[_labelf][_j])>>
+						<<set $_.items[_labelf].colour to clone($_.items[_slot].colour)>>
+						<<set $_.items[_labelf].accessory_colour to clone($_.items[_slot].accessory_colour)>>
+						<<if $featsBoosts.clothingCustomColors is true and _item.colour is "custom">>
+							<<set $_.items[_labelf].colourCustom to clone($_.items[_slot].colourCustom)>>
+						<</if>>
+						<<if $featsBoosts.clothingCustomColors is true and _item.accessory_colour is "custom">>
+							<<set $_.items[_labelf].accessory_ColourCustom to clone($_.items[_slot].accessory_colourCustom)>>
+						<</if>>
+						<<break>>
 					<</if>>
 				<</for>>
-			<</if>>
+			<</for>>
 		<</if>>
-		<<if _item isnot undefined and $wardrobe[_slot].length lt 40>>
-			<<run $wardrobe[_slot].push(clone(_item))>>
-			<<unset _item>>
+
+		<<if $_.items[_slot] isnot undefined and $wardrobe[_slot].length lt 40>>
+			<<for _labelf, _valuef range $_.items>>
+				<<run $wardrobe[_labelf].push(_valuef)>>
+			<</for>>
 		<<else>>
-			<<set _skip to true>>
 			<<set _clothingItems += 1>>
 		<</if>>
-		<<if _lowerItem isnot undefined and _skip isnot true>>
-			<<run $wardrobe[_lowerSlot].push(clone(_lowerItem))>>
-			<<unset _lowerItem>>
-		<</if>>
 		<<unset _item>>
-		<<unset _lowerItem>>
-		<<unset _skip>>
 	<</for>>
 <</if>>
 <</nobr>><</widget>>

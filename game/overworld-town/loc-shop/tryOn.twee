@@ -136,22 +136,11 @@
 		<<if _outfitPrimaryCR isnot undefined>>
 			<<for _labelCR, _valueCR range _outfitPrimaryCR>>
 				<<if $worn[_labelCR].name is _valueCR>>
-					<<set _outfitPrimaryCR2 to $tryOn.ownedStored[_labelCR].outfitPrimary>>
-					<<if _outfitPrimaryCR2 isnot undefined>>
-						<<for _labelCR2, _valueCR2 range _outfitPrimaryCR2>>
-							<<if $tryOn.ownedStored[_labelCR2].name is _valueCR2>>
-								<<set $worn[_labelCR2] to clone($tryOn.ownedStored[_labelCR2])>>
-								<<removeTryingOn _labelCR2>>
-							<</if>>
-						<</for>>
-					<</if>>
-					<<set $worn[_labelCR] to clone($tryOn.ownedStored[_labelCR])>>
-					<<removeTryingOn _labelCR>>
+					<<clothingResetOwnedReset _labelCR>>
 				<</if>>
 			<</for>>
 		<</if>>
-		<<set $worn[$args[0]] to clone($tryOn.ownedStored[$args[0]])>>
-		<<removeTryingOn $args[0]>>
+		<<clothingResetOwnedReset $args[0]>>
 	<</if>>
 <<else>>
 	<<set _equip to ["over_upper","over_lower","upper", "lower", "under_upper", "under_lower","over_head","head", "face", "neck", "legs", "feet"]>>
@@ -164,6 +153,32 @@
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "clothingResetOwnedReset">><<nobr>>
+<<if $tryOn.ownedStored[$args[0]]>>
+	<<set $_.outfitSecondary to $tryOn.ownedStored[$args[0]].outfitSecondary>>
+	<<set $_.slot to false>>
+	<<if $_.outfitSecondary isnot undefined>>
+		<<if $_.outfitSecondary[1] is $tryOn.ownedStored[$_.outfitSecondary[0]].name>>
+			<<set $_.slot to $_.outfitSecondary[0]>>
+		<</if>>
+	<</if>>
+	<<if $_.slot is false>>
+		<<set $_.slot to $args[0]>>
+	<</if>>
+	<<set $_.outfitPrimary to $tryOn.ownedStored[$_.slot].outfitPrimary>>
+	<<if $_.outfitPrimary isnot undefined>>
+		<<for _labelOCR, _valueOCR range $_.outfitPrimary>>
+			<<if $tryOn.ownedStored[_labelOCR].name is _valueOCR>>
+				<<set $worn[_labelOCR] to clone($tryOn.ownedStored[_labelOCR])>>
+				<<removeTryingOn _labelOCR>>
+			<</if>>
+		<</for>>
+	<</if>>
+
+	<<set $worn[$_.slot] to clone($tryOn.ownedStored[$_.slot])>>
+	<<removeTryingOn $_.slot>>
+<</if>>
+<</nobr>><</widget>>
 
 <<widget "tryOnWear">><<nobr>>
 <<if $args[0] and $args[1]>>

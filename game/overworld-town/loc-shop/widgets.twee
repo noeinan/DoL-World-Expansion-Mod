@@ -25,7 +25,7 @@ Forth argument - item index*/
 <<elseif $args[1] is "try">>
 	<<tryOnWear $args[0] _shop_temp>>
 <<elseif $args[1] is "return">>
-	<<clothingReset [$args[0]]>>
+	<<clothingReset $args[0]>>
 <<elseif $args[1] is "reset">>
 	<<unset $colouraction>>
 	<<unset $accessorycolouraction>>
@@ -201,7 +201,7 @@ Forth argument - item index*/
 		<<elseif $tryOn.tryingOn>>
 			<<link [[Try On|$passage]]>><<shopbuy $clothingShopSlot "try" null $clothes_choice>><</link>>
 			<br>
-			<<if $tryOn.tryingOn.upper isnot null>>
+			<<if $tryOn.tryingOn[[$clothingShopSlot]] isnot null>>
 			<<link [[Return|$passage]]>><<shopbuy $clothingShopSlot "return" null $clothes_choice>><</link>>
 			<br>
 			<</if>>
@@ -520,20 +520,24 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 <<widget "shopBuyItemStatus">><<nobr>>
 <<if $args[0]>>
 	<<set _undamagedCount to 0>>
+	<<set _damagedCount to 0>>
 	<<set _space to $wardrobe.space>>
 	<<set _spaceLeft to clone(_space)>>
 	<<for _i to 0; _i lt $args[0].length; _i++>>
 		<<if _i is 0>>
-			<<for _j to 0; _j lt $wardrobe[$args[0][0]]; _j++>>
+			<<for _j to 0; _j lt $wardrobe[$args[0][0]].length; _j++>>
 				<<if $wardrobe[$args[0][0]][_j].name is _temp_choice.name>>
 					<<set _undamagedCount++>>
 					<<if $wardrobe[$args[0][0]][_j].outfitPrimary isnot undefined>>
 						<<for _valueShop range $wardrobe[$args[0][0]][_j].outfitPrimary>>
 							<<if _valueShop is "broken">>
+								<<set _damagedCount++>>
 								<<set _undamagedCount-->>
 								<<break>>
 							<</if>>
 						<</for>>
+					<<else>>
+						<<set _damagedCount to -1>>
 					<</if>>
 				<</if>>
 			<</for>>
@@ -543,11 +547,15 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 		<</if>>
 		Wardrobe <<print ($args[0][_i]).replace("_"," ")>> slots used: <<print $wardrobe[$args[0][_i]].length>> / _space.
 		<br>
-		<<if _i is $args[0].length - 1>>
-			You own _undamagedCount of this item<<if $args[0].length gt 1>> unbroken<</if>>.
-			<br>
-		<</if>>
 	<</for>>
+	<<if _undamagedCount gt 0>>
+		You own _undamagedCount of this item<<if _damagedCount gte 0>> unbroken<</if>>.
+		<br>
+	<</if>>
+	<<if _damagedCount gt 0>>
+		You own _damagedCount of this item that have been broken in some way.
+		<br>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
