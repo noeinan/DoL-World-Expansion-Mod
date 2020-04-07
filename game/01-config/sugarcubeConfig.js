@@ -55,15 +55,65 @@ l10nStrings.errorTitle = StartConfig.version + " Error";
  * may break this
  */
 const VIRTUAL_CURRENT = "_";
-const VIRTUAL_STACK = "VIRTUAL_STACK"
+const vStack = []
+const vContext = []
+const d = JSON.stringify.bind(JSON);
+let devOptions = {
+  trace: false,
+  invocationId: false
+}
+// setTimeout as Sugarcube may not have finished making it's State object yet,
+// and any lifecycle hooks (that might make this less hackish), are
+// non-obvious if they exist
+setTimeout(() => State.variables.devOptions = devOptions)
+// We declare some global debug utils that other code is free to use
+// Note that enabling trace will display all widget calls
+// Note that clog is currently non-configured and will always be invoked
+// TODO: add more granular debug log levels if needed
+function clog() {
+  console.log(`${State.passage}:${d(vContext)}`,...arguments)
+}
+function trace() {
+  if (devOptions.trace) {
+    clog(...arguments)
+  }
+}
+function allMagical() {
+  return Object.keys(State.variables).filter(key => key.startsWith(VIRTUAL_CURRENT) && key != VIRTUAL_CURRENT)
+}
+let uniqueInvocation = 0;
 function widgetHandler(widgetName, contents) {
   let argsCache;
+  trace('declaring fn', widgetName);
   return function () {
+    const context = devOptions.invocationId
+      ? `${State.passage}:${widgetName}:${uniqueInvocation++}`
+      : `${State.passage}:${widgetName}`;
+    trace('invoking', context);
+    vContext.push(context);
     // Custom code
     const newFrame = {};
-    State.variables[VIRTUAL_STACK] = State.variables[VIRTUAL_STACK] || []
-    State.variables[VIRTUAL_STACK].push(newFrame);
     State.variables[VIRTUAL_CURRENT] = newFrame;
+    vStack.push(newFrame);
+    /**
+     * place the previous invocation's magical objects on the stack
+     * It's an error if the prior frame doesn't exist
+     *  note: that would mean the $_var was defined in the body,
+     *  as we clean our local magic variables
+     */
+    const priorFrame = vStack[vStack.length - 2]
+    const magicals = allMagical();
+    if (magicals.length > 0) {
+      trace(`saving ${d(magicals)} to ${d(priorFrame)}`)
+    }
+    if (priorFrame !== undefined) {
+      magicals.forEach(key => {
+        priorFrame[key] = State.variables[key]
+        delete State.variables[key]
+      })
+    } else if (magicals.length > 0) {
+      console.warn(`Found variables: ${JSON.stringify(magicals)} declared in main`)
+    }
     // End custom code
 
 
@@ -98,13 +148,26 @@ function widgetHandler(widgetName, contents) {
       }
     }
     catch (ex) {
-      console.error(`Error executing widget ${widgetName}`, ex);
-      return this.error(`cannot execute widget: ${ex.message}`);
+      console.error(`Error executing widget ${widgetName}`, ex); return this.error(`cannot execute widget: ${ex.message}`);
     }
     finally {
       // Custom code
-      State.variables[VIRTUAL_STACK].pop();
-      State.variables[VIRTUAL_CURRENT] = State.variables[VIRTUAL_STACK][State.variables[VIRTUAL_STACK].length - 1]
+      vStack.pop();
+      vContext.pop();
+      State.variables[VIRTUAL_CURRENT] = priorFrame
+      const magicals = allMagical();
+      if (magicals.length > 0) {
+        trace(`cleaning up ${d(magicals)}`)
+        magicals.forEach(key => {
+          // don't pollute the global namespace
+          delete State.variables[key]
+        })
+      }
+      if (priorFrame !== undefined && Object.keys(priorFrame).length > 0) {
+        trace(`restoring ${d(priorFrame)}`)
+        // restore prior frame
+        Object.assign(State.variables, priorFrame)
+      }
       // End custom code
       if (typeof argsCache !== 'undefined') {
         State.variables.args = argsCache;
