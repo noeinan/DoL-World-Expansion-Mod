@@ -1,3 +1,48 @@
+:: Widgets Actions Mouth FlavorText [widget]
+<<widget "breastFlavorText">><<nobr>>
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<for _j = $enemyno-1; _j gte _end; _j-->>
+	<<if $NPCList[_j].chest is "mouthentrance">>
+		Your head is pressed <<print ($NPCList[_j].breastsize gte 6?"between":"against")>>
+		<<if $enemyno gte 2>>
+			the <<person1>><<persons>>
+		<<else>>
+			<<person1>><<his>>
+		<</if>>
+		$NPCList[_j].breastsdesc.
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+<<widget "nippleFlavorText">><<nobr>>
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<for _j = $enemyno-1; _j gte _end; _j-->>
+	<<if $NPCList[0].chest is "mouth">>
+		Your head is pressed against
+		<<if $enemyno gte 2>>
+			the <<person1>><<persons>>
+		<<else>>
+			<<person1>><<his>>
+		<</if>>
+		<<if $NPCList[0].lactation is 1 and $breastfeedingdisable is "f">>
+			leaking
+			<</if>>
+		$NPCList[0].breastdesc.
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+
 :: Widgets Actions Mouth [widget]
 
 <<widget "oral">><<nobr>>
@@ -60,6 +105,66 @@
 
 <</nobr>><</widget>>
 
+<<widget "oralnew">><<nobr>>
+
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<set _xx to $enemyno-1>>
+<<if _xx is -1>>
+	<<set _stanceCheck to 0>>
+<<else>>
+	<<set _stanceCheck to $NPCList[_xx].stance>>
+<</if>>
+
+<<if $consensual is 1 and ($promiscuity lte 54 and $enemytype is "man" or $deviancy lte 54 and $enemytype isnot "man")>>
+<!-- Do Nothing -->
+<<elseif _stanceCheck is "top">>
+<!-- Do Nothing -->
+<<else>>
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].penis is 0>>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _mouthaction["Move your lips to "+_pron+" penis"] to "mouth">>
+		<<break>>
+		<</if>>
+	<</for>>
+
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].vagina is 0>>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _mouthaction["Move your mouth to "+_pron+" pussy"] to "othervagina">>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
+
+<<if $consensual is 1 and $promiscuity lte 34>>
+<!-- Do Nothing -->
+<<elseif !$gloryhole>>
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].chest is 0>>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _mouthaction["Move your lips to "+_pron+" chest"] to "movetochest">>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
+
+<</nobr>><</widget>>
+
 <<widget "oralswallow">><<nobr>>
 <!-- Below if-or statement is super-clumsy but not sure how to shorten NG -->
 	<<if $consensual is 1 and $promiscuity lte 74 and $enemytype is "man" or $consensual is 1 and $deviancy lte 74 and $enemytype isnot "man">>
@@ -72,4 +177,90 @@
 			<</if>>
 		<</if>>
 	<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "oralswallownew">><<nobr>>
+<<if $consensual is 1 and ($promiscuity lte 74 and $enemytype is "man" or $deviancy lte 74 and $enemytype isnot "man")>>
+<<else>>
+	<<if $combattype is "train">>
+		<<set _end to $enemyno-1>>
+	<<else>>
+		<<set _end to 0>>
+	<</if>>
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].penis is "mouthentrance" or $NPCList[_j].penis is "mouthimminent">>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _mouthaction["Take "+_pron+" penis into your mouth"] to "swallow">>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "combatApologise">><<nobr>>
+<<if $enemyanger gte 20 and $underwater lte 0>>
+	<<set _mouthaction["Apologise"] to "apologise">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "combatPenisEntrance">><<nobr>>
+<<set _mouthaction["Kiss"] to "peniskiss">>
+
+<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+<<elseif $chestuse is 0>>
+	<<set _mouthaction["Grab between breasts"] to "grasp">>
+<</if>>
+<<if $head isnot "grappled" and $head isnot "bound">>
+	<<set _mouthaction["Pull away"] to "pullaway">>
+<</if>>
+<<oralswallownew>>
+<<speaknew>>
+<</nobr>><</widget>>
+
+<<widget "combatPenisImminent">><<nobr>>
+<<set _mouthaction["Lick"] to "lick">>
+<<set _mouthaction["Pull away"] to "pullaway">>
+<<oralswallownew>>
+<<speaknew>>
+<</nobr>><</widget>>
+
+<<widget "combatPenisPenetrated">><<nobr>>
+<<set _mouthaction["Suck"] to "suck">>
+<<if $consensual isnot 1>>
+	<<set _mouthaction["Bite"] to "bite">>
+<</if>>
+<<if $head isnot "grappled" and $head isnot "bound">>
+	<<set _mouthaction["Pull away"] to "pullaway">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "combatOthervagina">><<nobr>>
+<<set _mouthaction["Lick"] to "vaginalick">>
+<<if $head isnot "grappled" and $head isnot "bound">>
+	<<set _mouthaction["Pull away"] to "pullawayvagina">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "combatBreast">><<nobr>>
+<<set _mouthaction["Suck"] to "breastsuck">>
+<<set _mouthaction["Lick"] to "breastlick">>
+<<set _mouthaction["breastclosed"] to "breastclosed">>
+<<if $consensual is 1 or $head isnot "breasts">>
+	<<set _mouthaction["Pull away"] to "breastpull">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "combatNipple">><<nobr>>
+<<set _mouthaction["Suck"] to "breastsuck">>
+<<set _mouthaction["breastclosed"] to "breastclosed">>
+<<if $consensual is 1 or $head isnot "breasts">>
+	<<set _mouthaction["Pull away"] to "breastpull">>
+<</if>>
+<<if $consensual isnot 1>>
+	<<set _mouthaction["Bite"] to "breastbite">>
+<</if>>
 <</nobr>><</widget>>

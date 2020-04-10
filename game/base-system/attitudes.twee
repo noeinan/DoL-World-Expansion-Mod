@@ -38,5 +38,307 @@ What makes you feel uncomfortable?
 <<else>>
 	<span class="black">Being nude in front of others.</span> <i>Requires higher exhibitionism.</i>
 <</if>>
-<br>
+<br><br>
+
+<div class="solidBorderContainer">
+	<<setupDefaults>>
+	How do you feel about others? (Sets the default actions in combat depending on the situation)
+	<br>
+
+	<<set _options to ["Everyone","Strangers","Animals","Acquaintances","Robin", "Bailey"]>>
+	<<set _named to ["Whitney","Kylar","Eden","Avery","Leighton"]>>
+
+	<<for _i to 0; _i lt _named.length; _i++>>
+		<<set _index to $NPCNameList.indexOf(_named[_i])>>
+		<<if $NPCName[_index].init is 1>>
+			<<run _options.push(_named[_i])>>
+		<</if>>
+	<</for>>
+
+	/*Data for the later loops*/
+	<<set _titles to ["Left Hand","Right Hand","Feet","Mouth","Penis","Vagina","Anus"]>>
+	<<set _dataName to ["leftaction","rightaction","feetaction","mouthaction","penisaction","vaginaaction","anusaction"]>>
+	<<set _data to ["_leftHand","_rightHand","_feet","_mouth","_penis","_vagina","_anus"]>>
+
+	<<listbox "_defaultActions" autoselect>>
+		<<optionsfrom _options>>
+	<</listbox>>
+	<<combatDefaults>>
+	<br><br>
+	<<consensualDefaults>>
+	<div id="othersFeelings">
+		<<othersFeelings 0>>
+	</div>
+</div>
+<</nobr>><</widget>>
+
+<<widget "othersFeelings">><<nobr>>
+<<set _stringDefault to "$actionDefaults."+_options[$args[0]]>>
+
+<<switch _options[$args[0]]>>
+	<<case "Everyone">><span class="red">Will override everyone if you use "Override related settings".</span><br><br><<set _requireConfirm to true>>
+	<<case "Acquaintances">><span class="red">Will override the other named acquaintances in the list if you use "Override related settings".</span><br><br><<set _requireConfirm to true>>
+	<<default>><<set _requireConfirm to false>>
+<</switch>>
+Earlier lists take priority in each type of action.
+<br><br>
+
+__If it is consensual:__
+<br><br>
+
+<<for _i to 0; _i lt _titles.length; _i++>>
+	<<if (_titles[_i] is "Penis" and $penisexist is 0) or (_titles[_i] is "Vagina" and $vaginaexist is 0)>>
+		<<continue>>
+	<</if>>
+	<<print _titles[_i]>>
+	<<print '<<listbox "'+_stringDefault+".consensual."+_dataName[_i]+'[0]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+	<<print '<<listbox "'+_stringDefault+".consensual."+_dataName[_i]+'[1]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+	<br>
+<</for>>
+
+
+<<if _options[$args[0]] isnot "Robin">>
+	<<rapeDefaults>>
+	<br><br>
+	__If you are raped:__
+	<br><br>
+	
+	<<for _i to 0; _i lt _titles.length; _i++>>
+		<<if (_titles[_i] is "Penis" and $penisexist is 0) or (_titles[_i] is "Vagina" and $vaginaexist is 0)>>
+			<<continue>>
+		<</if>>
+		<<print _titles[_i]>>
+		<<print '<<listbox "'+_stringDefault+".rape."+_dataName[_i]+'[0]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+		<<print '<<listbox "'+_stringDefault+".rape."+_dataName[_i]+'[1]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+		<br>
+	<</for>>
+<</if>>
+<br><br>
+
+<<if _requireConfirm is true>>
+	<<link [[Override related settings|$passage]]>>
+		<<switch _options[$args[0]]>>
+			<<case "Everyone">>
+				<<set _override to clone($actionDefaults.Everyone)>>
+				<<set _loop to Object.keys($actionDefaults)>>
+				<<run _loop.delete("Everyone")>>
+				<<for _i to 0; _i lt _loop.length;_i++>>
+					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
+				<</for>>
+			<<case "Acquaintances">>
+				<<set _override to clone($actionDefaults.Everyone)>>
+				<<set _loop to Object.keys($actionDefaults)>>
+				<<run _loop.delete("Everyone")>>
+				<<run _loop.delete("Strangers")>>
+				<<run _loop.delete("Acquaintances")>>
+				<<run _loop.delete("Animals")>>
+				<<for _i to 0; _i lt _loop.length;_i++>>
+					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
+				<</for>>
+		<</switch>>
+	<</link>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "setupDefaults">><<nobr>>
+<<if $actionDefaults is undefined>>
+	<<set _defaultObject to {
+		rape:{
+			leftaction:["rest","rest"],
+			rightaction:["rest","rest"],
+			feetaction:["rest","rest"],
+			mouthaction:["rest","rest"],
+			penisaction:["rest","rest"],
+			vaginaaction:["rest","rest"],
+			anusaction:["rest","rest"],
+		},
+		consensual:{
+			leftaction:["rest","rest"],
+			rightaction:["rest","rest"],
+			feetaction:["rest","rest"],
+			mouthaction:["rest","rest"],
+			penisaction:["rest","rest"],
+			vaginaaction:["rest","rest"],
+			anusaction:["rest","rest"],
+		}
+	}>>
+	<<set $actionDefaults to {
+		"Everyone":clone(_defaultObject),
+		"Strangers":clone(_defaultObject),
+		"Acquaintances":clone(_defaultObject),
+		"Animals":clone(_defaultObject),
+		"Robin":clone(_defaultObject),
+		"Bailey":clone(_defaultObject),
+		"Whitney":clone(_defaultObject),
+		"Kylar":clone(_defaultObject),
+		"Eden":clone(_defaultObject),
+		"Avery":clone(_defaultObject),
+		"Leighton":clone(_defaultObject),
+	}>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "consensualDefaults">><<nobr>>
+<<set _leftHand to {
+	"Rest":"rest",
+	"Stroke":"leftchest",
+	"Cover you face":"leftcoverface",
+	"Whack the pen away":"penwhack",
+}>>
+<<set _rightHand to {
+	"Rest":"rest",
+	"Stroke":"rightchest",
+	"Cover you face":"rightcoverface",
+	"Whack the pen away":"penwhack",
+}>>
+<<if $skulduggery gte 200>>
+	<<set _leftHand.Steal to "steal">>
+	<<set _rightHand.Steal to "steal">>
+<</if>>
+<<set _feet to {
+	"Rest":"rest",
+}>>
+<<if $promiscuity gt 34 or $deviancy gt 34>>
+	<<set _feet["Grab a penis"] to "grab">>
+	<<set _feet["Press against a pussy"] to "vaginagrab">>
+<</if>>
+
+
+<<set _mouth to {
+	"Rest":"rest",
+	"Plead":"plead",
+}>>
+<<if $promiscuity gt 54 or $deviancy gt 54>>
+	<<set _mouth["Move your lips to their penis"] to "mouth">>
+	<<set _mouth["Move your lips to their pussy"] to "othervagina">>
+<</if>>
+
+<<if $promiscuity gt 34>>
+	<<set _mouth["Move your lips to their chest"] to "movetochest">>
+<</if>>
+<<if $submissive gte 1150>>
+	<<set _mouth["Moan"] to "moan">>
+<</if>>
+<<if $angel gte 6 and $angelforgive isnot 1>>
+	<<set _mouth["Forgive"] to "forgive">>
+<</if>>
+<<if $submissive lte 850>>
+	<<set _mouth["Demand"] to "demand">>
+<</if>>
+
+
+<<set _penis to {
+	"Rest":"rest",
+}>>
+<<if $promiscuity gt 74 or $deviancy gt 74>>
+	<<set _penis["Press against their ass"] to "penistoanus">>
+	<<set _penis["Press against their vagina"] to "penistovagina">>
+	<<set _penis["Penetrate their ass"] to "penisanusfuck">>
+	<<set _penis["Penetrate their pussy"] to "penisvaginafuck">>
+<</if>>
+<<if $promiscuity gt 54 or $deviancy gt 54>>
+	<<set _penis["Frot against their ass"] to "otheranusbay">>
+	<<set _penis["Frot against their clit"] to "bay">>
+<</if>>
+
+<<set _vagina to {
+	"Rest":"rest",
+	"Offer your anus instead":"penisanus",
+}>>
+<<if $promiscuity gt 74 or $deviancy gt 74>>
+	<<set _vagina["Straddle their penis"] to "vaginatopenis">>
+	<<set _vagina["Envelop their penis"] to "vaginapenisfuck">>
+<</if>>
+<<if $promiscuity gt 54 or $deviancy gt 54>>
+	<<set _vagina["Try to keep the penis away with your thighs"] to "penisthighs">>
+<</if>>
+
+
+<<set _anus to {
+	"Rest":"rest",
+}>>
+<<if $vaginaexist is 1>>
+	<<set _anus["Offer your pussy instead"] to "penispussy">>
+<</if>>
+<<if $promiscuity gt 74 or $deviancy gt 74>>
+	<<set _anus["Straddle their penis"] to "anustopenis">>
+	<<set _anus["Envelop their penis"] to "anuspenisfuck">>
+<</if>>
+<<if $promiscuity gt 54 or $deviancy gt 54>>
+	<<set _anus["Keep the penis away with your cheeks"] to "penischeeks">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "rapeDefaults">><<nobr>>
+<<set _leftHand to {
+	"Rest":"rest",
+	"Stroke":"leftchest",
+	"Punch":"lefthit",
+	"Cover you face":"leftcoverface",
+	"Whack the pen away":"penwhack"
+}>>
+<<set _rightHand to {
+	"Rest":"rest",
+	"Stroke":"rightchest",
+	"Punch":"righthit",
+	"Cover you face":"rightcoverface",
+	"Whack the pen away":"penwhack"
+}>>
+<<if $skulduggery gte 200>>
+	<<set _leftHand.Steal to "steal">>
+	<<set _rightHand.Steal to "steal">>
+<</if>>
+<<set _feet to {
+	"Rest":"rest",
+	"Kick":"kick",
+	"Grab a penis":"grab",
+	"Press against a pussy":"vaginagrab",
+}>>
+<<set _mouth to {
+	"Rest":"rest",
+	"Scream":"scream",
+	"Plead":"plead",
+	"Move your lips to their penis":"mouth",
+	"Move your lips to their pussy":"othervagina",
+	"Move your lips to their chest":"movetochest",
+}>>
+<<if $submissive gte 1150>>
+	<<set _mouth["Moan"] to "moan">>
+<</if>>
+<<if $angel gte 6 and $angelforgive isnot 1>>
+	<<set _mouth["Forgive"] to "forgive">>
+<</if>>
+<<if $submissive lte 850>>
+	<<set _mouth["Demand"] to "demand">>
+<</if>>
+
+<<set _penis to {
+	"Rest":"rest",
+	"Press against their ass":"penistoanus",
+	"Press against their vagina":"penistovagina",
+	"Penetrate their ass":"penisanusfuck",
+	"Penetrate their pussy":"penisvaginafuck",
+	"Frot against their ass":"otheranusbay",
+	"Frot against their clit":"bay",
+}>>
+
+<<set _vagina to {
+	"Rest":"rest",
+	"Offer your anus instead":"penisanus",
+	"Straddle their penis":"vaginatopenis",
+	"Envelop their penis":"vaginapenisfuck",
+	"Try to keep the penis away with your thighs":"penisthighs",
+}>>
+
+<<set _anus to {
+	"Rest":"rest",
+}>>
+<<if $vaginaexist is 1>>
+	<<set _anus["Offer your pussy instead"] to "penispussy">>
+<</if>>
+<<set _anus["Straddle their penis"] to "anustopenis">>
+<<set _anus["Envelop their penis"] to "anuspenisfuck">>
+<<set _anus["Keep the penis away with your cheeks"] to "penischeeks">>
+
 <</nobr>><</widget>>

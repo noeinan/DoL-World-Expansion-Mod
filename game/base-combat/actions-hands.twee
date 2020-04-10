@@ -1,4 +1,14 @@
 :: Widgets Actions Left Hand [widget]
+<<widget "leftdefault">><<nobr>>
+
+<<set _leftaction["Stroke"] to "leftchest">>
+<<if $consensual isnot 1>>
+	<<set _leftaction["Punch"] to "lefthit">>
+<</if>>
+<<set _leftaction["Cover your face"] to "leftcoverface">>
+
+<</nobr>><</widget>>
+
 <<widget "leftgrab">><<nobr>>
 
 <<if $combattype is "train">>
@@ -30,6 +40,32 @@
 
 <</nobr>><</widget>>
 
+<<widget "leftgrabnew">><<nobr>>
+
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<for _j = $enemyno-1; _j gte _end; _j-->>
+	<<if $NPCList[_j].penis is 0>>
+		<<switch $NPCList[_j].gender>>
+			<<case "m">><<set _pron to "his">>
+			<<case "f">><<set _pron to "her">>
+		<</switch>>
+		<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+		<!-- Do Nothing -->
+		<<else>>
+			<<set _leftaction["Grab "+_pron+" penis"] to "leftgrab">>
+		<</if>>
+		<<set _leftaction["Stroke "+_pron+" penis"] to "leftstroke">>
+		<<break>>
+	<</if>>
+<</for>>
+
+<</nobr>><</widget>>
+
 <<widget "leftplay">><<nobr>>
 
 <<if $combattype is "train">>
@@ -53,6 +89,30 @@
 	<</for>>
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "leftplaynew">><<nobr>>
+
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+	<!-- Do Nothing -->
+<<else>>
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].vagina is 0>>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _leftaction["Play with "+_pron+" pussy"] to "leftplay">>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "leftclothes">><<nobr>>
@@ -99,6 +159,30 @@
 
 <</nobr>><</widget>>
 
+<<widget "leftclothesnew">><<nobr>>
+
+<<if $worn.upper.state is $worn.upper.state_base and $worn.upper.state_top is $worn.upper.state_top_base and !$worn.upper.type.includes("naked")>>
+	<<set _leftaction["Displace your "+$worn.upper.name] to "upper">>
+<</if>>
+
+<<if $worn.under_upper.state is $worn.under_upper.state_base and $worn.under_upper.state_top is $worn.under_upper.state_top_base and !$worn.under_upper.type.includes("naked")>>
+	<<set _leftaction["Displace your "+$worn.under_upper.name] to "under_upper">>
+<</if>>
+
+<<if $worn.lower.state is $worn.lower.state_base and $worn.lower.skirt isnot 1 and !$worn.lower.type.includes("naked")>>
+	<<set _leftaction["Displace your "+$worn.lower.name] to "lower">>
+<<elseif $worn.lower.skirt is 1 and $worn.lower.skirt_down is 1>>
+	<<set _leftaction["Displace your "+$worn.lower.name] to "lower">>
+<</if>>
+
+<<if $worn.under_lower.state is $worn.under_lower.state_base and !$worn.under_lower.type.includes("naked")>>
+	<<if $worn.lower.state isnot $worn.lower.state_base or $worn.lower.skirt is 1 or $worn.lower.type.includes("naked")>>
+		<<set _leftaction["Displace your "+$worn.under_lower.name] to "under">>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
 <<widget "leftspray">><<nobr>>
 <<if $consensual isnot 1 and $spray gte 1>>
 	<<if $leftactiondefault is "spray">>
@@ -106,6 +190,12 @@
 	<<else>>
 	| <label><span class="def">Pepper spray</span> <span class="black">Remaining:</span> $spray / $spraymax <<radiobutton "$leftaction" "spray">></label>
 	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "leftspraynew">><<nobr>>
+<<if $consensual isnot 1 and $spray gte 1>>
+	<<set _leftaction["Pepper spray"] to "spray">>
 <</if>>
 <</nobr>><</widget>>
 
@@ -117,6 +207,14 @@
 	<<else>>
 	| <label><span class="brat">Steal</span> <<radiobutton "$leftaction" "steal">> <<skulduggerydifficulty>><<combatcrime>></label>
 	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "leftstealnew">><<nobr>>
+<<if $skulduggery gte 200 and $stealstate isnot 3 and $enemytype is "man" and $npc is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+	/*Missing <<skulduggerydifficulty>><<combatcrime>>*/
+	<<set _leftaction["Steal"] to "steal">>
 <</if>>
 <</nobr>><</widget>>
 
@@ -135,7 +233,73 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "leftpenwhacknew">><<nobr>>
+<<if $NPCList[0].lefthand is "pen" or $NPCList[0].righthand is "pen" or
+$NPCList[1].lefthand is "pen" or $NPCList[1].righthand is "pen" or
+$NPCList[2].lefthand is "pen" or $NPCList[2].righthand is "pen" or
+$NPCList[3].lefthand is "pen" or $NPCList[3].righthand is "pen" or
+$NPCList[4].lefthand is "pen" or $NPCList[4].righthand is "pen" or
+$NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
+	<<set _leftaction["Whack the pen away"] to "penwhack">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "leftFixAndCoverActions">><<nobr>>
+<<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1 and $vaginause is 0>>
+	<<set _leftaction["Cover your pussy"] to "leftcovervagina">>
+<</if>>
+
+<<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1 and $penisuse is 0>>
+	<<set _leftaction["Cover your penis"] to "leftcoverpenis">>
+<</if>>
+
+<<if $worn.lower.anus_exposed is 1 and $worn.under_lower.anus_exposed is 1 and $anususe is 0>>
+	
+	<<set _leftaction["Cover your ass"] to "leftcoveranus">>
+<</if>>
+
+<<if $worn.under_lower.name isnot "naked">>
+	<<if $worn.under_lower.state is "thighs" or $worn.under_lower.state is "knees" or $worn.under_lower.state is "ankles">>
+		<<set _leftaction["Pull up your " + $worn.under_lower.name] to "leftunderpull">>
+	<</if>>
+<</if>>
+
+<<if $worn.lower.skirt is 1>>
+	<<if $worn.lower.skirt_down is 0>>
+		<<if $worn.lower.state is "waist">>
+			<<set _leftaction["Cover your crotch with your " + $worn.lower.name] to "leftskirtpull">>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $worn.lower.name isnot "naked">>
+	<<if $worn.upper.set is $worn.lower.set>>
+		<<if $worn.lower.state isnot $worn.lower.state_base and $worn.upper.state is $worn.upper.state_base and $worn.upper.state_top is $worn.upper.state_top_base>>
+			<<set _leftaction["Fix your " + $worn.lower.name] to "leftlowerpull">>
+		<</if>>
+	<<elseif $worn.lower.state isnot $worn.lower.state_base>>
+		<<set _leftaction["Fix your " + $worn.lower.name] to "leftlowerpull">>
+	<</if>>
+<</if>>
+
+<<if $worn.upper.name isnot "naked">>
+	<<if $worn.upper.state isnot $worn.upper.state_base or $worn.upper.state_top isnot $worn.upper.state_top_base>>
+		<<set _leftaction["Fix your " + $worn.upper.name] to "leftlowerpull">>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
 :: Widgets Actions Right Hand [widget]
+
+<<widget "rightdefault">><<nobr>>
+
+<<set _rightaction["Stroke"] to "rightchest">>
+<<if $consensual isnot 1>>
+	<<set _rightaction["Punch"] to "righthit">>
+<</if>>
+<<set _rightaction["Cover your face"] to "rightcoverface">>
+
+<</nobr>><</widget>>
 
 <<widget "rightgrab">><<nobr>>
 
@@ -168,6 +332,33 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <</nobr>><</widget>>
 
+<<widget "rightgrabnew">><<nobr>>
+
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<for _j = $enemyno-1; _j gte _end; _j-->>
+	<<if $NPCList[_j].penis is 0>>
+		<<switch $NPCList[_j].gender>>
+			<<case "m">><<set _pron to "his">>
+			<<case "f">><<set _pron to "her">>
+		<</switch>>
+		<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+		<!-- Do Nothing -->
+		<<else>>
+			/*Missing <<handdifficulty>> <<combatpromiscuous3>>*/
+			<<set _rightaction["Grab "+_pron+" penis"] to "rightgrab">>
+		<</if>>
+		<<set _rightaction["Stroke "+_pron+" penis"] to "rightstroke">>	
+		<<break>>
+	<</if>>
+<</for>>
+
+<</nobr>><</widget>>
+
 <<widget "rightplay">><<nobr>>
 
 <<if $combattype is "train">>
@@ -192,6 +383,30 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</for>>
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "rightplaynew">><<nobr>>
+
+<<if $combattype is "train">>
+	<<set _end to $enemyno-1>>
+<<else>>
+	<<set _end to 0>>
+<</if>>
+
+<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+	<!-- Do Nothing -->
+<<else>>
+	<<for _j = $enemyno-1; _j gte _end; _j-->>
+		<<if $NPCList[_j].vagina is 0>>
+			<<switch $NPCList[_j].gender>>
+				<<case "m">><<set _pron to "his">>
+				<<case "f">><<set _pron to "her">>
+			<</switch>>
+			<<set _rightaction["Play with "+_pron+" pussy"] to "rightplay">>
+			<<break>>
+		<</if>>
+	<</for>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "rightclothes">><<nobr>>
@@ -238,6 +453,30 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <</nobr>><</widget>>
 
+<<widget "rightclothesnew">><<nobr>>
+
+<<if $worn.upper.state is $worn.upper.state_base and $worn.upper.state_top is $worn.upper.state_top_base and !$worn.upper.type.includes("naked")>>
+	<<set _rightaction["Displace your "+$worn.upper.name] to "upper">>
+<</if>>
+
+<<if $worn.under_upper.state is $worn.under_upper.state_base and $worn.under_upper.state_top is $worn.under_upper.state_top_base and !$worn.under_upper.type.includes("naked")>>
+	<<set _rightaction["Displace your "+$worn.under_upper.name] to "under_upper">>
+<</if>>
+
+<<if $worn.lower.state is $worn.lower.state_base and $worn.lower.skirt isnot 1 and !$worn.lower.type.includes("naked")>>
+	<<set _rightaction["Displace your "+$worn.lower.name] to "lower">>
+<<elseif $worn.lower.skirt is 1 and $worn.lower.skirt_down is 1>>
+	<<set _rightaction["Displace your "+$worn.lower.name] to "lower">>
+<</if>>
+
+<<if $worn.under_lower.state is $worn.under_lower.state_base and !$worn.under_lower.type.includes("naked")>>
+	<<if $worn.lower.state isnot $worn.lower.state_base or $worn.lower.skirt is 1 or $worn.lower.type.includes("naked")>>
+		<<set _rightaction["Displace your "+$worn.under_lower.name] to "under">>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
 <<widget "rightspray">><<nobr>>
 
 <<if $consensual isnot 1 and $spray gte 1>>
@@ -250,6 +489,12 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 
 <</nobr>><</widget>>
 
+<<widget "rightspraynew">><<nobr>>
+<<if $consensual isnot 1 and $spray gte 1>>
+	<<set _rightaction["Pepper spray"] to "spray">>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "rightsteal">><<nobr>>
 <<if $skulduggery gte 200 and $stealstate isnot 3 and $enemytype is "man" and $npc is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
 <<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
@@ -258,6 +503,14 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<<else>>
 	| <label><span class="brat">Steal</span> <<radiobutton "$rightaction" "steal">> <<skulduggerydifficulty>><<combatcrime>></label>
 	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "rightstealnew">><<nobr>>
+<<if $skulduggery gte 200 and $stealstate isnot 3 and $enemytype is "man" and $npc is 0 and $water isnot 1 and $punishmentposition isnot "gloryhole">>
+<<set $skulduggerydifficulty to 1000 - ($enemyarousal / $enemyarousalmax * 400) - $skulduggery - $enemytrust + $enemyanger>>
+	/*Missing <<skulduggerydifficulty>><<combatcrime>>*/
+	<<set _rightaction["Steal"] to "steal">>
 <</if>>
 <</nobr>><</widget>>
 
@@ -272,6 +525,62 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	| <label><span class="brat">Whack the pen away</span> <<radiobutton "$rightaction" "penwhack" checked>></label>
 	<<else>>
 	| <label><span class="brat">Whack the pen away</span> <<radiobutton "$rightaction" "penwhack">></label>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "rightpenwhacknew">><<nobr>>
+<<if $NPCList[0].lefthand is "pen" or $NPCList[0].righthand is "pen" or
+$NPCList[1].lefthand is "pen" or $NPCList[1].righthand is "pen" or
+$NPCList[2].lefthand is "pen" or $NPCList[2].righthand is "pen" or
+$NPCList[3].lefthand is "pen" or $NPCList[3].righthand is "pen" or
+$NPCList[4].lefthand is "pen" or $NPCList[4].righthand is "pen" or
+$NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
+	<<set _leftaction["Whack the pen away"] to "penwhack">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "rightFixAndCoverActions">><<nobr>>
+<<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1 and $vaginause is 0>>
+	<<set _rightaction["Cover your pussy"] to "rightcovervagina">>
+<</if>>
+
+<<if $worn.lower.vagina_exposed is 1 and $worn.under_lower.vagina_exposed is 1 and $penisuse is 0>>
+	<<set _rightaction["Cover your penis"] to "rightcoverpenis">>
+<</if>>
+
+<<if $worn.lower.anus_exposed is 1 and $worn.under_lower.anus_exposed is 1 and $anususe is 0>>
+	<<set _rightaction["Cover your ass"] to "rightcoveranus">>
+<</if>>
+
+<<if $worn.under_lower.name isnot "naked">>
+	<<if $worn.under_lower.state is "thighs" or $worn.under_lower.state is "knees" or $worn.under_lower.state is "ankles">>
+		<<set _rightaction["Pull up your " + $worn.under_lower.name] to "rightunderpull">>
+	<</if>>
+<</if>>
+
+<<if $worn.lower.skirt is 1>>
+	<<if $worn.lower.skirt_down is 0>>
+		<<if $worn.lower.state is "waist">>
+			<<set _rightaction["Cover your crotch with your " + $worn.lower.name] to "rightskirtpull">>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $worn.lower.name isnot "naked">>
+	<<if $worn.upper.set is $worn.lower.set>>
+		<<if $worn.lower.state isnot $worn.lower.state_base and $worn.upper.state is $worn.upper.state_base and $worn.upper.state_top is $worn.upper.state_top_base>>
+			<<set _rightaction["Fix your " + $worn.lower.name] to "rightlowerpull">>
+		<</if>>
+	<<elseif $worn.lower.state isnot $worn.lower.state_base>>
+		<<set _rightaction["Fix your " + $worn.lower.name] to "rightlowerpull">>
+	<</if>>
+<</if>>
+
+<<if $worn.upper.name isnot "naked">>
+	<<if $worn.upper.state isnot $worn.upper.state_base or $worn.upper.state_top isnot $worn.upper.state_top_base>>
+		<<set _rightaction["Fix your " + $worn.upper.name] to "rightlowerpull">>
 	<</if>>
 <</if>>
 <</nobr>><</widget>>
