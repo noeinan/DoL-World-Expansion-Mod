@@ -18,14 +18,14 @@ window.loadSave = function(saveSlot, confirm){
 	}
 }
 
-window.save = function(saveSlot, confirm, saveId){
+window.save = function(saveSlot, confirm, saveId, saveName){
 	if (saveId == null){
 		new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
 	} else if((SugarCube.State.variables.confirmSave === true && confirm != true) || (SugarCube.State.variables.saveId != saveId && saveId != null)){
 		new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');
 	}else{
 		if(saveSlot != undefined){
-			Save.slots.save(saveSlot, null, {saveId:SugarCube.State.variables.saveId});
+			Save.slots.save(saveSlot, null, {"saveId":saveId, "saveName":saveName});
 			SugarCube.State.variables.currentOverlay = null;
 			overlayShowHide("customOverlay");
 		}

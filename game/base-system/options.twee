@@ -56,7 +56,7 @@ These require a passage (move location, enter/exit a wardrobe, etc) change to ap
 Closed sidebar stats: 
 <br>
 <label><<print '<<radiobutton "$sidebarStats" "Disabled" ' + ($sidebarStats is "Disabled" ? "checked" : "") + '>>'>>Disabled</label> |
-<label><<print '<<radiobutton "$sidebarStats" "Limited" ' + ($sidebarStats is "Limited" ? "checked" : "") + '>>'>>Limited to importaint only</label> |
+<label><<print '<<radiobutton "$sidebarStats" "Limited" ' + ($sidebarStats is "Limited" ? "checked" : "") + '>>'>>Limited to important only</label> |
 <label><<print '<<radiobutton "$sidebarStats" "All" ' + ($sidebarStats is "All" ? "checked" : "") + '>>'>>Show all</label>
 <br>
 Combat Controls: 
@@ -97,7 +97,8 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 	Load from file: <input id="saveImport" type="file" value="Load from file" onchange="importSave(this.files)">
 	<br><br>
 	<<if $dancing is 0 and $combat is 0>>
-		<input type="button" value="Save to file" onclick="SugarCube.Save.export()">
+		<<set _exportName to "'degrees-of-lewdity"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
+		<input type="button" value="Save to file" @onclick="'SugarCube.Save.export('+_exportName+')'">
 	<<else>>
 		Unable to save to file currently.
 	<</if>>
@@ -136,55 +137,96 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 <<widget "saveList">><<nobr>>
 <<set _saveDetails = returnSaveDetails()>>
-<table id="savesList">
-	<tbody>
-		<<for _i to 0; _i lt 10; _i++>>
-			<tr>
-				<<if _i is 0>>
-					<td>A</td>
-					<<if _saveDetails.autosave isnot null>>
-						<td><input type="button" class="saveMenuButton" value="Load" onclick="loadSave('auto')"/></td>
-						<td><<print _saveDetails.autosave.title.replace(/</g, "< ")>>
-						<br>
-						<span class="datestamp"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span></td>
-						<td><input type="button" class="saveMenuButton right" value="Delete Auto" onclick="deleteSave('auto')"/></td>
-					<<else>>
-						<td><input type="button" value="Load" disabled/></td>
-						<td></td>
-						<td></td>
-					<</if>>
-				<<elseif _i lt 9>>
-					<<set _slot to _i - 1>>
-					<td><<print _i>></td>
-					<<if _saveDetails.slots[_slot] isnot null>>
-						<td>
+<div id="savesListContainer">
+	<div class="savesListRow">
+		<div class="saveGroup">
+			<div class="saveId">#</div>
+			<div class="saveButton">Save/Load</div>
+			<div class="saveName">ID/Name</div>
+			<div class="saveDetails">Details</div>
+		</div>
+		<div class="saveButton"></div>
+	</div>
+	<<for _i to 0; _i lt 10; _i++>>
+		<div class="savesListRow">
+			<<if _i is 0>>
+				<<if _saveDetails.autosave isnot null>>
+					<div class="saveGroup">
+						<div class="saveId">A</div>
+						<div class="saveButton">
+							<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('auto')"/>						
+						</div>
+						<div class="saveName">
+							<<if _saveDetails.autosave.metadata isnot undefined>>
+								<<print _saveDetails.autosave.metadata.saveId>>
+							<</if>>
+						</div>
+						<div class="saveDetails">
+							<span><<print _saveDetails.autosave.title.replace(/</g, "< ")>></span>	
+							<span class="datestamp"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>			
+						</div>
+					</div>
+					<div class="saveButton"><input type="button" class="saveMenuButton right" value="Delete Auto" onclick="deleteSave('auto')"/></div>
+				<<else>>
+					<div class="saveGroup">
+						<div class="saveId">A</div>
+						<div class="saveButton">
+							<input type="button" value="Load" disabled/>
+						</div>
+						<div class="saveName"></div>
+						<div class="saveDetails"></div>
+					<div>
+					<div class="saveButton"></div>
+				<</if>>
+			<<elseif _i lt 9>>
+				<<set _slot to _i - 1>>
+				<<if _saveDetails.slots[_slot] isnot null>>
+					<div class="saveGroup">
+						<div class="saveId"><<print _i>></div>
+						<div class="saveButton">
 							<<if _saveDetails.slots[_slot].metadata isnot undefined>>
 								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+_saveDetails.slots[_slot].metadata.saveId+')"/>'>>
 							<<else>>
 								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+null+')"/>'>>
 							<</if>>
 							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
-						</td>
-						<td><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>>
-						<br>
-						<span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span></td>
-						<td><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></td>
-					<<else>>
-						<td><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,'+$saveId+')"/>'>></td>
-						<td></td>
-						<td></td>
-					<</if>>
+						</div>
+						<div class="saveName">
+							<<if _saveDetails.slots[_slot].metadata isnot undefined>>
+								<<if _saveDetails.slots[_slot].metadata.saveName isnot undefined and _saveDetails.slots[_slot].metadata.saveName isnot "">>
+									<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
+								<<else>>
+									<<print _saveDetails.slots[_slot].metadata.saveId>>
+								<</if>>
+							<</if>>
+						</div>
+						<div class="saveDetails">
+							<span><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>></span>
+							<span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>			
+						</div>
+					</div>
+					<div class="saveButton"><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></div>
 				<<else>>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td><input type="button" class="saveMenuButton right" value="Delete All" onclick="deleteSave('all')"/></td>
+					<div class="saveGroup">
+						<div class="saveId"><<print _i>></div>
+						<div class="saveButton"><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,`'+$saveId+'`, `'+$saveName+'`)"/>'>></div>
+						<div class="saveName"></div>
+						<div class="saveDetails"></div>
+					</div>
+					<div class="saveButton"></div>
 				<</if>>
-			</tr>
-		<</for>>
-	</tbody>
-</table>
-<br>
+			<<else>>
+				<div class="saveGroup">
+					<div class="saveId"></div>
+					<div class="saveButton"></div>
+					<div class="saveName"></div>
+					<div class="saveDetails"></div>
+				</div>
+				<div class="saveButton"><input type="button" class="saveMenuButton right" value="Delete All" onclick="deleteSave('all')"/></div>
+			<</if>>
+		</div>
+	<</for>>
+</div>
 <</nobr>><</widget>>
 
 <<widget "clearAllWarning">><<nobr>>
