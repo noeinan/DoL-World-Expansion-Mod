@@ -44,7 +44,19 @@ The garden looks <span class="red">wild,</span> barely a garden at all. The hedg
 			It's too dark to work in the garden.
 			<br>
 		<<elseif $temple_garden lt 100>>
-			<<link [[Work in the garden (1:00)|Temple Garden Work]]>><<set $temple_garden += 5>><<pass 60>><<grace 1>><<tiredness 6>><</link>><<ggrace>><<gtiredness>>
+			<<link [[Work in the garden (1:00)|Temple Garden Work]]>>
+			<<if $tending gte 800>>
+				<<set $temple_garden += 5>>
+			<<elseif $tending gte 600>>
+				<<set $temple_garden += 4>>
+			<<elseif $tending gte 400>>
+				<<set $temple_garden += 3>>
+			<<elseif $tending gte 200>>
+				<<set $temple_garden += 2>>
+			<<else>>
+				<<set $temple_garden += 1>>
+			<</if>>
+			<<pass 60>><<grace 1>><<tiredness 6>><<tending 1>><</link>><<gtending>><<ggrace>><<gtiredness>>
 			<br>
 		<<else>>
 			<span class="green">The garden is perfect, and there's nothing more you can do for today.</span>
@@ -67,17 +79,19 @@ The garden looks <span class="red">wild,</span> barely a garden at all. The hedg
 You ask a priest what work needs doing around the garden. You're asked to trim a row of hedges. You take a pair of shears and get to work.
 <br><br>
 	<<if $danger gte (9900 - $allure) and $tentacledisable is "f" and $hallucinations gte 2>>
-		It's hard going, but you neaten things up a great deal. <<physique 6>>
+		<<tending_text>> It's hard going, but you neaten things up a great deal. <<physique 6>>
 		<br><br>
 		You're reaching in to cut a rogue branch when your wrist gets stuck. You reach your other hand in to help free yourself, and that gets stuck too. You feel something wrap around both ankles. A force pulls you off your feet and into the hedge.
 		<br><br>
 		You find yourself suspended within its branches, held aloft by tendrils wrapped around your body. More tendrils emerge from every direction.
 		<br><br>
 
-		<<link [[Next|Temple Garden Tentacles]]>><<set $molestationstart to 1>><</link>>
+		<<link [[Struggle|Temple Garden Tentacles]]>><<set $molestationstart to 1>><</link>>
+		<br>
+		<<link [[Soothe|Temple Garden Soothe]]>><</link>><<tendingdifficulty 1 1200>>
 		<br>
 	<<else>>
-		It's hard going, but you neaten things up a great deal. <<physique 6>>
+		<<tending_text>> It's hard going, but you neaten things up a great deal. <<physique 6>>
 		<br><br>
 		<<link [[Next|Temple Garden]]>><</link>>
 		<br>
@@ -86,7 +100,7 @@ You ask a priest what work needs doing around the garden. You're asked to trim a
 You ask a priest what work needs doing around the garden. You're asked to deweed the flower beds. You drop to your knees and get to work.
 <br><br>
 	<<if $danger gte (9900 - $allure) and $bestialitydisable is "f">>
-		Your hands get dirty, and beads of sweat slip down your cheek, but the flowers have lots more space when you're done. <<physique 6>>
+		<<tending_text>> Your hands get dirty, and beads of sweat slip down your cheek, but the flowers have lots more space when you're done. <<physique 6>>
 		<br><br>
 			<<if $syndromewolves is 1>>
 				You hear footsteps behind you. You turn just as a wolf jumps on top of you. It licks your face. You can't help but laugh.<<ltrauma>><<lstress>><<trauma -6>><<stress -6>>
@@ -103,7 +117,7 @@ You ask a priest what work needs doing around the garden. You're asked to deweed
 				<br>
 			<</if>>
 	<<else>>
-		Your hands get dirty, and beads of sweat slip down your cheek, but the flowers have lots more space when you're done. <<physique 6>>
+		<<tending_text>> Your hands get dirty, and beads of sweat slip down your cheek, but the flowers have lots more space when you're done. <<physique 6>>
 		<br><br>
 
 		<<link [[Next|Temple Garden]]>><</link>>
@@ -113,7 +127,7 @@ You ask a priest what work needs doing around the garden. You're asked to deweed
 You ask a priest what work needs doing around the garden. You're asked to gather fruit from the trees growing near the temple proper.
 <br><br>
 	<<if $danger gte (9900 - $allure)>>
-		Basket in hand, you climb a stepladder and start picking <<print either("lemons", "limes", "apples", "oranges", "pears")>>. It's pleasant, though you need to stretch pretty far to reach some of them. <<physique 6>><<lstress>><<stress -6>>
+		Basket in hand, you climb a stepladder and start picking <<print either("lemons", "limes", "apples", "oranges", "pears")>>. <<tending_text>> It's pleasant, though you need to stretch pretty far to reach some of them. <<physique 6>><<lstress>><<stress -6>>
 		<br><br>
 
 		<<generate1>><<person1>>
@@ -141,7 +155,7 @@ You ask a priest what work needs doing around the garden. You're asked to tend t
 		You shovel coal onto the fire. A <<monk>> keeps an eye on you as a <<he>> trims the hedges around the clearing. <<physique 6>>
 		<br><br>
 
-		It doesn't take long. You're just finishing up when Jordan arrives from the temple, a <<person3>><<person>> in tow.
+		<<tending_text>> It doesn't take long. You're just finishing up when Jordan arrives from the temple, a <<person3>><<person>> in tow.
 		<br><br>
 
 		Jordan whispers to the <<person2>><<monkcomma>> who smiles and looks at you. "Keep shoveling," <<he>> says. "This young'un is attempting the trial." You return to work, shoveling more coal onto the fire while the <<monk>> encourages the flame with a pair of bellows.
@@ -174,7 +188,7 @@ You ask a priest what work needs doing around the garden. You're asked to tend t
 		<<generate1>><<person1>>
 		You shovel coal onto the fire. A <<monk>> keeps an eye on you as a <<he>> trims the hedges around the clearing. <<physique 6>>
 		<br><br>
-		It doesn't take long. The <<monk>> asks you to help clean up the coals left over from a previous trial, which takes a bit longer.
+		<<tending_text>> It doesn't take long. The <<monk>> asks you to help clean up the coals left over from a previous trial, which takes a bit longer.
 		<br><br>
 
 		<<endevent>>
@@ -189,15 +203,15 @@ You ask a priest what work needs doing around the garden. You're asked to assist
 You find <<him>> tending to a row of trellises, each bearing a vibrant bine of hops.
 	<<set $rng to random(1, 100)>>
 	<<if $rng gte 81>>
-		<<He>> has you search the plants for mites.
+		<<He>> has you search the plants for mites. <<tending_text>> 
 	<<elseif $rng gte 61>>
-		<<He>> has you search the plants for mildew.
+		<<He>> has you search the plants for mildew. <<tending_text>> 
 	<<elseif $rng gte 41>>
-		<<He>> has you removes weeds from the soil.
+		<<He>> has you remove weeds from the soil. <<tending_text>> 
 	<<elseif $rng gte 21>>
-		<<He>> has you removes weeds from the soil.
+		<<He>> has you removes weeds from the soil. <<tending_text>> 
 	<<else>>
-		<<He>> has you harvest the riper plants.
+		<<He>> has you harvest the riper plants. <<tending_text>> 
 	<</if>>
 	<<physique 6>>
 <br><br>
@@ -207,13 +221,33 @@ You find <<him>> tending to a row of trellises, each bearing a vibrant bine of h
 	<br><br>
 
 	<<if $danger gte (9900 - $allure) and $grace lt 0 or $danger gte (9900 - $allure) and random(1, 10) is 10>>
-		<<link [[Next|Temple Drink Drugged]]>><<set $drunk += 180>><<set $drugged += 180>><</link>>
+		<<link [[Drink|Temple Drink Drugged]]>><<set $drunk += 180>><<set $drugged += 180>><</link>>
 		<br>
 	<<else>>
-		<<link [[Next|Temple Drink]]>><<set $drunk += 180>><</link>>
+		<<link [[Drink|Temple Drink]]>><<set $drunk += 180>><</link>>
 		<br>
 	<</if>>
 	<<link [[Refuse|Temple Drink Refuse]]>><<grace -1 monk>><</link>><<lgrace monk>>
+	<br>
+<</if>>
+
+:: Temple Garden Soothe [nobr]
+<<effects>>
+
+You stroke the vines as they surround you, and hum gently.
+
+<<if $tending gte random(1, 1200)>>
+	With a shudder, <span class="green">they still,</span> releasing your limbs and dropping you to the ground. You crawl out from beneath the hedge.
+	<br><br>
+	
+	<<link [[Next|Temple Garden]]>><</link>>
+	<br>
+	
+<<else>>
+	<span class="red">It's no use.</span> The tendrils close in.
+	
+	<br><br>
+	<<link [[Next|Temple Garden Tentacles]]>><<set $molestationstart to 1>><</link>>
 	<br>
 <</if>>
 
