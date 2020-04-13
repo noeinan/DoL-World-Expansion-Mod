@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## 0.2.11.2
+
+- Fixed a game-breaking bug found when trying to swim across forest rivers.
+- Fixed a bug that would cause Leighton to materialise as a random rapist.
+- Fixed a bug that would make Mason pretend you're naked even when wearing your swimming costume.
+- Fixed a bug that caused text and action repetitions when daydreaming during swimming class.
+- Fixed a few bugs that caused errors when trying to return items in the clothing shop. Thanks to Lollipop Scythe and Airks
+- Removed a duplicated line of text found when complimenting Avery before a date.
+
+Thanks to Lollipop Scythe for the following:
+- Added randomised clothing as a feat boost.
+- Fixed a bug found in the underwater ruins.
+- Fixed a bug found when trying to overwrite outfit sets.
+- Fixed a bug involving the wolf transformation.
+- Fixed wardrobe slot information in shops.
+- Added new custom colour toggles to allow for randomized custom colours.
+- Updated clothing code to use the new outfit system.
+
 ## 0.2.11.1
 
 - Added art to represent the heart, paw print, flower, skull, flame, butterfly, unicorn, star and cross tattoos to the sidebar, doggy and missionary sprites. Art courtesy of PurityGuy.
