@@ -18,6 +18,10 @@ window.loadSave = function(saveSlot, confirm){
 	}
 }
 
+window.autoSave = function(saveId, saveName){
+	SugarCube.Save.autosave.save(null,{"saveId":saveId, "saveName":saveName})
+}
+
 window.save = function(saveSlot, confirm, saveId, saveName){
 	if (saveId == null){
 		new Wikifier(null, '<<saveConfirm '+saveSlot+'>>');

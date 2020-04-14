@@ -96,7 +96,9 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 <<else>>
 	Load from file: <input id="saveImport" type="file" value="Load from file" onchange="importSave(this.files)">
 	<br><br>
-	<<if $dancing is 0 and $combat is 0>>
+	<<if $passage is "Start" or $passage is "Start2">>
+		Please load a save before trying to export a save file.
+	<<elseif $dancing is 0 and $combat is 0>>
 		<<set _exportName to "'degrees-of-lewdity"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
 		<input type="button" value="Save to file" @onclick="'SugarCube.Save.export('+_exportName+')'">
 	<<else>>
@@ -136,6 +138,9 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 <</nobr>><</widget>>
 
 <<widget "saveList">><<nobr>>
+<<if $passage isnot "Start" and $passage isnot "Start2">>
+	<<set $saveUnlock to true>>
+<</if>>
 <<set _saveDetails = returnSaveDetails()>>
 <div id="savesListContainer">
 	<div class="savesListRow">
@@ -145,7 +150,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 			<div class="saveName">ID/Name</div>
 			<div class="saveDetails">Details</div>
 		</div>
-		<div class="saveButton"></div>
+		<div class="deleteButton"></div>
 	</div>
 	<<for _i to 0; _i lt 10; _i++>>
 		<div class="savesListRow">
@@ -158,7 +163,11 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 						</div>
 						<div class="saveName">
 							<<if _saveDetails.autosave.metadata isnot undefined>>
-								<<print _saveDetails.autosave.metadata.saveId>>
+								<<if _saveDetails.autosave.metadata.saveName isnot undefined and _saveDetails.autosave.metadata.saveName isnot "">>
+									<<print _saveDetails.autosave.metadata.saveName.slice(0,10)>>
+								<<else>>
+									<<print _saveDetails.autosave.metadata.saveId>>
+								<</if>>
 							<</if>>
 						</div>
 						<div class="saveDetails">
@@ -166,7 +175,9 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 							<span class="datestamp"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>			
 						</div>
 					</div>
-					<div class="saveButton"><input type="button" class="saveMenuButton right" value="Delete Auto" onclick="deleteSave('auto')"/></div>
+					<div class="deleteButton">
+						<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('auto')"/>
+					</div>
 				<<else>>
 					<div class="saveGroup">
 						<div class="saveId">A</div>
@@ -175,8 +186,10 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 						</div>
 						<div class="saveName"></div>
 						<div class="saveDetails"></div>
-					<div>
-					<div class="saveButton"></div>
+					</div>
+					<div class="deleteButton">
+						<input class="right" type="button" value="Delete" disabled/>
+					</div>
 				<</if>>
 			<<elseif _i lt 9>>
 				<<set _slot to _i - 1>>
@@ -184,10 +197,14 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
-							<<if _saveDetails.slots[_slot].metadata isnot undefined>>
-								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+_saveDetails.slots[_slot].metadata.saveId+')"/>'>>
+							<<if $saveUnlock>>
+								<<if _saveDetails.slots[_slot].metadata isnot undefined>>
+									<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+_saveDetails.slots[_slot].metadata.saveId+')"/>'>>
+								<<else>>
+									<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+null+')"/>'>>
+								<</if>>
 							<<else>>
-								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+null+')"/>'>>
+								<input type="button" value="Save" disabled/>
 							<</if>>
 							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
 						</div>
@@ -205,15 +222,24 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 							<span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>			
 						</div>
 					</div>
-					<div class="saveButton"><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></div>
+					<div class="deleteButton"><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></div>
 				<<else>>
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
-						<div class="saveButton"><<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,`'+$saveId+'`, `'+$saveName+'`)"/>'>></div>
+						<div class="saveButton">
+							<<if $saveUnlock>>
+								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,`'+$saveId+'`, `'+$saveName+'`)"/>'>>
+							<<else>>
+								<input type="button" value="Save" disabled/>
+							<</if>>
+							<input type="button" value="Load" disabled/>
+						</div>
 						<div class="saveName"></div>
 						<div class="saveDetails"></div>
 					</div>
-					<div class="saveButton"></div>
+					<div class="deleteButton">
+						<input class="right" type="button" value="Delete" disabled/>
+					</div>
 				<</if>>
 			<<else>>
 				<div class="saveGroup">
