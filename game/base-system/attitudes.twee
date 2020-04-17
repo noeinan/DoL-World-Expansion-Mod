@@ -65,7 +65,7 @@ What makes you feel uncomfortable?
 	<</listbox>>
 	<<combatDefaults>>
 	<br><br>
-	<<consensualDefaults>>
+	<<set _currentActionSet to 0>>
 	<div id="othersFeelings">
 		<<othersFeelings 0>>
 	</div>
@@ -73,33 +73,53 @@ What makes you feel uncomfortable?
 <</nobr>><</widget>>
 
 <<widget "othersFeelings">><<nobr>>
-<<set _stringDefault to "$actionDefaults."+_options[$args[0]]>>
+<<set _currentOptions to $args[0]>>
+<<set _stringDefault to "$actionDefaults."+_options[_currentOptions]>>
 
-<<switch _options[$args[0]]>>
+<<switch _options[_currentOptions]>>
 	<<case "Everyone">><span class="red">Will override everyone if you use "Override related settings".</span><br><br><<set _requireConfirm to true>>
 	<<case "Acquaintances">><span class="red">Will override the other named acquaintances in the list if you use "Override related settings".</span><br><br><<set _requireConfirm to true>>
 	<<default>><<set _requireConfirm to false>>
 <</switch>>
-Earlier lists take priority in each type of action.
+Lower action set numbers take higher priority.
+<br>
+Default Action Set: <<print _currentActionSet + 1>> / $maxDefaultActionSets.
+<br>
+<<if _currentActionSet gt 0>>
+	<<link "Previous Action Set">>
+		<<set _currentActionSet-->>
+		<<replace #othersFeelings>><<othersFeelings _currentOptions>><</replace>>
+	<</link>> |
+<<else>>
+	Previous Action Set |
+<</if>>
+<<if _currentActionSet lt $maxDefaultActionSets - 1>>
+	<<link "Next Action Set">>
+		<<set _currentActionSet++>>
+		<<replace #othersFeelings>><<othersFeelings _currentOptions>><</replace>>
+	<</link>>
+<<else>>
+	Next Action Set
+<</if>>
 <br><br>
-
 __If it is consensual:__
 <br><br>
-
+<<sexDefaults false>>
 <<for _i to 0; _i lt _titles.length; _i++>>
 	<<if (_titles[_i] is "Penis" and $penisexist is 0) or (_titles[_i] is "Vagina" and $vaginaexist is 0)>>
 		<<continue>>
 	<</if>>
-	<<print _titles[_i]>>
-	<<print '<<listbox "'+_stringDefault+".consensual."+_dataName[_i]+'[0]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
-	<<print '<<listbox "'+_stringDefault+".consensual."+_dataName[_i]+'[1]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+	<span class="listMargin">
+		<<print _titles[_i]>>:
+		<<print '<<listbox "'+_stringDefault+".consensual."+_dataName[_i]+'['+_currentActionSet+']" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+	</span>
 	<br>
 <</for>>
 
 
-<<if _options[$args[0]] isnot "Robin">>
-	<<rapeDefaults>>
-	<br><br>
+<<if _options[_currentOptions] isnot "Robin">>
+	<<sexDefaults true>>
+	<br>
 	__If you are raped:__
 	<br><br>
 	
@@ -107,17 +127,18 @@ __If it is consensual:__
 		<<if (_titles[_i] is "Penis" and $penisexist is 0) or (_titles[_i] is "Vagina" and $vaginaexist is 0)>>
 			<<continue>>
 		<</if>>
-		<<print _titles[_i]>>
-		<<print '<<listbox "'+_stringDefault+".rape."+_dataName[_i]+'[0]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
-		<<print '<<listbox "'+_stringDefault+".rape."+_dataName[_i]+'[1]" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+		<span class="listMargin">
+			<<print _titles[_i]>>:
+			<<print '<<listbox "'+_stringDefault+".rape."+_dataName[_i]+'['+_currentActionSet+']" autoselect>><<optionsfrom '+_data[_i]+'>><</listbox>>'>>
+		</span>
 		<br>
 	<</for>>
 <</if>>
-<br><br>
+<br>
 
 <<if _requireConfirm is true>>
 	<<link [[Override related settings|$passage]]>>
-		<<switch _options[$args[0]]>>
+		<<switch _options[_currentOptions]>>
 			<<case "Everyone">>
 				<<set _override to clone($actionDefaults.Everyone)>>
 				<<set _loop to Object.keys($actionDefaults)>>
@@ -143,24 +164,25 @@ __If it is consensual:__
 
 <<widget "setupDefaults">><<nobr>>
 <<if $actionDefaults is undefined>>
+	<<set _defaultItem to ["rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest"]>>
 	<<set _defaultObject to {
 		rape:{
-			leftaction:["rest","rest"],
-			rightaction:["rest","rest"],
-			feetaction:["rest","rest"],
-			mouthaction:["rest","rest"],
-			penisaction:["rest","rest"],
-			vaginaaction:["rest","rest"],
-			anusaction:["rest","rest"],
+			leftaction:clone(_defaultItem),
+			rightaction:clone(_defaultItem),
+			feetaction:clone(_defaultItem),
+			mouthaction:clone(_defaultItem),
+			penisaction:clone(_defaultItem),
+			vaginaaction:clone(_defaultItem),
+			anusaction:clone(_defaultItem),
 		},
 		consensual:{
-			leftaction:["rest","rest"],
-			rightaction:["rest","rest"],
-			feetaction:["rest","rest"],
-			mouthaction:["rest","rest"],
-			penisaction:["rest","rest"],
-			vaginaaction:["rest","rest"],
-			anusaction:["rest","rest"],
+			leftaction:clone(_defaultItem),
+			rightaction:clone(_defaultItem),
+			feetaction:clone(_defaultItem),
+			mouthaction:clone(_defaultItem),
+			penisaction:clone(_defaultItem),
+			vaginaaction:clone(_defaultItem),
+			anusaction:clone(_defaultItem),
 		}
 	}>>
 	<<set $actionDefaults to {
@@ -177,82 +199,218 @@ __If it is consensual:__
 		"Leighton":clone(_defaultObject),
 	}>>
 <</if>>
+<<if $maxDefaultActionSets is undefined>>
+	<<set $maxDefaultActionSets to 2>>
+<</if>>
 <</nobr>><</widget>>
 
-<<widget "consensualDefaults">><<nobr>>
+<<widget "sexDefaults">><<nobr>>
 <<set _leftHand to {
 	"Rest":"rest",
 	"Stroke":"leftchest",
-	"Cover you face":"leftcoverface",
-	"Whack the pen away":"penwhack",
 }>>
+
+<<if $args[0] is true>>
+	<<set _leftHand["Punch"] to "lefthit">>
+<</if>>
+<<set _leftHand["Cover you face"] to "leftcoverface">>
+<<set _leftHand["Whack the pen away"] to "penwhack">>
+<<if $skulduggery gte 200>>
+	<<set _leftHand["Steal"] to "steal">>
+<</if>>
+<<set _leftHand["Struggle"] to "leftstruggle">>
+
+<<set _leftHand["Stroke their penis"] to "leftstroke">>
+
+<<if $promiscuity gt 34 or $deviancy gt 34 or $args[0] is true>>
+	<<set _leftHand["Grap their penis"] to "leftgrab">>
+	<<set _leftHand["Work their shaft"] to "leftwork">>
+
+	<<set _leftHand["Play with their pussy"] to "leftplay">>
+	<<set _leftHand["Rub their clit"] to "leftclit">>
+<</if>>
+
+
 <<set _rightHand to {
 	"Rest":"rest",
 	"Stroke":"rightchest",
-	"Cover you face":"rightcoverface",
-	"Whack the pen away":"penwhack",
 }>>
-<<if $skulduggery gte 200>>
-	<<set _leftHand.Steal to "steal">>
-	<<set _rightHand.Steal to "steal">>
+
+<<if $args[0] is true>>
+	<<set _rightHand["Punch"] to "righthit">>
 <</if>>
+<<set _rightHand["Cover you face"] to "rightcoverface">>
+<<set _rightHand["Whack the pen away"] to "penwhack">>
+<<if $skulduggery gte 200>>
+	<<set _rightHand["Steal"] to "steal">>
+<</if>>
+<<set _rightHand["Struggle"] to "rightstruggle">>
+
+<<set _rightHand["Stroke their penis"] to "rightstroke">>
+
+<<if $promiscuity gt 34 or $deviancy gt 34 or $args[0] is true>>
+	<<set _rightHand["Grap their penis"] to "rightgrab">>
+	<<set _rightHand["Work their shaft"] to "rightwork">>
+
+	<<set _rightHand["Play with their pussy"] to "rightplay">>
+	<<set _rightHand["Rub their clit"] to "rightclit">>
+<</if>>
+
+
 <<set _feet to {
 	"Rest":"rest",
 }>>
+<<if $args[0] is true>>
+	<<set _feet["Kick"] to "kick">>
+<</if>>
 <<if $promiscuity gt 34 or $deviancy gt 34>>
 	<<set _feet["Grab a penis"] to "grab">>
+	<<set _feet["Rub Penis"] to "grabrub">>
+
 	<<set _feet["Press against a pussy"] to "vaginagrab">>
+	<<set _feet["Rub Pussy"] to "vaginagrabrub">>
 <</if>>
 
 
 <<set _mouth to {
 	"Rest":"rest",
-	"Plead":"plead",
 }>>
-<<if $promiscuity gt 54 or $deviancy gt 54>>
+
+<<if $args[0] is true>>
+	<<set _mouth["Scream"] to "scream">>
+	<<set _mouth["Plead"] to "plead">>
+<</if>>
+
+<<if $submissive gte 1150>>
+	<<set _mouth["Moan"] to "moan">>
+<</if>>
+<<if $angel gte 6 and $angelforgive isnot 1 and $args[0] is true>>
+	<<set _mouth["Forgive"] to "forgive">>
+<</if>>
+<<if $submissive lte 850 and $args[0] is true>>
+	<<set _mouth["Demand"] to "demand">>
+<</if>>
+
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _mouth["Move your lips to their penis"] to "mouth">>
+<</if>>
+<<if $promiscuity gt 34 or $deviancy gt 34 or $args[0] is true>>
+	<<set _mouth["Grab between breasts"] to "grasp">>
+<</if>>
+<<set _mouth["Pull away "] to "pullaway">>
+<<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
+	<<set _mouth["Take their penis into your mouth"] to "swallow">>
+<</if>>
+<<set _mouth["Suck Penis"] to "suck">>
+<<if $args[0] is true>>
+	<<set _mouth["Bite their penis"] to "bite">>
+<</if>>
+
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _mouth["Move your lips to their pussy"] to "othervagina">>
 <</if>>
+<<set _mouth["Lick the pussy"] to "vaginalick">>
 
-<<if $promiscuity gt 34>>
+<<if $promiscuity gt 34 or $args[0] is true>>
 	<<set _mouth["Move your lips to their chest"] to "movetochest">>
 <</if>>
-<<if $submissive gte 1150>>
-	<<set _mouth["Moan"] to "moan">>
+
+<<set _mouth["Lick Breasts"] to "breastlick">>
+<<set _mouth["Pull away from breasts"] to "breastpull">>
+
+<<set _mouth["Suck their Breasts"] to "breastsuck">>
+<<if $args[0] is true>>
+	<<set _mouth["Bite their Breasts"] to "breastbite">>
 <</if>>
-<<if $angel gte 6 and $angelforgive isnot 1>>
-	<<set _mouth["Forgive"] to "forgive">>
-<</if>>
-<<if $submissive lte 850>>
-	<<set _mouth["Demand"] to "demand">>
-<</if>>
+<<set _mouth["Keep your mouth closed"] to "breastclosed">>
 
 
 <<set _penis to {
 	"Rest":"rest",
 }>>
-<<if $promiscuity gt 74 or $deviancy gt 74>>
-	<<set _penis["Press against their ass"] to "penistoanus">>
-	<<set _penis["Press against their vagina"] to "penistovagina">>
-	<<set _penis["Penetrate their ass"] to "penisanusfuck">>
+
+<<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
+	<<set _penis["Press against their pussy"] to "penistovagina">>
+
 	<<set _penis["Penetrate their pussy"] to "penisvaginafuck">>
 <</if>>
-<<if $promiscuity gt 54 or $deviancy gt 54>>
-	<<set _penis["Frot against their ass"] to "otheranusbay">>
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _penis["Frot against their clit"] to "bay">>
+<</if>>	
+<<set _penis["Tease the pussy"] to "tease">>
+<<set _penis["Pull away from their pussy"] to "escape">>
+
+/*After bay*/
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
+	<<set _penis["Rub against their pussy"] to "rub">>
 <</if>>
+
+/*After penisvaginafuck*/
+<<set _penis["Take the pussy"] to "take">>
+<<set _penis["Cooperate with their pussy"] to "cooperate">>
+
+<<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
+	<<set _penis["Press against their ass"] to "penistoanus">>
+
+	<<set _penis["Penetrate their ass"] to "penisanusfuck">>
+<</if>>
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
+	<<set _penis["Frot against their ass"] to "otheranusbay">>
+<</if>>
+<<set _penis["Tease the ass"] to "otheranustease">>
+<<set _penis["Pull away from their ass"] to "otheranusescape">>
+
+/*After otheranusbay*/
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
+	<<set _penis["Rub against their ass"] to "otheranusrub">>
+<</if>>
+
+/*After penisanusfuck*/
+<<set _penis["Take the ass"] to "otheranustake">>
+<<set _penis["Cooperate with their ass"] to "otheranuscooperate">>
+
+<<set _penis["Press your thigh against their mouth"] to "thighbay">>
+<<set _penis["Rub against their face"] to "othermouthtease">>
+
+<<set _penis["Rub against their lips"] to "othermouthrub">>
+<<set _penis["Pull away from their mouth"] to "othermouthescape">>
+
+<<set _penis["Cooperate with their mouth"] to "othermouthcooperate">>
+
 
 <<set _vagina to {
 	"Rest":"rest",
-	"Offer your anus instead":"penisanus",
+	"Offer your ass instead":"penisanus",
 }>>
-<<if $promiscuity gt 74 or $deviancy gt 74>>
+
+<<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
 	<<set _vagina["Straddle their penis"] to "vaginatopenis">>
+
 	<<set _vagina["Envelop their penis"] to "vaginapenisfuck">>
 <</if>>
-<<if $promiscuity gt 54 or $deviancy gt 54>>
+<<set _vagina["Rub against their penis"] to "rub">>
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _vagina["Try to keep the penis away with your thighs"] to "penisthighs">>
 <</if>>
+<<set _vagina["Pull away from their penis"] to "escape">>
+<<set _vagina["Tease the tip"] to "penistease">>
+
+/*After penisthighs*/
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
+	<<set _vagina["Rub against their penis"] to "rub">>
+<</if>>
+
+/*After vaginapenisfuck*/
+<<set _vagina["Take it"] to "take">>
+<<set _vagina["Cooperate"] to "cooperate">>
+
+<<set _vagina["Press your thigh against their mouth"] to "thighbay">>
+<<set _vagina["Rub against their face"] to "othermouthtease">>
+
+<<set _vagina["Rub against their lips"] to "othermouthrub">>
+<<set _vagina["Pull away from their mouth"] to "othermouthescape">>
+
+<<set _vagina["Cooperate with their mouth"] to "othermouthcooperate">>
 
 
 <<set _anus to {
@@ -261,84 +419,34 @@ __If it is consensual:__
 <<if $vaginaexist is 1>>
 	<<set _anus["Offer your pussy instead"] to "penispussy">>
 <</if>>
-<<if $promiscuity gt 74 or $deviancy gt 74>>
+
+<<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
 	<<set _anus["Straddle their penis"] to "anustopenis">>
+
 	<<set _anus["Envelop their penis"] to "anuspenisfuck">>
 <</if>>
-<<if $promiscuity gt 54 or $deviancy gt 54>>
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _anus["Keep the penis away with your cheeks"] to "penischeeks">>
 <</if>>
-<</nobr>><</widget>>
+<<set _anus["Rub against their penis"] to "rub">>
+<<set _anus["Pull away from their penis"] to "escape">>
 
-<<widget "rapeDefaults">><<nobr>>
-<<set _leftHand to {
-	"Rest":"rest",
-	"Stroke":"leftchest",
-	"Punch":"lefthit",
-	"Cover you face":"leftcoverface",
-	"Whack the pen away":"penwhack"
-}>>
-<<set _rightHand to {
-	"Rest":"rest",
-	"Stroke":"rightchest",
-	"Punch":"righthit",
-	"Cover you face":"rightcoverface",
-	"Whack the pen away":"penwhack"
-}>>
-<<if $skulduggery gte 200>>
-	<<set _leftHand.Steal to "steal">>
-	<<set _rightHand.Steal to "steal">>
-<</if>>
-<<set _feet to {
-	"Rest":"rest",
-	"Kick":"kick",
-	"Grab a penis":"grab",
-	"Press against a pussy":"vaginagrab",
-}>>
-<<set _mouth to {
-	"Rest":"rest",
-	"Scream":"scream",
-	"Plead":"plead",
-	"Move your lips to their penis":"mouth",
-	"Move your lips to their pussy":"othervagina",
-	"Move your lips to their chest":"movetochest",
-}>>
-<<if $submissive gte 1150>>
-	<<set _mouth["Moan"] to "moan">>
-<</if>>
-<<if $angel gte 6 and $angelforgive isnot 1>>
-	<<set _mouth["Forgive"] to "forgive">>
-<</if>>
-<<if $submissive lte 850>>
-	<<set _mouth["Demand"] to "demand">>
+/*After penischeeks*/
+<<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
+	<<set _anus["Tease the tip"] to "penistease">>
 <</if>>
 
-<<set _penis to {
-	"Rest":"rest",
-	"Press against their ass":"penistoanus",
-	"Press against their vagina":"penistovagina",
-	"Penetrate their ass":"penisanusfuck",
-	"Penetrate their pussy":"penisvaginafuck",
-	"Frot against their ass":"otheranusbay",
-	"Frot against their clit":"bay",
-}>>
+/*After anuspenisfuck*/
+<<set _anus["Take it"] to "take">>
+<<set _anus["Cooperate"] to "cooperate">>
 
-<<set _vagina to {
-	"Rest":"rest",
-	"Offer your anus instead":"penisanus",
-	"Straddle their penis":"vaginatopenis",
-	"Envelop their penis":"vaginapenisfuck",
-	"Try to keep the penis away with your thighs":"penisthighs",
-}>>
+<<set _anus["Press your butt against their mouth"] to "bottombay">>
+<<set _anus["Rub against their face"] to "othermouthtease">>
 
-<<set _anus to {
-	"Rest":"rest",
-}>>
-<<if $vaginaexist is 1>>
-	<<set _anus["Offer your pussy instead"] to "penispussy">>
-<</if>>
-<<set _anus["Straddle their penis"] to "anustopenis">>
-<<set _anus["Envelop their penis"] to "anuspenisfuck">>
-<<set _anus["Keep the penis away with your cheeks"] to "penischeeks">>
+<<set _anus["Rub against their lips"] to "othermouthrub">>
+<<set _anus["Pull away from their mouth"] to "othermouthescape">>
+
+<<set _anus["Cooperate with their mouth"] to "othermouthcooperate">>
+
 
 <</nobr>><</widget>>
