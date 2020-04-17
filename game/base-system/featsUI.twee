@@ -3,7 +3,7 @@
 <<updateFeats>>
 <h3>Feats</h3>
 
-Here you can earn VrelCoins by completing different tasks, each requiring you to meet the requirements in a single save. These will transfer between saves and allow optional bonuses when starting a new game. This will work even if cookies are cleared, however, you have to load your most recent save before starting a new game.
+Here you can earn VrelCoins by completing different tasks, each requiring you to meet the requirements in a single save. These will transfer to new games and allow optional bonuses. This will work even if cookies are cleared, however, you have to load your most recent save before starting a new game.
 <br><br>
 Playing on softmode or having the "The rate that events are triggered by allure" setting below 1 will prevent you from earning feats.
 Enabling cheats at any point will prevent you from earning feats permanently in your current game.
@@ -168,6 +168,10 @@ You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.point
 				<span class="gold">A new best friend:</span> +<<print $featsBoosts.upgrades.newLife / _details.cost>>
 			<<case "randomClothing">>
 				<span class="gold">Random clothing item:</span> +<<print 3 * $featsBoosts.upgrades.randomClothing / _details.cost>>
+			<<case "tattoos">>
+				<span class="gold">Starting tattoos:</span> +<<print $featsBoosts.upgrades.tattoos / _details.cost>>
+			<<case "defaultMoves">>
+				<span class="gold">Extra default moves:</span> +<<print $featsBoosts.upgrades.defaultMoves / _details.cost>>
 			<<default>>
 				<span class="gold">Starting _name grade:</span> +<<print $featsBoosts.upgrades[_name] / _details.cost>>
 		<</switch>>
@@ -191,6 +195,67 @@ You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.point
 			<<featsPointsMenuButtons _name _details.cost _details.limit>>
 		<<else>>
 			Remove _details.exclusive upgrades to make use of this upgrade.
+		<</if>>
+		
+		<<if _name is "tattoos">>
+			<<set _totalTattoos to $featsBoosts.upgrades.tattoos / _details.cost>>
+			<<if _tattooNumber is undefined or _tattooNumber gt _totalTattoos>>
+				<<set _tattooNumber to Math.clamp(_totalTattoos, 1, $featsBoosts.upgradeDetails.tattoos.limit / _details.cost)>>
+			<</if>>
+
+			<<if _totalTattoos gt 0>>
+				<br>
+				<span class="gold">Tattoo Number:</span>
+				<<print _tattooNumber>>
+				<br>
+				<<if _tattooNumber gt 1>>
+					<<link "Previous Tattoo">>
+						<<set _tattooNumber -= 1>>
+						<<replace #featsPointsMenu>><<featsPointsMenu>><</replace>>
+					<</link>> |
+				<<else>>
+					Previous Tattoo |
+				<</if>>
+				<<if _tattooNumber lt _totalTattoos>>
+					<<link "Next Tattoo">>
+						<<set _tattooNumber += 1>>
+						<<replace #featsPointsMenu>><<featsPointsMenu>><</replace>>
+					<</link>> |
+				<<else>>
+					Next Tattoo |
+				<</if>>
+				<br>			
+				<span class="gold">Where the tattoo is:</span>
+				<<set _bodyPartOptions to ["Forehead","Left cheek","Right cheek","Left shoulder","Right shoulder","Back","Breasts","Left bottom","Right bottom","Left thigh","Right thigh","Pubic"]>>
+				<<for _l to 1; _l lte _totalTattoos; _l++>>
+					<<if _tattooNumber is _l>>
+						<<continue>>
+					<</if>>
+					<<run _bodyPartOptions.delete($featsBoosts.tattoos[_l].bodypart)>>
+				<</for>>
+				<<listbox `"$featsBoosts.tattoos["+_tattooNumber+"].bodypart"` autoselect>>
+					<<option "Random">>
+					<<optionsfrom _bodyPartOptions>>
+				<</listbox>>
+				<br>
+				<span class="listMargin">
+					<span class="gold">What the tattoo is:</span>
+					<<featsTattooOptions>>
+					<<listbox `"$featsBoosts.tattoos["+_tattooNumber+"].tattoo"` autoselect>>
+						<<option "Random">>
+						<<optionsfrom _featsTattooOptions>>
+					<</listbox>>
+				</span>
+				<br>
+				<span class="listMargin">
+					<span class="gold">Tattoo Type:</span>
+					<<set _penOptions to ["Tattoo","Brand"]>>
+					<<listbox `"$featsBoosts.tattoos["+_tattooNumber+"].pen"` autoselect>>
+						<<optionsfrom _penOptions>>
+					<</listbox>>
+				</span>
+				<br>
+			<</if>>
 		<</if>>
 	<<else>>
 		<span class="red"><<print $featsBoosts.missing[_name]>></span>
@@ -242,4 +307,16 @@ You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.point
 <<replace #featsPointsMenu>>
 	<<featsPointsMenu>>
 <</replace>>
+<</nobr>><</widget>>
+
+<<widget "featsTattooOptions">><<nobr>>
+<<if _featsTattooOptions is undefined>>
+	<<set _featsTattooOptions to []>>
+	<<for _value range setup.bodywriting>>
+		<<if _value.featSkip is true>>
+			<<continue>>
+		<</if>>
+		<<run _featsTattooOptions.push(_value.writing)>>
+	<</for>>
+<</if>>
 <</nobr>><</widget>>

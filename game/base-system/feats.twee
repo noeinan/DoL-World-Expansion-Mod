@@ -16,7 +16,7 @@
 	<<if _passageCheck is "Start">>
 		<<set _recalledFeats to JSON.parse(localStorage.getItem("dolFeats"))>>
 	<</if>>
-	<<if _recalledFeats is undefined>>
+	<<if _recalledFeats is undefined or _recalledFeats is null>>
 		<<set _recalledFeats to {points: 0}>>
 	<</if>>
 	<<set _points to 0>>
@@ -67,6 +67,8 @@
 	<<set _newLife to _keys.count("Broodmother Host") + _keys.count("Top Broodmother Host")>>
 	<<set _newLifeLimit to (_newLife * 20)>>
 
+	<<set _tattoosFeats to _keys.count("A Living Canvas") + _keys.count("Billboard")>>
+
 	<<set $featsBoosts to {
 		upgrades:{
 			money:0,
@@ -79,6 +81,8 @@
 			impurity:0,
 			newLife:0,
 			aNewBestFriend:0,
+			tattoos:0,
+			defaultMoves: 0,
 			randomClothing:0,
 		},
 		upgradeDetails:{
@@ -92,24 +96,35 @@
 			impurity:{cost:20, limit: 100, minCount: 1, count:_keys.count("Demon"), exclusive:"purity"},
 			newLife:{cost:20, limit: _newLifeLimit, minCount: 1, count:_newLife, exclusive:""},
 			aNewBestFriend:{cost:10, limit: 10, minCount: 1, count:_keys.count("Ear Slime Lover"), exclusive:""},
+			tattoos:{cost:5, limit: 25, minCount: 2, count:_tattoosFeats, exclusive:""},
+			defaultMoves:{cost:5, limit: 25, minCount: 1, count:_keys.count("A New Life"), exclusive:""},
 			randomClothing:{cost:1, limit: 20, minCount: 0, count:0, exclusive:""},
 		},
 		missing:{
-			money:"Missing money achievements",
-			grades:"Missing 'Perfect Record' achievement",
-			skulduggery:"Missing 'Thief' achievement",
-			dancing:"Missing 'May I have this Dance?' achievement",
-			swimming:"Missing 'Aquanaut' achievement",
-			seduction:"Missing 'Seductress' achievement",
-			purity:"Missing 'Angel' and 'Fallen Angel' achievements",
-			impurity:"Missing 'Demon' achievement",
-			newLife:"Missing a `?????` achievement",
-			aNewBestFriend:"Missing a `?????` achievement",
+			money:"Missing money feat",
+			grades:"Missing 'Perfect Record' feat",
+			skulduggery:"Missing 'Thief' feat",
+			dancing:"Missing 'May I have this Dance?' feat",
+			swimming:"Missing 'Aquanaut' feat",
+			seduction:"Missing 'Seductress' feat",
+			purity:"Missing 'Angel' and 'Fallen Angel' feats",
+			impurity:"Missing 'Demon' feat",
+			newLife:"Missing a `?????` feat",
+			aNewBestFriend:"Missing a `?????` feat",
+			tattoos:"Missing 'Billboard' and 'A Living Canvas' feats",
+			defaultMoves:"Missing a '?????' feat",
 			randomClothing:"",
 		},
 		pointsUsed: 0,
 		clothingGender:"Either",
 		clothingCustomColors:false,
+		tattoos:{
+			1:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
+			2:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
+			3:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
+			4:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
+			5:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
+		},
 	}>>
 <</if>>
 <</nobr>><</widget>>
@@ -251,6 +266,60 @@
 		<</if>>
 		<<unset _item>>
 	<</for>>
+<</if>>
+
+<<if _upgrades.tattoos gt 0>>
+	<<featsTattooOptions>>
+	<<set _totalTattoos to $featsBoosts.upgrades.tattoos / $featsBoosts.upgradeDetails.tattoos.cost>>
+	<<set _bodyPartOptions to ["forehead","left_cheek","right_cheek","left_shoulder","right_shoulder","back","breasts","left_bottom","right_Bottom","left_thigh","right_thigh","pubic"]>>
+	/*Add non-random bodyparts*/
+	<<for _label, _value range $featsBoosts.tattoos>>
+		<<if _label gt _totalTattoos>>
+			<<break>>
+		<</if>>
+		<<if _value.bodypart is "Random">>
+			<<continue>>
+		<</if>>
+		<<set _bodyPart to _value.bodypart.toLowerCase()>>
+		<<set _bodyPart to _bodyPart.replace(" ", "_")>>
+		<<run _bodyPartOptions.delete(_bodyPart)>>
+		<<if  _value.tattoo is "Random">>
+			<<set _tattoo to _featsTattooOptions.pluck()>>
+		<<else>>
+			<<set _tattoo to _value.tattoo>>
+		<</if>>
+		<<for _label2, _value2 range setup.bodywriting>>
+			<<if _value2.writing is _tattoo>>
+				<<add_bodywriting _value.bodypart _label2 `_value.pen.toLowerCase()`>>
+				<<break>>
+			<</if>>
+		<</for>>
+	<</for>>
+	/*Add random bodyparts*/
+	<<for _label, _value range $featsBoosts.tattoos>>
+		<<if _label gt _totalTattoos>>
+			<<break>>
+		<</if>>
+		<<if _value.bodypart isnot "Random">>
+			<<continue>>
+		<</if>>
+		<<set _bodyPart to _bodyPartOptions.pluck()>>
+		<<if  _value.tattoo is "Random">>
+			<<set _tattoo to _featsTattooOptions.pluck()>>
+		<<else>>
+			<<set _tattoo to _value.tattoo>>
+		<</if>>
+		<<for _label2, _value2 range setup.bodywriting>>
+			<<if _value2.writing is _tattoo>>
+				<<add_bodywriting _bodyPart _label2 `_value.pen.toLowerCase()`>>
+				<<break>>
+			<</if>>
+		<</for>>
+	<</for>>
+	<<bodywriting_exposure_check true>>
+<</if>>
+<<if _upgrades.defaultMoves gt 0>>
+	<<set $maxDefaultActionSets to 2 + _upgrades.defaultMoves / _details.defaultMoves.cost>>
 <</if>>
 <</nobr>><</widget>>
 
