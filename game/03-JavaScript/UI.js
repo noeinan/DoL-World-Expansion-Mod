@@ -191,8 +191,8 @@ const defaultSkinColorRanges = {
 	"bStart": 4.5, "bEnd": 0.7,
 };
 
-window.skinColor = function(percent, overwrite) {
-	if (SugarCube.State.variables.skinColor.tanImgEnabled === "f") {
+window.skinColor = function(enabled, percent, overwrite) {
+	if (enabled === "f") {
 		return "";
 	}
 
@@ -256,4 +256,23 @@ window.extendStats = function(){
 
 window.customColor = function(color, saturation, brightness, contrast, sepia){
 	return 'filter: hue-rotate('+color+'deg) saturate('+saturation+') brightness('+brightness+') contrast('+contrast+') sepia('+sepia+')';
+}
+
+window.zoom = function(size, set){
+	if(size === undefined){
+		size = document.getElementById("numberslider-input-zoom").value;
+	}
+	var parsedSize = parseInt(size);
+	var body = document.getElementsByTagName("body")[0];
+	if(parsedSize >= 50 && parsedSize <= 200 && parsedSize !== 100){
+		body.style.zoom = size + "%";
+		if(set === true){
+			SugarCube.State.variables.zoom = size;
+		}
+	}else{
+		body.style.zoom = "";
+		if(set === true){
+			SugarCube.State.variables.zoom = 100;
+		}
+	}
 }

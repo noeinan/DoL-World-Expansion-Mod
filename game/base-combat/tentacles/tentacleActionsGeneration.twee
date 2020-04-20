@@ -1,0 +1,920 @@
+:: Widgets Tnetacle Actions Generation [widget]
+
+/*Sends the required variables to the chosen display type*/
+<<widget "generateCombatActionTentacle">><<nobr>>
+<<switch $combatControls>>
+	<<case "radio">>
+		<<generateCombatActionTentacleRadio $args[0] $args[1] $args[3]>>
+	<<case "lists" "limitedLists">>
+		<<generateCombatActionTentacleList $args[0] $args[1] $args[2] $args[4]>>
+<</switch>>
+<</nobr>><</widget>>
+
+/*Generated each set of actions in the form of a set of radio buttons*/
+<<widget "generateCombatActionTentacleRadio">><<nobr>>
+<<for _labelC, _valueC range $args[0]>>
+	<label>
+		<<print '<<radiobutton "$'+$args[1]+'" "'+_valueC+'" ' + (_valueC is $args[2] ? "checked" : "") + '>>'>>
+		<span @class="combatListColor('', _valueC, 'Tentacle')"><<print _labelC>></span>
+		<<print '<<'+$args[1]+'DifficultyTentacle "'+_valueC+'">>'>> |
+	</label>
+<</for>>
+<</nobr>><</widget>>
+
+/*Generated each set of actions in the form of a list*/
+<<widget "generateCombatActionTentacleList">><<nobr>>
+<<if $args[0]>>
+	<<set _options to $args[0]>>
+	<<set _name to $args[1]>>
+	<<capture _var _options _name>>
+		<span @id="_name + 'Select'" @class="$args[2] + 'List flavorText '+($args[3] is true?'reducedWidth':'')">
+			<<listbox `"$"+_name` autoselect>>
+				<<optionsfrom _options>>
+			<</listbox>>
+		</span>
+		/*Changes the color of the list border when the option is changed*/
+		<<combatButtonAdjustments _name "Tentacle">>
+	<</capture>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "generateActionsTentacle">><<nobr>>
+<<if $oldControls is true>>
+	__New Controls__
+	<br><br>
+<</if>>
+<div id="listContainer">
+	<div id="leftaction" @class="$combatControls + 'Control'">
+		<<leftActionInitTentacle>>
+	</div>
+
+	<div id="rightaction" @class="$combatControls + 'Control'">
+		<<rightActionInitTentacle>>
+	</div>
+
+	<div id="feetaction" @class="$combatControls + 'Control'">
+		<<feetActionInitTentacle>>
+	</div>
+
+	<<if $mouthstate isnot 0>>
+		<div id="mouthaction" @class="$combatControls + 'Control'">
+			<<mouthActionInitTentacle>>
+		</div>
+	<</if>>
+	<<if $penisstate isnot 0 and $penisexist is 1>>
+		<div id="penisaction" @class="$combatControls + 'Control'">
+			<<penisActionInitTentacle>>
+		</div>
+	<</if>>
+	<<if $vaginastate isnot 0 and $vaginaexist is 1>>
+		<div id="vaginaaction" @class="$combatControls + 'Control'">
+			<<vaginaActionInitTentacle>>
+		</div>
+	<</if>>
+	<<if $anusstate isnot 0>>
+		<div id="anusaction" @class="$combatControls + 'Control'">
+			<<anusActionInitTentacle>>
+		</div>
+	<</if>>
+	<<if $bottomuse isnot 0>>
+		<div id="bottomaction" @class="$combatControls + 'Control'">
+			<<bottomActionInitTentacle>>
+		</div>
+	<</if>>
+	<<if $breastuse isnot 0>>
+		<div id="breastaction" @class="$combatControls + 'Control'">
+			<<breastActionInitTentacle>>
+		</div>
+	<</if>>
+</div>
+<<if $oldControls is true>>
+	<br><br>
+	__Old Controls__
+	<br><br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "leftActionInitTentacle">><<nobr>>
+	<<switch $leftarm>>
+		<<case 0>>
+			<<set _leftOptions to "free">>
+			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left arm is free.</span>
+		<<case "grappled">>
+			<<set _leftOptions to "grappled">>
+			<<for _i to 0; _i lt $tentacles.max; _i++>>
+				<<if $tentacles[_i].shaft is "leftarm">>
+					<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">The $tentacles[_i].desc tentacle entangles your left arm.</span>
+					<<break>>
+				<</if>>
+			<</for>>
+		<<case "bound">>
+			<<set _leftOptions to "bound">>
+			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left arm is bound.</span>
+		<<default>>
+			<<for _i to 0; _i lt $tentacles.max; _i++>>
+				<<if $leftarm is $tentacles[_i].id>>
+					<<set _leftOptions to "tentacle">>
+					<<set _tentacleLeftOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">You hold the $tentacles[_i].desc tentacle in your left hand.</span>
+					<<break>>
+				<</if>>
+			<</for>>
+	<</switch>>
+	<<if $leftactiondefault is 0>>
+		<<set $leftactiondefault to Object.values(_leftaction)[0]>>
+	<</if>>
+	<<set $leftaction to $leftactiondefault>>
+	<<leftActionsTentacle>>
+	<<if Object.keys(_leftaction).length gt 0>>
+		<<set _textColor to combatListColor('leftaction', (Object.values(_leftaction).includes($leftaction) ? $leftaction : Object.values(_leftaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<if $combatControls isnot "radio" and _leftOptions is "free">>
+				<<set _reducedWidths to true>>
+			<<else>>
+				<<set _reducedWidths to false>>
+			<</if>>
+			<<generateCombatActionTentacle _leftaction "leftaction" _textColor $leftaction _reducedWidths>>
+			<<if _leftOptions is "free">>
+				<<leftactionSetupTentacle>>
+			<</if>>
+		</div>
+		<div id="leftactionDifficulty">
+			<<leftactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.left to clone(_leftOptions)>>
+<</nobr>><</widget>>
+
+<<widget "leftactionSetupTentacle">><<nobr>>
+<<if $combatControls is "radio">>
+	<br><br>
+	<<set _first to true>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<if $tentacles[_i] isnot undefined>>
+			<<if $tentacles[_i].shaft isnot "finished">>
+				<label>
+					<<print '<<radiobutton "$leftactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					$tentacles[_i].fullDesc
+				</label> |
+				<<set _first to false>>
+			<</if>>
+		<</if>>
+	<</for>>
+<<else>>
+	<<if _avaliableTargets is undefined>>
+		<<if $controls is "radio">>
+			<br>
+		<</if>>
+		<<set _avaliableTargets to {}>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished">>
+					<<set _avaliableTargets[$tentacles[_i].desc+" tentacle"] to $tentacles[_i].id>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
+		<<listbox "$leftactionTarget">>
+			<<optionsfrom _avaliableTargets>>
+		<</listbox>>
+	</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "leftactionDifficultyTentacle">><<nobr>>
+<<if $args[0] is undefined>>
+	<<set _diffAction to $leftaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	<<case "showbottomtentacle" "showthighstentacle" "showmouthtentacle">><<deviant5>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "leftActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _leftaction to {}>>
+<<set _leftaction["Rest"] to "rest">>
+<<switch _leftOptions>>
+	<<case "free">>
+		<<set _leftaction["Strike the"] to "lefthit">>
+		<<set _leftaction["Grab the"] to "leftgrab">>
+	<<case "grappled">>
+	<<case "bound">>
+	<<case "tentacle">>
+		<<set _leftaction["Milk it"] to "leftrub"+_tentacleLeftOption>>
+		<<set _leftaction["Let go"] to "leftstop"+_tentacleLeftOption>>
+		<<if $deviancy gte 75>>
+			<<if $anususe is 0 and $analdisable is "f">>
+				<<set _leftaction["Guide to your ass"] to "showbottom"+_tentacleLeftOption>>
+			<</if>>
+			<<if ($vaginaexist is 1 and $vaginause is 0) or ($penisexist is 1 and $penisuse is 0)>>
+				<<set _leftaction["Guide to your thighs"] to "showthighs"+_tentacleLeftOption>>
+			<</if>>
+			<<if $mouthuse is 0>>
+				<<set _leftaction["Guide to your mouth"] to "showmouth"+_tentacleLeftOption>>
+			<</if>>
+		<</if>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "rightActionInitTentacle">><<nobr>>
+	<<switch $rightarm>>
+		<<case 0>>
+			<<set _rightOptions to "free">>
+			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right arm is free.</span>
+		<<case "grappled">>
+			<<set _rightOptions to "grappled">>
+			<<for _i to 0; _i lt $tentacles.max; _i++>>
+				<<if $tentacles[_i].shaft is "rightarm">>
+					<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">The $tentacles[_i].desc tentacle entangles your right arm.</span>
+					<<break>>
+				<</if>>
+			<</for>>
+		<<case "bound">>
+			<<set _rightOptions to "bound">>
+			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right arm is bound.</span>
+		<<default>>
+			<<for _i to 0; _i lt $tentacles.max; _i++>>
+				<<if $rightarm is $tentacles[_i].id>>
+					<<set _rightOptions to "tentacle">>
+					<<set _tentaclerightOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">You hold the $tentacles[_i].desc tentacle in your right hand.</span>
+					<<break>>
+				<</if>>
+			<</for>>
+	<</switch>>
+	<<if $rightactiondefault is 0>>
+		<<set $rightactiondefault to Object.values(_rightaction)[0]>>
+	<</if>>
+	<<set $rightaction to $rightactiondefault>>
+	<<rightActionsTentacle>>
+	<<if Object.keys(_rightaction).length gt 0>>
+		<<set _textColor to combatListColor('rightaction', (Object.values(_rightaction).includes($rightaction) ? $rightaction : Object.values(_rightaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<if $combatControls isnot "radio" and _rightOptions is "free">>
+				<<set _reducedWidths to true>>
+			<<else>>
+				<<set _reducedWidths to false>>
+			<</if>>
+			<<generateCombatActionTentacle _rightaction "rightaction" _textColor $rightaction _reducedWidths>>
+			<<if _rightOptions is "free">>
+				<<rightactionSetupTentacle>>
+			<</if>>
+		</div>
+		<div id="rightactionDifficulty">
+			<<rightactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.right to clone(_rightOptions)>>
+<</nobr>><</widget>>
+
+<<widget "rightactionSetupTentacle">><<nobr>>
+<<if $combatControls is "radio">>
+	<br><br>
+	<<set _first to true>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<if $tentacles[_i] isnot undefined>>
+			<<if $tentacles[_i].shaft isnot "finished">>
+				<label>
+					<<print '<<radiobutton "$rightactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					$tentacles[_i].fullDesc
+				</label> |
+				<<set _first to false>>
+			<</if>>
+		<</if>>
+	<</for>>
+<<else>>
+	<<if _avaliableTargets is undefined>>
+		<<if $controls is "radio">>
+			<br>
+		<</if>>
+		<<set _avaliableTargets to {}>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished">>
+					<<set _avaliableTargets[$tentacles[_i].desc+" tentacle"] to $tentacles[_i].id>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
+		<<listbox "$rightactionTarget">>
+			<<optionsfrom _avaliableTargets>>
+		<</listbox>>
+	</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "rightactionDifficultyTentacle">><<nobr>>
+<<if $args[0] is undefined>>
+	<<set _diffAction to $rightaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	<<case "showbottomtentacle" "showthighstentacle" "showmouthtentacle">><<deviant5>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "rightActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _rightaction to {}>>
+<<set _rightaction["Rest"] to "rest">>
+<<switch _rightOptions>>
+	<<case "free">>
+		<<set _rightaction["Strike the"] to "righthit">>
+		<<set _rightaction["Grab the"] to "rightgrab">>
+	<<case "grappled">>
+	<<case "bound">>
+	<<case "tentacle">>
+		<<set _rightaction["Milk it"] to "rightrub"+_tentaclerightOption>>
+		<<set _rightaction["Let go"] to "rightstop"+_tentaclerightOption>>
+		<<if $deviancy gte 75>>
+			<<if $anususe is 0 and $analdisable is "f">>
+				<<set _rightaction["Guide to your ass"] to "showbottom"+_tentaclerightOption>>
+			<</if>>
+			<<if ($vaginaexist is 1 and $vaginause is 0) or ($penisexist is 1 and $penisuse is 0)>>
+				<<set _rightaction["Guide to your thighs"] to "showthighs"+_tentaclerightOption>>
+			<</if>>
+			<<if $mouthuse is 0>>
+				<<set _rightaction["Guide to your mouth"] to "showmouth"+_tentaclerightOption>>
+			<</if>>
+		<</if>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "feetActionInitTentacle">><<nobr>>
+	<<if $leftleg is 0 and $rightleg is 0>>
+		<<set _feetOptions to "free">>
+		<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your legs are free.</span>
+	<<elseif $leftleg is 0>>
+		<<set _feetOptions to "leftFree">>
+		<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your left leg is free.</span>
+	<<elseif $rightleg is 0>>
+		<<set _feetOptions to "rightFree">>
+		<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your right leg is free.</span>
+	<<elseif $leftleg is "grappled" and $rightleg is "grappled">>
+		<<set _feetOptions to "grappled">>
+		<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your legs are entangled and forced apart, leaving you less able to protect your <<genitalsstop>></span>
+	<<else>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $leftleg is $tentacles[_i].id>>
+				<<set _feetOptions to "tentacle">>
+				<<set _tentacleFeetOption to $tentacles[_i].id>>
+				<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">You hold the $tentacles[_i].desc tentacle between your feet.</span>
+				<<break>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<<if $feetactiondefault is 0>>
+		<<set $feetactiondefault to Object.values(_feetaction)[0]>>
+	<</if>>
+	<<set $feetaction to $feetactiondefault>>
+	<<feetActionsTentacle>>
+	<<if Object.keys(_feetaction).length gt 0>>
+		<<set _textColor to combatListColor('feetaction', (Object.values(_feetaction).includes($feetaction) ? $feetaction : Object.values(_feetaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<set _avaliableContext to ["free","leftFree","rightFree"]>>
+			<<if $combatControls isnot "radio" and _avaliableContext.includes(_feetOptions)>>
+				<<set _reducedWidths to true>>
+			<<else>>
+				<<set _reducedWidths to false>>
+			<</if>>
+			<<generateCombatActionTentacle _feetaction "feetaction" _textColor $feetaction _reducedWidths>>
+			<<if _avaliableContext.includes(_feetOptions)>>
+				<<feetactionSetupTentacle>>
+			<</if>>
+		</div>
+		<div id="feetactionDifficulty">
+			<<feetactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.feet to clone(_feetOptions)>>
+<</nobr>><</widget>>
+
+<<widget "feetactionSetupTentacle">><<nobr>>
+<<if $combatControls is "radio">>
+	<br><br>
+	<<set _first to true>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<if $tentacles[_i] isnot undefined>>
+			<<if $tentacles[_i].shaft isnot "finished">>
+				<label>
+					<<print '<<radiobutton "$feetactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					$tentacles[_i].fullDesc
+				</label> |
+				<<set _first to false>>
+			<</if>>
+		<</if>>
+	<</for>>
+<<else>>
+	<<if _avaliableTargets is undefined>>
+		<<if $controls is "radio">>
+			<br>
+		<</if>>
+		<<set _avaliableTargets to {}>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished">>
+					<<set _avaliableTargets[$tentacles[_i].desc+" tentacle"] to $tentacles[_i].id>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
+		<<listbox "$feetactionTarget">>
+			<<optionsfrom _avaliableTargets>>
+		<</listbox>>
+	</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "feetactionDifficultyTentacle">><<nobr>>
+<<if $args[0] is undefined>>
+	<<set _diffAction to $feetaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	<<case "showbottomtentacle" "showthighstentacle">><<deviant5>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "feetActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _feetaction to {}>>
+<<set _feetaction["Rest"] to "rest">>
+<<switch _feetOptions>>
+	<<case "free">>
+		<<set _feetaction["Kick the"] to "feethit">>
+		<<set _feetaction["Grab the"] to "feetgrab">>
+	<<case "leftFree" "rightFree">>
+		<<set _feetaction["Kick the"] to "feethit">>
+	<<case "tentacle">>
+		<<set _feetaction["Milk it"] to "feetrub"+_tentacleFeetOption>>
+		<<set _feetaction["Let go"] to "feetstop"+_tentacleFeetOption>>
+		<<if $deviancy gte 75>>
+			<<if $anususe is 0 and $analdisable is "f">>
+				<<set _feetaction["Guide to your ass"] to "showbottom"+_tentacleFeetOption>>
+			<</if>>
+			<<if ($vaginaexist is 1 and $vaginause is 0) or ($penisexist is 1 and $penisuse is 0)>>
+				<<set _feetaction["Guide to your thighs"] to "showthighs"+_tentacleFeetOption>>
+			<</if>>
+		<</if>>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "mouthActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $mouthstate>>
+			<<case "tentacleentrance">>
+				<<if $tentacles[_i].head is "mouthentrance">>
+					<<set _mouthOptions to "entrance">>
+					<<set _tentacleMouthOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].desc tentacle threatens your mouth.</span>
+					<<break>>
+				<</if>>
+			<<case "tentacleimminent">>
+				<<if $tentacles[_i].head is "mouthimminent">>
+					<<set _mouthOptions to "imminent">>
+					<<set _tentacleMouthOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].desc tentacle presses against your mouth.</span>
+					<<break>>
+				<</if>>
+			<<case "tentacle">>
+				<<if $tentacles[_i].head is "mouth">>
+					<<set _mouthOptions to "penetrated">>
+					<<set _tentacleMouthOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your mouth.</span>
+					<<break>>
+				<</if>>
+			<<case "tentacledeep">>
+				<<if $tentacles[_i].head is "mouthdeep">>
+					<<set _mouthOptions to "penetrated">>
+					<<set _tentacleMouthOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your mouth, ejaculating down your throat.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $mouthactiondefault is 0>>
+		<<set $mouthactiondefault to Object.values(_mouthaction)[0]>>
+	<</if>>
+	<<set $mouthaction to $mouthactiondefault>>
+	<<mouthActionsTentacle>>
+	<<if Object.keys(_mouthaction).length gt 0>>
+		<<set _textColor to combatListColor('mouthaction', (Object.values(_mouthaction).includes($mouthaction) ? $mouthaction : Object.values(_mouthaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _mouthaction "mouthaction" _textColor $mouthaction>>
+		</div>
+		<div id="mouthactionDifficulty">
+			<<mouthactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.mouth to clone(_mouthOptions)>>
+<</nobr>><</widget>>
+
+<<widget "mouthactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $mouthaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "mouthActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _mouthaction to {}>>
+<<switch _mouthOptions>>
+	<<case "entrance">>
+		<<set _mouthaction["Rest"] to "rest">>
+		<<set _mouthaction["Lick it"] to "mouthlick"+_tentacleMouthOption>>
+		<<if $head isnot "grappled">>
+			<<set _mouthaction["Pull away"] to "mouthpullaway"+_tentacleMouthOption>>
+		<</if>>
+	<<case "imminent">>
+		<<set _mouthaction["Rest"] to "rest">>
+		<<set _mouthaction["Kiss it"] to "mouthkiss"+_tentacleMouthOption>>
+		<<if $head isnot "grappled">>
+			<<set _mouthaction["Pull away"] to "mouthpullaway"+_tentacleMouthOption>>
+		<</if>>
+	<<case "penetrated">>
+		<<set _mouthaction["Take it"] to "take">>
+		<<set _mouthaction["Cooperate"] to "mouthcooperate"+_tentacleMouthOption>>
+		<<set _mouthaction["Bite"] to "mouthbite"+_tentacleMouthOption>>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "penisActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $penisstate>>
+			<<case "tentacleentrance">>
+				<<if $tentacles[_i].head is "penisentrance">>
+					<<set _penisOptions to "entrance">>
+					<<set _tentaclepenisOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">The $tentacles[_i].desc tentacle threatens your <<penisstop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacleimminent">>
+				<<if $tentacles[_i].head is "penisimminent">>
+					<<set _penisOptions to "imminent">>
+					<<set _tentaclepenisOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">The $tentacles[_i].desc tentacle presses against your <<peniscomma>> about to engulf</span>
+					<<break>>
+				<</if>>
+			<<case "tentacle">>
+				<<if $tentacles[_i].head is "penis">>
+					<<set _penisOptions to "penetrated">>
+					<<set _tentaclepenisOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">The $tentacles[_i].desc tentacle envelops and pounds your <<penisstop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacledeep">>
+				<<if $tentacles[_i].head is "penisdeep">>
+					<<set _penisOptions to "penetrated">>
+					<<set _tentaclepenisOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">The $tentacles[_i].desc tentacle envelops and pounds your <<penisstop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentaclerub">>
+				<<if $tentacles[_i].head is "penisrub">>
+					<<set _penisOptions to "penisrub">>
+					<<set _tentaclepenisOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">The $tentacles[_i].desc tentacle runs between your thighs, coiling around your <<penis>> and pressing against your tummy.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $penisactiondefault is 0>>
+		<<set $penisactiondefault to Object.values(_penisaction)[0]>>
+	<</if>>
+	<<set $penisaction to $penisactiondefault>>
+	<<penisActionsTentacle>>
+	<<if Object.keys(_penisaction).length gt 0>>
+		<<set _textColor to combatListColor('penisaction', (Object.values(_penisaction).includes($penisaction) ? $penisaction : Object.values(_penisaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _penisaction "penisaction" _textColor $penisaction>>
+		</div>
+		<div id="penisactionDifficulty">
+			<<penisactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.penis to clone(_penisOptions)>>
+<</nobr>><</widget>>
+
+<<widget "penisactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $penisaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "penisActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _penisaction to {}>>
+<<switch _penisOptions>>
+	<<case "entrance" "imminent">>
+		<<set _penisaction["Rest"] to "rest">>
+		<<set _penisaction["Rub"] to "penisrub"+_tentaclepenisOption>>
+		<<if $leftleg isnot "grappled" or $rightleg isnot "grappled">>
+			<<set _penisaction["Pull away"] to "penispullaway"+_tentaclepenisOption>>
+		<</if>>
+	<<case "penetrated">>
+		<<set _penisaction["Take it"] to "take">>
+		<<set _penisaction["Cooperate"] to "peniscooperate"+_tentaclepenisOption>>
+	<<case "penisrub">>
+		<<set _penisaction["Rest"] to "rest">>
+		<<set _penisaction["Rub"] to "penisrub"+_tentaclepenisOption>>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "vaginaActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $vaginastate>>
+			<<case "tentacleentrance">>
+				<<if $tentacles[_i].head is "tentacleentrance">>
+					<<set _vaginaOptions to "entrance">>
+					<<set _tentaclevaginaOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">The $tentacles[_i].desc tentacle threatens your <<pussystop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacleimminent">>
+				<<if $tentacles[_i].head is "tentacleimminent">>
+					<<set _vaginaOptions to "imminent">>
+					<<set _tentaclevaginaOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">The $tentacles[_i].desc tentacle presses against your <<pussycomma>> about to penetrate</span>
+					<<break>>
+				<</if>>
+			<<case "tentacle">>
+				<<if $tentacles[_i].head is "tentacle">>
+					<<set _vaginaOptions to "penetrated">>
+					<<set _tentaclevaginaOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your <<pussystop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacledeep">>
+				<<if $tentacles[_i].head is "tentacledeep">>
+					<<set _vaginaOptions to "penetrated">>
+					<<set _tentaclevaginaOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your <<pussycomma>> ejaculating deep into your womb.</span>
+					<<break>>
+				<</if>>
+			<<case "tentaclerub">>
+				<<if $tentacles[_i].head is "tentaclerub">>
+					<<set _vaginaOptions to "vaginarub">>
+					<<set _tentaclevaginaOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">The $tentacles[_i].desc tentacle runs between your thighs, pressing against your labia and continuing to your tummy.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $vaginaactiondefault is 0>>
+		<<set $vaginaactiondefault to Object.values(_vaginaaction)[0]>>
+	<</if>>
+	<<set $vaginaaction to $vaginaactiondefault>>
+	<<vaginaActionsTentacle>>
+	<<if Object.keys(_vaginaaction).length gt 0>>
+		<<set _textColor to combatListColor('vaginaaction', (Object.values(_vaginaaction).includes($vaginaaction) ? $vaginaaction : Object.values(_vaginaaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _vaginaaction "vaginaaction" _textColor $vaginaaction>>
+		</div>
+		<div id="vaginaactionDifficulty">
+			<<vaginaactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.vagina to clone(_vaginaOptions)>>
+<</nobr>><</widget>>
+
+<<widget "vaginaactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $vaginaaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "vaginaActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _vaginaaction to {}>>
+<<switch _vaginaOptions>>
+	<<case "entrance" "imminent">>
+		<<set _vaginaaction["Rest"] to "rest">>
+		<<set _vaginaaction["Rub"] to "vaginarub"+_tentaclevaginaOption>>
+		<<if $leftleg isnot "grappled" or $rightleg isnot "grappled">>
+			<<set _vaginaaction["Pull away"] to "vaginapullaway"+_tentaclevaginaOption>>
+		<</if>>
+	<<case "penetrated">>
+		<<set _vaginaaction["Take it"] to "take">>
+		<<set _vaginaaction["Cooperate"] to "vaginacooperate"+_tentaclevaginaOption>>
+	<<case "vaginarub">>
+		<<set _vaginaaction["Rest"] to "rest">>
+		<<set _vaginaaction["Rub"] to "vaginarub"+_tentaclevaginaOption>>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "anusActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $anusstate>>
+			<<case "tentacleentrance">>
+				<<if $tentacles[_i].head is "anusentrance">>
+					<<set _anusOptions to "entrance">>
+					<<set _tentacleanusOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle threatens your <<bottomstop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacleimminent">>
+				<<if $tentacles[_i].head is "anusimminent">>
+					<<set _anusOptions to "imminent">>
+					<<set _tentacleanusOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle presses against your <<bottomcomma>> about to penetrate.</span>
+					<<break>>
+				<</if>>
+			<<case "tentacle">>
+				<<if $tentacles[_i].head is "anus">>
+					<<set _anusOptions to "penetrated">>
+					<<set _tentacleanusOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your <<bottomstop>></span>
+					<<break>>
+				<</if>>
+			<<case "tentacledeep">>
+				<<if $tentacles[_i].head is "anusdeep">>
+					<<set _anusOptions to "penetrated">>
+					<<set _tentacleanusOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your <<bottomcomma>> ejaculating deep into your bowels.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $anusactiondefault is 0>>
+		<<set $anusactiondefault to Object.values(_anusaction)[0]>>
+	<</if>>
+	<<set $anusaction to $anusactiondefault>>
+	<<anusActionsTentacle>>
+	<<if Object.keys(_anusaction).length gt 0>>
+		<<set _textColor to combatListColor('anusaction', (Object.values(_anusaction).includes($anusaction) ? $anusaction : Object.values(_anusaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _anusaction "anusaction" _textColor $anusaction>>
+		</div>
+		<div id="anusactionDifficulty">
+			<<anusactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.anus to clone(_anusOptions)>>
+<</nobr>><</widget>>
+
+<<widget "anusactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $anusaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "anusActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _anusaction to {}>>
+<<switch _anusOptions>>
+	<<case "entrance" "imminent">>
+		<<set _anusaction["Rest"] to "rest">>
+		<<set _anusaction["Rub"] to "anusrub"+_tentacleanusOption>>
+		<<if $leftleg isnot "grappled" or $rightleg isnot "grappled">>
+			<<set _anusaction["Pull away"] to "anuspullaway"+_tentacleanusOption>>
+		<</if>>
+	<<case "penetrated">>
+		<<set _anusaction["Take it"] to "take">>
+		<<set _anusaction["Cooperate"] to "anuscooperate"+_tentacleanusOption>>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "bottomActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $bottomuse>>
+			<<case "tentaclerub">>
+				<<if $tentacles[_i].head is "bottomrub">>
+					<<set _bottomOptions to "bottomrub">>
+					<<set _tentaclebottomOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.bottom isnot _bottomOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your butt cheeks.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $bottomactiondefault is 0>>
+		<<set $bottomactiondefault to Object.values(_bottomaction)[0]>>
+	<</if>>
+	<<set $bottomaction to $bottomactiondefault>>
+	<<bottomActionsTentacle>>
+	<<if Object.keys(_bottomaction).length gt 0>>
+		<<set _textColor to combatListColor('bottomaction', (Object.values(_bottomaction).includes($bottomaction) ? $bottomaction : Object.values(_bottomaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _bottomaction "bottomaction" _textColor $bottomaction>>
+		</div>
+		<div id="bottomactionDifficulty">
+			<<bottomactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.bottom to clone(_bottomOptions)>>
+<</nobr>><</widget>>
+
+<<widget "bottomactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $bottomaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "bottomActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _bottomaction to {}>>
+<<switch _bottomOptions>>
+	<<case "bottomrub">>
+		<<set _bottomaction["Rest"] to "rest">>
+		<<set _bottomaction["Rub"] to "bottomrub"+_tentaclebottomOption>>
+<</switch>>
+<</nobr>><</widget>>
+
+
+<<widget "chestActionInitTentacle">><<nobr>>
+	<<for _i to 0; _i lt $tentacles.max; _i++>>
+		<<switch $chestuse>>
+			<<case "tentaclerub">>
+				<<if $tentacles[_i].head is "chestrub">>
+					<<set _chestOptions to "entrance">>
+					<<set _tentaclechestOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your butt cheeks.</span>
+					<<break>>
+				<</if>>
+		<</switch>>
+	<</for>>
+	<<if $chestactiondefault is 0>>
+		<<set $chestactiondefault to Object.values(_chestaction)[0]>>
+	<</if>>
+	<<set $chestaction to $chestactiondefault>>
+	<<chestActionsTentacle>>
+	<<if Object.keys(_chestaction).length gt 0>>
+		<<set _textColor to combatListColor('chestaction', (Object.values(_chestaction).includes($chestaction) ? $chestaction : Object.values(_chestaction)[0]), "Tentacle")>>
+		<div class="extraMargin">
+			<<generateCombatActionTentacle _chestaction "chestaction" _textColor $chestaction>>
+		</div>
+		<div id="chestactionDifficulty">
+			<<chestactionDifficultyTentacle>>
+		</div>
+	<</if>>
+	<<set $lastOptions.chest to clone(_chestOptions)>>
+<</nobr>><</widget>>
+
+<<widget "chestactionDifficultyTentacle">><<nobr>>
+/*
+<<if $args[0] is undefined>>
+	<<set _diffAction to $chestaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch (""+_diffAction).replace(/\d+/g,'')>>
+	
+<</switch>>
+*/
+<</nobr>><</widget>>
+
+<<widget "chestActionsTentacle">><<nobr>>
+/*Generate Actions*/
+<<set _chestaction to {}>>
+<<switch _chestOptions>>
+	<<case "chestrub">>
+		<<set _chestaction["Rest"] to "rest">>
+		<<set _chestaction["Rub"] to "chestrub"+_tentaclechestOption>>
+<</switch>>
+<</nobr>><</widget>>
