@@ -880,28 +880,69 @@ The _tentacle.desc tentacle writhes between your feet.
 	<<set _tentacle to $args[0] >>
 	<<set $rng to random(1, 100)>>
 
-	<<if $leftaction is "lefthit"+_tentacle.id or $rightaction is "righthit"+_tentacle.id>>
-		<<if $leftaction is "lefthit"+_tentacle.id>>
-			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit"+_tentacle.id>>
-			You strike the _tentacle.desc tentacle with your left hand and it reels away from you.
-		<<else>>
-			<<set $rightaction to 0>><<set $rightactiondefault to "righthit"+_tentacle.id>>
-			You strike the _tentacle.desc tentacle with your right hand and it reels away from you.
+	/*Old Controls*/
+	<<if $oldControls is true>>
+		<<if $leftaction is "lefthit"+_tentacle.id or $rightaction is "righthit"+_tentacle.id>>
+			<<if $leftaction is "lefthit"+_tentacle.id>>
+				<<set $leftaction to 0>><<set $leftactiondefault to "lefthit"+_tentacle.id>>
+				You strike the _tentacle.desc tentacle with your left hand and it reels away from you.
+			<<else>>
+				<<set $rightaction to 0>><<set $rightactiondefault to "righthit"+_tentacle.id>>
+				You strike the _tentacle.desc tentacle with your right hand and it reels away from you.
+			<</if>>
+			<<defiance 2>>
+			<<set $speechhit to 1>><<set $attackstat += 1>>
+			<<set _tentacle.tentaclehealth -= 1>>
+			<<if $rng lte ($physique / 200)>><<set _tentacle.tentaclehealth -= 1>><</if>>
+			<<tentacleadvdisable _tentacle>>
 		<</if>>
-		<<defiance 2>>
-		<<set $speechhit to 1>><<set $attackstat += 1>>
-		<<set _tentacle.tentaclehealth -= 1>>
-		<<if $rng lte ($physique / 200)>><<set _tentacle.tentaclehealth -= 1>><</if>>
+
+		<<if $leftaction is "leftgrab"+_tentacle.id or $rightaction is "rightgrab"+_tentacle.id>>
+			<<tentacleadvdisable _tentacle>> /* Make sure you call this before trying to set the tentacle info */
+			<<if $leftaction is "leftgrab"+_tentacle.id>>
+				<<set _hand to "left">><<set $leftaction to 0>><<set $leftactiondefault to "leftrub"+_tentacle.id>>
+				<<set $leftarm to _tentacle.id>><<set _tentacle.head to "leftarm">><<set $leftarmstate to "tentacle">>
+			<<else>>
+				<<set _hand to "right">><<set $rightaction to 0>><<set $rightactiondefault to "rightrub"+_tentacle.id>>
+				<<set $rightarm to _tentacle.id>><<set _tentacle.head to "rightarm">><<set $rightarmstate to "tentacle">>
+			<</if>>
+			<span class="lblue">You <<handtext>> grab the _tentacle.desc tentacle with your _hand hand.</span>
+			<<submission 1>><<handstat>>
+		<</if>>
+	<</if>>
+
+	/*New Controls*/
+	<<if ($leftaction is "lefthit" and $leftactionTarget is _tentacle.id)
+	or ($rightaction is "righthit" and $rightactionTarget is _tentacle.id)>>
+		<<if $leftaction is "lefthit" and $rightaction is "righthit">>
+			You strike the _tentacle.desc tentacle with both hands and it reels away from you.
+			<<set _multi to 2>>
+			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">>
+		<<elseif $leftaction is "lefthit">>
+			You strike the _tentacle.desc tentacle with your left hand and it reels away from you.
+			<<set _multi to 1>><<set $leftaction to 0>>
+			<<set $leftactiondefault to "lefthit">>
+		<<else>>
+			You strike the _tentacle.desc tentacle with your right hand and it reels away from you.
+			<<set _multi to 1>>
+			<<set $rightaction to 0>><<set $rightactiondefault to "righthit">>
+		<</if>>
+		<<defiance `2 * _multi`>>
+		<<set $speechhit to 1 * _multi>><<set $attackstat += 1 * _multi>>
+		<<if $rng lte ($physique / 200)>><<set _tentacle.tentaclehealth -= 1 * _multi>><</if>>
+		<<set _tentacle.tentaclehealth -= 1 * _multi>>
 		<<tentacleadvdisable _tentacle>>
 	<</if>>
 
-	<<if $leftaction is "leftgrab"+_tentacle.id or $rightaction is "rightgrab"+_tentacle.id>>
+	<<if ($leftaction is "leftgrab" and $leftactionTarget is _tentacle.id)
+	or ($rightaction is "rightgrab" and $rightactionTarget is _tentacle.id)>>
 		<<tentacleadvdisable _tentacle>> /* Make sure you call this before trying to set the tentacle info */
-		<<if $leftaction is "leftgrab"+_tentacle.id>>
-			<<set _hand to "left">><<set $leftaction to 0>><<set $leftactiondefault to "leftrub"+_tentacle.id>>
+		<<if $leftaction is "leftgrab" and $leftactionTarget is _tentacle.id>>
+			<<set _hand to "left">><<set $leftaction to 0>><<set $leftactiondefault to "leftrub">>
 			<<set $leftarm to _tentacle.id>><<set _tentacle.head to "leftarm">><<set $leftarmstate to "tentacle">>
 		<<else>>
-			<<set _hand to "right">><<set $rightaction to 0>><<set $rightactiondefault to "rightrub"+_tentacle.id>>
+			<<set _hand to "right">><<set $rightaction to 0>><<set $rightactiondefault to "rightrub">>
 			<<set $rightarm to _tentacle.id>><<set _tentacle.head to "rightarm">><<set $rightarmstate to "tentacle">>
 		<</if>>
 		<span class="lblue">You <<handtext>> grab the _tentacle.desc tentacle with your _hand hand.</span>
@@ -1063,24 +1104,45 @@ The _tentacle.desc tentacle writhes between your feet.
 		<<tentacleadvdisable _tentacle>>
 	<</if>>
 
-<<if $leftaction is "leftstop"+_tentacle.id>>
-<<set $leftaction to 0>><<set $leftactiondefault to "leftstop"+_tentacle.id>>
-You release the _tentacle.desc tentacle from your left hand.
-<<tentacleadvdisable _tentacle>>
-<</if>>
-	<<if $feetaction is "feethit"+_tentacle.id>>
-		<<set $feetaction to 0>><<set $feetactiondefault to "feethit"+_tentacle.id>>
+	<<if $leftaction is "leftstop"+_tentacle.id>>
+		<<set $leftaction to 0>><<set $leftactiondefault to "leftstop"+_tentacle.id>>
+		You release the _tentacle.desc tentacle from your left hand.
+		<<tentacleadvdisable _tentacle>>
+	<</if>>
+
+	/*Old Controls*/
+	<<if $oldControls is true>>
+		<<if $feetaction is "feethit"+_tentacle.id>>
+			<<set $feetaction to 0>><<set $feetactiondefault to "feethit"+_tentacle.id>>
+			You kick the _tentacle.desc tentacle and it reels away from you.
+			<<defiance 2>><<set $speechhit to 1>><<tentacleadvdisable _tentacle>><<set $attackstat += 1>><<set _tentacle.tentaclehealth -= 1>>
+			<<if $rng lte ($physique / 200)>>
+				<<set _tentacle.tentaclehealth -= 1>>
+			<</if>>
+		<</if>>
+
+		<<if $feetaction is "feetgrab"+_tentacle.id>>
+			<<set $feetaction to 0>><<set $feetactiondefault to "feetrub"+_tentacle.id>><<submission 1>><<feetstat>>
+			<span class="lblue">You <<feettext>> grab the _tentacle.desc tentacle between your feet.</span>
+			<<tentacleadvdisable _tentacle>><<set $leftleg to _tentacle.id>><<set $rightleg to _tentacle.id>><<set _tentacle.head to "feet">><<feetstat>><<set $feetstate to "tentacle">>
+		<</if>>
+	<</if>>
+
+	/*New Controls*/
+	<<if $feetaction is "feethit" and $feetactionTarget is _tentacle.id>>
+		<<set $feetaction to 0>><<set $feetactiondefault to "feethit">>
 		You kick the _tentacle.desc tentacle and it reels away from you.
-		<<defiance 2>><<set $speechhit to 1>><<tentacleadvdisable _tentacle>><<set $attackstat += 1>><<set _tentacle.tentaclehealth -= 1>>
+		<<defiance 2>><<set $speechhit to 1>><<tentacleadvdisable _tentacle>><<set $attackstat += 1>>
+		<<set _tentacle.tentaclehealth -= 1>>
 		<<if $rng lte ($physique / 200)>>
 			<<set _tentacle.tentaclehealth -= 1>>
 		<</if>>
 	<</if>>
-
-	<<if $feetaction is "feetgrab"+_tentacle.id>>
-		<<set $feetaction to 0>><<set $feetactiondefault to "feetrub"+_tentacle.id>><<submission 1>><<feetstat>>
+	<<if $feetaction is "feetgrab" and $feetactionTarget is _tentacle.id>>
+		<<set $feetaction to 0>><<set $feetactiondefault to "feetrub">><<submission 1>><<feetstat>>
 		<span class="lblue">You <<feettext>> grab the _tentacle.desc tentacle between your feet.</span>
-		<<tentacleadvdisable _tentacle>><<set $leftleg to _tentacle.id>><<set $rightleg to _tentacle.id>><<set _tentacle.head to "feet">><<feetstat>><<set $feetstate to "tentacle">>
+		<<tentacleadvdisable _tentacle>><<set $leftleg to _tentacle.id>><<set $rightleg to _tentacle.id>>
+		<<set _tentacle.head to "feet">><<feetstat>><<set $feetstate to "tentacle">>
 	<</if>>
 
 	<<if $feetaction is "feetrub"+_tentacle.id>>
@@ -1168,8 +1230,13 @@ You release the _tentacle.desc tentacle from your left hand.
 		<</if>>
 	<</if>>
 
+	<<if $mouthaction is "take">>
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "take">>
+
+	<</if>>
+
 	<<if $mouthaction is "mouthcooperate"+_tentacle.id>>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "mouthcooperate"+_tentacle.id>>
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "mouthcooperate"+_tentacle.id>>
 		<<sex 5>><<oralskilluse>>
 		You <<oraltext>> suck the _tentacle.desc tentacle invading your mouth.
 		<<if $oralskill gte (800 - ($rng * 10))>>
@@ -1203,6 +1270,11 @@ You release the _tentacle.desc tentacle from your left hand.
 		<</if>>
 	<</if>>
 
+	<<if $vaginaaction is "take">>
+		<<set $vaginaaction to 0>><<set $vaginaactiondefault to "take">>
+
+	<</if>>
+
 	<<if $vaginaaction is "vaginacooperate"+_tentacle.id>>
 		<<set $vaginaaction to 0>><<set $vaginaactiondefault to "vaginacooperate"+_tentacle.id>>
 		<<sex 5>><<vaginalskilluse>>
@@ -1229,6 +1301,11 @@ You release the _tentacle.desc tentacle from your left hand.
 		<</if>>
 	<</if>>
 
+	<<if $penisaction is "take">>
+		<<set $penisaction to 0>><<set $penisactiondefault to "take">>
+
+	<</if>>
+
 	<<if $penisaction is "peniscooperate"+_tentacle.id>>
 		<<set $penisaction to 0>><<set $penisactiondefault to "peniscooperate"+_tentacle.id>>
 		<<sex 5>><<penileskilluse>>
@@ -1253,6 +1330,11 @@ You release the _tentacle.desc tentacle from your left hand.
 			<span class="lblue">Slimy fluid erupts from the tip, covering your <<bottomstop>></span>
 			<<set $bottomgoo += 1>><<set _tentacle.tentaclehealth -= 3>><<bottomejacstat>><<ejacstat>>
 		<</if>>
+	<</if>>
+
+	<<if $anusaction is "take">>
+		<<set $anusaction to 0>><<set $anusactiondefault to "take">>
+		
 	<</if>>
 
 	<<if $anusaction is "anuscooperate"+_tentacle.id>>

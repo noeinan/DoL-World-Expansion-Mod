@@ -60,7 +60,7 @@ window.wikifier2 = function(str){
 	new Wikifier(null, str);
 }
 
-window.combatListColor = function(name, value){
+window.combatListColor = function(name, value, type){
 	var color = "";
 	var check = "";
 	if(value != undefined){
@@ -68,72 +68,121 @@ window.combatListColor = function(name, value){
 	}else{
 		check = SugarCube.State.variables[name];
 	}
+	if(type === ""){
+		switch(check) {
+			/*leftaction or rightaction*/
+			case "steal": case "penwhack": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus": case "rightcovervagina":
+			case "rightcoverpenis": case "rightcoveranus":
+			/*mouthaction*/
+			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
+			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss":
+			/*penisaction*/
+			case "othermouthescape": case "escape": case "otheranusescape":
+				color = "brat";
+			break;
+			
+			/*leftaction or rightaction*/
+			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle":
+			/*feetaction*/
+			case "kick":
+			/*mouthaction*/
+			case "bite": case "demand":
+				color = "def";
+			break;
 	
-	switch(check) {
-		/*leftaction or rightaction*/
-		case "steal": case "penwhack": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus": case "rightcovervagina":
-		case "rightcoverpenis": case "rightcoveranus":
-		/*mouthaction*/
-		case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
-		case "mock": case "breastclosed": case "breastpull": case "pullawaykiss":
-		/*penisaction*/
-		case "othermouthescape": case "escape": case "otheranusescape":
-			color = "brat";
-		break;
-		
-		/*leftaction or rightaction*/
-		case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle":
-		/*feetaction*/
-		case "kick":
-		/*mouthaction*/
-		case "bite": case "demand":
-			color = "def";
-		break;
+			/*mouthaction*/
+			case "grasp": case "plead": case "forgive":
+			/*penisaction*/
+			case "thighbay": case "bay": case "otheranusbay":
+			/*vaginaaction*/
+			case "penisthighs":
+			/*anusaction*/
+			case "bottombay": case "penischeeks": case "penispussy":
+				color = "meek";
+			break;
+	
+			/*leftaction or rightaction*/
+			case "leftplay": case "leftgrab": case "leftstroke": case "leftchest": case "rightplay": case "rightgrab": case "rightstroke": case "rightchest":
+			case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit":
+			/*feetaction*/
+			case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
+			/*mouthaction*/
+			case "peniskiss": case "kiss": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
+			case "othervagina": case "mouth": case "kissback":
+			/*penisaction*/
+			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
+			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
+			/*vaginaaction*/
+			case "vaginatopenis": case "vaginapenisfuck":
+			/*anusaction*/
+			case "anustopenis": case "anuspenisfuck": case "penistease":
+				color = "sub";
+			break;
+	
+			default:
+				color = "white";
+			break;
+		}
+	}
+	else if(type === "Tentacle"){
+		switch(check.replace(/\d+/g, '')) {
+			/*leftaction or rightaction*/
+			case "lefthittentacle": case "righthittentacle":
+			case "lefthit": case "righthit":
+			/*feetaction*/
+			case "feethittentacle":
+			/*mouthaction*/
+			case "mouthbitetentacle":
+				color = "def";
+			break;
 
-		/*mouthaction*/
-		case "grasp": case "plead": case "forgive":
-		/*penisaction*/
-		case "thighbay": case "bay": case "otheranusbay":
-		/*vaginaaction*/
-		case "penisthighs":
-		/*anusaction*/
-		case "bottombay": case "penischeeks": case "penispussy":
-			color = "meek";
-		break;
+			/*mouthaction*/
+			case "mouthpullawaytentacle": 
+			/*penisaction*/
+			case "penispullawaytentacle":
+			/*vaginaaction*/
+			case "vaginapullawaytentacle":
+			/*anusaction*/
+			case "anuspullawaytentacle":
+				color = "brat";
 
-		/*leftaction or rightaction*/
-		case "leftplay": case "leftgrab": case "leftstroke": case "leftchest": case "rightplay": case "rightgrab": case "rightstroke": case "rightchest":
-		case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit":
-		/*feetaction*/
-		case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
-		/*mouthaction*/
-		case "peniskiss": case "kiss": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
-		case "othervagina": case "mouth": case "kissback":
-		/*penisaction*/
-		case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
-		case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
-		/*vaginaaction*/
-		case "vaginatopenis": case "vaginapenisfuck":
-		/*anusaction*/
-		case "anustopenis": case "anuspenisfuck": case "penistease":
-			color = "sub";
-		break;
-
-		default:
-			color = "white";
-		break;
+			/*leftaction or rightaction*/
+			case "leftgrabtentacle": case "rightgrabtentacle": case "leftrubtentacle": case "rightrubtentacle":
+			case "showbottomtentacle": case "showthighstentacle": case "showmouthtentacle": 
+			case "leftgrab": case "rightgrab": case "leftrub": case "rightrub":
+			case "showbottom": case "showthighs": case "showmouth": 
+			/*feetaction*/
+			case "feetgrab": case "feetrubtentacle":
+			/*mouthaction*/
+			case "mouthlicktentacle": case "mouthkisstentacle": case "mouthcooperatetentacle":
+			/*penisaction*/
+			case "penisrubtentacle": case "peniscooperatetentacle":
+			/*vaginaaction*/
+			case "vaginarubtentacle": case "vaginacooperatetentacle":
+			/*anusaction*/
+			case "anusrubtentacle": case "anuscooperatetentacle":
+			/*bottomuse*/
+			case "bottomrubtentacle":
+			/*breastuse*/
+			case "chestrubtentacle":
+				color = "sub";
+			break;
+			default:
+				color = "white";
+			break;
+		}
 	}
 	return color;
 }
 
 DefineMacroS("combatListColor", combatListColor);
 
-function combatButtonAdjustments(name){
-	jQuery(document).on('change', '#listbox-'+name,{"name":name}, function(e) {
+function combatButtonAdjustments(name, extra){
+	jQuery(document).on('change', '#listbox-'+name,{"name":name, "extra":extra}, function(e) {
 		/*console.log(e.data);*/
-		new Wikifier(null, '<<replace #'+e.data.name+'Difficulty>><<'+e.data.name+'Difficulty>><</replace>>');
-		$('#'+e.data.name+'Select' ).removeClass();
-		$('#'+e.data.name+'Select' ).addClass(combatListColor(e.data.name) + "List");
+		new Wikifier(null, '<<replace #'+e.data.name+'Difficulty>><<'+e.data.name+'Difficulty'+e.data.extra+'>><</replace>>');
+		$('#'+e.data.name+'Select' ).removeClass('whiteList bratList meekList defList subList');
+		$('#'+e.data.name+'Select' ).addClass(combatListColor(e.data.name, undefined, e.data.extra) + "List");
 	});
 	return "";
 }
