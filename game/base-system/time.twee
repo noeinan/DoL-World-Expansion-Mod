@@ -180,8 +180,24 @@
 <<unset $ex_brothel>>
 <<unset $ex_studio>>
 <<unset $ex_high>>
+<<unset $ex_stall>>
+<<unset $ex_mason>>
 <<unset $mason_spoken>>
-<<tending_day>>
+<<unset $stall_rented>>
+<<if $stall_rejected gte 1>>
+	<<set $stall_rejected -= 1>>
+	<<set $stall_rejected = Math.clamp($stall_rejected, 0, 100)>>
+<</if>>
+<<if $mason_pond is 3>>
+	<<if $weather isnot "rain">>
+		<<set $mason_pond_timer -= 1>>
+	<</if>>
+	<<if $mason_pond_timer lte 0>>
+		<<unset $mason_pond_timer>>
+		<<set $mason_pond to 4>>
+	<</if>>
+<</if>>
+
 
 <<set $masochism *= 0.985>>
 <<if $masochism_level is 0>>
@@ -555,6 +571,8 @@
 <<set $weather to $nextWeather[0]>>
 <<run $nextWeather.deleteAt(0)>>
 
+<<tending_day>>
+
 <<if $flashbacktown isnot 0>>
 	<<set $flashbacktown -= 1>>
 <</if>>
@@ -728,6 +746,7 @@
 	<</if>>
 	<<set $averydateattended to 0>>
 <</if>>
+<<unset $averydatedone>>
 
 <<if $skulduggery gte 100 and $skulduggeryday lt 100>>
 	<span class="gold">Your skulduggery has improved to</span> <span class="pink">F+.</span>

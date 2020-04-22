@@ -1,5 +1,5 @@
 :: Widgets Tending [widget]
-<<widget "plots_init">><<nobr>>/*First variable: location. Second variable: number of plots. Third variable: earth, water, or whatever the plot is made of. Fourth variable: plot quality, fifth variable: plot size*/
+<<widget "plots_init">><<nobr>>/*First variable: location. Second variable: number of plots. Third variable: ground type (earth, water). Fourth variable: plot quality, fifth variable: plot size*/
 <<set $plots[$args[0]] to []>>
 <<for _i to 0; _i lt $args[1]; _i++>>
 	<<set $plots[$args[0]][_i] to clone(setup.plot_base)>>
@@ -11,8 +11,8 @@
 <</nobr>><</widget>>
 
 <<widget "add_plot">><<nobr>>/*Adds a plot to an existing location. Arguments are as in the plots_init widget, but the second variable and beyond are shifted down one.*/
-	<<set _i to $plots[$args[0]].length + 1>>
-	<<set $plots[$args[0]][_i] to clone(setup.plot_base)>>
+	<<set _i to $plots[$args[0]].length>>
+	<<set $plots[$args[0]].push(clone(setup.plot_base))>>
 	<<set $plots[$args[0]][_i].bed to $args[1]>>
 	<<set $plots[$args[0]][_i].quality to $args[2]>>
 	<<set $plots[$args[0]][_i].size to $args[3]>>
@@ -30,21 +30,40 @@
 
 <<widget "display_plot">><<nobr>>/*Argument is the plot location you want to display.*/
 <<set _water_needed to 0>>
+There are <<print $plots[$args[0]].length>> tillable
+<<if $plots[$args[0]][0].size is "small">>
+	<span class="lblue">beds</span>
+<<elseif $plots[$args[0]][0].size is "medium">>
+	<span class="teal">plots</span>
+<<else>>
+	<span class="green">fields</span>
+<</if>>
+here. The soil quality is 
+<<if $plots[$args[0]][0].quality is 1>>
+	<span class="blue">poor.</span>
+<<elseif $plots[$args[0]][0].quality is 2>>
+	<span class="lblue">decent.</span>
+<<elseif $plots[$args[0]][0].quality is 3>>
+	<span class="teal">good.</span>
+<<else>>
+	<span class="green">excellent.</span>
+<</if>>
+<br><br>
 <<for _i to 0; _i lt $plots[$args[0]].length; _i++>>
 <<set _tending_temp to _i>>
 <<capture _tending_temp>>
-<span class="gold"><<wordify_i _i cap>> plot:</span>
+<span class="gold"><<wordify_i _i cap>> plot <<if $plots[$args[0]][_i].bed isnot "earth">>(<<print $plots[$args[0]][_i].bed>>)<</if>>:</span>
 	<<if $plots[$args[0]][_i].stage gte 5>>
 		<span class="green">The <<print setup.plants[$plots[$args[0]][_i].name].plural>> are flowering, and ready for picking.</span>
 		<br>
 		<<if $plots[$args[0]][_i].size is "small">>
-			<<link [[Pick (0:05)|$passage]]>><<pass 5>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "small">><<clear_plot $args[0] _tending_temp>><</link>>
+			<<link [[Pick (0:05)|$passage]]>><<pass 5>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "small">><<set $tending_harvest_quality to clone($plots[$args[0]][_tending_temp].quality)>><<clear_plot $args[0] _tending_temp>><</link>>
 			<br>
 		<<elseif $plots[$args[0]][_i].size is "medium">>
-			<<link [[Pick (0:15)|$passage]]>><<pass 15>><<tending_harvest $plots[$args[0]][_tending_temp].name medium>><</link>>
+			<<link [[Pick (0:15)|$passage]]>><<pass 15>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "medium">><<set $tending_harvest_quality to clone($plots[$args[0]][_tending_temp].quality)>><<clear_plot $args[0] _tending_temp>><</link>>
 			<br>
 		<<else>>
-			<<link [[Harvest (1:00)|$passage]]>><<pass 60>><<tending_harvest $plots[$args[0]][_tending_temp].name large>><</link>>
+			<<link [[Harvest (1:00)|$passage]]>><<pass 60>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "large">><<set $tending_harvest_quality to clone($plots[$args[0]][_tending_temp].quality)>><<clear_plot $args[0] _tending_temp>><</link>>
 			<br>
 		<</if>>
 	<<elseif $plots[$args[0]][_i].stage is 4>>
@@ -54,7 +73,7 @@
 	<<elseif $plots[$args[0]][_i].stage is 2>>
 		<span class="blue">Thin <<print setup.plants[$plots[$args[0]][_i].name].plural>> sprout from the soil.</span>
 	<<elseif $plots[$args[0]][_i].stage is 1>>
-		<span class="blue">You planted <<print $plots[$args[0]][_i].name>> seeds here.</span>
+		<span class="blue">You planted <<print setup.plants[$plots[$args[0]][_i].name].name.replace(/_/g," ")>> seeds here.</span>
 	<<else>>
 		<<if $plots[$args[0]][_i].till gte 1>>
 			The soil is ready for planting.
@@ -66,11 +85,11 @@
 			<br>
 				<<if setup.plants[$plants_known[_e]].bed is $plots[$args[0]][_i].bed>>
 					<<if $plots[$args[0]][_i].size is "small">>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (0:30)"` $passage>><<pass 30>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (0:30)"` $passage>><<pass 30>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<<elseif $plots[$args[0]][_i].size is "medium">>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (1:30)"` $passage>><<pass 90>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (1:30)"` $passage>><<pass 90>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<<else>>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (3:00)"` $passage>><<pass 3 hours>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (3:00)"` $passage>><<pass 3 hours>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<</if>>
 				<<else>>
 					<span class="blue"><<print setup.plants[$plants_known[_e]].plural.toLocaleUpperFirst()>> only grow in <<print setup.plants[$plants_known[_e]].bed>>.</span>
@@ -144,8 +163,10 @@
 			<</if>>
 		<</if>>
 	<</if>>
-	<<if $plots[$args[0]][_i].stage gte 1 and $plots[$args[0]][_i].bed isnot "water">>
-		<<if $plots[$args[0]][_i].water is 1>>
+	<<if $plots[$args[0]][_i].stage gte 1>>
+		<<if $plots[$args[0]][_i].bed is "water">>
+			<br>
+		<<elseif $plots[$args[0]][_i].water is 1>>
 			<span class="green">The <<if $plots[$args[0]][_i].bed is "large">>field<<else>>plot<</if>> is watered.</span>
 			<br>
 		<<elseif $plots[$args[0]][_i].stage isnot 5 and $plots[$args[0]][_i].water isnot 1>>
@@ -165,10 +186,11 @@
 		<</if>>
 	<</if>>
 <</capture>>
+<br>
 <</for>>
 <<if _water_needed gte 1>>
 	<<if $plots[$args[0]][0].size is "small">>
-		<<link [[Water all plots (0:05 per plot)|$passage]]>>
+		<<link [[Water all beds (0:05 per bed)|$passage]]>>
 			<<for _i to 0; _i lt $plots[$args[0]].length; _i++>><<capture _i>>
 				<<if $plots[$args[0]][_i].stage gte 1 and $plots[$args[0]][_i].bed isnot "water">>
 					<<set $plots[$args[0]][_i].water to 1>><<pass 5>><<tending 1>>
@@ -181,7 +203,7 @@
 		<br>
 	<<elseif $plots[$args[0]][0].size is "medium">>
 		<<link [[Water all plots (0:15 per plot)|$passage]]>>
-			<<for _i to 0; _i lt $args[0].length; _i++>><<capture _i>>
+			<<for _i to 0; _i lt $plots[$args[0]].length; _i++>><<capture _i>>
 				<<if $plots[$args[0]][_i].stage gte 1 and $plots[$args[0]][_i].bed isnot "water">>
 					<<set $plots[$args[0]][_i].water to 1>><<pass 15>><<tending 2>>
 				<</if>>
@@ -193,7 +215,7 @@
 		<br>
 	<<else>>
 		<<link [[Water all fields (1:00 per field)|$passage]]>>
-			<<for _i to 0; _i lt $args[0].length; _i++>><<capture _i>>
+			<<for _i to 0; _i lt $plots[$args[0]].length; _i++>><<capture _i>>
 				<<if $plots[$args[0]][_i].stage gte 1 and $plots[$args[0]][_i].bed isnot "water">>
 					<<set $plots[$args[0]][_i].water to 1>><<pass 60>><<tending 6>>
 				<</if>>
@@ -216,12 +238,12 @@
 	<br>
 <</if>>
 <<if $tending_harvest is 1>>
-	<<tending_harvest $tending_harvest_name $tending_harvest_size>>
-	<<unset $tending_harvest>><<unset $tending_harvets_name>><<unset $tending_harvest_size>>
+	<<tending_harvest $tending_harvest_name $tending_harvest_size $tending_harvest_quality>>
+	<<unset $tending_harvest>><<unset $tending_harvest_name>><<unset $tending_harvest_size>><<unset $tending_harvest_quality>>
 	<br>
 <</if>>
 <<if $plot_tilled is 1>>
-	You till the soil, ready for planting. <span class="gold">You get a good workout.</span>
+	You get to work removing weeds and tilling the soil. It's hard going, but when you're done the soil is ready for planting. <span class="gold">You get a good workout.</span>
 	<<unset $plot_tilled>>
 	<br>
 <</if>>
@@ -233,32 +255,118 @@
 <</nobr>><</widget>>
 
 <<widget "tending_day">><<nobr>>
-<<for _t to 0; _t lt $plots.garden.length; _t++>>
-	<<capture _t>>
-	<<set $plots.garden[_t].days += 1>>
-	<<switch $plots.garden[_t].stage>>
-	<<case 4>>
-		<<if $plots.garden[_t].days gte setup.plants[$plots.garden[_t].name].days and $plots.garden[_t].water is 1>>
-			<<set $plots.garden[_t].stage to 5>>
+<<if $plots.garden isnot undefined>>
+	<<for _t to 0; _t lt $plots.garden.length; _t++>>
+		<<capture _t>>
+		<<set $plots.garden[_t].days += 1>>
+		<<switch $plots.garden[_t].stage>>
+		<<case 4>>
+			<<if $plots.garden[_t].days gte setup.plants[$plots.garden[_t].name].days and $plots.garden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.garden[_t].stage to 5>>
+			<</if>>
+		<<case 3>>
+			<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 4 and $plots.garden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.garden[_t].stage to 4>>
+			<</if>>
+		<<case 2>>
+			<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 3 and $plots.garden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.garden[_t].stage to 3>>
+			<</if>>
+		<<case 1>>
+			<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 2 and $plots.garden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.garden[_t].stage to 2>>
+			<</if>>
+		<</switch>>
+		<<if $weather isnot "rain">>
+			<<set $plots.garden[_t].water to 0>>
 		<</if>>
-	<<case 3>>
-		<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 4 and $plots.garden[_t].water is 1>>
-			<<set $plots.garden[_t].stage to 4>>
+		<</capture>>
+	<</for>>
+<</if>>
+<<if $plots.eden isnot undefined>>
+	<<for _t to 0; _t lt $plots.eden.length; _t++>>
+		<<capture _t>>
+		<<set $plots.eden[_t].days += 1>>
+		<<switch $plots.eden[_t].stage>>
+		<<case 4>>
+			<<if $plots.eden[_t].days gte setup.plants[$plots.eden[_t].name].days and $plots.eden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.eden[_t].stage to 5>>
+			<</if>>
+		<<case 3>>
+			<<if $plots.eden[_t].days gte (setup.plants[$plots.eden[_t].name].days / 5) * 4 and $plots.eden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.eden[_t].stage to 4>>
+			<</if>>
+		<<case 2>>
+			<<if $plots.eden[_t].days gte (setup.plants[$plots.eden[_t].name].days / 5) * 3 and $plots.eden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.eden[_t].stage to 3>>
+			<</if>>
+		<<case 1>>
+			<<if $plots.eden[_t].days gte (setup.plants[$plots.eden[_t].name].days / 5) * 2 and $plots.eden[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.eden[_t].stage to 2>>
+			<</if>>
+		<</switch>>
+		<<if $weather isnot "rain">>
+			<<set $plots.eden[_t].water to 0>>
 		<</if>>
-	<<case 2>>
-		<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 3 and $plots.garden[_t].water is 1>>
-			<<set $plots.garden[_t].stage to 3>>
+		<</capture>>
+	<</for>>
+<</if>>
+<<if $plots.wolf isnot undefined>>
+	<<for _t to 0; _t lt $plots.wolf.length; _t++>>
+		<<capture _t>>
+		<<set $plots.wolf[_t].days += 1>>
+		<<switch $plots.wolf[_t].stage>>
+		<<case 4>>
+			<<if $plots.wolf[_t].days gte setup.plants[$plots.wolf[_t].name].days and $plots.wolf[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.wolf[_t].stage to 5>>
+			<</if>>
+		<<case 3>>
+			<<if $plots.wolf[_t].days gte (setup.plants[$plots.wolf[_t].name].days / 5) * 4 and $plots.wolf[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.wolf[_t].stage to 4>>
+			<</if>>
+		<<case 2>>
+			<<if $plots.wolf[_t].days gte (setup.plants[$plots.wolf[_t].name].days / 5) * 3 and $plots.wolf[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.wolf[_t].stage to 3>>
+			<</if>>
+		<<case 1>>
+			<<if $plots.wolf[_t].days gte (setup.plants[$plots.wolf[_t].name].days / 5) * 2 and $plots.wolf[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.wolf[_t].stage to 2>>
+			<</if>>
+		<</switch>>
+		<<if $weather isnot "rain">>
+			<<set $plots.wolf[_t].water to 0>>
 		<</if>>
-	<<case 1>>
-		<<if $plots.garden[_t].days gte (setup.plants[$plots.garden[_t].name].days / 5) * 2 and $plots.garden[_t].water is 1>>
-			<<set $plots.garden[_t].stage to 2>>
+		<</capture>>
+	<</for>>
+<</if>>
+<<if $plots.asylum isnot undefined>>
+	<<for _t to 0; _t lt $plots.asylum.length; _t++>>
+		<<capture _t>>
+		<<set $plots.asylum[_t].days += 1>>
+		<<switch $plots.asylum[_t].stage>>
+		<<case 4>>
+			<<if $plots.asylum[_t].days gte setup.plants[$plots.asylum[_t].name].days and $plots.asylum[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.asylum[_t].stage to 5>>
+			<</if>>
+		<<case 3>>
+			<<if $plots.asylum[_t].days gte (setup.plants[$plots.asylum[_t].name].days / 5) * 4 and $plots.asylum[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.asylum[_t].stage to 4>>
+			<</if>>
+		<<case 2>>
+			<<if $plots.asylum[_t].days gte (setup.plants[$plots.asylum[_t].name].days / 5) * 3 and $plots.asylum[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.asylum[_t].stage to 3>>
+			<</if>>
+		<<case 1>>
+			<<if $plots.asylum[_t].days gte (setup.plants[$plots.asylum[_t].name].days / 5) * 2 and $plots.asylum[_t].water is 1 or $plots.garden[_t].bed is "water">>
+				<<set $plots.asylum[_t].stage to 2>>
+			<</if>>
+		<</switch>>
+		<<if $weather isnot "rain">>
+			<<set $plots.asylum[_t].water to 0>>
 		<</if>>
-	<</switch>>
-	<<if $weather isnot "rain">>
-		<<set $plots.garden[_t].water to 0>>
-	<</if>>
-	<</capture>>
-<</for>>
+		<</capture>>
+	<</for>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "tending_harvest">><<nobr>>
@@ -273,7 +381,16 @@
 <<else>>
 	<<set _tending_amount to random(10, ($tending / 2) + 50)>>
 <</if>>
+<<if $args[2] gte 4>>
+	<<set _tending_amount *= 1.6>>
+<<elseif $args[2] is 3>>
+	<<set _tending_amount *= 1.4>>
+<<elseif $args[1] is 2>>
+	<<set _tending_amount *= 1.2>>
+<</if>>
+<<set _tending_amount to Math.trunc(_tending_amount)>>
 <<set $plants[$args[0]].amount += _tending_amount>>
 <<set $plants[$args[0]].plural to clone(setup.plants[$args[0]].plural)>>
-You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>
+<<set $plants[$args[0]].name to clone(setup.plants[$args[0]].name)>>
+You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
 <</nobr>><</widget>>
