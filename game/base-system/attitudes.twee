@@ -54,6 +54,13 @@ What makes you feel uncomfortable?
 			<<run _options.push(_named[_i])>>
 		<</if>>
 	<</for>>
+	<<run _options.push("Alternative")>>
+	<<if $submissive lte 850>>
+		<<run _options.push("Defiant")>>
+	<</if>>
+	<<if $submissive gte 1150>>
+		<<run _options.push("Submissive")>>
+	<</if>>
 
 	/*Data for the later loops*/
 	<<set _titles to ["Left Hand","Right Hand","Feet","Mouth","Penis","Vagina","Anus"]>>
@@ -79,6 +86,7 @@ What makes you feel uncomfortable?
 <<switch _options[_currentOptions]>>
 	<<case "Everyone">><span class="red">"Everyone" will only apply defaults when the "Override related settings" link is used. This will override defaults for everyone.</span><br><br><<set _requireConfirm to true>>
 	<<case "Acquaintances">><span class="red">Will override the other named acquaintances in the list if you use "Override related settings".</span><br><br><<set _requireConfirm to true>>
+	<<case "Alternative" "Defiant" "Submissive">>Can be used to replace moves mid-combat. Is not effected by "Override related settings" in any way.<br><br><<set _requireConfirm to false>>
 	<<default>><<set _requireConfirm to false>>
 <</switch>>
 Lower action sets have higher priority. Defaults in higher sets are used if the default action in a lower set is unavailable.
@@ -145,6 +153,9 @@ __If consensual:__
 				<<set _override to clone($actionDefaults.Everyone)>>
 				<<set _loop to Object.keys($actionDefaults)>>
 				<<run _loop.delete("Everyone")>>
+				<<run _loop.delete("Defiant")>>
+				<<run _loop.delete("Submissive")>>
+				<<run _loop.delete("Alternative")>>
 				<<for _i to 0; _i lt _loop.length;_i++>>
 					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
 				<</for>>
@@ -155,6 +166,9 @@ __If consensual:__
 				<<run _loop.delete("Strangers")>>
 				<<run _loop.delete("Acquaintances")>>
 				<<run _loop.delete("Animals")>>
+				<<run _loop.delete("Defiant")>>
+				<<run _loop.delete("Submissive")>>
+				<<run _loop.delete("Alternative")>>
 				<<for _i to 0; _i lt _loop.length;_i++>>
 					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
 				<</for>>
@@ -165,28 +179,28 @@ __If consensual:__
 <</nobr>><</widget>>
 
 <<widget "setupDefaults">><<nobr>>
+<<set _defaultItem to ["rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest"]>>
+<<set _defaultObject to {
+	rape:{
+		leftaction:clone(_defaultItem),
+		rightaction:clone(_defaultItem),
+		feetaction:clone(_defaultItem),
+		mouthaction:clone(_defaultItem),
+		penisaction:clone(_defaultItem),
+		vaginaaction:clone(_defaultItem),
+		anusaction:clone(_defaultItem),
+	},
+	consensual:{
+		leftaction:clone(_defaultItem),
+		rightaction:clone(_defaultItem),
+		feetaction:clone(_defaultItem),
+		mouthaction:clone(_defaultItem),
+		penisaction:clone(_defaultItem),
+		vaginaaction:clone(_defaultItem),
+		anusaction:clone(_defaultItem),
+	}
+}>>
 <<if $actionDefaults is undefined>>
-	<<set _defaultItem to ["rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest","rest"]>>
-	<<set _defaultObject to {
-		rape:{
-			leftaction:clone(_defaultItem),
-			rightaction:clone(_defaultItem),
-			feetaction:clone(_defaultItem),
-			mouthaction:clone(_defaultItem),
-			penisaction:clone(_defaultItem),
-			vaginaaction:clone(_defaultItem),
-			anusaction:clone(_defaultItem),
-		},
-		consensual:{
-			leftaction:clone(_defaultItem),
-			rightaction:clone(_defaultItem),
-			feetaction:clone(_defaultItem),
-			mouthaction:clone(_defaultItem),
-			penisaction:clone(_defaultItem),
-			vaginaaction:clone(_defaultItem),
-			anusaction:clone(_defaultItem),
-		}
-	}>>
 	<<set $actionDefaults to {
 		"Everyone":clone(_defaultObject),
 		"Strangers":clone(_defaultObject),
@@ -203,6 +217,70 @@ __If consensual:__
 <</if>>
 <<if $maxDefaultActionSets is undefined>>
 	<<set $maxDefaultActionSets to 2>>
+<</if>>
+<<if $actionDefaults.Alternative is undefined>>
+	<<set $actionDefaults.Alternative to clone(_defaultObject)>>
+<</if>>
+<<if $actionDefaults.Submissive is undefined and $submissive gte 1150>>
+	<<set $actionDefaults.Submissive to clone(_defaultObject)>>
+
+	<<set $actionDefaults.Submissive.rape.leftaction[0] to "leftchest">>
+	<<set $actionDefaults.Submissive.rape.rightaction[0] to "rightchest">>
+	<<set $actionDefaults.Submissive.rape.mouthaction[0] to "moan">>
+	<<set $actionDefaults.Submissive.rape.mouthaction[1] to "suck">>
+	<<set $actionDefaults.Submissive.rape.mouthaction[2] to "breastsuck">>
+	<<set $actionDefaults.Submissive.rape.mouthaction[3] to "breastlick">>
+	<<set $actionDefaults.Submissive.rape.penisaction[0] to "tease">>
+	<<set $actionDefaults.Submissive.rape.penisaction[1] to "cooperate">>
+	<<set $actionDefaults.Submissive.rape.vaginaaction[0] to "penistease">>
+	<<set $actionDefaults.Submissive.rape.vaginaaction[1] to "cooperate">>
+	<<set $actionDefaults.Submissive.rape.anusaction[0] to "penistease">>
+	<<set $actionDefaults.Submissive.rape.anusaction[1] to "cooperate">>
+
+	<<set $actionDefaults.Submissive.consensual.leftaction[0] to "leftchest">>
+	<<set $actionDefaults.Submissive.consensual.rightaction[0] to "rightchest">>
+	<<set $actionDefaults.Submissive.consensual.mouthaction[0] to "moan">>
+	<<set $actionDefaults.Submissive.consensual.mouthaction[1] to "suck">>
+	<<set $actionDefaults.Submissive.consensual.mouthaction[2] to "breastsuck">>
+	<<set $actionDefaults.Submissive.consensual.mouthaction[3] to "breastlick">>
+	<<set $actionDefaults.Submissive.consensual.penisaction[0] to "tease">>
+	<<set $actionDefaults.Submissive.consensual.penisaction[1] to "cooperate">>
+	<<set $actionDefaults.Submissive.consensual.vaginaaction[0] to "penistease">>
+	<<set $actionDefaults.Submissive.consensual.vaginaaction[1] to "cooperate">>
+	<<set $actionDefaults.Submissive.consensual.anusaction[0] to "penistease">>
+	<<set $actionDefaults.Submissive.consensual.anusaction[1] to "cooperate">>
+<</if>>
+
+<<if $actionDefaults.Defiant is undefined and $submissive lte 850>>
+	<<set $actionDefaults.Defiant to clone(_defaultObject)>>
+
+	<<set $actionDefaults.Defiant.rape.leftaction[0] to "lefthit">>
+	<<set $actionDefaults.Defiant.rape.leftaction[1] to "leftstruggle">>
+	<<set $actionDefaults.Defiant.rape.rightaction[0] to "penwhack">>
+	<<set $actionDefaults.Defiant.rape.rightaction[1] to "righthit">>
+	<<set $actionDefaults.Defiant.rape.rightaction[2] to "rightstruggle">>
+	<<set $actionDefaults.Defiant.rape.feetaction[0] to "kick">>
+	<<set $actionDefaults.Defiant.rape.mouthaction[0] to "demand">>
+	<<set $actionDefaults.Defiant.rape.mouthaction[1] to "bite">>
+	<<set $actionDefaults.Defiant.rape.mouthaction[2] to "breastbite">>
+	<<set $actionDefaults.Defiant.rape.penisaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.rape.penisaction[1] to "otheranusescape">>
+	<<set $actionDefaults.Defiant.rape.penisaction[2] to "othermouthescape">>
+	<<set $actionDefaults.Defiant.rape.vaginaaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.rape.vaginaaction[1] to "othermouthescape">>
+	<<set $actionDefaults.Defiant.rape.anusaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.rape.anusaction[1] to "othermouthescape">>
+
+	<<set $actionDefaults.Defiant.consensual.rightaction[0] to "penwhack">>
+	<<set $actionDefaults.Defiant.consensual.mouthaction[0] to "breastpull">>
+	<<set $actionDefaults.Defiant.consensual.mouthaction[1] to "breastclosed">>
+	<<set $actionDefaults.Defiant.consensual.penisaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.consensual.penisaction[1] to "otheranusescape">>
+	<<set $actionDefaults.Defiant.consensual.penisaction[2] to "othermouthescape">>
+	<<set $actionDefaults.Defiant.consensual.vaginaaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.consensual.vaginaaction[1] to "othermouthescape">>
+	<<set $actionDefaults.Defiant.consensual.anusaction[0] to "escape">>
+	<<set $actionDefaults.Defiant.consensual.anusaction[1] to "othermouthescape">>
 <</if>>
 <</nobr>><</widget>>
 
@@ -398,7 +476,6 @@ __If consensual:__
 
 	<<set _vagina["Envelop their penis"] to "vaginapenisfuck">>
 <</if>>
-<<set _vagina["Rub against their penis"] to "rub">>
 <<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _vagina["Try to keep their penis away with your thighs"] to "penisthighs">>
 <</if>>
@@ -438,12 +515,13 @@ __If consensual:__
 <<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
 	<<set _anus["Keep their penis away with your cheeks"] to "penischeeks">>
 <</if>>
-<<set _anus["Rub against their penis"] to "rub">>
+<<set _anus["Tease the tip"] to "penistease">>
+
 <<set _anus["Pull away from their penis"] to "escape">>
 
 /*After penischeeks*/
 <<if $promiscuity gt 54 or $deviancy gt 54 or $args[0] is true>>
-	<<set _anus["Tease the tip"] to "penistease">>
+	<<set _anus["Rub against their penis"] to "rub">>
 <</if>>
 
 /*After anuspenisfuck*/
