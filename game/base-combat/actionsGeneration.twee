@@ -50,6 +50,13 @@
 	__New Controls__
 	<br>
 <</if>>
+<<if $defaultsType is undefined>>
+	<<getCombatDefaultsType>>
+<</if>>
+<div id="replaceAction">
+	<<replaceActionLink>>
+</div>
+
 <div id="listContainer">
 	<div id="leftaction" @class="$combatControls + 'Control'">
 		<<leftActionInit>>
@@ -104,30 +111,98 @@
 
 /*Generates the required values for defaults to be setup based on the situation*/
 <<widget "getCombatDefaultsType">><<nobr>>
-<<if _defaultsType is undefined>>
-	<<switch $enemytype>>
-		<<case "man">>
-			<<if $NPCNameList.includes($NPCList[0].fullDescription)>>
-				<<if $actionDefaults[$NPCList[0].fullDescription] isnot undefined>>
-					<<set _defaultsType to $NPCList[0].fullDescription>>
-				<<else>>
-					<<set _defaultsType to "Acquaintances">>
-				<</if>>
+<<switch $enemytype>>
+	<<case "man">>
+		<<if $NPCNameList.includes($NPCList[0].fullDescription)>>
+			<<if $actionDefaults[$NPCList[0].fullDescription] isnot undefined>>
+				<<set $defaultsType to $NPCList[0].fullDescription>>
 			<<else>>
-				<<set _defaultsType to "Strangers">>
+				<<set $defaultsType to "Acquaintances">>
 			<</if>>
-		<<case "beast">><<set _defaultsType to "Animals">>
-		<<default>><<set _defaultsType to "Everyone">>
-	<</switch>>
+		<<else>>
+			<<set $defaultsType to "Strangers">>
+		<</if>>
+	<<case "beast">><<set $defaultsType to "Animals">>
+	<<default>><<set $defaultsType to "Everyone">>
+<</switch>>
 
-	<<if $consensual is 1>>
-		<<set _defaultsCombatType = "consensual">>
-	<<else>>
-		<<set _defaultsCombatType = "rape">>
-	<</if>>
+<<if $consensual is 1>>
+	<<set $defaultsCombatType = "consensual">>
+<<else>>
+	<<set $defaultsCombatType = "rape">>
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "getCombatDefaultsTypeClear">><<nobr>>
+<<unset $defaultsType>>
+<<unset $defaultsCombatType>>
+<<unset $replaceAction>>
+<</nobr>><</widget>>
+
+<<widget "replaceActionLink">><<nobr>>
+<<if $replaceAction isnot "Alternative">>
+	<a onclick="wikifier('replaceAction','Alternative')">Switch to Alternative Actions</a>
+	<br>
+<</if>>
+<<if $submissive gte 1150 and $replaceAction isnot "Submissive">>
+	<a onclick="wikifier('replaceAction','Submissive')">Switch to Submissive Actions</a>
+	<br>
+<</if>>
+<<if $submissive lte 850 and $replaceAction isnot "Defiant">>
+	<a onclick="wikifier('replaceAction','Defiant')">Switch to Defiant Actions</a>
+	<br>
+<</if>>
+<<if $replaceAction isnot undefined>>
+	<a onclick="wikifier('replaceAction','Normal')">Switch to Normal Actions</a>
+	<br>
+<</if>>
+<br>
+<</nobr>><</widget>>
+
+<<widget "replaceAction">><<nobr>>
+<<switch $args[0]>>
+	<<case "Alternative">>
+		<<if $actionDefaults.Alternative is undefined>>
+			<<setupDefaults>>
+		<</if>>
+		<<set $defaultsType to "Alternative">>
+		<<set $replaceAction to "Alternative">>
+	<<case "Submissive">>
+		<<if $actionDefaults.Submissive is undefined>>
+			<<setupDefaults>>
+		<</if>>
+		<<set $defaultsType to "Submissive">>
+		<<set $replaceAction to "Submissive">>
+	<<case "Defiant">>
+		<<if $actionDefaults.Defiant is undefined>>
+			<<setupDefaults>>
+		<</if>>
+		<<set $defaultsType to "Defiant">>
+		<<set $replaceAction to "Defiant">>
+	<<case "Normal">>
+		<<getCombatDefaultsType>>
+		<<unset $replaceAction>>
+<</switch>>
+
+<<replace #replaceAction>><<replaceActionLink _replace>><</replace>>
+<<replace #leftaction>><<leftActionInit>><</replace>>
+<<replace #rightaction>><<rightActionInit>><</replace>>
+<<replace #feetaction>><<feetactionInit>><</replace>>
+<<replace #mouthaction>><<mouthactionInit>><</replace>>
+<<if $penisexist is 1>>
+	<<replace #penisaction>><<penisactionInit>><</replace>>
+<</if>>
+<<if $vaginaexist is 1>>
+	<<replace #vaginaaction>><<vaginaactionInit>><</replace>>
+<</if>>
+<<replace #anusaction>><<anusactionInit>><</replace>>
+<<if $chestuse isnot 0>>
+	<<replace #chestaction>><<chestactionInit>><</replace>>
+<</if>>
+<<if $thighuse isnot 0>>
+	<<replace #thighaction>><<thighactionInit>><</replace>>
+<</if>>
+<</nobr>><</widget>>
 
 /*Each set of actions are based on the same set of rules*/
 /*Setup by getting the situation that the player is in. i.e Their left hand is hold onto a penis*/
@@ -151,48 +226,49 @@
 	<<switch $leftarm>>
 		<<case 0>>
 			<<set _leftOptions to "free">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is free.</span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is free.</span>
 		<<case "penis">>
 			<<set _leftOptions to "penis">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is holding <<his>> penis.</span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is holding <<his>> penis.</span>
 		<<case "grappled">>
 			<<set _leftOptions to "grappled">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left arm is being held down.</span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left arm is being held down.</span>
 		<<case "bound">>
 			<<set _leftOptions to "bothBound">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your arms are helplessly bound.</span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your arms are helplessly bound.</span>
 		<<case "othervagina">>
 			<<set _leftOptions to "pussy">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is stroking <<his>> pussy.</span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is stroking <<his>> pussy.</span>
 		<<case "vagina">>
 			<<set _leftOptions to "coverVagina">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is protecting your <<pussystop>></span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is protecting your <<pussystop>></span>
 		<<case "coverpenis">>
 			<<set _leftOptions to "coverPenis">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is protecting your <<penisstop>></span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is protecting your <<penisstop>></span>
 		<<case "anus">>
 			<<set _leftOptions to "coverAss">>
-			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left hand is protecting your <<bottomstop>></span>
+			<span @class="($lastOptions.left isnot _leftOptions or _leftGold is true ?'gold':'')">Your left hand is protecting your <<bottomstop>></span>
 	<</switch>>
+	<<if $lastOptions.left isnot _leftOptions>>
+		<<set _leftGold to true>>
+	<</if>>
 	
 	<<leftActions>>
 	<<if Object.keys(_leftaction).length gt 0>>
-		<<if $leftactiondefault is 0 or _leftOptions isnot $lastOptions.left>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "leftaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_leftaction).includes(_actionsSet[_set])>>
-					<<set $leftactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $leftactiondefault to Object.values(_leftaction)[0]>>
+		<<set _defaultsCombatAction to "leftaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_leftaction).includes(_actionsSet[_set])>>
+				<<set $leftactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $leftactiondefault to Object.values(_leftaction)[0]>>
 		<</if>>
+
 		<<set $leftaction to $leftactiondefault>>
 		<<set _textColor to combatListColor('leftaction', (Object.values(_leftaction).includes($leftaction) ? $leftaction : Object.values(_leftaction)[0]), "")>>
 		<<generateCombatAction _leftaction "leftaction" _textColor $leftaction>>
@@ -261,51 +337,53 @@
 	<<switch $rightarm>>
 		<<case 0>>
 			<<set _rightOptions to "free">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is free.</span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is free.</span>
 		<<case "penis">>
 			<<set _rightOptions to "penis">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is holding <<his>> penis.</span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is holding <<his>> penis.</span>
 		<<case "grappled">>
 			<<set _rightOptions to "grappled">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right arm is being held down.</span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right arm is being held down.</span>
 		<<case "bound">>
 			<<set _rightOptions to "bothBound">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your arms are helplessly bound.</span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your arms are helplessly bound.</span>
 		<<case "othervagina">>
 			<<set _rightOptions to "pussy">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is stroking <<his>> pussy.</span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is stroking <<his>> pussy.</span>
 		<<case "vagina">>
 			<<set _rightOptions to "coverVagina">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is protecting your <<pussystop>></span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is protecting your <<pussystop>></span>
 		<<case "coverpenis">>
 			<<set _rightOptions to "coverPenis">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is protecting your <<penisstop>></span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is protecting your <<penisstop>></span>
 		<<case "anus">>
 			<<set _rightOptions to "coverAss">>
-			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right hand is protecting your <<bottomstop>></span>
+			<span @class="($lastOptions.right isnot _rightOptions or _rightGold is true ?'gold':'')">Your right hand is protecting your <<bottomstop>></span>
 	<</switch>>
+	<<if $lastOptions.right isnot _rightOptions>>
+		<<set _rightGold to true>>
+	<</if>>
 	
 	<<rightActions>>
 	<<if Object.keys(_rightaction).length gt 0>>
-		<<if $rightactiondefault is 0 or _rightOptions isnot $lastOptions.right>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "rightaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_rightaction).includes(_actionsSet[_set])>>
-					<<set $rightactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $rightactiondefault to Object.values(_rightaction)[0]>>
+		<<set _defaultsCombatAction to "rightaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_rightaction).includes(_actionsSet[_set])>>
+				<<set $rightactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $rightactiondefault to Object.values(_rightaction)[0]>>
 		<</if>>
+
 		<<set $rightaction to $rightactiondefault>>
 		<<set _textColor to combatListColor('rightaction', (Object.values(_rightaction).includes($rightaction) ? $rightaction : Object.values(_rightaction)[0]), "")>>
 		<<generateCombatAction _rightaction "rightaction" _textColor $rightaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="rightactionDifficulty">
@@ -372,40 +450,44 @@
 	<<switch $feetuse>>
 		<<case 0>>
 			<<set _feetOptions to "free">>
-			<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your feet are free.</span>
+			<span @class="($lastOptions.feet isnot _feetOptions or _feetGold is true ?'gold':'')">Your feet are free.</span>
 		<<case "penis">>
 			<<set _feetOptions to "penis">>
-			<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your feet are holding <<his>> penis.</span>
+			<span @class="($lastOptions.feet isnot _feetOptions or _feetGold is true ?'gold':'')">Your feet are holding <<his>> penis.</span>
 		<<case "othervagina">>
 			<<set _feetOptions to "othervagina">>
-			<span @class="($lastOptions.feet isnot _feetOptions ?'gold':'')">Your feet are holding back <<his>> pussy.</span>
+			<span @class="($lastOptions.feet isnot _feetOptions or _feetGold is true ?'gold':'')">Your feet are holding back <<his>> pussy.</span>
 		<<case "bound">>
-			Your legs are bound.
+			<<set _feetOptions to "bound">>
+			<span @class="($lastOptions.feet isnot _feetOptions or _feetGold is true ?'gold':'')">Your legs are bound.</span>
 		<<default>>
-			Your feet are free but unusable in this position.
+			<<set _feetOptions to "unusable">>
+			<span @class="($lastOptions.feet isnot _feetOptions or _feetGold is true ?'gold':'')">Your feet are free but unusable in this position.</span>
 	<</switch>>
+	<<if $lastOptions.feet isnot _feetOptions>>
+		<<set _feetGold to true>>
+	<</if>>
 	
 	<<feetActions>>
 	<<if Object.keys(_feetaction).length gt 0>>
-		<<if $feetactiondefault is 0 or _feetOptions isnot $lastOptions.feet>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "feetaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_feetaction).includes(_actionsSet[_set])>>
-					<<set $feetactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $feetactiondefault to Object.values(_feetaction)[0]>>
+		<<set _defaultsCombatAction to "feetaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_feetaction).includes(_actionsSet[_set])>>
+				<<set $feetactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $feetactiondefault to Object.values(_feetaction)[0]>>
 		<</if>>
+
 		<<set $feetaction to $feetactiondefault>>
 		<<set _textColor to combatListColor('feetaction', (Object.values(_feetaction).includes($feetaction) ? $feetaction : Object.values(_feetaction)[0]), "")>>
 		<<generateCombatAction _feetaction "feetaction" _textColor $feetaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="feetactionDifficulty">
@@ -446,68 +528,70 @@
 	<<switch $mouthuse>>
 		<<case 0>>
 			<<set _mouthOptions to "free">>
-			<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">Your mouth is free.</span>
+			<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is free.</span>
 		<<case "othervagina">>
 			<<set _mouthOptions to "othervagina">>
-			<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<His>> pussy presses against your lips.</span>
+			<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<His>> pussy presses against your lips.</span>
 		<<case "kiss">>
 			<<set _mouthOptions to "kiss">>
 			<<switch $mouthstate>>
 				<<case "kissentrance">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">Your mouth is pressed by another's.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is pressed by another's.</span>
 				<<case "kissimminent" "kiss">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">Your mouth is engulfed by another's.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is engulfed by another's.</span>
 			<</switch>>
 		<<case "gagged">>
 			<<set _mouthOptions to "gagged">>
-			<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">Your mouth is helplessly gagged.</span>
+			<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is helplessly gagged.</span>
 		<<default>>
 			<<switch $mouthstate>>
 				<<case "entrance">>
 					<<set _mouthOptions to "penisEntrance">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<His>> penis hovers in front of your mouth.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<His>> penis hovers in front of your mouth.</span>
 				<<case "imminent">>
 					<<set _mouthOptions to "penisImminent">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<His>> penis presses against your lips.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<His>> penis presses against your lips.</span>
 				<<case "penetrated">>
 					<<set _mouthOptions to "penisPenetrated">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<His>> penis penetrates your mouth.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<His>> penis penetrates your mouth.</span>
 				<<case "gagged">>
 					<<set _mouthOptions to "gagged">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')">Your mouth is helplessly gagged.</span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is helplessly gagged.</span>
 				<<case "breasts">>
 					<<set _mouthOptions to "breasts">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<breastFlavorText>></span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<breastFlavorText>></span>
 				<<case "nipple">>
 					<<set _mouthOptions to "nipple">>
-					<span @class="($lastOptions.mouth isnot _mouthOptions ?'gold':'')"><<nippleFlavorText>></span>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<nippleFlavorText>></span>
 				<<default>>
-					Your mouth is blocked, muffling any noise you make.
+					<<set _mouthOptions to "blocked">>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')">Your mouth is blocked, muffling any noise you make.</span>
 			<</switch>>
 	<</switch>>
+	<<if $lastOptions.mouth isnot _mouthOptions>>
+		<<set _mouthGold to true>>
+	<</if>>
 	
 	<<mouthActions>>
 	<<if Object.keys(_mouthaction).length gt 0>>
-		<<if $mouthactiondefault is 0 or _mouthOptions isnot $lastOptions.mouth>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "mouthaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_mouthaction).includes(_actionsSet[_set])>>
-					<<set $mouthactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $mouthactiondefault to Object.values(_mouthaction)[0]>>
+		<<set _defaultsCombatAction to "mouthaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_mouthaction).includes(_actionsSet[_set])>>
+				<<set $mouthactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $mouthactiondefault to Object.values(_mouthaction)[0]>>
 		<</if>>
 		
 		<<set $mouthaction to $mouthactiondefault>>
 		<<set _textColor to combatListColor('mouthaction', (Object.values(_mouthaction).includes($mouthaction) ? $mouthaction : Object.values(_mouthaction)[0]), "")>>
 		<<generateCombatAction _mouthaction "mouthaction" _textColor $mouthaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="mouthactionDifficulty">
@@ -588,66 +672,68 @@
 	<<switch $penisstate>>
 		<<case 0>>
 			<<set _penisOptions to "free">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">Your <<penis>> is free.</span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')">Your <<penis>> is free.</span>
 		<<case "othermouthentrance">>
 			<<set _penisOptions to "mouthEntrance">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">You feel breath on your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')">You feel breath on your <<penisstop>></span>
 		<<case "othermouthimminent">>
 			<<set _penisOptions to "mouthImminent">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> lips press against the tip of your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> lips press against the tip of your <<penisstop>></span>
 		<<case "othermouth">>
 			<<set _penisOptions to "mouthPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> mouth envelopes your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> mouth envelopes your <<penisstop>></span>
 		<<case "entrance">>
 			<<set _penisOptions to "pussyEntrance">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> pussy hovers near your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> pussy hovers near your <<penisstop>></span>
 		<<case "imminent">>
 			<<set _penisOptions to "pussyImminent">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> pussy presses against your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> pussy presses against your <<penisstop>></span>
 		<<case "penetrated">>
 			<<set _penisOptions to "pussyPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> vagina envelopes your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> vagina envelopes your <<penisstop>></span>
 		<<case "otheranusentrance">>
 			<<set _penisOptions to "anusEntrance">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> ass hovers near your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass hovers near your <<penisstop>></span>
 		<<case "otheranusimminent">>
 			<<set _penisOptions to "anusImminent">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> ass presses against your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass presses against your <<penisstop>></span>
 		<<case "otheranus">>
 			<<set _penisOptions to "anusPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')"><<His>> ass envelopes your <<penisstop>></span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass envelopes your <<penisstop>></span>
 		<<default>>
 			<<switch $penisuse>>
 				<<case "clit">>
 					<<set _penisOptions to "penisAgainstClit">>
-					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">You press your <<penis>> against <<his>> <<if $enemytype is "beast">><<beasttype>> pussy<<else>>clit<</if>>.</span>
+					<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')">You press your <<penis>> against <<his>> <<if $enemytype is "beast">><<beasttype>> pussy<<else>>clit<</if>>.</span>
 				<<case "otheranusrub">>
 					<<set _penisOptions to "penisAgainstAss">>
-					<span @class="($lastOptions.penis isnot _penisOptions ?'gold':'')">You hold your <<penis>> between <<his>> ass cheeks.</span>
+					<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')">You hold your <<penis>> between <<his>> ass cheeks.</span>
 			<</switch>>
 	<</switch>>
+	<<if $lastOptions.penis isnot _penisOptions>>
+		<<set _penisGold to true>>
+	<</if>>
 	
 	<<penisActions>>
 	<<if Object.keys(_penisaction).length gt 0>>
-		<<if $penisactiondefault is 0 or _penisOptions isnot $lastOptions.penis>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "penisaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_penisaction).includes(_actionsSet[_set])>>
-					<<set $penisactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $penisactiondefault to Object.values(_penisaction)[0]>>
+		<<set _defaultsCombatAction to "penisaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_penisaction).includes(_actionsSet[_set])>>
+				<<set $penisactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $penisactiondefault to Object.values(_penisaction)[0]>>
 		<</if>>
+
 		<<set $penisaction to $penisactiondefault>>
 		<<set _textColor to combatListColor('penisaction', (Object.values(_penisaction).includes($penisaction) ? $penisaction : Object.values(_penisaction)[0]), "")>>
 		<<generateCombatAction _penisaction "penisaction" _textColor $penisaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="penisactionDifficulty">
@@ -714,45 +800,47 @@
 			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">Your <<pussy>> is free.</span>
 		<<case "othermouthentrance">>
 			<<set _vaginaOptions to "mouthEntranch">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')">You feel breath on your <<pussystop>></span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')">You feel breath on your <<pussystop>></span>
 		<<case "othermouthimminent">>
 			<<set _vaginaOptions to "mouthImminent">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')"><<His>> lips press against your labia.</span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<His>> lips press against your labia.</span>
 		<<case "othermouth">>
 			<<set _vaginaOptions to "mouthPenetrated">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')"><<His>> tongue penetrates your <<pussystop>></span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<His>> tongue penetrates your <<pussystop>></span>
 		<<case "entrance">>
 			<<set _vaginaOptions to "penisEntrance">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')"><<His>> penis hovers near your <<pussystop>></span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<His>> penis hovers near your <<pussystop>></span>
 		<<case "imminent">>
 			<<set _vaginaOptions to "penisImminent">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')"><<His>> penis presses against your <<pussystop>></span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<His>> penis presses against your <<pussystop>></span>
 		<<case "penetrated">>
 			<<set _vaginaOptions to "penisPenetrated">>
-			<span @class="($lastOptions.vagina isnot _vaginaOptions ?'gold':'')"><<His>> penis penetrates your <<pussystop>></span>
+			<span @class="($lastOptions.vagina isnot _vaginaOptions or _vaginaGold is true ?'gold':'')"><<His>> penis penetrates your <<pussystop>></span>
 	<</switch>>
+	<<if $lastOptions.vagina isnot _vaginaOptions>>
+		<<set _vaginaGold to true>>
+	<</if>>
 	
 	<<vaginaActions>>
 	<<if Object.keys(_vaginaaction).length gt 0>>
-		<<if $vaginaactiondefault is 0 or _vaginaOptions isnot $lastOptions.vagina>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "vaginaaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_vaginaaction).includes(_actionsSet[_set])>>
-					<<set $vaginaactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $vaginaactiondefault to Object.values(_vaginaaction)[0]>>
+		<<set _defaultsCombatAction to "vaginaaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_vaginaaction).includes(_actionsSet[_set])>>
+				<<set $vaginaactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $vaginaactiondefault to Object.values(_vaginaaction)[0]>>
 		<</if>>
+
 		<<set $vaginaaction to $vaginaactiondefault>>
 		<<set _textColor to combatListColor('vaginaaction', (Object.values(_vaginaaction).includes($vaginaaction) ? $vaginaaction : Object.values(_vaginaaction)[0]), "")>>
 		<<generateCombatAction _vaginaaction "vaginaaction" _textColor $vaginaaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="vaginaactionDifficulty">
@@ -804,57 +892,59 @@
 	<<switch $anusstate>>
 		<<case 0>>
 			<<set _anusOptions to "free">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">Your <<bottom>> is free.</span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')">Your <<bottom>> is free.</span>
 		<<case "othermouthentrance">>
 			<<set _anusOptions to "mouthEntrance">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">You feel breath on your <<bottomstop>></span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')">You feel breath on your <<bottomstop>></span>
 		<<case "othermouthimminent">>
 			<<set _anusOptions to "mouthImminent">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')"><<His>> lips press against your anus.</span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')"><<His>> lips press against your anus.</span>
 		<<case "othermouth">>
 			<<set _anusOptions to "mouthPenetration">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')"><<His>> tongue penetrates your <<bottomstop>></span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')"><<His>> tongue penetrates your <<bottomstop>></span>
 		<<case "entrance">>
 			<<set _anusOptions to "penisEntrance">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')"><<His>> penis hovers near your <<bottomstop>></span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')"><<His>> penis hovers near your <<bottomstop>></span>
 		<<case "imminent">>
 			<<set _anusOptions to "penisImminent">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')"><<His>> penis presses against your anus.</span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')"><<His>> penis presses against your anus.</span>
 		<<case "penetrated">>
 			<<set _anusOptions to "penisPenetration">>
-			<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')"><<His>> penis penetrates your anus.</span>
+			<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')"><<His>> penis penetrates your anus.</span>
 		<<default>>
 			<<switch $bottomuse>>
 				<<case "mouth">>
 					<<set _anusOptions to "faceAgainstAnus">>
-					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">You press your <<bottom>> against <<his>> face.</span>
+					<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')">You press your <<bottom>> against <<his>> face.</span>
 				<<case "penis">>
 					<<set _anusOptions to "penisAgainstAnus">>
-					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">You hold <<his>> penis between your buttocks.</span>
+					<span @class="($lastOptions.anus isnot _anusOptions or _anusGold is true ?'gold':'')">You hold <<his>> penis between your buttocks.</span>
 			<</switch>>
 	<</switch>>
+	<<if $lastOptions.anus isnot _anusOptions>>
+		<<set _anusGold to true>>
+	<</if>>
 	
 	<<anusActions>>
 	<<if Object.keys(_anusaction).length gt 0>>
-		<<if $anusactiondefault is 0 or _anusOptions isnot $lastOptions.anus>>
-			<<getCombatDefaultsType>>
-			<<set _defaultsCombatAction to "anusaction">>
-			<<set _actionsSet to $actionDefaults[_defaultsType][_defaultsCombatType][_defaultsCombatAction]>>
-			<<set _pass to false>>
-			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
-				<<if Object.values(_anusaction).includes(_actionsSet[_set])>>
-					<<set $anusactiondefault to clone(_actionsSet[_set])>>
-					<<set _pass to true>>
-					<<break>>
-				<</if>>
-			<</for>>
-			<<if _pass is false>>
-				<<set $anusactiondefault to Object.values(_anusaction)[0]>>
+		<<set _defaultsCombatAction to "anusaction">>
+		<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+		<<set _pass to false>>
+		<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+			<<if Object.values(_anusaction).includes(_actionsSet[_set])>>
+				<<set $anusactiondefault to clone(_actionsSet[_set])>>
+				<<set _pass to true>>
+				<<break>>
 			<</if>>
+		<</for>>
+		<<if _pass is false>>
+			<<set $anusactiondefault to Object.values(_anusaction)[0]>>
 		<</if>>
+
 		<<set $anusaction to $anusactiondefault>>
 		<<set _textColor to combatListColor('anusaction', (Object.values(_anusaction).includes($anusaction) ? $anusaction : Object.values(_anusaction)[0]), "")>>
 		<<generateCombatAction _anusaction "anusaction" _textColor $anusaction>>
+
 		/*Checks/Difficulty*/
 		<<if $combatControls.includes("ists")>>
 			<div id="anusactionDifficulty">
@@ -921,12 +1011,11 @@
 	
 	<<chestActions>>
 	<<if Object.keys(_chestaction).length gt 0>>
-		<<set $test1 to [clone($chestaction),clone($chestactiondefault)]>>
 		<<if $chestactiondefault is 0>>
 			<<set $chestactiondefault to Object.values(_chestaction)[0]>>
 		<</if>>
+
 		<<set $chestaction to $chestactiondefault>>
-		<<set $test2 to [clone($chestaction),clone($chestactiondefault)]>>
 		<<set _textColor to combatListColor('chestaction', (Object.values(_chestaction).includes($chestaction) ? $chestaction : Object.values(_chestaction)[0]), "")>>
 		<<generateCombatAction _chestaction "chestaction" _textColor $chestaction>>
 		
@@ -936,7 +1025,6 @@
 				<<chestactionDifficulty>>
 			</div>
 		<</if>>
-		<<set $test3 to [clone($chestaction),clone($chestactiondefault)]>>
 	<</if>>
 	<<set $lastOptions.chest to clone(_chestOptions)>>
 <</nobr>><</widget>>
