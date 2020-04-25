@@ -185,7 +185,7 @@ $(document).on('keyup', function(ev) {
 	}
 });
 
-const defaultSkinColorRanges = {
+var defaultSkinColorRanges = {
 	"hStart": 45, "hEnd": 45,
 	"sStart": 0.2, "sEnd": 0.4,
 	"bStart": 4.5, "bEnd": 0.7,
@@ -196,26 +196,26 @@ window.skinColor = function(enabled, percent, overwrite) {
 		return "";
 	}
 
-	const ranges = ensureIsArray(overwrite || defaultSkinColorRanges);
-	const totalProgress = percent / 100;
+	var ranges = ensureIsArray(overwrite || defaultSkinColorRanges);
+	var totalProgress = percent / 100;
 
-	const scaledProgress = ranges.length * totalProgress;
-	const rangeIndex = totalProgress === 1
+	var scaledProgress = ranges.length * totalProgress;
+	var rangeIndex = totalProgress === 1
 		? ranges.length - 1
 		: Math.floor(scaledProgress);
-	const progress = totalProgress === 1
+	var progress = totalProgress === 1
 		? 1
 		: scaledProgress - rangeIndex;
 
-	const {hStart, hEnd, sStart, sEnd, bStart, bEnd} = ranges[rangeIndex];
+	var {hStart, hEnd, sStart, sEnd, bStart, bEnd} = ranges[rangeIndex];
 
-	const hue = (hEnd - hStart) * progress + hStart;
-	const saturation = (sEnd - sStart) * progress + sStart;
-	const brightness = (bEnd - bStart) * progress + bStart;
+	var hue = (hEnd - hStart) * progress + hStart;
+	var saturation = (sEnd - sStart) * progress + sStart;
+	var brightness = (bEnd - bStart) * progress + bStart;
 
-	const hueCss = `hue-rotate(${hue}deg)`;
-	const saturationCss = `saturate(${saturation.toFixed(2)})`;
-	const brightnessCss = `brightness(${brightness.toFixed(2)})`;
+	var hueCss = `hue-rotate(${hue}deg)`;
+	var saturationCss = `saturate(${saturation.toFixed(2)})`;
+	var brightnessCss = `brightness(${brightness.toFixed(2)})`;
 
 	return `${hueCss} ${saturationCss} ${brightnessCss}`;
 }
