@@ -1,5 +1,156 @@
 # CHANGELOG
 
+## 0.2.12.3
+
+- Fixed a bug that caused an error in the sidebar for characters with long hair. Thanks to slenderostrich.
+- Fixed an error found when masturbating at the stall on Connudatus street. Thanks to Lollipop Scythe.
+- Fixed an error found when sleeping. Thanks to Lollipop Scythe and Spectacular.
+- Improved code responsible for plant growth. Thanks to Lollipop Scythe.
+- Being vaginally and anally penetrated in doggy position with your arms bound will no longer leave a gaping hole in the vaginal NPC's silhouette. Art courtesy of PurityGuy.
+- Fixed a bug that broke physique and tiredness after watering all plants out Eden's cabin or the wolf cave.
+- Removed the z, n and enter hotkeys during masturbation due to issues on mobile devices. Thanks to Lollipop Scythe.
+- Fixed a bug that caused UI issues when covering your body. Thanks to Lollipop Scythe.
+- Fixed a bug that caused NPCs to be described with male pronouns during combat, regardless of their actual gender. Also thanks to Lollipop Scythe.
+
+## 0.2.12.2
+
+- Added the "Hawker", "Vendor", "Merchant", "Seedy", and "Green Fingered" feats.
+- Added an Alternative, Submissive and Defiant default action sets that can be swapped to mid-combat. Thanks to Lollipop Scythe.
+- Improved performance during combat. Thanks to Lollipop Scythe.
+
+### Bug fixes
+
+- Fixed a bug that prevented action defaults from setting correctly. Thanks to Lollipop Scythe.
+- Fixed a problem with the control context text for breasts and nipples. Thanks to Lollipop Scythe.
+- Minor text fixes to action defaults. Also thanks to Lollipop Scythe.
+
+## 0.2.12.1
+
+- Increased the speed that the temple garden is cleared.
+
+### Bug Fixes
+
+- Fixed a bug that caused additional flower species to be discovered by searching for seeds in the orphanage garden.
+- Fixed a bug that caused images to overlap the "Next" button during encounters.
+- Attending swimming class naked after Leighton's commandment will no longer be incorrectly advertised as increasing delinquency.
+- Seducing another inmate in the asylum will no longer appear to take place at the beach.
+
+## 0.2.12.0
+
+- Mason can now be interacted with at the lake on rainy weekends and holidays.
+- Added the Tending skill, which measures your ability to nurture plants and animals.
+- Working in the temple garden, the garden outside Eden's cabin, and the gardens of Danube Street improve the tending skill.
+- Added the option to soothe the tentacles that attack you in the temple garden, Danube Street mansions, and at Eden's cabin.
+- Added flower beds to the orphanage garden. Various flowers can be grown here. The soil must be tilled, and the plants must be watered daily, unless it rains. Growing flowers improves the tending skill.
+- Added tendable plots to the clearings outside Eden's cabin and the wolf cave. They function like the flower beds in the orphanage garden, but are larger, taking longer to work and producing more.
+- Added a small flower bed to the asylum.
+- Different species of flower are valued differently, and have different growth times. Harvest size is influenced by tending skill, plot size, and soil quality.
+- Seeds for different species can be found around town in natural areas. Some seeds require a certain science skill before they can be recognised.
+- You can now rent a stall on Connudatus Street. The office is open from 6:00 until 9:00 in the morning, and the stall remains yours until 21:00 or 9:00 pm that day. You can sell your produce there.
+- Attractiveness, your fame for business, your tending skill, and the variety of your stock will help attract customers. The seduction skill and a willingness to flirt can help keep them.
+- Flowers have a standard value, but you have influence over how much you charge. Some NPCs will want to haggle. Cunning use of discounts may yield greater returns in the long run. Successful sales improve business fame.
+- Exhibitionist PCs can have some fun while waiting for customers.
+- Using your charms too aggressively might cause anger and resentment among your customers.
+- Added "Produce sold" to the statistics overlay.
+- Added a simple harassment event to the town's streets.
+- Added another simple event to the town's streets, found during the day. Could cause problems for characters wearing a skirt with no underwear.
+- Another dark creature roams the streets at night, and can be encountered rarely. Requires severe hallucinations and tentacles enabled.
+- Added an event triggered by passing out in the orphanage, replacing the existing abduction encounter in this location. The old event can still be found by passing out on the town's streets.
+- Added a simple event to the town's streets that appears if the PC has high crime.
+- Added a simple event to the forest to encourage wearing shoes.
+- Added an event to the asylum.
+- Added the option to wash your face in the school and park toilets, removing lewd fluid and non-permanent ink.
+- Added the "Skill check display" option to the general tab of settings, letting you display or hide the percentage chance of success for skill checks.
+- The PC can now have a spring unearthed in the orphanage garden. Requires befriending Mason, and convincing Bailey.
+- Added a simple event to the orphanage, triggered by the above improvement.
+- Thanks to 00c356 for various dev tools and code improvements.
+- Added the Mason's Secret feat.
+
+Thanks to Lollipop Scythe for the following additions and improvements:
+- Improved the code responsible for actions during encounters with humans and beasts.
+- Actions are now selected via a drop down list, rather than a radiobutton display.
+- List box border colour changes depending on the action.
+- Converted tentacle combat controls to a similar system.
+- Added an improved version of the radiobutton set up for those who prefer it.
+- You can choose between radiobuttons and the drop down list via the SAVES/OPTIONS overlay.
+- Added gold highlighting for each type of action context when context changes.
+- You can now choose default encounter actions in the attitudes menu.
+- Different defaults can be selected for different types of NPCs.
+- The available options expand alongside that options that are available to the PC during encounters.
+- Re-designed the save menu with help from 00c356.
+- Added Save Name to the general tab in settings.
+- Above change will show in the save menu when a save is exported.
+- Autosaves can now include a name.
+- Added a new feat for the demon transformation.
+- Blocked making and exporting saves on the start passages to avoid issues.
+- Save/Load/Delete now appear locked when they are not available.
+- Minor CSS adjustments for delete buttons, and other CSS changes.
+- Feats will now only transfer to new games to prevent save scumming.
+- Added a tattoo feat boost that allows up to five random and selected body parts to begin with tattoos. Requires the "Billboard" and "A Living Canvas" feats to unlock.
+- The tattoos themselves can be random or selected.
+- Permanent versions can be added by changing the tattoo type to brand.
+- Added a reminder to the starting text about settings.
+- Updated feats text to reflect recent changes.
+- Improved the default UI in attitudes.
+- Added game zoom to the general tab of settings.
+- Added a body-writing images toggle.
+- Moved the "Begin" link at the game's start to the top of the page.
+- General code improvements.
+
+### Balance Changes
+
+- The time it takes to clean up the temple garden is now dependent on the tending skill.
+- Reduced the chance of having your clothes torn by thickets in the forest.
+- The "Orgasm Addict" trait now increases the amount of lewd fluid produced on orgasm.
+- Increased the rate athletics increases.
+
+### Bug Fixes
+
+- The submissive option found when sneaking through someone's garden via the residential alleyways now provides towels as advertised.
+- Fixed a bug that prevented the virginities tracker in statistics from remembering the NPC who took your virginity.
+- Fixed a bug that could make the PC grow a penis if assaulted after passing out in the orphanage.
+- Seducing the NPC during the random event on the beach will now indicate that your seduction skill has increased.
+- Fixed a bug that caused your top to be damaged while playing volleyball, even when topless. Thanks to larsrand.
+- Beasts and tentacles will no longer be describe as "people" when ending a consensual encounter with your attitude set to submissive. Thanks to larsrand.
+- Fixed a bug that could prevent text for large breasts from appearing during a certain event. Also thanks to larsrand.
+- The Christmas skirt will no longer be described as a shirt in some places. Thanks to CasaBlanc.
+- Fixed a bug that prevented traits on legwear and footwear from applying as intended, and could prevent those items being stored properly.
+- Fixed a bug found when encountering angry NPCs. Thanks to 00c356.
+- Fixed a bug found when NPCs admire the PC's clothing. Also thanks to 00c356.
+- Fixed a bug that broke the park icon Linux.
+- Avery will on longer ask the PC to attend a party with them, then surprise them with a trip to the restaurant. Or the other way round.
+- Fixed some Winter gender confusion when showing them your gold chastity belt.
+- Fixed a bug that tricked Kylar into thinking you're wearing a chastity belt when you were not.
+- Fixed a bug that caused shoulder tattoos and body-writing to appear above clothes.
+- Male PC's will now have the option to pray for smaller, rather than bigger, breasts should they have small but unmistakable breasts.
+- Bailey will no longer materialise as a random rapist after tricking them in their office.
+- Encounters with Eden will no longer increase sex fame without sex occurring.
+- Avery will no longer remain on Domus Street after driving away.
+- Fixed a bug that prevented an encounter during swimming class from ending due to interruption from Mason.
+- Fixed a bug that caused an encounter during swimming class to end after one turn, and caused the NPCs to act like they successfully stole the PC's swimwear.
+- Fixed a bug causing underwear to appear on the floor instead of around the PC's ankles.
+- Fixed a bug that caused a broken image when the PC's skirt was pulled down to their ankles while in the missionary position.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that could break beast sprites.
+- Fixed a typo found when audiences comment on the PC.
+- Fixed chastity code during an event.
+- Fixed a bug regarding insecurity fix.
+- Fixed an error found when transforming into a wolfboy/girl.
+- Fixed a bug causing default moves to fail to work as intended when the situation changes.
+- Fixed a bug involving the PC's penis.
+- Fixed a bug breaking skin tone when reloading the game.
+- Fixed a bug that broke thin screen stat icon colours.
+- Made breast size descriptions and images more consistent.
+
+Thanks to araven for the following fixes:
+- The flavour text found when swimming while covered in copious amounts of lewd fluid will now show.
+- The flavour text found when playing darts in the orphanage with high hand skill will now show.
+- Refusing a solicitation triggered by prostitution body-writing will now take a more submissive form should the PC's submissiveness be high enough.
+- Fixed a bug that prevented wolves from giving aid to an exposed PC in the temple gardens despite their status in the pack warranting it.
+- Fixed a typo found when kissing Robin after a trip to the cinema.
+- Other fixes to debug and in-development content.
+
 ## 0.2.11.2
 
 - Fixed a game-breaking bug found when trying to swim across forest rivers.
