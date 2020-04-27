@@ -1,8 +1,6 @@
 :: Widgets Wardrobe [widget]
 <<widget "wardrobewear">><<nobr>>
 
-/*<<wardrobesanity>>*/
-
 <<if $wear is "strip">>
 	You remove your clothing.
 	<br><br>
@@ -150,7 +148,7 @@
 		<</for>>
 	<</if>>
 	<<unset _outfitPrimary>>
-	<<if _outfitPieceIds is {}>>
+	<<if Object.keys(_outfitPieceIds).length is 0>>
 		<<unset _outfitPieceIds>>
 	<</if>>
 
@@ -406,35 +404,6 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <</nobr>><</widget>>
 
 <<widget "wardrobesanity">><<nobr>>
-/*Fixes invisible outfit bottoms caused by bugs in previous versions*/
-
-<<for _i to 0; _i lt $wardrobe.lower.length; _i++>>
-	<<if $wardrobe.lower[_i].one_piece is 1>><<set _lower_sane to 0>>
-		<<for _e to 0; _e lt $wardrobe.upper.length; _e++>>
-			<<if $wardrobe.upper[_e].one_piece is 1 and $wardrobe.upper[_e].set is $wardrobe.lower[_i].set and $wardrobe.upper[_e].colour is $wardrobe.lower[_i].colour>>
-			<<set _lower_sane to 1>>
-			<</if>>
-		<</for>>
-		<<if _lower_sane isnot 1>>
-		<<set $wardrobe.lower[_i].one_piece to "broken">>
-		<<set $wardrobe.lower[_i].outfitSecondary[1] to "broken">>
-		<</if>>
-	<</if>>
-<</for>>
-
-<<for _i to 0; _i lt $wardrobe.under_lower.length; _i++>>
-	<<if $wardrobe.under_lower[_i].one_piece is 1>><<set _under_lower_sane to 0>>
-		<<for _e to 0; _e lt $wardrobe.under_upper.length; _e++>>
-			<<if $wardrobe.under_upper[_e].one_piece is 1 and $wardrobe.under_upper[_e].set is $wardrobe.under_lower[_i].set and $wardrobe.under_upper[_e].colour is $wardrobe.under_lower[_i].colour>>
-			<<set _under_lower_sane to 1>>
-			<</if>>
-		<</for>>
-		<<if _under_lower_sane isnot 1>>
-		<<set $wardrobe.under_lower[_i].one_piece to "broken">>
-		<<set $wardrobe.under_lower[_i].outfitSecondary[1] to "broken">>
-		<</if>>
-	<</if>>
-<</for>>
 
 <</nobr>><</widget>>
 
@@ -585,7 +554,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 				<span class="red">(Broken)</span>
 			<</if>>
 		<</if>>
-		<<if _item.outfitSecondary isnot undefined>>
+		<<if _item.outfitSecondary is "broken">>
 			<span class="red">(Broken)</span>
 		<</if>>
 		<<wardrobeintegrity _wardrobe_list>> |

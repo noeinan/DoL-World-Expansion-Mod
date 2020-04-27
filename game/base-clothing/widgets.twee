@@ -10,7 +10,7 @@
 	/*Check the current worn outfit related items for being locked on the character*/
 	<<set _outfitPrimaryWear to setup.clothes[$args[0]][$args[1]].outfitPrimary>>
 	<<if _outfitPrimaryWear isnot undefined>>
-		<<for _labelWear , _value range _outfitPrimaryWear>>
+		<<for _labelWear, _value range _outfitPrimaryWear>>
 			<<if $worn[_labelWear].cursed is 1>>
 				<<set _cursedPrevent to true>>
 			<</if>>
@@ -49,20 +49,20 @@
 
 <<widget "equipClothesItemFromDefault">><<nobr>>
 <<set $worn[$args[0]] to clone(setup.clothes[$args[0]][$args[1]])>>
-<<if $args[2]>>
+<<if $args[2] and $worn[$args[0]].colour_options.length gt 0>>
 	<<set $worn[$args[0]].colour to $args[2]>>
 	<<if $worn[$args[0]].colour is "custom">>
 		<<set $worn[$args[0]].colourCustom to 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+')'>>
 	<</if>>
-<<elseif setup.clothes[$args[0]][$args[1]].colour_options.length isnot 0>>
+<<elseif $worn[$args[0]].colour_options.length gt 0>>
 	<<set $worn[$args[0]].colour to clone($worn[$args[0]].colour_options.random())>>
 <</if>>
-<<if $args[3] and setup.clothes[$args[0]][$args[1]].accessory is 1>>
+<<if $args[3] and $worn[$args[0]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
 	<<set $worn[$args[0]].accessory_colour to $args[3]>>
 	<<if $worn[$args[0]].accessory_colour is "custom">>
 		<<set $worn[$args[0]].accessory_colourCustom to 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+')'>>
 	<</if>>
-<<elseif setup.clothes[$args[0]][$args[1]].accessory_colour_options.length isnot 0 and $worn[$args[0]].accessory is 1>>
+<<elseif setup.clothes[$args[0]][$args[1]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
 	<<set $worn[$args[0]].accessory_colour to clone($worn[$args[0]].accessory_colour_options.random())>>
 <</if>>
 <</nobr>><</widget>>
@@ -124,47 +124,45 @@
 /*The "generalSend" widget works in the same way as the "...send" widgets, however, the argument are as follows; Location, slot, item index, colour, accessory_colour*/
 
 <<widget "generalSend">><<nobr>>
-<<set _outfitPrimary to setup.clothes[$args[1]][$args[2]].outfitPrimary>>
+<<set $_outfitPrimary to setup.clothes[$args[1]][$args[2]].outfitPrimary>>
 
 <<if $args[0] is "wardrobe">>
 	<<sendToWardrobeFromDefault $args[1] $args[2] $args[3] $args[4]>>
-<</if>>
 
-<<if _outfitPrimary isnot undefined>>
-	<<set _colour to $wardrobe[$args[1]].last().colour>>
-	<<set _accessory_colour to $wardrobe[$args[1]].last().accessory_colour>>
-	<<for _label, _value range _outfitPrimary>>
-		<<unset _pieceId>>
-		<<for _iSend to 0; _iSend lt setup.clothes[_label].length; _iSend++>>
-			<<if setup.clothes[_label][_iSend].name is _value>>
-				<<set _pieceId to _iSend>>
-				<<break>>
-			<</if>>
+	<<if $_outfitPrimary isnot undefined>>
+		<<set _colour to $wardrobe[$args[1]].last().colour>>
+		<<set _accessory_colour to $wardrobe[$args[1]].last().accessory_colour>>
+		<<for $_label, $_value range $_outfitPrimary>>
+			<<unset _pieceId>>
+			<<for _iSend to 0; _iSend lt setup.clothes[$_label].length; _iSend++>>
+				<<if setup.clothes[$_label][_iSend].name is $_value>>
+					<<set _pieceId to _iSend>>
+					<<break>>
+				<</if>>
+			<</for>>
+
+			<<sendToWardrobeFromDefault $_label _pieceId _colour _accessory_colour>>
 		<</for>>
-		<<if $args[0] is "wardrobe">>
-			<<sendToWardrobeFromDefault _label _pieceId _colour _accessory_colour>>
-		<</if>>
-	<</for>>
-	<<unset _outfitPrimary>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "sendToWardrobeFromDefault">><<nobr>>
 <<set $wardrobe[$args[0]].push(clone(setup.clothes[$args[0]][$args[1]]))>>
-<<if $args[2] and setup.clothes[$args[0]][$args[1]].colour_options.length isnot 0>>
+<<if $args[2] and $wardrobe[$args[0]].last().colour_options.length isnot 0>>
 	<<set $wardrobe[$args[0]].last().colour to $args[2]>>
 	<<if $wardrobe[$args[0]].last().colour is "custom">>
 		<<set $wardrobe[$args[0]].last().colourCustom to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
 	<</if>>
-<<elseif setup.clothes[$args[0]][$args[1]].colour_options.length isnot 0>>
+<<elseif $wardrobe[$args[0]].last().colour_options.length gt 0>>
 	<<set $wardrobe[$args[0]].last().colour to clone($wardrobe[$args[0]].last().colour_options.random())>>
 <</if>>
-<<if $args[3] and $wardrobe[$args[0]].last().accessory is 1 and setup.clothes[$args[0]][$args[1]].accessory_colour_options.length isnot 0>>
+<<if $args[3] and $wardrobe[$args[0]].last().accessory is 1 and $wardrobe[$args[0]].last().accessory_colour_options.length isnot 0>>
 	<<set $wardrobe[$args[0]].last().accessory_colour to $args[3]>>
 	<<if $wardrobe[$args[0]].last().accessory_colour is "custom">>
 		<<set $wardrobe[$args[0]].last().accessory_colourCustom to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
 	<</if>>
-<<elseif setup.clothes[$args[0]][$args[1]].accessory_colour_options.length isnot 0 and $wardrobe[$args[0]].last().accessory is 1>>
+<<elseif $wardrobe[$args[0]].last().accessory_colour_options.length gt 0 and $wardrobe[$args[0]].last().accessory is 1>>
 	<<set $wardrobe[$args[0]].last().accessory_colour to clone($wardrobe[$args[0]].last().accessory_colour_options.random())>>
 <</if>>
 <</nobr>><</widget>>
@@ -386,7 +384,7 @@
 
 		/*Re-buy*/
 		<<if $args[0] isnot "genitals">>
-			<<if $carried[$args[0]].name isnot "naked" and $clothingrebuy is 1 and $carried[$args[0]].one_piece isnot "broken" and ($carried[$args[0]].shop.includes("clothing") or $carried[$args[0]].shop.includes("forest"))>>
+			<<if $carried[$args[0]].name isnot "naked" and $clothingrebuy is 1 and $carried[$args[0]].one_piece isnot "broken" and $carried[$args[0]].shop.length gt 0>>
 				<<if $money gte Math.trunc($carried[$args[0]].cost * 1.5)>>
 					<<generalSend "wardrobe" $args[0] $carried[$args[0]].index $carried[$args[0]].colour $carried[$args[0]].accessory_colour>>
 					<<set $money -= Math.trunc($carried[$args[0]].cost * 1.5)>>
@@ -394,7 +392,7 @@
 				<<else>>
 					<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($carried[$args[0]].name))>>
 				<</if>>
-			<<elseif $clothingrebuy is 1 and $worn[$args[0]].one_piece isnot "broken" and ($worn[$args[0]].shop.includes("clothing") or $worn[$args[0]].shop.includes("forest"))>>
+			<<elseif $clothingrebuy is 1 and $worn[$args[0]].one_piece isnot "broken" and $worn[$args[0]].shop.length gt 0>>
 				<<if $money gte Math.trunc($worn[$args[0]].cost * 1.5)>>
 					<<generalSend "wardrobe" $args[0] $worn[$args[0]].index $worn[$args[0]].colour $worn[$args[0]].accessory_colour>>
 					<<set $money -= Math.trunc($worn[$args[0]].cost * 1.5)>>
