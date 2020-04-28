@@ -1,2 +1,12 @@
-@set TWEEGO_PATH=%cd%\StoryFormats
-@tweego -o "Degrees of Lewdity VERSION.html" --head "build/head.html" game
+@echo off
+
+:: Set working directory
+pushd %~dp0
+@set TWEEGO_PATH="%~dp0devTools\tweego\StoryFormats"
+
+:: Run the appropriate compiler for the user's CPU architecture.
+if %PROCESSOR_ARCHITECTURE% == AMD64 (
+	CALL "%~dp0devTools\tweego\tweego_win64.exe" -o "%~dp0Degrees of Lewdity VERSION.html" --head "%~dp0devTools\head.html" "%~dp0game"
+) else (
+	CALL "%~dp0devTools\tweego\tweego_win86.exe" -o "%~dp0Degrees of Lewdity VERSION.html" --head "%~dp0devTools\head.html" "%~dp0game"
+)
