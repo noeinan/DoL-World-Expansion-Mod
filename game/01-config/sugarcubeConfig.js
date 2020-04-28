@@ -20,7 +20,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.2.12.4",
+	"version": "0.2.12.5",
 }
 
 config.saves.autosave = "autosave";
