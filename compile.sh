@@ -1,12 +1,48 @@
 #!/bin/bash
 
-if [ ! -f "$(command -v tweego)" ]; then
-	echo "Cannot find tweego. Please install tweego before compiling."
-	exit 1
-fi
+function compile() {
+	export TWEEGO_PATH=devTools/tweeGo/storyFormats
+	VERSION="$(git describe --tags --always --dirty)"
+	TWEEGO_EXE="tweego"
+	if [ ! -f "$(command -v tweego)" ]; then
+		case "$(uname -m)" in
+			x86_64 | amd64)
+				echoMessage "x64 arch"
+				if [ "$(uname -s)" = "Darwin" ]; then
+					TWEEGO_EXE="./devTools/tweego/tweego_osx64"
+				elif [ "$OSTYPE" = "msys" ]; then
+					TWEEGO_EXE="./devTools/tweego/tweego_win64"
+				else
+					TWEEGO_EXE="./devTools/tweego/tweego_linux64"
+				fi
+				;;            
+			x86 | i[3-6]86)
+				echoMessage "x86 arch"
+				if [ "$(uname -s)" = "Darwin" ]; then
+					TWEEGO_EXE="./devTools/tweego/tweego_osx86"
+				elif [ "$OSTYPE" = "msys" ]; then
+					TWEEGO_EXE="./devTools/tweego/tweego_win86"
+				else
+					TWEEGO_EXE="./devTools/tweego/tweego_linux86"
+				fi
+				;;
+			*)
+				echoError "No system tweego binary found, and no precompiled binary for your platform available."
+				echoError "Please compile tweego and put the executable in PATH."
+				exit 2
+				;;
+		esac
+	fi
 
-VERSION="$(git describe --tags --always --dirty)"
+	$TWEEGO_EXE -o "Degrees of Lewdity $VERSION.html" --head "devTools/head.html" game/ || build_failed="true"
 
-TWEEGO_PATH="./StoryFormats" tweego -o "Degrees of Lewdity $VERSION.html" --head "build/head.html" game
-cp "Degrees of Lewdity $VERSION.html" "Degrees of Lewdity.html"
-echo "Done: \"Degrees of Lewdity.html\""
+	if [ "$build_failed" = "true" ]; then
+		echoError "Build failed."
+		exit 1
+	else
+		echo "Done: \"Degrees of Lewdity $VERSION.html\""
+		exit 1
+	fi
+}
+
+compile
