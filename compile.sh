@@ -15,7 +15,7 @@ function compile() {
 				else
 					TWEEGO_EXE="./devTools/tweego/tweego_linux64"
 				fi
-				;;            
+				;;
 			x86 | i[3-6]86)
 				echoMessage "x86 arch"
 				if [ "$(uname -s)" = "Darwin" ]; then
