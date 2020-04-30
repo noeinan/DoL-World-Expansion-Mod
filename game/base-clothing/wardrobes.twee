@@ -1,6 +1,8 @@
 :: Widgets Wardrobe [widget]
 <<widget "wardrobewear">><<nobr>>
 
+<<wardrobeSanityCheck>>
+
 <<if $wear is "strip">>
 	You remove your clothing.
 	<br><br>
@@ -146,11 +148,11 @@
 				<</for>>
 			<</if>>
 		<</for>>
+		<<if Object.keys(_outfitPieceIds).length is 0>>
+			<<unset _outfitPieceIds>>
+		<</if>>
 	<</if>>
 	<<unset _outfitPrimary>>
-	<<if Object.keys(_outfitPieceIds).length is 0>>
-		<<unset _outfitPieceIds>>
-	<</if>>
 
 	<<if $wardrobeOption is "delete" and _wearId gte 0>>
 		/*Delete the relating items*/
@@ -554,7 +556,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 				<span class="red">(Broken)</span>
 			<</if>>
 		<</if>>
-		<<if _item.outfitSecondary is "broken">>
+		<<if _item.outfitSecondary isnot undefined>>
 			<span class="red">(Broken)</span>
 		<</if>>
 		<<wardrobeintegrity _wardrobe_list>> |
@@ -754,6 +756,63 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 		<<set $wardrobe[_slot] to clone(_newWardrobeItems)>>
 	<</if>>
 	<<replace #wardrobeList>><<wardrobeList $lastWardrobeSlot>><</replace>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "wardrobeSanityCheck">><<nobr>>
+/*Fixes invisible outfit bottoms caused by bugs in previous versions*/
+<<if $lastWardrobeSanityCheck is undefined or $lastWardrobeSanityCheck isnot $saveVersions.last()>>
+	<<set $lastWardrobeSanityCheck to $saveVersions.last()>>
+	/*Update _equip as required*/
+	<<set _equip to ["lower", "under_lower"]>>
+	<<for _slot range _equip>>
+		<<set $_itemIndex to {}>>
+		<<for $_i to 0; $_i lt $wardrobe[_slot].length; $_i++>>
+			<<if $wardrobe[_slot][$_i].outfitSecondary is undefined>>
+				<<continue>>
+			<</if>>
+			<<if $wardrobe[_slot][$_i].outfitSecondary[1] is "broken">>
+				<<continue>>
+			<</if>>
+
+			/*Prep*/
+			<<set $_markBroken to true>>
+			<<set $_found to false>>
+			<<set $_item to $wardrobe[_slot][$_i]>>
+			<<set $_outfitSecondary to $wardrobe[_slot][$_i].outfitSecondary>>
+			<<if $_itemIndex[$_outfitSecondary[0]] is undefined>>
+				<<set $_itemIndex[$_outfitSecondary[0]] to []>>
+			<</if>>
+
+			/*Look for a primary piece that matches*/
+			<<for $_j to 0; $_j lt $wardrobe[$_outfitSecondary[0]].length; $_j++>>
+				<<if $wardrobe[$_outfitSecondary[0]][$_j].name isnot $_outfitSecondary[1]>>
+					<<continue>>
+				<</if>>
+				<<if $_itemIndex[$_outfitSecondary[0]].includes($_j)>>
+					<<continue>>
+				<</if>>
+				<<if $wardrobe[$_outfitSecondary[0]][$_j].colour is $_item.colour and $wardrobe[$_outfitSecondary[0]][$_j].accessory_colour is $_item.accessory_colour>>
+					<<if $_item.colour isnot "custom" and $_item.accessory_colour isnot "custom">>
+						<<set $_markBroken to false>>
+						<<run $_itemIndex[$_outfitSecondary[0]].push(clone($_j))>>
+						<<break>>
+					<<elseif $_item.colourCustom is $wardrobe[$_outfitSecondary[0]][$_j].colourCustom and $_item.accessory_colourCustom is $wardrobe[$_outfitSecondary[0]][$_j].accessory_colourCustom>>
+						<<set $_markBroken to false>>
+						<<run $_itemIndex[$_outfitSecondary[0]].push(clone($_j))>>
+						<<break>>
+					<</if>>
+				<</if>>
+			<</for>>
+			<<if $_markBroken is true>>
+				/*Mark as broken*/
+				<<set $wardrobe[_slot][$_i].outfitSecondary[1] to "broken">>
+				<<set $wardrobe[_slot][$_i].one_piece to "broken">>
+				<<set $wardrobe[_slot][$_i].set to clone(_slot)>>
+				<<set $wardrobe[_slot][$_i].sanityCheck to true>>
+			<</if>>
+		<</for>>
+	<</for>>
 <</if>>
 <</nobr>><</widget>>
 
