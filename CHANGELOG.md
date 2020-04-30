@@ -1,5 +1,57 @@
 # CHANGELOG
 
+## 0.2.12.5
+
+- NPCs now sometimes decide to release their grip on the PC's mask should their attempt to remove it be thwarted.
+- Added autofellatio and autocunnilingus for characters that have the cat transformation or very high dancing skill. Thanks to Lollipop - Scythe.
+- Improved the code behind masturbation action UI. Also thanks to Lollipop Scythe.
+- The Chastity Vow trait will now become a Broken Vow trait should you lose your virginity, rather than just disappearing.
+
+### Bug Fixes
+
+- Fixed a pronoun problem found when a girl is called up to the front of the class by Sirris.
+- Fixed a pronoun problem found when cumming inside a woman's ass.
+- Fixed a bug that caused feeding the wolf pups to take longer than advertised.
+- NPCs pulling at your mask with both hands will no longer be described as doing so three times.
+- Disabling anal in settings will now prevent NPCs from rimming you.
+- Fixed a bug that prevented cheat menu changes to vaginal virginity from applying properly.
+- Fixed a bug that prevented NPCs from properly sucking your nipples.
+
+Thanks to Hexogen for the following fixes:
+- Fixed a bug that left the PC's attitude towards consensual sex blank on old saves.
+- Fixed a bug that prevented secondary custom colours from setting properly.
+- Fixed a bug that prevented cat images from appearing in the missionary position.
+- Fixed a bug that prevented slime images from appearing during encounters.
+- Fixed a bug that prevented NPCs from commenting on your chastity belt while trying to fuck your ass.
+- Fixed a bug that could prevent the game from acknowledging the PC's head being pressed against an NPC's breast.
+- Swarms should now be described properly during encounters.
+- Fixed a bug that prevented male Leighton from acting properly after witnessing the PC and other student lewd each other.
+- The tattoo scene in the dungeon should no longer ignore clothing beneath your waist.
+- Other minor fixes.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that prevented whacking pens with your right hand from working properly.
+- Fixed an issue that would have caused problems if new clothing shops were added in the future.
+- Trying on an outfit with the same primary and accessory colours will no longer break the outfit.
+- Other minor clothing system fixes.
+- Added missing breast bite combat colour.
+
+## 0.2.12.4
+
+- Fixed a bug found when interrupted while masturbating at your market stall.
+- Fixed a bug that prevented the sidebar sprite's right arm from staying inside its sleeve when covering your genitals.
+- Fixed an error found when haggling while bottomless.
+- Fixed a bug that allowed NPCs to stuff two cocks in your ass when they weren't meant to.
+- Masturbating to six orgasms in one session will no longer be described as five orgasms.
+- Thanks to Lollipop Scythe and 00c356 for investigating an issue that prevents old Android devices from running the game.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed an error found when accosted by a wolf in the temple garden.
+- Fixed a problem with highlight colours during combat.
+- Fixed a minor save system UI issue.
+- Fixed an issue found when receiving vaginal sex.
+- The haggling display at the market stall will now display pennies, rather than rounding down to the nearest pound.
+
 ## 0.2.12.3
 
 - Fixed a bug that caused an error in the sidebar for characters with long hair. Thanks to slenderostrich.
