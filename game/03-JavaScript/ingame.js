@@ -80,7 +80,7 @@ window.combatListColor = function(name, value, type){
 			case "othermouthescape": case "escape": case "otheranusescape":
 				color = "brat";
 			break;
-			
+
 			/*leftaction or rightaction*/
 			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle":
 			/*feetaction*/
@@ -89,7 +89,7 @@ window.combatListColor = function(name, value, type){
 			case "bite": case "demand": case "breastbite":
 				color = "def";
 			break;
-	
+
 			/*mouthaction*/
 			case "grasp": case "plead": case "forgive":
 			/*penisaction*/
@@ -100,7 +100,7 @@ window.combatListColor = function(name, value, type){
 			case "bottombay": case "penischeeks": case "penispussy": case "penisanus":
 				color = "meek";
 			break;
-	
+
 			/*leftaction or rightaction*/
 			case "leftplay": case "leftgrab": case "leftstroke": case "leftchest": case "rightplay": case "rightgrab": case "rightstroke": case "rightchest":
 			case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit":
@@ -118,7 +118,7 @@ window.combatListColor = function(name, value, type){
 			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub":
 				color = "sub";
 			break;
-	
+
 			default:
 				color = "white";
 			break;
@@ -137,7 +137,7 @@ window.combatListColor = function(name, value, type){
 			break;
 
 			/*mouthaction*/
-			case "mouthpullawaytentacle": 
+			case "mouthpullawaytentacle":
 			/*penisaction*/
 			case "penispullawaytentacle":
 			/*vaginaaction*/
@@ -148,9 +148,9 @@ window.combatListColor = function(name, value, type){
 
 			/*leftaction or rightaction*/
 			case "leftgrabtentacle": case "rightgrabtentacle": case "leftrubtentacle": case "rightrubtentacle":
-			case "showbottomtentacle": case "showthighstentacle": case "showmouthtentacle": 
+			case "showbottomtentacle": case "showthighstentacle": case "showmouthtentacle":
 			case "leftgrab": case "rightgrab": case "leftrub": case "rightrub":
-			case "showbottom": case "showthighs": case "showmouth": 
+			case "showbottom": case "showthighs": case "showmouth":
 			/*feetaction*/
 			case "feetgrab": case "feetrubtentacle":
 			/*mouthaction*/
