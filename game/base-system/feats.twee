@@ -272,6 +272,16 @@
 	<<featsTattooOptions>>
 	<<set _totalTattoos to $featsBoosts.upgrades.tattoos / $featsBoosts.upgradeDetails.tattoos.cost>>
 	<<set _bodyPartOptions to ["forehead","left_cheek","right_cheek","left_shoulder","right_shoulder","back","breasts","left_bottom","right_Bottom","left_thigh","right_thigh","pubic"]>>
+	
+	/*Remove non-random locations*/
+	<<for _label, _value range $featsBoosts.tattoos>>
+		<<if  _value.tattoo isnot "Random">>
+			<<set _bodyPart to _value.bodypart.toLowerCase()>>
+			<<set _bodyPart to _bodyPart.replace(" ", "_")>>
+			<<run _bodyPartOptions.delete(_bodyPart)>>
+		<</if>>
+	<</for>>
+
 	/*Add non-random bodyparts*/
 	<<for _label, _value range $featsBoosts.tattoos>>
 		<<if _label gt _totalTattoos>>
@@ -290,7 +300,7 @@
 		<</if>>
 		<<for _label2, _value2 range setup.bodywriting>>
 			<<if _value2.writing is _tattoo>>
-				<<add_bodywriting _value.bodypart _label2 `_value.pen.toLowerCase()`>>
+				<<add_bodywriting _bodyPart _label2 `_value.pen.toLowerCase()`>>
 				<<break>>
 			<</if>>
 		<</for>>

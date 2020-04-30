@@ -248,7 +248,11 @@
 						<<set $wardrobe[_labelWO].deleteAt(_valueWO)>>
 					<</for>>
 				<<else>>
-					<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found"}>>
+					<<if $worn[_equip[_i]].name is $outfit[$wear_outfit][_equip[_i]]>>
+						<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found replacement"}>>
+					<<else>>
+						<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found"}>>
+					<</if>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -264,7 +268,7 @@
 				<<case "not found">>
 					<<if _resultStrings.notFound is undefined>>
 						<<set _resultStrings.notFound to {
-							"start": "You were unable to find your ",
+							"start": "You were unable to find any ",
 							"end": " in your wardrobe.",
 							"count": 0,
 							"color": "purple"
@@ -272,6 +276,17 @@
 					<</if>>
 					<<set _resultStrings.notFound[_resultStrings.notFound.count] to _notEquipped[_keys[_i]].name>>
 					<<set _resultStrings.notFound.count++>>
+				<<case "not found replacement">>
+					<<if _resultStrings.notFoundReplacement is undefined>>
+						<<set _resultStrings.notFoundReplacement to {
+							"start": "You were unable to find any ",
+							"end": " in your wardrobe to replace what your already wearing.",
+							"count": 0,
+							"color": "lewd"
+						}>>
+					<</if>>
+					<<set _resultStrings.notFoundReplacement[_resultStrings.notFoundReplacement.count] to _notEquipped[_keys[_i]].name>>
+					<<set _resultStrings.notFoundReplacement.count++>>
 				<<case "corruption_slime_deny">>
 					<<if _resultStrings.corruption_slime_deny is undefined>>
 						<<set _resultStrings.corruption_slime_deny to {
@@ -309,7 +324,7 @@
 					<<if _resultStrings.notFoundPiece is undefined>>
 						<<set _resultStrings.notFoundPiece to {
 							"start": "You were unable to fully equip your ",
-							"end": " due to an unexpected issue (Error in save most likely).",
+							"end": " due to an unexpected issue (Error in save most likely). Discarding and replacing relating items should deal with the issue.",
 							"count": 0,
 							"color": "red"
 						}>>
