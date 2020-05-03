@@ -1,5 +1,17 @@
 #!/bin/bash
 
+output=/dev/stdout
+
+#display an error message
+function echoError() {
+	echo -e "\033[0;31m$*\033[0m"
+}
+
+#display message
+function echoMessage() {
+	echo "$1" >"${output}"
+}
+
 function compile() {
 	export TWEEGO_PATH=devTools/tweeGo/storyFormats
 	VERSION="$(git describe --tags --always --dirty)"
