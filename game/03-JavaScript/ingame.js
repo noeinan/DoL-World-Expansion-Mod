@@ -1,27 +1,3 @@
-window.hairdressers = function(type, value){
-	switch(type){
-		case 1:
-			SugarCube.State.variables.money -= 3000;
-			SugarCube.State.variables.hairlength = (100 * value);
-			SugarCube.State.variables.phase = 1;
-			new Wikifier(null, '<<pass 20>>');
-			break;
-		case 2:
-			SugarCube.State.variables.money -= 3000;
-			SugarCube.State.variables.fringelength = (200 * value);
-			SugarCube.State.variables.phase = 1;
-			new Wikifier(null, '<<pass 20>>');
-			break;
-		case 3:
-			SugarCube.State.variables.money -= 6000;
-			SugarCube.State.variables.haircolour = SugarCube.State.variables.hairdressersHairColour[value];
-			SugarCube.State.variables.phase = 3;
-			new Wikifier(null, '<<pass 30>>');
-			break;
-	}
-	SugarCube.State.display(SugarCube.State.variables.passage);
-}
-
 window.mapMove = function(moveTo){
 	var currentPassage = SugarCube.State.variables.passage;
 	var destination_table = [];
@@ -197,3 +173,13 @@ function combatDefaults(){
 }
 
 DefineMacroS("combatDefaults", combatDefaults);
+
+function hairdressersReset(){
+	jQuery(document).on('change', '.macro-listbox', function(e) {
+		new Wikifier(null, '<<replace #hairDressers>><<hairDressersOptions>><</replace>>');
+		new Wikifier(null, '<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("hairdressersReset", hairdressersReset);

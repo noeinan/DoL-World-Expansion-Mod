@@ -1,0 +1,249 @@
+:: Hairdressers Lock [nobr]
+<<set $outside to 0>><<effects>><<set $lock to 0>>
+<<if $skulduggery gte $lock>>
+	<span class="green">The lock looks easy to pick.</span>
+	<br><br>
+
+	<<link [[Pick it (0:10)|Hairdressers]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+	<br>
+<<else>>
+	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+	<br><br>
+<</if>>
+
+<<link [[Leave|Shopping Centre]]>><</link>>
+<br>
+
+:: Hairdressers [nobr]
+<<set $outside to 0>><<set $location to "shopping_centre">><<effects>>
+
+You are in the hairdressers. Here you can have your hair cut or dyed.
+
+<<if $daystate is "night">>
+	You are alone in the darkness.
+<<elseif $exposed gte 1>>
+	You hide in a cupboard to protect your dignity.
+<<else>>
+	There's a seat available.
+<</if>>
+<br><br>
+
+<<if $stress gte 10000>>
+	<<passoutshop>>
+<<else>>
+	<<if $hour is 21>>
+		It's closing time. Security is herding everyone outside.
+		<<if $exposed gte 1>>
+			Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.
+		<</if>>
+		<br><br>
+		<<if $exposed lte 0>>
+			<<link [[Go Outside|High Street]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Hide until it's over (1:00)|Hairdressers]]>><<pass 1 hour>><</link>>
+		<</if>>
+	<<else>>
+		<<if $daystate is "night" and $hour isnot $closinghour and $hairdresserstheft isnot 1>>
+			<<link [[Examine the cash register|Hairdressers Register]]>><</link>>
+			<br>
+		<</if>>
+		<<if $exposed lte 1 and $daystate isnot "night" and $hour isnot 21>>
+			[[Take a seat|Hairdressers Seat]]
+			<br><br>
+		<</if>>
+		[[Leave|Shopping Centre]]
+		<br>
+	<</if>>
+<</if>>
+
+:: Hairdressers Seat [nobr]
+
+<<generate1>><<person1>>You take a seat, and a hairdresser soon appears behind you. "What'll it be hun?" A sign by the mirror reads:
+<br>
+"Hair cut: £30
+<br>
+Hair dye: £60"
+<br><br>
+<<set $hairOption to $hairlength>>
+<<set $fringeOption to $fringelength>>
+<<set $dyeOption to "noChange">>
+<div id="currentCost" class="gold">
+	To pay: £0
+</div>
+<div id="hairDressers">
+	<<hairDressersOptions>>
+</div>
+<<hairdressersReset>>
+
+:: Hairdressers Session [nobr]
+
+You hand over the money and <<he>> gets to work.
+<br><br>
+<<set _pass to 0>>
+<<if $hairOption isnot $hairlength>>
+	The hairdresser starts snipping away, locks floating to the ground all around you. After a short while, <<he>> stands back while brandishing a mirror for you to examine <<his>> handiwork.
+	<br><br>
+	<<set $hairlength to clone($hairOption)>>
+	<<set _pass += 15>>
+	<<unset $hairOption>>
+<</if>>
+
+<<if $fringeOption isnot $fringelength>>
+	<<if _pass gt 0>>
+		<<He>> continues snipping away, and locks continue floating to the ground all around you After a short while, <<he>> again stands back while brandishing a mirror for you to examine <<his>> handiwork further.
+	<<else>>
+		The hairdresser starts snipping away, locks floating to the ground all around you. After a short while, <<he>> stands back while brandishing a mirror for you to examine <<his>> handiwork.
+	<</if>>
+	<br><br>
+	<<set $fringelength to clone($fringeOption)>>
+	<<set _pass += 15>>
+	<<unset $fringeOption>>
+<</if>>
+
+<<if $dyeOption is "removeDye">>
+	<<if _pass gt 0>>
+		<<He>> finishes your requests by asking you to tilt your head back. <<He>> applies a liquid smelling of artificial chemicals to your hair, then begins rinsing it out in a small basin.
+		<<He>> is soon blowing you dry and brandishing a mirror for you to see your hair back in its natural $naturalhaircolour colour.
+	<<else>>
+		The hairdresser asks you to tilt your head back. <<He>> applies a liquid smelling of artificial chemicals to your hair, then begins rinsing it out in a small basin.
+		<<He>> is soon blowing you dry and brandishing a mirror for you to see your hair back in its natural $naturalhaircolour colour.
+	<</if>>
+	<br><br>
+	<<set $haircolour to clone($naturalhaircolour)>>
+	<<set _pass += 15>>
+	<<unset $dyeOption>>
+<<elseif $dyeOption isnot "noChange">>
+	<<set $haircolour to clone($dyeOption)>>
+	<<if _pass gt 0>>
+		<<He>> finishes your requests by carefully applying your chosen colour. It's not long before <<he>> brandishes a mirror for you to see your newly <<haircolourtext>> hair from all angles.
+	<<else>>
+		The hairdresser begins carefully applying your chosen colour. It's not long before <<he>> brandishes a mirror for you to see your newly <<haircolourtext>> hair from all angles.
+	<</if>>
+	<br><br>
+	<<set _pass += 30>>
+	<<unset $dyeOption>>
+<</if>>
+
+<<if $hairlength gte 900>>
+	<<set $hairlengthstage to "feet">>
+<<elseif $hairlength gte 700>>
+	<<set $hairlengthstage to "thighs">>
+<<elseif $hairlength gte 600>>
+	<<set $hairlengthstage to "navel">>
+<<elseif $hairlength gte 400>>
+	<<set $hairlengthstage to "chest">>
+<<elseif $hairlength gte 200>>
+	<<set $hairlengthstage to "shoulder">>
+<<else>>
+	<<set $hairlengthstage to "short">>
+<</if>>
+
+<<if $fringelength gte 900>>
+	<<set $fringelengthstage to "feet">>
+<<elseif $fringelength gte 700>>
+	<<set $fringelengthstage to "thighs">>
+<<elseif $fringelength gte 600>>
+	<<set $fringelengthstage to "navel">>
+<<elseif $fringelength gte 400>>
+	<<set $fringelengthstage to "chest">>
+<<elseif $fringelength gte 200>>
+	<<set $fringelengthstage to "shoulder">>
+<<else>>
+	<<set $fringelengthstage to "short">>
+<</if>>
+
+<<pass _pass>>
+
+<<link [[Leave|Hairdressers]]>><<endevent>><</link>>
+
+:: Hairdressers Widgets [widget]
+
+<<widget "hairDressersOptions">><<nobr>>
+<<set _currentCost to 0>>
+<<if ($money gte _currentCost + 3000 or $hairOption isnot $hairlength) and $hairlength gte 100>>
+	<<if $hairOption isnot $hairlength>>
+		<<set _currentCost += 3000>>
+	<</if>>
+	Have your sides cut to your:
+	<br>
+	<<set _hairNames to ["Ears", "Chin", "Shoulders", "Upper chest", "Middle chest", "Upper stomach", "Navel", "Thighs", "Knees", "Ankles"]>>
+	<<set _start to ($hairlength - ($hairlength % 100))/100>>
+	<<set _hairOptions to {"Don't cut":$hairlength}>>
+	<<for _i to _start; _i gte 0; _i-->>
+		<<set _hairOptions[_hairNames[_i]] to (_i * 100) + 100>>
+	<</for>>
+	<<listbox "$hairOption" autoselect>>
+		<<optionsfrom _hairOptions>>
+	<</listbox>>
+	<br><br>
+<<elseif $hairlength gte 100>>
+	Not enough money to cut your hair.
+	<br><br><br>
+<</if>>
+
+<<if ($money gte _currentCost + 3000 or $fringeOption isnot $fringelength) and $fringelength gte 100>>
+	<<if $fringeOption isnot $fringelength>>
+		<<set _currentCost += 3000>>
+	<</if>>
+	Have your fringe cut until it's:
+	<br>
+	<<set _fringeNames to ["Very short", "Short", "Standard", "Long"]>>
+	<<set _start to ($fringelength - ($fringelength % 200))/200>>
+	<<set _fringeOptions to {"Don't cut":$fringelength}>>
+	<<for _i to _start; _i gte 0; _i-->>
+		<<set _fringeOptions[_fringeNames[_i]] to (_i * 200) + 100>>
+	<</for>>
+	<<listbox "$fringeOption" autoselect>>
+		<<optionsfrom _fringeOptions>>
+	<</listbox>>
+	<br><br>
+<<elseif $fringelength gte 100>>
+	Not enough money to cut your fringe.
+	<br><br><br>
+<</if>>
+
+<<if $money gte _currentCost + 3000 or $dyeOption isnot "noChange">>
+	<<if $dyeOption is "removeDye">>
+		<<set _currentCost += 3000>>
+	<<elseif $dyeOption isnot "noChange">>
+		<<set _currentCost += 6000>>
+	<</if>>
+	Have your hair dyed<<if $haircolour isnot $naturalhaircolour>> or cleared of hair dye<</if>>:
+	<br>
+
+	<<set _dyeNames to ["Red", "Black", "Blond", "Platinum blond", "Strawberry blond", "Brown", "Light brown", "Ginger", "Blue", "Green", "Teal", "Pink", "Hot pink", "Soft pink", "Crimson", "Purple", "White", "Snow white", "Deep Blue"]>>
+	<<set $hairdressersHairColour to ["red", "black", "blond", "platinumblond", "strawberryblond", "brown", "lightbrown", "ginger", "blue", "green", "teal", "pink", "hotpink", "softpink", "crimson", "purple", "white", "snowwhite", "deepblue"]>>
+	<<set _dyeOptions to {"Don't dye":"noChange"}>>
+	<<if $haircolour isnot $naturalhaircolour>>
+		<<set _dyeOptions["Remove dye"] to "removeDye">>
+	<</if>>
+	<<if $money gte _currentCost + 6000 or ($dyeOption isnot "noChange" and $dyeOption isnot "removeDye")>>
+		<<for _i to 0; _i lt _dyeNames.length; _i++>>
+			<<if $haircolour is $hairdressersHairColour[_i] or $naturalhaircolour is $hairdressersHairColour[_i]>>
+				<<continue>>
+			<</if>>
+			<<set _dyeOptions[_dyeNames[_i]] to $hairdressersHairColour[_i]>>
+		<</for>>
+	<</if>>
+	<<listbox "$dyeOption" autoselect>>
+		<<optionsfrom _dyeOptions>>
+	<</listbox>>
+	<<if $dyeOption isnot "noChange"and $dyeOption isnot "removeDye">>
+		<div @class="'hair-'+$dyeOption">
+			<div style="height: 25px; width: 100px; margin-top:5px; background-color: #fd6064; border:1px solid #ccc;" class="colour-hair"></div>
+		</div>
+		<br>
+	<<else>>
+		<br>
+	<</if>>
+<</if>>
+
+<<if _currentCost gt 0>>
+	<<link [[Pay Hairdresser|Hairdressers Session]]>>
+		<<set $money -= _currentCost>>
+	<</link>>
+<</if>>
+<br><br>
+<<link [[Leave|Hairdressers]]>><<endevent>><</link>>
+<</nobr>><</widget>>
