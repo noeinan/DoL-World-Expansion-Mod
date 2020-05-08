@@ -1,4 +1,4 @@
-:: Widgets Tnetacle Actions Generation [widget]
+:: Widgets Tentacle Actions Generation [widget]
 
 /*Sends the required variables to the chosen display type*/
 <<widget "generateCombatActionTentacle">><<nobr>>
@@ -110,6 +110,9 @@
 		<<case "bound">>
 			<<set _leftOptions to "bound">>
 			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'')">Your left arm is bound.</span>
+		<<case "trapped">>
+			<<set _leftOptions to "trapped">>
+			<span @class="($lastOptions.left isnot _leftOptions ?'gold':'purple')">Your left arm is trapped by the $vorecreature.</span>
 		<<default>>
 			<<for _i to 0; _i lt $tentacles.max; _i++>>
 				<<if $leftarm is $tentacles[_i].id>>
@@ -134,7 +137,7 @@
 				<<set _reducedWidths to false>>
 			<</if>>
 			<<generateCombatActionTentacle _leftaction "leftaction" _textColor $leftaction _reducedWidths>>
-			<<if _leftOptions is "free">>
+			<<if _leftOptions is "free" and $tentacles.active gt 0>>
 				<<leftactionSetupTentacle>>
 			<</if>>
 		</div>
@@ -201,8 +204,19 @@
 <<set _leftaction["Rest"] to "rest">>
 <<switch _leftOptions>>
 	<<case "free">>
-		<<set _leftaction["Strike the"] to "lefthit">>
-		<<set _leftaction["Grab the"] to "leftgrab">>
+		<<if $vorecreature>>
+			<<set _leftaction["Escape the "+$vorecreature] to "leftescape">>
+			<<if $vorestage lte 6>>
+				<<set _leftaction["Hold on to the "+$vorecreature] to "lefthold">>
+			<</if>>
+			<<if $rightarm is "trapped">>
+				<<set _leftaction["Free your right arm"] to "leftvorefree">>
+			<</if>>
+		<</if>>
+		<<if $tentacles.active gt 0>>
+			<<set _leftaction["Strike the"] to "lefthit">>
+			<<set _leftaction["Grab the"] to "leftgrab">>
+		<</if>>
 	<<case "grappled">>
 	<<case "bound">>
 	<<case "tentacle">>
@@ -238,6 +252,9 @@
 		<<case "bound">>
 			<<set _rightOptions to "bound">>
 			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'')">Your right arm is bound.</span>
+		<<case "trapped">>
+			<<set _rightOptions to "trapped">>
+			<span @class="($lastOptions.right isnot _rightOptions ?'gold':'purple')">Your right arm is trapped by the $vorecreature.</span>
 		<<default>>
 			<<for _i to 0; _i lt $tentacles.max; _i++>>
 				<<if $rightarm is $tentacles[_i].id>>
@@ -262,7 +279,7 @@
 				<<set _reducedWidths to false>>
 			<</if>>
 			<<generateCombatActionTentacle _rightaction "rightaction" _textColor $rightaction _reducedWidths>>
-			<<if _rightOptions is "free">>
+			<<if _rightOptions is "free" and $tentacles.active gt 0>>
 				<<rightactionSetupTentacle>>
 			<</if>>
 		</div>
@@ -329,8 +346,19 @@
 <<set _rightaction["Rest"] to "rest">>
 <<switch _rightOptions>>
 	<<case "free">>
-		<<set _rightaction["Strike the"] to "righthit">>
-		<<set _rightaction["Grab the"] to "rightgrab">>
+		<<if $vorecreature>>
+			<<set _rightaction["Escape the "+$vorecreature] to "rightescape">>
+			<<if $vorestage lte 6>>
+				<<set _rightaction["Hold on to the "+$vorecreature] to "righthold">>
+			<</if>>
+			<<if $rightarm is "trapped">>
+				<<set _rightaction["Free your left arm"] to "rightvorefree">>
+			<</if>>
+		<</if>>
+		<<if $tentacles.active gt 0>>
+			<<set _rightaction["Strike the"] to "righthit">>
+			<<set _rightaction["Grab the"] to "rightgrab">>
+		<</if>>
 	<<case "grappled">>
 	<<case "bound">>
 	<<case "tentacle">>
@@ -388,7 +416,7 @@
 				<<set _reducedWidths to false>>
 			<</if>>
 			<<generateCombatActionTentacle _feetaction "feetaction" _textColor $feetaction _reducedWidths>>
-			<<if _avaliableContext.includes(_feetOptions)>>
+			<<if _avaliableContext.includes(_feetOptions) and $tentacles.active gt 0>>
 				<<feetactionSetupTentacle>>
 			<</if>>
 		</div>
@@ -455,10 +483,14 @@
 <<set _feetaction["Rest"] to "rest">>
 <<switch _feetOptions>>
 	<<case "free">>
-		<<set _feetaction["Kick the"] to "feethit">>
-		<<set _feetaction["Grab the"] to "feetgrab">>
+		<<if $tentacles.active gt 0>>
+			<<set _feetaction["Kick the"] to "feethit">>
+			<<set _feetaction["Grab the"] to "feetgrab">>
+		<</if>>
 	<<case "leftFree" "rightFree">>
-		<<set _feetaction["Kick the"] to "feethit">>
+		<<if $tentacles.active gt 0>>
+			<<set _feetaction["Kick the"] to "feethit">>
+		<</if>>
 	<<case "tentacle">>
 		<<set _feetaction["Milk it"] to "feetrub"+_tentacleFeetOption>>
 		<<set _feetaction["Let go"] to "feetstop"+_tentacleFeetOption>>

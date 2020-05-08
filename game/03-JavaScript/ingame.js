@@ -106,12 +106,14 @@ window.combatListColor = function(name, value, type){
 			case "lefthittentacle": case "righthittentacle":
 			case "lefthit": case "righthit":
 			/*feetaction*/
-			case "feethittentacle":
+			case "feethit":
 			/*mouthaction*/
 			case "mouthbitetentacle":
 				color = "def";
 			break;
-
+			
+			/*leftaction or rightaction*/
+			case "leftescape": case "rightescape": case "lefthold": case "righthold": case "leftvorefree": case "rightvorefree":
 			/*mouthaction*/
 			case "mouthpullawaytentacle":
 			/*penisaction*/
@@ -121,6 +123,7 @@ window.combatListColor = function(name, value, type){
 			/*anusaction*/
 			case "anuspullawaytentacle":
 				color = "brat";
+			break;
 
 			/*leftaction or rightaction*/
 			case "leftgrabtentacle": case "rightgrabtentacle": case "leftrubtentacle": case "rightrubtentacle":

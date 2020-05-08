@@ -2,11 +2,9 @@
 <<set $outside to 0>><<set $location to "shopping_centre">><<effects>>
 
 You are in the tailor shop. It has cloth of various colours hanging on racks.
-<br>
-The tailor is known for the ability to fix even the most tattered clothing, and for offering to repair the lower half of outfits for free.
 <br><br>
 
-<<if $sewingKit isnot 1>>
+	<<if $sewingKit isnot 1 and $dev is 1>>
 		Looks like the shop has a new machine for sale in the display.
 		<br><br>
 	<</if>>
@@ -64,9 +62,11 @@ The tailor is known for the ability to fix even the most tattered clothing, and 
 			You are hiding behind bolts of cloth to protect your dignity.
 			<br><br>
 		<<else>>
-
+			<<generate1>><<person1>>"Welcome" <<He>> says, "What services are you looking for today?
+			We offer repairs on clothes that you have on with you or we offer a monthly service to either repair or sell by delievery."
+			<br><br>
 			<<if $tailor_cost gte 1 and $money gte $tailor_cost>>
-				The tailor offers to fix all your clothes for <span class="gold">£<<print Math.trunc($tailor_cost / 100)>>.<<if $tailor_cost % 100 lte 9>>0<</if>><<print $tailor_cost % 100>>.</span>
+				<<He>> offers to fix what your currently wearing for <span class="gold">£<<print Math.trunc($tailor_cost / 100)>>.<<if $tailor_cost % 100 lte 9>>0<</if>><<print $tailor_cost % 100>>.</span>
 				<br>
 				<<print'<<link [[Fix Clothes (0:'+(_time lt 10 ? "0":"")+_time+')|Fix Clothes]]>><<set $money -= $tailor_cost>><<pass _time>><</link>>'>>
 				<br><br>
@@ -90,13 +90,29 @@ The tailor is known for the ability to fix even the most tattered clothing, and 
 				<br><br>
 			<</if>>
 
+			<<if $wardrobeRepair isnot undefined>>
+				You need to visit you wardrobe to collect your clothes from being repaired.
+			<<elseif $tailorMonthlyService is undefined>>
+				The tailor catches you looking at the small crate beside <<himstop>> "Ah, you're in luck if you need our monthly service. We have a spot free as long as it's somewhere local."
+				<br>
+				<<link [[Ask how much they offer for old clothes|Tailor Monthly Discard]]>><</link>>
+				<br>
+				<<link [[Ask how much they charge to repair all clothes|Tailor Monthly Repair]]>><</link>>
+			<<elseif $tailorMonthlyService is "repair">>
+				You currently have a crate to get your clothing repaired.
+			<<elseif $tailorMonthlyService is "discard">>
+				You currently have a crate to get your clothing sold.
+			<<elseif $tailorMonthlyService is gt 0>>
+				You recently made use of this service and have to wait $tailorMonthlyService days before you can do so again.
+			<</if>>
+			<br><br>
+
 			<<if $sewingKit isnot 1 and $dev is 1>>
 				<<link [[Approach the Display Cabinet|Tailor Shop Sewing Machine]]>><</link>>
 				<br><br>
 			<</if>>
 		<</if>>
-
-		[[Leave|Shopping Centre Top]]
+		<<link [[Leave|Shopping Centre Top]]>><<endevent>><</link>>
 	<</if>>
 <</if>>
 
@@ -169,3 +185,65 @@ Your lower clothes have been fixed.
 		<br>
 	<</if>>
 	<<link [[Go Back|Tailor Shop]]>><</link>>
+
+
+:: Tailor Monthly Discard[nobr]
+"Certainly <<sirstop>> We'll have the crate delivered. Fill it as soon as you're ready to sell them. Please bare in mind that we are not allowed to return any items. We will also only take items we can repair and resell."
+<br><br>
+
+<<set _value to 0>>
+<<for _items range $wardrobe>>
+	<<for _i to 0; _i lt _items.length; _i++>>
+		<<if _items[_i].shop.length is 0>>
+			<<continue>>
+		<</if>>
+		<<if _items[_i].outfitSecondary isnot undefined>>
+			<<continue>>
+		<</if>>
+		<<set _value += Math.floor(_items[_i].cost * (_items[_i].integrity / _items[_i].integrity_max) / 2)>>
+	<</for>>
+<</for>>
+You think it will earn you £<<print ((_value / 100) + 50).toFixed(2)>> currently after getting the deposit back.
+
+<br><br>
+<<link [[Confirm the sale and pay the £50 deposit|Tailor Monthly Driver]]>>
+	<<set $money -= 5000>>
+	<<set $tailorMonthlyService to "discard">>
+<</link>>
+<br>
+<<link [[Back out of the sale|Tailor Shop]]>><</link>>
+
+:: Tailor Monthly Repair[nobr]
+"Certainly <<sirstop>> We'll have the crate delivered. Fill it as soon as you're ready for repairs. Please bare in mind that it will take a day before we get them back to you.
+Please make sure you don't buy too many new clothes once you send them to us, or our driver will have to take them back as a donation."
+<br><br>
+
+<<set _value to 0>>
+<<for _items range $wardrobe>>
+	<<for _i to 0; _i lt _items.length; _i++>>
+		<<if _items[_i].outfitSecondary isnot undefined>>
+			<<continue>>
+		<</if>>
+		<<set _value += Math.floor(_items[_i].cost * (1 - (_items[_i].integrity / _items[_i].integrity_max)) * 1.25)>>
+	<</for>>
+<</for>>
+You think it will cost you
+<<if _value gt 5000>>
+	£<<print ((_value / 100) - 50).toFixed(2)>>
+<<else>>
+	nothing
+<</if>>
+currently with the deposit reducing the cost.
+
+<br><br>
+<<link [[Confirm the repair and pay the £50 deposit|Tailor Monthly Driver]]>>
+	<<set $money -= 5000>>
+	<<set $tailorMonthlyService to "repair">>
+<</link>>
+<br>
+<<link [[Back out of the repair|Tailor Shop]]>><</link>>
+
+:: Tailor Monthly Driver[nobr]
+Out of no where, someone picks up the crate and takes it through a door in the back of the shop.
+<br><br>
+<<link [[Next|Tailor Shop]]>><</link>>
