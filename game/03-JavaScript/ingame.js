@@ -127,7 +127,7 @@ window.combatListColor = function(name, value, type){
 
 			/*leftaction or rightaction*/
 			case "leftgrabtentacle": case "rightgrabtentacle": case "leftrubtentacle": case "rightrubtentacle":
-			case "showbottomtentacle": case "showthighstentacle": case "showmouthtentacle":
+			case "showbottomtentacle": case "showthighstentacle": case "showmouthtentacle": case "showpenistentacle": case "showvaginatentacle": 
 			case "leftgrab": case "rightgrab": case "leftrub": case "rightrub":
 			case "showbottom": case "showthighs": case "showmouth":
 			/*feetaction*/
