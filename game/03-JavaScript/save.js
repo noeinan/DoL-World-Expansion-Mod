@@ -133,7 +133,7 @@ window.importSettings = function(data, type){
 		importSettingsData(textArea.value);
 	}
 	else if(type === "file"){
-		console.log("data", data);
+		//console.log("data", data);
 		var reader = new FileReader();
 		reader.addEventListener('load', function (e) {
 			importSettingsData(e.target.result);
@@ -199,11 +199,25 @@ var importSettingsData = function(data){
 				}
 			}
 		}
+
+		if(S.npc != undefined){
+			var listObject = settingsObjects("npc");
+			var listKey = Object.keys(listObject);
+			for (var i = 0; i < V.NPCNameList.length; i++){
+				if(S.npc[V.NPCNameList[i]] != undefined){
+					for (var j = 0; j < listKey.length; j++){
+						if(validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])){
+							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+						}
+					}
+				}
+			}
+		}
 	}
 }
 
 var validateValue = function(keys, value){
-	console.log("validateValue",keys,value);
+	//console.log("validateValue",keys,value);
 	var keyArray = Object.keys(keys);
 	var valid = false;
 	if(keyArray.length === 0){
@@ -297,6 +311,16 @@ window.exportSettings = function(data, type){
 			}
 		}
 	}
+	var listObject = settingsObjects("npc");
+	var listKey = Object.keys(listObject);
+	for (var i = 0; i < V.NPCNameList.length; i++){
+		S.npc[V.NPCNameList[i]] = {};
+		for (var j = 0; j < listKey.length; j++){
+			if(validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])){
+				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
+			}
+		}
+	}
 
 	//console.log(S);
 	var result = JSON.stringify(S);
@@ -379,6 +403,11 @@ var settingsObjects = function(type){
 				confirmSave: {bool:true},
 				confirmLoad: {bool:true},
 				confirmDelete: {bool:true},
+				newWardrobeStyle: {bool:true},
+				imgLighten: {bool:true},
+				sidebarStats: {strings:["Disabled","Limited","All"]},
+				combatControls: {strings:["radio","lists","limitedLists"]},
+				reducedLineHeight: {bool:true},
 				map:{
 					movement: {bool:true},
 					top: {bool:true},
@@ -389,6 +418,14 @@ var settingsObjects = function(type){
 					tanningEnabled: {bool:true},
 				}
 			};
+			break;
+		case "npc":
+			result = {
+				pronoun: {strings:["m","f"]},
+				gender: {strings:["m","f"]},
+				penissize: {min:0,max:4,decimals:0},
+				breastsize: {min:0,max:5,decimals:0},
+			}
 			break;
 	}
 	return result;
@@ -401,7 +438,7 @@ window.loadExternalExportFile = function(){
 		textArea.value = JSON.stringify(DolSettingsExport);
 	})
 	.catch(function (err) {
-		console.log(err);
+		//console.log(err);
 		var button = document.getElementById("LoadExternalExportFile");
 		button.value = "Error Loading";
 	});

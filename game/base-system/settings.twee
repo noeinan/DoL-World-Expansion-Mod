@@ -47,6 +47,16 @@
 <<set $saveName to "">>
 <<set $zoom to 100>>
 <<set $checkstyle to "words">>
+<<set $blackwolfmonster to 0>>
+
+
+
+<<set $newWardrobeStyle to false>>
+<<set $showCaptionText to false>>
+<<set $imgLighten to false>>
+<<set $sidebarStats to "Disabled">>
+<<set $combatControls to "radio">>
+<<set $reducedLineHeight to false>>
 
 <</nobr>><</widget>>
 
@@ -711,47 +721,56 @@
 	<<initnpcgender "penis">>
 	<<displaySettings>>
 <</link>>
+<br>
+<<link "Generate all breast sizes based on game settings">>
+	<<initnpcgender "breasts">>
+	<<displaySettings>>
+<</link>>
+<<if $debug is 1>>
+	<br>
+	<<link "Reset hair and eye colours (Will only effect NPC's with a default colour)">>
+		<<generateNPCNameHairAndEyeColors "default">>
+		<<displaySettings>>
+	<</link>>
+<</if>>
 <br><br>
 
-<<for _i to 0; _i lt $NPCName.length; _i++>>
-/% <<set _i to 0>> %/
-	<span class="gold">$NPCName[_i].nam the $NPCName[_i].title</span>
-	<br>
-	<label>Female <<print '<<radiobutton "$NPCName['+_i+'].pronoun" "f" ' + ($NPCName[_i].pronoun is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Male <<print '<<radiobutton "$NPCName['+_i+'].pronoun" "m" ' + ($NPCName[_i].pronoun is "m" ? "checked" : "") + '>>'>></label>
-	<br>
-	<label>Vagina <<print '<<radiobutton "$NPCName['+_i+'].gender" "f" ' + ($NPCName[_i].gender is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Penis <<print '<<radiobutton "$NPCName['+_i+'].gender" "m" ' + ($NPCName[_i].gender is "m" ? "checked" : "") + '>>'>></label>
-	<br>
-	Penis size - if applicable:
-	<<for _j to 0; _j lt _penisNames.length; _j++>>
-		<label><<print _penisNames[_j]>> <<print '<<radiobutton "$NPCName['+_i+'].penissize" ' + (_j + 1) + ' ' + ($NPCName[_i].penissize is (_j + 1) ? "checked" : "") + '>>'>></label> |
+<<if _npcId is undefined>>
+	<<set _npcId to 0>>
+
+	<<set _breastDescription to ["Flat","Small","Pert","Modest","Full","Large"]>>
+	<<set _breastDescriptionNPC to ["nipple","small breast","pert breast","modest breast","full breast","large breast"]>>
+	<<set _breastsDescriptionNPC to ["nipples","small breast","pert breast","modest breast","full breast","large breast"]>>
+
+	<<set _hairColorNPC to ["Red","Black","Brown","Light Brown","Blond","Platinum blond","Strawberry blond","Ginger", "mousy"]>>
+	<<set _hairColorNPCData to ["red","black","brown","lightbrown","blond","platinumblond","strawberryblond","ginger", "mousy"]>>
+	<<set _hairColorNPCText to ["red","black","brown","lightbrown","gold","platinum","strawberry","tangerine", "mousy"]>>
+
+	<<set _eyeColorNPC to ["Purple","Dark Blue","Light Blue","Amber","Hazel","Green","Red","Pink","Grey"]>>
+	<<set _eyeColorNPCData to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"]>>
+	<<set _eyeColorNPCText to ["purple","blue","lblue","tangerine","brown","green","red","pink","grey"]>>
+<</if>>
+
+<<if _npcList is undefined>>
+	<<set _npcList to {}>>
+	<<for $_i to 0; $_i lt $NPCNameList.length; $_i++>>
+		<<set _npcList[clone($NPCNameList[$_i])] to clone($_i)>>
 	<</for>>
+<</if>>
 
-	<<if $NPCName[_i].nam is "Black Wolf">>
-		<br>
-		<label>Always a beast <<print '<<radiobutton "$blackwolfmonster" 0 ' + ($blackwolfmonster is 0 ? "checked" : "") + '>>'>></label> |
-		<label>Monster girl or boy when requirements met <<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>></label>
+<div id="npcSettingsMenu">
+	<<npcSettingsMenu>>
+</div>
 
-	<</if>>
-	<br><br>
-
-<</for>>
-
-/% <span class="gold">The Black Wolf</span> - Unaffected by auto-generation buttons %/
-/% <br> %/
-/% <label>Female <<print '<<radiobutton "$blackwolfgender" "f" ' + ($blackwolfgender is "f" ? "checked" : "") + '>>'>></label> | %/
-/% <label>Male <<print '<<radiobutton "$blackwolfgender" "m" ' + ($blackwolfgender is "m" ? "checked" : "") + '>>'>></label> %/
-/% <br> %/
-/% <label>Vagina <<print '<<radiobutton "$blackwolfgenitals" "vagina" ' + ($blackwolfgenitals is "vagina" ? "checked" : "") + '>>'>></label> | %/
-/% <label>Penis <<print '<<radiobutton "$blackwolfgenitals" "penis" ' + ($blackwolfgenitals is "penis" ? "checked" : "") + '>>'>></label> %/
-/% <br> %/
+<<if _listActive isnot true>>
+	<<NPCSettingsReset>>
+	<<set _listActive to true>>
+<</if>>
 
 <</nobr>><</widget>>
 
 <<widget "exportsettings">><<nobr>>
 
-<span class="red">Experimental, please report issues. As of current, NPC settings are uneffected by this. Please keep a save backup before importing.</span>
 <span class="yellow">Will also import/export settings found in the "SAVE/OPTIONS" overlay.</span>
 
 <h4>Settings File Import/Export</h4>
@@ -793,6 +812,89 @@ Click on "Copy Text Area" to copy the current contents for you. The button name 
 
 <</nobr>><</widget>>
 
+<<widget "npcSettingsMenu">><<nobr>>
+<<listbox "_npcId" autoselect>>
+	<<optionsfrom _npcList>>
+<</listbox>>
+<<if _npcId gt 0>>
+	 | <<link Previous>>
+		<<set _npcId-->>
+		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
+	<</link>> |
+<<else>>
+	 | Previous |
+<</if>>
+<<if _npcId lt $NPCName.length>>
+	<<link Next>>
+		<<set _npcId++>>
+		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
+	<</link>>
+<<else>>
+	Next
+<</if>>
+<br><br>
+<span class="gold">$NPCName[_npcId].nam the $NPCName[_npcId].title</span>
+<br>
+<label><<print '<<radiobutton "$NPCName['+_npcId+'].pronoun" "f" ' + ($NPCName[_npcId].pronoun is "f" ? "checked" : "") + '>>'>> Female</label> |
+<label><<print '<<radiobutton "$NPCName['+_npcId+'].pronoun" "m" ' + ($NPCName[_npcId].pronoun is "m" ? "checked" : "") + '>>'>> Male</label>
+<br>
+<label><<print '<<radiobutton "$NPCName['+_npcId+'].gender" "f" ' + ($NPCName[_npcId].gender is "f" ? "checked" : "") + '>>'>> Vagina</label> |
+<label><<print '<<radiobutton "$NPCName['+_npcId+'].gender" "m" ' + ($NPCName[_npcId].gender is "m" ? "checked" : "") + '>>'>> Penis</label>
+<br><br>
+Penis size - if applicable:
+<br>
+<<for _j to 0; _j lt _penisNames.length; _j++>>
+	<label>
+		<<print '<<radiobutton "$NPCName['+_npcId+'].penissize" ' + (_j + 1) + ' ' + ($NPCName[_npcId].penissize is (_j + 1) ? "checked" : "") + '>>'>>
+		<<print _penisNames[_j]>>
+	</label> |
+<</for>>
+<br><br>
+
+Breast size:
+<br>
+<<for _j to 0; _j lt _breastDescription.length; _j++>>
+	<label>
+		<<set _onclick to "SugarCube.State.variables.NPCName["+_npcId+"].breastsize="+ _j + ";">>
+		<<set _onclick += "SugarCube.State.variables.NPCName["+_npcId+"].breastdesc='" + _breastDescriptionNPC[_j] + "';">>
+		<<set _onclick += "SugarCube.State.variables.NPCName["+_npcId+"].breastsdesc='" + _breastsDescriptionNPC[_j] + "';">>
+		<<print '<input type="radio" name="breastSize" @value="_j" @onclick="clone(_onclick)" '+($NPCName[_npcId].breastsize is (_j) ? "checked" : "") +'/>'>>
+		<<print _breastDescription[_j]>>
+	</label> |
+<</for>>
+<br><br>
+
+<<if $NPCName[_npcId].nam is "Black Wolf">>
+	Beast Type:
+	<br>
+	<label><<print '<<radiobutton "$blackwolfmonster" 0 ' + ($blackwolfmonster is 0 ? "checked" : "") + '>>'>> Always a beast</label> |
+	<label><<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>> Monster girl or boy when requirements met</label>
+	<br><br>
+<</if>>
+<<if $debug is 1>>
+	Hair Colour:
+	<br>
+	<<for _j to 0; _j lt _hairColorNPC.length; _j++>>
+		<label>
+			<<print '<<radiobutton "$NPCName['+_npcId+'].hairColour" "'+_hairColorNPCData[_j]+'" ' + ($NPCName[_npcId].hairColour is _hairColorNPCData[_j] ? "checked" : "") + '>>'>>
+			<span @class="_hairColorNPCText[_j]">_hairColorNPC[_j]</span>
+		</label> |
+	<</for>>
+	<br><br>
+
+	Eye Colour:
+	<br>
+	<<for _j to 0; _j lt _eyeColorNPC.length; _j++>>
+		<label>
+			<<print '<<radiobutton "$NPCName['+_npcId+'].eyeColour" "'+_eyeColorNPCData[_j]+'" ' + ($NPCName[_npcId].eyeColour is _eyeColorNPCData[_j] ? "checked" : "") + '>>'>>
+			<span @class="_eyeColorNPCText[_j]">_eyeColorNPC[_j]</span>
+		</label> |
+	<</for>>
+	<br><br>
+<</if>>
+
+<</nobr>><</widget>>
+
 :: Settings [nobr]
 <<set $settingsExitPassage to "Bedroom">>
 <<settings>>
@@ -800,6 +902,7 @@ Click on "Copy Text Area" to copy the current contents for you. The button name 
 :: Attitudes [nobr]
 <<attitudes>>
 <br><br>
-
-<<link [[Confirm|Bedroom]]>><</link>>
+<<link [[Confirm|$attitudesExitPassage]]>>
+  <<unset $attitudesExitPassage>>
+<</link>>
 <br>

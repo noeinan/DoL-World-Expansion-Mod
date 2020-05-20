@@ -186,3 +186,24 @@ function hairdressersReset(){
 }
 
 DefineMacroS("hairdressersReset", hairdressersReset);
+
+function NPCSettingsReset(){
+	jQuery(document).on('change', '.macro-listbox', function(e) {
+		new Wikifier(null, '<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("NPCSettingsReset", NPCSettingsReset);
+
+function loveInterestFunction(){
+	jQuery(document).on('change', '#listbox-loveinterestprimary', function(e) {
+		new Wikifier(null, '<<replace #loveInterest>><<loveInterest>><</replace>>');
+	});
+	jQuery(document).on('change', '#listbox-loveinterestsecondary', function(e) {
+		new Wikifier(null, '<<replace #loveInterest>><<loveInterest>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("loveInterestFunction", loveInterestFunction);
