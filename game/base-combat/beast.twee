@@ -11,20 +11,26 @@
 <!-- TODO Create train-combat functionality for human NPCs -->
 <<widget "beast">><<nobr>>
 <div @class="($debugLines ? 'debugLines-beast' : '')">
-<<if $args[0]>>
-	<<set _n to $args[0]-1>>
-<<else>>
-	<<set _n to 0>>
-<</if>>
+
+<<set _n to $active_enemy>>
+
 
 <<set $pronoun to "i">>
 
 <<if $NPCList[_n].stance is "top">>
-The $NPCList[_n].type has you pinned in a mating posture.
-	<<if $semenpuddle gte 4>>
-		<<if $water is 0>>
-The semen on the ground makes your knees slip with every thrust.
+	<<if $NPCList[_n].type is "horse" or $NPCList[_n].type is "centaur">>
+		<<if $position is "wall">>
+			The $NPCList[_n].type rears above your restrained body in a mating posture.
 		<<else>>
+			The $NPCList[_n].type rears above you in a mating posture.
+		<</if>>
+	<<else>>
+		The $NPCList[_n].type has you pinned in a mating posture.
+		<<if $semenpuddle gte 4>>
+			<<if $water is 0>>
+				The semen on the ground makes your knees slip with every thrust.
+			<<else>>
+			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
@@ -158,18 +164,34 @@ The semen on the ground makes you slip with every thrust.
 	<<elseif $worn.lower.vagina_exposed is 1>>
 		<<set $rng to random(1, 100)>>
 		<<if $worn.under_lower.vagina_exposed is 1 and $worn.genitals.type.includes("chastity") and $NPCList[_n].beastChastityKnown is false>>
-			<<bHe>> thrusts against your $worn.genitals.name, desperate to breed the <<pussy>> beneath. It hurts itself against the hard material and withdraws, growling.
-			<<set $NPCList[_n].penis to 0>><<set $vaginause to 0>><<set $vaginastate to 0>><<sex 20>><<set $worn.genitals.integrity -= 40>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>>
+			<<if $NPCList[_n].penissize gte 5>>
+				<<bHe>> thrusts <<his>> $NPCList[_n].penisdesc against your $worn.genitals.name, desperate to breed the <<pussy>> beneath. <<bHe>> growls in pain, but <span class="pink">the device feels looser after each push.</span><<sex 20>><<set $worn.genitals.integrity -= 240>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>>
+			<<else>>
+				<<bHe>> thrusts against your $worn.genitals.name, desperate to breed the <<pussy>> beneath. It hurts itself against the hard material and withdraws, growling.
+				<<set $NPCList[_n].penis to 0>><<set $vaginause to 0>><<set $vaginastate to 0>><<sex 20>><<set $worn.genitals.integrity -= 40>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>>
+			<</if>>
 		<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.type.includes("chastity") and $NPCList[_n].beastChastityKnown is true>>
 			<<bHe>> carefully moves <<bhis>> $NPCList[_n].penisdesc against your $worn.genitals.name near your <<pussy>>.
 			<<sex 5>><<set $NPCList[_n].penis to "vaginaimminent">><<set $vaginastate to "imminent">>
 		<<elseif $worn.under_lower.vagina_exposed is 0>>
-			<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.genitals.name.<<sex 5>><<set $worn.genitals.integrity -= 10>>
+			<<if $NPCList[_n].penissize gte 5>>
+				<<bHe>> thrusts <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.under_lower.name, <span class="purple">tearing the fabric.</span><<sex 10>><<set $worn.under_lower.integrity -= 40>>
+			<<else>>
+				<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.under_lower.name.<<sex 5>><<set $worn.under_lower.integrity -= 10>>
+			<</if>>
 		<<elseif $worn.under_lower.vagina_exposed is 1>>
-			<<if $rng gte 71>>
-				<span class="pink"><<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<pussycomma>> preparing to penetrate you fully.</span><<sex 20>><<set $NPCList[_n].penis to "vaginaimminent">><<set $vaginastate to "imminent">>
-			<<elseif $rng gte 1>>
-				<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<pussystop>><<sex 5>>
+			<<if $NPCList[_n].penissize gte 5>>
+				<<if (10 + $vaginaWetness + ($vaginaoutsidesemen * 5) + ($vaginasemen * 5) + ($vaginaoutsidegoo * 5) + ($vaginagoo * 5)) gte random(1, 100)>>
+					<<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<pussystop>> <span class="pink">The tip presses against you, one thrust away from penetrating.</span><<sex 20>><<set $NPCList[_n].penis to "vaginaimminent">><<set $vaginastate to "imminent">>
+				<<else>>
+					<<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<pussycomma>> <span class="purple">but fails to penetrate,</span> instead angling away and thrusting against your clit.<<sex 10>>
+				<</if>>
+			<<else>>
+				<<if $rng gte 71>>
+					<span class="pink"><<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<pussycomma>> preparing to penetrate you fully.</span><<sex 20>><<set $NPCList[_n].penis to "vaginaimminent">><<set $vaginastate to "imminent">>
+				<<elseif $rng gte 1>>
+					<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<pussystop>><<sex 5>>
+				<</if>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -280,15 +302,35 @@ The semen on the ground makes you slip with every thrust.
 	<<if $worn.lower.anus_exposed is 0>><<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.lower.name.<<sex 5>><<set $worn.lower.integrity -= 10>>
 	<<elseif $worn.lower.anus_exposed is 1>><<set $rng to random(1, 100)>>
 		<<if $worn.under_lower.anus_exposed is 1 and $worn.genitals.type.includes("chastity") and $worn.genitals.anal_shield is 1 and $NPCList[_n].beastChastityKnown is false>>
-			<<bHe>> thrusts against your $worn.genitals.name, desperate to violate the <<bottom>> beneath. It hurts itself against the hard material and withdraws, growling.
-			<<set $NPCList[_n].penis to 0>><<set $anususe to 0>><<set $anusstate to 0>><<sex 20>><<set $worn.genitals.integrity -= 40>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>><<set $NPCList[_n].beastChastityKnown to true>>
+			<<if $NPCList[_n].penissize gte 5>>
+				<<bHe>> thrusts against your $worn.genitals.name, desperate to violate the <<bottom>> beneath. It growls in pain, <span class="purple">but each thrust leaves the device a little looser.</span>
+				<<sex 20>><<set $worn.genitals.integrity -= 240>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>>
+			<<else>>
+				<<bHe>> thrusts against your $worn.genitals.name, desperate to violate the <<bottom>> beneath. It hurts itself against the hard material and withdraws, growling.
+				<<set $NPCList[_n].penis to 0>><<set $anususe to 0>><<set $anusstate to 0>><<sex 20>><<set $worn.genitals.integrity -= 40>><<set $enemyanger += 15>><<set $enemytrust -= 15>><<set $enemyhealth -= 5>>
+			<</if>>
 		<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.type.includes("chastity") and $worn.genitals.anal_shield is 1 and $NPCList[_n].beastChastityKnown is true>>
 			<<bHe>> carefully moves <<bhis>> $NPCList[_n].penisdesc against your $worn.genitals.name near your anus.
 			<<sex 5>><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">>
-		<<elseif $worn.under_lower.anus_exposed is 0>><<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.under_lower.name.<<sex 5>><<set $worn.genitals.integrity -= 10>>
+		<<elseif $worn.under_lower.anus_exposed is 0>>
+			<<if $NPCList[_n].penissize gte 6>>
+				<<bHe>> thrusts <<bhis>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.under_lower.name, <span class="purple">tearing the fabric.</span><<sex 10>><<set $worn.under_lower.integrity -= 40>>
+			<<else>>
+				<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.under_lower.name.<<sex 5>><<set $worn.under_lower.integrity -= 10>>
+			<</if>>
 		<<elseif $worn.under_lower.anus_exposed is 1>>
-			<<if $rng gte 71>><span class="pink"><<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against the entrance of your anus, preparing to penetrate you fully.</span><<sex 20>><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">>
-			<<elseif $rng gte 1>><<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<bottomstop>><<sex 5>>
+			<<if $NPCList[_n].penissize gte 5>>
+				<<if (10 + ($bottomsemen * 5) + ($anussemen * 5) + ($bottomgoo * 5) + ($anusgoo * 5)) gte random(1, 100)>>
+					<<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<bottomstop>> <span class="pink">The tip presses against you, one thrust away from penetrating.</span><<sex 20>><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">>
+				<<else>>
+					<<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against your <<bottomcomma>> <span class="purple">but fails to gain purchase,</span> instead angling away and thrusting between your cheeks.<<sex 10>>
+				<</if>>
+			<<else>>
+				<<if $rng gte 71>>
+					<span class="pink"><<bHe>> pushes <<bhis>> $NPCList[_n].penisdesc against the entrance of your anus, preparing to penetrate you fully.</span><<sex 20>><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">>
+				<<elseif $rng gte 1>>
+					<<bHe>> rubs <<bhis>> $NPCList[_n].penisdesc against your <<bottomstop>><<sex 5>>
+				<</if>>
 			<</if>>
 		<</if>>
 	<</if>>

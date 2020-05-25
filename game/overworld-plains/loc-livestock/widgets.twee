@@ -1,0 +1,229 @@
+:: Widgets Livestock [widget]
+<<widget "livestock_transform">><<nobr>>
+<<if $args[0]>>
+	<<set $wolfgirl -= 1>>
+	<<set $catbuild -= 1>>
+	<<set $cowbuild += 1>>
+	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<<set $wolfgirl = Math.clamp($wolfgirl, 0, 100)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "livestock_sleep">><<nobr>>
+<<if $hour is 21>>
+	<<set _livestock_sleep to 9>>
+<<elseif $hour is 22>>
+	<<set _livestock_sleep to 8>>
+<<elseif $hour is 23>>
+	<<set _livestock_sleep to 7>>
+<<else>>
+	<<set _livestock_sleep to (6 - $hour)>>
+<</if>>
+<<for _l to 0; _l lt _livestock_sleep; _l++>>
+	<<pass 60>>
+	<<effectstime>>
+	<<if $sleeptrouble is 1 and $controlled is 0>>
+		<<set $tiredness -= 200>>
+	<<else>>
+		<<set $tiredness -= 250>>
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+<<widget "livestock_init">><<nobr>>
+<<set $livestock_river to 1>>
+<<set $livestock_fence to 1>>
+<<set $livestock_grass to 1>>
+<</nobr>><</widget>>
+
+<<widget "livestock_end">><<nobr>>
+<<unset $livestock_muzzle>>
+<<unset $livestock_dig>>
+<</nobr>><</widget>>
+
+<<widget "livestock_cows">><<nobr>>
+<<if $monsterchance gte 1 and $hallucinations gte 1 or $monsterchance gte 1 and $monsterhallucinations is "f">>
+	<<if $malechance is 0>>
+		<<set _text_output to "cowgirls">>
+	<<elseif $malechance is 100>>
+		<<set _text_output to "bullboys">>
+	<<else>>
+		<<set _text_output to "cowgirls and bullboys">>
+	<</if>>
+<<else>>
+	<<set _text_output to "cows">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "livestock_horse">><<nobr>>
+<<if $monsterchance gte 1 and $hallucinations gte 1 or $monsterchance gte 1 and $monsterhallucinations is "f">>
+	<<set _text_output to "centaur">>
+<<else>>
+	<<set _text_output to "stallion">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "livestock_obey_description">><<nobr>>
+<<if $livestock_obey gte 100>>
+	<span class="green">The farmhands don't give you a second look. As far as they're concerned, you're a domesticated member of the herd.</span>
+<<elseif $livestock_obey gte 80>>
+	<span class="teal">The farmhands don't pay you much attention. They expect no trouble.</span>
+<<elseif $livestock_obey gte 60>>
+	<span class="lblue">The farmhands glance at you now and then, but don't seem concerned about your behaviour.</span>
+<<elseif $livestock_obey gte 40>>
+	<span class="blue">The farmhands keep a cautious eye on you.</span>
+<<elseif $livestock_obey gte 20>>
+	<span class="purple">The farmhands watch you warily from behind the fence.</span>
+<<elseif $livestock_obey gte 1>>
+	<span class="pink">The farmhands watch you, expecting trouble.</span>
+<<else>>
+	<span class="red">The farmhands watch you, expecting an escape attempt.</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "livestock_overhear">><<nobr>>
+<<generate1>><<generate2>><<person1>>
+You overhear two farmhands talking behind the fence.
+<<set $rng to random(1, 9)>>
+<<if $rng is 1>>
+	"How does Remy keep that herd of beasts under control?" a <<person>> asks.
+	<br>
+	"No clue," a <<person2>><<person>> responds. "They won't respond to anyone else."
+	<br>
+	"Have you seen them at full gallop?"
+	<br>
+	"Aye. Cow got free once, and Remy chased it down on one. Was terrifying to see."
+	<br><br>
+	They walk out of earshot.
+	<br><br>	
+<<elseif $rng is 2>>
+	"Remy's a stingy bastard," a <<person>> says, looking over <<his>> shoulder.
+	<br>
+	"Aye," a <<person2>><<person>> responds. "Especially with the animals. Treats apples like they're fucking gold."
+	<br>
+	"I ate an apple in front of those horses once. The way they looked at it, I almost felt bad."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 3>>
+	"Where'd you think the milk ends up?" a <<person>> asks.
+	<br>
+	"Where'd you think?" a <<person2>><<person>> responds. "In a supermarket. Where else?"
+	<br>
+	"No, I mean the," <<person1>><<he>> looks over <<his>> shoulder. "The milk from the special cattle. I'm not drinking it with my tea am I?"
+	<br>
+	"I know some gets processed elsewhere. Don't know more than that."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 4>>
+	"Heard more strange noises last night," a <<person>> says. "From the south."
+	<br>
+	"Just some animal," a <<person2>><<person>> responds. "A wolf, at worst. What, you scared?"
+	<br>
+	"You haven't heard it. I'm telling you. Like a screech. I'm asking Remy to change my hours."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 5>>
+	"There's no way," a <<person>> says. "One of the teachers would step in."
+	<br>
+	"They don't though," a <<person2>><<person>> responds. "Maybe they don't know. Check it out yourself if you don't believe me."
+	<br>
+	"You know I don't like that part of town. Smells like shit."
+	<br>
+	"Doesn't smell like any shit I've known."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 6>>
+	<<set _harper_gender to $NPCName[$NPCNameList.indexOf("Harper")].pronoun>>
+	"That doctor makes me uncomfortable," a <<person>> says.
+	<br>
+	"The kid?" a <<person2>><<person>> laughs. "Don't be daft."
+	<br>
+	"<<if _harper_gender is "m">>He's<<else>>She's<</if>> too nice for a place like this. Something's not right."
+	<br>
+	"I think you're just afraid of doctors."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 7>>
+	"Where'd they get new <<girls>> anyway?" a <<person>> asks. "Just grab em off the street?"
+	<br>
+	"Remy knows a few sellers," a <<person2>><<person>> responds. "Dunno how they get them. Police sometimes throw trash our way."
+	<br>
+	"Explains the squad car. Thought they were just shaking us down."
+	<br>
+	"They probably were."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 8>>
+	"That new <<girl>> is cute," a <<person>> says.
+	<br>
+	"That new <<if $player.gender_appearance is "m">>bull<<else>>cow<</if>> you mean," a <<person2>><<person>> responds.
+	<br>
+	"Right. Tasty looking thing."
+	<br>
+	"Just don't get any ideas. Remy don't like us interfering."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<<elseif $rng is 9>>
+	"Wish they let us see the photos," a <<person>> says.
+	<br>
+	"Aye," a <<person2>><<person>> responds. "Asked that photographer for a peek. <<if $NPCName[$NPCNameList.indexOf("Niki")].pronoun is "m">>He<<else>>She<</if>> ignored me."
+	<br>
+	"They must be selling em to someone."
+	<br>
+	"Perverts richer than us, I guess."
+	<br><br>
+	They walk out of earshot.
+	<br><br>
+<</if>>
+<<endevent>>
+<</nobr>><</widget>>
+
+
+<<widget "passoutremy">><<nobr>>
+
+<<passout>>
+You've pushed yourself too much. You pass out.
+<br><br>
+<<link [[Next|Livestock Passout]]>><<pass 60>><<set $stress -2000>><</link>>
+<br>
+
+<</nobr>><</widget>>
+
+<<widget "livestock_bodywriting">><<nobr>>
+<<if $skin[_bodypart].writing>>
+	<<bodywriting_clear _bodypart>>
+<</if>>
+<<set $rng to random(1, 6)>>
+<<switch $rng>>
+<<case 1>>
+	<<add_bodywriting _bodypart remys_cattle tattoo>>
+<<case 2>>
+	<<if $player.gender_appearance is "m">>
+		<<add_bodywriting _bodypart remys_bull tattoo>>
+	<<else>>
+		<<add_bodywriting _bodypart remys_cow tattoo>>
+	<</if>>
+<<case 3>>
+	<<if $player.gender_appearance is "m">>
+		<<add_bodywriting _bodypart remys_bull tattoo>>
+	<<else>>
+		<<add_bodywriting _bodypart dairy_cow tattoo>>
+	<</if>>
+<<case 4>>
+	<<add_bodywriting _bodypart milk_me tattoo>>
+<<case 5>>
+	<<add_bodywriting _bodypart animal tattoo>>
+<<case 6>>
+	<<add_bodywriting _bodypart breedable tattoo>>
+<</switch>>
+<</nobr>><</widget>>
