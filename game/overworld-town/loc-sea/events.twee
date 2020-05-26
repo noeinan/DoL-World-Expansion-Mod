@@ -6,7 +6,11 @@
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-	<<beastNEWinit 3 dolphin>><<set $water to 1>><<set $claws to 0>>
+	<<set $combatTrain.length to 2>>
+	<<set $combatTrain.beastTypes to ["dolphin","dolphin"]>>
+	<<set $combatTrain.numberPerTrain to [1,1]>>
+	<<beastNEWinit 1 dolphin>>
+	<<set $water to 1>><<set $claws to 0>>
 	<<if $daystate isnot "night" and $location is "beach">>
 		<<set $rescue to 1>>
 	<</if>>
@@ -34,37 +38,27 @@
 <<effects>>
 <<if $enemyhealth lte 0>>
 	<<beastwound>>
-	<<if $enemyno gte 3>>
+	<<if $combatTrain.length gt 0>>
 		The <<beasttype>> recoils in pain and fear, but another is eager for a go.
-		<<set $enemyno -= 1>>
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 2>>
-		The <<beasttype>> recoils in pain and fear, but the last is eager for a go.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		The <<beasttype>> recoils in pain and fear.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Sea Dolphins Finish]]>><<set $finish to 1>><</link>>
 	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<<beastejaculation>>
-	<<if $enemyno gte 3>>
+	<<if $combatTrain.length gt 0>>
 		Satisfied, the <<beasttype>> moves and another takes its turn.
-		<<set $enemyno -= 1>>
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 2>>
-		Satisfied, the <<beasttype>> moves and the last takes its turn.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		Satisfied, the <<beasttype>> moves away from you.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Sea Dolphins Finish]]>><<set $finish to 1>><</link>>
 	<</if>>
@@ -91,67 +85,6 @@
 	<<generate1>><<person1>>A whistle blows, startling the dolphins. A lifeguard in a small boat races toward you. The dolphins make a chittering noise, then flee away from the shore. Seeing them leave, the lifeguard heads back to the beach.
 	<br><br>
 	<<tearful>> you gather yourself.
-	<<clotheson>>
-	<<endcombat>>
-	<<destinationeventend>>
-<</if>>
-
-:: Beast Finish [nobr]
-
-<<effects>>
-<<if $enemyhealth lte 0>>
-	<<beastwound>>
-	<<if $enemyno gte 3>>
-		The <<beasttype>> recoils in pain and fear, but another takes its place.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 2>>
-		The <<beasttype>> recoils in pain and fear, but the other takes its place.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 1>>
-		The <<beasttype>> recoils in pain and fear.
-		<<set $enemyno -= 1>>
-		<br><br>
-		<<link [[Next|Sea Dolphins Finish]]>><<set $finish to 1>><</link>>
-	<</if>>
-<<elseif $enemyarousal gte $enemyarousalmax>>
-	<<beastejaculation>>
-	<<if $enemyno gte 3>>
-		Satisfied, the <<beasttype>> leaves you be. Another takes its place.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 2>>
-		Satisfied, the <<beasttype>> leaves you be. The other takes its place.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins]]
-	<<elseif $enemyno is 1>>
-		Satisfied, the <<beasttype>> leaves you be.
-		<<set $enemyno -= 1>>
-		<br><br>
-		<<link [[Next|Sea Dolphins Finish]]>><<set $finish to 1>><</link>>
-	<</if>>
-<<elseif $finish is 1>>
-	<<if $enemywounded is 1 and $enemyejaculated is 0>>
-		The <<beasttype>> whimpers and flees into the darkness.
-	<<elseif $enemywounded is 0 and $enemyejaculated is 1>>
-		The <<beasttype>> leaves you lying on the pavement.
-	<<elseif $enemywounded gte 2 and $enemyejaculated is 0>>
-		Feeling that you're more trouble than you're worth, the <<beasttype>> flee into the darkness.
-	<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-		The <<beasttype>> leave you spent and shivering on the pavement.
-	<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-		The <<beasttype>> leave you spent and shivering on the pavement. One is slowed by a limp.
-	<</if>>
-	<br><br>
-	<<clotheson>>
-	<<endcombat>>
-	<<destinationeventend>>
-<<elseif $alarm is 1 and $rescue is 1>>
 	<<clotheson>>
 	<<endcombat>>
 	<<destinationeventend>>
@@ -538,16 +471,17 @@ The creature loses interest in you, and returns to the depths. <<tearful>> you s
 	<<consensual>>
 	<<set $consensual to 1>>
 	<<neutral 1>>
-	<<generatedolphin1>><<generatedolphin2>><<generatedolphin3>><<beastNOGENinit>><<set $water to 1>><<set $claws to 0>>
+
+	<<set $combatTrain.length to 2>>
+	<<set $combatTrain.beastTypes to ["dolphin","dolphin"]>>
+	<<set $combatTrain.numberPerTrain to [1,1]>>
+	<<beastNEWinit 1 dolphin>>
+
+	<<set $water to 1>><<set $claws to 0>>
 	<<if $daystate isnot "night" and $location is "beach">>
 		<<set $rescue to 1>>
 	<</if>>
-	<<if $enemyno gte 1>>
-	<<set _na to $enemyno-1>>
-	<<else>>
-	<<set _na to 0>>
-	<</if>>
-	You pet further and further down the $NPCList[_na].type's belly. They take the hint, and swim closer to you in excitement. <br>
+	You pet further and further down the $NPCList[0].type's belly. They take the hint, and swim closer to you in excitement. <br>
 	<<deviancy3>>
 <</if>>
 <<effects>>
@@ -573,50 +507,30 @@ The creature loses interest in you, and returns to the depths. <<tearful>> you s
 :: Sea Dolphins Sex Finish [nobr]
 
 <<effects>>
-<<if $enemyno gte 1>>
-<<set _na to $enemyno-1>>
-<<else>>
-<<set _na to 0>>
-<</if>>
-<<if $enemyno gte 1>>
-<<set _nb to $enemyno-2>>
-<<else>>
-<<set _nb to 0>>
-<</if>>
 
 <<if $enemyhealth lte 0>>
 	<<beastwound>>
-	<<if $enemyno gte 3>>
-		The $NPCList[_na].type recoils in pain and fear, but another $NPCList[_nb].type is eager for a go.
-		<<set $enemyno -= 1>>
+	<<if $combatTrain.length gt 0>>
+		The $NPCList[_na].type recoils in pain and fear, but the next takes its turn.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Sea Dolphins Sex]]
-	<<elseif $enemyno is 2>>
-		The $NPCList[_na].type recoils in pain and fear, but the last is eager for a go.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins Sex]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		The $NPCList[_na].type recoils in pain and fear.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Sea Dolphins Sex Finish]]>><<set $finish to 1>><</link>>
 	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<<beastejaculation>>
-	<<if $enemyno gte 3>>
-		Satisfied, the $NPCList[_na].type moves and another $NPCList[_nb].type takes its turn.
-		<<set $enemyno -= 1>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the $NPCList[_na].type moves and the next takes its turn.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Sea Dolphins Sex]]
-	<<elseif $enemyno is 2>>
-		Satisfied, the $NPCList[_na].type moves and the last takes its turn.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Sea Dolphins Sex]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		Satisfied, the $NPCList[_na].type moves away from you.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Sea Dolphins Sex Finish]]>><<set $finish to 1>><</link>>
 	<</if>>
