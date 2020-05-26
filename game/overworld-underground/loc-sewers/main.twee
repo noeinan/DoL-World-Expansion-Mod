@@ -151,14 +151,17 @@ You've pushed yourself too much.
 :: Passout Beast Drain [nobr]
 
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
 
-<<beastNEWinit 4 lizard>>
-You awaken to the sound of hissing. Four lizards tower above you!
+	<<set $combatTrain.length to 3>>
+	<<set $combatTrain.beastTypes to ["lizard","lizard", "lizard"]>>
+	<<set $combatTrain.numberPerTrain to [1,1,1]>>
+	<<beastNEWinit 1 lizard>>
+	You awaken to the sound of hissing. Four lizards tower above you!
 <</if>>
 
 <<effects>>
@@ -171,82 +174,58 @@ You awaken to the sound of hissing. Four lizards tower above you!
 <br><br>
 <<actionsman>>
 
-	<<if $alarm is 1>>
-		<<if $rescue is 1>>
+<<if $alarm is 1>>
+	<<if $rescue is 1>>
 
-		<<else>>
+	<<else>>
 		No one comes to your aid.
 		<<set $alarm to 0>>
 		<<if $drugged gte 1>>Intoxicated as you are, you couldn't cry very convincingly.<</if>>
 		<br><br>
-			<<if $enemyarousal gte $enemyarousalmax>>
+		<<if $enemyarousal gte $enemyarousalmax>>
 			<span id="next"><<link [[Next|Passout Beast Drain Ejaculation]]>><</link>></span><<nexttext>>
-			<<elseif $enemyhealth lte 0>>
+		<<elseif $enemyhealth lte 0>>
 			<span id="next"><<link [[Next->Passout Beast Drain Escape]]>><</link>></span><<nexttext>>
-			<<else>>
+		<<else>>
 			<span id="next"><<link [[Next|Passout Beast Drain]]>><</link>></span><<nexttext>>
-			<</if>>
 		<</if>>
-	<<elseif $enemyarousal gte $enemyarousalmax>>
-	<span id="next"><<link [[Next->Passout Beast Drain Ejaculation]]>><</link>></span><<nexttext>>
-	<<elseif $enemyhealth lte 0>>
-	<span id="next"><<link [[Next->Passout Beast Drain Escape]]>><</link>></span><<nexttext>>
-	<<else>>
-	<span id="next"><<link [[Next->Passout Beast Drain]]>><</link>></span><<nexttext>>
 	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next->Passout Beast Drain Ejaculation]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next->Passout Beast Drain Escape]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next->Passout Beast Drain]]>><</link>></span><<nexttext>>
+<</if>>
 
 :: Passout Beast Drain Ejaculation [nobr]
 <<effects>>
 <<beastejaculation>>
-
-<<if $enemyno gte 3>>
-Satisfied, the beast leaves you be. Another takes its place.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain]]
-
-<<elseif $enemyno is 2>>
-Satisfied, the beast leaves you be. The other takes its place.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain]]
-
-<<elseif $enemyno is 1>>
-Satisfied, the beast leaves you be.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain End]]
-
+<<if $combatTrain.length gt 0>>
+	Satisfied, the beast leaves you be. Another takes its place.
+	<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+	<<combatTrainAdvance>>
+	<br><br>
+	[[Next|Passout Beast Drain]]
+<<else>>
+	Satisfied, the beast leaves you be.
+	<br><br>
+	[[Next|Passout Beast Drain End]]
 <</if>>
 
 :: Passout Beast Drain Escape [nobr]
 <<effects>>
 <<beastwound>>
-
-<<if $enemyno gte 3>>
-The beast recoils in pain and fear, but another takes its place.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain]]
-
-<<elseif $enemyno is 2>>
-The beast recoils in pain and fear, but the other takes its place.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain]]
-
-<<elseif $enemyno is 1>>
-The beast recoils in pain and fear.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Passout Beast Drain End]]
-
+<<if $combatTrain.length gt 0>>
+	The beast recoils in pain and fear, but another takes its place.
+	<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+	<<combatTrainAdvance>>
+	<br><br>
+	[[Next|Passout Beast Drain]]
+<<else>>
+	The beast recoils in pain and fear.
+	<br><br>
+	[[Next|Passout Beast Drain End]]
 <</if>>
 
 :: Passout Beast Drain End [nobr]
@@ -603,7 +582,7 @@ The walkway is almost within reach.
 <<elseif $swimdistance lte 1>>
 <span id="next"><<link [[Next|Drain Water Eels Finish]]>><</link>></span><<nexttext>>
 <<else>>
-<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Drain Water Lizard [nobr]
@@ -649,7 +628,7 @@ You see the exit of the drains up ahead.
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<span id="next"><<link [[Next|Drain Water Lizard Finish]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Drain Water Eels Finish [nobr]
@@ -825,7 +804,7 @@ The water pulls you further along the tunnel.
 <<elseif $swimdistance lte 1>>
 	<span id="next"><<link [[Next|Drain Water Slime Finish]]>><</link>></span><<nexttext>>
 <<else>>
-	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Drain Water Slime Finish [nobr]

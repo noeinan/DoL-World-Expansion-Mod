@@ -1,16 +1,17 @@
 :: Abduction Hospital Water [nobr]
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
-
-<<beastNEWinit 2 wolf>><<set $water to 1>>
-
-As you reach the water you hear a sharp buzz and the sound of grinding metal. The water looks foreboding but there's no going back now. You ease yourself into the water and start swimming towards the exit. You spare a glance at the top of the hole. A group of wolves stand at the top, glaring down at you. Two prove more daring than the rest, and jump in after you.
-<br><br>
-
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<set $combatTrain.length to 1>>
+	<<set $combatTrain.beastTypes to ["wolf"]>>
+	<<set $combatTrain.numberPerTrain to [1]>>
+	<<beastNEWinit 1 wolf>>
+	<<set $water to 1>>
+	As you reach the water you hear a sharp buzz and the sound of grinding metal. The water looks foreboding but there's no going back now. You ease yourself into the water and start swimming towards the exit. You spare a glance at the top of the hole. A group of wolves stand at the top, glaring down at you. Two prove more daring than the rest, and jump in after you.
+	<br><br>
 <</if>>
 
 <<effects>>
@@ -24,11 +25,11 @@ As you reach the water you hear a sharp buzz and the sound of grinding metal. Th
 <<actionsman>>
 
 <<if $enemyhealth lte 0>>
-<span id="next"><<link [[Next|Abduction Hospital Water Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Water Finish]]>><</link>></span><<nexttext>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
-<span id="next"><<link [[Next|Abduction Hospital Water Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Water Finish]]>><</link>></span><<nexttext>>
 <<else>>
-<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Abduction Hospital Corridor [nobr]
@@ -37,23 +38,22 @@ As you reach the water you hear a sharp buzz and the sound of grinding metal. Th
 You run down the corridor. As you reach the door you hear a sharp buzz and the sound of grinding metal.
 
 <<if $rng gte 81>>
-You pull on the handle, and the door aches open. You dash through and shut it behind you, seeing a number of wolves bounding down the corridor as you do.
-<br><br>
+	You pull on the handle, and the door aches open. You dash through and shut it behind you, seeing a number of wolves bounding down the corridor as you do.
+	<br><br>
 
-<<nightingaleeventend>>
+	<<nightingaleeventend>>
 
 <<else>>
 	<<if $skulduggery gte $lock>>
-You pull on the handle, but the door won't budge. There's a padlock keeping it sealed. You spare a glance behind you, and see a number of wolves racing closer. You try to pick the lock, <span class="green">and succeed!</span> You dash through and shut the door behind you.
-<br><br>
+		You pull on the handle, but the door won't budge. There's a padlock keeping it sealed. You spare a glance behind you, and see a number of wolves racing closer. You try to pick the lock, <span class="green">and succeed!</span> You dash through and shut the door behind you.
+		<br><br>
 
-<<nightingaleeventend>>
+		<<nightingaleeventend>>
 	<<else>>
-You pull on the handle, but the door won't budge. There's a padlock keeping it sealed. You spare a glance behind you, and see a number of wolves racing closer. You try to pick the lock, <span class="red">but fail.</span> The wolves are upon you.
-<br><br>
+		You pull on the handle, but the door won't budge. There's a padlock keeping it sealed. You spare a glance behind you, and see a number of wolves racing closer. You try to pick the lock, <span class="red">but fail.</span> The wolves are upon you.
+		<br><br>
 
-<<link [[Next|Abduction Hospital Corridor Wolves]]>><<set $molestationstart to 1>><</link>>
-
+		<<link [[Next|Abduction Hospital Corridor Wolves]]>><<set $molestationstart to 1>><</link>>
 	<</if>>
 <</if>>
 
@@ -61,111 +61,83 @@ You pull on the handle, but the door won't budge. There's a padlock keeping it s
 <<effects>>
 
 <<if $devlevel lte 6>>
+	Dropping to your hands and knees, you squeeze through the gap. It's a tight fit.
+	<<set $stripintegrity to 10>><<set $stripobject to "steel wire">><<stripobject>>
+	You see light penetrating the ceiling up ahead. After a short journey, you find a manhole leading outside.
+	<br><br>
 
-Dropping to your hands and knees, you squeeze through the gap. It's a tight fit.
-<<set $stripintegrity to 10>><<set $stripobject to "steel wire">><<stripobject>>
-You see light penetrating the ceiling up ahead. After a short journey, you find a manhole leading outside.
-<br><br>
-
-<<commercialquick>>
+	<<commercialquick>>
 <<else>>
+	Dropping to your hands and knees, you squeeze through the gap. It goes well at first, you manage to get your stomach through before becoming stuck. You hear a sharp buzz and the sound of grinding metal as you try to pull out, but you're stuck tight. Something pokes your rear!
+	<br><br>
 
-Dropping to your hands and knees, you squeeze through the gap. It goes well at first, you manage to get your stomach through before becoming stuck. You hear a sharp buzz and the sound of grinding metal as you try to pull out, but you're stuck tight. Something pokes your rear!
-<br><br>
-
-<<link [[Next|Abduction Hospital Hole Wolves]]>><<set $molestationstart to 1>><</link>>
-
+	<<link [[Next|Abduction Hospital Hole Wolves]]>><<set $molestationstart to 1>><</link>>
 <</if>>
 
 :: Abduction Hospital Water Finish [nobr]
 <<effects>>
 
 <<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		The <<beasttype>> recoils in pain and fear, but another is eager for a go.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Sea Dolphins]]
+	<<else>>
+		The <<beasttype>> recoils in pain and fear.
+		<br><br>
 
-<<beastwound>>
+		The wolves disappear beneath the surface, headed somewhere unknown.
+		<br><br>
 
-<<if $enemyno gte 3>>
-The <<beasttype>> recoils in pain and fear, but another is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Water]]
+		<<tearful>> you swim down the tunnel, helped along by the flow of water. The tunnel dips and you rush downward, exiting into a storm drain.
+		<<set $stress -= 1000>>
+		<br><br>
 
-<<elseif $enemyno is 2>>
-The <<beasttype>> recoils in pain and fear, but the other is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Water]]
-
-<<else>>
-The <<beasttype>> recoils in pain and fear.
-<<set $enemyno -= 1>>
-<br><br>
-
-The wolves disappear beneath the surface, headed somewhere unknown.
-<br><br>
-
-<<clotheson>>
-<<endcombat>>
-
-<<tearful>> you swim down the tunnel, helped along by the flow of water. The tunnel dips and you rush downward, exiting into a storm drain.
-<<set $stress -= 1000>>
-<br><br>
-
-<<link [[Next|Drain Water]]>><<set $bus to "commercialdrain">><</link>>
-
-<</if>>
-
+		<<link [[Next|Drain Water]]>><<set $bus to "commercialdrain">><</link>>
+	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another takes its turn.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Sea Dolphins]]
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<br><br>
 
-<<beastejaculation>>
+		The wolves disappear beneath the surface, headed somewhere unknown.
+		<br><br>
 
-<<if $enemyno gte 3>>
-Satisfied, the <<beasttype>> moves and another takes its turn.
-<<set $enemyno -= 1>>
-<br><br>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Water]]
+		<<tearful>> you swim down the tunnel, helped along by the flow of water. The tunnel dips and you rush downward, exiting into a storm drain.
+		<<set $stress -= 1000>>
+		<br><br>
 
-<<elseif $enemyno is 2>>
-Satisfied, the <<beasttype>> moves and the other takes its turn.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Water]]
-
-<<else>>
-Satisfied, the <<beasttype>> moves away from you.
-<<set $enemyno -= 1>>
-<br><br>
-
-The wolves disappear beneath the surface, headed somewhere unknown.
-<br><br>
-
-<<clotheson>>
-<<endcombat>>
-
-<<tearful>> you swim down the tunnel, helped along by the flow of water. The tunnel dips and you rush downward, exiting into a storm drain.
-<<set $stress -= 1000>>
-<br><br>
-
-<<link [[Next|Drain Water]]>><<set $bus to "commercialdrain">><</link>>
-
-<</if>>
-
+		<<link [[Next|Drain Water]]>><<set $bus to "commercialdrain">><</link>>
+	<</if>>
 <</if>>
 
 :: Abduction Hospital Corridor Wolves [nobr]
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
-
-<<beastNEWinit 6 wolf>>
-
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<set $combatTrain.length to 5>>
+	<<set $combatTrain.beastTypes to ["wolf","wolf","wolf","wolf","wolf"]>>
+	<<set $combatTrain.numberPerTrain to [1,1,1,1,1]>>
+	<<beastNEWinit 1 wolf>>
 <</if>>
 
 <<effects>>
@@ -179,106 +151,82 @@ The wolves disappear beneath the surface, headed somewhere unknown.
 <<actionsman>>
 
 <<if $enemyhealth lte 0>>
-<span id="next"><<link [[Next|Abduction Hospital Corridor Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Corridor Finish]]>><</link>></span><<nexttext>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
-<span id="next"><<link [[Next|Abduction Hospital Corridor Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Corridor Finish]]>><</link>></span><<nexttext>>
 <<else>>
-<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Abduction Hospital Corridor Finish [nobr]
 <<effects>>
 
 <<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		The <<beasttype>> recoils in pain and fear, but another is eager for a go.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Abduction Hospital Corridor Wolves]]
+	<<else>>
+		The <<beasttype>> recoils in pain and fear.
+		<br><br>
 
-<<beastwound>>
+		<<if $enemywounded gte 2 and $enemyejaculated is 0>>
+			Feeling that you're more trouble than you're worth, the wolves flee.
+		<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+			The wolves leave you spent and shivering on the metallic floor.
+		<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+			The wolves leave you spent and shivering on the metallic floor.
+		<</if>>
+		<br><br>
 
-<<if $enemyno gte 3>>
-The <<beasttype>> recoils in pain and fear, but another is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Corridor Wolves]]
-
-<<elseif $enemyno is 2>>
-The <<beasttype>> recoils in pain and fear, but the last is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Corridor Wolves]]
-
-<<else>>
-The <<beasttype>> recoils in pain and fear.
-<<set $enemyno -= 1>>
-<br><br>
-
-<<if $enemywounded gte 2 and $enemyejaculated is 0>>
-Feeling that you're more trouble than you're worth, the wolves flee.
-<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-The wolves leave you spent and shivering on the metallic floor.
-<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-The wolves leave you spent and shivering on the metallic floor.
-<</if>>
-<br><br>
-
-<<clotheson>>
-<<endcombat>>
-
-<<passouthospital>>
-
-<</if>>
-
+		<<passouthospital>>
+	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another takes its turn.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Abduction Hospital Corridor Wolves]]
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<br><br>
 
-<<beastejaculation>>
+		<<if $enemywounded gte 2 and $enemyejaculated is 0>>
+			Feeling that you're more trouble than you're worth, the wolves flee.
+		<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+			The wolves leave you spent and shivering on the metallic floor.
+		<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+			The wolves leave you spent and shivering on the metallic floor.
+		<</if>>
+		<br><br>
 
-<<if $enemyno gte 3>>
-Satisfied, the <<beasttype>> moves and another takes its turn.
-<<set $enemyno -= 1>>
-<br><br>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Corridor Wolves]]
-
-<<elseif $enemyno is 2>>
-Satisfied, the <<beasttype>> moves and the last takes its turn.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Corridor Wolves]]
-
-<<else>>
-Satisfied, the <<beasttype>> moves away from you.
-<<set $enemyno -= 1>>
-<br><br>
-
-<<if $enemywounded gte 2 and $enemyejaculated is 0>>
-Feeling that you're more trouble than you're worth, the wolves flee.
-<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-The wolves leave you spent and shivering on the metallic floor.
-<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-The wolves leave you spent and shivering on the metallic floor.
-<</if>>
-<br><br>
-
-<<clotheson>>
-<<endcombat>>
-
-<<passouthospital>>
-
-<</if>>
-
+		<<passouthospital>>
+	<</if>>
 <</if>>
 
 :: Abduction Hospital Hole Wolves [nobr]
 <<if $molestationstart is 1>>
-<<set $molestationstart to 0>>
-<<controlloss>>
-<<violence 1>>
-<<neutral 1>>
-<<molested>>
-
-<<beastNEWinit 6 creature>>
-<<set $position to "wall">><<set $leftarm to "bound">><<set $rightarm to "bound">><<set $head to "bound">>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<set $combatTrain.length to 5>>
+	<<set $combatTrain.beastTypes to ["creature","creature","creature","creature","creature"]>>
+	<<set $combatTrain.numberPerTrain to [1,1,1,1,1]>>
+	<<beastNEWinit 1 creature>>
+	<<set $position to "wall">><<set $leftarm to "bound">><<set $rightarm to "bound">><<set $head to "bound">>
 <</if>>
 
 <<effects>>
@@ -292,94 +240,68 @@ The wolves leave you spent and shivering on the metallic floor.
 <<actionsman>>
 
 <<if $enemyhealth lte 0>>
-<span id="next"><<link [[Next|Abduction Hospital Hole Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Hole Finish]]>><</link>></span><<nexttext>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
-<span id="next"><<link [[Next|Abduction Hospital Hole Finish]]>><</link>></span><<nexttext>>
+	<span id="next"><<link [[Next|Abduction Hospital Hole Finish]]>><</link>></span><<nexttext>>
 <<else>>
-<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Abduction Hospital Hole Finish [nobr]
 <<effects>>
 
 <<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		You keep the <<beasttype>> at bay with your feet, but another is eager for a go.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Abduction Hospital Hole Wolves]]
+	<<else>>
+		You keep the <<beasttype>> at bay with your feet, it recoils in pain and fear.
+		<br><br>
 
-<<beastwound>>
+		<<if $enemywounded gte 2 and $enemyejaculated is 0>>
+			Feeling that you're more trouble than you're worth, the wolves flee.
+		<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+			The wolves leave you spent and shivering in the wall.
+		<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+			The wolves leave you spent and shivering in the wall.
+		<</if>>
+		<br><br>
 
-<<if $enemyno gte 3>>
-You keep the <<beasttype>> at bay with your feet, but another is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
+		<<set $position to 0>>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Hole Wolves]]
-
-<<elseif $enemyno is 2>>
-You keep the <<beasttype>> at bay with your feet, but the last is eager for a go.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Hole Wolves]]
-
-<<else>>
-You keep the <<beasttype>> at bay with your feet, it recoils in pain and fear.
-<<set $enemyno -= 1>>
-<br><br>
-
-<<if $enemywounded gte 2 and $enemyejaculated is 0>>
-Feeling that you're more trouble than you're worth, the wolves flee.
-<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-The wolves leave you spent and shivering in the wall.
-<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-The wolves leave you spent and shivering in the wall.
-<</if>>
-<br><br>
-
-<<set $position to 0>>
-<<clotheson>>
-<<endcombat>>
-
-<<passouthospital>>
-
-<</if>>
-
+		<<passouthospital>>
+	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another takes its turn with your helpless rear.
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Abduction Hospital Hole Wolves]]
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<br><br>
 
-<<beastejaculation>>
+		<<if $enemywounded gte 2 and $enemyejaculated is 0>>
+			Feeling that you're more trouble than you're worth, the wolves flee.
+		<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+			The wolves leave you spent and shivering in the wall.
+		<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+			The wolves leave you spent and shivering in the wall.
+		<</if>>
+		<br><br>
 
-<<if $enemyno gte 3>>
-Satisfied, the <<beasttype>> moves and another takes its turn with your helpless rear.
-<<set $enemyno -= 1>>
-<br><br>
+		<<set $position to 0>>
+		<<clotheson>>
+		<<endcombat>>
 
-[[Next|Abduction Hospital Hole Wolves]]
-
-<<elseif $enemyno is 2>>
-Satisfied, the <<beasttype>> moves and the last takes its turn with your helpless rear.
-<<set $enemyno -= 1>>
-<br><br>
-
-[[Next|Abduction Hospital Hole Wolves]]
-
-<<else>>
-Satisfied, the <<beasttype>> moves away from you.
-<<set $enemyno -= 1>>
-<br><br>
-
-<<if $enemywounded gte 2 and $enemyejaculated is 0>>
-Feeling that you're more trouble than you're worth, the wolves flee.
-<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-The wolves leave you spent and shivering in the wall.
-<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-The wolves leave you spent and shivering in the wall.
-<</if>>
-<br><br>
-
-<<set $position to 0>>
-<<clotheson>>
-<<endcombat>>
-
-<<passouthospital>>
-
-<</if>>
-
+		<<passouthospital>>
+	<</if>>
 <</if>>

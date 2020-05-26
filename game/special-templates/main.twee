@@ -355,7 +355,7 @@ Insert text about the beast stopping because you asked it to.
 <<elseif $enemyarousal gte $enemyarousalmax>>
 <span id="next"><<link [[Next|Beast Rape Finish]]>><</link>></span><<nexttext>>
 <<else>>
-<span id="next"><<link "Next">><<script>>state.display(state.active.title, null, "back")<</script>><</link>></span><<nexttext>>
+<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
 <</if>>
 
 :: Beast Rape Finish [nobr]
@@ -411,7 +411,10 @@ Insert text about being rescued.
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-	<<beastNEWinit 3 wolf>>
+	<<set $combatTrain.length to 2>>
+	<<set $combatTrain.beastTypes to ["wolf","wolf"]>>
+	<<set $combatTrain.numberPerTrain to [1,1]>>
+	<<beastNEWinit 1 wolf>>
 	<<set $rescue to 1>>/*optional*/
 <</if>>
 <<effects>>
@@ -436,37 +439,27 @@ Insert text about being rescued.
 <<effects>>
 <<if $enemyhealth lte 0>>
 	<<beastwound>>
-	<<if $enemyno gte 3>>
+	<<if $combatTrain.length gt 0>>
 		The $beasttype recoils in pain and fear, but another is eager for a go.
-		<<set $enemyno -= 1>>
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Beast Gang]]
-	<<elseif $enemyno is 2>>
-		The $beasttype recoils in pain and fear, but the last is eager for a go.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Beast Gang]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		The $beasttype recoils in pain and fear.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
 	<</if>>
 <<elseif $enemyarousal gte $enemyarousalmax>>
 	<<beastejaculation>>
-	<<if $enemyno gte 3>>
+	<<if $combatTrain.length gt 0>>
 		Satisfied, the $beasttype moves and another takes its turn.
-		<<set $enemyno -= 1>>
+		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Beast Gang]]
-	<<elseif $enemyno is 2>>
-		Satisfied, the $beasttype moves and the last takes its turn.
-		<<set $enemyno -= 1>>
-		<br><br>
-		[[Next|Beast Gang]]
-	<<elseif $enemyno is 1>>
+	<<else>>
 		Satisfied, the $beasttype moves away from you.
-		<<set $enemyno -= 1>>
 		<br><br>
 		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
 	<</if>>
