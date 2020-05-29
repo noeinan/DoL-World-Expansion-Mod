@@ -54,31 +54,71 @@ A gust of wind blows in from the ocean, pleasantly caressing your skin.
 	<<set _trauma_gain to 0>>
 	<<set _arousal_gain to 0>>
 
+	<<set _seen to 0>>
+	<<if random(0, 10) gte 5>>
+		<<set _seen to 1>>
+	<</if>>
+
+	<<set _caught_on_camera to 0>>
+	<<if _seen and random(0, 10) gte 7>>
+		<<set _caught_on_camera to 1>>
+	<</if>>
+
 	/* event */
-	It flares up your skirt, laying bare your 
+	It flares up your skirt, exposing your  
 	<<if _nopan>>
 		<<set _arousal_gain += 200>>
+		<<set _trauma_gain += .5>>
 		<<genitals>>
 	<<else>>
 		<<set _arousal_gain += 100>>
 		$worn.under_lower.name 
-	<</if>>for anyone to see.
+	<</if>>in the middle of the beach.
 
 	<<if _helpless>>
 		<<set _arousal_gain += 100>>
-		With your arms bound you are utterly helpless against the wind, forced to endure the exposure until the wind abates and your skirt hem settles back where it should be.
+		<<set _trauma_gain += 1>>
+		Bound and helpless you can do nothing but endure the wind as it toys with your exposure, until finally it abates and your skirt hem settles back where it should be.
+	<</if>>
+	<<if _seen>>
+		<<print [
+		"A sudden giggle causes you to turn, facing the onlooker.",
+		"A sudden giggle grabs your attention.",
+		"An onlooker gasping in shock grabs your attention.",
+		"An onlooker giggling grabs your attention.",
+		"A group of people gasping in shock draws your attention.",
+		"A group of people giggling grabs your attention."
+		].pluck()>>
+		<<fameexhibitionism 1>>
+
+		<<if _caught_on_camera>>
+			<<endevent>>
+			<span class="pink">
+				You notice a phone pointing at you, and realise they were probably recording.
+			</span>
+			<<fameexhibitionism 5>>
+			<<set _trauma_gain += 2>>
+			<<set _arousal_gain += 100>>
+		<<else>>
+			They must have seen everything.
+			<<set _trauma_gain += 1>>
+			<<set _arousal_gain += 50>>
+		<</if>>
 	<</if>>
 
-	<<if $exhibitionismaction is "embarrassed" and _nopan>>
-		You feel humiliated.
+	<<if $exhibitionismaction is "embarrassed" and _trauma_gain>>
+		Your stomach churns horribly at having been exposed in such a public place, and you do your best to put it out of your mind as you try and recover some of your dignity.
 		<<set _trauma_gain += 1>>
+	<<else>>
+		Your stomach churns with excitement at having been exposed in such a public place, and you can't help but hold on to the sensation of it all as you pretend to recover some of your dignity.
+		<<set _arousal_gain += 50>>
 	<</if>>
 
 	/* stats application */
 	<<if _arousal_gain>>
 		<<garousal>><<arousal _arousal_gain>>
 	<</if>>
-	<<if _trauma_gain>>
+	<<if _trauma_gain and $exhibitionismaction is "embarrassed">>
 		<<gtrauma>><<trauma _trauma_gain>>
 	<</if>>
 
@@ -99,6 +139,8 @@ A gust of wind blows in from the ocean, pleasantly caressing your skin.
 	<<unset _nopan>>
 	<<unset _arousal_gain>>
 	<<unset _trauma_gain>>
+	<<unset _seen>>
+	<<unset _caught_on_camera>>
 <<else>>
 	<<link [[Next|Beach]]>><<set $eventskip to 1>><</link>>
 <</if>>
