@@ -128,7 +128,13 @@
 
 <<widget "danceaudience">><<nobr>>
 	<<if $danceevent is 0>>
-		<<if $allure / 100 + $danceskill / 20 + $audienceexcitement / 5 + $audiencearousal / 5 gte $rng>>
+		<<if $worn.feet.type.includes("heels")>>
+			<<set _heelBonus to $worn.feet.reveal / 100>>
+		<<else>>
+			<<set _heelBonus to -4>>
+		<</if>>
+		<<set $rng to random(1, 100)>>
+		<<if ($allure / 100 + $danceskill / 20 + $audienceexcitement / 5 + $audiencearousal / 5 + _heelBonus) gte $rng>>
 			<<set $audience += 1>>
 			<<if $audience is 1>>
 				<<generatel>> A <<person1>><<person>> starts watching you./*Not to be confused with generate1*/
@@ -219,9 +225,14 @@
 			Awe: <<statbarinverted $audiencemod 10>>
 
 			<<set $rng to random(1, 100)>>
-			<<if ($allure / 100 + $danceskill / 20 + $audienceexcitement / 5 + $audiencearousal / 5) gte $rng + 50>>
+			<<if ($allure / 100 + $danceskill / 20 + $audienceexcitement / 5 + $audiencearousal / 5) gte $rng>>
 				<<set $rng to random(1, 10)>>
 				<<set $dancetip to ($rng * $audience * $venuemod * $audiencemod)>>
+				<<if $worn.feet.type.includes("heels")>>
+					<<set $dancetip *= (1 + $worn.feet.reveal / 3000)>>
+				<<else>>
+					<<set $dancetip *= 0.9>>
+				<</if>>
 				<<set $dancetip *= 1 + ($mathstrait / 4)>>
 				<<if $dancetip gte 5000>>
 					Thrilled with the display, your audience showers you with cash.
@@ -257,7 +268,9 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "club">>
-				<<if $audiencearousal gte 100>>
+				<<if $rng lte 8 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+					<<dancetripfinish>>
+				<<elseif $audiencearousal gte 100>>
 					<<dancefinish>>
 				<<elseif $audiencearousal gte 60>>
 					<<if $rng gte 81 and $privatedanceoffered isnot 1>>
@@ -289,7 +302,9 @@
 					<</if>>
 				<</if>>
 			<<elseif $dancelocation is "brothel">>
-				<<if $audiencearousal gte 100>>
+				<<if $rng lte 8 and $worn.feet.type.includes("heels") and $feetskill lt $worn.feet.reveal>>
+					<<dancetriprape>>
+				<<elseif $audiencearousal gte 100>>
 					<<if $rng gte 101 - ($corruption_slime / 20) and $corruptionDancing is undefined>>
 						<<danceCorruption>>
 					<<elseif $rng gte 91>>
@@ -413,6 +428,22 @@
 	<<set $danceevent to "finish">>
 	<br><br>
 <</nobr>><</widget>>
+
+<<widget "dancetripfinish">><<nobr>>
+	You clumsily botch a move and stumble in your heels, falling forwards and hurtling your body off the stage. Luckily, a member of security manages to catch you, but your ankle is left feeling sore.
+	<<pain 10>><<ggpain>>
+	<br><br>
+	<<set $danceevent to "finish">>
+	<br><br>
+<</nobr>><</widget>>
+
+<<widget "dancetriprape">><<nobr>>
+	You clumsily botch a move and stumble in your heels, falling forwards and hurtling your body off the stage. You land in a crowd of people, hitting your head on the way down.
+	<<pain 25>><<ggpain>>
+	<br><br>
+	<<dancerape>>
+<</nobr>><</widget>>
+
 
 <<widget "danceprivate">><<nobr>>
 	<<person1>>The <<person>> raises <<his>> <<if $pronoun is "m">>wallet,<<else>>purse,<</if>> indicating <<he>> wants to hire your services.
