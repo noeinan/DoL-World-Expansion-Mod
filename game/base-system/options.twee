@@ -146,6 +146,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 	<<set $saveUnlock to true>>
 <</if>>
 <<set _saveDetails = returnSaveDetails()>>
+<<set _currentTime to new Date().getTime()>>
 <div id="savesListContainer">
 	<div class="savesListRow">
 		<div class="saveGroup">
@@ -165,18 +166,21 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 						<div class="saveButton">
 							<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('auto')"/>
 						</div>
-						<div class="saveName">
-							<<if _saveDetails.autosave.metadata isnot undefined>>
+						
+						<<if _saveDetails.autosave.metadata isnot undefined>>
+							<div @class="'saveName' + ($saveId is _saveDetails.autosave.metadata.saveId ? ' gold' : '')">
 								<<if _saveDetails.autosave.metadata.saveName isnot undefined and _saveDetails.autosave.metadata.saveName isnot "">>
 									<<print _saveDetails.autosave.metadata.saveName.slice(0,10)>>
 								<<else>>
 									<<print _saveDetails.autosave.metadata.saveId>>
 								<</if>>
-							<</if>>
-						</div>
+							</div>
+						<<else>>
+							<div class="saveName"></div>
+						<</if>>
 						<div class="saveDetails">
 							<span><<print _saveDetails.autosave.title.replace(/</g, "< ")>></span>
-							<span class="datestamp"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>
+							<span @class="'datestamp' + (_saveDetails.autosave.date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>
 						</div>
 					</div>
 					<div class="deleteButton">
@@ -213,18 +217,20 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 							<</if>>
 							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
 						</div>
-						<div class="saveName">
 							<<if _saveDetails.slots[_slot].metadata isnot undefined>>
-								<<if _saveDetails.slots[_slot].metadata.saveName isnot undefined and _saveDetails.slots[_slot].metadata.saveName isnot "">>
-									<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
-								<<else>>
-									<<print _saveDetails.slots[_slot].metadata.saveId>>
-								<</if>>
+								<div @class="'saveName' + ($saveId is _saveDetails.slots[_slot].metadata.saveId ? ' gold' : '')">
+									<<if _saveDetails.slots[_slot].metadata.saveName isnot undefined and _saveDetails.slots[_slot].metadata.saveName isnot "">>
+										<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
+									<<else>>
+										<<print _saveDetails.slots[_slot].metadata.saveId>>
+									<</if>>
+								</div>
+							<<else>>
+								<div class="saveName"></div>
 							<</if>>
-						</div>
 						<div class="saveDetails">
 							<span><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>></span>
-							<span class="datestamp"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>
+							<span @class="'datestamp' + (_saveDetails.slots[_slot].date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>
 						</div>
 					</div>
 					<div class="deleteButton"><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></div>
@@ -233,7 +239,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
 							<<if $saveUnlock>>
-								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,`'+$saveId+'`, `'+$saveName+'`)"/>'>>
+								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)"/>'>>
 							<<else>>
 								<input type="button" value="Save" disabled/>
 							<</if>>
@@ -310,9 +316,11 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
 		<br>
 	<</if>>
-	<<if _saveDetails.slots[$args[0]].metadata.saveName isnot undefined>>
-		Older Save Name: <<print _saveDetails.slots[$args[0]].metadata.saveName>>
-		<br>
+	<<if _saveDetails.slots[$args[0]].metadata isnot undefined>>
+		<<if _saveDetails.slots[$args[0]].metadata.saveName isnot undefined>>
+			Older Save Name: <<print _saveDetails.slots[$args[0]].metadata.saveName>>
+			<br>
+		<</if>>
 	<</if>>
 	<<if _showSaveId is true>>
 		Older Save ID: <<print _saveDetails.slots[$args[0]].metadata.saveId>>
@@ -353,7 +361,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 <</nobr>><</widget>>
 
 <<widget "deleteWarning">><<nobr>>
-<div class="saveBorder">>
+<div class="saveBorder">
 	<<set _saveDetails = returnSaveDetails()>>
 	<h4 class="red">Delete Save in slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>></h4>
 	<br><br>
