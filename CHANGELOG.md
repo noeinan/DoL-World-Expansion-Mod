@@ -1,5 +1,224 @@
 # CHANGELOG
 
+## 0.2.13.4
+
+- Added Settings and Attitudes to the cell at Remy's farm.
+- Added highlighting for save times for saves made in the last 30 minutes. Thanks to Lollipop Scythe.
+- Adjusted saveId/name highlighting so that it only occurs when they match the current game. Thanks to Lollipop Scythe.
+- Added a new feat filter and removed the All option. Thanks to Lollipop Scythe.
+
+### Balance Changes
+
+- Your hair will now get semen on it when NPCs use it to clean their cocks after coming.
+- Increased the stress removed when passing out at Remy's farm.
+- NPCs at the brothel gloryhole should now cum faster.
+- Lowered the minimum physique required to successfully hold on to your clothes when assaulted by a tentacle on the streets.
+- Eating grass with the full cow transformation will impact the PC's attitude towards nudity. Thanks to Lollipop Scythe.
+
+### Bug Fixes
+
+- Fixed a bug that broke the obedience stat at Remy's farm.
+- Fixed a bug that made the pig at the brothel cum like a human.
+- Exercising in the field at Remy's farm should now improve physique.
+- Closed a couple of futa portals in the forest.
+- Another event will no longer begin straight away after successfully resisting Remy's whip through sheer willpower.
+- Pleading with Niki will no longer trigger another event right after.
+- Time will now pass on the tentacle plains.
+- Fixed a visual bug with the sweater found when the PC covers themselves.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Minor fix for saveId that effected the highlighting, this can be corrected by loading the save and re-saving.
+- Fixed a bug with settings export.
+- Eden and the black wolf will now stop hunting you should you return to town with Mason.
+- Fixed a bug that caused the feat selection box to default to the last option rather than General.
+- Fixed a bug that broke the exhibitionism attitude selection box.
+- Fixed an error caused by the counter for the number of dates the PC has been on.
+- Added extra line spacing below combat controls.
+
+## 0.2.13.3
+
+- Female PCs will no longer be referred to as "sir" by the tailor.
+- Fixed a bug causing your chastity belt to be described as "feeling good" as if it were a part of you when swallowed by a snake alongside Robin.
+- Fixed a bug that allowed up to six NPCs to suck your nipples at once.
+- The Characteristics overlay will now acknowledge the cow transformation.
+- The PC will no longer be left bound and collared following the swarm show at the brothel. Thanks to Dinesty30 and Lollipop Scythe.
+- Closed a futa portal opened by trying to help an injured horse.
+- Fixed a clipping issue with the flat ponytail.
+- Fixed an issue found when examined by Harper on the farm while wearing a chastity belt.
+- Remy will now respect the body-writing toggle when you pass out on their farm.
+- Showing in the strip club bathroom now takes twenty minutes.
+- Choosing to wait when finishing the tunnel at the farm will no longer teleport the PC to their cell.
+- Named NPCs' breasts will now respect the average NPC breast size setting.
+- Fixed a bug allowing Remy to milk the PC's penis despite the presence of a chastity belt.
+- Removed the roof over the cattle field.
+- Fixed a bug that allowed fame to grow much higher than intended.
+- Thanks to CasaBlanc for typo fixes.
+
+Thanks to Lollipop Scythe for the following fixes and improvements:
+- The most deviant characters may now goad the mirror tentacles into greater lewdity in the small hours during a blood moon, creating a portal to the tentacle world.
+- Fixed a compatibility issue with overlays.
+- Adjusted the penis Rest action.
+- Sleeping at Remy's farm will now auto-save.
+- Fixed an img error that could appear during encounters.
+- Fixed a pronoun issue for combat actions.
+- Fixed a bug that caused the swim to safety option to not be checked.
+- The strike, kick and bite tentacle actions should no longer be available during consensual encounters.
+- Closed a futa portal at the tailor shop.
+- You can no longer pay the tailor deposit without the appropriate funds.
+- Selling your clothes using the tailor's new service should now pay out as advertised.
+- Several typo fixes.
+
+## 0.2.13.2
+
+- Harper will no longer be described as assaulting a female character's penis.
+- The old centaur should no longer be referred to with a male pronoun if female.
+- The PC will no longer be referred to by an NPC's pronouns after performing hard labour at Remy's farm.
+- Sirris will no longer be referred to with a student's pronouns when examining the PC with a speculum.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed a bug that prevented save names from displaying.
+- Fixed a bug that caused performance to worsen over time.
+- Fixed an error at the tailor.
+- Fixed an issue in the cheat menu.
+- Fixed an error found when Remy removes the PC's tattoo or body-writing to make way for their own.
+
+## 0.2.13.1
+
+- Fixed a bug that could cause the NPC who tries to strip the PC on the beach to forget about their underwear.
+- Allowing the wind to flare up your skirt on the beach now correctly requires level 4 exhibitionist acts unlocked, rather than level 5. The act is now also change stats as intended.
+- The above event will no longer cause your chastity belt to "tingle".
+- Encouraging the tentacles in the forest is now properly considered a deviant act.
+- Flashing students in history class is now properly considered an exhibitionist act.
+- Fixed an error found when Whitney gloats having taken the PC's penile virginity.
+- Fixed a gamebreaking error found when visiting the farm more than once, and being punished by a male centaur or horse.
+- Fixed a bug that caused the PC's head to be pressed against the wrong pair of breasts during encounters.
+- Fixed a bug found when eating a basket of apples.
+- Fixed a gender error found when being molested while pretending to be a mannequin.
+- Fixed a bug that caused an error when vaginally penetrated by a horse or centaur.
+- Fixed a bug that prevented horse and centaur art from displaying.
+- Fixed a bug that caused acting like a cow to erode the wolf transformation far too quickly.
+- Your genitals will now be properly referred to, rather than your chastity belt, when assaulted by a slime in the old sewers.
+- Jogging with Doren after crying on their shoulder will now improve athletics.
+- Jogging with Doren will now be advertised as taking thirty minutes, rather than an hour.
+- Fixed a bunch of typos.
+
+Thanks to Lollipop Scythe for the following fixes and improvements:
+- Added a "Get dressed" option when walking home with Mason.
+- Fixed a number of issues during encounters with multiple beasts.
+- Fixed an issue causing saving/refreshing to not work properly on some passages.
+- Fixed a display issue with new tattoo text.
+- Fixed a broken link on the farm.
+- Fixed an error found when modelling on Domus Street.
+- Fixed a bug that broke the trauma stat.
+- The PC should now be unbound following the brother swarm show.
+- Other code improvements.
+
+## 0.2.13.0
+
+- Failing to pay Bailey and being sold three times will now send the PC to a new location out in the countryside.
+- Added horses. Art courtesy of Anon, including the main body, close-ups, x-rays and props. All horses have penises for the time being.
+- Horses can be replaced by centaur should settings and traits allow it. Centaur gender is based on human gender settings, rather than beast. Female centaur require the chance for women to have penises to be set to at least 1%.
+- Horse and centaur penises are larger than existing cocks, and work differently during encounters.
+- Gave horses and centaur different ejaculation text to account for the much greater quantities of semen they produce.
+- Added a new named NPC, who rules the above location through liberal use of their whip.
+- Added a new type of restraint to encounters that can lock down the PC's legs and head. Art courtesy of Anon.
+- Added the cow/bull transformation. Increases the amount of milk and semen produced, and encourages growth of the PC's breasts, ass and penis if applicable. Art courtesy of Morgan Vayne and PurityGuy.
+- Refusing defiant opportunities and accepting your role at the above location will cause the PC to transform. Gaining points towards the cow/bull transformation will weaken other animal transformations.
+- Added a cow bell to the forest shop. Art also courtesy of Morgan Vayne and PurityGuy. Wearing it prevents the cow/bull transformation from decaying.
+- Added a muzzle, which functions as a gag. Art courtesy of KG.
+- Added new body-writing lines and the "cattle" body-writing category.
+- Added a new event to the town's streets. Involves an abduction attempt should the PC be particularly beautiful, which can lead to the new location. Skilled or cautious PCs may avoid it.
+- Going with the police when confronted outside the cafe with max chef suspicion will also now lead to the new location.
+- Added a strange van to the bus station. Investigating it will lead to the new location. This will likely be removed in the future, but I wanted to add an easy way to access and test the new area.
+- You can now apologise to Avery after standing them up.
+- Added Mason's love and lust to the cheat menu.
+- Added the cow/bull transformation to the cheat menu.
+- Added "Fluid forcibly milked" to the statistics overlay.
+- The game will now present a more appropriate message when failing to find part of a clothing set that's already worn by the PC. Thanks to Lollipop Scythe.
+- You can now ask Eden to teach you how to shoot in the evenings.
+- Robin will now always refuse a threesome on halloween should their confidence be high enough.
+- Added adjusted close-up images that better reflect different positions during combat. Thanks to Airks.
+- Going to bed aroused may result in orgasm on waking up. Robin and Eden may take note if sharing a bed with the PC. Thanks to Lollipop Scythe.
+- Added platform heels, front-tie bikini, and micro pleated skirt to the clothing shop. Code courtesy of Lollipop Scythe and art courtesy of KG.
+- Updated the hairdresser UI. Thanks to Lollipop Scythe.
+- Overlays should now scroll to the top when switching between them. Thanks to Lollipop Scythe.
+- Added sidebar art to represent the new location.
+- Converted vore UI to the new system. Thanks to Lollipop Scythe.
+- Re-wrote the tailor with a little more personality. Thanks to Lollipop Scythe.
+- Added a delivery service that allows the PC to sell or repair their entire wardrobe once per month. Thanks to Lollipop Scythe.
+- Many improvements to encounter code. Thanks to Lollipop Scythe.
+- Improved start screen UI, and hid the default actions attitude settings until the first encounter is met. Thanks to Lollipop Scythe.
+- Gave pigs different text and effects when they cum inside the PC's pussy or ass.
+- Added a new show to the brothel, involving a terrarium full of squirmy creatures. Thanks to lewddude and Lollipop Scythe.
+- Added lines for NPCs witnessing the PC in a swarm encounter. Also thanks to lewddude.
+- Improved the NPC Settings UI. Thanks to Lollipop Scythe.
+- Named NPCs now have different breast sizes, controllable via NPC Settings. Thanks to Lollipop Scythe.
+- Updated Settings export/import to include new settings. Thanks to Lollipop Scythe.
+- Monster boys and girls now have silhouettes for each species, and accompanying penises where appropriate. Art courtesy of PurityGuy.
+- Gave canine and cat monster boys and girls their own penises. Art courtesy of PurityGuy.
+- Added location art to Gwylan's shop and the wolf cave. Art courtesy of Anon.
+- Adjusted beast ejaculation text.
+- Thanks to larsrand for code improvements.
+- Added new lines to the scream, plead and demand actions that mention the PC's love interest. These lines can influence the PC's fame. Thanks to Harcher and PurityGuy.
+- You can now choose your love interest in the attitudes menu. NPCs become available as certain criteria is met. High awareness allows a second love interest to be chosen. Thanks to PurityGuy.
+- Generic and named NPCs will now react to the PC mentioning a love interest. Thanks to PurityGuy.
+- Added the "Cattle" feat and a few special feats.
+
+### Balance Changes
+
+- Bailey will now sell the PC to the underground brothel the fourth time they sell them off.
+- Submissive and defiant acts outside combat now have a much bigger impact on the PC's submissiveness/defiance.
+- The temple event leading to the stone pendant and brass statuette now triggers more frequently, and finding the items will be prioritised should they not be found already.
+- Added the attitudes menu to Eden's cabin.
+
+### Bug Fixes
+
+- You'll no longer be described as hiding among trees while swimming in the lake. Thanks to larsrand.
+- Fixed a bug that prevented lewdity from increasing as often as intended at the Connudatus market.
+- Fixed the leaky roof at the photo studio.
+- Shoving NPCs who grope your ass on the streets now decreases stress as advertised.
+- Thanks to Klorpa for numerous minor fixes.
+- Fixed a bug causing the student involved in Leighton's brothel scene to be described as having a pussy regardless of their actual genitals.
+- Fixed a bug that broke the description of your chastity belt in the sidebar. Thanks to larsrand.
+- Fixed a problem with some pillories being described in an odd way.
+- Fixed a bug causing beasts to become overly careful when trying to fuck your ass through a chastity belt.
+- Fixed a bug that caused beasts to rub their penis against your "naked" through your underwear.
+- Fixed a bug that prevented beast penis from damaging your underwear during encounters.
+- Fixed a bug that caused your chastity belt to be described as though it were alive during the hospital parasite treatment scene.
+- Fixed a gamebreaking error found when accosted by screaming when accosted by sailors when blindfolded.
+- Masochism should now be taken into account during the compound interrogation sequence.
+- Thanks to Dinesty30 for fixing an error found during swarm encounters.
+- Fixed a bug that caused Whitney to be referred to with the victim's pronouns when willingly helping them rob someone.
+- Fixed a number of bugs that prevented the genitals of beasts in groups from generating properly.
+- Fixed an error that appeared when assaulted by packs of dogs or wolves while blindfolded.
+- Thanks to CasaBlanc for typo fixes.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Included a new clothing sanity checker to help debug in the future.
+- Fixed a bug that could cause term time to start incorrectly.
+- Fixed a minor clothing error.
+- Fixed a bug that caused body-writing to display on the wrong layer.
+- Fixed a bug that caused the tattoo feat boost to allocate random tattoos to places that were specified.
+- Fixed a minor bug involving Whitney.
+- Drinking herbal booze should no longer pass more time than advertised.
+- Fixed a minor sidebar text problem.
+- Fixes a bug involving tentacle images.
+- Disabled cheat button on second passage to avoid issues.
+- Fixed bugs that could result from arousal becoming negative.
+- Fixed a bug that reset arousal when sleeping.
+- Fixed a bug that caused male PCs to cum in their own mouths whenever they orgasmed.
+- Fixed a bug that prevented virginity from working as intended.
+- Fixed a bug that caused a couple of events to reset on load or page refresh.
+- Fixed a bug that gave tentacle hit actions the wrong colour.
+- Fixed a bug that confused Bailey and made them wake you for school in the middle of the night.
+- Fixed a bug that could make the PC sleep for longer than intended.
+- Fixed a bug that prevented towel colours from working as intended.
+- The virginity recorder should now take the full NPC description into account.
+- Fixed a bug that prevented the PC to dress following a Robin sex scene.
+- Fixed a bug that prevented swarms from functioning as intended.
+- Fixed the incomplete cursed message in the shop.
+- Minor text fixes and code improvements.
+
 ## 0.2.12.5
 
 - NPCs now sometimes decide to release their grip on the PC's mask should their attempt to remove it be thwarted.
