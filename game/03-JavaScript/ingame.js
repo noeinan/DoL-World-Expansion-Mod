@@ -49,6 +49,8 @@ window.combatListColor = function(name, value, type){
 			/*leftaction or rightaction*/
 			case "steal": case "penwhack": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus": case "rightcovervagina":
 			case "rightcoverpenis": case "rightcoveranus":
+			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
+			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss":
