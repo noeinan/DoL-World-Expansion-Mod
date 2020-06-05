@@ -139,7 +139,7 @@ Thanks to Lollipop Scythe for the following fixes and improvements:
 - Robin will now always refuse a threesome on halloween should their confidence be high enough.
 - Added adjusted close-up images that better reflect different positions during combat. Thanks to Airks.
 - Going to bed aroused may result in orgasm on waking up. Robin and Eden may take note if sharing a bed with the PC. Thanks to Lollipop Scythe.
-- Added platform heels, front-tie bikini, and micro pleated skirt to the clothing shop. Code courtesy of Lollipop Scythe and art courtesy of KG.
+- Added platform heels, front-tie bikini, and micro pleated skirt. Code courtesy of Lollipop Scythe and art courtesy of KG.
 - Updated the hairdresser UI. Thanks to Lollipop Scythe.
 - Overlays should now scroll to the top when switching between them. Thanks to Lollipop Scythe.
 - Added sidebar art to represent the new location.
