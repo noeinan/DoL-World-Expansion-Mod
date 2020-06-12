@@ -995,7 +995,7 @@ Thanks to gay skele for the following improvements:
 - NPCs will now acknowledge the PC's penis size during several more events, including when locked in the pillory on Cliff Street, during swimming class, and when entering the changing rooms naked.
 - Added an exhibitionist option when your skirt flares up on the beach.
 - Added the option to buy coffee at the cafe. Doing so with a skirt on may lead to exhibitionist lewdity.
-- Added the option to practice your backstroke while swimming naked with high exhibitionism during swimming class.
+- Added the option to practise your backstroke while swimming naked with high exhibitionism during swimming class.
 - Added the option to buy milkshake "to go" at the cafe. You can drink them at the beach, at the school canteen, and can share them with Robin in their room.
 - Added an event to the landfill, found by searching while carrying a milkshake. Requires you not be exposed, and to have the chance of male NPCs set to at least 1%.
 
@@ -2670,7 +2670,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed a bug generating phantom tentacles if a tentacle stopped squeezing your breasts together while a second was fucking them.
 - The deviant options after howling in the forest will now increase deviancy and restore control as advertised.
 - Fixed some gender confusion during a blackmail scene.
-- Fixed a bug preventing the swimming skill increasing if practicing in the lake.
+- Fixed a bug preventing the swimming skill increasing if practising in the lake.
 - Students will no longer journey to the lake on rainy days, only to vanish once there.
 - Fixed an issue preventing Landry from being available despite having their black box.
 - Closed a herm portal opened by performing in a show at the brothel, and fixed associated issues.
