@@ -136,7 +136,7 @@ Thanks to Lollipop Scythe for the following fixes and improvements:
 - Added "Fluid forcibly milked" to the statistics overlay.
 - The game will now present a more appropriate message when failing to find part of a clothing set that's already worn by the PC. Thanks to Lollipop Scythe.
 - You can now ask Eden to teach you how to shoot in the evenings.
-- Robin will now always refuse a threesome on halloween should their confidence be high enough.
+- Robin will now always refuse a threesome on Halloween should their confidence be high enough.
 - Added adjusted close-up images that better reflect different positions during combat. Thanks to Airks.
 - Going to bed aroused may result in orgasm on waking up. Robin and Eden may take note if sharing a bed with the PC. Thanks to Lollipop Scythe.
 - Added platform heels, front-tie bikini, and micro pleated skirt. Code courtesy of Lollipop Scythe and art courtesy of KG.
@@ -1217,7 +1217,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - The brothel showers now have a chance to run out of hot water during busy hours. Thanks to Freeman.
 - Reduced the stress reduced by showering at the brothel.
 - Overdosing on growth pills will now make your breasts and genitals more sensitive. Thanks to Lollipop Scythe.
-- Whitney's halloween event will now have priority over regular events.
+- Whitney's Halloween event will now have priority over regular events.
 - Whitney will now strip you, rather than shove you in a locker, should you fail to fight them off during the collar strip event.
 - Whitney will now take your panties, rather than shove you in a locker, should you fail to fight them off when they try to impose or enforce the "no panties" rule.
 - Lowered the dominance required for Whitney to impose the "no panties" rule by one collar, to nine.
@@ -1290,9 +1290,9 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 
 - Fixed a number of issues resulting in the breaking on of named NPC genitals, pronouns, and events.
 - Fixed an error at the end of Avery dates that prevented love and rage from increasing as intended.
-- Fixed a bug causing Robin and Whitney to use their genitals to determine their gender during halloween activities rather than their actual gender.
+- Fixed a bug causing Robin and Whitney to use their genitals to determine their gender during Halloween activities rather than their actual gender.
 - Fixed a repetition of lines when being rescued from the dealers during the maths project.
-- Robin will now properly acquire a ghost costume for halloween even if you don't speak to them in their room in the days prior.
+- Robin will now properly acquire a ghost costume for Halloween even if you don't speak to them in their room in the days prior.
 - Fixed a bug that could cause the location of Eden's cabin to become known when visiting the forest shop.
 - Fixed a bug preventing NPC genders and genitals being selected if not chosen at the start.
 - Fixed a bug causing Kylar to appear without first meeting them in the school hallways.
@@ -1315,9 +1315,9 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 
 ## 0.2.5.0
 
-- From the 21st of October you can now take Robin shopping for halloween costumes.
-- Robin will ask to go trick-or-treating on halloween proper.
-- Whitney will also ask to go trick-or-treating on halloween. Their ideal halloween differs.
+- From the 21st of October you can now take Robin shopping for Halloween costumes.
+- Robin will ask to go trick-or-treating on Halloween proper.
+- Whitney will also ask to go trick-or-treating on Halloween. Their ideal Halloween differs.
 - Added a witch dress, witch hat, and vampire jacket to the forest shop. In stock from 21st October.
 - Added kindness fame to the cheat menu.
 - The moon now becomes full on the last day of each month, greatly increasing allure.
