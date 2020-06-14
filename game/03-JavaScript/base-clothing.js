@@ -23,6 +23,13 @@ function colourContainerClasses() {
 }
 window.colourContainerClasses = colourContainerClasses; // export function
 
+function limitedColourContainerClasses() {
+	var V = State.variables;
+	return 'hair-'  + (V.haircolour||'').replace(/ /g,'-') +
+		' ' + 'eye-'   + (V.eyecolour||'').replace(/ /g,'-')
+}
+window.limitedColourContainerClasses = limitedColourContainerClasses; // export function
+
 function debugColourContainerClasses(color) {
 	var V = State.variables;
 	return 'hair-'  + (color.hair||'').replace(/ /g,'-') +
