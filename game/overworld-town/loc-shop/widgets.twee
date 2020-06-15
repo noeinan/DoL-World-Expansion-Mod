@@ -145,22 +145,38 @@ Forth argument - item index*/
 			<span class="blue">Your wardrobe is full.</span>
 			<br>
 		<<elseif $daystate is "night">>
-			<<if $worn[$clothingShopSlot].cursed is 1>>
-				<span class="blue">You can't wear this item without first removing your
-				<<for _i to 0; _i lt _preventSlots.length; _i++>>
-					<<print $worn[_preventSlots[_i]].name>><<if _preventSlots.length gt 2 and _i lt _preventSlots.length - 2>>,
-					<<elseif _preventSlots.length gte 2 and _i is _preventSlots.length - 2>>
-						and
+			<<if $clothingShop.stolenClothes lte 20>>
+				<<if $worn[$clothingShopSlot].cursed is 1>>
+					<span class="blue">You can't wear this item without first removing your
+					<<for _i to 0; _i lt _preventSlots.length; _i++>>
+						<<print $worn[_preventSlots[_i]].name>><<if _preventSlots.length gt 2 and _i lt _preventSlots.length - 2>>,
+						<<elseif _preventSlots.length gte 2 and _i is _preventSlots.length - 2>>
+							and
+						<</if>>
+					<</for>>
+					.</span>
+					<br>
+				<<else>>
+					<<link [[Steal and wear|$passage]]>>
+						<<shopbuy $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>>
+						<<set $clothingShop.stolenClothes++>>
+						<<set $clothingShop.totalStolenClothes++>>
+					<</link>><<crime>>
+					<br>
+				<</if>>
+				<<link [[Steal and take home|$passage]]>>
+					<<shopbuy $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup _cost / 100>>
+					<<set $clothingShop.stolenClothes++>>
+					<<set $clothingShop.totalStolenClothes++>>
+					<<if $shopDefaults.disableReturn is false>>
+						<<unset $clothes_choice>>
 					<</if>>
-				<</for>>
-				.</span>
+				<</link>><<crime>>
 				<br>
 			<<else>>
-				<<link [[Steal and wear|$passage]]>><<shopbuy $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
+				<span class="red">You can't carry any more clothes with you.</span> You should take them to your wardrobe.
 				<br>
 			<</if>>
-			<<link [[Steal and send home|$passage]]>><<shopbuy $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup _cost / 100>><<unset $clothes_choice>><</link>><<crime>>
-			<br>
 		<<elseif $money gte _cost>>
 			<<if _cursedPrevent is true>>
 				<span class="blue">You can't wear this item without first removing your
