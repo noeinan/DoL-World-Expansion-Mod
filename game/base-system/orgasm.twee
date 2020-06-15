@@ -159,6 +159,7 @@
 			<span class="pink">You are overcome by sensation and climax like a girl.</span><<set $femaleclimax to 1>>
 			<<semenvolume -1>>
 		<<else>>
+			<<set $penissemen += 1>>
 			<<if $parasite.penis.name>>
 			You are overcome by sensation. You ejaculate into the parasite latched onto your penis.
 			<<elseif $penisuse is "othervagina">>
@@ -478,9 +479,12 @@
 
 <<set _exponential to Math.pow(0.99996,_totalArousal)>>
 <<if $vaginaexist is 1>>
-	<<set $vaginaWetness to Math.clamp((75 - Math.floor(_exponential * 75)) + $vaginagoo + $vaginasemen + Math.floor($vaginalskill / 40) + $combatWetBoost, 0, 100)>>
+	<<set $vaginaWetness to Math.clamp((75 - Math.floor(_exponential * 75)) + ($vaginagoo * 6) + ($vaginasemen * 6) + ($vaginaoutsidegoo * 6) + ($vaginaoutsidesemen * 6) + $combatWetBoost, 0, 120)>>
 <</if>>
-<<set $anusWetness to Math.clamp(60 - (Math.floor(_exponential * 60)) + $anusgoo + $anussemen + Math.floor($analskill / 40) + $combatWetBoost, 0, 100)>>
+<<if $penisexist is 1>>
+	<<set $penisWetness to Math.clamp(($penisgoo * 12) + ($penissemen * 12), 0, 120)>>
+<</if>>
+<<set $anusWetness to Math.clamp(($anusgoo * 6) + ($anussemen * 6) + ($bottomgoo * 6) + ($bottomsemen * 6), 0, 120)>>
 <<if $combat is 1>>
 	<<combatWetnessCalculate>>
 <</if>>
@@ -489,6 +493,7 @@
 <<widget "combatWetnessCalculate">><<nobr>>
 <<set $vaginalPain to 0>>
 <<set $analPain to 0>>
+<<set $penisPain to 0>>
 <<if $demon lt 6 and $gamemode isnot "soft">>
 	<<if $gamemode is "hard">>
 		<<set _diff to 2>>
@@ -502,6 +507,14 @@
 			<<set _base to Math.floor(6 * Math.pow(0.5,$vaginaWetness/25))>>
 		<</if>>
 		<<set $vaginalPain to _base * _diff>>
+	<</if>>
+	<<if $penisexist is 1>>
+		<<if $consensual is 1>>
+			<<set _base to Math.floor(3 * Math.pow(0.4,$penisWetness/8))>>
+		<<else>>
+			<<set _base to Math.floor(6 * Math.pow(0.5,$penisWetness/25))>>
+		<</if>>
+		<<set $penisPain to _base * _diff>>
 	<</if>>
 	<<if $consensual is 1>>
 		<<set _base to Math.floor(3 * Math.pow(0.4,$anusWetness/8))>>
