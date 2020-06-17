@@ -572,7 +572,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Fixed a large number of bugs in the clothing system.
 - Fixed a problem found when Eden ejaculations.
 - Fixed a couple of bugs that prevented clothing sets from working as intended.
-- Fixed a bug that caused problems with stripping/toweling with discard enabled.
+- Fixed a bug that caused problems with stripping/towelling with discard enabled.
 - Fixed a bug that prevented broken outfit pieces from discarding properly.
 - Fixed a bug that allowed "cursed" clothing like collars to be removed when not intended.
 - Fixed a bug that caused the PC to become naked when equipping your sleeping set should it be missing or already wearing part of it.
@@ -2664,7 +2664,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 
 - Slime and semen will now wash off in the middle of the lake.
 - Fixed an issue causing events to trigger back-to-back at the lake.
-- Fixed an issue with text refering to Robin as male regardless of their actual gender.
+- Fixed an issue with text referring to Robin as male regardless of their actual gender.
 - Fixed a bug causing cuddling Robin to increase rather than decrease stress and trauma.
 - Fixed a bug preventing Robin from leaving for school or work while being cuddled.
 - Fixed a bug generating phantom tentacles if a tentacle stopped squeezing your breasts together while a second was fucking them.
@@ -2751,7 +2751,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 ## 0.1.17.0
 
 - Added two events to Science class.
-- Being the black wolf's prisoner now runs the risk of developing stockholm syndrome.
+- Being the black wolf's prisoner now runs the risk of developing Stockholm syndrome.
 - Expanded the wolf cave. The chance of specific events triggering is determined by how you interact with the pack.
 - If they trust you enough, they'll let you join in their hunts.
 
@@ -2783,7 +2783,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed the bugs causing consensual encounters with Whitney to keep going after successfully asking them to stop.
 - Fixed a bug rendering you unable to use your hands in the maths class gangbang.
 - Fixed a bug causing the pain bar to overflow while drugged with an aphrodisiac.
-- Fixed a bug preventing you from returning to Eden's cabin despite having stockholm syndrome.
+- Fixed a bug preventing you from returning to Eden's cabin despite having Stockholm syndrome.
 
 ## 0.1.16.0
 
@@ -2797,7 +2797,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Dresses and bikinis now have a more appropriate sex sprite, art courtesy of Ulithium_Dragon.
 - Added a colour key to the characteristics, traits etc. pages.
 - An NPC will now attempt to blackmail the PC if their sexual fame gets too high.
-- If the PC fails to fulfill their demands or escapes the situation, they can fulfill the demands for pay instead.
+- If the PC fails to fulfil their demands or escapes the situation, they can fulfil the demands for pay instead.
 - Added a new option when blackmailing the headteacher, only available in some circumstances.
 - PCs famous mainly for consensual sex with humans can take control during the announcement board scene.
 - Added a map to the text only version.
@@ -2894,7 +2894,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Added more potential reactions to NPCs discovering the PC is crossdressing. They may now have something to say about it too.
 - Added skirts to the sex sprite, art courtesy of Ulithium_Dragon.
 - Reworded male characters losing their virginity to sound less brutal.
-- You can now be caught masturbating during english, history and swimming lessons.
+- You can now be caught masturbating during English, history and swimming lessons.
 - Added breast reduction and enlargement procedures to the hospital. They're expensive.
 - Named NPCs should now remember your sex once they've seen your genitals.
 
@@ -2958,7 +2958,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed a bug that could prevent your bottom clothes from being stripped properly.
 - Screaming while being molested on the bus should now attract help.
 - Corrected some wonky text during tentacle encounters.
-- Fixed a bug preventing normal interaction with Robin on saturdays.
+- Fixed a bug preventing normal interaction with Robin on Saturdays.
 - Fixed a bug preventing you from pulling down your tights.
 - Fixed a bug preventing you from fixing your shorts if you were wearing a shirt.
 
