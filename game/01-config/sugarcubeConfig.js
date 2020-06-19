@@ -104,21 +104,21 @@ function widgetHandler(widgetName, contents) {
 	const priorFrame = vStack[vStack.length - 2]
 	const magicals = allMagical();
 	if (magicals.length > 0) {
-	  trace(`saving ${d(magicals)} to ${d(priorFrame)}`)
+		trace(`saving ${d(magicals)} to ${d(priorFrame)}`)
 	}
 	if (priorFrame !== undefined) {
-	  magicals.forEach(key => {
-		priorFrame[key] = State.variables[key]
-		delete State.variables[key]
-	  })
+		magicals.forEach(key => {
+			priorFrame[key] = State.variables[key]
+			delete State.variables[key]
+		})
 	} else if (magicals.length > 0) {
-	  console.warn(`Found variables: ${JSON.stringify(magicals)} declared in main`)
+		console.warn(`Found variables: ${JSON.stringify(magicals)} declared in main`)
 	}
 	// End custom code
 
 	// Cache the existing value of the `$args` variable, if necessary.
 	if (State.variables.hasOwnProperty('args')) {
-	  argsCache = State.variables.args;
+		argsCache = State.variables.args;
 	}
 	State.variables.args = [...this.args];
 	State.variables.args.raw = this.args.raw;
@@ -147,7 +147,7 @@ function widgetHandler(widgetName, contents) {
 	  }
 	}
 	catch (ex) {
-	  console.error(`Error executing widget ${widgetName}`, ex); return this.error(`cannot execute widget: ${ex.message}`);
+		console.error(`Error executing widget ${widgetName}`, ex); return this.error(`cannot execute widget: ${ex.message}`);
 	}
 	finally {
 	  // Custom code
@@ -158,8 +158,8 @@ function widgetHandler(widgetName, contents) {
 	  if (magicals.length > 0) {
 		trace(`cleaning up ${d(magicals)}`)
 		magicals.forEach(key => {
-		  // don't pollute the global namespace
-		  delete State.variables[key]
+		// don't pollute the global namespace
+		delete State.variables[key]
 		})
 	  }
 	  if (priorFrame !== undefined && Object.keys(priorFrame).length > 0) {
