@@ -143,7 +143,7 @@ function generateNumbers(ev){
 			return; // simply skip this render
 	}
 
- 	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
+	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
 	currentLinks = $(ev.content)
 		.find(".link-internal")
 		.not(".no-numberify *, .no-numberify");
