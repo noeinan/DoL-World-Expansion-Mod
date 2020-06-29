@@ -1,5 +1,185 @@
 # CHANGELOG
 
+## 0.2.14.3
+
+- NPCs are now more likely to go for penetration when pressing their cocks against your rear.
+- The mirror now mentions that hiding wolf TF hair has no impact on trauma. Thanks to Lollipop Scythe.
+- Descriptions of the PC's underwear in the sidebar should now read better. Thanks to Chingonerio.
+- Added crossdresser progression to the Extra Stats tab of the statistics overlay.
+- Added the transformation section to the Extra Stats tab of the statistics overlay.
+
+### Bug Fixes
+
+- Fixed a gamebreaking bug found by asking Darryl for work.
+- Adjusted the futa portal fix to prevent a number of issues.
+- Fixed a bug found when attempting to envelop a penis with your ass if you weren't an anal virgin. Thanks to mncskj.
+- Remy will now actually remove the PC's muzzle if it says as much after passing out on their farm.
+- Fixed a couple of bugs that allowed NPCs to phase through chastity belts.
+- Fixed a bug that caused caused anal shields to prevent anal even after their removal.
+- Fixed a number of issues involving the mirror's hirsutism toggle. Thanks to Lollipop Scythe.
+- Tentacles about to envelop the PC's penis will no longer print the text and apply stat changes twice. Thanks to Chingonerio.
+- Fixed a bug that allowed multiple butt parasites to attach to the PC at once in the old sewers.
+- Fixed an image error found when giving footjobs with the platform heels.
+- Thanks to Chingonerio for a number of minor fixes.
+
+## 0.2.14.2
+
+- Vagina descriptions can now take arousal into account. Thanks to TreeFrogSoup.
+
+### Balance Changes
+
+- Adjusted insertions so that lubrication is no longer required for even the largest sizes, though is still helpful.
+- Increased the likelihood of the "shady fan" street event triggering.
+
+### Bug Fixes
+
+- Futa bug portals should now be closed for good. Hopefully.
+- Fixed an error that could break encounters. Thanks to Lollipop Scythe.
+- Fixed an error that could cause disembodied genitals, asses, breasts, and other things to completely replace each other, and even whole NPCs. Thanks to Lollipop Scythe.
+- You will no longer be pinched by a crap out at sea.
+- Fixed an error that tore the PC's anus from reality.
+- Fixed an error found when being ass fucked by a beast or monster boy/girl.
+- Fixed several errors that prevented images from displaying. Thanks to Lollipop Scythe.
+- Fixed a bug that could prevent spiritual transformation attributes from displaying. Thanks to Lollipop Scythe.
+- Fixed an error that could appear on the Characteristics overlay, and when progressing through the angel transformation. Thanks to Lollipop Scythe.
+- Thrusting against an NPC's pussy will now take lubrication into account.
+- Fixed a duplicated set of options that could appear during dock work.
+- Fixed a gamebreaking error that could appear on new saves.
+- The museum will now properly recognise the copper compass on old saves.
+- Your character will now only find the farmer in the pub suspicious if they have the full cow transformation.
+- Disabling the hirsute wolf transformation in settings should now work again.
+- Fixed an image error caused by clit parasites.
+- Fixed an image error found when in the doggy position with the angel transformation.
+
+## 0.2.14.1
+
+- Fixed a graphical error with shorts in the missionary position.
+- Charlie will no longer appear as a random rapist. Thanks to Lollipop Scythe.
+- A pulled up top will no longer appear on the doggy sprite when no appropriate clothing is worn.
+- Fixed a bug that prevented the "shots fired" stat from increasing.
+- Fixed an error that appeared while masturbating.
+- Fixed some missing line breaks. Thanks to Lollipop Scythe.
+- Demonic purity-induced stress gain now occurs until you lose it completely. Thanks to Lollipop Scythe.
+
+## 0.2.14.0
+
+- Added ways to cross between the following areas while exposed during the day: Residential alleyways to the commercial district, commercial alleyways to the park, and the park to the industrial district. Requires level 3 exhibitionist actions unlocked if in underwear or similar, and level 5 if naked or similar. The naked versions of the scenes can be more involved.
+- One of the above events includes whipped cream "clothes", with art courtesy of Mochi.
+- Added an event to the school playground, triggered if another student films you crossing Oxford street naked during one of the above events.
+- Expanded the wetness system developed in collaboration with Lollipop Scythe.
+- The lubrication of the PC's pussy, penis and ass are now taken into account when NPCs, beasts and tentacles try to penetrate or envelop. Slime and semen will increase lubrication.
+- The above also applies when the PC tries to penetrate or envelop. A lack of lubrication can be overcome with sufficient skill.
+- Aroused NPC penises, vaginas and tentacles will sometimes smear or squirt lubricating fluid as they try to penetrate or envelop.
+- Larger penises and tentacles will now struggle to penetrate without lubrication. Larger tentacles will have an easier time enveloping the PC's penis.
+- The PC's vagina will become wetter over time while they're aroused. Thanks to Lollipop Scythe.
+- NPCs may now carry and use bottles of lube during encounters.
+- Added ass and penis lubrication to the Characteristics overlay.
+- Added the police force's opinion of the PC to the Social overlay, which gives a general idea of the PC's criminal history stat.
+- Added a simple event to the town's streets during the day.
+- Adjusted the horse x-ray images.
+- Added high heels to the clothing shop, including kitten heels, wedge sandals, court heels, heeled boots, and stripper heels. Code and art courtesy of Poonta.
+- Heels make kicking more effective during encounters, and increase the tips earned dancing, but are tiring, hobble journeys through the forest, and can result in tripping if the PC is forced to move quickly without adequate feet skill. Thanks to Poonta.
+- Added the "Exercise in heels" option to the park, and "Take a walk in heels" option to the beach, should you have the appropriate footwear. Thanks to Poonta.
+- Added high heel lessons to the dance studio, where the PC can improve their feet skill. Thanks to Poonta.
+- Added an event to the town's streets that can trigger while wearing heels. Thanks to Poonta.
+- Added a couple of events to dancing that can trigger while wearing heels. Thanks to Poonta.
+- Cleaned up the forest travel code. Thanks to Poonta.
+- Added an antique out at sea.
+- The horses and centaur at Remy's farm can now have pussies, should settings allow it.
+- Split the mirror into multiple sections. Thanks to Lollipop Scythe.
+- Improved tattoo system code. Thanks to Lollipop Scythe.
+- Added a transformation section to the mirror, which lets you hide different transformation parts. Hiding parts adds a small daily trauma increase. Thanks to Lollipop Scythe.
+- Added several new body-writing options to the mirror with their own requirements. Thanks to Lollipop Scythe.
+- Leaving the clothing shop with stolen clothes during the day can lead them getting banned for several days. Thanks to Lollipop Scythe and PurityGuy.
+- Entering the Clothing shop in at night has a chance for the player to get caught when leaving. Can lead to an extended ban. Thanks to Lollipop Scythe and PurityGuy.
+- Added demon flaunting images. Art courtesy of PurityGuy and coded by Lollipop Scythe.
+- Transformation feats are now earned when the PC transforms, rather that some time after. Thanks to Lollipop Scythe.
+- Improved the code during the chef party sequence. Thanks to Chingonerio.
+- Adjusted the criminal history stat. Thanks to Lollipop Scythe.
+- Added the dull versions of VrelCoins to distinguish between feats earned in the current save, and those not. Thanks to Lollipop Scythe and PurityGuy.
+- Added saveVersions stat to the Statistics overlay. Thanks to Lollipop Scythe.
+- Updated the character viewer. Thanks to Lollipop Scythe.
+- Adjusted the cat sprite for the doggy position. Thanks to Mochi.
+- Adjusted the hair images for the sidebar sprite. Thanks to Mochi.
+- Added location art for the sea, moor, and lake ruins, including a variant for the lake ruins that appears during a blood moon. Art courtesy of Mochi.
+- Adjusted flavour text for losing vaginal and anal virginities to various sized cocks.
+- Added chest wraps to the clothing shop, which can bind and conceal the PC's breasts. Art, including encounter images, courtesy of Rise Goochikawa.
+- The eyes of the black wolf now glow while in monster girl/boy form. Art courtesy of PurityGuy.
+- Added horsebit loafers, cordovan loafers, chinos and a peacoat to the clothing shop. Art and code courtesy of gay skele.
+- One of Remy's goons may recognise you around town should you have the cow transformation, and try to bring you back to the farm. Beware of generous farmers. Written in collaboration with Harcher.
+- Added new body-writing lines. Thanks to Poonta.
+- NPCs are now more intelligent when selecting where on the PC to write. Thanks to Poonta.
+- Improved the encounter code for groups of beasts. Thanks to Lollipop Scythe.
+- Thanks to larsrand for further code improvements.
+- Added new Feats: A Lewd Adventure, Swift, A Thunderous Response, Sour Dealing.
+
+### Balance Changes
+
+- Vaginal wetness now takes slime and semen on the labia into account.
+- Increased the effect of foreign slime and semen when determining overall wetness.
+- Vaginal wetness no longer takes vaginal skill into account.
+- Horse/centaur penises will impact arousal, stress and trauma less while trying to fuck their way through a chastity belt.
+- Beasts are now more focused on trying to breed with the PC.
+- Increased the likelihood of rebellious events triggering at the orphanage.
+- The frustration NPCs experience when denied a penetration is now dependent on the size of the penis involved, with larger penises having a bigger impact. The PC's stress gain and trauma reduction is also impacted.
+- Male PCs now get semen on their penis when they cum, assuming they produce anything.
+- Losing your virginity to small cocks is now as traumatic as losing it to regular cocks, though still less painful and stressful. Losing your virginity to larger cocks now causes more pain.
+- More clothing items are ruined when taken to the farm. Thanks to Lollipop Scythe.
+- The cow bell is now only equipped at Remy's farm during the intro sequence if the PC already has the full cow transformation, or if they have both the full cow transformation and high obedience. Thanks to Lollipop Scythe.
+- Blood moons now cause severe hallucinations. Thanks to Lollipop Scythe.
+- Reduced the money earnable from the tailor. Thanks to Lollipop Scythe.
+- Added a steal limit of 20 clothing items, reset on visiting a wardrobe. Thanks to Lollipop Scythe.
+
+### Bug Fixes
+
+- Fixed a bug that prevented NPCs from writing on the PC's right thigh.
+- Horse penises are now appropriately devastating when penetrating.
+- Fixed a pronoun issue with the NPC who carries lewd clothing during a street event.
+- Fixed a pronoun issue when Mason covers their nudity at the pool.
+- Fixed an NPC description issue when convincing someone to threaten your ass instead of your pussy.
+- Fixed a pronoun issue found when defending Kylar from bullies.
+- Imminent penetration by horse/centaur penises will now impact arousal, stress and trauma as intended.
+- Fixed a bug that prevented the result of breast milkings at Remy's farm from being properly tracked.
+- Improved encounters' ability to keep track of NPC locations relative to the PC, resulting in fewer physical contortions. Thanks to Lollipop Scythe.
+- Fixed an issue involving the "Try on" option for outfits that didn't have a colour choice.
+- Fixed a bug during the shady fan event.
+- Fixed a bug that made male PCs appear female when clothing was wet. Thanks to Lollipop Scythe.
+- Fixed a bug that hid parasites when Clothing was wet. Thanks to Lollipop Scythe.
+- Fixed an issue with the removing the demon transformation. Thanks to Lollipop Scythe.
+- Added missing combat controls highlighting. Thanks to Lollipop Scythe.
+- Fixed a bug that prevented masks from protecting right cheeks from being written on. Thanks to Chingonerio.
+- Fixed a bug that caused writing on the right shoulder to show through clothes. Thanks to Chingonerio.
+- An anal shield is no longer required for slime to show up on the PC's anus after a slime-induced sleepwalking episode. Thanks to Chingonerio.
+- Slime entering the PC's right ear will no longer be described as entering the left ear. Thanks to Chingonerio.
+- The PC will no longer mention Landry during the compound interrogation sequence if they've never met them. Thanks to Chingonerio.
+- Fixed a bug that caused an error at the tailor with max hair and fringe length. Thanks to Lollipop Scythe.
+- Fixed a bug that caused clothing repairs to fail. Thanks to Lollipop Scythe.
+- Fixed a bug found during the shady fan event. Thanks to Lollipop Scythe.
+- The cow transformation will now increase allure. Thanks to Chingonerio.
+- The cow transformation will now increase attractiveness.
+- The cat transformation will now be listed as a factor influencing allure and attractiveness at the mirror.
+- Fixed an issue with the close up art of a penis rubbing against the PC's bottom.
+- Fixed a bug that prevented semen from spurting over the PC's ass when appropriate. Thanks to SirSkeleto.
+- Jerking off someone at a gloryhole with your right hand will no longer get your left hand dirty instead. Thanks to SirSkeleto.
+- Fixed a bug that prevented successful oral from gaining the the horses' favour.
+- The option to look beneath a horse or centaur will no longer be available with beasts disabled.
+- Fixed a bug that hid the "Leave" button after approaching friendly horses or centaur at Remy's farm.
+- The dark-haired character that appears during the temple punishment sequence will no longer be described as a boy regardless of their actual gender at the conclusion.
+- Fixed a bug involving chastity belt integrity that could appear during some events. Thanks to Lollipop Scythe.
+- Fixed a bug that made the cow bell available from the beginning. Thanks to Lollipop Scythe.
+- The babydoll lingerie should now be transparent. Thanks to PurityGuy and Lollipop Scythe.
+- Fixed a bug that allowed interacting with genitals during masturbation despite wearing a chastity device. Thanks to Lollipop Scythe.
+- The location image will no longer briefly shift to the town when escaping a dog in the park.
+- Fixed a bug that prevented bikini bottoms from displaying during encounters.
+- Under tops should now display on the doggy sprite.
+- The PC's right hand should now be able to interact with female NPC's genitals. Thanks to Chingonerio.
+- Eden will no longer harass the PC in the Cabin clearing while they're meant to be asleep. Thanks to Chingonerio.
+- Leighton will no longer break free of the pillory to rescue you. Thanks to Chingonerio.
+- Whitney's events will no longer trigger while they're in the pillory. Thanks to Chingonerio.
+- Fixed numerous points where text would not make sense should the PC have a single bound arm and/or bound legs. Thanks to Chingonerio.
+- Thanks to Chingonerio for numerous typo and minor fixes.
+- Thanks to klorpa for a large number of minor fixes.
+
 ## 0.2.13.4
 
 - Added Settings and Attitudes to the cell at Remy's farm.
@@ -27,6 +207,7 @@
 - Fixed a visual bug with the sweater found when the PC covers themselves.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Minor fix for saveId that effected the highlighting, this can be corrected by loading the save and re-saving.
 - Fixed a bug with settings export.
 - Eden and the black wolf will now stop hunting you should you return to town with Mason.
@@ -55,6 +236,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Thanks to CasaBlanc for typo fixes.
 
 Thanks to Lollipop Scythe for the following fixes and improvements:
+
 - The most deviant characters may now goad the mirror tentacles into greater lewdity in the small hours during a blood moon, creating a portal to the tentacle world.
 - Fixed a compatibility issue with overlays.
 - Adjusted the penis Rest action.
@@ -76,6 +258,7 @@ Thanks to Lollipop Scythe for the following fixes and improvements:
 - Sirris will no longer be referred to with a student's pronouns when examining the PC with a speculum.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that prevented save names from displaying.
 - Fixed a bug that caused performance to worsen over time.
 - Fixed an error at the tailor.
@@ -103,6 +286,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Fixed a bunch of typos.
 
 Thanks to Lollipop Scythe for the following fixes and improvements:
+
 - Added a "Get dressed" option when walking home with Mason.
 - Fixed a number of issues during encounters with multiple beasts.
 - Fixed an issue causing saving/refreshing to not work properly on some passages.
@@ -194,6 +378,7 @@ Thanks to Lollipop Scythe for the following fixes and improvements:
 - Thanks to CasaBlanc for typo fixes.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Included a new clothing sanity checker to help debug in the future.
 - Fixed a bug that could cause term time to start incorrectly.
 - Fixed a minor clothing error.
@@ -237,6 +422,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Fixed a bug that prevented NPCs from properly sucking your nipples.
 
 Thanks to Hexogen for the following fixes:
+
 - Fixed a bug that left the PC's attitude towards consensual sex blank on old saves.
 - Fixed a bug that prevented secondary custom colours from setting properly.
 - Fixed a bug that prevented cat images from appearing in the missionary position.
@@ -249,6 +435,7 @@ Thanks to Hexogen for the following fixes:
 - Other minor fixes.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that prevented whacking pens with your right hand from working properly.
 - Fixed an issue that would have caused problems if new clothing shops were added in the future.
 - Trying on an outfit with the same primary and accessory colours will no longer break the outfit.
@@ -265,6 +452,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Thanks to Lollipop Scythe and 00c356 for investigating an issue that prevents old Android devices from running the game.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed an error found when accosted by a wolf in the temple garden.
 - Fixed a problem with highlight colours during combat.
 - Fixed a minor save system UI issue.
@@ -338,6 +526,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Added the Mason's Secret feat.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - Improved the code responsible for actions during encounters with humans and beasts.
 - Actions are now selected via a drop down list, rather than a radiobutton display.
 - List box border colour changes depending on the action.
@@ -403,6 +592,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Fixed a bug that caused a broken image when the PC's skirt was pulled down to their ankles while in the missionary position.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that could break beast sprites.
 - Fixed a typo found when audiences comment on the PC.
 - Fixed chastity code during an event.
@@ -415,6 +605,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Made breast size descriptions and images more consistent.
 
 Thanks to araven for the following fixes:
+
 - The flavour text found when swimming while covered in copious amounts of lewd fluid will now show.
 - The flavour text found when playing darts in the orphanage with high hand skill will now show.
 - Refusing a solicitation triggered by prostitution body-writing will now take a more submissive form should the PC's submissiveness be high enough.
@@ -432,6 +623,7 @@ Thanks to araven for the following fixes:
 - Removed a duplicated line of text found when complimenting Avery before a date.
 
 Thanks to Lollipop Scythe for the following:
+
 - Added randomised clothing as a feat boost.
 - Fixed a bug found in the underwater ruins.
 - Fixed a bug found when trying to overwrite outfit sets.
@@ -461,6 +653,7 @@ Thanks to Lollipop Scythe for the following:
 - Body-writing will no longer be concealed by the PC's blush.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that caused the ear slime to forbid clothing without being present.
 - Fixed a bug that prevented clothing shops from working.
 - Fixed a bug that caused the pain icon on thin screens to be red when it shouldn't
@@ -501,6 +694,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Added the "Neck Deep", "Ballroom Show-off", "Under the Table" and "Pub Crawl Victors" feats.
 
 Thanks to bsin for the following additions and improvements:
+
 - NPCs may now take advantage of NPCs locked in the pillory by milking them of lewd fluids, or actual milk.
 - Added a number of smaller events that can happen to NPCs trapped in the pillory.
 - A stressed, traumatised PC now has more ways to torment NPCs trapped in the pillory.
@@ -508,6 +702,7 @@ Thanks to bsin for the following additions and improvements:
 - Playing arcade games with your arms bound is now hard.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - Expanded the clothing system to enable coats and other "over" clothing in the future, and to allow attachments between different clothing slots.
 - Adjustments and additions to the skin colour system to enable tan lines.
 - Reworked the attitudes page.
@@ -568,6 +763,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Fixed a game-breaking error that was caused by NPCs trying to write a specific line.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that prevented excited text from displaying when outside and exposed.
 - Fixed a large number of bugs in the clothing system.
 - Fixed a problem found when Eden ejaculations.
@@ -581,6 +777,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Improved the accuracy of broken clothing checks.
 
 Thanks for bsin for the following fixes:
+
 - Whitney and Leighton should no longer adopt the gender of another NPC when entering the pillory.
 - Whitney no longer slips their cuffs to drag you places and bully you while being hauled away by police.
 - Leighton no longer slips their cuffs to go sit in their office and pretend nothing is wrong.
@@ -654,6 +851,7 @@ Thanks for bsin for the following fixes:
 - Fixed a bug that caused angel and demon wings to materialise and cover the PC's nudity when they aren't meant to.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug that broke the pain and arousal stats.
 - Fixed a problem with the witch skirt.
 - Fixed an error in the generalRuined widget.
@@ -666,6 +864,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - The "Billboard" feat is now attainable.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a minor error relating to the traits menu.
 - Fixed a variable conflict that caused an infinite loops when buying five items in the shop.
 - Fixed several issues found when sending clothes to the wardrobe.
@@ -687,6 +886,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Fixed an error that could appear when the PC's skin was
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a couple of issues found when NPCs steal clothes from the PC.
 - Fixed an issue with legwear.
 - Fixed a bug that caused errors in shops.
@@ -736,6 +936,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Added seven feats: Top of the Food Chain, A Living Canvas, Billboard, Science Fair Winner, Maths Competition Winner, Illicit Science, and Mouth Sealed Shut.
 
 Thanks to pettan for reworking how gender appearance is determined:
+
 - Each visible garment and accessory now contributes to your overall appearance, rather than only the one the game deems the most "important". Bulges caused by penises and breasts also contribute, depending on size and coverage. Aroused big penises are hard to conceal. Hair level and physique contribute a little.
 - Visible genitals still have a big impact on appearance.
 - Added a gender section to the mirror, which breaks down the factors influencing your appearance.
@@ -743,6 +944,7 @@ Thanks to pettan for reworking how gender appearance is determined:
 - Improved gyaru skin tones, particularly around a middling tan.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - Added contrast and sepia options to custom clothing colours.
 - Added a "Reset selected to default" option to the custom colours UI.
 - Added the ability to reset feats on the start passage. Can be reverted by loading a save.
@@ -757,6 +959,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Reworked clothing code under the hood to prepare for future additions.
 
 Thanks to bsin for the following additions and improvements:
+
 - Unpopular, well behaved PCs now have a chance of being pranked in the history class dress up event. There are multiple ways of handling the situation.
 - Winter can now notice ears and horns in addition to collars.
 - Skulduggerous PCs may now have the opportunity to turn the tables on book-dropping bullies.
@@ -853,6 +1056,7 @@ Thanks to bsin for the following additions and improvements:
 - Added thirteen new clothing icons. Thanks to TaiwanSmurf.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - Added a "Feats" system, which tracks accomplishments between saves and awards VrelCoins. Can be viewed from the Statistics/Feats tab.
 - VrelCoins can be used at the start of a new game to improve the PC's initial situation.
 - Feats are only awarded on saves that have not used cheats. Soft mode and reducing the allure slider below the default value will prevent feats from unlocking, and permanently prevent some.
@@ -900,6 +1104,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Thanks to Klorpa for numerous minor fixes.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed an issue with anal pregnancy.
 - Fixed an issue with deleting items at the wardrobe.
 - Fixed an issue at the temple that could prevent male characters getting the chastity device they want.
@@ -990,6 +1195,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Thanks to Noot for condensing and improving parasite sidebar messages, and for improvements to parasite code.
 
 Thanks to gay skele for the following improvements:
+
 - You can now prove your lack of underwear when a stranger asks to buy them.
 - Added a new Whitney event to the school hallways. Requires parasites be enabled.
 - NPCs will now acknowledge the PC's penis size during several more events, including when locked in the pillory on Cliff Street, during swimming class, and when entering the changing rooms naked.
@@ -1000,6 +1206,7 @@ Thanks to gay skele for the following improvements:
 - Added an event to the landfill, found by searching while carrying a milkshake. Requires you not be exposed, and to have the chance of male NPCs set to at least 1%.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - Added a "Show Caption Text" checkbox to SAVE/OPTIONS. When unchecked, an alternative, svelte version of your stats will be shown in the sidebar.
 - You can now use numbers when naming outfits at the wardrobe.
 - Added a new option to mind-control slime street encounters for submissive characters.
@@ -1383,6 +1590,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Fixed a bug preventing the clothes thief from stealing your clothing on the beach when intended.
 
 Thanks to bsin for the following fixes:
+
 - Fixed an error message found when getting detention.
 - Fixed an error message found in the police skulduggery event.
 - Fixed a bug preventing named NPCs from showing up at the pillory when intended.
@@ -1391,6 +1599,7 @@ Thanks to bsin for the following fixes:
 - The Faraday cage will no longer be referred to as a "Tesla cage".
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed an error in the tailor shop.
 - Male characters will no longer start with plain panties as part of their school set.
 - Added an option to disable the SVG map. Check if town map is not visible.
@@ -1440,6 +1649,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Added Gwylan to NPC settings.
 
 Thanks to Lollipop Scythe for the following additions and improvements:
+
 - You can now optionally save specific colours when making a new clothing set.
 - Revamped the settings page to include tabs. Tabs on the start passage can be opened with number keys.
 - Added the option to re-calculate named NPC gender, genitals, and penis size.
@@ -1458,6 +1668,7 @@ Thanks to Lollipop Scythe for the following additions and improvements:
 - Added the option to highlight clickable parts of the town map, and the option to move the town map above the travel links.
 
 Thanks to Bsin for the following additions and improvements:
+
 - The PC is no longer the only one who can find themselves punished via pillory.
 - Pilloried NPCs will suffer abuse from townsfolk, especially at night.
 - The PC can abuse pilloried NPCs themselves if stressed.
@@ -1514,6 +1725,7 @@ Thanks to Bsin for the following additions and improvements:
 - Special thanks to Talrea for help testing.
 
 Thanks to Lollipop Scythe for the following fixes:
+
 - Fixed a bug preventing growth pills from working properly.
 - Fixed a bug preventing under tops from being discarded.
 - Fixed a compatibility issue for anal pregnancy on old saves.
@@ -1570,6 +1782,7 @@ Thanks to Lollipop Scythe for the following fixes:
 - Thanks to vultureangels for improving code related to the player character's sex.
 
 Thanks to bsin for the following additions:
+
 - Harper now notices if you're dripping with lewd fluids during a personal exam.
 - The trained medical audience will now notice if you're covered in lewd fluid during parasite removal.
 - Jordan now notices lewd fluids when checking your chastity belt.
@@ -1840,6 +2053,7 @@ Thanks to bsin for the following additions:
 ## 0.2.0.0 - Clothing overhaul
 
 Overhauled the clothing system. The main goal is to improve expandability, but it also has the following effects:
+
 - Removed automatic clothing replacements. Instead, you can store multiple versions of the same item.
 - You can store up to 40 items for each body category. Outfits take up both a top and bottom slot. Reaching this limit prevents you from buying more from the shop.
 - You can discard items you no longer want from the wardrobe.
@@ -1870,6 +2084,7 @@ Thanks to lollipop scythe for help adjusting sprites.
 Thanks to Shigure and anons for improved art for many existing garments, and for the following art:
 
 Clothes:
+
 - Ball gown
 - Kimono
 - Mini kimono
@@ -1893,6 +2108,7 @@ Clothes:
 - Large towel
 
 Underwear:
+
 - Leotard
 - Full body leotard
 - Skimpy leotard
@@ -1911,6 +2127,7 @@ Underwear:
 - Sports bra
 
 Accessories:
+
 - Bunny ears
 - Bunny collar
 - Nun's veil
@@ -2033,6 +2250,7 @@ Accessories:
 - Collecting enough different antiques for the museum will now prompt Winter to ask you for further assistance.
 
 Thanks to bsin for the following additions and improvements:
+
 - Defiant/submissive characters now react differently to catcalling.
 - Improved the street underwear selling event. High fame exhibitionist characters may be asked for lewd photos instead, and the NPC may have different demands by night. Also added more NPC commentary on your state/fame/appearance.
 - Added an event to the town's streets where an exposed PC witnesses another NPC being attacked. Intervention is risky.
@@ -2215,6 +2433,7 @@ Thanks to bsin for the following additions and improvements:
 - Fixed a bug causing your "naked" to be pulled down if playing volleyball in clothes considered underwear.
 
 Thanks to boj for fixing numerous typos, as well as other fixes including the following:
+
 - It will no longer rain inside the accessory shop.
 - You can no longer enter the accessory shop while exposed.
 - Corrected a visual error in two of the x-ray images.
@@ -2231,7 +2450,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Added an event to the town's streets involving tentacles. Written by Scrumpy.
 - Visiting the forest with Robin on dry but overcast days will result in a new scenario. Has an additional option if vore is enabled. Written by Scrumpy.
 - Added an event to the town's streets that becomes more dangerous if you're famous.
-- Added a short event to the town's streets written by TheShadowSlayer_ and coded by boj.
+- Added a short event to the town's streets written by TheShadowSlayer\_ and coded by boj.
 - Added fame to the cheat menu. Thanks to boj.
 - Added a stump to the rear school playground that you can sit on to reduce stress and fatigue, with a couple of events tied to it. Written in collaboration with DanHell.
 - Clothing images will now become transparent when wet. Thanks to Khan.
@@ -2681,7 +2900,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Added new options in Robin's bedroom for dealing with trauma and other troubles. Designed and written in collaboration with Jemini.
 - Added a lake to the forest. Teenagers like to hang out there if the weather is nice. And if they can muster the courage. Couples sometimes camp there at night. Designed and written in collaboration with Klain.
 - A science fair will now be held in the town hall. Your teacher will give you a few weeks warning. Time enough to make a project. Check the Social page for details.
--
+
 ### Balance Changes
 
 - Being upskirted or pantsed while playing volleyball will now lower your status.
@@ -3036,7 +3255,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed a bug that could reset your "Whored yourself" stat.
 - School grades no longer decay at the weekend.
 - Removed the excess decimal places from school skills on the characteristics page.
-- The progress bar now remains for school skills at A*.
+- The progress bar now remains for school skills at A\*.
 - Thigh length pink hair no longer stretches to the ground between your legs.
 - Fixed a gamebreaking bug that could trigger after delivering a note to the headteacher.
 - Disabling tentacles will now correctly prevent the tentacle encounter in the forest from occurring.
@@ -3303,6 +3522,7 @@ Thanks to boj for fixing numerous typos, as well as other fixes including the fo
 - Fixed a bug that caused vaginas to be exiled from reality if you stopped licking them.
 
 ## 0.1.1
+
 This small update fixes some bugs and makes a few improvements.
 
 - You can now spend the night in hospital instead of being thrown out onto the dangerous streets.
