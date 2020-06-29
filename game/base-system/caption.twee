@@ -70,7 +70,7 @@
 				It is <<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm
 				<br>
 			<<else>>
-				It is $hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am<</if>>
+				It is <<print ($hour is 0 ? "12" : $hour)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am<</if>>
 				<br>
 			<</if>>
 		<<else>>
@@ -273,8 +273,16 @@
 	<</if>>
 	<<drunk>><<drugged>><<hallucinogen>>
 	<br>
-	<<if $passage isnot "Start" and $passage isnot "Start2" and $sidebarStats isnot "Disabled">>
-		<<replace #mobileStats>><<mobileStats>><</replace>>
+	<<if $passage isnot "Start" and $passage isnot "Start2">>
+		<<if $sidebarTime is "top">>
+			<<append #mobileStats>><<mobileStatsTime>><</append>>
+		<</if>>
+		<<if $sidebarStats isnot "Disabled">>
+			<<append #mobileStats>><<mobileStats>><</append>>
+		<</if>>
+		<<if $sidebarTime is "bottom">>
+			<<append #mobileStats>><<mobileStatsTime>><</append>>
+		<</if>>
 	<</if>>
 
 	<<if $tipdisable is "f">>
@@ -667,9 +675,9 @@ Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.und
 	<img class="icon_ui" src="img/ui/icon_time.png">
 	<<if $timestyle is "ampm">>
 		<<if $hour gte 13>>
-		<<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm.
+			<<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm.
 		<<else>>
-		$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am.<</if>>
+			<<print ($hour is 0 ? "12" : $hour)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am.<</if>>
 		<</if>>
 	<<else>>
 	<<if $hour lt 10>>0<</if>>$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>>
