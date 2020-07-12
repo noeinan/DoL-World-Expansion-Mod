@@ -1354,7 +1354,7 @@
 		<<case pub>>
 		<img id="location" src="img/misc/pubday.png">
 		<<case forest>>
-		<img id="location" src="img/misc/forestday.png">
+		<img id="location" src="img/misc/forestday.gif">
 		<<case lake>>
 		<img id="location" src="img/misc/lakeday.gif">
 		<<case asylum>>
@@ -1449,9 +1449,17 @@
 		<<case pub>>
 		<img id="location" src="img/misc/pubnight.png">
 		<<case forest>>
-		<img id="location" src="img/misc/forestnight.png">
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+				<img id="location" src="img/misc/forestbloodmoon.gif">
+			<<else>>
+				<img id="location" src="img/misc/forestnight.png">
+			<</if>>
 		<<case lake>>
-		<img id="location" src="img/misc/lakenight.gif">
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+				<img id="location" src="img/misc/lakebloodmoon.gif">
+			<<else>>
+				<img id="location" src="img/misc/lakenight.gif">
+			<</if>>
 		<<case asylum>>
 			<<if $hallucinations gte 1>>
 			<img id="location" src="img/misc/asylumnightvfast.gif">
@@ -1639,7 +1647,7 @@
 		<<case pub>>
 		<img id="location" src="img/misc/pubdusk.png">
 		<<case forest>>
-		<img id="location" src="img/misc/forestdusk.png">
+		<img id="location" src="img/misc/forestdusk.gif">
 		<<case lake>>
 		<img id="location" src="img/misc/lakedusk.gif">
 		<<case asylum>>
@@ -2109,32 +2117,47 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<widget "integritycheck">><<nobr>>
 <<if $worn.upper.name isnot "naked">>
-	<<if $worn.upper.integrity lte 0>><span class="lewd">Your $worn.upper.name <<upperplural>> ripped into scraps, exposing your <<breastsstop>></span>
-	<br>
+	<<if $worn.upper.integrity lte 0>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.upper.name <<upperplural>> ripped into scraps, exposing your <<breastsstop>></span>
+			<br>
+		<</if>>
 	<<upperruined>><<clothesruinstat>><<set $upperoff to 0>>
 	<</if>>
 <</if>>
 <<if $worn.lower.name isnot "naked">>
-	<<if $worn.lower.integrity lte 0>><span class="lewd">Your $worn.lower.name <<lowerplural>> ripped into scraps, exposing your <<undiesstop>></span>
-	<br>
+	<<if $worn.lower.integrity lte 0>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.lower.name <<lowerplural>> ripped into scraps, exposing your <<undiesstop>></span>
+			<br>
+		<</if>>
 	<<lowerruined>><<clothesruinstat>><<set $loweroff to 0>>
 	<</if>>
 <</if>>
 <<if $worn.under_upper.name isnot "naked">>
-	<<if $worn.under_upper.integrity lte 0>><span class="lewd">Your $worn.under_upper.name <<underupperplural>> ripped into scraps, exposing your <<breastsstop>></span>
-	<br>
+	<<if $worn.under_upper.integrity lte 0>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.under_upper.name <<underupperplural>> ripped into scraps, exposing your <<breastsstop>></span>
+			<br>
+		<</if>>
 	<<underupperruined>><<clothesruinstat>><<set $underupperoff to 0>>
 	<</if>>
 <</if>>
 <<if $worn.under_lower.name isnot "naked">>
-	<<if $worn.under_lower.integrity lte 0>><span class="lewd">Your $worn.under_lower.name <<underlowerplural>> ripped into scraps, exposing your <<if $worn.genitals.name isnot "naked">>$worn.genitals.name.<<else>><<genitalsstop>><</if>></span>
-	<br>
+	<<if $worn.under_lower.integrity lte 0>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.under_lower.name <<underlowerplural>> ripped into scraps, exposing your <<if $worn.genitals.name isnot "naked">>$worn.genitals.name.<<else>><<genitalsstop>><</if>></span>
+			<br>
+		<</if>>
 	<<underlowerruined>><<clothesruinstat>><<set $underloweroff to 0>>
 	<</if>>
 <</if>>
 <<if $worn.genitals.name isnot "naked">>
 	<<if $worn.genitals.integrity lte 0>>
-		<span class="lewd">Your $worn.genitals.name breaks, exposing your <<if $penisexist is 1>><<penisstop>><<else>><<pussystop>><</if>></span>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<if $penisexist is 1>><<penisstop>><<else>><<pussystop>><</if>></span>
+			<br>
+		<</if>>
 		<<if $worn.genitals.type.includes("chastity")>>
 			<<set $worn.genitals.type.push("broken")>>
 			<<if $vaginalchastityparasite isnot 0>>
@@ -2828,6 +2851,11 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 		<span class="red">Your halo shatters and fades.</span>
 	<</if>>
 	<<set $angel to 0>><<set $angelbuild to 0>>
+	<<if $player.virginity.temple is true>>
+		<<set $player.virginity.temple to false>>
+		/*Old check, remove when not required*/
+		<<set $temple_virginity to 0>>
+	<</if>>
 	<<set $vaginafucked to 1>>
 <</nobr>><</widget>>
 
@@ -2847,6 +2875,11 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 		<span class="red">Your halo shatters and fades.</span>
 	<</if>>
 	<<set $angel to 0>><<set $angelbuild to 0>>
+	<<if $player.virginity.temple is true>>
+		<<set $player.virginity.temple to false>>
+		/*Old check, remove when not required*/
+		<<set $temple_virginity to 0>>
+	<</if>>
 	<<set $penisfucked to 1>>
 <</nobr>><</widget>>
 
@@ -3343,7 +3376,7 @@ __Map__<br>
 
 <<widget "breastfed">><<nobr>>
 	<<set $milk_drank_stat += random(1, 5)>>
-	<<if random(1, 100) gte 70>><<set $catbuild += 1>><</if>>
+	<<if random(1, 100) gte 70>><<cat_transform 1>><</if>>
 	<<purity -1>>
 	<<if $milkdranktrait is 1>><<physique 1>><</if>>
 <</nobr>><</widget>>
@@ -4095,5 +4128,54 @@ __Map__<br>
 	<<set $masturbation_vaginaFluid to 0>>
 
 	<<set $objectVersion.vaginaWetness to 2>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "wolf_transform">><<nobr>>
+<<if $args[0]>>
+	<<set $wolfbuild += 1>>
+	<<set $catbuild -= 1>>
+	<<set $cowbuild -= 1>>
+	<<set $birdbuild -= 1>>
+	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "cat_transform">><<nobr>>
+<<if $args[0]>>
+	<<set $wolfbuild -= 1>>
+	<<set $catbuild += 1>>
+	<<set $cowbuild -= 1>>
+	<<set $birdbuild -= 1>>
+	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_transform">><<nobr>>
+<<if $args[0]>>
+	<<set $wolfbuild -= 1>>
+	<<set $catbuild -= 1>>
+	<<set $cowbuild -= 1>>
+	<<set $birdbuild += 1>>
+	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "hand_gag">><<nobr>>/*First arg the NPC index. Second arg the hand used.*/
+<<if !$worn.face.type.includes("gag") and $args[0] isnot undefined>>
+	<<if $args[1] is "left">>
+		<<set $mouthuse to "lefthand">><<set $NPCList[$args[0]].lefthand to "mouth">>
+	<<else>>
+		<<set $mouthuse to "righthand">><<set $NPCList[$args[0]].righthand to "mouth">>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>

@@ -64,7 +64,7 @@ window.combatListColor = function(name, value, type){
 			/*feetaction*/
 			case "kick":
 			/*mouthaction*/
-			case "bite": case "demand": case "breastbite":
+			case "bite": case "demand": case "breastbite": case "handbite":
 				color = "def";
 			break;
 

@@ -910,17 +910,24 @@ The _tentacle.desc tentacle writhes between your feet.
 	/*Old Controls*/
 	<<if $oldControls is true>>
 		<<if $leftaction is "lefthit"+_tentacle.id or $rightaction is "righthit"+_tentacle.id>>
-			<<if $leftaction is "lefthit"+_tentacle.id>>
+			<<if $leftaction is "lefthit"+_tentacle.id and $rightaction is "righthit"+_tentacle.id>>
+				<<set $leftaction to 0>><<set $leftactiondefault to "lefthit"+_tentacle.id>>
+				<<set $rightaction to 0>><<set $rightactiondefault to "righthit"+_tentacle.id>>
+				You strike the _tentacle.desc with both hands and it reels away from you.
+				<<set _multi to 2>>
+			<<elseif $leftaction is "lefthit"+_tentacle.id>>
 				<<set $leftaction to 0>><<set $leftactiondefault to "lefthit"+_tentacle.id>>
 				You strike the _tentacle.desc tentacle with your left hand and it reels away from you.
+				<<set _multi to 1>>
 			<<else>>
 				<<set $rightaction to 0>><<set $rightactiondefault to "righthit"+_tentacle.id>>
 				You strike the _tentacle.desc tentacle with your right hand and it reels away from you.
+				<<set _multi to 1>>
 			<</if>>
-			<<defiance 2>>
-			<<set $speechhit to 1>><<set $attackstat += 1>>
-			<<set _tentacle.tentaclehealth -= 1>>
-			<<if $rng lte ($physique / 200)>><<set _tentacle.tentaclehealth -= 1>><</if>>
+			<<defiance `2 * _multi`>>
+			<<set $speechhit to 1 * _multi>><<set $attackstat += 1 * _multi>>
+			<<set _tentacle.tentaclehealth -= 1 * _multi>>
+			<<if $rng lte ($physique / 200)>><<set _tentacle.tentaclehealth -= 1 * _multi>><</if>>
 			<<tentacleadvdisable _tentacle>>
 		<</if>>
 
@@ -941,7 +948,7 @@ The _tentacle.desc tentacle writhes between your feet.
 	/*New Controls*/
 	<<if ($leftaction is "lefthit" and $leftactionTarget is _tentacle.id)
 	or ($rightaction is "righthit" and $rightactionTarget is _tentacle.id)>>
-		<<if $leftaction is "lefthit" and $rightaction is "righthit">>
+		<<if $leftaction is "lefthit" and $rightaction is "righthit" and $leftactionTarget is $rightactionTarget>>
 			You strike the _tentacle.desc tentacle with both hands and it reels away from you.
 			<<set _multi to 2>>
 			<<set $leftaction to 0>><<set $leftactiondefault to "lefthit">>
