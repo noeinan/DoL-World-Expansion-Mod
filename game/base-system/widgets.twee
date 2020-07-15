@@ -3376,7 +3376,7 @@ __Map__<br>
 
 <<widget "breastfed">><<nobr>>
 	<<set $milk_drank_stat += random(1, 5)>>
-	<<if random(1, 100) gte 70>><<cat_transform 1>><</if>>
+	<<if random(1, 100) gte 70>><<transform cat 1>><</if>>
 	<<purity -1>>
 	<<if $milkdranktrait is 1>><<physique 1>><</if>>
 <</nobr>><</widget>>
@@ -4131,44 +4131,45 @@ __Map__<br>
 <</if>>
 <</nobr>><</widget>>
 
-<<widget "wolf_transform">><<nobr>>
-<<if $args[0]>>
-	<<set $wolfbuild += 1>>
-	<<set $catbuild -= 1>>
-	<<set $cowbuild -= 1>>
-	<<set $birdbuild -= 1>>
-	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
-	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
-	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
-	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+<<widget "transform">><<nobr>>/*First arg is transformation, second is the intensity of change.*/
+<<if $args[1]>>
+	<<if $args[0] is "wolf">>
+		<<set $wolfbuild += $args[1]>>
+		<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<</if>>
+	<<if $args[0] is "cat">>
+		<<set $catbuild += $args[1]>>
+		<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<</if>>
+	<<if $args[0] is "cow">>
+		<<set $cowbuild += $args[1]>>
+		<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>		
+	<</if>>
+	<<if $args[0] is "bird">>
+		<<set $birdbuild += $args[1]>>
+		<<set $birdbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<</if>>
+<</if>>
+<<if $args[1] gte 1>>
+	<<if $args[0] isnot "wolf" and $worn.neck.name isnot "spiked collar">>
+		<<set $wolfbuild -= $args[1]>>
+		<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
+	<</if>>
+	<<if $args[0] isnot "cat" and $worn.neck.name isnot "cat bell collar">>
+		<<set $catbuild -= $args[1]>>
+		<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
+	<</if>>
+	<<if $args[0] isnot "cow" and $worn.neck.name isnot "cow bell">>
+		<<set $cowbuild -= $args[1]>>
+		<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
+	<</if>>
+	<<if $args[0] isnot "bird">>
+		<<set $birdbuild -= $args[1]>>
+		<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
-<<widget "cat_transform">><<nobr>>
-<<if $args[0]>>
-	<<set $wolfbuild -= 1>>
-	<<set $catbuild += 1>>
-	<<set $cowbuild -= 1>>
-	<<set $birdbuild -= 1>>
-	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
-	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
-	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
-	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
-<</if>>
-<</nobr>><</widget>>
-
-<<widget "bird_transform">><<nobr>>
-<<if $args[0]>>
-	<<set $wolfbuild -= 1>>
-	<<set $catbuild -= 1>>
-	<<set $cowbuild -= 1>>
-	<<set $birdbuild += 1>>
-	<<set $cowbuild = Math.clamp($cowbuild, 0, 100)>>
-	<<set $catbuild = Math.clamp($catbuild, 0, 100)>>
-	<<set $wolfbuild = Math.clamp($wolfbuild, 0, 100)>>
-	<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
-<</if>>
-<</nobr>><</widget>>
 
 <<widget "hand_gag">><<nobr>>/*First arg the NPC index. Second arg the hand used.*/
 <<if !$worn.face.type.includes("gag") and $args[0] isnot undefined>>
