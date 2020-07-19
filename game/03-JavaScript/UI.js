@@ -129,38 +129,38 @@ $(document).on(':passagerender', function (ev) {
 	if (passage() == "GiveBirth") {
 		$(ev.content).find("[type=checkbox]").on('propertychange change', function () {
 			new Wikifier(null, '<<resetPregButtons>>');
-			generateLinkNumbers(ev);
+			Links.generateLinkNumbers(ev.content);
 		});
 	}
 
-	generateLinkNumbers(ev);
+	Links.generateLinkNumbers(ev.content);
 });
 
-const keyNumberMatcher = /\([^\)]+\)/
+Links.keyNumberMatcher = /^\([^\)]+\)/
 
-function generateLinkNumbers(ev) {
+Links.generateLinkNumbers = function generateLinkNumbers(content) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify)
 		return;
 
 	for (var i = 0; i < disableNumberifyInVisibleElements.length; i++) {
-		if ($(ev.content).find(disableNumberifyInVisibleElements[i]).length || $(ev.content).is(disableNumberifyInVisibleElements[i]))
+		if ($(content).find(disableNumberifyInVisibleElements[i]).length || $(content).is(disableNumberifyInVisibleElements[i]))
 			return; // simply skip this render
 	}
 
 	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
-	Links.currentLinks = $(ev.content)
+	Links.currentLinks = $(content)
 		.find(".link-internal")
 		.not(".no-numberify *, .no-numberify");
 
 	$(Links.currentLinks).each(function (i, el) {
-		if (keyNumberMatcher.test(el.innerHTML)) {
-			el.innerHTML = el.innerHTML.replace(keyNumberMatcher, `(${getPrettyKeyNumber(i + 1)})`)
+		if (Links.keyNumberMatcher.test(el.innerHTML)) {
+			el.innerHTML = el.innerHTML.replace(Links.keyNumberMatcher, `(${getPrettyKeyNumber(i + 1)})`)
 		} else {
 			$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
 		}
 	});
 }
-Links.generate = () => generateLinkNumbers({ content: (document.getElementsByClassName("passage")[0] || document) });
+Links.generate = () => Links.generateLinkNumbers(document.getElementsByClassName("passage")[0] || document);
 
 $(document).on('keyup', function (ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
