@@ -98,7 +98,8 @@ var disableNumberifyInVisibleElements = [
 ];
 
 // Number-ify links
-var currentLinks = [];
+window.Links = window.Links || {};
+Links.currentLinks = [];
 
 function getPrettyKeyNumber(counter) {
 	var str = "";
@@ -123,19 +124,21 @@ function getPrettyKeyNumber(counter) {
 }
 
 $(document).on(':passagerender', function (ev) {
-	currentLinks = [];
+	Links.currentLinks = [];
 
 	if (passage() == "GiveBirth") {
 		$(ev.content).find("[type=checkbox]").on('propertychange change', function () {
 			new Wikifier(null, '<<resetPregButtons>>');
-			generateNumbers(ev);
+			generateLinkNumbers(ev);
 		});
 	}
 
-	generateNumbers(ev);
+	generateLinkNumbers(ev);
 });
 
-function generateNumbers(ev) {
+const keyNumberMatcher = /\([^\)]+\)/
+
+function generateLinkNumbers(ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify)
 		return;
 
@@ -145,14 +148,19 @@ function generateNumbers(ev) {
 	}
 
 	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
-	currentLinks = $(ev.content)
+	Links.currentLinks = $(ev.content)
 		.find(".link-internal")
 		.not(".no-numberify *, .no-numberify");
 
-	$(currentLinks).each(function (i, el) {
-		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+	$(Links.currentLinks).each(function (i, el) {
+		if (keyNumberMatcher.test(el.innerHTML)) {
+			el.innerHTML = el.innerHTML.replace(keyNumberMatcher, `(${getPrettyKeyNumber(i + 1)})`)
+		} else {
+			$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+		}
 	});
 }
+Links.generate = () => generateLinkNumbers({ content: (document.getElementsByClassName("passage")[0] || document) });
 
 $(document).on('keyup', function (ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
@@ -181,8 +189,8 @@ $(document).on('keyup', function (ev) {
 		else if (ev.shiftKey)
 			requestedLinkIndex += 10;
 
-		if ($(currentLinks).length >= requestedLinkIndex + 1)
-			$(currentLinks[requestedLinkIndex]).click();
+		if ($(Links.currentLinks).length >= requestedLinkIndex + 1)
+			$(Links.currentLinks[requestedLinkIndex]).click();
 	}
 });
 

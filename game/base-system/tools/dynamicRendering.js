@@ -1,14 +1,14 @@
 
-const Dynamic = window.Dynamic || {};
-window.Dynamic = Dynamic;
+window.Dynamic = window.Dynamic || {};
 
 /**
  * Re-renders all dynamic elements in the current passage
  */
 Dynamic.render = () => {
 	Object.entries(Dynamic.liveIds).forEach(([id, content]) => {
-		Dynamic.renderAt(id, content)
+		Dynamic.renderAt(id, content);
 	});
+	Links.generate();
 }
 /** 
  * Underlying implementation of the <<dynamic>> widget. You probably want to use that instead.
