@@ -308,17 +308,10 @@ __Clothing sets__
 __Clothing__
 <br>
 
+
 <<if $newWardrobeStyle>>
-	<div id="wardrobeLinks">
-		<<wardrobeLinks>>
-	</div>
-	<div id="wardrobeList">
-		<<if $lastWardrobeSlot is "NewOutfit">>
-			<<wardrobeNewOutfit>>
-		<<else>>
-			<<wardrobeList $lastWardrobeSlot>>
-		<</if>>
-	</div>
+	<<dynamic "wardrobeLinks" "wardrobeLinks">>
+	<<dynamic "wardrobeContents" "wardrobeList">>
 <<else>>
 	<<oldWardrobeListDisplay>>
 <</if>>
@@ -331,41 +324,40 @@ __Clothing__
 
 <</nobr>><</widget>>
 
-<<widget "wardrobeLinks">><<nobr>>
-<<if $debug is 1>>
-	<a @class="($lastWardrobeSlot is 'over_head'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_head')">Over Head</a> |
-	<a @class="($lastWardrobeSlot is 'over_upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_upper')">Over Upper</a> |
-	<a @class="($lastWardrobeSlot is 'over_lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','over_lower')">Over Lower</a> |
-<</if>>
-<a @class="($lastWardrobeSlot is 'head'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','head')">Head</a> |
-<a @class="($lastWardrobeSlot is 'face'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','face')">Face</a> |
-<a @class="($lastWardrobeSlot is 'neck'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','neck')">Neck</a> |
-<a @class="($lastWardrobeSlot is 'upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','upper')">Upper</a> |
-<a @class="($lastWardrobeSlot is 'lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','lower')">Lower</a> |
-<a @class="($lastWardrobeSlot is 'under_upper'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','under_upper')">Under Upper</a> |
-<a @class="($lastWardrobeSlot is 'under_lower'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','under_lower')">Under Lower</a> |
-<a @class="($lastWardrobeSlot is 'legs'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','legs')">Legs</a> |
-<a @class="($lastWardrobeSlot is 'feet'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','feet')">Feet</a> |
-<a @class="($lastWardrobeSlot is 'NewOutfit'?'selected':'')" onclick="wikifier('wardrobeNewOutfitDisplayer','NewOutfit')">New Outfit</a> |
+<<widget "wardrobeContents">><<nobr>>
+	<<if $lastWardrobeSlot is "NewOutfit">>
+		<<wardrobeNewOutfit>>
+	<<else>>
+		<<wardrobeList $lastWardrobeSlot>>
+	<</if>>
 <</nobr>><</widget>>
 
-<<widget "wardrobeNewOutfitDisplayer">><<nobr>>
-<<switch $args[0]>>
-	<<case "over_head">><<replace #wardrobeList>><<wardrobeList "over_head">><</replace>><<set $lastWardrobeSlot to "over_head">>
-	<<case "head">><<replace #wardrobeList>><<wardrobeList "head">><</replace>><<set $lastWardrobeSlot to "head">>
-	<<case "face">><<replace #wardrobeList>><<wardrobeList "face">><</replace>><<set $lastWardrobeSlot to "face">>
-	<<case "neck">><<replace #wardrobeList>><<wardrobeList "neck">><</replace>><<set $lastWardrobeSlot to "neck">>
-	<<case "over_upper">><<replace #wardrobeList>><<wardrobeList "over_upper">><</replace>><<set $lastWardrobeSlot to "over_upper">>
-	<<case "over_lower">><<replace #wardrobeList>><<wardrobeList "over_lower">><</replace>><<set $lastWardrobeSlot to "over_lower">>
-	<<case "upper">><<replace #wardrobeList>><<wardrobeList "upper">><</replace>><<set $lastWardrobeSlot to "upper">>
-	<<case "lower">><<replace #wardrobeList>><<wardrobeList "lower">><</replace>><<set $lastWardrobeSlot to "lower">>
-	<<case "under_upper">><<replace #wardrobeList>><<wardrobeList "under_upper">><</replace>><<set $lastWardrobeSlot to "under_upper">>
-	<<case "under_lower">><<replace #wardrobeList>><<wardrobeList "under_lower">><</replace>><<set $lastWardrobeSlot to "under_lower">>
-	<<case "legs">><<replace #wardrobeList>><<wardrobeList "legs">><</replace>><<set $lastWardrobeSlot to "legs">>
-	<<case "feet">><<replace #wardrobeList>><<wardrobeList "feet">><</replace>><<set $lastWardrobeSlot to "feet">>
-	<<case "NewOutfit">><<replace #wardrobeList>><<wardrobeNewOutfit>><</replace>><<set $lastWardrobeSlot to "NewOutfit">>
-<</switch>>
-<<replace #wardrobeLinks>><<wardrobeLinks>><</replace>>
+<<widget "wardrobeLinks">><<nobr>>
+<<set _wardrobeLinks=[
+	{ id: 'over_head', label: 'Over Head', disabled: !$debug },
+	{ id: 'over_upper', label: 'Over Upper', disabled: !$debug },
+	{ id: 'over_lower', label: 'Over Lower', disabled: !$debug },
+	{ id: 'head', label: 'Head' },
+	{ id: 'face', label: 'Face' },
+	{ id: 'neck', label: 'Neck' },
+	{ id: 'upper', label: 'Upper' },
+	{ id: 'lower', label: 'Lower' },
+	{ id: 'under_upper', label: 'Under Upper' },
+	{ id: 'under_lower', label: 'Under Lower' },
+	{ id: 'legs', label: 'Legs' },
+	{ id: 'feet', label: 'Feet' },
+	{ id: 'NewOutfit', label: 'New Outfit' },
+]>>
+<<for _i = 0; _i < _wardrobeLinks.length; _i++>>
+	<<set _wardrobeLink=_wardrobeLinks[_i]>>
+	<<if !_wardrobeLink.disabled>>
+		<a
+			@class="($lastWardrobeSlot is _wardrobeLink.id ? 'selected' : '')" 
+			@id="Dynamic.eventBinder(_wardrobeLink.id)"
+			onclick="(id) => $lastWardrobeSlot = id"
+		>_wardrobeLink.label</a><<if _i < _wardrobeLinks.length - 1>> | <</if>>
+	<</if>>
+<</for>>
 <</nobr>><</widget>>
 
 <<widget "wardrobeClothingOptions">><<nobr>>
@@ -803,7 +795,7 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 	<<if _newWardrobeItems isnot []>>
 		<<set $wardrobe[_slot] to clone(_newWardrobeItems)>>
 	<</if>>
-	<<replace #wardrobeList>><<wardrobeList $lastWardrobeSlot>><</replace>>
+	<<run Dynamic.render()>>
 <</if>>
 <</nobr>><</widget>>
 

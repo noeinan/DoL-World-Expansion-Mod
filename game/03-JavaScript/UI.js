@@ -1,29 +1,29 @@
-window.overlayShowHide = function(elementId){
+window.overlayShowHide = function (elementId) {
 	var div = document.getElementById(elementId);
-	if(div != undefined){
+	if (div != undefined) {
 		div.classList.toggle("hidden");
-		if(elementId === "debugOverlay"){
+		if (elementId === "debugOverlay") {
 			SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
 		}
 	}
 }
 
-window.overlayMenu = function(elementId, type){
-	switch(type){
+window.overlayMenu = function (elementId, type) {
+	switch (type) {
 		case "debug":
-		var debug = ["debugMain", "debugCharacter", "debugEvents"]
-		for(var i = 0, l = debug.length; i < l; i++){
-			var div = document.getElementById(debug[i]);
-			if(div != undefined){
-				SugarCube.State.variables.debugMenu[1] = elementId;
-				if(elementId === debug[i]){
-					div.classList.remove("hidden");
-				}else{
-					div.classList.add("hidden");
+			var debug = ["debugMain", "debugCharacter", "debugEvents"]
+			for (var i = 0, l = debug.length; i < l; i++) {
+				var div = document.getElementById(debug[i]);
+				if (div != undefined) {
+					SugarCube.State.variables.debugMenu[1] = elementId;
+					if (elementId === debug[i]) {
+						div.classList.remove("hidden");
+					} else {
+						div.classList.add("hidden");
+					}
 				}
 			}
-		}
-		break;
+			break;
 	}
 }
 
@@ -36,7 +36,7 @@ var yDown = null;
 
 function getTouches(evt) {
 	return evt.touches ||			 // browser API
-			evt.originalEvent.touches; // jQuery
+		evt.originalEvent.touches; // jQuery
 }
 
 function handleTouchStart(evt) {
@@ -46,7 +46,7 @@ function handleTouchStart(evt) {
 };
 
 function handleTouchMove(evt) {
-	if ( ! xDown || ! yDown ) {
+	if (!xDown || !yDown) {
 		return;
 	}
 
@@ -55,13 +55,12 @@ function handleTouchMove(evt) {
 	 * 50px - +/- width of unstowed UI Bar
 	 * 280px - +/- width of unstowed UI bar
 	 */
-	if ( isUIBarStowed() ) {
-		if ( xDown > 50 ) {
+	if (isUIBarStowed()) {
+		if (xDown > 50) {
 			return;
 		}
-	} else
-	{
-		if ( xDown > 280 ) {
+	} else {
+		if (xDown > 280) {
 			return;
 		}
 	}
@@ -72,14 +71,14 @@ function handleTouchMove(evt) {
 	var xDiff = xDown - xUp;
 	var yDiff = yDown - yUp;
 
-	if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-		if ( xDiff > 0 ) {
+	if (Math.abs(xDiff) > Math.abs(yDiff)) {/*most significant*/
+		if (xDiff > 0) {
 			UIBar.stow();/* left swipe */
 		} else {
 			UIBar.unstow();/* right swipe */
 		}
 	} else {
-		if ( yDiff > 0 ) {
+		if (yDiff > 0) {
 			/* up swipe */
 		} else {
 			/* down swipe */
@@ -91,7 +90,7 @@ function handleTouchMove(evt) {
 };
 
 function isUIBarStowed() {
-	return $( '#ui-bar' ).hasClass( 'stowed' );
+	return $('#ui-bar').hasClass('stowed');
 }
 
 var disableNumberifyInVisibleElements = [
@@ -99,7 +98,8 @@ var disableNumberifyInVisibleElements = [
 ];
 
 // Number-ify links
-var currentLinks = [];
+window.Links = window.Links || {};
+Links.currentLinks = [];
 
 function getPrettyKeyNumber(counter) {
 	var str = "";
@@ -123,37 +123,46 @@ function getPrettyKeyNumber(counter) {
 	return str;
 }
 
-$(document).on(':passagerender', function(ev) {
-	currentLinks = [];
+$(document).on(':passagerender', function (ev) {
+	Links.currentLinks = [];
 
 	if (passage() == "GiveBirth") {
-		$(ev.content).find("[type=checkbox]").on('propertychange change', function() { new Wikifier(null, '<<resetPregButtons>>');
-		generateNumbers(ev);} );
+		$(ev.content).find("[type=checkbox]").on('propertychange change', function () {
+			new Wikifier(null, '<<resetPregButtons>>');
+			Links.generateLinkNumbers(ev.content);
+		});
 	}
 
-	generateNumbers(ev);
+	Links.generateLinkNumbers(ev.content);
 });
 
-function generateNumbers(ev){
+Links.keyNumberMatcher = /^\([^\)]+\)/
+
+Links.generateLinkNumbers = function generateLinkNumbers(content) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify)
 		return;
 
 	for (var i = 0; i < disableNumberifyInVisibleElements.length; i++) {
-		if ($(ev.content).find(disableNumberifyInVisibleElements[i]).length || $(ev.content).is(disableNumberifyInVisibleElements[i]))
+		if ($(content).find(disableNumberifyInVisibleElements[i]).length || $(content).is(disableNumberifyInVisibleElements[i]))
 			return; // simply skip this render
 	}
 
 	// wanted to use .macro-link, but wardrobe and something else doesn't get selected, lmao
-	currentLinks = $(ev.content)
+	Links.currentLinks = $(content)
 		.find(".link-internal")
 		.not(".no-numberify *, .no-numberify");
 
-	$(currentLinks).each(function(i, el) {
-		$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+	$(Links.currentLinks).each(function (i, el) {
+		if (Links.keyNumberMatcher.test(el.innerHTML)) {
+			el.innerHTML = el.innerHTML.replace(Links.keyNumberMatcher, `(${getPrettyKeyNumber(i + 1)})`)
+		} else {
+			$(el).html("(" + getPrettyKeyNumber(i + 1) + ") " + $(el).html());
+		}
 	});
 }
+Links.generate = () => Links.generateLinkNumbers(document.getElementsByClassName("passage")[0] || document);
 
-$(document).on('keyup', function(ev) {
+$(document).on('keyup', function (ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
 		return;
 
@@ -180,8 +189,8 @@ $(document).on('keyup', function(ev) {
 		else if (ev.shiftKey)
 			requestedLinkIndex += 10;
 
-		if ($(currentLinks).length >= requestedLinkIndex + 1)
-			$(currentLinks[requestedLinkIndex]).click();
+		if ($(Links.currentLinks).length >= requestedLinkIndex + 1)
+			$(Links.currentLinks[requestedLinkIndex]).click();
 	}
 });
 
@@ -191,7 +200,7 @@ var defaultSkinColorRanges = {
 	"bStart": 4.5, "bEnd": 0.7,
 };
 
-window.skinColor = function(enabled, percent, overwrite) {
+window.skinColor = function (enabled, percent, overwrite) {
 	if (enabled === "f") {
 		return "";
 	}
@@ -207,7 +216,7 @@ window.skinColor = function(enabled, percent, overwrite) {
 		? 1
 		: scaledProgress - rangeIndex;
 
-	var {hStart, hEnd, sStart, sEnd, bStart, bEnd} = ranges[rangeIndex];
+	var { hStart, hEnd, sStart, sEnd, bStart, bEnd } = ranges[rangeIndex];
 
 	var hue = (hEnd - hStart) * progress + hStart;
 	var saturation = (sEnd - sStart) * progress + sStart;
@@ -220,58 +229,58 @@ window.skinColor = function(enabled, percent, overwrite) {
 	return `${hueCss} ${saturationCss} ${brightnessCss}`;
 }
 
-window.closeFeats = function(id){
+window.closeFeats = function (id) {
 	var div1 = document.getElementById("feat-" + id);
 	var div2 = document.getElementById("closeFeat-" + id);
 	div1.style.display = "none";
 	div2.style.display = "none";
 }
 
-window.filterFeats = function(){
+window.filterFeats = function () {
 	new Wikifier(null, '<<replace #featsList>><<featsList>><</replace>>');
 }
 
-window.getTimeNumber = function(t){
+window.getTimeNumber = function (t) {
 	var time = new Date(t);
 	var result = time.getTime();
-	if(isNaN(result)){
+	if (isNaN(result)) {
 		return 9999999999999999;
 	}
 	return result;
 }
 
-window.extendStats = function(){
+window.extendStats = function () {
 	SugarCube.State.variables.extendedStats = !SugarCube.State.variables.extendedStats;
 	var captionDiv = document.getElementById('storyCaptionDiv'),
 		statsDiv = document.getElementById('stats');
-	if(SugarCube.State.variables.extendedStats === true){
+	if (SugarCube.State.variables.extendedStats === true) {
 		captionDiv.classList.add("storyCaptionDivExtended");
 		statsDiv.classList.add("statsExtended");
-	}else{
+	} else {
 		captionDiv.classList.remove("storyCaptionDivExtended");
 		statsDiv.classList.remove("statsExtended");
 	}
 	new Wikifier(null, '<<replace #stats>><<statsCaption>><</replace>>');
 }
 
-window.customColor = function(color, saturation, brightness, contrast, sepia){
-	return 'filter: hue-rotate('+color+'deg) saturate('+saturation+') brightness('+brightness+') contrast('+contrast+') sepia('+sepia+')';
+window.customColor = function (color, saturation, brightness, contrast, sepia) {
+	return 'filter: hue-rotate(' + color + 'deg) saturate(' + saturation + ') brightness(' + brightness + ') contrast(' + contrast + ') sepia(' + sepia + ')';
 }
 
-window.zoom = function(size, set){
-	if(size === undefined){
+window.zoom = function (size, set) {
+	if (size === undefined) {
 		size = document.getElementById("numberslider-input-zoom").value;
 	}
 	var parsedSize = parseInt(size);
 	var body = document.getElementsByTagName("body")[0];
-	if(parsedSize >= 50 && parsedSize <= 200 && parsedSize !== 100){
+	if (parsedSize >= 50 && parsedSize <= 200 && parsedSize !== 100) {
 		body.style.zoom = size + "%";
-		if(set === true){
+		if (set === true) {
 			SugarCube.State.variables.zoom = size;
 		}
-	}else{
+	} else {
 		body.style.zoom = "";
-		if(set === true){
+		if (set === true) {
 			SugarCube.State.variables.zoom = 100;
 		}
 	}
