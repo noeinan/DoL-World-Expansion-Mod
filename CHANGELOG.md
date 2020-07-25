@@ -1,5 +1,209 @@
 # CHANGELOG
 
+## 0.2.15.4
+
+- The PC's outburst at Harper should the doctor have abducted the PC will now take a muzzle into account. Thanks to Harcher.
+- Adjusted standard male NPC orgasm text.
+
+### Balance Changes
+
+- The athlete background now increases the player's starting athletics skill.
+- Letting your tears flow after a fight at the club will no reduce pain.
+- Newly bought gothic jackets and trousers will now be considered formal.
+
+### Bug Fixes
+
+- Fixed a bug that caused the "Is it worth prostituting yourself to help avoid Bailey's torments?" option to tick itself when visiting the Attitudes page.
+- Whitney will no longer get angry when discovering that you're wearing underwear during maths class if they haven't yet demanded you wear none.
+- Body-writing should no longer display on encounter sprites if body-writing images are disabled.
+- Fixed a bug that made the striped on sprites thighhighs disappear on the missionary sprite.
+- Fixed a bug that would cause different socks to clip through each other on the doggy sprite.
+- Ass action selection will no longer reset to "Rest" after trying and failing to envelop a penis.
+- The PC will no longer be described as crying at the strip club if they're not actually crying.
+- Fixed an issue that could cause all NPC orgasms to behave as if they were at a gloryhole on old saves.
+- Fixed a bug that prevented NPC's becoming more aggressive when reading provocative body-writing
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed an error found when an NPC cums at a gloryhole.
+- Fixed alignment issues with several x-ray images.
+- Further fixes to the character viewer for skin tone and under tops.
+- Fixed an error found when sleeping with an ear slime.
+- A minor typo fix.
+
+## 0.2.15.3
+
+- Female Charlie's introduction will now take her breast size into account.
+- Fixed a bug that could break the encounter with the janitor at the school gloryhole.
+- Added an escape door to the shopping centre restroom, so the PC should no longer get trapped there.
+- Fixed an error found when triggering a fight by wearing whipped cream.
+- The PC's legwear will no longer fall off while being kissed or performing various other acts in the missionary position.
+- Fixed an error found when passing out at the riding school.
+- Fixed an error found when coerced into oral at the beach.
+- River will no longer pass out twice should they catch you masturbating during class.
+- Fixed a broken image found when NPCs scissor you.
+- Giving an NPC oral in return for a ride will no longer have your character described as a girl regardless of their apparent gender.
+- Fixed a bug that would hide all options when someone asks you to strip in return for a ride while hitchhiking.
+- Fixed a bug that caused two separate version of a scene to both trigger when leaving the canteen to perform oral on Whitney.
+- Fixed a broken image found when both vagina and ass are threatened while in the doggy position.
+- Cleared the excess hay bales that littered the farmlands.
+- Fixed a blank screen found when running naked through the park.
+- Fixed a bug that prevented cat tails from displaying during combat.
+- Fixed a contortion problem that could appear if an NPC gags you with their right hand.
+- Fixed a bug found when an NPC in the sea by the beach tries to gag you.
+- Fixed a bug that allowed a few remaining NPCs to gag your while you're already wearing a gag.
+- The gold anklet image should now appear when giving a footjob from the missionary position.
+- Fixed a bug that caused Whitney to be referred to with River's pronouns when caught kissing in class.
+- Fixed a bug that made your right sock vanish when you penetrated someone while they rode you.
+- Fixed a bug that would cause the NPCs description to repeat during encounters.
+- Thanks to CasaBlanc for a typo fix.
+
+## 0.2.15.2
+
+- Fixed an error that could appear if feats are disabled. Thanks to Lollipop Scythe.
+
+## 0.2.15.1
+
+- Robin's empty confidence heart icons now have unique art, courtesy of PurityGuy.
+- The muzzle now has its own art for encounter sprites. Thanks to KG.
+
+### Balance Changes
+
+- The transformation decay protection provided by the spiked collar, cow bell, and cat bell collar now applies to all sources of decay.
+
+### Bug Fixes
+
+- The topmost ribbon on the gothic dress should no longer seem to be tucked into the skirt. Thanks to PurityGuy.
+- Legwear should no longer appear to take on a life of its own and drop off the PC when fellating in the missionary position.
+- Fixed an error found when interrogated in the compound.
+- The NPC on Danube Street who invites you to tea in their garden now sets up a parasol when it rains.
+- Fixed a bug that prevented the cow transformation from triggering at the intended rate.
+- Fixed an error found when trying to bite someone's breasts.
+
+Thanks to Lollipop Scythe for the following fixes:
+- Fixed an error found when angry NPCs try to bite your neck.
+- Fixed an issue found with the anal horse x-ray images.
+- Fixed an issue found with the vaginal creampie x-ray images.
+- Fixed a bug that would cause the wrong close up images to display.
+- Fixed a bug that broke the pound icon in feats.
+- Fixed a bug that broke under tops in the character viewer.
+- Fixed an error found when forced to sleepwalk by the ear slime.
+
+## 0.2.15.0
+
+- Whitney now shares maths class with you, when they aren't skipping lessons. The events change after Whitney declares you their boy/girlfriend.
+- The road leading east from Harvest Street has opened, leading into the farmlands. It's a long journey on foot, but you can hitchhike if you're daring.
+- Added a riding school to the farmlands.
+- Added a meadow to the farmlands.
+- Those with an A in history can find an alternative route to the farmlands.
+- Teasing Kylar at the park or arcade will now prompt them to proposition the PC, should their love and lust be high.
+- You can now flaunt or flash when someone recognises you as a famous exhibitionist on the street, resulting in a variety of reactions. Thanks to larsrand.
+- Failing to pay Bailey the first time will unlock a new option in the Attitudes menu that allows you to bypass some promiscuity checks that lead to prostitution. Doing so will decrease control. Written and coded in collaboration with anon.
+- Extended the orphanage bedroom exhibitionist scene. Your character now leaves the orphanage via the fence in the garden, putting them in the residential alleyways.
+- Added a "Percentage of other victims that are male" option to Settings, which controls the gender of characters in a similar position to the PC. Impacts many of the events at the orphanage, the street assault at night, a couple of events in the underground brothel, and the temple punishment sequence.
+- Added a "Proportion of same-sex couples" option to Settings, which impacts the couple met on the beach during the science project and a couple at the orphanage.
+- NPCs who want to strip the PC will now behave with more intelligence. Thanks to larsrand.
+- Added new lines for NPCs trying to strip the PC. Thanks to larsrand.
+- Robin's opinion of the PC as shown in the Social overlay will now take their confidence into account.
+- Harper may now attempt to abduct cowgirls and bullboys from the park, should they be running naked, in order to return them to the farm. Written in collaboration with Harcher.
+- Added the "Moo for attention" option to Robin's bedroom. Requires a full cow transformation. Written in collaboration with Harcher.
+- The orphans will now notice if you spend a long time away from the orphanage. Written in collaboration with Harcher.
+- Adjusted the house party event found when robbing homes on Danube Street, and the exposed street assault event.
+- Added weather to the "Other" tab of the cheat menu.
+- Added chastity integrity to the cheat menu.
+- Added the option to change gender and natural features to the cheat menu, available while at a wardrobe. Thanks to Lollipop Scythe.
+- Added anal pregnancy options to the cheat menu. Thanks to Lollipop Scythe.
+- Added a couple of antiques to the farmlands.
+- Options that are available or successful due to the PC's small size are now marked as such.
+- Added new location art for the forest and lake, courtesy of Mochi.
+- Added attitudes toggle for flaunting demon images. Thanks to Lollipop Scythe.
+- Added an alternative missionary silhouette. Art courtesy of sseshess, and coded by Lollipop Scythe.
+- Made some code tweaks that should improve performance on older saves.
+- Added lines for when NPCs ogle a pilloried PC's normal sized penis.
+- The "Next" button during encounters is now clickable in its entirety, rather than just the text. Thanks to stuffed.
+- NPCs can now be bitten when they gag the PC with their hand.
+- Adjusted NPC orgasm text, particularly for generic female NPCs.
+- Added the "Delinquent Antics", "Rear Passenger" and "Cornered Rogue" feats.
+
+All art in the following additions is courtesy of PurityGuy:
+- The missionary and doggy sprites now display tights, fishnet tights, boy's gym socks, girl's gym socks, stockings, fishnet stockings, garter stockings, legwarmers, Christmas leg warmers, gold anklets, and striped thighhighs.
+- The purity icon in the characteristics overlay will now change if the PC has the demon or fallen angel transformations.
+- Robin's confidence is now displayed in the Social overlay.
+- Added frayed, torn, and tattered image variants for the chastity belt, chastity cage, gold chastity belt, apron, tuxedo shirt, tuxedo trousers, boardshorts, breeches, argyle sweater vest, and beatnik shirt.
+- Added new art for the pepper spray.
+- The tattoo parlour now has its own icon.
+- Added the gothic gown, gothic jacket, gothic trousers and lace choker to the clothing shop.
+- Added the spiked collar to the clothing shop. Wearing it prevents the wolf transformation from decaying over time.
+
+### Balance Changes
+
+- Newly bought peacoats will now have the Formal trait.
+- Sneaking through the orphanage will no longer prevent exhibitionism points when sneaking into the strip club on the same day, and vice versa.
+- The mirror tentacles' aphrodisiac is now more potent. Thanks to Lollipop Scythe.
+- The PC will no longer automatically rush for their clothes at Eden's cabin should their exhibitionism be high enough.
+- Kylar will now try to seduce the PC at a lower level of lust.
+- Actions that cause wolfiness or felinity now cause other animal transformations to decay, similar to the bovine transformation.
+- Struggling while your arms are held down now has a chance to overcome the grappler, freeing you. Success chance is based on physique, and success is more likely if you struggle with both arms.
+
+### Bug Fixes
+
+- Fixed a bug that caused NPCs to continue to rub their penis between your feet after moving your feet away.
+- Chastity devices will now be properly removed during the temple forgiveness sequence, and will no longer be described as if they were a part of the PC.
+- Fixed an error found when Doren asks if you need help during English class.
+- Fixed a bug that could case Avery to materialise as a random rapist.
+- Fixed an error that would prevent monster dog and wolf penis images from displaying properly in the missionary position.
+- Fixed an issue with the images for stripper heels in the doggy position, and the boot heels, court heels, kitten heels, stripper heels and wedge sandals - in the missionary position. Thanks to PurityGuy.
+- Fixed an issue with the images for platform heels in the missionary position. Thanks to KG.
+- Fixed a bug that prevented angel and demon images from disappearing when intended. Thanks to Lollipop Scythe.
+- Fixed a bug that caused hallucinations to appear at unintended times. Thanks to Lollipop Scythe.
+- Receiving a foot message from a lady in the park will no longer see them transform into a man part-way through.
+- Fixed a bug that prevented the Chastity Vow trait from disappearing on non-virgins.
+- The physique and beauty bars in the Characteristics overlay will now properly fill when those stats are maxed.
+- Targeting separate tentacles with both arms will no longer strike the same one.
+- The shaft of the swallowed tentacle will now function properly during the eerie mirror encounter.
+- You'll no longer seem to take two tentacles in your mouth at once during the eerie mirror encounter.
+- Fixed a bug that caused the game to lose count of the number of tentacles present during an encounter.
+- The dog involved in the underground brothel hunt event will no longer be referred to as a "boy" regardless of its actual gender.
+- Fixed a number of errors that could appear when sent out of maths class.
+- Fixed a bug that allowed any number of NPCs to suck your nipples.
+- The PC will now remove their bra or similar under top when Harper hypnotises them into dusting a room naked.
+- Fixed an error found after fighting off Remy and their goons in the barn cell.
+- The PC should now have their ass properly pressed against the wall during the brothel punishment sequence.
+- Fixed an error found when caught by a janitor at the school gloryhole.
+- The text when selling your clothes to someone on the street will no longer say you sell them your "naked" if you're already topless, and will now take - your under top into account.
+- Fixed an error found after someone offers to massage your feet in the park.
+- Fixed an error found when encountering a familiar face when running exposed through the park.
+- Fixed some word salad found when attending a party with Avery.
+- Fixed a bug found when meeting Darryl in their office.
+- Fixed a number of encounter contortions. Thanks to Lollipop Scythe.
+- Fixed a bug in the old sewers that involved the PC's genitals. Thanks to Lollipop Scythe.
+- Fixed a problem with 12-hour time in the sidebar. Thanks to Lollipop Scythe.
+- Cleaned up old code. Thanks to Lollipop Scythe.
+- Fixed a bug that gave the hairdresser the power to lengthen your hair.
+- Staying put while witnessing an assault at night will now increase trauma as advertised.
+- Fixed a bug that made the swimming skill check in the lake ruins plinth room output the wrong result.
+- Passing out at Remy's farm will now reduce stress by the intended amount.
+- Fixed a bug that would cause some NPCs to ignore the genital sliders.
+- Fixed an issue with the ballgown image. Thanks to PurityGuy.
+- Your character will now speak when encouraging your colleague while on a pub crawl with middling submissiveness.
+- Fixed a bug that could give female centaur on Remy's farm vaginas regardless of Settings.
+- Fixed an issue with insecurity. Thanks to Lollipop Scythe.
+- Fixed a few icons on UNIX based systems. Thanks to KrisAphalon.
+- Thanks to CasaBlanc for a type fix, and for fixing an issue found when abducted from the orphanage.
+- Fixed an error found when locked in the pillory with a normal sized penis.
+- Fixed a bug that prevented NPC lines from working properly when the PC was locked in the pillory with a micropenis.
+- Fixed a bug that caused NPCs who tried to fellate a PC to instead swap their mouth with their ass, and ignore any chastity device.
+- Fixed a bug that could cause NPCs to grow penises mid-combat.
+- Working yourself free of your bindings when tied to a desk at school will now properly remove the bindings. Thanks to CasaBlanc.
+- Fixed a bug that would cause under tops to render above shirts on the doggy sprite.
+- Female centaur will no longer sprout a cock when receiving oral.
+- Fixed a bug that allowed the PC to pull up their "naked" when flashing a young monk or nun at the temple.
+- Talking to Kylar at the park or arcade will no longer change the location icon to the town's.
+- Fixed a bug that caused the tuxedo shirt to disappear when damaged. Thanks to PurityGuy.
+- NPCs will no longer gag your mouth with their hand while you're already wearing a gag.
+- Fixed an issue with the parasitic pregnancy feat boost. Thanks to Lollipop Scythe.
+- The NPC who gags the PC on the bus will no longer have three arms.
+- Thanks to Klorpa for numerous minor fixes.
+
 ## 0.2.14.3
 
 - NPCs are now more likely to go for penetration when pressing their cocks against your rear.
