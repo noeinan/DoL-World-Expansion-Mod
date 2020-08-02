@@ -46,7 +46,7 @@ function compile() {
 		esac
 	fi
 
-	$TWEEGO_EXE -o "Degrees of Lewdity $VERSION.html" --head "devTools/head.html" game/ || build_failed="true"
+	$TWEEGO_EXE "$@" -o "Degrees of Lewdity $VERSION.html" --head "devTools/head.html" game/ || build_failed="true"
 
 	if [ "$build_failed" = "true" ]; then
 		echoError "Build failed."
@@ -57,4 +57,4 @@ function compile() {
 	fi
 }
 
-compile
+compile "$@"
