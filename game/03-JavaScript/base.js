@@ -7,10 +7,10 @@ window.statsConsole = function () {
  * Alias SugarCube.State as State
  * When sugarcube executes code, it makes the global value `State`
  * the sugarcube state, but other globals like SugarCube.State don't exist
- * 
+ *
  * By making this alias, if you simply use `State` to refer to state, it does not
  * matter if your code is executing inside of sugarcube or not. It'll always just work
- * 
+ *
  * To elaborate further, we don't use SugarCube.State here as global initialization is considered
  * sugarcube execution. SugarCube.State (currently) does not exist, but `State` (note, *not* window.State)
  * exists.
