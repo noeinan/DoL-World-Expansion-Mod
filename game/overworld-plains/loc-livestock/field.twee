@@ -119,6 +119,28 @@ A river runs through one corner. The cattle stay almost as far away from the chu
 		<br>
 		<<link [[Protest|Livestock Field Intro Protest]]>><</link>>
 		<br>
+	<<elseif $arousal gte $arousalmax>>
+		<<orgasmpassage>> Your knees buckle, and you fall to the grass.
+		
+		<<if $monsterchance gte 1 and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+			<<if $malechance lt random(1, 100)>>
+				Cowgirls around the field look over in confusion.
+				
+			<<else>>
+				Bullboys around the field look over in confusion.
+				
+			<</if>>
+		<<else>>
+		<</if>>
+		<br><br>
+		<<generate1>><<generate2>><<generate3>><<generate4>><<person1>>
+		You lie in the field, and soon hear footsteps approach. "What have we here?" Says <<personsimple>>'s voice beside you. "Is it unwell?"
+		<br><br>
+		"I think it needs a seeing to," says a <<person2>><<person>> as <<he>> crouches beside you, pinning your shoulders to the ground. You hear more farmhands approach.
+		<br><br>
+		
+		<<link [[Next|Livestock Field Gang]]>><<set $molestationstart to 1>><</link>>
+		<br>
 	<<else>>
 		<<link [[Eat Grass (1:00)|Livestock Field Grass]]>><<pass 60>><<livestock_obey 1>><<transform cow 1>><<hunger -400>><</link>><<gobey>><<lhunger>>
 		<br>
@@ -127,8 +149,17 @@ A river runs through one corner. The cattle stay almost as far away from the chu
 		<<if $livestock_fence is 1>>
 			<<link [[Examine the fence|Livestock Field Fence]]>><<unset $livestock_fence>><</link>>
 			<br>
-		<<elseif $livestock_dig gte 24>>
+		<<elseif $livestock_dig gte 25>>
 			<<link [[Approach the tunnel under the fence|Livestock Tunnel]]>><</link>>
+			<br>
+		<<elseif $livestock_dig gte 24 and $physiquesize lte 12000>>
+			<<link [[Approach the tunnel under the fence|Livestock Tunnel]]>><</link>><<small_text>>
+			<br>
+		<<elseif $livestock_dig gte 23 and $physiquesize lte 10000>>
+			<<link [[Approach the tunnel under the fence|Livestock Tunnel]]>><</link>><<small_text>>
+			<br>
+		<<elseif $livestock_dig gte 22 and $physiquesize lte 6000>>
+			<<link [[Approach the tunnel under the fence|Livestock Tunnel]]>><</link>><<small_text>>
 			<br>
 		<<else>>
 			<<link [[Dig beneath the fence (1:00)|Livestock Field Dig]]>><<pass 60>><<tiredness 6>><<set $livestock_dig += 1>><</link>><<gtiredness>>
@@ -233,7 +264,7 @@ You ignore the <<personcomma>> and walk away from <<his>> mocking laughter.
 		You look up, and see a <<generate1>><<person1>><<person>> leering at you. <<covered>><<gstress>><<stress 6>>
 	<<else>>
 		You look up for just a moment. You spot a <<generate1>><<person1>><<person>> leering at you,
-		but you pay him no mind as you continue your search for tasty tufts of grass.
+		but you pay <<him>> no mind as you continue your search for tasty tufts of grass.
 	<</if>>
 	<br><br>
 <<else>>
@@ -436,7 +467,7 @@ You see movement nearby. A mouse scurries past, hiding within tufts of grass. It
 :: Livestock Field Dig [nobr]
 <<effects>>
 
-<<if $livestock_dig gte 24>>
+<<if $livestock_dig gte 25 or $livestock_dig gte 24 and $physiquesize lte 12000 or $livestock_dig gte 23 and $physiquesize lte 10000 or $livestock_dig gte 22 and $physiquesize lte 6000>>
 	You crawl inside your tunnel, and get to digging. You pull free a large stone, and earth collapses on your head. You brush it aside, and glimpse daylight above.
 	<br><br>
 
@@ -459,8 +490,13 @@ You see movement nearby. A mouse scurries past, hiding within tufts of grass. It
 <</if>>
 <br><br>
 
-<<if $livestock_dig gte 24>>
+<<if $livestock_dig gte 25>>
 	<<link [[Escape|Livestock Dig Escape]]>><</link>>
+	<br>
+	<<link [[Wait|Livestock Field]]>><</link>>
+	<br>
+<<elseif $livestock_dig gte 24 and $physiquesize lte 12000 or $livestock_dig gte 23 and $physiquesize lte 10000 or $livestock_dig gte 22 and $physiquesize lte 6000>>
+	<<link [[Escape|Livestock Dig Escape]]>><</link>><<small_text>>
 	<br>
 	<<link [[Wait|Livestock Field]]>><</link>>
 	<br>
@@ -566,6 +602,9 @@ You walk over to your tunnel. It's still there, though both sides hide in long g
 <br><br>
 
 <<link [[Escape|Livestock Dig Escape]]>><</link>>
+<<if $livestock_dig lte 24>>
+	<<small_text>>
+<</if>>
 <br>
 <<link [[Wait|Livestock Field]]>><</link>>
 <br>
@@ -2804,4 +2843,133 @@ You slap Remy's face, too quick for <<him>> to dodge. One of the farmhands shock
 <br><br>
 
 <<link [[Next|Livestock Job]]>><</link>>
+<br>
+
+
+
+:: Livestock Field Gang [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+
+	<<maninit>>
+	<<if $livestock_horse gte 2 and $hour gte 12>>
+		<<set $rescue to 1>>
+	<</if>>
+<</if>>
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+<span id="next"><<link [[Next|Livestock Field Gang Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Livestock Field Gang]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Livestock Field Gang Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	The farmhands walk together toward the gate, leaving you lying on the grass.
+	<br><br>
+	<<tearful>> you stagger to your feet.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Livestock Field]]>><</link>>
+	<br>
+
+<<elseif $enemyhealth lte 0>>
+	The farmhands back away from you, surprised by your ferocity. They stand still, facing you in a line.
+	<br><br>
+	
+	<<link [[Charge|Livestock Field Gang Charge]]>><<def 1>><</link>>
+	<br>
+	<<link [[Stare|Livestock Field Gang Stare]]>><</link>>
+	<br>
+
+
+<<else>>
+	<<set $rescued += 1>>
+	<<earnFeat "Equine Rescue">>
+	You hear hooves. The <<person1>><<person>> looks up. "Shit!" <<he>> shouts, backing away from you. The others follow suit, leaving you alone on the grass.
+	<br><br>
+	<<if $monsterchance gte 1 and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+		<<if $malechance lt random(1, 100)>>
+			The hooves grow louder, and a moment later you're surrounded by centaur. They form a protective circle around you while a couple chase the farmhands off the field.
+			<br><br>
+			The <<person4>><<person>> is last through the gate, and shuts it in a hurry. A firm-breasted centaur close to you throws back her head, and laughs. "That didn't take much."
+			<br><br>
+			Satisfied that you're safe, the centaur return to their territory.
+			<br><br>
+		<<else>>
+			The hooves grow louder, and a moment later you're surrounded by centaur. They form a protective circle around you while a couple chase the farmhands off the field.
+			<br><br>
+			The <<person4>><<person>> is last through the gate, and shuts it in a hurry. A barrel-chested centaur close to you throws back his head, and laughs. "That didn't take much."
+			<br><br>
+			Satisfied that you're safe, the centaur return to their territory.
+			<br><br>
+		<</if>>
+	<<else>>
+		The hooves grow louder, and a moment later you're surrounded by horses. Most stand around you, as if protecting you, while a couple chase the farmhands off the field.
+		<br><br>
+		The <<person4>><<person>> is last through the gate, and shuts it in a hurry.
+		<br><br>
+		Satisfied that you're safe, the horses return to their territory.
+		<br><br>
+	<</if>>
+	<br><br>
+	<<tearful>> you rise to your feet.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Livestock Field]]>><</link>>
+	<br>
+
+<</if>>
+
+
+:: Livestock Field Gang Charge [nobr]
+<<effects>>
+	
+You take advantage of your initiative, and spring forward into a charge. The <<person1>><<person>> tumbles backwards before you even touch <<him>>, and the others turn and run.
+<br><br>
+	
+<<tearful>> you catch your breath.
+<br><br>
+<<clotheson>>
+<<endcombat>>
+<<link [[Next|Livestock Field]]>><</link>>
+<br>
+
+
+:: Livestock Field Gang Stare [nobr]
+<<effects>>
+
+You stare them down. They look at each other, trying to goad one another into making the first move. None of them are keen.
+<br><br>
+
+"Screw this," the <<person1>><<person>> says. "I need a drink." <<He>> turns and walks away. The others soon follow.
+<br><br>
+
+<<tearful>> you catch your breath.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+<<link [[Next|Livestock Field]]>><</link>>
 <br>

@@ -56,7 +56,7 @@ You are in the garden behind the orphanage.
 <<else>>
 
 <<if $hour gte 7 and $hour lt 20 and $weather is "rain">>
-Some children are playing.
+Some orphans are playing.
 <br><br>
 <</if>>
 
@@ -182,14 +182,65 @@ You look over your shoulder to make sure you aren't being watched, then hoist yo
 	<i>Once discovered, seeds can be planted here. Seeds are found in wild parts of the world. Tending skill reduces tilling time and improves harvest quality and quantity.</i>
 	<br><br>
 <</if>>
-<<display_plot garden>>
-<<if !$plants_known.includes("daisy")>>
-	<<link [[Search for seeds (0:30)|Garden Flowers Seeds]]>><<set $plants_known.push("daisy")>><<pass 30>><</link>>
+
+<<if $event_trigger is 1>>
+	<<robin_location>>
+	<<if $rng gte 51 and _robin_location is "orphanage" and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $robin_tending isnot 1>>
+		<<set $robin_tending to 1>>
+		<<npc Robin>><<person1>>
+		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
+			You hear a gentle patter of footsteps disturbing the grass. It's Robin.
+			<br><br>
+			
+			"I hope I'm not being rude," <<he>> says. <<He>> watches you water with red eyes. "I heard someone watering out here, and thought it would be you."
+			<br><br>
+			
+			<<link [[Hug (0:05)|Garden Robin Hug]]>><<pass 5>><<npcincr Robin love 1>><<npcincr Robin trauma -1>><<trauma -6>><</link>><<ltrauma>><<glove>><<lrtrauma>>
+			<br>
+			<<link [[Let Robin Help (0:10)|Garden Robin Help]]>><<pass 10>><<npcincr Robin love 1>><<trauma -6>><<stress -6>><<pass 10>><</link>><<ltrauma>><<lstress>><<glove>>
+			<br>
+			<<link [[Say you're finished|Garden Robin Finished]]>><</link>>
+			<br>
+		<<else>>
+			You hear a gentle patter of footsteps disturbing the grass. It's Robin.
+			<br><br>
+			
+			"I thought I heard you out here," <<He>> says, stepping closer. "Can I help?"
+			<br><br>
+			
+			<<link [[Let Robin Help|Garden Robin Help]]>><<pass 10>><<npcincr Robin love 1>><<trauma -6>><<stress -6>><<pass 10>><</link>><<ltrauma>><<lstress>><<glove>>
+			<br>
+			<<link [[Say you're finished|Garden Robin Finished]]>><</link>>
+			<br>
+		<</if>>
+	<<elseif $rng gte 31 and $hallucinations gte 2>>
+		Something brushes against your leg. You shake it off, assuming it an insect, but it happens again. You look down, and see a stem curling around your ankle.
+		<br><br>
+		
+		<<link [[Shake it off|Garden Stem Shake]]>><</link>>
+		<br>
+		<<link [[Look closer|Garden Stem Look]]>><</link>>
+		<br>
+	<<else>>
+		<<set $hallucinogen += 60>>
+		A strange scent rises from the plants as you water. You feel lightheaded.
+		<br><br>
+		
+		<<link [[Next|Garden Flowers]]>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<display_plot garden>>
+	<<if !$plants_known.includes("daisy")>>
+		<<link [[Search for seeds (0:30)|Garden Flowers Seeds]]>><<set $plants_known.push("daisy")>><<pass 30>><</link>>
+		<br>
+	<</if>>
+	<br>
+	<<link [[Leave|Garden]]>><</link>>
 	<br>
 <</if>>
-<br>
-<<link [[Leave|Garden]]>><</link>>
-<br>
+
+<<unset $event_trigger>>
 
 :: Garden Flowers Seeds [nobr]
 
@@ -233,7 +284,7 @@ You find some seeding daisies growing within a tuft of wild grass near the back 
 :: Bask Sneak [nobr]
 <<set $outside to 1>><<set $location to "home">><<effects>>
 
-You crawl beneath a bush and look out towards your bedroom window. Children play on the grass between you and the orphanage. You won't be able to cross without being seen.
+You crawl beneath a bush and look out towards your bedroom window. Orphans relax on the grass between you and the orphanage. You won't be able to cross without being seen.
 <br><br>
 
 <<link [[Shield yourself with a potted plant|Bask Sneak Exhibitionism]]>><</link>>
@@ -413,12 +464,12 @@ You cling to the branch holding your clothes with your hands and knees and crawl
 :: Bask Sneak Exhibitionism [nobr]
 <<set $outside to 1>><<set $location to "home">><<effects>>
 
-You shuffle out from beneath the bush and take cover behind a plant pot. You stand up, lifting the pot as you so that the flowers continue to protect you. You walk along the side of the garden, hoping no one thinks anything is odd. The children don't look twice at you.
+You shuffle out from beneath the bush and take cover behind a plant pot. You stand up, lifting the pot as you do so that the flowers continue to protect you. You walk along the side of the garden, hoping no one thinks anything is odd. The orphans don't look twice at you.
 <br><br>
 
 <<if $rng gte 81>>
 
-You're half way there when the bottom of the pot gives way, spilling the contents and causing the rest of the pot to collapse. You find yourself stood out in the open with your <<lewdness>> displayed. One of the children averts their eyes, but most stare at you. You run to your bedroom window and climb inside as laughter breaks out behind you.
+You're half way there when the bottom of the pot gives way, spilling the contents and causing the rest of the pot to collapse. You find yourself stood out in the open with your <<lewdness>> displayed. One of the orphans averts their eyes, but most stare at you. You run to your bedroom window and climb inside as laughter breaks out behind you.
 <<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 600>>
 <br><br>
 
@@ -437,7 +488,7 @@ You make it to your bedroom window and climb through without incident.
 :: Bask Sneak Wait [nobr]
 <<set $outside to 1>><<set $location to "home">><<effects>>
 
-You wait, <<lewdness>> displayed but hidden beneath the bush, for the children to grow bored and leave. Once vacant, you run across the garden and through your bedroom window to safety.
+You wait, <<lewdness>> displayed but hidden beneath the bush, for the orphans to grow bored and leave. Once vacant, you run across the garden and through your bedroom window to safety.
 <br><br>
 
 <<link [[Next|Bedroom]]>><</link>>
@@ -535,3 +586,393 @@ You squeeze <<his>> hips between your thighs for a moment and lean closer. "You'
 
 <<link [[Next|Garden]]>><<endevent>><</link>>
 <br>
+
+
+:: Garden Robin Help [nobr]
+<<effects>>
+
+<<set _garden_location to "garden">>
+<<for _i to 0; _i lt $plots[_garden_location].length; _i++>>
+	<<set _tending_temp to _i>>
+	<<set $plots[_garden_location][_tending_temp].water to 1>>
+<</for>>
+
+You hand Robin your watering can, and <<he>> gets to work while you find another. Together, you water the flowers around the garden.
+<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
+	Robin is quiet, but <<he>> seems happier as <<he>> works.
+<<else>>
+	Robin hums as <<he>> works.
+<</if>>
+<br><br>
+
+Job well done, Robin sits on the grass and watches the flowers sway in the breeze.
+<br><br>
+
+<<link [[Sit with Robin (0:05)|Garden Robin Sit]]>><<pass 5>><<npcincr Robin love 1>><</link>><<glove>>
+<br>
+<<link [[Make Robin a flower crown (0:10)|Garden Robin Crown]]>><<pass 10>><</link>><<tendingdifficulty 1 200>>
+<br>
+
+
+:: Garden Robin Sit [nobr]
+<<effects>>
+
+<<if $robinromance is 1 and $NPCName[$NPCNameList.indexOf("Robin")].dom gte 40>>
+	You sit beside Robin. <<He>> rests <<his>> hand on yours, and gives it a little squeeze.
+<<else>>
+	You sit beside Robin, and together watch as bees float between the glistening petals.
+<</if>>
+<br><br>
+
+A few minutes pass, until an argument breaks out inside the orphanage. Robin looks over. "I should investigate," <<he>> says, rising to <<his>> feet. "Thanks for letting me help."
+<br><br>
+
+<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+<br>
+
+:: Garden Robin Crown [nobr]
+<<effects>>
+<<headwear 14>>
+You sit on the grass beside Robin, and rummage among the wild flowers for suitable specimens. Robin watches a moment, then gasps in excitement. <<He>> joins in. "I'm making one for you too."
+<br><br>
+
+Soon, you both have flower crowns ready. <<if $tending lt 200>>Yours looks rougher than Robin's, but <<he>> doesn't seem to mind.<</if>> <<He>> reaches atop your head, and places the crown <<he>> made upon it. You place yours atop <<his>> head in turn.
+
+<br><br>
+<<if $tending gte random(1, 200)>>
+	"I love it," Robin says, <span class="green">smiling beneath the wreathe of flowers.</span>
+	<br><br>
+<<else>>
+	"I love it," Robin says. <<Hes>> barely finished speaking when the <span class="red">the crown on <<his>> head unravels,</span> and it falls to the ground. <<He>> smiles. "It's okay! I still love it. They can be tricky to make, but you'll get it with practice."<<glove>><<npcincr Robin love 1>><<gdom>><<npcincr Robin dom 1>>
+	<br><br>
+<</if>>
+
+You hear shouting within the orphanage. "Those two are at it again," Robin says, rising to <<his>> feet. "I need to investigate. Thanks for letting me help."
+<br><br>
+
+<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+<br>
+
+:: Garden Robin Hug [nobr]
+<<effects>>
+
+You wrap your arms around Robin. <<He>> rests <<his>> head on your shoulder, and sobs.
+<br><br>
+
+"I'm okay," <<he>> says after a few minutes, wiping <<his>> eyes. "Thank you. I'll be inside."
+<br><br>
+
+<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+<br>
+
+:: Garden Robin Finished [nobr]
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"Thank you for offering," you say. "But I've just finished."
+<<elseif $submissive lte 850>>
+	"You're a tad too late," you say. "Just finished."
+<<else>>
+	"Thank you for offering," you say. "But I've just finished."
+<</if>>
+<br><br>
+<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
+	Robin nods, and walks back towards the orphanage.
+<<else>>
+	Robin nods. "Okay. I'll be inside if you need me."
+<</if>>
+<br><br>
+
+<<link [[Next|Garden Flowers]]>><</link>>
+<br>
+
+
+:: Garden Stem Shake [nobr]
+<<effects>>
+
+<<if $rng gte 21>>
+
+	You shake it off again, and move elsewhere.
+	<br><br>
+
+	<<link [[Next|Garden Flowers]]>><</link>>
+	<br>
+	
+<<else>>
+	
+	You try to shake it off again, but it tightens its grip. More shoots spring from the earth, wrapping around your arms and legs, and pulling you to the soil.<<gstress>><<stress 6>>
+	<br><br>
+	
+	<<link [[Call for help|Garden Stem Help]]>><</link>>
+	<br>
+	<<link [[Struggle|Garden Stem Struggle]]>><</link>><<physiquedifficulty 1 $physiquemax>>
+	<br>
+	<<link [[Soothe|Garden Stem Soothe]]>><</link>><<tendingdifficulty 1 1000>>
+	<br>
+	<<link [[Brace yourself|Garden Stem Brace]]>><</link>>
+	<br>
+	
+<</if>>
+
+:: Garden Stem Look [nobr]
+<<effects>>
+
+<<if $rng gte 71>>
+
+	You crouch down, leaning closer to the plant. The smooth green tip drips a pink, sweet-smelling fluid. You feel an urge to taste i.
+	<br><br>
+	
+	<<link [[Lick|Garden Stem Lick]]>><<set $phase to 0>><</link>><<deviant1>>
+	<br>
+
+
+<<elseif $rng gte 41>>
+	You crouch down, leaning closer to the plant. The thin green tip drips a purple, sweet-smelling fluid. You feel an urge to taste it.
+	<br><br>
+	
+	<<link [[Lick|Garden Stem Lick]]>><<set $phase to 1>><</link>><<deviant1>>
+	<br>
+
+<<else>>
+	You crouch down, leaning closer to the plant. The bulbous green tip drips a red, sweet-smelling fluid. You feel an urge to taste it.
+	<br><br>
+
+	<<link [[Lick|Garden Stem Lick]]>><<set $phase to 2>><</link>><<deviant1>>
+	<br>
+
+
+<</if>>
+	<<link [[Shake it off|Garden Stem Shake]]>><</link>>
+	<br>
+
+:: Garden Stem Lick [nobr]
+<<effects>>
+
+<<if $phase is 0>>
+	You stick out your tongue, and lick the tip. The pink fluid is sticky, and so, so sweet.<<deviancy1>>
+	
+	An unnatural warmth spreads from your mouth, journeying to the base of your tongue, down your neck and throughout your body.<<gggarousal>><<arousal 2000>><<set $drugged += 180>>
+	<br><br>
+	
+	<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+	<br>
+<<elseif $phase is 1>>
+	You stick out your tongue, and lick the tip. The purple fluid is sticky, and so, so sweet.<<deviancy1>>
+	
+	The colours of the garden shift and blend together, creative an ever-changing patchwork. You shake your head, breaking free of the effect, but are left with the nagging feeling that the world is not as it seems.<<set $hallucinogen += 180>>
+	<br><br>
+	
+	<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+	<br>
+<<else>>
+	You stick out your tongue, and lick the tip. The red fluid is sticky, and so, so sweet.<<deviancy1>>
+	<br><br>
+	
+	The world spins, and you stagger to the ground. You laugh, suddenly giddy, as you rise again to your feet.<<set $drunk += 180>>
+	<br><br>
+	
+	<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+
+
+
+:: Garden Stem Help [nobr]
+<<effects>>
+
+You call for help as the shoots tighten around you.
+
+<<if $daystate is "night">>
+	<<generate1>><<person1>>
+	There's no response at first, except the night wind blowing through the branches overhead. But then you hear the garden fence creak, followed but a thump.
+	<br><br>
+	
+	"Well now," says a <<personsimple>>'s voice. "One of the orphan's got <<pherself>> all tangled." A <<person>> crouches in front of you, regarding you with leering eyes. "Not allowed in the orphanage they says, but you're not in the orphanage, are you?" <<He>> tears the restraining shoots away, but only to give better access as <<he>> climbs on top of you.
+	<br><br>
+	
+	<<link [[Next|Garden Stem Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+
+<<else>>
+	<<robin_location>>
+	<<if $rng gte 51 and _robin_location is "orphanage" and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $robin_tending isnot 1>>
+		<<npc Robin>><<person1>>
+		"I'm coming!" shouts a voice in response. It's Robin. <<He>> emerges from the orphanage, and gasps when <<he>> sees you. "You're all tangled. Here." <<He>> drops to <<his>> knees and loosens the entangling shoots. <<Hes>> careful not to damage any.
+		<br><br>
+		
+		They become less tight at <<his>> touch, allowing you to wriggle free. "It's a good thing you didn't fall into stinging nettles," <<he>> says. "I try to keep the garden free of them, but it's like they appear over night."
+		<br><br>
+		You thank Robin, and <<he>> returns to the orphanage proper.
+		<br><br>
+		
+		<<link [[Next|Garden Flowers]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<generatey1>><<person1>>
+		You hear footsteps. "Don't worry," says a <<person>> as <<he>> crouches beside you. "They don't have thorns." <<He>> pulls apart the shoots restraining you, frowning at the effort. "These are really tight. It's almost like they have a life of their own."
+		<br><br>
+		
+		With the <<persons>> help, you manage to struggle free. You thank <<him>>, and <<he>> returns to the orphanage proper.
+		<br><br>
+		
+		<<link [[Next|Garden Flowers]]>><</link>>
+		<br>
+	<</if>>	
+<</if>>
+
+
+
+:: Garden Stem Rape [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+
+	<<maninit>>
+	
+<</if>>
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+<span id="next"><<link [[Next|Garden Stem Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+<span id="next"><<link [[Next|Garden Stem Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+<span id="next"><<link [[Next|Garden Stem Rape]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Garden Stem Rape Finish [nobr]
+<<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	The <<person>> pants on top of you, before hauling <<himself>> off. <<He>> peeks above the fence before climbing over, disappearing into the night.
+	<br><br>
+	<<tearful>> you rise to your feet. At least the plants seem inert.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Garden Flowers]]>><</link>>
+	<br>
+
+<<else>>
+	The <<person>> wasn't expecting resistance. <<He>> rushes for the fence and hauls <<himself>> over, escaping into the night.
+	<br><br>
+	<<tearful>> you rise to your feet. At least the plants seem inert.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Garden Flowers]]>><</link>>
+
+
+<</if>>
+
+
+:: Garden Stem Struggle [nobr]
+<<effects>>
+
+
+<<if $physique gte random(1, $physiquemax)>>
+
+	<span class="green">You tear yourself free of the shoots binding you,</span> and climb to your feet. The plants fall to the ground, inert, freeing your body.
+	<br><br>
+
+	<<link [[Next|Garden Flowers]]>><</link>>
+	<br>
+
+<<else>>
+
+	You try to tear yourself free of the plants binding you, <span class="red">but they're too tight.</span>
+	<br><br>
+	
+	<<link [[Next|Garden Stem Tentacles]]>><<set $molestationstart to 1>><</link>>
+	<br>
+	
+<</if>>
+
+
+:: Garden Stem Soothe [nobr]
+<<effects>>
+
+<<if $tending gte random(1, 1000)>>
+
+	You sing a gentle hum. The shoots sway to its tune, <span class="green">becoming looser,</span> allowing you to wriggle free.
+	<br><br>
+	
+	<<link [[Next|Garden Flowers]]>><</link>>
+	<br>
+
+<<else>>
+
+	You sing a gentle hum. <span class="red">The shoots don't respond,</span> and continue to tighten around you.
+	<br><br>
+	
+	<<link [[Next|Garden Stem Tentacles]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<</if>>
+
+
+
+:: Garden Stem Brace [nobr]
+<<effects>>
+
+You brace yourself as the shoots tighten around your limbs.
+<br><br>
+
+<<link [[Next|Garden Stem Tentacles]]>><<set $molestationstart to 1>><</link>>
+<br>
+
+:: Garden Stem Tentacles [nobr]
+<<effects>>
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<set $combat to 1>>
+	<<set $enemytype to "tentacles">>
+	<<molested>>
+	<<controlloss>>
+
+	<<tentaclestart 4 15>>
+	<<set $timer to 15>>
+<</if>>
+
+<<statetentacles>>
+You count $tentacles.active tentacles surrounding you.
+
+<<effects>>
+<<effectstentacles>>
+<<tentacles>>
+<<actionstentacles>>
+
+<<if $tentacles.active lte ($tentacles.max / 2) or $timer lte 1>>
+	<span id="next"><<link [[Next|Garden Stem Tentacles Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Garden Stem Tentacles]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Garden Stem Tentacles Finish [nobr]
+<<effects>>
+
+The shoots fall inert. <<tearful>> you tear them away from your body.
+<br><br>
+
+<<clotheson>>
+<<endcombat>>
+
+<<link [[Next|Garden Flowers]]>><</link>>
+<br>
+
+
+
+

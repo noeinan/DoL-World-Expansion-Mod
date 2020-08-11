@@ -382,7 +382,33 @@
 <<set $rng to random(1, 100)>>
 
 <<if $NPCList[_n].penis is "mouth">>
-	<<if $rng gte 81 and $NPCList[_n].stance isnot "topface">>
+	<<if $enemyanger gte random(1, 100)>>
+		<<if $oralskill gte random(1, 1200)>>
+			<<bHe>> shoves <<bhis>> $NPCList[_n].penisdesc down your throat, <span class="blue">but you manage to gasp between <<bhis>> thrusts.</span>	
+		<<else>>
+			<span class="pink">You gag as <<bhe>> thrusts <<bhis>> $NPCList[_n].penisdesc down your throat.</span>
+				<<oxygen -100>>
+			<<if $swimmingskill lt random(1, 1200)>>
+				<<oxygen -100>>
+			<</if>>
+			<<if $oxygen gte 900>>
+				<span class="blue">You struggle for breath.</span>
+			<<elseif $oxygen gte 600>>
+				<span class="purple">You can't breathe!</span>
+				<<violence 10>>
+			<<elseif $oxygen gte 300>>
+				<span class="pink">You feel light-headed.</span>
+				<<violence 20>>
+			<<elseif $oxygen gte 1>>
+				<span class="pink">You see stars.</span>
+				<<violence 40>>
+			<<else>>
+				<span class="red">You are suffocating.</span>
+				<<violence 100>>
+			<</if>>
+		<</if>>
+		<<submission 10>><<bruise face>><<bruise neck>><<violence 1>><<set $speechmouthpenetrated to 1>>
+	<<elseif $rng gte 81 and $NPCList[_n].stance isnot "topface">>
 		<span class="purple"><<bHe>> withdraws <<bhis>> penis from your mouth.</span>
 		<<sex 30>><<set $NPCList[_n].penis to "mouthimminent">><<bruise face>><<violence 1>><<set $mouthstate to "imminent">>
 	<<elseif $rng gte 1>>
@@ -391,7 +417,7 @@
 		<<if $NPCList[_n].penissize gte 4>>
 			<<switch random(1, 4)>>
 				<<case 1>>
-					<span class="pink"> You gag as <<bhis>> $NPCList[_n].penisdesc bumps the back of your throat.</span>
+					It's a struggle not to gag as the $NPCList[_n].penisdesc fills you.
 				<<case 2>>
 					<span class="pink"> Saliva drools down your chin as you struggle to keep your lips wrapped around <<bhis>> $NPCList[_n].penisdesc.</span>
 					<<set $hygiene += 500>><<set $facegoo += 1>>
@@ -983,10 +1009,10 @@
 		<<set $NPCList[_n].mouth to "vaginaentrance">><<set $vaginastate to "othermouthentrance">>
 	<<elseif $rng gte 1>>
 		<<if $novaginal is 0 and $worn.genitals.type.includes("chastity")>>
-			<<bhe>> uses his tongue to lick around your $worn.genitals.name while feeling for a way past.
+			<<bhe>> uses <<bhis>> tongue to lick around your $worn.genitals.name while feeling for a way past.
 			<<sex 20>><<set $worn.genitals.integrity -= 10>><<set $enemyanger += 5>>
 		<<elseif $novaginal is 1 and $worn.genitals.type.includes("chastity")>>
-			<<bhe>> uses his tongue to lick around your $worn.genitals.name.
+			<<bhe>> uses <<bhis>> tongue to lick around your $worn.genitals.name.
 			<<sex 25>>
 		<<elseif $novaginal is 0>>
 			<<if $player.virginity.vaginal isnot true or $virginitytest isnot 1>>
@@ -1082,10 +1108,10 @@
 		<<set $NPCList[_n].mouth to "anusentrance">><<set $anusstate to "othermouthentrance">>
 	<<elseif $rng gte 1>>
 		<<if $noanal is 0 and $worn.genitals.anal_shield is 1>>
-			<<bhe>> uses his tongue to lick around your $worn.genitals.name while feeling for a way past.
+			<<bhe>> uses <<bhis>> tongue to lick around your $worn.genitals.name while feeling for a way past.
 			<<sex 25>><<set $worn.genitals.integrity -= 10>><<set $enemyanger += 5>>
 		<<elseif $noanal is 1 and $worn.genitals.anal_shield is 1>>
-			<<bhe>> uses his tongue to lick around your $worn.genitals.name.
+			<<bhe>> uses <<bhis>> tongue to lick around your $worn.genitals.name.
 			<<sex 30>>
 		<<elseif $noanal is 0>>
 			<<if $player.virginity.anal isnot true or $virginitytest isnot 1>>
@@ -1753,6 +1779,10 @@
 			<</if>>
 		<</if>>
 	<</if>>
+<</if>>
+
+<<if $oxygen lt $oxygenmax and $underwater isnot 1>>
+	<br>Air: <<oxygencaption>>
 <</if>>
 
 <</nobr>><</widget>>
