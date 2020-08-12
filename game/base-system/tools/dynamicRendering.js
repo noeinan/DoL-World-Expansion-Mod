@@ -162,9 +162,10 @@ Dynamic.renderAt = (id, content) => {
 	const elm = document.getElementById(id);
 	if (elm) {
 		while (elm.hasChildNodes()) { elm.removeChild(elm.lastChild); }
+		const priorStage = Dynamic.stage;
 		Dynamic.stage = Dynamic.Stage.SugarCubeRender;
 		new Wikifier(elm, content);
-		Dynamic.stage = Dynamic.Stage.UpdateQueued;
+		Dynamic.stage = priorStage;
 	} else {
 		console.warn(`Unable to locate element {#${id}} for rendering content:`, content);
 	}
