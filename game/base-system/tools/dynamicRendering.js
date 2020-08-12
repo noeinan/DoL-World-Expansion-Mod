@@ -5,9 +5,10 @@ window.Dynamic = window.Dynamic || {};
  */
 Dynamic.render = () => {
 	Object.entries(Dynamic.liveIds).forEach(([id, content]) => {
-		Dynamic.renderAt(id, content);
+		Dynamic.task(() => Dynamic.renderAt(id, content), `Dynamic.renderAt(${id}, ${content})`);
 	});
-	Links.generate();
+	Dynamic.task(() => Links.generate(), `Links.generate()`);
+	Dynamic.processTasks();
 }
 
 /**
@@ -60,10 +61,14 @@ Dynamic.render = () => {
 Dynamic.eventBinder = (...valuesToInject) => {
 	const id = Dynamic.getNewId();
 	/** We must let SugarCube finish rendering. Our element won't exist yet */
-	setTimeout(() => {
+	Dynamic.task(() => {
 		const elm = document.getElementById(id);
-		Dynamic.bindEvents(elm, {}, valuesToInject)
-	})
+		if (!elm) {
+			console.warn(`Unable to find Dynamic id ${id} on page. Page maybe rendered incorrectly`);
+		} else {
+			Dynamic.bindEvents(elm, {}, valuesToInject)
+		}
+	}, `Dynamic.bindEvents(${id}, {}, ${JSON.stringify(valuesToInject)})`)
 	return id;
 }
 
@@ -76,17 +81,70 @@ Dynamic.eventBinder = (...valuesToInject) => {
 Dynamic.bind = (content, customId) => {
 	const id = customId || Dynamic.getNewId();
 	Dynamic.bindTo(id, content);
-	setTimeout(() => Dynamic.renderAt(id, content), 0);
+	Dynamic.task(() => Dynamic.renderAt(id, content), `Dynamic.renderAt(${id}, ${content})`);
 	return id;
 }
 
 /** ################
- * Dynamic lifecycle
+ * Sugarcube lifecycle
  */
 $(document).on(':passageinit', function (ev) {
 	// cleanup existing IDs and usages before we start rendering the next passage
 	Dynamic.dispose();
+	Dynamic.stage = Dynamic.Stage.SugarCubeRender;
 });
+$(document).on(':passagedisplay', function (ev) {
+	Dynamic.processTasks();
+});
+
+/** ################
+ * Dynamic lifecycle
+ */
+Dynamic.Stage = {
+	Settled: 'Settled',
+	UpdateQueued: 'UpdateQueued',
+	SugarCubeRender: 'SugarCubeRender',
+};
+Dynamic.stage = Dynamic.Stage.Rendering;
+Dynamic.tasks = [];
+
+Dynamic.MAX_IN_LOOP_TASKS = 1_000_000;
+Dynamic.processTasks = () => {
+	const errors = [];
+	let inLoopTasks = 0;
+	while (Dynamic.tasks.length > 0) {
+		Dynamic.stage = Dynamic.Stage.UpdateQueued;
+		const task = Dynamic.tasks.pop()
+		try {
+			task()
+		} catch (e) {
+			errors.push([task, e]);
+		}
+
+		if (inLoopTasks++ > Dynamic.MAX_IN_LOOP_TASKS) {
+			console.error(`Too many dynamic tasks, likely an infinite recursion occurred. Quitting.`);
+			break;
+		}
+	}
+	Dynamic.stage = Dynamic.Stage.Settled;
+	if (errors.length) {
+		console.warn(`Encountered errors while finishing a Dynamic render:`, errors.map(([task, error]) => {
+			return [task.toString(), error]
+		}))
+	}
+}
+Dynamic.task = (fn, name) => {
+	fn.toString = () => name;
+	if (Dynamic.stage === Dynamic.Stage.Settled) {
+		try {
+			fn()
+		} catch (e) {
+			console.warn(`Encountered a unexpected critical error while performing a dynamic render task`, fn.toString(), e);
+		}
+	} else {
+		Dynamic.tasks.push(fn);
+	}
+}
 
 /** ############################################################
  * Dynamic internal tools (you probably don't need to use these)
@@ -104,7 +162,11 @@ Dynamic.renderAt = (id, content) => {
 	const elm = document.getElementById(id);
 	if (elm) {
 		while (elm.hasChildNodes()) { elm.removeChild(elm.lastChild); }
-		new SugarCube.Wikifier(elm, content);
+		Dynamic.stage = Dynamic.Stage.SugarCubeRender;
+		new Wikifier(elm, content);
+		Dynamic.stage = Dynamic.Stage.UpdateQueued;
+	} else {
+		console.warn(`Unable to locate element {#${id}} for rendering content:`, content);
 	}
 }
 const SUGARCUBE_IDENTIFIER = /(.*?)\$([A-Za-z0-9_]+)/g;

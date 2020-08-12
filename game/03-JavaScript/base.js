@@ -16,6 +16,8 @@ window.statsConsole = function () {
  * exists.
  */
 window.State = State;
+window.Wikifier = Wikifier;
+
 /** Uncomment the following lines to get a better idea about how sugarcube makes certain globals available */
 // function sugarCubeGlobals() {
 // 	return {
