@@ -59,7 +59,9 @@ Dynamic.render = () => {
  * ```@id="Dynamic.eventBinder(_var1, _var3, _var2)" onclick="(var1, var3, var2) => ..."```
  */
 Dynamic.eventBinder = (...valuesToInject) => {
-	const id = Dynamic.getNewId();
+	return Dynamic.eventBinderWithId(Dynamic.getNewId(), ...valuesToInject);
+}
+Dynamic.eventBinderWithId = (id, ...valuesToInject) => {
 	/** We must let SugarCube finish rendering. Our element won't exist yet */
 	Dynamic.task(() => {
 		const elm = document.getElementById(id);
@@ -170,7 +172,7 @@ Dynamic.renderAt = (id, content) => {
 		console.warn(`Unable to locate element {#${id}} for rendering content:`, content);
 	}
 }
-const SUGARCUBE_IDENTIFIER = /(.*?)\$([A-Za-z0-9_]+)/g;
+const SUGARCUBE_IDENTIFIER = /(.*?)\$([A-Za-z0-9_]+)(.*)/g;
 const LITERAL_EVENTS = Object.getOwnPropertyNames(window)
 	.filter(g => g.startsWith("HTML"))
 	.map(k => window[k])
@@ -186,18 +188,27 @@ Dynamic.bindEvents = (elm, options, valuesToInject) => {
 }
 Dynamic.createBoundHandler = (sourceHandler, ...valuesToInject) => {
 	const handlerText = sourceHandler.toString();
-	let handlerContents = handlerText.slice(handlerText.search(/\{/g) + 1, handlerText.length - 1);
-	SUGARCUBE_IDENTIFIER.lastIndex = 0;
-	let lastMatch = SUGARCUBE_IDENTIFIER.exec(handlerContents);
-	while (lastMatch) {
-		const newContent = `SugarCube.State.variables.${lastMatch[2]}`;
-		handlerContents = lastMatch[1] + newContent
-			+ handlerContents.slice(SUGARCUBE_IDENTIFIER.lastIndex)
-		SUGARCUBE_IDENTIFIER.lastIndex = lastMatch.index + newContent.length;
+	let handlerContents, lastMatch;
+	try {
+		handlerContents = handlerText.slice(handlerText.search(/\{/) + 1, handlerText.length - 1);
+		SUGARCUBE_IDENTIFIER.lastIndex = 0;
 		lastMatch = SUGARCUBE_IDENTIFIER.exec(handlerContents);
-	}
-	const newHandler = new Function(`return (${handlerContents})`)()
-	return () => {
-		newHandler(...valuesToInject); Dynamic.render();
+		while (lastMatch) {
+			const newContent = `SugarCube.State.variables.${lastMatch[2]}`;
+			handlerContents = handlerContents.slice(0, lastMatch.index) + lastMatch[1] + newContent + lastMatch[3]
+			SUGARCUBE_IDENTIFIER.lastIndex = lastMatch.index + lastMatch[1].length + newContent.length;
+			lastMatch = SUGARCUBE_IDENTIFIER.exec(handlerContents);
+		}
+		const newHandler = new Function(`return (${handlerContents})`)()
+		return () => {
+			newHandler(...valuesToInject); Dynamic.render();
+		}
+	} catch (e) {
+		console.error(
+			`Failed to create bound handler from raw handler:`, handlerText,
+			`\nLast contents / match:`, handlerContents, lastMatch,
+			`\nError encountered:`, e
+		);
+		throw e;
 	}
 }
