@@ -110,7 +110,7 @@ Dynamic.Stage = {
 Dynamic.stage = Dynamic.Stage.Rendering;
 Dynamic.tasks = [];
 
-Dynamic.MAX_IN_LOOP_TASKS = 1_000_000;
+Dynamic.MAX_IN_LOOP_TASKS = 1000000;
 Dynamic.processTasks = () => {
 	const errors = [];
 	let inLoopTasks = 0;
