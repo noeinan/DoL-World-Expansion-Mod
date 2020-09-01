@@ -1,5 +1,154 @@
 # CHANGELOG
 
+## 0.2.16.3
+
+- Added an event to the deep forest. Requires tentacles and vore enabled. Written in collaboration with Anon.
+
+### Balance Changes
+
+- Unavoidable tentacle encounters triggered by hallucinations in the deep forest are now less likely.
+- Breastfeeding wolves will now increase milk capacity even if you don't have enough milk available.
+
+### Bug Fixes
+
+- The highest crossdressing and hermaphrodite school fame midnight notices can no longer repeat every night.
+- Stripping for the class to examine your body in science will now increase crossdresser or hermaphrodite fame.
+- Fixed an error found when hermaphrodite characters pose for life-art.
+- Newly bought short cheongsams should no longer try to display an extra image that doesn't exist
+- Fixed several problems with hermaphrodite images. Thanks to Lollipop Scythe.
+- Fixed an issue with the cat sprite while in the doggy position. Thanks to Lollipop Scythe.
+- Fixed an error found when Eden cums. Thanks to CasaBlanc.
+- Fixed a bug that would prevent the game from loading on some devices. Thanks to 00c356.
+- Mason and their students will no longer break into school to conduct swimming lessons on holidays and weekends.
+- Fixed a bug that could prevent you from stealing after attending a gloryhole.
+- Fixed a broken legwear image on the missionary sprite. Thanks to Lollipop Scythe.
+- Fixed a bug that hid right legwear on the combat sprite.
+- Fixed a bug that made swimming skill checks in the old sewers more difficult than they actually were.
+
+## 0.2.16.2
+
+- Newly bought waiter's trousers are now considered masculine, rather than feminine.
+- Winter will no longer mistake the gender of the person who helps them set up the second demonstration.
+- Fixed a bug that prevented the silver star image from displaying on Linux.
+- Fixed a bug that could result in a number of errors, including one found by drying your clothes. Thanks to 00c356.
+- The air bar will no longer appear multiple times during gang encounters
+- The monk or nun who assaults you while searching for lichen should no longer transform into the 0 man or woman.
+- Harper's breast size chart will now make more sense for flat-chested characters.
+- The sleeves on the waiter's shirt will no longer disappear when covering your nudity.
+- The PC will no longer describe female centaur as "sir".
+
+## 0.2.16.1
+
+- Fixed a bug that prevented crime from increasing by the intended amount when stealing from the clothing shop. Thanks to Lollipop Scythe.
+- Fixed an error found during combat as a hermaphrodite. Thanks to Lollipop Scythe.
+- Fixed a bug that caused problems when bonus skill exp was granted.
+- Fixed a soft-lock found when receiving a spare school uniform from Leighton as a hermaphrodite. Thanks to Lollipop Scythe.
+
+## 0.2.16.0
+- You can now choose to play as a hermaphrodite at the game's start. Big thanks to Lollipop Scythe for a huge number of adjustments to images and code to incorporate characters with both sets of genitals.
+- Hermaphrodites can choose whether or not they have testes at character creation.
+- Added hermaphrodite variants to the school changing room crossdressing scenes.
+- Added hermaphrodite variants to the science class inspection scenes. Written in collaboration with Lollipop Scythe.
+- Adjusted the text in a large number of scenes, allowing NPCs to take hermaphrodites into account.
+- Added speech lines for NPCs witnessing a hermaphrodite PC exposed on stage during the maths competition. Written in collaboration with Lollipop Scythe.
+- Added speech lines for NPCs during encounters with hermaphrodite characters.
+- NPCs who discover hermaphrodite genitals during encounters can react in different ways.
+- Audiences will now react when dancing crossdressers and hermaphrodites reveal their true gender.
+- You can now gain a reputation at school as a crossdresser or hermaphrodite, which influences some events.
+- Added events to the school hallways and playground for characters with high crossdresser or hermaphrodite fame.
+- Added school crossdresser and hermaphrodite reputations to the cheat menu.
+- Added the option to become a hermaphrodite to the cheat menu. Thanks to Lollipop Scythe.
+- Robin may now investigate when your character waters the flowers behind the orphanage, alongside other new events.
+- Robin can now make you a flower crown during an event. Art courtesy of KG.
+- Winter will now ask for further assistance at the museum should the player find and bring twenty different antiques.
+- Added an antique to the town.
+- Adjusted Eden's orgasm text.
+- Adjusted a line of aggressive NPC speech. Thanks to larsrand.
+- NPCs at a glory hole now have a new set of lines, which should make more sense given the situation. Thanks to larsrand.
+- Added the "Rest" and "Cooperate" actions while tribbing. Thanks to larsrand.
+- The "Cooperate" action now becomes "Fuck" when your vagina is penetrated during consensual encounters if your character is promiscuous or deviant, depending on the type of encounter. Thanks to larsrand.
+- Improved the code and text for being vaginally fucked. Thanks to larsrand.
+- Added the backwards cap, alice band, maid headband, bun covers, waiter's shirt and waiter's trousers to the clothing shop. Art courtesy of KG.
+- The colour of the band on the straw hat can now be chosen. Thanks to KG.
+- Avery's rage, wolf pack harmony, and wolf pack ferocity now have their own icons in the Social tab. Art courtesy of PurityGuy.
+- You can now tell if an NPC is lactating when they first push your face against their breasts.
+- Successfully retrieving your hat from a high branch along the road east of town is now marked as succeeding due to your character's large size.
+- The PC will now cum if they have max arousal on Remy's field.
+- Very strong characters can now carry Whitney on their back should they try to mount you, opening new options.
+- Added new location art for the town's streets and the underground. Courtesy of Mochi.
+- Having an orgasm while sleeping naked in bed with Robin will now get cum on them. Written in collaboration with Harcher.
+- Added an event to Robin's lemonade stand for players with the cow transformation. Written in collaboration with Harcher.
+- NPCs may now write additional lines on the PC should they be famous for deviancy.
+- Characters with pussies can now initiate tribadism. Requires sufficient promiscuity or deviancy should the encounter be consensual.
+- Angry NPCs and beasts can now thrust their penises down the player character's throat. This can lead to suffocation should the PC lack the oral skill to cope.
+- NPCs can't deepthroat the PC if their penis is too small.
+- The air bar now appears during encounters when the PC as at risk of suffocation.
+- You now gain a bronze, silver and gold star the first three times you study science, maths, English and history on a given day. Gaining a star gives you a skill boost. You can gain three stars per subject. Art courtesy of Mochi.
+- Added the Equine Rescue, Being a Hermaphrodite, Pain Rider, Submerged, and Giddy Up feats.
+
+### Balance changes
+
+- Plants no longer need to be watered when planted in the rain.
+- Smaller characters can now more easily squeeze through the holes made by digging in the underground dungeon, the wolf cave and Remy's farm.
+- Reduced the rate of willpower decay.
+- There's now a chance Eden will sniff you out if you try to hide from them in town.
+- Known or higher in a fame category is now required before NPCs will write associated lines on the PC.
+- Reduced the impact of fame on allure by 50%.
+- Control is no longer damaged when an NPC gropes or attempts to strip you while dancing. Stress and trauma increase instead.
+
+### Bug Fixes
+
+- Kylar will now remember your sex should you show them your genitals while masturbating or teasing them.
+- Fixed a bug that could cause the changing room options at the school pool to appear twice on one screen.
+- The gothic gown description will no longer display twice at the clothing shop.
+- Ignoring NPCs who try to chat or seduce the PC during a riding lesson will no longer end the lesson.
+- Kylar's jealously should now be correctly marked as such when they try to pull you into dark alley.
+- Monster girls should no longer be referred to as if they are male when attempting to perform oral on the PC.
+- Removed a rogue pixel from the fishnet stockings' sidebar image.
+- Fixed a bug that could the skip the negotiation phase when attracting a client at the strip club or brothel.
+- You should no longer teleport to the brothel when accepting a client at the strip club out of fear of Bailey.
+- Fixed an error found when successfully pleading with a centaur while crawling through a hole in the wall.
+- Female Briar's introduction will now take her breast size into account.
+- Any messy fluids gained while fucking Eden in the bath will now be washed off.
+- The text found when fighting off Eden after a bath seduction becomes non-consensual should now make sense.
+- Fixed an image error found when wearing wedge sandals in the missionary position.
+- Leighton will now remember your sex should they find out while you're being being dragged around school naked on a leash.
+- Mason is no longer aware of your sex when they shouldn't be while rescuing you from the school changing rooms.
+- Fixed a bug that broke an NPC were you to flirt when caught in the opposite-sex changing rooms at school.
+- Mason will now remember the PC's gender when discussing spare swimsuits.
+- Leighton should have a better memory of the PC's gender during the inspection scenes, though they may still "forget" if it suits them.
+- Fixed a bug that prevented the rain from watering plots that hadn't been watered the previous day.
+- Fixed a bug that caused NPCs to treat characters like the wrong sex when talking about boyish body-writing or tattoos.
+- Certain police officers should no longer be able to detect your true gender without evidence.
+- Fixed a close-up image error found during tentacle encounters. Thanks to 00c356.
+- Fixed a bug that prevented the NPCs who catch the PC sneaking naked across Connudatus Street from recognising them as a notorious flaunter.
+- The straw hat should now appear in the clothing shop.
+- Morgan will no longer ask you to strip if you're already naked.
+- Characters with a small body will no longer be described as having a tiny body by the text that indicates that an action is possible or successful due to the character's small frame.
+- Passing out after being assaulted in your cell on Remy's farm in the morning will no longer prevent hunger increasing that day.
+- Robin will no longer be able to play video games without a console should you moo for attention.
+- The couple at the lake will now respect the "Proportion of same-sex couples" setting.
+- Hunted down a couple of rogue NPCs at the cell in Remy's farm.
+- The location image at the strip club and brothel dressing rooms will no longer display the town's streets.
+- Locked up a rogue NPC found after fighting Whitney in the school canteen, and one found when flaunting in response to catcalls triggered by exhibitionism fame.
+- Fixed a bug that prevented Eden from loading properly when giving them their supplies.
+- Remy, Harper and Niki will now remember your gender should they see you naked at Remy's farm.
+- Winter will now remember your gender should they fix a chastity belt on you or give you a bare-bottomed spanking.
+- Accepting an NPC's proposition during a riding lesson will now count as a promiscuity 1 actions as advertised.
+- NPCs will no longer act like they're playing with your clit while rubbing your belly.
+- Fixed an error found when taking pills. Thanks to CasaBlanc.
+- Thanks to CasaBlanc for a couple of other minor fixes.
+- Locked up a rogue NPC found when submitting to Bailey after failing to meet their demands.
+- Newly bought cheongsams, short cheongsams, and tie-front tops will now properly be considered feminine.
+- Fixed a bunch of points where chastity devices were treated as a part of your body.
+- You can no longer give money you don't have to the person you rescue from a cargo container at the docks.
+- Fixed a bug that caused the "Hit others" stat to increase twice instead of inflicting extra pain when kicking with high heels.
+- The temple quarters will now become cleaner when fixed up by other initiates, rather than the garden.
+- Whitney will no longer examine your cheek when spotting body-writing or a tattoo on your forehead.
+- Socks should no longer render in front of beasts on the combat sprites.
+- Fixed a bug that prevented the history skill from increasing as intended when modelling traditional clothes in History class.
+- Thanks to klorpa for numerous minor fixes.
+
 ## 0.2.15.4
 
 - The PC's outburst at Harper should the doctor have abducted the PC will now take a muzzle into account. Thanks to Harcher.
