@@ -11,6 +11,14 @@
  * if shadowed, and for "documentation" purposes
  */
 window.DOL = {
+	// In pseduo-load order
+	/** 
+	 * Mini application reporter app
+	 * helps get detailed error messages to devs
+	 * {@link ./01-error/error.js
+	 */
+	Errors: {},
+
 	/** Patch to make javascript execution more consistent (see comment below) */
 	State: State,
 	/** Patch to make javascript execution more consistent (see comment below) */
