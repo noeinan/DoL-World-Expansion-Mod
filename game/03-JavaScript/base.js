@@ -3,41 +3,6 @@ window.statsConsole = function () {
 	console.log("BreastGrowthTimer", SugarCube.State.variables.breastgrowthtimer);
 
 }
-/**
- * Alias SugarCube.State as State
- * When sugarcube executes code, it makes the global value `State`
- * the sugarcube state, but other globals like SugarCube.State don't exist
- *
- * By making this alias, if you simply use `State` to refer to state, it does not
- * matter if your code is executing inside of sugarcube or not. It'll always just work
- *
- * To elaborate further, we don't use SugarCube.State here as global initialization is considered
- * sugarcube execution. SugarCube.State (currently) does not exist, but `State` (note, *not* window.State)
- * exists.
- */
-window.State = State;
-window.Wikifier = Wikifier;
-
-/** Uncomment the following lines to get a better idea about how sugarcube makes certain globals available */
-// function sugarCubeGlobals() {
-// 	return {
-// 		"State": typeof State !== 'undefined' ? State : '',
-// 		"SugarCube": typeof SugarCube !== 'undefined' ? SugarCube : '',
-// 		"SugarCube.State": typeof SugarCube !== 'undefined' ? (SugarCube || {}).State || '' : '',
-// 		"window.State": window.State || '',
-// 		"window.SugarCube": window.SugarCube || '',
-// 		"window.SugarCube.State": (window.SugarCube || {}).State || '',
-// 	}
-// }
-// $(document).on(':passageinit', () => {
-// 	console.log(`:passageinit:`, sugarCubeGlobals());
-// });
-// $(document).on(':passageend', () => {
-// 	console.log(`:passageend:`, sugarCubeGlobals());
-// 	setTimeout(() => {
-// 		console.log(`:passageend [after]:`, sugarCubeGlobals());
-// 	})
-// })
 
 jQuery(document).ready(function () {
 	jQuery('#sidetooltip').appendTo("body");
