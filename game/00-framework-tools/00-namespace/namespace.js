@@ -44,7 +44,6 @@ window.defineGlobalNamespaces = (namespaces) => {
 	});
 }
 defineGlobalNamespaces(DOL);
-defineGlobalNamespaces(DOL.Utils);
 
 /**
  * Patches to make javascript execution more consistent
