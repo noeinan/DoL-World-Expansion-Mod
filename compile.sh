@@ -14,7 +14,17 @@ function echoMessage() {
 
 function compile() {
 	export TWEEGO_PATH=devTools/tweeGo/storyFormats
-	VERSION="$(git describe --tags --always --dirty)"
+	if [ -z ${FORCE_VERSION+true} ]; then
+		VERSION="$FORCE_VERSION"
+	else
+		VERSION="$(git describe --tags --always --dirty)"
+	fi
+	if [ -z "${VERSION}" ]; then
+		TARGET="Degrees of Lewdity.html"
+	else
+		TARGET="Degrees of Lewdity $VERSION.html"
+	fi
+
 	TWEEGO_EXE="tweego"
 	if [ ! -f "$(command -v tweego)" ]; then
 		case "$(uname -m)" in
@@ -46,13 +56,13 @@ function compile() {
 		esac
 	fi
 
-	$TWEEGO_EXE "$@" -o "Degrees of Lewdity $VERSION.html" --head "devTools/head.html" game/ || build_failed="true"
+	$TWEEGO_EXE "$@" -o  "$TARGET" --head "devTools/head.html" game/ || build_failed="true"
 
 	if [ "$build_failed" = "true" ]; then
 		echoError "Build failed."
 		exit 1
 	else
-		echo "Done: \"Degrees of Lewdity $VERSION.html\""
+		echo "Done: \"$TARGET\""
 		exit 1
 	fi
 }
