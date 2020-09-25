@@ -1,0 +1,254 @@
+:: Widgets Struggle [widget]
+<<widget "struggle_init">><<nobr>>
+<<set $struggle to {}>>
+<<set $struggle.bottom to {}>>
+<<set $struggle.vagina to {}>>
+<<set $struggle.penis to {}>>
+<<set $struggle.timer to 0>>
+<<set $struggle.creature to "lurker">>
+<<set $struggle.warded to 0>>
+<<set $struggle.satisfied to 0>>
+<<set $struggle.done to 0>>
+
+<<struggle_mouth_init>>
+
+<<set $enemytype to "struggle">>
+<</nobr>><</widget>>
+
+<<widget "struggle_mouth_init">><<nobr>>
+<<set $struggle.mouth to {}>>
+<<set $struggle.mouth.grip to 0>>
+<<set $struggle.mouth.creature to 0>>
+<<set $struggle.mouth.progress to 0>>
+<<set $struggle.mouth.success to 0>>
+<<set $struggle.mouth.action to 0>>
+<</nobr>><</widget>>
+
+<<widget "struggle">><<nobr>>
+<<struggle_effects>>
+<<struggle_enemy>>
+<<struggle_state>>
+<<struggle_actions>>
+<</nobr>><</widget>>
+
+
+<<widget "struggle_state">><<nobr>>
+<<if $struggle.mouth.creature>>
+	<<switch $struggle.mouth.grip>>
+	<<case 0>>
+		You have <span class="red">no</span> grip on the <<print $struggle.mouth.creature>>.
+	<<case 1>>
+		You have a <span class="pink">fragile</span> grip on the <<print $struggle.mouth.creature>>.
+	<<case 2>>
+		You have a <span class="purple">weak</span> grip on the <<print $struggle.mouth.creature>>.
+	<<case 3>>
+		You have a <span class="blue">tentative</span> grip on the <<print $struggle.mouth.creature>>.
+	<<case 4>>
+		You have a <span class="lblue">decent</span> grip on the <<print $struggle.mouth.creature>>.
+	<<case 5>>
+		You have a <span class="teal">strong</span> grip on the <<print $struggle.mouth.creature>>.
+	<<default>>
+		You have an <span class="green">iron</span> grip on the <<print $struggle.mouth.creature>>.
+	<</switch>>
+	<br>
+<</if>>
+<br>
+
+<<if $arousal gte 10000>>
+	<<orgasmpassage>>
+<</if>>
+<<set $seconds += 10>>
+<<if $seconds gte 60>>
+<<set $seconds to 0>>
+<<pass 1>>
+<</if>>
+<<set $struggle.timer += 1>>
+<</nobr>><</widget>>
+
+<<widget "end_struggle">><<nobr>>
+<<unset $struggle>>
+<</nobr>><</widget>>
+
+<<widget "struggle_actions">><<nobr>>
+<<oxygen 50>>
+
+<<willpowerpain>>
+<<willpowerorgasm>>
+
+<<if $trance lte 0 and $dissociation lte 1 and $panicparalysis is 0 and $panicviolence is 0
+and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
+	<<if $mouthuse is "struggle">>
+		The <<print $struggle.mouth.creature>> clings to your face.
+		<br>
+		<<if $leftarm is "bound" and $rightarm is "bound">>
+			Your arms are helplessly bound, leaving you defenceless.
+			<br>
+		<<elseif $leftarm is "grappled" and $rightarm is "grappled">>
+			Your arms are grappled, leaving you defenceless.
+			<br>
+		<<else>>
+			<<struggle_difficulty_set>>
+			<<if $struggle.mouth.grip gte 1>>
+				<<if $struggle.mouth.success lt 100>>
+					<<link [[Strengthen your grip|$passage]]>><<set $struggle.mouth.action to "strengthen">><</link>>
+					<br>
+				<</if>>
+				<<link [[Pull|$passage]]>><<set $struggle.mouth.action to "pull">><</link>><<struggle_difficulty>>
+				<br>
+			<<else>>
+				<<link [[Grasp it|$passage]]>><<set $struggle.mouth.action to "grasp">><</link>>
+				<br>
+			<</if>>
+			<<if $spray gte 1>>
+				<<link [[Pepper Spray|$passage]]>><<set $struggle.mouth.action to "spray">><</link>>
+				<br>
+			<</if>>
+		<</if>>
+	<<link [[Endure|$passage]]>><<set $struggle.mouth.action to 0>><</link>>
+	<br>
+	<</if>>
+<<else>>
+	<<link [[Endure|$passage]]>><<set $struggle.mouth.action to 0>><</link>>
+	<br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "struggle_effects">><<nobr>>
+<<if $struggle.mouth.action is "strengthen">>
+	You tighten your grip on the <<print $struggle.mouth.creature>>.
+	<<if $handskill gte random(1, 1000)>>
+		Your grasp is <span class="teal">much better.</span>
+		<<set $struggle.mouth.grip += 2>>
+	<<else>>
+		Your grasp is <span class="blue">a bit better.</span>
+		<<set $struggle.mouth.grip += 1>>
+	<</if>>
+	<<handskilluse>>
+	<br>
+<</if>>
+<<if $struggle.mouth.action is "pull">>
+	You dig your nails in and try to wrench the <<print $struggle.mouth.creature>> off your face.
+	<<struggle_difficulty_set>>
+	<<if $struggle.mouth.success gte random (1, 100)>>
+		<span class="green">You hurl it away from you.</span>
+		<<set $mouthuse to 0>>
+		<<set $mouthstate to 0>>
+		<<struggle_mouth_init>>
+		<<set $struggle.warded += 1>>
+		<<set $struggle.done += 1>>
+	<<else>>
+		You can't maintain your grip, and <span class="red">your fingers pull away without the creature.</span>
+		<<set $struggle.mouth.grip to 0>>
+	<</if>>
+	<br>
+<</if>>
+<<if $struggle.mouth.action is "grasp">>
+	You raise your hands to the <<print $struggle.mouth.creature>>, though it's hard to find purchase on its slippery hide.
+	<br>
+	<<set $struggle.mouth.grip += 1>>
+<</if>>
+<<if $struggle.mouth.action is "spray">>
+	You spray the <<print $struggle.mouth.creature>>. <span class="green">It leaps off your face.</span>
+	<<set $spraystat += 1>><<spray -1>>
+	<<set $mouthuse to 0>>
+	<<set $mouthstate to 0>>
+	<<struggle_mouth_init>>
+	<<set $struggle.warded += 1>>
+	<<set $struggle.done += 1>>
+<</if>>
+
+<br>
+<<set $struggle.mouth.action to 0>>
+<</nobr>><</widget>>
+
+<<widget "struggle_enemy">><<nobr>>
+<<if $struggle.mouth.creature>>
+	<<switch $struggle.mouth.progress>>
+	<<case 0>>
+		The <<print $struggle.mouth.creature>>'s appendage rubs against your face.<<neutral 1>>
+	<<case 1>>
+		The <<print $struggle.mouth.creature>> plays with your lips, <span class="blue">searching for a way in.</span><<neutral 2>>
+	<<case 2>>
+		The <<print $struggle.mouth.creature>>'s appendage <span class="purple">pushes against your lips.</span><<neutral 4>>
+	<<case 3>>
+		The tip of the <<print $struggle.mouth.creature>> begins to part your lips. <span class="pink">It's about to penetrate fully.</span><<neutral 5>>
+	<<case 4>>
+		<<if $player.virginity.oral isnot true>>
+			The <<print $struggle.mouth.creature>> <span class="pink">forces its appendage into your mouth</span>. It becomers girthier as more enters.
+			<<bruise face>><<oralstat>><<raped>><<set $mouthstate to "struggle_pen">>
+		<<else>>
+			The <<print $struggle.mouth.creature>> <span class="pink">forces its appendage into your mouth</span>. <span class="red">It tastes strange.</span>
+			<<takeVirginity $struggle.mouth.creature "oral">><<bruise face>><<oralstat>><<violence 1>><<raped>><<set $mouthstate to "struggle_pen">>
+		<</if>>
+		<<neutral 5>>
+	<<case 5>>
+		The <<print $struggle.mouth.creature>> pushes itself deeper into your mouth.<<neutral 5>>
+	<<case 6>>
+		The <<print $struggle.mouth.creature>>'s appendage pushes down your throat. <<if $underwater isnot 1>><span class="purple">You can't breathe!</span><</if>><<neutral 5>>
+	<<case 7>>
+		The <<print $struggle.mouth.creature>> <span class="pink">shudders as it begins to pump a sweet fluid down your throat.</span><<neutral 5>><<set $drugged += 25>><<purity -1>><<internalejac>><<set $mouthgoo += 1>><<oralejacstat>><<ejacstat>>
+	<<case 14>>
+		The <<print $struggle.mouth.creature>> shudders, and withdraws its appendage from your throat. It leaps from your face.<<neutral 5>><<set $drugged += 25>>
+		<<set $mouthuse to 0>>
+		<<set $mouthstate to 0>>
+		<<struggle_mouth_init>>
+		<<set $struggle.done += 1>>
+		<<set $struggle.satisfied += 1>>
+	<<default>>
+		The <<print $struggle.mouth.creature>> pumps a sweet fluid down your throat.<<neutral 5>><<set $drugged += 25>><<purity -1>><<internalejac>><<set $mouthgoo += 1>>
+	<</switch>>
+	<<if $struggle.mouth.progress gte 6 and $struggle.mouth.progress lte 14>>
+		<<if $underwater isnot 1>>
+			<<oxygen -150>>
+		<</if>>
+		<<if $oxygen gte 900>>
+			
+		<<elseif $oxygen gte 600>>
+			
+		<<elseif $oxygen gte 300>>
+			
+		<<elseif $oxygen gte 1>>
+			
+		<<else>>
+			<<violence 15>>
+		<</if>>
+	<</if>>
+	<<set $struggle.mouth.progress += 1>>
+<</if>>
+
+
+<<if $oxygen lt $oxygenmax and $underwater isnot 1 and _strangle is 1>>
+	<<unset _strangle>>
+	<br>Air: <<oxygencaption>>
+<</if>>
+<br>
+<</nobr>><</widget>>
+
+
+<<widget "struggle_difficulty">><<nobr>>
+
+<<struggle_difficulty_set>>
+
+ | Success Chance :
+<<if $struggle.mouth.success gte 100>>
+	<span class="green"><<print $struggle.mouth.success>>%</span>
+<<elseif $struggle.mouth.success gte 80>>
+	<span class="teal"><<print $struggle.mouth.success>>%</span>
+<<elseif $struggle.mouth.success gte 60>>
+	<span class="lblue"><<print $struggle.mouth.success>>%</span>
+<<elseif $struggle.mouth.success gte 40>>
+	<span class="blue"><<print $struggle.mouth.success>>%</span>
+<<elseif $struggle.mouth.success gte 20>>
+	<span class="purple"><<print $struggle.mouth.success>>%</span>
+<<elseif $struggle.mouth.success gte 1>>
+	<span class="pink"><<print $struggle.mouth.success>>%</span>
+<<else>>
+	<span class="red"><<print $struggle.mouth.success>>%</span>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "struggle_difficulty_set">><<nobr>>
+	<<set $struggle.mouth.success to Math.trunc(($struggle.mouth.grip * 10) + ($physique / 600))>>
+<</nobr>><</widget>>
+

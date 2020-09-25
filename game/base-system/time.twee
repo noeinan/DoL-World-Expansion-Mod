@@ -106,7 +106,7 @@
 <<set $sewersfeeding to 0>>
 <<set $sewerssex to 0>>
 <<set $museumgreengemtouch to 0>>
-<<set $fenceclimb to 0>>
+<<unset $fenceclimb>>
 <<set $cafeeaten to 0>>
 <<set $mirrortentacles to 0>>
 <<set $massattended to 0>>
@@ -263,6 +263,28 @@
 <<set $deviancystress4 to 0>>
 <<set $deviancystress5 to 0>>
 
+<<if $farm_stage gte 2>>
+	<<farm_work_update midnight>>
+<</if>>
+<<if $farm_stage gte 5>>
+	<<farm_aggro 5>>
+<</if>>
+<<if $farm_countdown gte 1>>
+	<<set $farm_countdown -= 1>>
+<</if>>
+<<unset $farm_work>>
+<<unset $farm_count>>
+<<unset $farm_naked>>
+<<unset $farm_event>>
+<<if $farm_yield isnot undefined>>
+	<<if $farm_yield_alex is undefined>>
+		<<set $farm_yield_alex to 0>>
+	<</if>>
+	<<set $farm_yield_alex += $farm_yield>>
+	<<unset $farm_yield>>
+<</if>>
+
+
 <<trauma -10>>
 <<if $schooltrait is 4>>
 	<<trauma -40>>
@@ -352,27 +374,27 @@
 	<<if $scienceattended isnot 1>>
 		<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
 	<<else>>
-		<<set $sciencemissed -= 1>><<set $lessonmissed -= 1>>
+		<<set $sciencemissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 	<</if>>
 	<<if $mathsattended isnot 1>>
 		<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
 	<<else>>
-		<<set $mathsmissed -= 1>><<set $lessonmissed -= 1>>
+		<<set $mathsmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 	<</if>>
 	<<if $englishattended isnot 1>>
 		<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
 	<<else>>
-		<<set $englishmissed -= 1>><<set $lessonmissed -= 1>>
+		<<set $englishmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 	<</if>>
 	<<if $historyattended isnot 1>>
 		<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
 	<<else>>
-		<<set $historymissed -= 1>><<set $lessonmissed -= 1>>
+		<<set $historymissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 	<</if>>
 	<<if $swimmingattended isnot 1>>
 		<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
 	<<else>>
-		<<set $swimmingmissed -= 1>><<set $lessonmissed -= 1>>
+		<<set $swimmingmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 	<</if>>
 	<<set $scienceattended to 0>>
 	<<set $mathsattended to 0>>
@@ -506,7 +528,11 @@
 <<set $physiquesize to (1000 * $devlevel)>>
 
 <<if $physique gte 1000>>
-	<<set $physique to ($physique - ($physique / 2000))>>
+	<<if $farm_stage gte 6>>
+		<<set $physique to ($physique - ($physique / 2000))>>
+	<<else>>
+		<<set $physique to ($physique - ($physique / 2500))>>
+	<</if>>
 <</if>>
 
 <<set $willpower *= 0.99>>
@@ -984,6 +1010,7 @@
 <<set $sewersantiquehorn to 0>>
 <<set $temple_fire to 0>>
 <<unset $police_high>>
+<<unset $school_pool_swap>>
 
 <</nobr>><</widget>>
 

@@ -11,7 +11,7 @@ You are in the farmlands.
 	<</if>>
 <<elseif $daystate is "dawn">>
 	<<if $weather is "rain">>
-		Rain sweeps over hte fields.
+		Rain sweeps over the fields.
 	<<elseif $weather is "overcast">>
 		A dense fog devours the fields.
 	<<else>>
@@ -36,6 +36,11 @@ You are in the farmlands.
 <</if>>
 <br><br>
 
+<<if $farm_stage is undefined>>
+	A sign stands beside a dirt track leading up to a farmhouse. It advertises fresh eggs, carrots, and other produce. One line is written in darker paint than the others. It reads: "Farmhands needed. Ask inside." <<if $daystate is "night">>You'd need to come back during the day.<</if>>
+	<br><br>
+<</if>>
+
 <<if $exposed gte 1>>
 	You hide behind a hay bale to cover your indecency.
 	<br><br>
@@ -44,6 +49,19 @@ You are in the farmlands.
 <<if $stress gte 10000>>
 	<<passoutfarmroad>>
 <<else>>
+	<<if $daystate isnot "night">>
+		<<if $farm_stage is undefined and $exposed lte 0>>
+			<<link [[Ask about farm work (0:30)|Farm Intro]]>><<pass 30>><<set $farm_stage to 1>><</link>>
+			<br>
+		<<elseif $farm_stage is 1 and $exposed lte 0>>
+			<<link [[Accept farm work (0:05)|Farm Intro Accept 2]]>><<pass 5>><<set $farm_stage to 2>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if $farm_stage gte 2>>
+		<<link [[Farm (0:05)|Farm Work]]>><<pass 5>><</link>>
+		<br>		
+	<</if>>
 	<<if $exposed lte 0>>
 		<<if $daystate is "night">>
 			<<link [[Riding School|Riding School Lock]]>><</link>>
@@ -55,10 +73,706 @@ You are in the farmlands.
 			<<link [[Riding School (0:01)|Riding School]]>><<pass 1>><</link>>
 			<br>
 		<</if>>
-		<<link [[Meadow (0:10)|Meadow]]>><<pass 10>><</link>>
-		<br>
 	<</if>>
-	<br>
+	<<link [[Meadow (0:10)|Meadow]]>><<pass 10>><</link>>
+	<br><br>
 	<<link [[Walk towards town (0:05)|Farm Road 6]]>><<set $phase to 0>><<pass 5>><</link>>
 	<br>
 <</if>>
+
+
+:: Farm Intro [nobr]
+<<set $outside to 0>><<set $location to "farm">><<effects>>
+
+<<npc Alex>><<person1>>
+You walk towards the farmhouse. There's a chicken coop opposite. A <<if $pronoun is "m">>boy<<else>>girl<</if>> emerges from behind it, carrying a large bale of hay on <<his>> shoulder. <<He>> notices you, and smiles. "Hey," <<he>> says. "I'll be right with you."
+<br><br>
+
+You stand under the porch as the <<if $pronoun is "m">>boy<<else>>girl<</if>> carries <<his>> burden to a nearby shed. <<He>> hefts it inside. A cloud of dust erupts as the hay hits the floor.
+<br><br>
+
+The <<if $pronoun is "m">>boy<<else>>girl<</if>> stretches <<his>> back as <<he>> walks towards you,
+<<if $weather is "rain">>
+	wiping <<his>> red fringe away from <<his>> eyes. "Let's get you out of this rain," <<he>> says, opening the door. "I'll put the kettle on."
+<<else>>
+	sweat glistening on <<his>> forehead. <<He>> wipes <<his>> red fringe away from <<his>> eyes. "I'll put the kettle on," <<he>> says, opening the door.
+<</if>>
+"Tea or coffee?"
+<br><br>
+
+<<link [[Tea|Farm Intro 2]]>><<set $phase to 0>><<stress -6>><</link>><<lstress>>
+<br>
+<<link [[Coffee|Farm Intro 2]]>><<set $phase to 1>><<tiredness -6>><</link>><<ltiredness>>
+<br>
+
+
+
+:: Farm Intro 2 [nobr]
+<<effects>>
+
+<<if $phase is 0>>
+	The interior is rustic and cosy. The <<if $pronoun is "m">>boy<<else>>girl<</if>> insists on not discussing why you're here until your tea is ready.
+<<else>>
+	The interior is rustic and cosy. The <<if $pronoun is "m">>boy<<else>>girl<</if>> insists on not discussing why you're here until your coffee is ready.
+<</if>>
+<<Hes>> about your age, but you've never seen <<him>> at school.
+<br><br>
+
+"Now then," <<he>> says after you've taken your first sip. "<span class="green">I'm Alex.</span> What can I do for you? You interested in our eggs?"
+<br><br>
+
+<<if $submissive gte 1150>>
+	"I-I'm here," you say. "The sign said you needed help."
+<<elseif $submissive lte 850>>
+	"I'm here for work," you say.
+<<else>>
+	"The sign said you needed help," you say.
+<</if>>
+<br><br>
+
+"Great," <<he>> smiles, taking another sip of <<his>> tea. "Come on. I'll show you around."
+<br><br>
+
+<<link [[Next|Farm Intro 3]]>><</link>>
+<br>
+
+
+:: Farm Intro 3 [nobr]
+<<effects>>
+
+"This is my <<if $pronoun is "m">>dad's<<else>>mum's<</if>> farm," <<he>> says as <<he>> leads you outside. "There are several, and this one's left up to me. It's a bit much without help. Hard enough to keep up with the animals. Some of the fields are going to waste."
+<br><br>
+
+You arrive at the chicken coop. "These girls are easy enough. They just need to be fed once a day, and let into the yard for at least an hour or so."
+<br><br>
+
+<<link [[Next|Farm Intro 4]]>><</link>>
+<br>
+
+
+:: Farm Intro 4 [nobr]
+<<effects>>
+
+
+Alex leads you around the coop, toward a long stone building. You hear oinking. "The pigs are harder to keep fed. They're hungry buggers. It's a job to carry it all." You enter the sty. 
+
+<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+	<<if $malechance gte 100>>
+		Several pigboys sit in pens.
+	<<elseif $malechance gte 1>>
+		Several pigboys and girls sit in pens.
+	<<else>>
+		Several piggirls sit in pens.
+	<</if>>
+<<else>>
+	Several pigs sit in pens.
+<</if>>
+Some look quizzical, others lie on their sides.
+<br><br>
+
+"There's an area for them to roam outside. They don't need much space."
+<br><br>
+
+<<link [[Next|Farm Intro 5]]>><</link>>
+<br>
+
+:: Farm Intro 5 [nobr]
+<<effects>>
+
+<<He>> leads you away from the sty, through an old wooden gate and onto a paved road. You see a stable up ahead.
+
+<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+	<<if $malechance lte $rng>>
+		<<set _horse_gender to "f">>
+	<<else>>
+		<<set _horse_gender to "m">>
+	<</if>>
+	Centaur lean out the stalls, resting on their elbows. 
+	<<if _horse_gender is "f">>
+		"Hey Alex," one says as you draw close. She's unconcerned about her exposed breasts, but casts a wary eye over you. "When you letting us out?" 
+	<<else>>
+		"Hey Alex," one says as you draw close. He casts a wary eye over you. "When you letting us out?"
+	<</if>>
+	<br><br>
+	
+	"Sorry," Alex replies, scratching the centaur's nose. "I have a visitor." <<He>> opens the stall. "Someone I hope you come to like."
+	<br><br>
+	
+<<else>>
+
+	Horses watch from the stalls. One of them neighs as you draw close.
+	<br><br>
+	
+	"Sorry," Alex says, scratching the horse's nose. "I have a visitor." <<He>> opens the stall. "Someone I hope you come to like."
+	<br><br>
+	
+<</if>>
+
+"The horses need lots of care," <<he>> says as you walk further along the track, towards another gate. "They need brushing every day, and feeding twice a day. They need lots of exercise too." <<He>> opens the gate, and the centaur thunder through to the field beyond.
+<br><br>
+
+<<link [[Next|Farm Intro 6]]>><</link>>
+<br>
+
+
+:: Farm Intro 6 [nobr]
+<<effects>>
+
+You follow Alex through the field, toward a barn. A dog sits outside, its mouth open and tongue lolling.
+<br><br>
+
+<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+	<<if $malechance gte 100>>
+		Inside, a number of bullboys stand on all-fours, each with a tube attached to his penis. They moo in pleasure.
+	<<elseif $malechance lte 0>>
+		Inside, a number of cowgirls stand on all-fours, each with two tubes attached to her breasts. They moo in pleasure.
+	<<else>>
+		Inside, a number of cowgirls and bullboys stand on all-fours, each attached to a milking machine. They moo in pleasure.
+	<</if>>
+
+<<else>>
+	<<if $malechance gte 100>>
+		A number of bulls stand inside, each attached to a milking machine.
+	<<elseif $malechance lte 0>>
+		A number of cows stand inside, each attached to a milking machine.
+	<<else>>
+		A number of cattle stand inside, each attached to a milking machine.
+	<</if>>
+	
+<</if>>
+
+"They need milking three times a day," Alex says. "They prefer to be milked by hand, but it's too time-consuming."
+<br><br>
+
+"I'll be back in a jiffy," <<he>> says to the cattle. "Just showing our new friend around." You follow <<him>> outside.
+<br><br>
+
+<<link [[Next|Farm Intro 7]]>><</link>>
+<br>
+
+:: Farm Intro 7 [nobr]
+<<effects>>
+
+Alex hauls <<himself>> over a fence with one arm, onto a field beyond. It's lined by rows of green plants, each topped with small white flowers.
+<br><br>
+<<He>> beams with pride. "These are my potatoes," <<he>> says. "It's been hard work, but I managed to get them to take. They're about halfway along." 
+<br><br>
+<<He>> points across the field. "We have three more fields like this, but they're infested with weeds. Looking after the animals is the priority, and it's hard to keep up with them."
+<br><br>
+
+
+<<link [[Next|Farm Intro 8]]>><</link>>
+<br>
+
+
+:: Farm Intro 8 [nobr]
+<<effects>>
+
+"That's the run of it," Alex says as you return to the farmhouse. "A little help should make things more manageable. Perhaps I'll be able to put the other fields to work."
+<br><br>
+
+"Where do you live, anyway?"
+<br><br>
+
+<<link [[Say you live at the orphanage|Farm Intro 9]]>><<set $phase to 0>><</link>>
+<br>
+<<link [[Say you live in town|Farm Intro 9]]>><<set $phase to 1>><</link>>
+<br>
+<<link [[Refuse to say|Farm Intro 9]]>><<set $phase to 2>><</link>>
+<br>
+
+
+:: Farm Intro 9 [nobr]
+<<effects>>
+
+
+<<if $phase is 0>>
+	Alex looks uncomfortable. "I'm sorry," <<he>> says. "I imagine you have school and stuff? You can work whenever you like between dawn and dusk. I'll pay you <span class="gold">£15</span> an hour."
+<<elseif $phase is 1>>
+	"I thought so," Alex says. "I imagine you have school and stuff? You can work whenever you like between dawn and dusk. I'll pay you <span class="gold">£15</span> an hour."
+<<else>>
+	"That's okay," Alex smiles. "I can tell you're from town though. I imagine you have school and stuff. You can work whenever you like between dawn and dusk. I'll pay you <span class="gold">£15</span> an hour."
+<</if>>
+<br><br>
+
+"I'd pay more," <<he>> continues. "But the farm is just breaking even. I'm hoping that'll change with your help. I'm not gonna lie though. It's hard work."
+<br><br>
+
+<i>Alex has all the farm options you do. Covering chores will free <<him>> to perform different tasks. Getting the other fields running will improve your wage. Alex may also give you a cut of profits should there be an exceptional yield.
+<br><br>
+Some options are only available at certain times of day.
+</i>
+<br><br>
+
+<<link [[Next|Farm Intro 10]]>><</link>>
+<br>
+
+
+:: Farm Intro 10 [nobr]
+<<effects>>
+
+Alex stops at the porch. "There's a lot more to cover, but you can learn as you go. So how about it?" <<he>> smiles. "Fancy helping? It's okay if you need time to think about it."
+<br><br>
+
+<<link [[Accept|Farm Intro Accept]]>><<set $farm_stage to 2>><</link>>
+<br>
+<<link [[Refuse|Farm Intro Refuse]]>><</link>>
+<br>
+
+
+:: Farm Intro Accept [nobr]
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I'd love to help," you nod.
+<<elseif $submissive lte 850>>
+	"Sounds good," you say. "I'm in."
+<<else>>
+	"I'd like to help," you nod.
+<</if>>
+<br><br>
+
+Alex smiles. "Great! You can start whenever you like, and don't be afraid to ask questions."
+<br><br>
+
+<<farm_init>>
+
+<<link [[Next|Farmland]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Intro Refuse [nobr]
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I need time to think about it," you say.
+<<elseif $submissive lte 850>>
+	"I'll think about it," you say. "Was hoping it'd pay more."
+<<else>>
+	"I'll think about it," you say.
+<</if>>
+<br><br>
+Alex nods. "I understand. Come back when you're ready."
+<br><br>
+
+<<link [[Next|Farmland]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Intro Accept 2 [nobr]
+<<effects>>
+
+<<npc Alex>><<person1>>
+You approach Alex's farm. <<Hes>> carrying two heavy buckets across the yard, but smiles and plants them on the ground when <<he>> sees you. "It's good to see you again," <<he>> says.
+<br><br>
+
+<<if $submissive gte 1150>>
+	"I-I've come about your job offer," you say. "I'd like to help."
+<<elseif $submissive lte 850>>
+	"I'm here about work," you say. "I'm in."
+<<else>>
+	"I'm hear about your job offer," you say. "I'd like to help."
+<</if>>
+<br><br>
+
+Alex beams. "Great! You can start whenever you like, and don't be afraid to ask questions."
+<br><br>
+
+
+<<farm_init>>
+
+<<link [[Next|Farm Work]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Visitor [nobr]
+<<effects>>
+
+<<person2>>
+Alex seems less tense now the <<person>> is gone. <<person1>>"Sorry," <<he>> says, turning to you. "You weren't the first to respond to my sign. There are nasty types around. Stay clear of them."
+<br><br>
+
+<<He>> leans against the fence and watches the lane leading away. "I was relieved when you showed up." <<He>> laughs. "Come on, let's get back to work."
+<br><br>
+
+<<link [[Next|Farm Work]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Stage 4 [nobr]
+<<effects>>
+
+<<if $phase is 0>>
+	<<set $drunk += 60>>
+	You take the proferred bottle, and take a swig. It's a bitter spirit.
+<<else>>
+	Alex puts the bottle away.
+<</if>>
+"It'll be more work," <<he>> continues. "But we'll be making a steady profit. You'll get <span class="gold">£30</span> per hour from now on."
+<br><br>
+<<He>> points over the hedge beyond the cleared field, at the tangled mess beyond. "That's the next target." <<He>> drops off the fence. "I'm eager to get started."<<gglove>><<npcincr Alex love 3>>
+<br><br>
+
+<<set $farm.wage to 3000>>
+
+<<link [[Next|Farm Work]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Stage 5 [nobr]
+<<effects>>
+
+
+Once inside, Alex insists on making the drinks before proceeding.
+<br><br>
+
+<<endevent>><<npc Remy>><<person1>>
+
+"Thank you for your hospitality," Remy says after sipping <<his>> tea.
+<br>
+<<endevent>><<npc Alex>><<person1>>"Just get on with it," Alex says. "I've got work to do."
+<br>
+<<endevent>><<npc Remy>><<person1>>"As you wish. I'm here to offer assistance. I couldn't help but-"
+<br>
+<<endevent>><<npc Alex>><<person1>>"I already have the assistance I need," Alex interrupts, gesturing at you. "We're reclaiming the land, bit by bit. It's going well. And you're not getting a piece. That's what you're really here for, isn't it."
+<br><br>
+
+<<link [[Next|Farm Stage 5 2]]>><</link>>
+<br>
+
+
+:: Farm Stage 5 2 [nobr]
+<<effects>>
+
+<<endevent>><<npc Remy>><<person1>>Remy doesn't respond at once, instead taking another spoonful of sugar. "Don't be stupid," <<he>> says, a new sternness in <<his>> voice. "You two alone? I can offer many more hands. Not to mention security-"
+<br>
+<<endevent>><<npc Alex>><<person1>>"Finish your tea," Alex interrupts again. "Then get out."
+<br>
+<<endevent>><<npc Remy>><<person1>>Remy takes another sip, and turns to you.
+
+<<if $ridingschoolintro is undefined>>
+	"You should drop by the riding school sometime," <<he>> says. "I might have a thing or two to teach."
+<<elseif $livestock_intro isnot undefined and $cow gte 6>>
+	"You should be wiser about your choice of employer," <<he>> says, "I could keep you safe." Your mind is wrenched from the moment by <<his>> words. Visions of tranquil fields invade, along with memories of abuse.<<gstress>><<stress 6>>
+	<br>
+	"What a weird thing to say," Alex interrupts, bringing your thoughts back to reality. "So you're a weirdo as well as a thug."
+<<else>>
+	"You should be wiser about your choice of employer," <<he>> says. "This one doesn't have much of a future."
+<</if>>
+<br><br>
+Remy places <<his>> empty cup on the plate. "Thank you," <<he>> says as <<he>> rises. "You have time to reconsider. I hope you do, for your sake."
+<br><br>
+
+<<link [[Next|Farm Stage 5 3]]>><</link>>
+<br>
+
+
+
+:: Farm Stage 5 3 [nobr]
+<<effects>>
+
+<<endevent>><<npc Alex>><<person1>>
+"I'm sorry about this," Alex says once Remy is gone. "I was afraid we'd get a visit like that once we started turning a profit. Fucking rat."
+<br><br>
+
+<<Hes>> so tense <<he>> shatters one of the cups while trying to clean it, so you take over the washing up. <<He>> calms down some, and laughs. "I might count on you too much."<<gglove>><<npcincr Alex love 3>>
+<br><br>
+
+"I don't know what Remy will try," <<he>> continues as you finish. "But working for me could be dangerous. I understand if you don't want to continue, but if you do, I can pay <span class="gold">£45</span> an hour."
+<br><br>
+
+<<He>> smiles. "I shouldn't let that idiot get me down. Come on. Things are going great, and there's more to do."
+<br><br>
+<<set $farm.wage to 4500>>
+
+<<link [[Next|Farm Work]]>><</link>>
+<br>
+
+
+:: Farm Stage 6 [nobr]
+<<effects>>
+
+You listen to Alex talk over the phone to <<his>> <<if $pronoun is "m">>dad<<else>>mum<</if>>. <<He>> tries to seem calm, but can't stop the excitement bubbling over.
+<br><br>
+
+<<He>> hangs up, and turns to you. "<<Hes>> in the area, and wants to drop by," <<he>> says, no longer trying to contain <<his>> excitement. "I should get the kettle on."
+
+<<if $exposed gte 1>>
+	<<He>> glances at your <<lewdness>> and blushes, as if just now remembering. "Y-You need to wear something." <<He>> rushes up the stairs.
+	
+	A bundle falls down the stairwell a few moments later.
+
+	<<if $worn.upper.type.includes("naked") and $worn.lower.type.includes("naked")>>
+		It's a checkered shirt.<<upperwear 33>>
+		<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte $npcdomhigh and $NPCName[$NPCNameList.indexOf("Alex")].lust gte 10>>
+			A smaller bundle followers. A pair of denim shorts.<<lowerwear 31>>
+		<<else>>
+			A another bundle thumps to the ground in front of you. A pair of jeans.<<lowerwear 22>>
+		<</if>>
+	<<elseif $worn.upper.type.includes("naked")>>
+		It's a checkered shirt.<<upperwear 33>>
+	<<else>>
+		<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte $npcdomhigh and $NPCName[$NPCNameList.indexOf("Alex")].lust gte 10>>
+			It's a pair of denim shorts.<<lowerwear 31>>
+		<<else>>
+			It's a pair of jeans.<<lowerwear 22>>
+		<</if>>
+	<</if>>
+	<<if $upperwetstage gte 1 or $lowerwetstage gte 2>>
+		A rolled up towel follows. "Something to dry with," Alex shouts.
+		<<dry>>
+	<</if>>
+	<br><br>
+	
+	You get dressed in the kitchen. Alex climbs down the staircase.
+<</if>>
+
+<<He>> looks at <<his>> own <<if $weather is "snow" or $weather is "rain">>mud<<else>>weed<</if>>-covered clothes. "Fuck. I need a change of clothes. And a shower."
+<br><br>
+
+<<link [[Next|Farm Stage 6 2]]>><</link>>
+<br>
+
+
+
+:: Farm Stage 6 2 [nobr]
+<<effects>>
+
+You put the kettle on while Alex has a shower. <<Hes>> only gone a little over a minute. You see <<him>> approach the farmhouse wearing just a towel. <<He>> must have left <<his>> dirty clothes outside.
+<br><br>
+
+"Don't look," <<he>> says before entering the kitchen.
+<br><br>
+
+<<link [[Look|Farm Stage 6 Look]]>><<npcincr Alex love -1>><<npcincr Alex dom -1>><<arousal 6>><</link>><<llove>><<ldom>><<garousal>>
+<br>
+<<link [[Don't look|Farm Stage 6 No Look]]>><<npcincr Alex love 1>><</link>><<glove>>
+<br>
+<<link [[Pull the towel away|Farm Stage 6 Pull]]>><<npcincr Alex love -3>><<npcincr Alex dom -3>><<npcincr Alex lust 1>><</link>><<lllove>><<lldom>><<glust>><<promiscuous1>>
+<br>
+
+:: Farm Stage 6 Look [nobr]
+<<effects>>
+
+You turn away from the window, and get a better look at Alex in <<his>> towel.
+<<if $pronoun is "m">>
+	The fabric is tied low around <<his>> waist, and is barely wide enough to wrap around <<him>>. The waistline is pulled taut, leaving <<his>> entire thigh exposed on the side facing you. You glimpse <<his>> toned ass.
+<<else>>
+	<<if $NPCList[0].breastsize gte 1>>
+		The fabric is tied low around <<his>> chest, leaving the top of <<his>> <<print $NPCList[0].breastsdesc>> exposed, and is barely wide enough to wrap arouund <<him>>. The top is pulled taut, leaving the side of <<his>> body facing you exposed. You glimpse <<his>> toned ass.
+	<<else>>
+		The fabric is tied low around <<his>> chest, almost exposing <<his>> nipples, and is barely wide enough to wrap arouund <<him>>. The top is pulled taut, leaving the side of <<his>> body facing you exposed. You glimpse <<his>> toned ass.
+	<</if>>
+<</if>>
+<br><br>
+
+<<He>> clutches the towel tight against <<his>> body. "Don't be a perv!" <<He>> rushes through the remainder of the kitchen, retrieves a fresh change of clothes from a basket, then leaves the way <<he>> came. You hear <<him>> climb the stairs.
+<br><br>
+
+<<link [[Next|Farm Stage 6 3]]>><</link>>
+<br>
+
+:: Farm Stage 6 No Look [nobr]
+<<effects>>
+
+You look out the window, and hear Alex walk through the kitchen behind you. <<He>> rummages in a basket for a fresh set of clothes, then leaves the way <<he>> came. You hear <<him>> climb the stairs.
+<br><br>
+
+<<link [[Next|Farm Stage 6 3]]>><</link>>
+<br>
+
+:: Farm Stage 6 Pull [nobr]
+<<effects>>
+
+You hear Alex walk through the kitchen behind you, then rummage through the basket in search of a fresh set of clothes.
+<br><br>
+You turn, and see <<him>> bent over the basket, clutching <<his>> towel close to <<his>> body.
+
+<<if $pronoun is "m">>
+	The fabric is tied low around <<his>> waist, and is barely wide enough to wrap around <<him>>. The waistline is pulled taut, leaving <<his>> entire thigh exposed on the side facing you. You glimpse <<his>> toned ass.
+<<else>>
+	<<if $NPCList[0].breastsize gte 1>>
+		The fabric is tied low around <<his>> chest, leaving the top of <<his>> <<print $NPCList[0].breastsdesc>> exposed, and is barely wide enough to wrap arouund <<him>>. The top is pulled taut, leaving the side of <<his>> body facing you exposed. You glimpse <<his>> toned ass.
+	<<else>>
+		The fabric is tied low around <<his>> chest, almost exposing <<his>> nipples, and is barely wide enough to wrap arouund <<him>>. The top is pulled taut, leaving the side of <<his>> body facing you exposed. You glimpse <<his>> toned ass.
+	<</if>>
+<</if>>
+<br><br>
+
+You creep behind <<him>>, grasp the hem, and tear the towel off <<his>> body.
+<br><br>
+
+
+<<link [[Next|Farm Stage 6 Pull 2]]>><</link>>
+<br>
+
+:: Farm Stage 6 Pull 2 [nobr]
+<<effects>>
+
+The towel comes away without resistance. "Fuck!" Alex reaches behind to recover it, but you pull it away from <<his>> grasp.
+
+<<if $pronoun is "m">>
+	<<He>> half-turns in the process, showing off <<his>> muscled chest and abdomen. <<He>> covers <<his>> groin with a hand before facing you.
+<<else>>
+	<<He>> half-turns in the process, exposing <<his>> <<print $NPCList[0].breastsdesc>>. <<He>> covers <<his>> chest with one arm, and covers <<his>> groin with the other before facing you.
+<</if>>
+<br><br>
+
+"F-Fucking perv," <<he>> says, <<his>> face crimson. "Give it back. And turn around."
+<br><br>
+
+<<link [[Return the towel|Farm Stage 6 Pull Return]]>><<npcincr Alex love 1>><</link>><<glove>>
+<br>
+<<link [[Refuse|Farm Stage 6 Pull Refuse]]>><<npcincr Alex love -1>><<npcincr Alex dom -1>><<npcincr Alex lust 1>><</link>><<llove>><<ldom>><<glust>>
+<br>
+
+
+:: Farm Stage 6 Pull Return [nobr]
+<<effects>>
+
+You cover your eyes and hold out the towel. Alex pulls it from your grasp.
+<br><br>
+
+You turn to the window. You hear Alex continue to rummage in the basket, then walk back through the kitchen. You hear <<him>> climb the staircase.
+<br><br>
+
+<<link [[Next|Farm Stage 6 3]]>><</link>>
+<br>
+
+
+:: Farm Stage 6 Pull Refuse [nobr]
+<<effects>>
+
+
+<<if $submissive gte 1150>>
+	"B-But you're so hot," you say, keeping the towel.
+<<elseif $submissive lte 850>>
+	"I prefer you like this," you say, keeping the towel.
+<<else>>
+	"You look pretty good," you say, keeping the towel.
+<</if>>
+<br><br>
+Alex throws an anxious glance out the window, then turns back to the basket. <<He>> rummages with one hand, using the other to cover <<his>> ass.
+<br><br>
+
+<<He>> holds the clothes in front of <<his>> body as <<he>> leaves the kitchen and climbs the stairs.
+<br><br>
+
+
+
+<<link [[Farm Stage 6 3]]>><</link>>
+<br>
+
+
+:: Farm Stage 6 3 [nobr]
+<<effects>>
+
+<<pass 5>>
+A car pulls into the yard some minutes later, just as Alex arrives at the bottom of the stairs. "That's <<him>>," <<he>> says. "I hope I look okay."
+<br><br>
+
+You leave the farmhouse with Alex. Up ahead, climbing from a car, is an older, thicker version of Alex.
+<br><br>
+
+"<<if $pronoun is "m">>Hi dad<<else>>Hi mum<</if>>," Alex says.
+<br><br>
+They face each other for an awkward moment, then the <<if $pronoun is "m">>father<<else>>mother<</if>> steps forward, and grasps Alex by the shoulders.
+<br><br>
+
+<<link [[Next|Farm Stage 6 4]]>><</link>>
+<br>
+
+
+:: Farm Stage 6 4 [nobr]
+<<effects>>
+
+They pull away from each other. "Knew you had it in ya," the <<if $pronoun is "m">>father<<else>>mother<</if>> says. <<He>> looks at you over <<his>> <<if $pronoun is "m">>son's<<else>>daughter's<</if>> shoulder. "You must be the townie. Alex's told me all about you."
+<br><br>
+
+Alex turns. "That's right," <<he>> says, resting a hand on your shoulder. "<<pShes>> great with the animals."
+<br>
+<<His>> <<if $pronoun is "m">>father<<else>>mother<</if>> nods. "A farm this size with only two people? Impressive. You need to show me around. First though-"
+<br>
+Alex is already walking towards the farmhouse. <<He>> stops at the door. "Tea of coffee?"
+<br>
+"You know the answer to that."
+<br><br>
+
+<<link [[Tea|Farm Stage 6 5]]>><<stress -6>><</link>><<lstress>>
+<br>
+<<link [[Coffee|Farm Stage 6 5]]>><<tiredness -6>><</link>><<ltiredness>>
+<br>
+
+
+
+:: Farm Stage 6 5 [nobr]
+<<effects>>
+
+You sit at the kitchen table with Alex's <<if $pronoun is "m">>father<<else>>mother<</if>>. "Surprised a townie can be so helpful-"
+<br>
+"<<if $pronoun is "m">>Dad<<else>>Mum<</if>>-" Alex interrupts.
+<br>
+"More surprised by how cute you are-"
+<br>
+"<<if $pronoun is "m">>Dad!<<else>>Mum!<</if>>" Alex says again, slamming a mug of tea in front of the older <<if $pronoun is "m">>man<<else>>woman<</if>>."
+<br>
+"Sorry," <<he>> chuckles. "Thanks for the tea."
+<br><br>
+
+<<link [[Next|Farm Stage 6 6]]>><</link>>
+<br>
+
+
+:: Farm Stage 6 6 [nobr]
+<<effects>>
+
+Alex takes <<his>> <<if $pronoun is "m">>father<<else>>mother<</if>> on a tour of the farm, and insists you come along. The older <<if $pronoun is "m">>man<<else>>woman<</if>> stops to examine each animal, and seems pleased with what <<he>> sees.
+<br><br>
+Alex beams with pride when you reach the fields. The first three are filled with rows of green potato plants. The last is barren, but clear and ready for planting.
+<br><br>
+
+You return to the farmhouse. "You've done a good job," Alex's <<if $pronoun is "m">>father<<else>>mother<</if>> says. "Keep it up. Sorry I can't get out here more often. You know how it is." <<He>> reaches into <<his>> pocket. "Left my keys in the kitchen. Could you grab them?"
+<br><br>
+Alex enters the farmhouse.
+<br><br>
+
+<<link [[Next|Farm Stage 6 7]]>><</link>>
+<br>
+
+
+
+:: Farm Stage 6 7 [nobr]
+<<effects>>
+
+Now alone, the older <<if $pronoun is "m">>man<<else>>woman<</if>> turns to you. "This is for you," <<he>> says pulling an envelope from <<his>> pocket. <<He>> holds it out.
+<br><br>
+
+"Open it when I'm gone," <<he>> continues. "And don't tell Alex."
+<br><br>
+
+Alex emerges from the farmhouse, and holds out the keys. "Thanks," <<his>> <<if $pronoun is "m">>father<<else>>mother<</if>> says. "I'll give the others your love." <<He>> climbs into the car, and drives away.
+<br><br>
+
+<<link [[Next|Farm Stage 6 8]]>><</link>>
+<br>
+
+:: Farm Stage 6 8 [nobr]
+<<effects>>
+
+Alex watches until the car vanishes from view. "I'm glad you were here to meet <<him>>," <<he>> says, turning back to the farm. "Come on. There's work to do."
+<br><br>
+
+You nod, but hang back until Alex disappears behind the sty. You open the envelope. There's a wad of cash inside, along with a note.
+<br><br>
+
+<i>"Thanks for looking out for my <<if $pronoun is "m">>son<<else>>daughter<</if>>. Here's a little something for you. Don't give it to Alex. And don't let <<him>> pressure you into anything. <<Hes>> a good <<if $pronoun is "m">>boy<<else>>girl<</if>>, but dogged."
+</i>
+<br><br>
+You count the money. There's <span class="gold">£10000</span>.<<set $money += 1000000>>
+<br><br>
+
+<<set $farm.wage to 6000>>
+
+
+<<link [[Next|Farm Work]]>><<endevent>><</link>>
+<br>

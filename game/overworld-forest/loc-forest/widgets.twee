@@ -26,7 +26,7 @@ Go deeper into the forest
 	<br>
 	<<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forest += 5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 	<br>
-	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
+	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -37,7 +37,7 @@ Search this area
 <br>
 <<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 <br>
-<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
+<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
 <</nobr>><</widget>>
 
 <<widget "forestlessdeep">><<nobr>>
@@ -50,7 +50,7 @@ Go towards town
 	<br>
 	<<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forest -= 5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 	<br>
-	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
+	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -600,7 +600,7 @@ You feel whatever's hunting you draw closer.
 <<link [[Take a detour (0:30)|Forest]]>><<pass 30>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><<set $eventskip to 1>><</link>>
 <br>
 <<if $bestialitydisable is "f">>
-	<<if $rng gte 81>>
+	<<if random(1, 5) is 5>>
 	<<link [[Ignore them|Forest Bear Molestation]]>><<set $molestationstart to 1>><</link>>
 	<br>
 	<<else>>
@@ -700,29 +700,83 @@ You spot a decaying metal shard amongst the fallen bark at your feet. It's an ar
 <<else>>
 	<<if $edenfreedom gte 2 and $edendays gte 8>>
 
-	<<npc Eden>><<person1>>A bullet whizzes past and hits a tree in front of you. You shield your face with your arms and stagger backwards. A cold hard object presses against your back, and you hear a <<if $pronoun is "m">>man's<<else>>woman's<</if>> voice. "I've been looking for you all over. Come on, let's go home."
+	<<npc Eden>><<person1>>An arm wraps around your neck from behind, while a hand presses against the back of your head. You hear a <<if $pronoun is "m">>man's<<else>>woman's<</if>> voice. "I've been looking for you all over." It's Eden. "Come on, let's go home."
 	<br><br>
 
-	<<link [[Next (0:30)|Eden Recaptured]]>><<pass 30>><</link>>
+	<<link [[Resist|Eden Recaptured Resist]]>><<set $fightstart to 1>><</link>>
+	<br>
+	<<link [[Go to the cabin (0:30)|Eden Recaptured]]>><<pass 30>><</link>>
 	<br>
 
-	<<elseif $edenfreedom gte 1 and $edendays gte 2>>
-	<<npc Eden>><<person1>>A bullet whizzes past and hits a tree in front of you. You shield your face with your arms and stagger backwards. A cold hard object presses against your back, and you hear a <<if $pronoun is "m">>man's<<else>>woman's<</if>> voice. "I've been looking for you all over. Come on, let's go home."
+	<<elseif $edenfreedom is 1 and $edendays gte 2>>
+	<<npc Eden>><<person1>>An arm wraps around your neck from behind, while a hand presses against the back of your head. You hear a <<if $pronoun is "m">>man's<<else>>woman's<</if>> voice. "I've been looking for you all over." It's Eden. "Come on, let's go home."
 	<br><br>
 
-	<<link [[Next (0:30)|Eden Recaptured]]>><<pass 30>><</link>>
+	<<link [[Resist|Eden Recaptured Resist]]>><<set $fightstart to 1>><</link>>
+	<br>
+	<<link [[Go to the cabin (0:30)|Eden Recaptured]]>><<pass 30>><</link>>
 	<br>
 
 	<<elseif $edenfreedom gte 1>>
-	<<npc Eden>><<person1>>A bullet whizzes past and hits a tree in front of you. You shield your face with your arms and stagger backwards. "Sorry," it's Eden. "I just wanted to check on you. Why do you look scared?"
-	<<set $stress -= 2000>>
-	<br><br>
+		<<set $rng to random(1, 100)>>
+		<<if $daystate isnot "night">>
+			<<if $rng gte 51>>
+				<<if $feetskill gte 800>>
+					<<npc Eden>><<person1>>
+					You step on a branch. You’re almost caught off guard as a rope starts to coil around your legs. <span class="green">You jump out of the way.</span> A half-second later and you'd be left dangling from a tree.
+					<br><br>
+					"Too close," a voice calls out. It’s Eden. "Those traps are meant for animals. You should watch where you're going."
+					<br><br>
+					
+					<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+					<br>
+					<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+					<br>
+				<<else>>
+					<<npc Eden>><<person1>>
+					You step on a branch. You’re caught off guard as a rope snares around your right leg, hoisting you high into the air. It flips you upside down, leaving you dangling from a nearby tree.<<gstress>><<stress 6>>
+					<br><br>
+					You reach up to untie yourself, and spot someone watching. It's Eden.
+					<br><br>
+					"Those traps are meant for animals," <<he>> says. "You should watch where you’re going." <<He>> takes your weight in <<his>> arms while <<he>> unties you, then eases you to the ground.
+					<br><br>
+					
+					<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+					<br>
+					<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+					<br>
+				<</if>>
+			<<else>>
+				<<npc Eden>><<person1>>
+				You hear leaves rustling. A deer leaps from a nearby bush, with Eden close behind. The latter stops in <<his>> tracks when <<he>> spot you.
+				<br><br>
+				"I almost didn’t see you," <<he>> says. "You should get back to the cabin. Where it’s safe."
+				<br><br>
+				<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+				<br>
+				<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
+			<</if>>
+		<<else>>
+			<<if $rng gte 51>>
+				<<npc Eden>><<person1>>
+				A light blazes into your eyes, obscuring your vision. You raise your arm in front of your face. "Can't see a damn thing out here," says a voice. It's Eden. <<He>> points the torch right at you. "What are you doing out at this time?"
+				<br><br>
+				<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+				<br>
+				<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
+			<<else>>
+				<<npc Eden>><<person1>>An arm wraps around your neck from behind, while a hand presses against the back of your head. You struggle, and the perpetrator releases you. "Sorry," says a voice. It’s Eden. "I just wanted to check on you. Why do you look scared?"
+				
+				<br><br>
 
-	<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
-	<br>
-	<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
-	<br>
-
+				<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+				<br>
+				<<link [[Say goodbye|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+				<br>
+			<</if>>
+		<</if>>
 	<<else>>
 	<<npc Eden>><<person1>>A bullet whizzes past and hits a tree in front of you. You shield your face with your arms and stagger backwards. A cold hard object presses against your back, and you hear a <<if $pronoun is "m">>man's<<else>>woman's<</if>> voice. "I've got you now. Don't resist."
 	<br><br>

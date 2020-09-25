@@ -665,7 +665,13 @@
 
 <<widget "athletics">><<nobr>>
 <<if $args[0]>>
-	<<set $athletics += Math.trunc($args[0] * 1.4)>>
+	<<set _temp to $args[0]>>
+	<<if $exposed gte 2>>
+		<<set $athletics += 2>>
+	<<elseif $exposed is 1>>
+		<<set $athletics += 1>>
+	<</if>>
+	<<set $athletics += Math.trunc(_temp * 1.4)>>
 	<<set $athletics to Math.clamp($athletics, 0, 1000)>>
 <</if>>
 <</nobr>><</widget>>
@@ -794,6 +800,13 @@
 <<widget "neckejacstat">><<set $neckejacstat += 1>><</widget>>
 
 <<widget "dancestat">><<set $dancestat += 1>><</widget>>
+
+<<widget "knot_stat">><<nobr>>
+<<if $knot_stat is undefined>>
+	<<set $knot_stat to 0>>
+<</if>>
+<<set $knot_stat += 1>>
+<</nobr>><</widget>>
 
 <<widget "hunger">><<nobr>>
 <<if $args[0]>>
@@ -1264,13 +1277,13 @@
 	<<elseif $awareness lte 400>>
 	<<awareness 1>>
 	<</if>>
-	<<if $enemytype is "beast">>
+	<<if $enemytype is "beast" or $enemytype is "struggle" and $struggle.creature isnot "slime">>
 	<<set $beastrapestat += 1>>
 		<<if $awareness lte 300>>
 		<<awareness 1>>
 		<</if>>
 	<</if>>
-	<<if $enemytype is "tentacles">>
+	<<if $enemytype is "tentacles" or $enemytype is "struggle" and $struggle.creature is "slime">>
 	<<set $tentaclerapestat += 1>>
 		<<if $awareness lte 400>>
 		<<awareness 1>>
@@ -1316,12 +1329,12 @@
 	<<elseif $awareness lte 400>>
 	<<awareness 1>>
 	<</if>>
-	<<if $enemytype is "beast">>
+	<<if $enemytype is "beast" or $enemytype is "struggle" and $struggle.creature isnot "slime">>
 		<<if $awareness lte 300>>
 		<<awareness 1>>
 		<</if>>
 	<</if>>
-	<<if $enemytype is "tentacles">>
+	<<if $enemytype is "tentacles" or $enemytype is "struggle" and $struggle.creature is "slime">>
 		<<if $awareness lte 400>>
 		<<awareness 1>>
 		<</if>>
@@ -1855,6 +1868,17 @@
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "towelupm">><<nobr>>
+<<if $exposed gte 1>>
+	<<if $lowerwetstage gte 3>>
+	<<lowerwear 3>>
+	<</if>>
+	<<if $worn.lower.exposed gte 1>>
+	<<lowerwear 3>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "plantupper">><<nobr>>
 <<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
 or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
@@ -1884,21 +1908,15 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <</nobr>><</widget>>
 
 <<widget "schoolspareclothes">><<nobr>>
-<<if !$worn.upper.type.includes("school") and !$worn.lower.type.includes("school")>>
-<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
+<<if !$worn.upper.type.includes("school") or !$worn.lower.type.includes("scohol") and $worn.upper.set is $worn.lower.set>>
+	<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
+<</if>>
+<<if !$worn.lower.type.includes("school")>>
 	<<if $clothingselector is "m">>
-	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+		<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<<else>>
-	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
+		<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
 	<</if>>
-<<elseif !$worn.lower.type.includes("school")>>
-	<<if $clothingselector is "m">>
-	<<lowerwear 6>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
-	<<else>>
-	<<lowerwear 7>><<set $worn.lower.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.lower.integrity /= 2>>
-	<</if>>
-<<elseif !$worn.upper.type.includes("school")>>
-<<upperwear 5>><<set $worn.upper.colour to either("black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow")>><<set $worn.upper.integrity /= 2>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -2137,14 +2155,14 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 	<<if $player.gender_appearance is "m">>
 	<<elseif $libertine gte 1>>
 	<<else>>
-	<<set $exposed to 1>>
+		<<set $exposed to 1>>
 	<</if>>
 <</if>>
 <<if $worn.upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 	<<if $libertine is 1>>
-	<<set $topless to 1>>
+		<<set $topless to 1>>
 	<<else>>
-	<<set $exposed to 1>>
+		<<set $exposed to 1>>
 	<</if>>
 <<else>>
 <<set $topless to 0>>
@@ -2831,6 +2849,11 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "wash_mouth">><<nobr>>
+<<set $mouthsemen to 0>>
+<<set $mouthgoo to 0>>
+<</nobr>><</widget>>
+
 <<widget "tipset">><<nobr>>
 
 <<set $tip to random(1000, 3000)>>
@@ -3436,6 +3459,7 @@ __Map__<br>
 	<<if random(1, 100) gte 70>><<transform cat 1>><</if>>
 	<<purity -1>>
 	<<if $milkdranktrait is 1>><<physique 1>><</if>>
+	<<set $hunger -= 200>><<set $thirst -= 200>>
 <</nobr>><</widget>>
 
 <<widget "setup_pillory">><<nobr>>
@@ -4244,9 +4268,9 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget "schoolrep">><<nobr>>
-<<if $args[0] and $args[1] and !$worn.face.type.includes("mask")>>
+<<if $args[0] and $args[1] and (!$worn.face.type.includes("mask") or $args[1] lt 0)>>
 	<<if $schoolrep[$args[0]] lt 5 or $args[1] lt 0>>
-		<<if $args[0] is "crossdress" and $school_crossdress_day is undefined>>
+		<<if $args[0] is "crossdress" and ($school_crossdress_day is undefined or $args[1] lt 0)>>
 			<<set $school_crossdress_day to 1>>
 			<<set $schoolrep[$args[0]] += $args[1]>>
 			<<if $schoolrep.crossdress gte 5>>
@@ -4263,7 +4287,7 @@ __Map__<br>
 				<<set $school_crossdress_message to $schoolrep.crossdress>>
 			<</if>>
 			<<set $schoolrep.crossdress = Math.clamp($schoolrep.crossdress, 0, 5)>>
-		<<elseif $args[0] is "herm" and $school_herm_day is undefined>>
+		<<elseif $args[0] is "herm" and ($school_herm_day is undefined or $args[1] lt 0)>>
 			<<set $school_herm_day to 1>>
 			<<set $schoolrep[$args[0]] += $args[1]>>
 			<<if $schoolrep.herm gte 5>>
@@ -4288,7 +4312,7 @@ __Map__<br>
 <<widget "schoolrep_naked">><<nobr>>
 <<if $player.gender is "h">>
 	<<schoolrep herm 1>>
-<<else>>
+<<elseif $player.gender isnot $player.gender_appearance>>
 	<<schoolrep crossdress 1>>
 <</if>>
 <</nobr>><</widget>>
