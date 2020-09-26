@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.degrees.of.lewdity.AppEntry;
+package com.vrelnir.DegreesOfLewdity;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

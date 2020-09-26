@@ -65,4 +65,4 @@ Start the emulator, and then open Google Play to update
 
 Run `adb install -r <name of apk>` to easily install an apk on a currently running emulator or detected android device.
 
-NOTE: If switching between release and/or debug version, it will likely be necessary to uninstall the previous version first using `adb uninstall com.degrees.of.lewdity.AppEntry`.
+NOTE: If switching between release and/or debug version, it will likely be necessary to uninstall the previous version first using `adb uninstall com.vrelnir.DegreesOfLewdity`.
