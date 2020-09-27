@@ -707,7 +707,7 @@ You've pushed yourself too much. You pass out.
 		Some of the horses lie on the grass, worn out for the day.
 		<br>
 	<</if>>
-<<elseif $deviancy gte 35 and $bestialitydisable is "f" and $farm_work.horses_satisfied lt 6>>
+<<elseif $deviancy gte 35 and $bestialitydisable is "f" and $farm_work.horses_satisfied lt 6 and $farm_work.horses_out lt 2>>
 	<<if $farm_work.horse.monster is true>>
 		The centaur seem agitated. They need "special" attention.
 		<br>
@@ -909,6 +909,10 @@ You've pushed yourself too much. You pass out.
 		<<link [[Tend the crops (0:20)|Farm Tending]]>><<farm_count 20>><<pass 20>><<tending 2>><<tiredness 2>><<physique 2>><<set $farm_work.tending += 1>><</link>><<gtiredness>><<gtending>>
 		<br>
 	<</if>>
+<</if>>
+<<if $farm_stage isnot 6 and $farm_work.alex is "clearing">>
+	<<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<farm_count 20>><<pass 20>><<tiredness 2>><<physique 2>><<set $farm.clearing -= 1>><</link>><<gtiredness>>
+	<br>
 <</if>>
 
 <br>
@@ -1463,7 +1467,7 @@ You've pushed yourself too much. You pass out.
 		You catch Alex ogling you from a distance, though <<he>> pretends otherwise.<<glust>><<npcincr Alex lust 1>>
 		<br><br>
 		
-		<<link [[Next|Farm Work]]>><</link>>
+		<<link [[Next|Farm Work]]>><<endevent>><</link>>
 		<br>
 	<<else>>
 		Alex pats your shoulder as <<he>> passes by.
@@ -1572,4 +1576,150 @@ You've pushed yourself too much. You pass out.
 	<br>
 <</if>>
 <<set $phase += 1>>
+<</nobr>><</widget>>
+
+<<widget "farm_tending_events">><<nobr>>
+<<set $rng to random(1, 3)>>
+<<if $rng is 3>>
+	<<if $bestialitydisable is "f" and random(1, 2) is 2>>
+		You're digging in the earth when you see something dark move in your peripheral, low to the ground. It's gone by the time you look over.
+		<br><br>
+		
+		<<link [[Keep working|Farm Tending Lurker Work]]>><</link>>
+		<br>
+		<<link [[Call for Alex (0:05)|Farm Tending Lurker Alex]]>><<npcincr Alex dom 1>><<farm_count 5>><<pass 5>><</link>><<gdom>>
+		<br>
+	<<else>>
+		You're digging in the earth when you see something dark move in your peripheral, low to the ground. It leaps at you before you can look. You tumble backward.<<gtrauma>><<gstress>><<gpain>><<trauma 6>><<stress 6>><<pain 4>>
+		<br><br>
+		It vanishes as fast as it appeared, darting over you and into the plants opposite.
+		<br><br>
+		
+		<<link [[Next|Farm Work]]>><</link>>
+		<br>
+	<</if>>
+<<elseif $rng is 2>>
+	<<if $hallucinations gte 2 and $tentacledisable is "f" and random(1, 2) is 2>>
+		Something twists around your ankle, making you fall. You land on a pile of <<if $weather is "rain" or $weather is "snow">>mud<<else>>dirt<</if>>. You look behind, and see a thick shoot wrapping around your leg. Another emerges from the hedge, and grasps your other ankle.<<gpain>><<gstress>><<pain 4>><<stress 6>>
+		<br><br>
+		
+		They try to pull you into the undergrowth.
+		<br><br>
+		
+		<<link [[Soothe|Farm Tending Soothe]]>><</link>><<tendingdifficulty 1 1200>>
+		<br>
+		<<link [[Struggle|Farm Tending Tentacle Struggle]]>><</link>><<physiquedifficulty 1 24000>>
+		<br>
+		<<link [[Scream|Farm Tending Scream]]>><<npcincr Alex dom 3>><<sub 1>><</link>><<npc Alex>><<person1>><<ggdom>><<endevent>>
+		<br>
+		<<link [[Brace yourself|Farm Tending Brace]]>><</link>>
+		<br>
+	<<else>>
+		Your foot catches on something, and you land on a pile of <<if $weather is "rain" or $weather is "snow">>mud<<else>>dirt<</if>>. You look back, but can't see what tripped you.<<gpain>><<gstress>><<pain 4>><<stress 6>>
+		<br><br>
+		
+		<<link [[Next|Farm Work]]>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<if $farm_stage gte 5 and $farm.aggro gte 10 and random(1, 2) is 2>>
+		<<generate1>><<generate2>><<generate3>><<person1>>
+		"Hey <<girl>>," says a voice. You look up, and see a <<person>> leering at you across the fence. "What's a cute <<girl>> like you doing working the fields?"
+		<br><br>
+		
+		<<if $skulduggery gte random(500, 700)>>
+			<span class="green">You shiver.</span> Something's wrong. This isn't your usual pervert. You glance around, and spot them. A <<person2>><<person>> and <<person3>><<person>> creep through the crops, trying to sneak up on you.
+			<br><br>
+				
+			<<link [[Scream|Farm Tending Group Alex]]>><<sub 1>><<npcincr Alex dom 1>><</link>> | <span class="purple">+ Alex's Dominance</span>
+			<br>
+			<<link [[Seize the initiative|Farm Tending Group Fight]]>><<def 1>><<farm_aggro -5>><</link>><<laggro>>
+			<br>
+		<<else>>
+			<span class="red">You hear movement to the side.</span> You turn, and see a <<person2>><<person>> rush toward you. Before you can respond, a hand clamps over your mouth from behind.
+			<br><br>
+				
+			The <<person1>><<person>> climbs over the fence, and walks closer. "Not gonna lie," <<he>> says. "I enjoy my work."
+			<br><br>
+				
+			<<link [[Next|Farm Tending Gang Rape]]>><<set $molestationstart to 1>><</link>>
+			<br>
+		<</if>>
+	<<else>>
+		<<generate1>><<person1>>
+		"Hey <<girl>>," says a voice. You look up, and see a <<person>> leering at you across the fence. "What's a cute <<girl>> like you doing working the fields?"
+		<br><br>
+			
+		<<link [[Ignore|Farm Tending Ignore]]>><<set $phase to 0>><</link>>
+		<br>
+		<<link [[Respond politely|Farm Tending Polite]]>><</link>>
+		<br>
+		<<link [[Flirt|Farm Tending Flirt]]>><</link>><<promiscuous1>>
+		<br>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "farm_tending_alex_events">><<nobr>>
+<<set $rng to random(1, 4)>>
+<<if $rng is 4>>
+	<<npc Alex>><<person1>>
+	You hear Alex shout in surprise. You rush over, and find <<him>> lying on <<his>> back.
+	<br><br>
+	"Blighter startled me," <<he>> says.
+	<br><br>
+	
+	
+	<<link [[Offer your arm|Farm Tending Alex Arm]]>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
+	<br>
+	<<link [[Get back to work|Farm Tending Alex Back]]>><</link>>
+	<br>
+<<elseif $rng is 3>>
+	<<npc Alex>><<person1>>
+	<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 10 and random(1, 2) is 2>>
+		You catch Alex sneaking glances at you when <<he>> thinks you're not looking.
+		<br><br>
+		
+		<<link [[Flirt|Farm Tending Alex Flirt]]>><</link>><<promiscuous1>>
+		<br>
+		<<link [[Ignore|Farm Tending Alex Ignore]]>><</link>>
+		<br>
+	<<elseif $exposed gte 1>>
+		You catch Alex sneaking glances at you when <<he>> thinks you're not looking.<<garousal>><<arousal 600>>
+		<br><br>
+		
+		<<link [[Ignore|Farm Tending Alex Ignore]]>><<npcincr Alex lust 1>><</link>><<gglust>>
+		<br>
+		<<link [[Tease|Farm Tending Alex Tease]]>><<npcincr Alex lust 1>><<arousal 1800>><<trauma -6>><<npcincr Alex dom 1>><</link>><<glust>><<ldom>><<ggarousal>><<ltrauma>>
+		<br>
+	<<else>>
+		Alex waves at you from across the field. You wave back.<<lstress>><<stress -6>>
+		<br><br>
+		
+		<<link [[Next|Farm Work]]>><<endevent>><</link>>
+		<br>
+	<</if>>
+<<elseif $rng is 2>>
+	You work beside Alex, chatting all the while.<<ltrauma>><<lstress>><<trauma -6>><<stress -6>>
+	<br><br>
+		
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+
+<<else>>
+	<<npc Alex>><<person1>>
+	You chat with Alex as you work. <<Hes>> keen to share <<his>> farming techniques.
+	<br><br>
+	
+	<<if $tending lt 1000>>
+		<<link [[Listen (0:10)|Farm Tending Alex Listen]]>><<farm_count 10>><<tending 6>><<pass 10>><<npcincr Alex dom 1>><</link>><<gdom>><<gtending>>
+		<br>
+	<<else>>
+		<<link [[Teach Alex instead (0:10)|Farm Tending Alex Teach]]>><<farm_count 10>><<npcincr Alex love 1>><<npcincr Alex dom -1>><</link>><<ldom>><<glove>>
+		<br>
+	<</if>>
+	<<link [[Focus on working|Farm Tending Alex Focus]]>><</link>>
+	<br>
+	
+<</if>>
 <</nobr>><</widget>>
