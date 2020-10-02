@@ -4,12 +4,6 @@ Config.history.maxStates = 1;
 
 State.initPRNG();
 
-window.versionUpdateCheck = true;
-
-Config.saves.onLoad = function (save) {
-	window.versionUpdateCheck = true;
-}
-
 Config.saves.onSave = function (save) {
 	new Wikifier(null, '<<updateFeats>>');
 }
