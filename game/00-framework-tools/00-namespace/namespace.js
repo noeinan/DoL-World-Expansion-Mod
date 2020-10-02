@@ -18,6 +18,11 @@ window.DOL = {
 	 * {@link ./01-error/error.js
 	 */
 	Errors: {},
+	/** 
+	 * Registry of state schema, used for migrating Dol to new versions
+	 * {@link ./02-version/.init.js
+	 */
+	Versions: {},
 
 	/** Patch to make javascript execution more consistent (see comment below) */
 	State: State,
