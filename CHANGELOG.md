@@ -1,5 +1,190 @@
 # CHANGELOG
 
+## 0.2.17.5
+
+- Fixed a bug that stopped Alex saying goodbye at the end of the day.
+- Fixed a bug that would prevent Alex from offering a bonus from farm yield.
+- Fixed a rare bug that could break your money.
+- Fixed an error found after helping Alex repair the perimeter.
+- Fixed an error found after witnessing students buy stimulants on Oxford Street.
+- Fixed an error found after being caught at the school gloryhole.
+- Fixed an error found after Alex rescues you from assailants in the fields.
+
+## 0.2.17.4
+
+- Fixed an error found when peeking on the boys after replacing their clothes in the school changing rooms.
+- Fixed an error found when handling your clothes the turn they are destroyed.
+- Alex will now give you larger bonuses at lower dominance.
+- Fixed a bug that caused the wrong number to display when receiving bonuses from Alex.
+- Fixed another error found during the farm intro.
+- Fixed a bug that caused the tending skill to interact improperly with the stress and tiredness reduction from observing your pets. Thanks to Kamikaza404
+- Thanks to Kamikaza404 for fixing a formatting issue, and for fixing typos.
+- Fixed a soft lock found when dogs are spooked by Remy's goons at Alex's farm.
+- Fixed an error found after calling Alex for help while feeding the pigs.
+- Fixed a bug that caused Whitney to react like you're wearing underwear when discovering you aren't during maths class, and vice versa.
+- Making Alex cum beneath a tree will now award the Alex's Partner feat.
+- Newly-bought racing silks, racing helmets, and riding helmets now have the costume trait.
+- Taking charge when Whitney initiates outside the maths classroom will now count as the advertised Promiscuous 1 action.
+- Newly-bought umbrella hats will no longer be considered masculine.
+
+## 0.2.17.3
+
+You can now help Alex clear the weeds that strangle the old fields, but can't do it alone.
+The padded football shirt, football shorts, gym shirt and gym bloomers are now considered appropriate attire for school.
+
+### Bug Fixes
+
+- Fixed a soft lock found when herding cattle inside with high dog respect.
+- Horses will no longer be described as centaur during the farm intro.
+- Shadbelly coat, chappete breeches, and hunting coat sprites will no longer disappear when damaged.
+- Milking cattle semen with your mouth will now leave semen in there, and pass time.
+- Fixed an error found when milking yourself in the barn at midnight.
+- Fixed errors found after Alex gives you your share of extra yield, after they ogle you across the field, after you help them up from the mud, and after Remy visits.
+- Fixed a couple of errors found during encounters.
+- Fixed an error found when stealing drugs from Danube street.
+- A successful tending roll when tending the plants on Alex's farm will now make the action more effective.
+- The "horses/centaur need special attention" indicator will no longer appear if the conditions required for the action aren't met.
+- Fixed a bug that hid the micropleated skirt image when in the missionary position.
+- Fixed a few errors found during the swarm scene at the brothel.
+
+## 0.2.17.2
+
+- Numbered link navigation is now enabled on Android, and can be disabled via Settings.
+
+### Bug Fixes
+
+- Eden will no longer forget that they agreed to the PC leaving for up to a week.
+- Fixed a soft lock found when wearing a skirt to history class with medium exhibitionism.
+- Fixed an error found when listening to Winter drone.
+- Cheerleading skirts will no longer disappear when damaged.
+
+## 0.2.17.1
+
+- The cheerleading top and skirt can now be worn to school. Blame Leighton.
+- The tiredness and stress reduction from observing your pets is now increased by your tending skill. Thanks to Lollipop Scythe.
+
+### Bug Fixes
+
+- The sun will no longer show up to boot you from the barn after sneaking in late at night.
+- Fixed an error found while chasing a horse. Thanks to 00c356.
+- Fixed a soft lock found when chasing a horse.
+- Fixed a soft lock found at the riding school.
+- Fixed an error that would appear at midnight if you hadn't visited Alex's farm the previous day.
+- The clothing shop no longer gives out cheerleading skirts for free.
+- Mason will now load properly when watching the class practise diving. Thanks to 00c356.
+- Feeding the dogs at the farm will no longer make their respect for you plummet.
+- Fixed an error found when a horse is startled by a moor beast.
+- Fixed an error caused by buying groceries for Alex.
+- Fixed an error found after Alex is harassed by a pig.
+- Fixed a bug that would give NPCs odd descriptions. Thanks to 00c356.
+- Fixed a bug that broke the silver star icon on some devices. Thanks to 00c356.
+- Sirris and your classmates can no longer see through gold chastity belts when undressing during science class. Thanks to Lollipop Scythe.
+- Remy will no longer know you have a penis if they've never seen it, and it's hidden behind a chastity belt. Thanks to Lollipop Scythe.
+- Money gained from farm yield will no longer depend on Leighton's dominance.
+
+## 0.2.17.0
+
+- A farm east of town is now hiring.
+- Added Alex the farmhand to the Social overlay and cheat menu.
+- A description of what the farm animals think of the PC appears in the Social overlay once the farm job is discovered.
+- The degree of Remy's encroachment appears in the Social overlay once the farm has developed to a sufficient point.
+- Added steed, pig, cattle and dog respect to the Social overlay and cheat menu once the farm job is discovered.
+- Added "Hours worked on a farm" to the Statistics overlay.
+- "Knotted" now appears in the statistics overlay when the count is above 0 (count only begins with this update.)
+- Added the "Farmer" trait.
+- Skullduggerous characters with a reputation for crossdressing at school can now implicate others in the pool changing rooms, distracting from their own crossdressing. Written in collaboration with PurityGuy.
+- The PC can now make a mistake when greeting friendly NPCs on the town's streets.
+- Very short skirts now automatically ride up the to doggy sprite's waist during combat. Thanks to Freeman.
+- Added some variety when the PC's ass or pussy are described. Thanks to Freeman.
+- You can now rinse your mouth of slime and/or semen at the school toilets. Thanks to Freeman.
+- Added the option to rinse out your mouth at the park toilets.
+- Whitney now takes your under top into account when pulling your shirt up to examine your chest. Thanks to Freeman.
+- The remaining "Cooperate" actions are now more appropriately named during consensual encounters, should the PC be lewd enough. Thanks to larsrand.
+- Added 57 new icons for clothing, 18 courtesy of TaiwanSmurf and 39 courtesy of PurityGuy. Coded by PurityGuy.
+- Eden will no longer fire at the PC when meeting them in the forest once the PC has Stockholm syndrome. A handful of short events can trigger instead, depending on the time of day and whether the Eden has agreed to let the PC out. Thanks to Harcher, Fangi, and PurityGuy.
+- You can now resist Eden when meeting them in forest after staying away from the cabin for longer than agreed. Written in collaboration with Harcher and Fangi.
+- Adjusted the text and mechanics found when an NPC grabs your throat with both hands.
+- You can now tease Robin in the school canteen once in a relationship. Thanks to AVeryChillDoctor and PurityGuy.
+- The move and search carefully options in the forest now indicate that they increase the chance of finding treasure.
+- Added random colour selection to clothing shops. Thanks to Lollipop Scythe.
+- Added a big bow, bunny slippers, field boots, paddock boot, riding helmet, racing helmet, racing silks, top hat, umbrella hat, work boots, chapette breeches, cheerleading top, cheerleading skirt, hunting coat, letterman jacket, and shadbelly coat. Art courtesy of KG.
+- Added a heart choker and ringed collar to the clothing shop. Art courtesy of sillygooseman7.
+- Added gym bloomers to the clothing shop. Sidebar and doggy art courtesy of Countess. Missionary sprite and shop icon courtesy of PurityGuy.
+- Added a gym shirt to the clothing shop. Sidebar, doggy and missionary sprites courtesy of Countess.
+- Added lederhosen, karate jacket, karate trousers, headband, large sailor's hat, small sailor's hat, sailor trousers, sailor shorts, sailor shirt, short sailor shirt, football helmet, and football shorts. Art courtesy of namelessone.
+- Larger breasts will now show on the school shirt sidebar sprite. Thanks to Countess.
+- Improved the flavour text for fucking a pussy during consensual encounters as a high promiscuity/deviancy character. Thanks to larsrand.
+- Thanks to larsrand for code improvements.
+- Added the I Spy, Alex's Partner, Alex the Robust, A Knot to Remember, Wrong Size, Dawn to Dusk, and Animal Tender feats.
+
+### Balance Changes
+
+- You can now allow the wind to blow up your skirt on the beach with less exhibitionism if you're wearing something beneath. Thanks to Freeman.
+- The PC will now dress in a more masculine way when grabbing towels to enter the boy's changing room. Thanks to Freeman.
+- Drinking milk from an NPC's breast now helps satisfy hunger when deprived on food on the farm.
+- Air will no longer deplete twice as fast if an NPC strangles you with both hands.
+- Athletics now rises faster when exposed.
+- The wine cellar on Danube Street is now harder to break into.
+- Increased the stress and tiredness reduction when visiting your pets in the fish tank. Thanks to Lollipop Scythe.
+- School status will decrease faster when status is low.
+
+### Bug Fixes
+
+- You can now enter the meadow while exposed.
+- Robin will now try to take things further if you kiss them after trick-or-treating.
+- Fixed a rogue NPC freed by escaping down a drain when exposed in the commercial alleyways.
+- Fixed a bug that prevented the game from acknowledging the NPC that took your oral virginity if the penetration occurred with the PC's help.
+- Fixed a bug that caused exposing yourself in science class to increase crossdressing fame even if you weren't crossdressing.
+- Whitney may now be upset should your panties be revealed by a ruler during maths class, after telling you not to wear any. Thanks to Freeman.
+- Fixed a bug that prevented one of the dog assaults that occur while blindfolded from beginning with the beast already mounting from behind.
+- NPCs will no longer squirt lube on body parts protected by a chastity device.
+- NPCs will no longer smother your face with their breasts using their right hand twice on the same turn.
+- All six NPCs will no longer be able to strangle you at once during group encounters.
+- Being filmed by a student while naked on Oxford street will now increase crossdresser or hermaphrodite fame as appropriate.
+- The location image should no longer become the school after the encounter with Bailey in their office.
+- The "You fix your clothing" message should now display even if the only clothing your character is wearing is an under top.
+- Attempting a rescue when witnessing an assault on the street at night, rescuing an NPC from a basement on Domus Street, and being kind to to the NPC who tries to steal a cream bun now increase kindness fame.
+- NPCs found imprisoned in the basements of Domus Street now use the victim gender slider.
+- Fixed a bug that caused an error when using your hands or feet on the tentacle that emerges from a drain.
+- Socks should no longer fall from your character's legs when using your feet on a tentacle.
+- Fixed a bug that made the back sock vanish when giving tentacles feetjobs.
+- Fixed a bug that made the "Wait for the boys/girls to leave" option to appear outside the school changing rooms while they're empty.
+- The location image will no longer switch to the forest when escaping the hole you get stuck in when fetching cigarettes for Whitney.
+- Jogging with Doren will now take 30 minutes as advertised.
+- Receiving spare school clothes from Leighton should no longer replace currently worn school clothes, nor remove the PC's underwear.
+- Slime and semen will now wash from you when dunked into the river by Winter.
+- Thanks to 00c356 for numerous code improvements, and for fixing a bug that prevented the game from loading on some devices.
+- Fixed a bug that made Eden regret and go back on their decision to let the PC spend up to a week away from the cabin.
+- Fixed a bug that caused issues with the encounter triggered by saving Darryl from a molester.
+- Fixed a bug that made the brothel swarm scene last half as long as intended, and prevented Briar from using the cum bucket. Thanks to PurityGuy.
+- Fixed an error found at the landfill.
+- Fixed a bug that prevented upper tops from properly re-equipping.
+- Kylar's lust will now be satisfied when they cum.
+- Beasts should no longer be able to orally penetrate characters wearing a gag.
+- Helping orphans who slip in the main hall will now prevent a hope drop.
+- The police will no longer overlook truancy if you've been a diligent student in the past. Thanks to killer1.
+- The PC will no longer be described as stripping again if they're already naked during the life art class.
+- Fixed a number of issues with close up sprites. Thanks to sseshess for the fixed images.
+- Your penis will no longer bend at an odd angle when receiving oral from a beast. Thanks to sseshess.
+- Receiving oral from a beast as a hermaphrodite without testes will no longer display testes in the close up sprite. Thanks to sseshess for the fixed image.
+- Adjusted the shading on a handful of close up images.
+- Your penis will no longer clip through an enveloping tentacle in the missionary close up sprite. Thanks to sseshess.
+- Fixed a bug that blocked some flavour text during masturbation. Thanks to Kamikaza404.
+- Fixed a bug that made bears hibernate all year.
+- Eden's cabin should no longer appear as the location image after encounters with Leighton in their office.
+- The micro pleated skirt should now display properly in the missionary position.
+- The tank top now displays correctly on the doggy sprite.
+- The + NPC Dominance indicator will now specify Whitney in a couple more places.
+- Fixed a bug that mixed up the characters during one of the orphanage events.
+- Fixed an improper pronoun found when teasing someone at the café.
+- Kylar will no longer act like like you have a chastity device when cumming against your ass, regardless of whether or not you're wearing one.
+- The NPC who harasses you while gathering lichen from the park statue will no longer half fade from existence when Avery shows up.
+- The swept left fringe type will no longer be described as swept right.
+- Female characters will no longer be described as having a cock when failing to resist during the milking sequence.
+- The photographer on the beach will no longer be described as a man regardless of their actual gender.
+- Legwear should no longer partially render above legwear on the encounter sprites.
+- Thanks to PurityGuy, CasaBlanc and Kamikaza404 for typo fixes.
+
 ## 0.2.16.3
 
 - Added an event to the deep forest. Requires tentacles and vore enabled. Written in collaboration with Anon.
