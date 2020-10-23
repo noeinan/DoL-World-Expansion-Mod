@@ -15,9 +15,9 @@ function echoMessage() {
 function compile() {
 	export TWEEGO_PATH=devTools/tweeGo/storyFormats
 	if [ -z ${FORCE_VERSION+true} ]; then
-		VERSION="$FORCE_VERSION"
-	else
 		VERSION="$(git describe --tags --always --dirty)"
+	else
+		VERSION="$FORCE_VERSION"
 	fi
 	if [ -z "${VERSION}" ]; then
 		TARGET="Degrees of Lewdity.html"
