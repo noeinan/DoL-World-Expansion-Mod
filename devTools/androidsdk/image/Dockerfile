@@ -30,4 +30,4 @@ COPY "cordova" "/cordovasrc"
 WORKDIR "/cordovasrc"
 RUN npm ci
 RUN npm run env -- cordova telemetry off
-RUN npm run build-debug
+RUN npm run build-debug-ci
