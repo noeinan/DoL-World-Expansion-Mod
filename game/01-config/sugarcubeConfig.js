@@ -4,6 +4,12 @@ Config.history.maxStates = 1;
 
 State.initPRNG();
 
+window.versionUpdateCheck = true;
+
+Config.saves.onLoad = function (save) {
+	window.versionUpdateCheck = true;
+}
+
 Config.saves.onSave = function (save) {
 	new Wikifier(null, '<<updateFeats>>');
 }
@@ -14,7 +20,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.2.18.0",
+	"version": "0.2.18.1",
 }
 
 config.saves.autosave = "autosave";
