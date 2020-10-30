@@ -1434,7 +1434,7 @@
 			<img id="location" src="img/misc/asylumdayslow.gif">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentworldday.gif">
+		<img id="location" src="img/misc/tentacles_day.gif">
 		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
 		<<case sewers>>
@@ -1487,6 +1487,12 @@
 		<img id="location" src="img/misc/ruins_day.gif">
 		<<case moor>>
 		<img id="location" src="img/misc/moor_day.gif">
+		<<case night_monster_lair>>
+		<img id="location" src="img/misc/night_monster_lair_day.gif">
+		<<case alley>>
+		<img id="location" src="img/misc/alley_day.gif">
+		<<case drain>>
+		<img id="location" src="img/misc/deepunderground.png">
 		<</switch>>
 	<<elseif $daystate is "night">>
 		<<if $location is "tentworld">>
@@ -1537,7 +1543,7 @@
 			<img id="location" src="img/misc/asylumnightslow.gif">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentworldnight.gif">
+		<img id="location" src="img/misc/tentacles_night.gif">
 		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
 		<<case sewers>>
@@ -1594,6 +1600,12 @@
 			<</if>>
 		<<case moor>>
 		<img id="location" src="img/misc/moor_night.gif">
+		<<case night_monster_lair>>
+		<img id="location" src="img/misc/night_monster_lair_night.gif">
+		<<case alley>>
+		<img id="location" src="img/misc/alley_night.gif">
+		<<case drain>>
+		<img id="location" src="img/misc/deepunderground.png">
 		<</switch>>
 	<<elseif $daystate is "dawn">>
 		<<if $location is "tentworld">>
@@ -1634,7 +1646,7 @@
 			<img id="location" src="img/misc/asylumdawnslow.gif">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentworlddawn.gif">
+		<img id="location" src="img/misc/tentacles_dawn.gif">
 		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
 		<<case sewers>>
@@ -1687,6 +1699,12 @@
 		<img id="location" src="img/misc/ruins_dawn.gif">
 		<<case moor>>
 		<img id="location" src="img/misc/moor_dawn.gif">
+		<<case night_monster_lair>>
+		<img id="location" src="img/misc/night_monster_lair_dawn.gif">
+		<<case alley>>
+		<img id="location" src="img/misc/alley_dawn.gif">
+		<<case drain>>
+		<img id="location" src="img/misc/deepunderground.png">
 		<</switch>>
 	<<elseif $daystate is "dusk">>
 		<<if $location is "tentworld">>
@@ -1727,7 +1745,7 @@
 			<img id="location" src="img/misc/asylumduskslow.gif">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentworlddusk.gif">
+		<img id="location" src="img/misc/tentacles_dusk.gif">
 		<<case underground>>
 		<img id="location" src="img/misc/deepunderground.png">
 		<<case sewers>>
@@ -1780,6 +1798,12 @@
 		<img id="location" src="img/misc/ruins_dusk.gif">
 		<<case moor>>
 		<img id="location" src="img/misc/moor_dusk.gif">
+		<<case night_monster_lair>>
+		<img id="location" src="img/misc/night_monster_lair_dusk.gif">
+		<<case alley>>
+		<img id="location" src="img/misc/alley_dusk.gif">
+		<<case drain>>
+		<img id="location" src="img/misc/deepunderground.png">
 		<</switch>>
 	<</if>>
 
@@ -2856,12 +2880,14 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 
 <<widget "tipset">><<nobr>>
 
+
 <<set $tip to random(1000, 3000)>>
-	<<if $tip lte 2000>>
-		<<set $tipreaction to "low">>
-	<<else>>
-		<<set $tipreaction to "mid">>
-	<</if>>
+<<if $tip lte 2000>>
+	<<set $tipreaction to "low">>
+<<else>>
+	<<set $tipreaction to "mid">>
+<</if>>
+
 <<set _temp_tip to $tip>>/*Remembers base tip value*/
 
 	<<if $args[0] is "serving">>
@@ -2897,16 +2923,35 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <<set $tip to $tipmod * $tip>>
 <<set $tip *= (1 + ($attractiveness / 10000))>>
 <<if $mathstrait gte 1>>
-<<set $tip *= (1 + ($mathstrait / 4))>>
+	<<set $tip *= (1 + ($mathstrait / 4))>>
 <</if>>
 
 <<set $tip to Math.trunc($tip)>>
-
+<<if $tip lt $tip_add>>
+	<<set $tip to $tip_add>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "tipreceive">><<nobr>>
-	<<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> £<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.
+	<span class="gold"><<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> £<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.</span>
 	<<set $money += $tip>>
+	<<if $tip gte 50000>>
+		<<earnFeat "Negotiator">>
+	<</if>>
+	<<set $tip to 0>>
+<</nobr>><</widget>>
+
+<<widget "tip_neg">><<nobr>>
+You negotiate a price of £<<print Math.trunc($tip / 100)>>,
+<<if $tipreaction is "low">>
+	less than you hoped for.
+<<else>>
+	which sounds reasonable.
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "tip_up">><<nobr>>
+<<He>> raises <<his>> offer to £<<print Math.trunc($tip / 100)>>.
 <</nobr>><</widget>>
 
 <<widget "passout">><<nobr>>
@@ -2964,7 +3009,7 @@ or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
 <</nobr>><</widget>>
 
 <<widget "anusraped">><<nobr>>
-
+<<set $anusfucked to 1>>
 <</nobr>><</widget>>
 
 <<widget "internalejac">><<nobr>>
@@ -4262,9 +4307,9 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget "prop">><<nobr>>
-<<if $args[0]>>
-	<<set $prop.push($args[0])>>
-<</if>>
+<<for _i = 0; _i < $args.length; _i++>>
+	<<set $prop.push($args[_i])>>
+<</for>>
 <</nobr>><</widget>>
 
 <<widget "schoolrep">><<nobr>>

@@ -1,0 +1,166 @@
+:: Spa [nobr]
+<<set $outside to 0>><<effects>>
+
+<<if $spa_job and !$spa_event>>
+	<<spa_event_select>>
+<</if>>
+
+You are in the spa on Danube Street. Large windows open onto a natural spring, and a corridor to the side leads to other facilities.
+<br><br>
+<<if $openinghours is 1>>
+	<<if $spa_event is "party">>
+		<span class="purple">The spring is packed with bodies, and loud music plays.</span> Someone's hired the venue for a party.
+	<<else>>
+		Patrons relax in and around the many pools.
+	<</if>>
+<<else>>
+	You can hear running water, but the establishment is otherwise quiet.
+<</if>>
+<br><br>
+
+<<if $stress gte 10000>>
+
+	<<passoutshop>>
+<<else>>
+	<<if $hour is $closinghour>>
+		It's closing time. The receptionist is herding everyone outside.<<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should you be found in this state of dress.<</if>>
+		<br>
+	<<elseif $openinghours is 0>>
+		You are alone in the darkness.
+		<br><br>
+	<<elseif $exposed gte 1>>
+		<<if $uncomfortable.nude is false>>
+		You hide in a cupboard. The thought of being caught is thrilling, but you decide it would be wiser to stay put.
+		<<else>>
+		You hide in a cupboard to protect your dignity.
+		<</if>>
+		<br><br>
+	<</if>>
+	<<if $openinghours is 1 and $exposed lt 1>>
+		<<if $spa_job gte 1>>
+			<<link [[Work as a masseur (0:50)|Spa Work Start]]>><<set $money += 1000>><</link>>
+			<br>
+		<<else>>
+			<<generate1>><<person1>>
+			The receptionist, a <<person>>, looks up from <<his>> desk, and curls <<his>> nose. "Make it quick," <<he>> says. "Our clientele don't mix with riff-raff off the street."
+			<br><br>
+			<<link [[Ask for work|Spa Work Ask]]>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+	<<if $openinghours is 0 and $hour isnot $closinghour and $spatheft isnot 1>>
+		<<link [[Examine the cash register|Spa Register]]>><</link>>
+		<br>
+	<</if>>
+	<br>
+<</if>>
+<<link [[Leave|Danube Street]]>><<endevent>><</link>>
+<br>
+
+:: Spa Lock [nobr]
+
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+<<openinghours>>
+<<if $skulduggery gte $lock>>
+	<span class="green">The lock looks easy to pick.</span>
+	<br><br>
+	<<link [[Pick it (0:10)|Spa]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+	<br>
+<<else>>
+	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+	<br><br>
+<</if>>
+<<link [[Leave|Danube Street]]>><</link>>
+<br>
+
+
+:: Spa Work Ask [nobr]
+<<effects>>
+
+The <<person>> scoffs. "Let me make this clear," <<he>> says, pushing <<his>> spectacles up <<his>> nose. 
+<<if $beauty gte ($beautymax / 7) * 6>>
+	<<spa_job_init>>
+	"Our clientele expect-"
+	<br><br>
+	<<He>> cuts off as <<he>> regards you, <span class="green">surprised by your beauty.</span> "Well," <<he>> continues. "Exceptions can be made for particularly... talented individuals. We might have a place for you."
+	<br><br>
+	
+	<<He>> clears <<his>> throat. "Just do as the clients tell you. It's 50 minutes per session, but allow an hour. Pay is <span class="gold">£10</span> per hour. Plus tips. You can work when you like. Any questions?"
+	<br><br>
+	
+	<<link [[Ask for advice|Spa Work Advice]]>><</link>>
+	<br>
+	<<link [[No|Spa Work No]]>><</link>>
+	<br>
+<<else>>
+	"Our clientele expect a certain," <<he>> pauses. "Standard. <span class="red">You don't meet them.</span> Good day."
+	<br><br>
+	
+	<i><<He>> might feel differently were you particularly beautiful.</i>
+	<br><br>
+	
+	
+	<<link [[Say you have skilled hands|Spa Work Hands]]>><</link>>
+	<br>
+	<<link [[Leave|Danube Street]]>><<endevent>><</link>>
+	<br>
+
+<</if>>
+
+
+
+:: Spa Work Advice [nobr]
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"C-can you give advice about how to be a masseur?" you ask.
+<<elseif $submissive lte 850>>
+	"Do I get any training?" you ask. "You haven't asked about my experience."
+<<else>>
+	"Do you have any tips for me?" you ask.
+<</if>>
+<br><br>
+The <<person>> laughs. "No. As I said, just do as the client asks. You can start when you like." <<He>> turns back to <<his>> desk.
+<br><br>
+
+<<link [[Next|Spa]]>><<endevent>><</link>>
+<br>
+
+
+:: Spa Work No [nobr]
+<<effects>>
+
+You shake your head. "Good," the <<person>> says. "You can start when you like." <<He>> turns back to <<his>> desk."
+<br><br>
+
+<<link [[Next|Spa]]>><<endevent>><</link>>
+<br>
+
+
+:: Spa Work Hands [nobr]
+<<effects>>
+
+"Skilled hands?" the <<person>> asks. "We'll see." <<He>> reaches over the desk, grasps your hands in <<his>>, and leans forward to observe them.
+
+<<if $handskill gte 400>>
+	<<spa_job_init>>
+	<<He>> frowns. "Unexpected. <span class="green">Maybe there is a place for you.</span>" <<He>> pulls away. 
+	<br><br>
+	
+	<<He>> clears <<his>> throat. "Just do as the clients tell you. It's 50 minutes per session, but allow an hour. Pay is <span class="gold">£10</span> per hour. Plus tips. You can work when you like. Any questions?"
+	<br><br>
+	
+	<<link [[Ask for advice|Spa Work Advice]]>><</link>>
+	<br>
+	<<link [[No|Spa Work No]]>><</link>>
+	<br>
+<<else>>
+	<<He>> releases <<his>> grasp with a disdainful sneer. "You're not suitable. Good day." <<He>> turns back to <<his>> desk.
+	<br><br>
+	
+	<i><span class="blue">C</span> Hand Skill or higher required.</i>
+	<br><br>
+	
+	<<link [[Next|Spa]]>><<endevent>><</link>>
+	<br>
+<</if>>

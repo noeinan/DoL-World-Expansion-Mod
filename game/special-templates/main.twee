@@ -2,10 +2,8 @@
 <<set $location to "underground">><<effects>>
 <<endevent>>
 
-
-
-
-
+<<generate1>><<generate2>><<person1>>
+<<hisselect 1>>
 
 :: Test2 [nobr]
 <<set $NPCName[$NPCNameList.indexOf("Kylar")].state to "active">>
@@ -935,4 +933,87 @@ Text about failing the physique check.
 	<<set $plots[_garden_location][_tending_temp].water to 1>>
 <</for>>
 
-	
+
+
+:: Machine [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+
+	<<set $machine_health to 10>><<set $machine_ammo to 3>>/*Used by following widget. Must be set.*/
+	<<machine_init tattoo vaginal anal arm_chains leg_chains>>/*Include each machine type you want present as an argument*/
+	<<set $machine.tattoo.armed to 1>>/*Remove if there's no tattoo gun, or you don't want the tattoo gun to be able to remove tattoos*/
+	<<set $machine.vaginal.armed to 1>>/*Remove if there's no vaginal sex machine, or you don't want the sex machine to be able to easily destroy clothes.*/
+	<<set $machine.anal.armed to 1>>
+	<<prop rails table milk neck_shackle>>/*Delete props as appropriate*/
+	<<set $bodywriting_special to "dungeon">>/*Makes all tattoos appropriate for dungeon. Remove for a broader range of tattoos.*/
+<</if>>
+
+<<effects>>
+
+<<machine_effects>><<machine_combat>>
+
+
+/*Debug info. Remove from playable events*/
+Number of active machines: <<print $machine.number>><br>
+<br>
+<<if $machine.tattoo>>
+	Tattoo gun use: <<print $machine.tattoo.use>><br>
+	Tattoo gun state: <<print $machine.tattoo.state>><br>
+	Tattoo gun health: <<print $machine.tattoo.health>><br>
+	Tattoo gun hack: <<print $machine.tattoo.hack>><br>
+<</if>>
+<br>
+<<if $machine.vaginal>>
+	Phallic machine use: <<print $machine.vaginal.use>><br>
+	Phallic machine state: <<print $machine.vaginal.state>><br>
+	Phallic machine health: <<print $machine.vaginal.health>><br>
+	Phallic machine hack: <<print $machine.vaginal.hack>><br>
+<</if>>
+<br>
+<<if $machine.anal>>
+	Small phallic machine use: <<print $machine.anal.use>><br>
+	Small phallic machine state: <<print $machine.anal.state>><br>
+	Small phallic machine health: <<print $machine.anal.health>><br>
+	Small phallic machine hack: <<print $machine.anal.hack>><br>
+<</if>>
+<br>
+<<if $machine.arm_chains>>
+	Arm chains use: <<print $machine.arm_chains.use>><br>
+	Arm chains state: <<print $machine.arm_chains.state>><br>
+	Arm chains health: <<print $machine.arm_chains.health>><br>
+	Arm chains hack: <<print $machine.arm_chains.hack>><br>
+<</if>>
+<br>
+<<if $machine.leg_chains>>
+	Leg chains use: <<print $machine.leg_chains.use>><br>
+	Leg chains state: <<print $machine.leg_chains.state>><br>
+	Leg chains health: <<print $machine.leg_chains.health>><br>
+	Leg chains hack: <<print $machine.leg_chains.hack>><br>
+<</if>>
+/*Debug info end*/
+
+<br><br>
+<<machine_actions>>
+
+<<if $machine.number lte 0 or $finish is 1>>
+	<<link [[Next|Machine End]]>><</link>>
+<<else>>
+	<<link [[Next|Machine]]>><</link>>
+<</if>>
+<br>
+<<link [[End|Machine End]]>><</link>>
+<br>
+
+
+:: Machine End [nobr]
+<<effects>>
+
+<<machine_end>>
+<<clotheson>>
+
+<<link [[Machine]]>><<set $molestationstart to 1>><</link>>
+<br>
