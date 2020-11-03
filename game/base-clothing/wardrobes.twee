@@ -18,6 +18,9 @@
 <</if>>
 
 <<wearoutfit>>
+<<if $randomWear>>
+	<<randomWear>>
+<</if>>
 
 <<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
 <<set _slimePrevent to ["upper", "lower", "under_upper", "under_lower"]>>
@@ -255,7 +258,18 @@
 <br>
 <</if>>
 
-<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>>
+<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>> | 
+<<link [[Wear Random Clothes|$passage]]>><<set $randomWear to true>><</link>> |
+<<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>> |
+<div id="randomClothingConfigure" class="hidden">
+	<<if $randomEquipConfigure is undefined>>
+		<<set $randomEquipConfigure to {face: true, feet: true, head: true, legs: true, lower: true, neck: true, under_lower: true, under_upper: true, upper: true}>>
+	<</if>>
+	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+	<<for _slot range _equip>>
+		<label><<print '<<checkbox "$randomEquipConfigure.'+_slot+'" false true '+($randomEquipConfigure[_slot] is true ? "checked" : "")+'>>'>> <<print _slot.replace("_"," ")>></label><br>
+	<</for>>
+</div>
 <br><br>
 
 <<if $location is "home" or $location is "town">>
@@ -896,6 +910,45 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 	The driver thanks you for the donation of _takenAway items due to you not having enough space.
 <</if>>
 <<unset $wardrobeRepair>>
+<</nobr>><</widget>>
+
+<<widget "randomWear">><<nobr>>
+<<set $wardrobeOption to "wear">>
+<<set _equip to []>>
+<<set _equipped to []>>
+<<for $_label, $_value range $randomEquipConfigure>>
+	<<if $_value>>
+		<<generalUndress "wardrobe" $_label>>
+		<<run _equip.push($_label)>>
+	<</if>>
+<</for>>
+<<for _i to 0; _i lt _equip.length;_i++>>
+	<<if !_equipped.includes(_equip[_i]) and $worn[_equip[_i]].name is "naked" and $wardrobe[_equip[_i]].length gt 0>>
+		<<set _ids to []>>
+
+		<<for _j to 0; _j lt $wardrobe[_equip[_i]].length; _j++>>
+			<<if $wardrobe[_equip[_i]][_j].outfitSecondary is undefined>>
+			<<elseif $wardrobe[_equip[_i]][_j].outfitSecondary[1] isnot "broken">>
+				<<continue>>
+			<</if>>
+			<<run _ids.push(_j)>>
+		<</for>>
+		<<set _id to _ids.pluck()>>
+		<<if _id>>
+			<<run _equipped.pushUnique(_equip[_i])>>
+			<<if $wardrobe[_equip[_i]][_id].outfitPrimary isnot undefined>>
+				<<for $_label, $_value range $wardrobe[_equip[_i]][_id].outfitPrimary>>
+					<<if $_value isnot "broken">>
+						<<run _equipped.pushUnique($_label)>>
+					<</if>>
+				<</for>>
+			<</if>>
+			<<print `<<set $wear_` + _equip[_i] + ` to ` + clone(_id) + `>>`>>
+		<</if>>
+		<<unset _id>>
+	<</if>>
+<</for>>
+<<unset $randomWear>>
 <</nobr>><</widget>>
 
 :: Wardrobe [nobr]
