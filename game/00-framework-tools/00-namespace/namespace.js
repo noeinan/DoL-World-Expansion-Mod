@@ -1,24 +1,24 @@
 /**
- * As part of my various refactors, I ended up introducing a bunch of 
+ * As part of my various refactors, I ended up introducing a bunch of
  * global namespace-esk variables.
- * 
+ *
  * Having a single spot to document them makes sense. By convention,
  * if you need to make a new top-level namespace, declare it here.
  */
 
-/** 
+/**
  * Declare everything in a root namespace, so that things can still be found
  * if shadowed, and for "documentation" purposes
  */
 window.DOL = {
 	// In pseduo-load order
-	/** 
+	/**
 	 * Mini application reporter app
 	 * helps get detailed error messages to devs
 	 * {@link ./01-error/error.js
 	 */
 	Errors: {},
-	/** 
+	/**
 	 * Registry of state schema, used for migrating Dol to new versions
 	 * {@link ./02-version/.init.js
 	 */

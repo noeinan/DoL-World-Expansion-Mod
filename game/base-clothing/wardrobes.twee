@@ -1,50 +1,58 @@
 :: Widgets Wardrobe [widget]
+
 <<widget "wardrobewear">><<nobr>>
 <<if $runWardrobeSanityChecker is true>>
 	<<wardrobeSanityCheck>>
 	<<set $runWardrobeSanityChecker to false>>
 <</if>>
-
 <<if $clothingShop.stolenClothes gt 0>>
 	<<set $clothingShop.stolenClothes to 0>>
 	<span class="gold">You place the clothes you recently stole from the shop in your wardrobe.</span>
 	<br>
 <</if>>
-
 <<if $wear is "strip">>
 	You remove your clothing.
 	<br><br>
 	<<undress $wardrobe_location>>
 <</if>>
-
 <<wearoutfit>>
 <<if $randomWear>>
 	<<randomWear>>
 <</if>>
-
 <<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
 <<set _slimePrevent to ["upper", "lower", "under_upper", "under_lower"]>>
 <<set _towelCheck to ["upper", "lower"]>>
 <<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "legs":false, "feet":false}>>
-
 <<for _ie to 0; _ie lt _equip.length;_ie++>>
 	<<if _equipSkip[_equip[_ie]] is true>>
 		<<continue>>
 	<</if>>
 	<<unset _wearId>><<unset _item>>
 	<<switch _equip[_ie]>>
-		<<case "over_upper">><<set _wearId to $wear_over_upper>>
-		<<case "over_lower">><<set _wearId to $wear_over_lower>>
-		<<case "upper">><<set _wearId to $wear_upper>>
-		<<case "lower">><<set _wearId to $wear_lower>>
-		<<case "under_upper">><<set _wearId to $wear_under_upper>>
-		<<case "under_lower">><<set _wearId to $wear_under_lower>>
-		<<case "over_head">><<set _wearId to $wear_over_head>>
-		<<case "head">><<set _wearId to $wear_head>>
-		<<case "face">><<set _wearId to $wear_face>>
-		<<case "neck">><<set _wearId to $wear_neck>>
-		<<case "legs">><<set _wearId to $wear_legs>>
-		<<case "feet">><<set _wearId to $wear_feet>>
+	<<case "over_upper">>
+		<<set _wearId to $wear_over_upper>>
+	<<case "over_lower">>
+		<<set _wearId to $wear_over_lower>>
+	<<case "upper">>
+		<<set _wearId to $wear_upper>>
+	<<case "lower">>
+		<<set _wearId to $wear_lower>>
+	<<case "under_upper">>
+		<<set _wearId to $wear_under_upper>>
+	<<case "under_lower">>
+		<<set _wearId to $wear_under_lower>>
+	<<case "over_head">>
+		<<set _wearId to $wear_over_head>>
+	<<case "head">>
+		<<set _wearId to $wear_head>>
+	<<case "face">>
+		<<set _wearId to $wear_face>>
+	<<case "neck">>
+		<<set _wearId to $wear_neck>>
+	<<case "legs">>
+		<<set _wearId to $wear_legs>>
+	<<case "feet">>
+		<<set _wearId to $wear_feet>>
 	<</switch>>
 	<<if _wearId is undefined>>
 		<<continue>>
@@ -72,7 +80,6 @@
 		<<if _cursedPrevent is true>>
 			<<continue>>
 		<</if>>
-
 		/*Strips equip and puts it in the wardrobe*/
 		<<if _wearId is "strip" and $worn[_equip[_ie]].name isnot "naked">>
 			You remove the <<print $worn[_equip[_ie]].name>>.
@@ -89,7 +96,6 @@
 			<<continue>>
 		<</if>>
 		<<unset _wornOutfitPrimary>>
-
 		/*Strips equip, puts it in the wardrobe and equips a towl*/
 		<<if _wearId is "towel" and _towelCheck.includes(_equip[_ie])>>
 			<<generalUndress $wardrobe_location _equip[_ie]>>
@@ -111,13 +117,11 @@
 			<<continue>>
 		<</if>>
 	<</if>>
-
 	/*Find the item to equip*/
 	<<if _wearId gte 0>>
 		<<set _item to $wardrobe[_equip[_ie]][_wearId]>>
 	<</if>>
-
-	/*Prevent equip when the ear slime doesnt allow it*/
+	/*Prevent equip when the ear slime doesn't allow it*/
 	<<if _wearId gte 0 and _slimePrevent.includes(_equip[_ie]) and $corruption_slime gte 80 and $wardrobeOption is "wear">>
 		<<if $willpower lt 800 and _item.reveal lt 500 and !_item.type.includesAny("school", "event")>>
 			<span class="red">You were unable to equip your _item.name as the slime in your ear did not permit it.</span>
@@ -125,7 +129,6 @@
 			<<continue>>
 		<</if>>
 	<</if>>
-
 	/*Finds any outfit pieces and records the Ids*/
 	<<set _outfitPrimary to _item.outfitPrimary>>
 	<<if _outfitPrimary isnot undefined>>
@@ -166,7 +169,6 @@
 		<</if>>
 	<</if>>
 	<<unset _outfitPrimary>>
-
 	<<if $wardrobeOption is "delete" and _wearId gte 0>>
 		/*Delete the relating items*/
 		<<if _outfitPieceIds isnot undefined>>
@@ -179,7 +181,6 @@
 		<br>
 		<<continue>>
 	<</if>>
-
 	<<if $wardrobeOption is "repair" and _wearId gte 0>>
 		/*Repair the relating items*/
 		<<if _outfitPieceIds isnot undefined>>
@@ -194,7 +195,6 @@
 		<br>
 		<<continue>>
 	<</if>>
-
 	<<if $wardrobeOption is "seperateOutfits" and _wearId gte 0>>
 		<<if _outfitPieceIds isnot undefined>>
 			<<for _labelWW, _valueWW range _outfitPieceIds>>
@@ -223,13 +223,11 @@
 		<br><br>
 	<</if>>
 <</for>>
-
 <<if $wear is "dry">><<set $wear to 0>>
 	<<set $upperwet to 0>><<set $lowerwet to 0>><<set $underlowerwet to 0>><<set $underupperwet to 0>>
 	You squeeze the water from your clothes.
 	<br><br>
 <</if>>
-
 <<set $wear to 0>>
 <<set $wear_over_upper to "none">>
 <<set $wear_over_lower to "none">>
@@ -244,21 +242,18 @@
 <<set $wear_legs to "none">>
 <<set $wear_feet to "none">>
 <<set $wear_outfit to "none">>
-
 <<exposure>>
-
 <</nobr>><</widget>>
 
 <<widget "wardrobe">><<nobr>>
 <<unset $tempDisable>>
 <<clotheson>> /*Fixes perma pulled aside clothes introduced by 0.2.3.0 bug.*/
-
 <<if $upperwet gte 1 or $lowerwet gte 1 or $underlowerwet or $underupperwet gte 1>>
-<<link [[Dry your clothes|$passage]]>><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>>
-<br>
+	<<link [[Dry your clothes|$passage]]>><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>>
+	<br>
 <</if>>
 
-<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>> | 
+<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>> |
 <<link [[Wear Random Clothes|$passage]]>><<set $randomWear to true>><</link>> |
 <<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>> |
 <div id="randomClothingConfigure" class="hidden">
@@ -1004,6 +999,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 <<wardrobe>>
 
 :: Asylum Wardrobe [nobr]
+
 <<effects>>
 You look through the cupboard containing your clothes.
 <br><br>
@@ -1011,27 +1007,28 @@ You look through the cupboard containing your clothes.
 <<wardrobewear>>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
-	<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
-	<br><br>
+		<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
+		<br><br>
 	<<else>>
-	You can't remain undressed like this!
-	<br><br>
+		You can't remain undressed like this!
+		<br><br>
 	<</if>>
 <<elseif $exhibitionism gte 75>>
-<<link [[Done|Asylum Cell]]>><</link>>
-<br><br>
+	<<link [[Done|Asylum Cell]]>><</link>>
+	<br><br>
 <<else>>
 	<<if $exposed lte 1>>
-	<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
-	<br><br>
+		<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
+		<br><br>
 	<<else>>
-	You can't remain undressed like this!
-	<br><br>
+		You can't remain undressed like this!
+		<br><br>
 	<</if>>
 <</if>>
 <<wardrobe>>
 
 :: Strip Club Dressing Room [nobr]
+
 <<effects>><<set $outside to 0>><<set $location to "strip_club">>
 <<set $wardrobe_location to "wardrobe">>
 You are in the strip club's dressing room. <<if $daystate isnot "day" and $daystate isnot "dawn">>There are a few mirrors, currently occupied by staff fixing their hair and makeup.<</if>>
@@ -1060,6 +1057,7 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 <<wardrobe>>
 
 :: Brothel Dressing Room [nobr]
+
 <<effects>><<set $outside to 0>><<set $location to "brothel">>
 <<set $wardrobe_location to "wardrobe">>
 You are in the brothel's dressing room. There are a few mirrors, currently occupied by staff fixing their hair and makeup.
@@ -1088,38 +1086,39 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 <<wardrobe>>
 
 :: School Boy Wardrobe [nobr]
+
 <<effects>><<set $outside to 0>><<set $location to "pool">>
 <<set $wardrobe_location to "wardrobe">>
 You stand in front of your open locker.
 <br><br>
 <<wardrobewear>>
 <<if $exposed gte 2 and $exhibitionism lt 75>>
-You can't go out like this!
-<br><br>
+	You can't go out like this!
+	<br><br>
 <<else>>
-<<link [[Leave|School Boy Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
-<br><br>
+	<<link [[Leave|School Boy Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
+	<br><br>
 <</if>>
-
 <<wardrobe>>
 
 :: School Girl Wardrobe [nobr]
+
 <<effects>><<set $outside to 0>><<set $location to "pool">>
 <<set $wardrobe_location to "wardrobe">>
 You stand in front of your open locker.
 <br><br>
 <<wardrobewear>>
 <<if $exposed gte 2 and $exhibitionism lt 75>>
-You can't go out like this!
-<br><br>
+	You can't go out like this!
+	<br><br>
 <<else>>
-<<link [[Leave|School Girl Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
-<br><br>
+	<<link [[Leave|School Girl Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><</link>>
+	<br><br>
 <</if>>
-
 <<wardrobe>>
 
 :: Wardrobe Sale Crate [nobr]
+
 Are you prepared to add all your
 <<if $crateContents is "all">>
 	clothes
@@ -1128,7 +1127,6 @@ Are you prepared to add all your
 <</if>>
 to the crate and send them to be sold? Might be best to go shopping shortly after.
 <br><br>
-
 <<set _value to 0>>
 <<for _items range $wardrobe>>
 	<<for _i to 0; _i lt _items.length; _i++>>
@@ -1145,7 +1143,6 @@ to the crate and send them to be sold? Might be best to go shopping shortly afte
 	<</for>>
 <</for>>
 It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
-
 <br><br>
 <<link [[Yes|Wardrobe Sale Crate Result]]>><</link>>
 <br>
@@ -1155,6 +1152,7 @@ It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
 <</link>>
 
 :: Wardrobe Sale Crate Result [nobr]
+
 <<set $tailorMonthlyService to 30>>
 <<set _value to 0>>
 <<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","legs","feet"]>>
@@ -1180,7 +1178,6 @@ It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
 		<</if>>
 	<</for>>
 <</for>>
-
 The driver takes the crate away, leaving £<<print ((_value + 5000) / 100).toFixed(2)>> in its place.
 <<set $money += Math.floor(_value + 5000)>>
 <br><br>
@@ -1190,6 +1187,7 @@ The driver takes the crate away, leaving £<<print ((_value + 5000) / 100).toFix
 <</link>>
 
 :: Wardrobe Repair Crate [nobr]
+
 Are you prepared to add all your
 <<if $crateContents is "all">>
 	clothes
@@ -1198,7 +1196,6 @@ Are you prepared to add all your
 <</if>>
 to the crate and send them to be repaired? Might be best to go shopping shortly after.
 <br><br>
-
 <<set _value to 0>>
 <<for _items range $wardrobe>>
 	<<for _i to 0; _i lt _items.length; _i++>>
@@ -1217,7 +1214,6 @@ It will cost you
 <<else>>
 	nothing.
 <</if>>
-
 <br><br>
 <<if $money gte _value>>
 	<<link [[Yes|Wardrobe Repair Crate Result]]>><</link>>
@@ -1231,6 +1227,7 @@ It will cost you
 <</link>>
 
 :: Wardrobe Repair Crate Result [nobr]
+
 <<set $tailorMonthlyService to 30>>
 <<set $wardrobeRepair to {timeLeft: 1}>>
 <<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","legs","feet"]>>
@@ -1258,7 +1255,6 @@ It will cost you
 				clone($wardrobe[_equip[$_i]][$_j].accessory_colourCustom)
 			]>>
 		<<run $wardrobeRepair[_equip[$_i]].push(clone(_itemStats))>>
-
 		<<run _toDelete.push(clone($_j))>>
 	<</for>>
 	<<for $_j to $wardrobe[_equip[$_i]].length; $_j gte 0; $_j-->>
