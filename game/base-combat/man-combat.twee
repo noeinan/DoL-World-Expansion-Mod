@@ -3975,6 +3975,63 @@
 			<</if>>
 		<</if>>
 	<</if>>
+
+	<<set $rng to random(1, 100)>>
+	<<if $NPCList[_n].vagina is "facesit">>
+		<<if $consensual is 0 and $enemyanger gte 30 and $underwater isnot 1>>
+			<<if $oxygen gt 150 or $enemyanger gte (($enemyangermax / 5) * 4)>>
+				<<oxygen -150>>
+				<<print either(
+					"<<He>> covers your face with <<his>> pussy and ass.",
+					"<<His>> pussy and ass press down on your face.",
+					"<<He>> continues to sit down full weight on your face.",
+					"<<He>> smothers you under <<him>>.",
+					"<<His>> pussy and ass press down on your mouth and nose."
+				)>>
+				<<sex 1>><<bruise face>><<bruise face>>
+
+				<<if $oxygen gte 900>>
+					<<violence 3>>
+				<<elseif $oxygen gte 600>>
+					<span class="purple">You can't breathe!</span>
+					<<violence 5>>
+				<<elseif $oxygen gte 300>>
+					<span class="pink">You feel light-headed.</span>
+					<<violence 10>>
+				<<elseif $oxygen gte 1>>
+					<span class="pink">You see stars.</span>
+					<<violence 20>>
+				<<else>>
+					<span class="red">You are suffocating.</span>
+					<<violence 50>>
+				<</if>>
+
+			<<elseif $oxygen lte 900>>
+				<<print either(
+					"<<He>> lets you breathe in air from under <<him>.>",
+					"<<He>> lifts off slightly, just enough to let you breathe a little.",
+					"You are able to snatch in some small amount of air from under <<him>>."
+				)>>
+			<</if>>
+		<</if>>
+
+		<<if $rng gte 1>>
+			<<if $mouthsubmit is 1>>
+				<<He>> grinds <<his>> pussy into your mouth and tongue.
+			<<else>>
+				<<He>> rubs <<his>> pussy against your lips.
+			<</if>>
+
+			<<if $enemyarousal gte (($enemyarousalmax / 5) * 3)>>
+				You can taste <<his>> juices.
+			<</if>>
+			<<sex 3>><<set $speechfacesit to 1>>
+		<<else>>
+			<<He>> gets up off of your face.
+			<<set $mouthuse to 0>><<set $mouthstate to 0>><<set $NPCList[_n].vagina to 0>>
+		<</if>>
+	<</if>>
+
 	<<if $NPCList[_n].vagina is 0>>
 		<<if $gloryhole>>
 			The pussy waits expectantly.
@@ -4061,11 +4118,28 @@
 						<<violence 20>><<hitstat>><<bruise vagina>><<set $speechbeat to 1>>
 					<</if>>
 				<<elseif $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "head">>
-					<span class="purple"><<He>> wraps <<his>> legs around your head and presses <<his>> pussy against your mouth.</span>
-					<<submission 5>><<set $mouthuse to "othervagina">><<set $NPCList[_n].vagina to "mouth">><<set $mouthstate to "othervagina">><<violence 3>><<bruise face>><<set $speechvaginamouth to 1>>
-					<<set $NPCList[_n].location.genitals = "head">>
+					<<if $rng % 1 is 0>>
+						<<if $position is "doggy">>
+							<<He>> turns you onto your back.
+							<<set $position to "missionary">>
+						<</if>>
+						<span class="purple">
+						<<print either(
+							"<<He>> swings a leg over your face and sits down, sitting on your face.",
+							"<<He>> sits down on your face, covering your mouth with <<his>> pussy.",
+							"<<His>> pussy and ass descend onto your face, as <<he>> sits on it."
+						)>>
+						</span>
+						<<submission 5>><<set $NPCList[_n].vagina to "facesit">><<set $mouthuse to "facesit">><<set $mouthstate to "facesit">>
+						<<violence 3>><<bruise face>><<set $speechfacesit to 1>>
+						<<set $NPCList[_n].location.genitals = "head">>
+					<<else>>
+						<span class="purple"><<He>> wraps <<his>> legs around your head and presses <<his>> pussy against your mouth.</span>
+						<<submission 5>><<set $mouthuse to "othervagina">><<set $NPCList[_n].vagina to "mouth">><<set $mouthstate to "othervagina">><<violence 3>><<bruise face>><<set $speechvaginamouth to 1>>
+						<<set $NPCList[_n].location.genitals = "head">>
+					<</if>>
 				<</if>>
-			<</if>>
+			<</if>>		
 		<<elseif $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<if $position is "wall">>
 				<<if $penisexist is 1>>
