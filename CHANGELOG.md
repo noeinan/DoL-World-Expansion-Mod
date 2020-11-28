@@ -1,5 +1,125 @@
 # CHANGELOG
 
+## 0.2.18.2
+
+- Added configuration controls to the random clothing option. Thanks to Lollipop Scythe.
+- Adjusted text formatting during encounters.
+- Cleaned up promiscuous and deviant lines during encounters, particularly when multiple such acts are performed at once.
+- Added 41 clothing icons, covering the remaining footwear, headwear, neckwear, tops and bottoms. Art courtesy of Anon.
+
+### Balance Changes
+
+- You can now straddle penises with your ass or pussy while in chastity.
+
+### Bug Fixes
+
+- Fixed a problem with the Machines disabled stat.
+- Fixed an alignment issue with the mummy facewrap. Thanks to namelessone.
+- Fixed an issue with the lederhosen. Thanks to namelessone and Anon.
+- Fixed an issue found when being vaginally threatened by a human with an audience watching.
+- The waist apron now has the Serving trait.
+- Giving a handjob at the spa will no longer act like you're only doing it to meet Bailey's demands your attitude is set otherwise. Thanks to braymann.
+- Fixed a bug that caused some deviant encounter effects to trigger twice.
+- Fixed an error found when building the orphanage spring before visiting the flower bed.
+- The mummy facewrap will now be unlocked on the 21s of October.
+- Time now passes when you endure having your ass groped in the street.
+- Fixed an issue with the description of clean pillories.
+- Fixed a bug that allowed the PC to continue rubbing a penis between their cheeks while disabled.
+- Restored the Android version icons. Thanks to 00c356.
+- Beasts and monsters will once again try to fuck the PC's pussy through a chastity belt.
+- Fixed a bug that could make the polite spa client ignore the same-sex couple slider.
+- Fixed a bug that prevented orgasms during machine encounters.
+- Fixed a bug that made beast and monsterboy/girl penises display as sex toys on the close up anal sprite.
+- Thanks to Golden Skullky for a bunch of minor fixes.
+- Thanks to Kamikaza404 for fixing a bunch of typos.
+
+## 0.2.18.1
+
+- Fixed a bug that caused a lot of errors, particularly on old saves.
+- Fixed a bug that prevented female beasts/monstergirls from enveloping the PC's penis with their ass.
+- Female beasts/monstergirls without a penis will no longer be described as pushing their "none" against your lips.
+- Being knotted outside the farm should now increment the knot counter in statistics.
+- Thanks to Golden Skullky for the following fixes:
+- Fixed a bug that caused school bottoms to be replaced when borrowing a uniform.
+- Fixed an error found when stripping for Leighton in their office
+- Fixed an error found when molested in the temple quarters.
+- Fixed a number of errors found while masturbating.
+- Fixed a bug that prevented the correct line of text appearing while acting cute as a masseur.
+- Fixed a number of minor errors and typos.
+
+## 0.2.18.0
+
+- Kylar will now meet you in the park on Halloween night, should their love be high enough. They've a date planned, but someone's watching.
+- You can now work as a masseur at the spa on Danube Street. The establishment is discerning, and won't hire just anyone.
+- The dungeon tattoo scene is now an encounter with new mechanics, giving the PC a chance to struggle. Art for the tattoo gun, rails, shackles and chains courtesy of PurityGuy.
+- Added a sex machine show to the brothel. It must be repaired before it can be used. The vaginal machine art is courtesy of sseshess, and the other art, including close-ups and x-rays, is courtesy of PurityGuy.
+- Added the number of clients serviced as a masseur and the number of machines disabled to the Statistics overlay.
+- Added another way to discover the soup kitchen.
+- The milking machine is now visually represented while the PC is being milked at Remy's or Alex's farm. The breast milking machine art is courtesy of sseshess, and the other art courtesy of PurityGuy.
+- A table now appears as a prop during some encounters. Courtesy of PurityGuy.
+- Whitney will now notice if you get close to Kylar, and might interfere should they have high dominance, and spot you eating lunch together. Thanks to Kodi and PurityGuy.
+- Added a mummy facewrap, mummy top, and mummy skirt to the forest shop, available from the 21st of October. Art courtesy of namelessone.
+- You can now just throw something together when Robin says you need a Halloween costume before trick-or-treating.
+- Added new location art for the tentacle world and night monster's lair. Art courtesy of Mochi.
+- Added new location art for the alleyways. Art courtesy of Mewsic Box.
+- The orphan who greets you after an extended absence now has a different reaction should hope be low. Thanks to PurityGuy.
+- Added the Idle Hands, Stolen Technology and Negotiator feats.
+
+### Balance Changes
+
+- Trick-or-treating with Whitney now takes 90 minutes.
+- The PC will now always be gifted the silver brooch the first time a rebellious orphan bumps into them.
+
+### Bug Fixes
+
+- Fixed an error found when Sam checks up on you while making dough.
+- Fixed a bug that resulted in duplicate text during beast encounters.
+- Fixed a bug that caused beast orgasm text to reference the PC's chastity belt, even if they weren't wearing one.
+- The storm drains now use the underground location art.
+- Milk will no longer be gathered should you lactate into your top.
+- Turtleneck jumpers no longer disappear when damaged.
+- Fixed a bug that broke the description of the tentacle on the street, should you engage with it consensually.
+- Giving a pig a hand while trying to get it back into its sty will now be marked as a deviant action.
+- Teaching Alex will now increment time.
+- Fixed a bug that caused Robin, Bailey and Briar to cum multiple times following certain encounters.
+- Fixed an error found when fighting off the client while Whitney tries to whore you out.
+- Fixed a bug that caused bikini bottoms to disappear while in the doggy position.
+- Milking yourself in the barn now indicates that it takes 30 minutes.
+- Fixed a bug that broke vore encounters if they occurred following an encounter with tentacles.
+- Fixed a pronoun issue when teasing Robin in the canteen.
+- Fixed an error that could appear after being recognised for your exhibitionism on the street.
+- Fixed an error found when another student spills chemicals on their clothes during science class, and another found when Sirris asks a student to strip for an anatomy lesson.
+- Letting Robin help when tending the orphanage garden will now always indicate the time it will take, and will take 10 minutes as intended.
+- Fixed a bug that could break the description of named NPCs during encounters.
+- Masturbating in the bath will no longer leave you messy.
+- Fixed a bug that prevented Alex's lust from increasing as often as intended.
+- The intended thirty minutes will now pass when climbing the statue in the park.
+- Searching for white rose seeds will now pass thirty minutes as advertised.
+- The harassed nurse at the asylum will now use the victim gender slider.
+- Waiting for another customer at the brothel basement will now pass time.
+- Fixed the resolution on the heart choker.
+- Fixed an error found after being gifted an antique in the orphanage.
+- Fixed a bug that prevented the maths and science projects from repeating the following year. Thanks to Lollipop Scythe.
+- Seeing the needle in the underground dungeon will now increase stress and trauma as advertised.
+- Fixed a bug that could cause the PC to say the wrong lines during beast encounters. Thanks to Kamikaza404.
+- Fixed a bug that broke the encounter when forced to strip at the landfill. Thanks to Kamikaza404.
+- Fixed a bug that could lower than maximum number of parasite pets. Thanks to Kamikaza404.
+- Fixed a bug that prevented a line of masturbation text triggering when it was meant to.
+- Removed a repeat line found when a flat-chested NPC pushes your mouth against their nipple.
+- You will no longer strip your naked when Leighton searches you for drugs.
+- The cow you meet on the road to the farmlands will no longer transform between screens.
+- Fixed a bug that made the game refer to River as "nipples" or similar term following the maths class gangbang.
+- Fixed a bug that gave horses and centaur a second, smaller penis visually.
+- Fixed a bug that caused the game to refer to the wrong NPC during encounters with named NPCs. Thanks to braymann.
+- Fixed a bug that broke the helpful and showboating options at the dance studio.
+- Harper will no longer be able to phase through the chastity belt when examining you at Remy's farm.
+- Fixed an error found when speaking to Landry about the police job.
+- Your skin will no be described as clean when looking in the mirror without being covered in slime or semen. Thanks to Rukarin.
+- Fixed an error found in Briar's office.
+- Being forced to strip in the school changing rooms as a hermaphrodite will now properly use your hermaphrodite reputation to determine the students' response.
+- Girls will no longer be able to see through masks while forcing you to strip in the school changing rooms.
+- Thanks to Kamikaza404 for typo fixes.
+
 ## 0.2.17.5
 
 - Fixed a bug that stopped Alex saying goodbye at the end of the day.
