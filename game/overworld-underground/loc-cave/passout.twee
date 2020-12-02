@@ -1,0 +1,587 @@
+:: Beach Slug [nobr]
+<<effects>>
+<<set $pursuit = Math.clamp($pursuit, 0, 3)>>
+You run as the slug slithers after you.
+<br><br>
+<<if $eventskip is 0>>
+	<<if $rng gte 76>>
+		You approach a pool of slime. You could run around, but that would cost precious time.
+		<br><br>
+		<<if $swarmdisable is "f">>
+			Something squirms beneath the surface.
+			<br><br>
+		<</if>>
+		<<link [[Jump over|Beach Slug Jump]]>><</link>><<athleticsdifficulty 400 1100>>
+		<br>
+		<<link [[Run around|Beach Slug Run]]>><<set $pursuit += 1>><</link>><<gpursuit>>
+		<br>
+	<<elseif $rng gte 51>>
+		The giant slug rears up and points its mouth at you. It shudders, and spits.
+		<br><br>
+		
+		The projectile unfurls as it hurtles towards you. It's another slug.
+		<br><br>
+		
+		<<link [[Dodge|Beach Slug Dodge]]>><</link>><<dancedifficulty 400 1100>>
+		<br>
+		<<link [[Brace|Beach Slug Brace]]>><<set $pursuit += 1>><</link>><<gpursuit>>
+		<br>
+	<<elseif $rng gte 26>>
+		The giant slug slams against the ground. The stone trembles, and you stagger into a slimy membrane hanging from the ceiling.
+		<br><br>
+		
+		<<if $physique gte random(1, 18000)>>
+			<span class="green">You tug yourself free</span> before the slug gets much closer.
+			<br><br>
+		<<else>>
+			<span class="red">You struggle to tug yourself free.</span> You manage it, but the slug gets closer.<<gpursuit>><<set $pursuit += 1>>
+			<br><br>
+		<</if>>
+		<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<<else>>
+		The rocky ground is smoother than normal up ahead.
+		<br><br>
+		
+		<<link [[Sprint|Beach Slug Sprint]]>><</link>><<athleticsdifficulty 600 1200>>
+		<br>
+		<<link [[Be careful|Beach Slug Careful]]>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	You make it to the 
+	<<if $cave_current is 1>>
+		lichen-filled tunnel.
+	<<elseif $cave_current is 2>>
+		mushroom-filled tunnel.
+	<<elseif $cave_current is 3>>
+		dark tunnel.
+	<<else>>
+		watery tunnel.
+	<</if>>
+	
+	<<if $cave_current is $cave_exit>>
+		<span class="green">It leads away from the chamber!</span>
+	<<else>>
+		<span class="red">It's a dead end!</span> You'll have to look elsewhere.
+	<</if>>
+	<br><br>
+	<<slug_text>>
+	<br><br>
+	
+	<<if $pursuit gte 3>>
+		<<slug_caught>>
+	<<else>>
+		<<set $cave_seen.pushUnique($cave_current)>>
+		<<if $cave_current is $cave_exit>>
+			<<link [[Escape|Beach Slug Escape]]>><</link>>
+			<br>
+		<</if>>
+
+		<<if $cave_current isnot 1>>
+			<<link [[Run to the lichen-filled tunnel|Beach Slug]]>><<set $cave_current to 1>><</link>> <<if $cave_seen.includes(1) and $cave_exit is 1>><span class="green">The exit is here.</span><<elseif $cave_seen.includes(1)>>(You've checked here.)<</if>>
+			<br>
+		<</if>>
+		<<if $cave_current isnot 2>>
+			<<link [[Run to the mushroom-filled tunnel|Beach Slug]]>><<set $cave_current to 2>><</link>> <<if $cave_seen.includes(2) and $cave_exit is 2>><span class="green">The exit is here.</span><<elseif $cave_seen.includes(2)>>(You've checked here.)<</if>>
+			<br>
+		<</if>>
+		<<if $cave_current isnot 3>>
+			<<link [[Run to the dark tunnel|Beach Slug]]>><<set $cave_current to 3>><</link>> <<if $cave_seen.includes(3) and $cave_exit is 3>><span class="green">The exit is here.</span><<elseif $cave_seen.includes(3)>>(You've checked here.)<</if>>
+			<br>
+		<</if>>
+		<<if $cave_current isnot 4>>
+			<<link [[Run to the watery tunnel|Beach Slug]]>><<set $cave_current to 4>><</link>> <<if $cave_seen.includes(4) and $cave_exit is 4>><span class="green">The exit is here.</span><<elseif $cave_seen.includes(4)>>(You've checked here.)<</if>>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<set $eventskip to 0>>
+
+
+:: Beach Slug Sprint [nobr]
+<<effects>>
+
+<<if $athletics gte random(400, 1200)>>
+	You sprint away from the slug, <span class="green">and manage to gain some distance.</span><<lpursuit>><<set $pursuit -= 1>>
+	<br><br>
+<<else>>
+	You try to sprint away from the slug, <span class="red">but lose your footing.</span> You tumble to the ground.<<gpain>><<gstress>><<pain 4>><<stress 6>>
+	<br><br>
+	
+	You scramble to your feet, and keep running.<<gpursuit>><<set $pursuit += 1>>
+	<br><br>
+<</if>>
+
+<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Beach Slug Careful [nobr]
+<<effects>>
+
+You continue to run with care, keeping to the solid-looking ground.
+<br><br>
+
+<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+<br>
+
+
+:: Beach Slug Dodge [nobr]
+<<effects>>
+
+<<if $danceskill gte random(400, 1100)>>
+	You step aside. <span class="green">The slug sails past you,</span> splashing into a pool. You continue running. It's a few moments before the giant slug is able to slither after you.<<lpursuit>><<set $pursuit -= 1>>
+	<br><br>
+	
+	<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	You try to step aside, <span class="red">but you're too slow.</span> The slug hits you square in the chest, knocking you to the floor. The giant slug slithers closer.
+	<br><br>
+	
+	<<link [[Next|Beach Slug Struggle]]>><<set $struggle_start to 1>><</link>>
+	<br>
+<</if>>
+
+:: Beach Slug Brace [nobr]
+<<effects>>
+
+You brace yourself. You stagger as the slug collides with your chest. You manage to keep your footing, but the giant slime is now closer.
+<br><br>
+
+<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Beach Slug Struggle [nobr]
+<<effects>>
+
+<<if $struggle_start is 1>>
+	<<struggle_init>>
+	<<set $struggle.creature to "slug">>
+	<<struggle_creatures 1 2>>
+	<<set $combat to 1>>
+	<<controlloss>>
+	<<violence 1>>
+	<<molested>>
+	<<set $struggle.chest.creature to "slug">><<set $chestuse to "struggle">><<set $cheststate to "struggle">><<set $struggle.enemy[0].location to "chest">>
+	<<set $timer to 10>>
+	<<unset $struggle_start>>
+<</if>>
+
+<<if $timer lte 0>>
+	<<set $pursuit += 1>>
+	<<set $timer to 0>>
+<<elseif $timer is 8 and random(1, 2) is 2>>
+	<<struggle_add 1 1>>
+	<span class="pink">Another slug leaps from the slime!</span>
+	<br><br>
+<</if>>
+
+<<slug_text>>
+<br><br>
+
+
+<<struggle>>
+
+
+
+<<if $struggle.done gte $struggle.number>>
+	<<link [[Next|Beach Slug Struggle End]]>><</link>>
+	<br>
+<<elseif $pursuit gte 3>>
+	<<link [[Next|Beach Slug Struggle End]]>><</link>>
+	<br>
+<<else>>
+	<<link [[Next|Beach Slug Struggle]]>><</link>>
+	<br>
+<</if>>
+
+
+:: Beach Slug Struggle End [nobr]
+<<effects>>
+
+<<if $pursuit gte 3>>
+	The smaller slug jumps away as the giant approaches.
+	<br><br>
+	<<endcombat>>
+	<<clotheson>>
+	<<slug_caught>>
+<<else>>
+	The slug dives into the slime. <<tearful>> you rise to your feet before the giant can bear down on you.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
+
+
+:: Beach Slug Jump [nobr]
+<<effects>>
+
+<<if $athletics gte random(400, 1100)>>
+	You leap, <span class="green">landing on the other side of the pool.</span> You keep running. The giant slug sloshes through without slowing.
+	<br><br>
+	
+	<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	You leap, <span class="red">and plunge into the pool of slime.</span>
+	<<drench goo 5>>
+	<br><br>
+	<<if $swarmdisable is "f">>
+		You manage to get your head above the surface, but feel a squirming against your skin.
+		<br><br>
+		
+		<<link [[Next|Beach Slug Swarm]]>><<set $molestationstart to 1>><</link>>
+		<br>
+	<<else>>
+		You manage to get your head above the suface, pull yourself onto the opposite bank. The giant slug is close behind. It sloshes through without slowing<<gpursuit>><<set $pursuit += 1>>
+		<br><br>
+		
+		<<if $pursuit gte 3>>
+			<<slug_caught>>
+		<<else>>
+			<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+
+
+:: Beach Slug Swarm [nobr]
+<<effects>>
+
+<<effects>>
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<molested>>
+	<<controlloss>>
+	<<set $combat to 1>>
+	<<set $enemytype to "swarm">>
+	<<swarminit "eels" "swarms" "moving towards you" "encircle you" "fend off" 1 6>>
+
+	<<set $swimdistance to 10>>
+	<<set $water to 1>>
+	<<set $timer to 10>>
+<</if>>
+
+<<if $timer lte 0>>
+	<<set $pursuit += 1>>
+	<<set $timer to 10>>
+<</if>>
+
+<<slug_text>><br>
+
+<<if $swimdistance gte 10>>
+	You need to start swimming toward the bank!
+<<elseif $swimdistance gte 5>>
+	The bank is still a long way off.
+<<elseif $swimdistance gte 3>>
+	You've passed halfway to the bank.
+<<elseif $swimdistance gte 1>>
+	You're almost at the bank.
+<<else>>
+	The bank is within arm's reach!
+<</if>>
+<br><br>
+<<swarmeffects>>
+<<swarm>>
+<<swarmactions>>
+<<if $stress gte 10000>>
+	<span id="next"><<link [[Next|Beach Slug Swarm Finish]]>><</link>></span><<nexttext>>
+<<elseif $pursuit gte 3>>
+	<span id="next"><<link [[Next|Beach Slug Swarm Finish]]>><</link>></span><<nexttext>>
+<<elseif $swimdistance lte 0>>
+	<span id="next"><<link [[Next|Beach Slug Swarm Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+<</if>>
+
+:: Beach Slug Swarm Finish [nobr]
+
+<<effects>>
+<<if $stress gte 10000>>
+	It's all just too much for you. You pass out.
+	<br><br>
+	<<if $upperoff isnot 0>>
+		<<upperruined>>
+	<</if>>
+	<<if $loweroff isnot 0>>
+		<<lowerruined>>
+	<</if>>
+	<<if $underloweroff isnot 0>>
+		<<underlowerruined>>
+	<</if>>
+	<<if $underupperoff isnot 0>>
+		<<underupperruined>>
+	<</if>>
+	<<endcombat>>
+	<<slug_end>>
+	<<link [[Next|Passout Beach]]>><<pass 1 hour>><</link>>
+<<elseif $pursuit gte 3>>
+	The giant slug sloshes into the pool, pushing the slime into a wave ahead of it and leaving you washed up on the bank.
+	<br><br>
+	<<endcombat>>
+	<<clotheson>>
+	<<slug_caught>>
+<<else>>
+	<<tearful>> you haul yourself out of the slime. The slugs drop off as you stagger to your feet.
+	<br><br>
+	
+	The giant slug sloshes through the slime without slowing.
+	<br><br>
+	
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
+
+:: Beach Slug Run [nobr]
+<<effects>>
+
+You run around the pool. The giant slug just sloshes through, and gains on you.
+<br><br>
+
+<<link [[Next|Beach Slug]]>><<set $eventskip to 1>><</link>>
+<br>
+
+
+:: Beach Slug Try [nobr]
+<<effects>>
+
+<<if $physique gte random(1, 20000)>>
+	You tug against the sticky slime, <span class="green">and manage to pull yourself free.</span> You jump from the closing maw just in time.
+	<br><br>
+	You're in another cave, tall and well-lit by pink lichen. Slime drips from the ceiling, forming large pools.
+	<br><br>
+			
+	The creature rises behind you. A gargantuan slug, larger than a horse. <span class="red">It slithers closer with alarming speed.</span>
+	<br><br>
+	
+	<<link [[Run|Beach Slug Start]]>><</link>>
+	<br>
+	
+<<else>>
+	You tug against the sticky slime, <span class="red">but you can't get free.</span> The maw surrounds you, then closes in, engulfing you.
+	<br><br>
+	
+	<<if $tentacledisable is "f">>
+	You feel a squirming against your skin.
+	<br><br>
+	<</if>>
+	<<link [[Next|Beach Slug Vore]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<</if>>
+
+:: Beach Slug Remove [nobr]
+<<effects>>
+
+<<clothesruined>>
+You struggle free from your clothes, and jump from the closing maw just in time.
+<br><br>
+
+You're in another cave, tall and well-lit by pink lichen. Slime drips from the ceiling, forming large pools.
+<br><br>
+			
+The creature rises behind you. A gargantuan slug, larger than a horse. <span class="red">It slithers closer with alarming speed.</span>
+<br><br>
+
+<<link [[Run|Beach Slug Start]]>><</link>>
+<br>
+
+
+:: Beach Slug Vore [nobr]
+<<effects>>
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<set $combat to 1>>
+	<<molested>>
+	<<controlloss>>
+	<<if $tentacledisable is "f">>
+		<<set $enemytype to "tentacles">>
+		<<tentaclestart 4 15>>
+	<<else>>
+		<<set $enemytype to "vore">>
+	<</if>>
+	<<set $vorestage to 1>>
+	<<set $vorecreature to "slug">>
+	<<set $vorestrength to 1>><<set $position to "doggy">>
+	<<if $tentacledisable is "f">>
+		<<set $voretentacles to 1>>
+	<<else>>
+		<<set $voretentacles to 0>>
+	<</if>>
+	<<resetLastOptions>>
+<</if>>
+<<if $tentacledisable is "f" and $enemytype is "tentacles">>
+	<<voreeffects>><<effectstentacles>>
+	<<vore>><<tentacles>>
+	<<statetentacles>>
+	<<voreactions>><<actionstentacles>>
+<<else>>
+	<<voreeffects>>
+	<<vore>>
+	<<voreactions>>
+<</if>>
+<<if $stress gte 10000>>
+	<span id="next"><<link [[Next|Beach Slug Vore Finish]]>><</link>></span><<nexttext>>
+<<elseif $vorestage lte 0>>
+	<span id="next"><<link [[Next|Beach Slug Vore Finish]]>><</link>></span><<nexttext>>
+<<elseif $vorestomach gte 5>>
+	<span id="next"><<link [[Next|Beach Slug Vore Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+<</if>>
+
+:: Beach Slug Vore Finish [nobr]
+
+<<effects>>
+<<if $stress gte 10000 or $vorestomach gte 5>>
+	It's too much for you. You pass out.
+	<br><br>
+	<<if $upperoff isnot 0>>
+		<<upperruined>>
+	<</if>>
+	<<if $loweroff isnot 0>>
+		<<lowerruined>>
+	<</if>>
+	<<if $underloweroff isnot 0>>
+		<<underlowerruined>>
+	<</if>>
+	<<if $underupperoff isnot 0>>
+		<<underupperruined>>
+	<</if>>
+	<<endcombat>>
+	<<slug_end>>
+	<<link [[Next|Passout Beach]]>><<clotheson>><<pass 1 hour>><</link>>
+<<else>>
+	<<set $pursuit to 1>>
+	<<if $cave_exit>>
+		<<tearful>> you haul yourself out of the $vorecreature's maw. You stagger to your feet, and run. It slithers close behind.
+		<br><br>
+	<<else>>
+		<<tearful>> you haul yourself out of the $vorecreature's maw. You're in another cave, tall and well-lit by pink lichen. Slime drips from the ceiling, forming large pools.
+		<br><br>
+					
+		The creature rises behind you. A gargantuan slug, larger than a horse. <span class="red">It slithers closer with alarming speed.</span>
+		<br><br>
+	<</if>>
+	<<clotheson>>
+	<<endcombat>>
+	<<if $cave_exit>>
+		<<link [[Next|Beach Slug]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Beach Slug Start]]>><</link>>
+		<br>
+	<</if>>
+<</if>>
+
+
+:: Beach Slug Start [nobr]
+<<effects>>
+<<slug_init>>
+You turn and run. Four tunnels lead away from the chamber.
+<br>
+The tunnel ahead is covered with bioluminescent lichen.
+<br>
+The tunnel to the right is full of mushrooms, some almost as tall as you. It seems to lead upward.
+<br>
+The tunnel to the left drops, leading deeper underground. You hear rushing water from that direction.
+<br>
+You glance back. There's another tunnel behind the slug, but no lichen, leaving it dark and forboding. The slug blocks the path for now.
+<br><br>
+
+<<link [[Run to the lichen-filled tunnel|Beach Slug]]>><<set $cave_current to 1>><</link>>
+<br>
+<<link [[Run to the mushroom-filled tunnel|Beach Slug]]>><<set $cave_current to 2>><</link>>
+<br>
+<<link [[Run to the watery tunnel|Beach Slug]]>><<set $cave_current to 4>><</link>>
+<br>
+
+
+
+
+:: Beach Slug Escape [nobr]
+<<effects>>
+
+<<earnFeat "Abnormal Mollusc">>
+
+
+<<pass 10>>
+<<if $cave_current is 1>>
+	You escape along the lichen-filled tunnel. You glance over your shoulder. The giant slug is reluctant to follow.
+	<br><br>
+	The tunnel slopes upwards as the pink hue gives way to a light blue.
+	
+	<<if $daystate isnot "night">>
+		You hear waves, and see daylight pierce the gloom up ahead.
+	<<elseif $weather is "clear">>
+		You hear waves, and see pale moonlight pierce the gloom up ahead.
+	<<else>>
+		You hear waves up ahead. 
+	<</if>>
+	<br><br>
+	
+	You emerge from the cliff facing the sea, and drop into the water. You're near the beach.
+	<br><br>
+	
+	<<link [[Next|Sea Beach]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<elseif $cave_current is 2>>
+	You escape up the mushroom-filled tunnel. You glance over your shoulder. The giant slug is reluctant to follow.
+	<br><br>
+	The mushrooms grow denser as the tunnel continues. You step around a particularly large specimen, and almost step through a crack in the ground. You thought you heard a voice. You listen, but hear only rushing water.
+	<br><br>
+	
+	<span class="red">The ground gives way,</span> and you tumble into darkness.
+	<br><br>
+	<<if $sewersintro is 1>>
+		<<link [[Next|Sewers Commercial]]>><<sewersstart>><<set $eventskip to 1>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Sewers Intro]]>><</link>>
+	<</if>>
+<br>
+<<elseif $cave_current is 3>>
+	You escape into the dark tunnel. You glance over your shoulder. The giant slug is reluctant to follow.
+	<br><br>
+	You feel your way along the walls as the tunnel takes you higher, 
+	<<if $daystate isnot "night">>
+		until daylight pierces the dark up ahead.
+	<<elseif $weather is "clear">>
+		until moonlight pierces the dark up ahead.
+	<<else>>
+		until you feel a breeze. It smells of the forest.
+	<</if>>
+	Emboldened you continue, and emerge in the forest.
+	<br><br>
+	
+	<<link [[Next|Forest]]>><<set $forest to 20>><<set $eventskip to 1>><</link>>
+	<br>
+<<elseif $cave_current is 4>>
+	You escape down the watery tunnel. You glance over your shoulder. The giant slug is reluctant to follow.
+	<br><br>
+	
+	The tunnel leads deeper into the earth. Water breaks through cracks in the walls, joining you in the journey downward.
+	<br><br>
+	
+	The tunnel opens, revealing a black pool, disturbed only by the water rushing around your ankles. The dark hides the other side, and even the ceiling. For all you can tell, the pool could reach to the horizon.
+	<br><br>
+	
+	You hear a roar behind you. A torrent thunders down the passage, snatching you off your feet and plunging you into the gloom.
+	<br><br>
+	
+	<<link [[Next|Underground Lake]]>><</link>>
+	<br>
+	
+	
+<</if>>
+
+<<slug_end>>
+<<beach_cave_end>>

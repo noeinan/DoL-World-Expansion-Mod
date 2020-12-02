@@ -393,7 +393,21 @@
 					<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($carried[$args[0]].name))>>
 				<</if>>
 			<<elseif $clothingrebuy is 1 and $worn[$args[0]].one_piece isnot "broken" and $worn[$args[0]].shop.length gt 0>>
-				<<if $money gte Math.trunc($worn[$args[0]].cost * 1.5)>>
+				<<if $worn[$args[0]].outfitSecondary isnot undefined>>
+					<<if $args[0] is "lower">>
+						<<if $money gte Math.trunc($worn["upper"].cost * 1.5)>>
+							<<generalSend "wardrobe" "upper" $worn["upper"].index $worn["upper"].colour $worn["upper"].accessory_colour>>
+							<<set $money -= Math.trunc($worn["upper"].cost * 1.5)>>
+							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["upper"].name))>>
+						<</if>>
+					<<elseif $args[0] is "under_lower">>
+						<<if $money gte Math.trunc($worn["under_upper"].cost * 1.5)>>
+							<<generalSend "wardrobe" "under_upper" $worn["under_upper"].index $worn["under_upper"].colour $worn["under_upper"].accessory_colour>>
+							<<set $money -= Math.trunc($worn["under_upper"].cost * 1.5)>>
+							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["under_upper"].name))>>
+						<</if>>
+					<</if>>
+				<<elseif $money gte Math.trunc($worn[$args[0]].cost * 1.5)>>
 					<<generalSend "wardrobe" $args[0] $worn[$args[0]].index $worn[$args[0]].colour $worn[$args[0]].accessory_colour>>
 					<<set $money -= Math.trunc($worn[$args[0]].cost * 1.5)>>
 					<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn[$args[0]].name))>>
@@ -446,6 +460,7 @@
 			<<if $worn[_outfitSecondaryRuined[0]].name is _outfitSecondaryRuined[1] and $worn[_outfitSecondaryRuined[0]].outfitPrimary isnot undefined>>
 				<<if $worn[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] is $worn[$args[0]].name>>
 					<<set $worn[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
+					<<set $worn[_outfitSecondaryRuined[0]].one_piece to "broken">>
 				<</if>>
 			<</if>>
 		<</if>>
