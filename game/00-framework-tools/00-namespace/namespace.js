@@ -11,7 +11,7 @@
  * if shadowed, and for "documentation" purposes
  */
 window.DOL = {
-	// In pseduo-load order
+	// In pseudo-load order
 	/**
 	 * Mini application reporter app
 	 * helps get detailed error messages to devs
