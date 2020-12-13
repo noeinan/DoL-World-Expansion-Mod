@@ -19,10 +19,10 @@
 <<if $randomWear>>
 	<<randomWear>>
 <</if>>
-<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
+<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "hands", "legs", "feet"]>>
 <<set _slimePrevent to ["upper", "lower", "under_upper", "under_lower"]>>
 <<set _towelCheck to ["upper", "lower"]>>
-<<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "legs":false, "feet":false}>>
+<<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "hands":false, "legs":false, "feet":false}>>
 <<for _ie to 0; _ie lt _equip.length;_ie++>>
 	<<if _equipSkip[_equip[_ie]] is true>>
 		<<continue>>
@@ -49,6 +49,8 @@
 		<<set _wearId to $wear_face>>
 	<<case "neck">>
 		<<set _wearId to $wear_neck>>
+	<<case "hands">>
+		<<set _wearId to $wear_hands>>
 	<<case "legs">>
 		<<set _wearId to $wear_legs>>
 	<<case "feet">>
@@ -239,6 +241,7 @@
 <<set $wear_head to "none">>
 <<set $wear_face to "none">>
 <<set $wear_neck to "none">>
+<<set $wear_hands to "none">>
 <<set $wear_legs to "none">>
 <<set $wear_feet to "none">>
 <<set $wear_outfit to "none">>
@@ -258,9 +261,9 @@
 <<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>> |
 <div id="randomClothingConfigure" class="hidden">
 	<<if $randomEquipConfigure is undefined>>
-		<<set $randomEquipConfigure to {face: true, feet: true, head: true, legs: true, lower: true, neck: true, under_lower: true, under_upper: true, upper: true}>>
+		<<set $randomEquipConfigure to {face: true, feet: true, head: true, hands: true, legs: true, lower: true, neck: true, under_lower: true, under_upper: true, upper: true}>>
 	<</if>>
-	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "legs", "feet"]>>
+	<<set _equip to ["upper", "lower", "under_upper", "under_lower","head", "face", "neck", "hands", "legs", "feet"]>>
 	<<for _slot range _equip>>
 		<label><<print '<<checkbox "$randomEquipConfigure.'+_slot+'" false true '+($randomEquipConfigure[_slot] is true ? "checked" : "")+'>>'>> <<print _slot.replace("_"," ")>></label><br>
 	<</for>>
@@ -352,6 +355,7 @@ __Clothing__
 	{ id: 'lower', label: 'Lower' },
 	{ id: 'under_upper', label: 'Under Upper' },
 	{ id: 'under_lower', label: 'Under Lower' },
+	{ id: 'hands', label: 'Hands' },
 	{ id: 'legs', label: 'Legs' },
 	{ id: 'feet', label: 'Feet' },
 	{ id: 'NewOutfit', label: 'New Outfit' },
@@ -430,7 +434,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 
 	<<if $saveColor is true>>
-		<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "legs", "feet"]>>
+		<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "hands", "legs", "feet"]>>
 		<<set _colors to {}>>
 		<<for _ie to 0; _ie lt _equip.length; _ie++>>
 			<<set _colors[_equip[_ie]] to [clone($worn[_equip[_ie]].colour),clone($worn[_equip[_ie]].accessory_colour)]>>
@@ -472,6 +476,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<case "lower">><<set _wear to "wear_lower">>
 	<<case "under_upper">><<set _wear to "wear_under_upper">>
 	<<case "under_lower">><<set _wear to "wear_under_lower">>
+	<<case "hands">><<set _wear to "wear_hands">>
 	<<case "legs">><<set _wear to "wear_legs">>
 	<<case "feet">><<set _wear to "wear_feet">>
 	<<default>><<set _errorPrevent to true>>
@@ -636,6 +641,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <<oldWardrobeList "head">>
 <<oldWardrobeList "face">>
 <<oldWardrobeList "neck">>
+<<oldWardrobeList "hands">>
 <<oldWardrobeList "legs">>
 <<oldWardrobeList "feet">>
 <div style="clear:both;"></div>
@@ -657,6 +663,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<case "lower">><<set _wear to "wear_lower">>
 	<<case "under_upper">><<set _wear to "wear_under_upper">>
 	<<case "under_lower">><<set _wear to "wear_under_lower">>
+	<<case "hands">><<set _wear to "wear_hands">>
 	<<case "legs">><<set _wear to "wear_legs">>
 	<<case "feet">><<set _wear to "wear_feet">>
 <</switch>>
@@ -864,7 +871,7 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 <</nobr>><</widget>>
 
 <<widget "wardrobeGetRepairedClothes">><<nobr>>
-<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","legs","feet"]>>
+<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","hands","legs","feet"]>>
 <<set _takenAway to 0>>
 <<for $_i to 0; $_i lt _equip.length; $_i++>>
 	<<if $wardrobeRepair[_equip[$_i]] is undefined>>
@@ -909,36 +916,36 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1)>>__ <i>$
 
 <<widget "randomWear">><<nobr>>
 <<set $wardrobeOption to "wear">>
-<<set _equip to []>>
+<<set $_equip to []>>
 <<set _equipped to []>>
 <<for $_label, $_value range $randomEquipConfigure>>
 	<<if $_value>>
 		<<generalUndress "wardrobe" $_label>>
-		<<run _equip.push($_label)>>
+		<<run $_equip.push($_label)>>
 	<</if>>
 <</for>>
-<<for _i to 0; _i lt _equip.length;_i++>>
-	<<if !_equipped.includes(_equip[_i]) and $worn[_equip[_i]].name is "naked" and $wardrobe[_equip[_i]].length gt 0>>
+<<for _i to 0; _i lt $_equip.length;_i++>>
+	<<if !_equipped.includes($_equip[_i]) and $worn[$_equip[_i]].name is "naked" and $wardrobe[$_equip[_i]].length gt 0>>
 		<<set _ids to []>>
 
-		<<for _j to 0; _j lt $wardrobe[_equip[_i]].length; _j++>>
-			<<if $wardrobe[_equip[_i]][_j].outfitSecondary is undefined>>
-			<<elseif $wardrobe[_equip[_i]][_j].outfitSecondary[1] isnot "broken">>
+		<<for _j to 0; _j lt $wardrobe[$_equip[_i]].length; _j++>>
+			<<if $wardrobe[$_equip[_i]][_j].outfitSecondary is undefined>>
+			<<elseif $wardrobe[$_equip[_i]][_j].outfitSecondary[1] isnot "broken">>
 				<<continue>>
 			<</if>>
 			<<run _ids.push(_j)>>
 		<</for>>
 		<<set _id to _ids.pluck()>>
 		<<if _id>>
-			<<run _equipped.pushUnique(_equip[_i])>>
-			<<if $wardrobe[_equip[_i]][_id].outfitPrimary isnot undefined>>
-				<<for $_label, $_value range $wardrobe[_equip[_i]][_id].outfitPrimary>>
+			<<run _equipped.pushUnique($_equip[_i])>>
+			<<if $wardrobe[$_equip[_i]][_id].outfitPrimary isnot undefined>>
+				<<for $_label, $_value range $wardrobe[$_equip[_i]][_id].outfitPrimary>>
 					<<if $_value isnot "broken">>
 						<<run _equipped.pushUnique($_label)>>
 					<</if>>
 				<</for>>
 			<</if>>
-			<<print `<<set $wear_` + _equip[_i] + ` to ` + clone(_id) + `>>`>>
+			<<print `<<set $wear_` + $_equip[_i] + ` to ` + clone(_id) + `>>`>>
 		<</if>>
 		<<unset _id>>
 	<</if>>
@@ -1155,7 +1162,7 @@ It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
 
 <<set $tailorMonthlyService to 30>>
 <<set _value to 0>>
-<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","legs","feet"]>>
+<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","hands","legs","feet"]>>
 <<for $_i to 0; $_i lt _equip.length; $_i++>>
 	<<set _toDelete to []>>
 	<<for $_j to 0; $_j lt $wardrobe[_equip[$_i]].length; $_j++>>
@@ -1230,7 +1237,7 @@ It will cost you
 
 <<set $tailorMonthlyService to 30>>
 <<set $wardrobeRepair to {timeLeft: 1}>>
-<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","legs","feet"]>>
+<<set _equip to ["over_upper","over_lower","upper","lower","under_upper","under_lower","over_head","head","face","neck","hands","legs","feet"]>>
 <<set _value to 0>>
 <<for $_i to 0; $_i lt _equip.length; $_i++>>
 	<<set _toDelete to []>>

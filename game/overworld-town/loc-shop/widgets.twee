@@ -264,6 +264,13 @@ Forth argument - item index*/
 	<<default>><<set _shopLocation to $location>>
 <</switch>>
 <<if _shopLocation>>
+	<<if $shopListStartCount is undefined>>
+		<<set $shopListStartCount to 0>>
+	<</if>>
+	<<if $shopListMax is undefined>>
+		<<set $shopListMax to 15>>
+	<</if>>
+	<<set _listCount to 0>><<set _trueListCount to 0>>
 	<<for _i to 0; _i lt setup.clothes[$clothingShopSlot].length; _i++>>
 		<<set _item to clone(setup.clothes[$clothingShopSlot][_i])>>
 		<<if !_item.shop.includes(_shopLocation) or _item.outfitSecondary isnot undefined>>
@@ -271,6 +278,14 @@ Forth argument - item index*/
 		<</if>>
 		<<if (_item.outfitPrimary is undefined and $args[1] is "outfits")
 		or (_item.outfitPrimary isnot undefined and $args[1] is "non-outfits")>>
+			<<continue>>
+		<</if>>
+		<<run _trueListCount++>>
+		<<if _listCount is $shopListMax + $shopListStartCount>>
+			<<continue>>
+		<</if>>
+		<<run _listCount++>>
+		<<if _listCount - $shopListStartCount <= 0>>
 			<<continue>>
 		<</if>>
 		<<clothingicon _item>>
@@ -302,6 +317,33 @@ Forth argument - item index*/
 		<</if>>
 		<br>
 	<</for>>
+	<br>
+	<<if $shopListStartCount gte $shopListMax or _listCount is $shopListMax + $shopListStartCount>>
+		<<if $shopListStartCount gte $shopListMax>>
+			<<link [["Previous Page"|$passage]]>>
+				<<run $shopListStartCount -= $shopListMax>>
+			<</link>>
+			<<set _extrabr to true>>
+		<<else>>
+			Previous Page
+		<</if>>
+		| Page
+		<<print ($shopListStartCount / $shopListMax) + 1>>
+		of
+		<<print Math.floor(_trueListCount / $shopListMax) + 1>> |
+		<<if _listCount is $shopListMax + $shopListStartCount>>
+			
+			<<link [["Next Page"|$passage]]>>
+				<<run $shopListStartCount += $shopListMax>>
+			<</link>>
+			<<set _extrabr to true>>
+		<<else>>
+			Next Page
+		<</if>>
+	<</if>>
+	<<if _extrabr>>
+		<br>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -429,6 +471,19 @@ Secondary Colour:
 <label><<print '<<checkbox "$shopDefaults.invertImagesHidden" false true '+($shopDefaults.invertImagesHidden is true? "checked" : "")+'>>'>> Show clothes images by default.</label>
 <br>
 <</if>>
+<br>
+<label>
+	<<if $shopListMax is undefined>>
+		<<set $shopListMax to 15>>
+	<</if>>
+	Number of shop items to display at once: 
+	<<listbox "$shopListMax" autoselect>>
+		<<option 10>>
+		<<option 15>>
+		<<option 20>>
+		<<option 25>>
+	<</listbox>>
+</label>
 <</nobr>><</widget>>
 
 <<widget "shopDefaultOptionsToggle">><<nobr>>
@@ -620,43 +675,54 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 /*Args: slot, itemName, outfit*/
 <<widget "shopFullImage">><<nobr>>
 <<if $args[0] and $args[1] isnot undefined>>
-	<<if _shopFullImageVar is undefined>>
-		<<set _shopFullImageVar to [$args[0], $args[1]]>>
-	<</if>>
 	<a value="Refresh" onclick="Wikifier.wikifyEval('<<replace #shopFullImage>><<shopFullImage SugarCube.State.temporary.shopFullImageVar[0] SugarCube.State.temporary.shopFullImageVar[1]>><</replace>>');">Refresh</a>
 	<br>
 	<div class="hideImageOverflow">
 		<div class="shopImg">
-			<img @class="'clothes-'+$colouraction" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + setup.clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/full.png'" @style="($colouraction is 'custom'? customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary):'')">
-			<<if setup.clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].accessory is 1>>
-				<img @class="'clothes-'+$accessorycolouraction" @src="'img/clothes/' + _shopFullImageVar[0] + '/' + setup.clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].variable + '/acc.png'" @style="($colouraction is 'custom'? customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary):'')">
-			<</if>>
-			<<if _shopFullImageVar[0] is "upper" or _shopFullImageVar[0] is "under_upper">>
-				<<if setup.clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].one_piece is 1>>
-					<<if _shopFullImageVar[2] is undefined>>
-						<<if _shopFullImageVar[0] is "upper">>
-							<<run _shopFullImageVar.push("lower")>>
-						<<else>>
-							<<run _shopFullImageVar.push("under_lower")>>
-						<</if>>
-						<<for _i to 0; _i lt setup.clothes[_shopFullImageVar[2]].length; _i++>>
-							<<if setup.clothes[_shopFullImageVar[2]][_i].set is setup.clothes[_shopFullImageVar[0]][_shopFullImageVar[1]].set>>
-								<<set _shopFullImageVar.push(_i)>>
-								<<break>>
-							<</if>>
-						<</for>>
-					<</if>>
-					<<if _shopFullImageVar[3]>>
-						<img @class="'clothes-'+$colouraction" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + setup.clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/full.png'" @style="($colouraction is 'custom'? customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary):'')">
-						<<if setup.clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].accessory is 1>>
-							<img @class="'clothes-'+$accessorycolouraction" @src="'img/clothes/' + _shopFullImageVar[2] + '/' + setup.clothes[_shopFullImageVar[2]][_shopFullImageVar[3]].variable + '/acc.png'" @style="($colouraction is 'custom'? customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary):'')">
-						<</if>>
-					<</if>>
-				<</if>>
-			<</if>>
+			<<set _customPrimary to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
+			<<set _customSecondary to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
+			<<shopFullImageSlot $args[0] $args[1]>>
 		</div>
 	</div>
 <</if>>
+<</nobr>><</widget>>
+
+<<widget "shopFullImageSlot">><<nobr>>
+<<if $args[0] and $args[1]>>
+	<<run console.log($args[0], $args[1])>>
+	<<set $_slot to $args[0]>>
+	<<set $_item to $args[1]>>
+	<<if setup.clothes[$_slot][$_item].mainImage isnot 0>>
+		<<shopFullImagePart $_slot $_item "full" $colouraction _customPrimary>>
+	<</if>>
+	<<if setup.clothes[$_slot][$_item].leftImage is 1>>
+		<<shopFullImagePart $_slot $_item "left" $colouraction _customPrimary>>
+	<</if>>
+	<<if setup.clothes[$_slot][$_item].rightImage is 1>>
+		<<shopFullImagePart $_slot $_item "right" $colouraction _customPrimary>>
+	<</if>>
+	<<if setup.clothes[$_slot][$_item].accessory is 1>>
+		<<shopFullImagePart $_slot $_item "acc" $accessorycolouraction _customSecondary>>
+	<</if>>
+	<<set $_outfitPrimary to setup.clothes[$_slot][$_item].outfitPrimary>>
+	<<run console.log($_outfitPrimary)>>
+	<<if $_outfitPrimary isnot undefined>>
+		<<for $_label, $_value range $_outfitPrimary>>
+			<<for $_i to 0; $_i < setup.clothes[$_label].length; $_i++>>
+				<<run console.log(setup.clothes[$_label][$_i].name)>>
+				<<if setup.clothes[$_label][$_i].name is $_value>>
+					<<shopFullImageSlot $_label $_i>>
+					<<break>>
+				<</if>>
+			<</for>>
+		<</for>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+/*$args[0] - slot, $args[1] - itemNo, $args[2] - file, $args[3] - colour, $args[4] - custom colour*/
+<<widget "shopFullImagePart">><<nobr>>
+<img @class="'clothes-'+ $args[3] + ' layer-' + $args[0]" @src="'img/clothes/' + $args[0] + '/' + setup.clothes[$args[0]][$args[1]].variable + '/' + $args[2] + '.png'" @style="($args[3] is 'custom'? $args[4]:'')">
 <</nobr>><</widget>>
 
 <<widget "shopFullImageToggle">><<nobr>>
