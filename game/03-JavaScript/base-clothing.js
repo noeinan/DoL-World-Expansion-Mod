@@ -9,6 +9,7 @@ function colourContainerClasses() {
 		' ' + 'head-' + (V.worn.head.colour || '').replace(/ /g, '-') +
 		' ' + 'face-' + (V.worn.face.colour || '').replace(/ /g, '-') +
 		' ' + 'neck-' + (V.worn.neck.colour || '').replace(/ /g, '-') +
+		' ' + 'hands-' + (V.worn.hands.colour || '').replace(/ /g, '-') +
 		' ' + 'legs-' + (V.worn.legs.colour || '').replace(/ /g, '-') +
 		' ' + 'feet-' + (V.worn.feet.colour || '').replace(/ /g, '-') +
 		' ' + 'upper_acc-' + (V.worn.upper.accessory_colour || '').replace(/ /g, '-') +
@@ -18,6 +19,7 @@ function colourContainerClasses() {
 		' ' + 'head_acc-' + (V.worn.head.accessory_colour || '').replace(/ /g, '-') +
 		' ' + 'face_acc-' + (V.worn.face.accessory_colour || '').replace(/ /g, '-') +
 		' ' + 'neck_acc-' + (V.worn.neck.accessory_colour || '').replace(/ /g, '-') +
+		' ' + 'hands_acc-' + (V.worn.hands.accessory_colour || '').replace(/ /g, '-') +
 		' ' + 'legs_acc-' + (V.worn.legs.accessory_colour || '').replace(/ /g, '-') +
 		' ' + 'feet_acc-' + (V.worn.feet.accessory_colour || '').replace(/ /g, '-')
 }
@@ -41,6 +43,7 @@ function debugColourContainerClasses(color) {
 		' ' + 'head-' + (color.head[0] || '').replace(/ /g, '-') +
 		' ' + 'face-' + (color.face[0] || '').replace(/ /g, '-') +
 		' ' + 'neck-' + (color.neck[0] || '').replace(/ /g, '-') +
+		' ' + 'hands-' + (color.hands[0] || '').replace(/ /g, '-') +
 		' ' + 'legs-' + (color.legs[0] || '').replace(/ /g, '-') +
 		' ' + 'feet-' + (color.feet[0] || '').replace(/ /g, '-') +
 		' ' + 'upper_acc-' + (color.upper[1] || '').replace(/ /g, '-') +
@@ -50,6 +53,7 @@ function debugColourContainerClasses(color) {
 		' ' + 'head_acc-' + (color.head[1] || '').replace(/ /g, '-') +
 		' ' + 'face_acc-' + (color.face[1] || '').replace(/ /g, '-') +
 		' ' + 'neck_acc-' + (color.neck[1] || '').replace(/ /g, '-') +
+		' ' + 'hands_acc-' + (color.hands[1] || '').replace(/ /g, '-') +
 		' ' + 'legs_acc-' + (color.legs[1] || '').replace(/ /g, '-') +
 		' ' + 'feet_acc-' + (color.feet[1] || '').replace(/ /g, '-')
 }
