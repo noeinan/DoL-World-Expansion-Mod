@@ -102,7 +102,8 @@
 <<set $girlsroomentered to 0>>
 <<set $famepark -= 7>>
 <<set $famepark = Math.clamp($famepark, 0, 100)>>
-<<set $robinbeachpolice to 0>>
+<<unset $robinbeachpolice>>
+<<unset $robinparksnow>>
 <<set $sewersfeeding to 0>>
 <<set $sewerssex to 0>>
 <<set $museumgreengemtouch to 0>>
@@ -364,6 +365,7 @@
 	<<set _monthDefault to true>>
 <</switch>>
 
+
 <<if _monthDefault is true>>
 	<<if $monthday gt _lastDay>>
 		<<set $monthday to 1>>
@@ -373,6 +375,19 @@
 		<<set $month to _months[_months.indexOf($month) + 1]>>
 	<</if>>
 <</if>>
+
+<<if _months.indexOf($month) gte 11 or _months.indexOf($month) lte 1>>
+	<<set $season to "winter">>
+<<elseif _months.indexOf($month) gte 8>>
+	<<set $season to "autumn">>
+<<elseif _months.indexOf($month) gte 5>>
+	<<set $season to "summer">>
+<<elseif _months.indexOf($month) gte 2>>
+	<<set $season to "spring">>
+<</if>>
+
+
+
 
 <<moonstate>>
 
@@ -620,14 +635,7 @@
 
 <<set $beauty += (100 - (($trauma / $traumamax) * 100))>>
 
-<<set _weatherOptions to ["clear", "clear", "clear", "clear", "overcast", "overcast", "overcast", "overcast", "rain", "rain"]>>
-<<if $nextWeather is undefined>>
-	<<set $nextWeather to [either(_weatherOptions),either(_weatherOptions),either(_weatherOptions)]>>
-<<else>>
-	<<run $nextWeather.push(either(_weatherOptions))>>
-<</if>>
-<<set $weather to $nextWeather[0]>>
-<<run $nextWeather.deleteAt(0)>>
+<<weather_select>>
 
 <<tending_day>>
 

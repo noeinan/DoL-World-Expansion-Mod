@@ -4,20 +4,24 @@
 <<set _img to setup.tanImg.sidebar[$skinColor.tanImgEnabled]>>
 <div id="img" @class="limitedColourContainerClasses() + ($imgLighten is true? ' imgLighten':'') + ($sidebarAnimations isnot false ? '':' noAnimations')">
 	/*Prep for image checks*/
-	<<switch $breastsize>>
-	<<case 12>>
-		<<set _breastSize to 6>>
-	<<case 8 9 10 11>>
-		<<set _breastSize to 5>>
-	<<case 6 7>>
-		<<set _breastSize to 4>>
-	<<case 4 5>>
-		<<set _breastSize to 3>>
-	<<case 3>>
-		<<set _breastSize to 2>>
-	<<case 0 1 2>>
+	<<if $worn.under_upper.type.includes("chest_bind")>>
 		<<set _breastSize to 1>>
-	<</switch>>
+	<<else>>
+		<<switch $breastsize>>
+		<<case 12>>
+			<<set _breastSize to 6>>
+		<<case 8 9 10 11>>
+			<<set _breastSize to 5>>
+		<<case 6 7>>
+			<<set _breastSize to 4>>
+		<<case 4 5>>
+			<<set _breastSize to 3>>
+		<<case 3>>
+			<<set _breastSize to 2>>
+		<<case 0 1 2>>
+			<<set _breastSize to 1>>
+		<</switch>>
+	<</if>>
 	<<if $penisexist is 1>>
 		<<switch $penissize>>
 		<<case 4>>
@@ -54,7 +58,7 @@
 
 	<img class="layer-base anim-idle-2f" @src="_img.basenoarms" @style="'filter: '+_filters.body">
 	<img class="layer-basehead anim-idle-2f" @src="_img.basehead" @style="'filter: '+_filters.body">
-
+	
 	<<for _i to 1; _i lte $spraymax; _i++>>
 		<<if $spray gte _i>>
 			<img @id="'spray'+_i" src="img/ui/pepperspray.png">
@@ -751,8 +755,7 @@
 <</if>>
 
 <<if $worn.feet.type.includes("heels")>>
-	<<set _feetjob to ($feetuse is 'penis' ? 'feetjob' : 'thighs')>>
-	<<set _feetjob to ($feetstate is 'tentacle' ? 'feetjob' : 'thighs')>>
+	<<set _feetjob to ($feetuse is 'penis' ? 'feetjob' : $feetstate is 'tentacle' ? 'feetjob' : 'thighs')>>
 	<<if $worn.feet.colour>>
 		<<set _shoeColour to $worn.feet.colourCustom>>
 	<</if>>
@@ -1194,8 +1197,7 @@
 	<</if>>
 <</if>>
 
-<<if !$worn.under_upper.type.includes("naked") and $worn.under_upper.name isnot "chest wrap"
-											   and $worn.under_upper.name isnot "mesh shirt">>
+<<if !$worn.under_upper.type.includes("naked") and $worn.under_upper.name isnot "chest wrap" and $worn.under_upper.name isnot "mesh shirt">>
 	<<if $breastsize is 0>>
 		<img class="layer-sexunder colour-under_upper anim-idle-2f" src="img/sex/missionary/idle/breastcover/none.png" @style="($worn.under_upper.colour is 'custom'? $worn.under_upper.colourCustom + _underUpperOpacity : '')">
 	<<elseif $breastsize lte 2>>
@@ -1594,8 +1596,7 @@
 	<</if>>
 <</if>>
 
-<<if !$worn.under_upper.type.includes("naked") and $worn.under_upper.name isnot "chest wrap"
-											   and $worn.under_upper.name isnot "mesh shirt">>
+<<if !$worn.under_upper.type.includes("naked") and $worn.under_upper.name isnot "chest wrap" and $worn.under_upper.name isnot "mesh shirt">>
 	<<if $breastsize is 0>>
 	<img @class="'layer-sexunder colour-under_upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/breastcover/none.png" @style="($worn.under_upper.colour is 'custom'? $worn.under_upper.colourCustom + _underUpperOpacity : '')">
 	<<elseif $breastsize lte 2>>
@@ -1793,7 +1794,7 @@
 		<<set _state to "neck">>
 	<</if>>
 	<img @class="'layer-sexunder colour-under_upper anim-doggy-4f-'+_animspeed" @src="'img/sex/missionary/active/mesh/'+_state+'.png'" @style="($worn.under_upper.colour is 'custom' ? $worn.under_upper.colourCustom + _upperOpacity : '')">
-
+	
 	<<if $worn.under_upper.exposed is 0>>
 		<<if $breastsize is 0>>
 			<<set _size to "none">>

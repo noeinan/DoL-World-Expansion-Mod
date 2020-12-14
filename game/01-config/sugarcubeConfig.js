@@ -1,6 +1,6 @@
 Config.history.controls = false;
 
-Config.history.maxStates = 1;
+Config.history.maxStates = 5;
 
 State.prng.init()
 
@@ -17,7 +17,7 @@ Config.saves.onSave = function (save) {
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
-	"debug": false,
+	"debug": true,
 	"enableImages": true,
 	"enableLinkNumberify": true,
 	"version": "0.2.19.2",

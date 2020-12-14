@@ -63,6 +63,7 @@
 <<set $struggle.mouth.success to 0>>
 <<set $struggle.mouth.action to 0>>
 <<set $struggle.mouth.action_default to 0>>
+<<set $struggle.mouth.damage to 0>>
 <<if !$struggle_start>>
 	<<struggle_purge mouth>>
 <</if>>
@@ -76,6 +77,7 @@
 <<set $struggle.vagina.success to 0>>
 <<set $struggle.vagina.action to 0>>
 <<set $struggle.vagina.action_default to 0>>
+<<set $struggle.vagina.damage to 0>>
 <<if !$struggle_start>>
 	<<struggle_purge vagina>>
 <</if>>
@@ -89,6 +91,7 @@
 <<set $struggle.penis.success to 0>>
 <<set $struggle.penis.action to 0>>
 <<set $struggle.penis.action_default to 0>>
+<<set $struggle.penis.damage to 0>>
 <<if !$struggle_start>>
 	<<struggle_purge penis>>
 <</if>>
@@ -102,6 +105,7 @@
 <<set $struggle.anus.success to 0>>
 <<set $struggle.anus.action to 0>>
 <<set $struggle.anus.action_default to 0>>
+<<set $struggle.anus.damage to 0>>
 <<if !$struggle_start>>
 	<<struggle_purge anus>>
 <</if>>
@@ -115,6 +119,7 @@
 <<set $struggle.chest.success to 0>>
 <<set $struggle.chest.action to 0>>
 <<set $struggle.chest.action_default to 0>>
+<<set $struggle.chest.damage to 0>>
 <<if !$struggle_start>>
 	<<struggle_purge chest>>
 <</if>>
@@ -1528,10 +1533,10 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<if $struggle.penis.creature>>
 	<<switch $struggle.penis.progress>>
 	<<case 0>>
-		<<if $struggle.anus.legs is "tentacles">>
-			The <<print $struggle.anus.creature>> lowers itself towards your <<penis>> as its tentacles slide and grope.<<neutral 2>>
+		<<if $struggle.penis.legs is "tentacles">>
+			The <<print $struggle.penis.creature>> lowers itself towards your <<penis>> as its tentacles slide and grope.<<neutral 2>>
 		<<else>>
-			The <<print $struggle.anus.creature>> lowers itself towards your <<penis>>.<<neutral 1>>
+			The <<print $struggle.penis.creature>> lowers itself towards your <<penis>>.<<neutral 1>>
 		<</if>>
 	<<case 1>>
 		The <<print $struggle.penis.creature>> presses against your <<penis>>, <span class="blue">trying to envelop.</span><<neutral 2>>
@@ -2142,7 +2147,30 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 			Its appendage pierces the material, and pulls. The material groans <span class="pink">as the <<print $struggle[$args[0]].creature>> tears it off your body with a flick, exposing your <<genitals>>.</span>
 		<</if>>
 		<<integritycheck no_text>><<exposure>>
-	<</if>>
+	<<else>>
+		<<if $struggle[$args[0]].damage gte 10>>
+			It hurts itself against the material, <span class="green">and it leaps away.</span>
+			<<if $args[0] is "vagina">>
+				<<set $vaginause to 0>>
+				<<set $vaginastate to 0>>
+				<<struggle_vagina_init>>
+				<<set $struggle.warded += 1>>
+			<<elseif $args[0] is "penis">>
+				<<set $penisuse to 0>>
+				<<set $penisstate to 0>>
+				<<struggle_penis_init>>
+				<<set $struggle.warded += 1>>
+			<<else>>
+				<<set $anususe to 0>>
+				<<set $anusstate to 0>>
+				<<struggle_anus_init>>
+				<<set $struggle.warded += 1>>
+			<</if>>
+		<<else>>
+			It hurts itself against the material.
+			<<set $struggle[$args[0]].damage += 1>>
+		<</if>>
+	<</if>>	
 <<elseif _struggle_exposed is "naked">>
 	<<if $args[0] is "vagina">>
 		The <<print $struggle[$args].creature>>'s appendage <span class="purple">presses against your <<pussy>>.</span><<neutral 4>>
