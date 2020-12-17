@@ -675,7 +675,8 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 /*Args: slot, itemName, outfit*/
 <<widget "shopFullImage">><<nobr>>
 <<if $args[0] and $args[1] isnot undefined>>
-	<a value="Refresh" onclick="Wikifier.wikifyEval('<<replace #shopFullImage>><<shopFullImage SugarCube.State.temporary.shopFullImageVar[0] SugarCube.State.temporary.shopFullImageVar[1]>><</replace>>');">Refresh</a>
+	<<set _shopFullImageVar to [$args[0], $args[1]]>>
+	<a value="Refresh" onclick="Wikifier.wikifyEval('<<replace #shopFullImage>><<shopFullImage $clothingShopSlot $clothes_choice>><</replace>>');">Refresh</a>
 	<br>
 	<div class="hideImageOverflow">
 		<div class="shopImg">
@@ -689,11 +690,31 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 
 <<widget "shopFullImageSlot">><<nobr>>
 <<if $args[0] and $args[1]>>
-	<<run console.log($args[0], $args[1])>>
 	<<set $_slot to $args[0]>>
 	<<set $_item to $args[1]>>
 	<<if setup.clothes[$_slot][$_item].mainImage isnot 0>>
 		<<shopFullImagePart $_slot $_item "full" $colouraction _customPrimary>>
+	<</if>>
+	<<if setup.clothes[$_slot][$_item].breast_img is 1>>
+		<<switch $breastsize>>
+			<<case 12>>
+				<<set _breastSize to 6>>
+			<<case 8 9 10 11>>
+				<<set _breastSize to 5>>
+			<<case 6 7>>
+				<<set _breastSize to 4>>
+			<<case 4 5>>
+				<<set _breastSize to 3>>
+			<<case 3>>
+				<<set _breastSize to 2>>
+			<<case 0 1 2>>
+				<<set _breastSize to 1>>
+		<</switch>>
+		<<shopFullImagePart $_slot $_item `(_breastSize - 1)` $colouraction _customPrimary>>
+	<</if>>
+	<<if setup.clothes[$_slot][$_item].sleeve_img is 1>>
+		<<shopFullImagePart $_slot $_item "right" $colouraction _customPrimary>>
+		<<shopFullImagePart $_slot $_item "left" $colouraction _customPrimary>>
 	<</if>>
 	<<if setup.clothes[$_slot][$_item].leftImage is 1>>
 		<<shopFullImagePart $_slot $_item "left" $colouraction _customPrimary>>
@@ -705,11 +726,9 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 		<<shopFullImagePart $_slot $_item "acc" $accessorycolouraction _customSecondary>>
 	<</if>>
 	<<set $_outfitPrimary to setup.clothes[$_slot][$_item].outfitPrimary>>
-	<<run console.log($_outfitPrimary)>>
 	<<if $_outfitPrimary isnot undefined>>
 		<<for $_label, $_value range $_outfitPrimary>>
 			<<for $_i to 0; $_i < setup.clothes[$_label].length; $_i++>>
-				<<run console.log(setup.clothes[$_label][$_i].name)>>
 				<<if setup.clothes[$_label][$_i].name is $_value>>
 					<<shopFullImageSlot $_label $_i>>
 					<<break>>

@@ -121,10 +121,18 @@
 			<<set $lowerwet -= ($pass * 2)>>
 		<</if>>
 		<<if $underlowerwet gte 1>>
-			<<set $underlowerwet -= ($pass * 2)>>
+			<<if $worn.lower.type.includes("naked")>>
+				<<set $underlowerwet -= ($pass * 2)>>
+			<<else>>
+				<<set $underlowerwet -= $pass>>
+			<</if>>
 		<</if>>
 		<<if $underupperwet gte 1>>
-			<<set $underupperwet -= ($pass * 2)>>
+			<<if $worn.upper.type.includes("naked")>>
+				<<set $underupperwet -= ($pass * 2)>>
+			<<else>>
+				<<set $underupperwet -= $pass>>
+			<</if>>
 		<</if>>
 	<<elseif $outside is 1 and $weather is "rain">>
 		<<if !$worn.upper.type.includes("naked") and !$worn.upper.type.includes("swim") and !$worn.head.type.includes("rainproof")>>
@@ -152,6 +160,17 @@
 		<<if $underupperwet gte 1>>
 			<<set $underupperwet -= $pass>>
 		<</if>>
+	<</if>>
+	<!-- Soak underwear if vagina is wet enough -->
+	<<if $vaginaWetness gte 60 and !$worn.under_lower.type.includes("naked") and !$worn.under_lower.type.includes("swim")>>
+		<<set $underlowerwet += Math.log10($vaginaWetness - 59) * 2 *  $pass>><!-- 59 is to have at minimum log10(1) and not log10(0), which is NaN -->
+		<<if $underlowerwet gte 100>>
+			<<set $pantiesSoaked to 1>>
+		<<else>>
+			<<set $pantiesSoaked to 0>>
+		<</if>>
+		<!-- Wetness accumulates at vaginaWetness >= 63 (or at >= 70 in direct sunlight), otherwise it dries out faster than it soaks.
+			At maximum wetness (90, drenched) panties become damp in 25 minutes and soaked in 50 min, at 65 wetness - damp in 1.5 hours and soaked in 3h-->
 	<</if>>
 <</nobr>><</widget>>
 
