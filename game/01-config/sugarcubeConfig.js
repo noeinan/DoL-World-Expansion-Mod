@@ -217,6 +217,7 @@ Macro.add('widget', {
 	}
 });
 
+/* ToDo: imprement the dolls system, uncomment during and when its setup
 importScripts([
     "img/dolls/NameValueMaps.js",
     "img/dolls/dollUpdater.js",
@@ -228,4 +229,4 @@ importScripts([
 })
 .catch(function (err) {
     console.log(err);
-});
+});*/
