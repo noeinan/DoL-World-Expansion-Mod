@@ -393,6 +393,8 @@ var settingsObjects = function (type) {
 				penissizemax: { min: -1, max: 4, decimals: 0 },
 				penissizemin: { min: -1, max: 0, decimals: 0 },
 				images: { min: 0, max: 1, decimals: 0 },
+				sidebarAnimations: { bool: true },
+				combatAnimations: { bool: true },
 				silhouettedisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
