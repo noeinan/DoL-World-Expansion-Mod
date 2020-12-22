@@ -4,30 +4,129 @@
 <<if $stress gte 10000>>
 	<<passoutlake>>
 <<else>>
-	You are beneath the lake. You swim over dark silt and between tall weeds.
-	<<if $daystate is "night">>
-		<<if $weather is "rain">>
-			The water is black. It dulls the sound of the rain above.
-		<<elseif $weather is "clear">>
-			The plants glisten in moonlight.
+	<<if $season is "winter">>
+		You are beneath the lake. You swim beneath a crystal ceiling, between tall weeds.
+		<<if $daystate is "night">>
+			<<if $weather is "snow">>
+				The ice is pitch black.
+			<<elseif $weather is "clear">>
+				Pale moonlight spills through.
+			<<else>>
+				The ice is black.
+			<</if>>
 		<<else>>
-			The water is black.
+			<<if $weather is "snow">>
+				The ice is white.
+			<<elseif $weather is "clear">>
+				Sunlight pierces through.
+			<<else>>
+				The ice is a dull grey.
+			<</if>>
 		<</if>>
 	<<else>>
-		<<if $weather is "rain">>
-			The water is dark. It dulls the sound of the rain above.
-		<<elseif $weather is "clear">>
-			Sunlight pierces the gloom.
+		You are beneath the lake. You swim over dark silt and between tall weeds.
+		<<if $daystate is "night">>
+			<<if $weather is "rain">>
+				The water is black. It dulls the sound of the rain above.
+			<<elseif $weather is "clear">>
+				The plants glisten in moonlight.
+			<<else>>
+				The water is black.
+			<</if>>
 		<<else>>
-			The water is dark.
+			<<if $weather is "rain">>
+				The water is dark. It dulls the sound of the rain above.
+			<<elseif $weather is "clear">>
+				Sunlight pierces the gloom.
+			<<else>>
+				The water is dark.
+			<</if>>
 		<</if>>
 	<</if>>
 	<br><br>
 	<<link [[Swim inside ruin|Lake Ruin]]>><<wateraction>><</link>><<loxygen>>
 	<br><br>
-	<<link [[Surface|Lake Depths]]>><<set $lakesurface to 1>><</link>>
+	<<if $season is "winter" and $lake_ice_broken is undefined>>
+		<<if $lake_ice_broken is undefined>>
+			<<link [[Surface|Lake Underwater Ice]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Surface|Lake Depths Ice]]>><</link>>
+			<br>
+		<</if>>
+	<<else>>
+		<<link [[Surface|Lake Depths]]>><<set $lakesurface to 1>><</link>>
+		<br>
+	<</if>>
+<</if>>
+
+:: Lake Underwater Ice [nobr]
+<<underwater>><<effects>>
+
+You swim up to the surface, <span class="red">but you can't find the hole in the ice.</span> It's frozen over!<<ggstress>><<stress 18>>
+<br><br>
+
+<<link [[Smash through|Lake Underwater Ice Smash]]>><<wateraction>><<pain 4>><</link>><<physiquedifficulty 1 $physiquemax>><<loxygen>><<gpain>>
+<br>
+<<link [[Keep calm and search for the hole|Lake Underwater Ice Calm]]>><<wateraction>><</link>><<willpowerdifficulty 1 $willpowermax>><<loxygen>>
+<br>
+<<link [[Swim back down|Lake Underwater]]>><<wateraction>><</link>><<loxygen>>
+<br>
+
+
+:: Lake Underwater Ice Smash [nobr]
+<<underwater>><<effects>>
+
+<<if $physique gte random(1, $physiquemax)>>
+	You smash your <<if $leftarm is "bound" and $rightarm is "bound">>feet<<else>>fists<</if>> against the ice. <span class="green">You hear it crack.</span> You keep bashing away, your strength bolstered by panic, and manage to bash open a hole large enough to climb through.
+	<br><br>
+	<<earnFeat "Under the Ice">>
+	You haul yourself onto the surface of the lake.
+	<br><br>
+	<<set $location to "lake">>
+	<<set $lake_ice_broken to 2>>
+	<<link [[Next|Lake Depths Ice]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	Your <<if $leftarm is "bound" and $rightarm is "bound">>feet<<else>>fists<</if>> thud against the ice, <span class="red">but it remains solid</span>.
+	<br><br>
+	
+	<<link [[Keep trying|Lake Underwater Ice Smash]]>><<wateraction>><<pain 4>><</link>><<physiquedifficulty 1 $physiquemax>><<loxygen>><<gpain>>
+	<br>
+	<<link [[Keep calm and search for the hole|Lake Underwater Ice Calm]]>><<wateraction>><</link>><<willpowerdifficulty 1 $willpowermax>><<loxygen>>
+	<br>
+	<<link [[Swim back down|Lake Underwater]]>><<wateraction>><</link>><<loxygen>>
 	<br>
 <</if>>
+
+
+:: Lake Underwater Ice Calm [nobr]
+<<underwater>><<effects>>
+
+<<if $willpower gte random(1, $willpowermax)>>
+	You can't breathe to focus yourself, but you can feel the current around you. The ice won't be solid. There hasn't been time.
+	<br><br>
+	Now calm, you see it. A gap not far from you. You swim over, and push against the frozen ceiling. <span class="green">It breaks apart at your touch.</span>
+	<br><br>
+	<<earnFeat "Under the Ice">>
+	You haul yourself onto the surface of the lake.
+	<br><br>
+	<<set $location to "lake">>
+	<<set $lake_ice_broken to 2>>
+	<<link [[Next|Lake Depths Ice]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	You'd normally breathe to stay calm, but you can't even do that. <span class="red">Frantic,</span> you push yourself along the surface <span class="red">in an erratic and hopeless pattern.</span><<gtrauma>><<trauma 6>><<ggwillpower>><<willpower 3>>
+	<br><br>
+	
+	<<link [[Smash through|Lake Underwater Ice Smash]]>><<wateraction>><<pain 4>><</link>><<physiquedifficulty 1 $physiquemax>><<loxygen>><<gpain>>
+	<br>
+	<<link [[Keep trying|Lake Underwater Ice Calm]]>><<wateraction>><</link>><<willpowerdifficulty 1 $willpowermax>><<loxygen>>
+	<br>
+	<<link [[Swim back down|Lake Underwater]]>><<wateraction>><</link>><<loxygen>>
+	<br>
+<</if>>
+
 
 :: Lake Ruin [nobr]
 
@@ -222,7 +321,7 @@ Whatever it is, it sounds like it's behind you. No matter what direction you fac
 <</if>>
 After a moment, you sense a number of tentacles approach you from behind. They prod you gently, testing your offer. Though underwater, your skin slickens at their touch.
 <br><br>
-Several of the tentacles begin to explore your body, trailing slime wherever they go. You feel two of them wrap around your ankles. Everywhere they make contact, a stimulating tingle electrifies your skin. You are filled with an intense excitement as the tendrils slide up your thighs and towards your <<genitalsstop>> <<ggarousal>><<arousal 1500>>
+Several of the tentacles begin to explore your body, trailing slime wherever they go. You feel two of them wrap around your ankles. Everywhere they make contact, a stimulating tingle electrifies your skin. You are filled with an intense excitement as the tendrils slide up your thighs and towards your <<genitals>>. <<ggarousal>><<arousal 1500>>
 <br><br>
 <<link [[Continue|Lake Ruin Deep Consentacles]]>><<loxygen>><<set $sexstart to 1>><</link>>
 <br>
@@ -235,7 +334,7 @@ Sensing imminent danger, you decide not to take any risks and leave the room.
 <<link [[Continue|Lake Ruin Deep]]>><<loxygen>><</link>>
 <br>
 
-:: Lake Ruin Deep Consentacles[nobr]
+:: Lake Ruin Deep Consentacles [nobr]
 
 <<if $sexstart is 1>>
 	<<set $sexstart to 0>>
