@@ -127,7 +127,7 @@
 <<if $wetintro gte 2>>
 	<<exposure>>
 	<<if $exhibitionism gte 55>>
-		You feel a lewd thrill as <<if !$worn.face.type.includes("blindfold")>>you look down and see<</if>> your clothes cling tightly to your body, completely transparent.
+		You feel a lewd thrill as <<if !$worn.face.type.includes("blindfold")>>you look down and see<</if>> your clothes cling tight to your body, completely transparent.
 	<<else>>
 		<<if !$worn.face.type.includes("blindfold")>>You look down in horror at<<else>>Horror takes over you as you feel<</if>> your clothes, which cling tight to your body and are completely transparent.
 	<</if>>
@@ -135,7 +135,7 @@
 	<br><br>
 <<elseif $wetintro gte 1>>
 	<<if $exhibitionism gte 35>>
-		You feel a lewd thrill as <<if !$worn.face.type.includes("blindfold")>>you look down and see<</if>> your clothes cling tightly to your body, giving a hint of transparency.
+		You feel a lewd thrill as <<if !$worn.face.type.includes("blindfold")>>you look down and see<</if>> your clothes cling tight to your body, giving a hint of transparency.
 	<<else>>
 		<<if !$worn.face.type.includes("blindfold")>>You look down anxiously at<<else>>You feel<</if>> your clothes, now clinging tightly to your body and giving a hint of transparency.
 	<</if>>
@@ -149,6 +149,7 @@
 
 <<effectstime>>
 <<effectswater>>
+<<temperature>>
 
 <<set $speechcycle += 1>>
 <<if $speechcycle gte 7>>
@@ -567,6 +568,59 @@
 
 <br>
 <<set $menu to 0>>
+<</nobr>><</widget>>
+
+<<widget "temperature">><<nobr>>
+<<set $warmth to 0>>
+<<for _e to 0; _e lt $clothing_number; _e++>>
+	<<activeclothes>>
+	<<if $inwater is 1>>
+		<<if $worn[_active_clothes].warmth isnot undefined and $worn[_active_clothes].type.includes("diving")>>	
+			<<set $warmth += $worn[_active_clothes].warmth>>
+		<</if>>
+	<<else>>
+		<<if $worn[_active_clothes].warmth isnot undefined>>
+			<<if _active_clothes is "upper" and $worn.upper.warmth lte $upperwet or _active_clothes is "lower" and $worn.lower.warmth lte $lowerwet or _active_clothes is "under_upper" and $worn.under_upper.warmth lte $underupperwet or _active_clothes is "under_lower" and $worn.under_lower.warmth lte $underlowerwet>>
+				/*Do nothing*/
+			<<else>>
+				<<set $warmth += $worn[_active_clothes].warmth>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</for>>
+
+
+<<if $inwater is 1>>
+	<<if $season is "winter" and $location isnot "sea" and $location isnot "beach" and $location isnot "underground">>
+		<<if $warmth gte 80>>
+			<<set $body_temperature_outside to "comfy">>
+		<<elseif $warmth gte 40>>
+			<<set $body_temperature_outside to "chilly">>
+		<<else>>
+			<<set $body_temperature_outside to "cold">>
+		<</if>>
+	<<else>>
+		<<set $body_temperature_outside to "comfy">>
+	<</if>>
+<<else>>
+	<<if $warmth gte (($chill * 1.2) + 120)>>
+		<<set $body_temperature_outside to "hot">>
+	<<elseif $warmth gte (($chill * 1.2) + 50)>>
+		<<set $body_temperature_outside to "warm">>
+	<<elseif $warmth lte ($chill - 70)>>
+		<<set $body_temperature_outside to "cold">>
+	<<elseif $warmth lte $chill>>
+		<<set $body_temperature_outside to "chilly">>
+	<<else>>
+		<<set $body_temperature_outside to "comfy">>
+	<</if>>
+<</if>>
+
+<<if $outside is 1 or _water_warmth isnot undefined>>
+	<<set $body_temperature to $body_temperature_outside>>
+<<else>>
+	<<set $body_temperature to "comfy">>
+<</if>>
 <</nobr>><</widget>>
 
 :: Widgets Compatibility [widget]

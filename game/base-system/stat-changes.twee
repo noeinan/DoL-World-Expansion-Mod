@@ -144,25 +144,31 @@
 <</nobr>><</widget>>
 
 <<widget "stress">><<nobr>>
-	<<if $args[0]>>
-		<<if $args[0] gt 0>>
-			<<if $drunk gte 480>>
-				<<set $stress += ($args[0] * 10)>>
-			<<elseif $drunk gte 360>>
-				<<set $stress += ($args[0] * 15)>>
-			<<elseif $drunk gte 240>>
-				<<set $stress += ($args[0] * 20)>>
-			<<elseif $drunk gte 120>>
-				<<set $stress += ($args[0] * 25)>>
-			<<elseif $drunk gte 1>>
-				<<set $stress += ($args[0] * 30)>>
-			<<else>>
-				<<set $stress += ($args[0] * 40)>>
-			<</if>>
-		<<else>>
-			<<set $stress += ($args[0] * 80)>>
-		<</if>>
+<<if $drunk gte 480>>
+	<<set _stress_mod to 10>>
+<<elseif $drunk gte 360>>
+	<<set _stress_mod to 15>>
+<<elseif $drunk gte 240>>
+	<<set _stress_mod to 20>>
+<<elseif $drunk gte 120>>
+	<<set _stress_mod to 25>>
+<<elseif $drunk gte 1>>
+	<<set _stress_mod to 30>>
+<<else>>
+	<<set _stress_mod to 40>>
+<</if>>
+<<if $body_temperature is "cold">>
+	<<set _stress_mod *= 3.0>>
+<<elseif $body_temperature is "chilly">>
+	<<set _stress_mod *= 1.5>>
+<</if>>
+<<if $args[0]>>
+	<<if $args[0] gt 0>>
+		<<set $stress += ($args[0] * _stress_mod)>>
+	<<else>>
+		<<set $stress += ($args[0] * 80)>>
 	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "arousal">><<nobr>>
@@ -229,13 +235,23 @@
 <</nobr>><</widget>>
 
 <<widget "tiredness">><<nobr>>
-	<<if $args[0]>>
+<<set _tiredness_mod to 1>>
+<<if $body_temperature is "hot">>
+	<<set _tiredness_mod += 2>>
+<<elseif $body_temperature is "warm">>
+	<<set _tiredness_mod += 0.5>>
+<</if>>
+<<if $args[0]>>
+	<<if $args[1] is "pass">>
+		<<set $tiredness += ($args[0] * _tiredness_mod)>>
+	<<else>>
 		<<if $args[0] gt 0>>
-			<<set $tiredness += ($args[0] * 15)>>
+			<<set $tiredness += ($args[0] * 15 * _tiredness_mod)>>
 		<<else>>
-			<<set $tiredness += ($args[0] * 20)>>
+			<<set $tiredness += ($args[0] * 20 * _tiredness_mod)>>
 		<</if>>
 	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "pain">><<nobr>>
@@ -554,7 +570,7 @@
 
 <<widget "willpower">><<nobr>>
 	<<if $args[0]>>
-		<<set $willpower += $args[0]>>
+		<<set $willpower += ($args[0] * 2)>>
 	<</if>>
 	<<set $willpower = Math.clamp($willpower, 0, $willpowermax)>>
 <</nobr>><</widget>>

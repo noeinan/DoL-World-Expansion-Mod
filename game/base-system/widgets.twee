@@ -48,26 +48,81 @@
 <<widget "wateraction">><<nobr>>
 	<<if $swimmingskill lt 100>>
 		<<set $seconds += 18>><<set $oxygen -= 180>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 18>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 200>>
 		<<set $seconds += 15>><<set $oxygen -= 150>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 15>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 300>>
 		<<set $seconds += 12>><<set $oxygen -= 120>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 12>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 400>>
 		<<set $seconds += 10>><<set $oxygen -= 100>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 10>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 500>>
 		<<set $seconds += 8>><<set $oxygen -= 80>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 8>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 600>>
 		<<set $seconds += 8>><<set $oxygen -= 80>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 8>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 700>>
 		<<set $seconds += 7>><<set $oxygen -= 70>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 7>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 800>>
 		<<set $seconds += 7>><<set $oxygen -= 70>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 7>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 900>>
 		<<set $seconds += 6>><<set $oxygen -= 60>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 6>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<elseif $swimmingskill lt 1000>>
 		<<set $seconds += 6>><<set $oxygen -= 60>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 6>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<<else>>
 		<<set $seconds += 5>><<set $oxygen -= 50>>
+		<<if $lake_ice_broken gte 1>>
+			<<if random(1, 120) lte 5>>
+				<<unset $lake_ice_broken>>
+			<</if>>
+		<</if>>
 	<</if>>
 <</nobr>><</widget>>
 
@@ -200,12 +255,18 @@
 			<<set $stress -= $pass>>
 		<</if>>
 	<</if>>
+	<<if $body_temperature is "cold">>
+		<<set $stress += ($pass * 2)>>
+	<<elseif $body_temperature is "chilly">>
+		<<set $stress += $pass>>
+	<</if>>
+	
 	<<if $hallucinogen gt 0>>
 		<<set $hallucinogen -= $pass>>
 	<</if>>
 	<<if $drunk gt 0>>
+		<<tiredness `($pass * ($drunk / 200))` pass>>
 		<<set $drunk -= $pass>>
-		<<set $tiredness += ($pass * ($drunk / 200))>>
 	<</if>>
 	<<if $drugged gt 0>>
 		<<set $drugged -= $pass>>
@@ -216,7 +277,7 @@
 	<<if $pass gt 1200>>
 		<<set $tiredness to 0>>
 	<<else>>
-		<<set $tiredness += $pass>>
+		<<tiredness $pass pass>>
 	<</if>>
 	<<set $time += $pass>><<set $minute += $pass>>
 	<<if $backgroundTraits.includes("lustful")>>
@@ -549,25 +610,24 @@
 <<widget "scienceskill">><<nobr>>
 <<switch $sciencetrait>>
 <<case 4>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 3>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 2>>
-	<<set _skill_mod to 0.2>>
+	<<set _skill_mod to 0.6>>
 <<case 1>>
-	<<set _skill_mod to 0.4>>
+	<<set _skill_mod to 1.2>>
 <<default>>
-	<<set _skill_mod to 0.8>>
+	<<set _skill_mod to 2.4>>
 <</switch>>
 <<if $science_star lt 3>>
-	<<set _skill_mod *= 4>>
 	<<set $science_star += 1>>
 <</if>>
 <<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $exposed gte 1>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $args[0]>>
 	<<set $science_exam += ($args[0] * _skill_mod)>>
@@ -580,25 +640,24 @@
 <<widget "mathsskill">><<nobr>>
 <<switch $mathstrait>>
 <<case 4>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 3>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 2>>
-	<<set _skill_mod to 0.2>>
+	<<set _skill_mod to 0.6>>
 <<case 1>>
-	<<set _skill_mod to 0.4>>
+	<<set _skill_mod to 1.2>>
 <<default>>
-	<<set _skill_mod to 0.8>>
+	<<set _skill_mod to 2.4>>
 <</switch>>
 <<if $maths_star lt 3>>
-	<<set _skill_mod *= 4>>
 	<<set $maths_star += 1>>
 <</if>>
 <<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $exposed gte 1>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $args[0]>>
 	<<set $maths_exam += ($args[0] * _skill_mod)>>
@@ -611,25 +670,24 @@
 <<widget "englishskill">><<nobr>>
 <<switch $englishtrait>>
 <<case 4>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 3>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 2>>
-	<<set _skill_mod to 0.2>>
+	<<set _skill_mod to 0.6>>
 <<case 1>>
-	<<set _skill_mod to 0.4>>
+	<<set _skill_mod to 1.2>>
 <<default>>
-	<<set _skill_mod to 0.8>>
+	<<set _skill_mod to 2.4>>
 <</switch>>
 <<if $english_star lt 3>>
-	<<set _skill_mod *= 4>>
 	<<set $english_star += 1>>
 <</if>>
 <<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $exposed gte 1>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $args[0]>>
 	<<set $english_exam += ($args[0] * _skill_mod)>>
@@ -642,25 +700,24 @@
 <<widget "historyskill">><<nobr>>
 <<switch $historytrait>>
 <<case 4>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 3>>
-	<<set _skill_mod to 0.1>>
+	<<set _skill_mod to 0.3>>
 <<case 2>>
-	<<set _skill_mod to 0.2>>
+	<<set _skill_mod to 0.6>>
 <<case 1>>
-	<<set _skill_mod to 0.4>>
+	<<set _skill_mod to 1.2>>
 <<default>>
-	<<set _skill_mod to 0.8>>
+	<<set _skill_mod to 2.4>>
 <</switch>>
 <<if $history_star lt 3>>
-	<<set _skill_mod *= 4>>
 	<<set $history_star += 1>>
 <</if>>
 <<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $exposed gte 1>>
-	<<set _skill_mod += 1>>
+	<<set _skill_mod *= 1.2>>
 <</if>>
 <<if $args[0]>>
 	<<set $history_exam += ($args[0] * _skill_mod)>>
@@ -1426,6 +1483,11 @@
 <</nobr>><</widget>>
 
 <<widget "weatherdisplay">><<nobr>>
+<<if $season is "winter">>
+	<<set _weather_display to "winter">>
+<<else>>
+	<<set _weather_display to "normal">>
+<</if>>
 <<if $images is 1>>
 	<<if $daystate is "day">>
 		<<if $location is "tentworld">>
@@ -1434,99 +1496,109 @@
 		<img id="daystate" src="img/misc/day.png">
 		<</if>>
 		<<if $location is "tentworld">>
-<img id="weather" src="img/misc/tentskyday.png">
+		<img id="weather" src="img/misc/tentskyday.png">
 		<<elseif $weather is "clear">>
-<img id="weather" src="img/misc/clearday.png">
+		<img id="weather" src="img/misc/clearday.png">
 		<<elseif $weather is "overcast">>
-<img id="weather" src="img/misc/overcastday.png">
+		<img id="weather" @src="'img/misc/' + _weather_display + '/overcastday.png'">
 		<<elseif $weather is "rain">>
-<img id="weather" src="img/misc/rainday.gif">
+		<img id="weather" src="img/misc/rainday.gif">
+		<<elseif $weather is "snow">>
+		<img id="weather" src="img/misc/winter/snowday.gif">
 		<</if>>
 		<<switch $location>>
 		<<case beach>>
-		<img id="location" src="img/misc/beachday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/beachday.gif'">
 		<<case sea>>
-		<img id="location" src="img/misc/ocean_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ocean_day.gif'">
 		<<case home>>
-		<img id="location" src="img/misc/homeday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/homeday.gif'">
 		<<case town>>
-		<img id="location" src="img/misc/town_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/town_day.gif'">
 		<<case docks>>
-		<img id="location" src="img/misc/docks_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/docks_day.png'">
 		<<case pub>>
-		<img id="location" src="img/misc/pubday.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pubday.png'">
 		<<case forest>>
-		<img id="location" src="img/misc/forestday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forestday.gif'">
 		<<case lake>>
-		<img id="location" src="img/misc/lakeday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/lakeday.gif'">
 		<<case asylum>>
 			<<if $hallucinations gte 1>>
-			<img id="location" src="img/misc/asylumdayvfast.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumdayvfast.gif'">
 			<<else>>
-			<img id="location" src="img/misc/asylumdayslow.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumdayslow.gif'">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentacles_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_day.gif'">
 		<<case underground>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case sewers>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case school>>
-		<img id="location" src="img/misc/schoolday.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/schoolday.png'">
 		<<case cabin>>
-		<img id="location" src="img/misc/cabinday.gif">
+			<<if $season is "winter">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabinday.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabinday.gif'">
+			<</if>>
 		<<case pool>>
-		<img id="location" src="img/misc/poolday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/poolday.gif'">
 		<<case landfill>>
-		<img id="location" src="img/misc/landfillday.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/landfillday.gif'">
 		<<case temple>>
-		<img id="location" src="img/misc/templeday.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/templeday.png'">
 		<<case strip_club>>
-		<img id="location" src="img/misc/strip_club_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/strip_club_day.png'">
 		<<case shopping_centre>>
-		<img id="location" src="img/misc/shopping_centre_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/shopping_centre_day.png'">
 		<<case police_station>>
-		<img id="location" src="img/misc/police_station_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/police_station_day.png'">
 		<<case park>>
-		<img id="location" src="img/misc/park_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/park_day.png'">
 		<<case museum>>
-		<img id="location" src="img/misc/museum_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/museum_day.png'">
 		<<case hospital>>
-		<img id="location" src="img/misc/hospital_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/hospital_day.png'">
 		<<case dance_studio>>
-		<img id="location" src="img/misc/dance_studio_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/dance_studio_day.png'">
 		<<case compound>>
-		<img id="location" src="img/misc/compound_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/compound_day.gif">
 		<<case brothel>>
-		<img id="location" src="img/misc/brothel_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/brothel_day.png'">
 		<<case cafe>>
 			<<if $chef_state gte 9>>
-				<img id="location" src="img/misc/cafe_renovated_day.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_renovated_day.png'">
 			<<elseif $chef_state gte 7>>
-				<img id="location" src="img/misc/cafe_construction_day.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_construction_day.png'">
 			<<else>>
-				<img id="location" src="img/misc/cafe_day.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_day.png'">
 			<</if>>
 		<<case arcade>>
-		<img id="location" src="img/misc/arcade_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_day.png'">
 		<<case farm>>
-		<img id="location" src="img/misc/farm_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/farm_day.png'">
 		<<case wolf_cave>>
-		<img id="location" src="img/misc/wolf_cave_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_day.png'">
 		<<case forest_shop>>
-		<img id="location" src="img/misc/forest_shop_day.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forest_shop_day.png'">
 		<<case lake_ruin>>
-		<img id="location" src="img/misc/ruins_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_day.gif'">
 		<<case moor>>
-		<img id="location" src="img/misc/moor_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
 		<<case night_monster_lair>>
-		<img id="location" src="img/misc/night_monster_lair_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_day.gif'">
 		<<case alley>>
-		<img id="location" src="img/misc/alley_day.gif">
+			<<if $bus is "industrial">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/indust_alley_day.gif'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/alley_day.gif'">
+			<</if>>
 		<<case drain>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case spa>>
-		<img id="location" src="img/misc/spa_day.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/spa_day.gif'">
 		<</switch>>
 	<<elseif $daystate is "night">>
 		<<if $location is "tentworld">>
@@ -1537,111 +1609,129 @@
 		<img id="daystate" src="img/misc/night.png">
 		<</if>>
 		<<if $location is "tentworld">>
-<img id="weather" src="img/misc/tentskynight.png">
+		<img id="weather" src="img/misc/tentskynight.png">
 		<<elseif $weather is "clear">>
-<img id="weather" src="img/misc/clearnight.png">
+		<img id="weather" src="img/misc/clearnight.png">
 		<<elseif $weather is "overcast">>
-<img id="weather" src="img/misc/overcastnight.png">
+		<img id="weather" @src="'img/misc/' + _weather_display + '/overcastnight.png'">
 		<<elseif $weather is "rain">>
-<img id="weather" src="img/misc/rainnight.gif">
+		<img id="weather" src="img/misc/rainnight.gif">
+		<<elseif $weather is "snow">>
+		<img id="weather" src="img/misc/winter/snownight.gif">
 		<</if>>
 		<<switch $location>>
 		<<case beach>>
-		<img id="location" src="img/misc/beachnight.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/beachnight.gif'">
 		<<case sea>>
-		<img id="location" src="img/misc/ocean_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ocean_night.gif'">
 		<<case home>>
-		<img id="location" src="img/misc/homenight.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/homenight.gif'">
 		<<case town>>
-		<img id="location" src="img/misc/town_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/town_night.gif'">
 		<<case docks>>
-		<img id="location" src="img/misc/docks_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/docks_night.png'">
 		<<case pub>>
-		<img id="location" src="img/misc/pubnight.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pubnight.png'">
 		<<case forest>>
 			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
-				<img id="location" src="img/misc/forestbloodmoon.gif">
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestbloodmoon.gif'">
 			<<else>>
-				<img id="location" src="img/misc/forestnight.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestnight.png'">
 			<</if>>
 		<<case lake>>
 			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
-				<img id="location" src="img/misc/lakebloodmoon.gif">
+				<img id="location" @src="'img/misc/' + _weather_display + '/lakebloodmoon.gif'">
 			<<else>>
-				<img id="location" src="img/misc/lakenight.gif">
+				<img id="location" @src="'img/misc/' + _weather_display + '/lakenight.gif'">
 			<</if>>
 		<<case asylum>>
 			<<if $hallucinations gte 1>>
-			<img id="location" src="img/misc/asylumnightvfast.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumnightvfast.gif'">
 			<<else>>
-			<img id="location" src="img/misc/asylumnightslow.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumnightslow.gif'">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentacles_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_night.gif'">
 		<<case underground>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case sewers>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case school>>
-		<img id="location" src="img/misc/schoolnight.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/schoolnight.png'">
 		<<case cabin>>
-		<img id="location" src="img/misc/cabinnight.gif">
+			<<if $season is "winter">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabinnight.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabinnight.gif'">
+			<</if>>
 		<<case pool>>
-		<img id="location" src="img/misc/poolnight.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/poolnight.gif'">
 		<<case landfill>>
-		<img id="location" src="img/misc/landfillnight.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/landfillnight.gif'">
 		<<case temple>>
-		<img id="location" src="img/misc/templenight.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/templenight.png'">
 		<<case strip_club>>
-		<img id="location" src="img/misc/strip_club_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/strip_club_night.png'">
 		<<case shopping_centre>>
-		<img id="location" src="img/misc/shopping_centre_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/shopping_centre_night.png'">
 		<<case police_station>>
-		<img id="location" src="img/misc/police_station_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/police_station_night.png'">
 		<<case park>>
-		<img id="location" src="img/misc/park_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/park_night.png'">
 		<<case museum>>
-		<img id="location" src="img/misc/museum_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/museum_night.png'">
 		<<case hospital>>
-		<img id="location" src="img/misc/hospital_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/hospital_night.png'">
 		<<case dance_studio>>
-		<img id="location" src="img/misc/dance_studio_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/dance_studio_night.png'">
 		<<case compound>>
-		<img id="location" src="img/misc/compound_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/compound_night.gif'">
 		<<case brothel>>
-		<img id="location" src="img/misc/brothel_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/brothel_night.png'">
 		<<case cafe>>
 			<<if $chef_state gte 9>>
-				<img id="location" src="img/misc/cafe_renovated_night.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_renovated_night.png'">
 			<<elseif $chef_state gte 7>>
-				<img id="location" src="img/misc/cafe_construction_night.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_construction_night.png'">
 			<<else>>
-				<img id="location" src="img/misc/cafe_night.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_night.png'">
 			<</if>>
 		<<case arcade>>
-		<img id="location" src="img/misc/arcade_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_night.png'">
 		<<case farm>>
-		<img id="location" src="img/misc/farm_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/farm_night.png'">
 		<<case wolf_cave>>
-		<img id="location" src="img/misc/wolf_cave_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_night.png'">
 		<<case forest_shop>>
-		<img id="location" src="img/misc/forest_shop_night.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forest_shop_night.png'">
 		<<case lake_ruin>>
 			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
-				<img id="location" src="img/misc/ruins_blood_moon.gif">
+				<img id="location" @src="'img/misc/' + _weather_display + '/ruins_blood_moon.gif'">
 			<<else>>
-				<img id="location" src="img/misc/ruins_night.gif">
+				<img id="location" @src="'img/misc/' + _weather_display + '/ruins_night.gif'">
 			<</if>>
 		<<case moor>>
-		<img id="location" src="img/misc/moor_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
 		<<case night_monster_lair>>
-		<img id="location" src="img/misc/night_monster_lair_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_night.gif'">
 		<<case alley>>
-		<img id="location" src="img/misc/alley_night.gif">
+			<<if $bus is "industrial">>
+				<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+					<img id="location" @src="'img/misc/' + _weather_display + '/indust_alley_blood.gif'">
+				<<else>>
+					<img id="location" @src="'img/misc/' + _weather_display + '/indust_alley_night.gif'">
+				<</if>>
+			<<else>>
+				<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+					<img id="location" @src="'img/misc/' + _weather_display + '/alley_blood.gif'">
+				<<else>>
+					<img id="location" @src="'img/misc/' + _weather_display + '/alley_night.gif'">
+				<</if>>
+			<</if>>
 		<<case drain>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case spa>>
-		<img id="location" src="img/misc/spa_night.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/spa_night.gif'">
 		<</switch>>
 	<<elseif $daystate is "dawn">>
 		<<if $location is "tentworld">>
@@ -1650,99 +1740,109 @@
 		<img id="daystate" src="img/misc/dawn.png">
 		<</if>>
 		<<if $location is "tentworld">>
-<img id="weather" src="img/misc/tentskydawn.png">
+		<img id="weather" src="img/misc/tentskydawn.png">
 		<<elseif $weather is "clear">>
-<img id="weather" src="img/misc/cleardawn.png">
+		<img id="weather" src="img/misc/cleardawn.png">
 		<<elseif $weather is "overcast">>
-<img id="weather" src="img/misc/overcastdawn.png">
+		<img id="weather" @src="'img/misc/' + _weather_display + '/overcastdawn.png'">
 		<<elseif $weather is "rain">>
-<img id="weather" src="img/misc/raindawn.gif">
+		<img id="weather" src="img/misc/raindawn.gif">
+		<<elseif $weather is "snow">>
+		<img id="weather" src="img/misc/winter/snowdawn.gif">
 		<</if>>
 		<<switch $location>>
 		<<case beach>>
-		<img id="location" src="img/misc/beachdawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/beachdawn.gif'">
 		<<case sea>>
-		<img id="location" src="img/misc/ocean_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ocean_dawn.gif'">
 		<<case home>>
-		<img id="location" src="img/misc/homedawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/homedawn.gif'">
 		<<case town>>
-		<img id="location" src="img/misc/town_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/town_dawn.gif'">
 		<<case docks>>
-		<img id="location" src="img/misc/docks_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/docks_dawn.png'">
 		<<case pub>>
-		<img id="location" src="img/misc/pubdawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pubdawn.png'">
 		<<case forest>>
-		<img id="location" src="img/misc/forestdawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forestdawn.png'">
 		<<case lake>>
-		<img id="location" src="img/misc/lakedawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/lakedawn.gif'">
 		<<case asylum>>
 			<<if $hallucinations gte 1>>
-			<img id="location" src="img/misc/asylumdawnvfast.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumdawnvfast.gif'">
 			<<else>>
-			<img id="location" src="img/misc/asylumdawnslow.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumdawnslow.gif'">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentacles_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_dawn.gif'">
 		<<case underground>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case sewers>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case school>>
-		<img id="location" src="img/misc/schooldawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/schooldawn.png'">
 		<<case cabin>>
-		<img id="location" src="img/misc/cabindawn.gif">
+			<<if $season is "winter">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabindawn.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabindawn.gif'">
+			<</if>>
 		<<case pool>>
-		<img id="location" src="img/misc/pooldawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pooldawn.gif'">
 		<<case landfill>>
-		<img id="location" src="img/misc/landfilldawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/landfilldawn.gif'">
 		<<case temple>>
-		<img id="location" src="img/misc/templedawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/templedawn.png'">
 		<<case strip_club>>
-		<img id="location" src="img/misc/strip_club_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/strip_club_dawn.png'">
 		<<case shopping_centre>>
-		<img id="location" src="img/misc/shopping_centre_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/shopping_centre_dawn.png'">
 		<<case police_station>>
-		<img id="location" src="img/misc/police_station_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/police_station_dawn.png'">
 		<<case park>>
-		<img id="location" src="img/misc/park_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/park_dawn.gif'">
 		<<case museum>>
-		<img id="location" src="img/misc/museum_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/museum_dawn.png'">
 		<<case hospital>>
-		<img id="location" src="img/misc/hospital_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/hospital_dawn.png'">
 		<<case dance_studio>>
-		<img id="location" src="img/misc/dance_studio_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/dance_studio_dawn.png'">
 		<<case compound>>
-		<img id="location" src="img/misc/compound_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/compound_dawn.gif'">
 		<<case brothel>>
-		<img id="location" src="img/misc/brothel_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/brothel_dawn.png'">
 		<<case cafe>>
 			<<if $chef_state gte 9>>
-				<img id="location" src="img/misc/cafe_renovated_dawn.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_renovated_dawn.png'">
 			<<elseif $chef_state gte 7>>
-				<img id="location" src="img/misc/cafe_construction_dawn.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_construction_dawn.png'">
 			<<else>>
-				<img id="location" src="img/misc/cafe_dawn.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_dawn.png'">
 			<</if>>
 		<<case arcade>>
-		<img id="location" src="img/misc/arcade_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dawn.png'">
 		<<case farm>>
-		<img id="location" src="img/misc/farm_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/farm_dawn.png'">
 		<<case wolf_cave>>
-		<img id="location" src="img/misc/wolf_cave_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_dawn.png'">
 		<<case forest_shop>>
-		<img id="location" src="img/misc/forest_shop_dawn.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forest_shop_dawn.png'">
 		<<case lake_ruin>>
-		<img id="location" src="img/misc/ruins_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dawn.gif'">
 		<<case moor>>
-		<img id="location" src="img/misc/moor_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
 		<<case night_monster_lair>>
-		<img id="location" src="img/misc/night_monster_lair_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dawn.gif'">
 		<<case alley>>
-		<img id="location" src="img/misc/alley_dawn.gif">
+			<<if $bus is "industrial">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/indust_alley_dawn.gif'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/alley_dawn.gif'">
+			<</if>>
 		<<case drain>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case spa>>
-		<img id="location" src="img/misc/spa_dawn.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/spa_dawn.gi'f">
 		<</switch>>
 	<<elseif $daystate is "dusk">>
 		<<if $location is "tentworld">>
@@ -1751,99 +1851,109 @@
 		<img id="daystate" src="img/misc/dusk.png">
 		<</if>>
 		<<if $location is "tentworld">>
-<img id="weather" src="img/misc/tentskydusk.png">
+		<img id="weather" src="img/misc/tentskydusk.png">
 		<<elseif $weather is "clear">>
-<img id="weather" src="img/misc/cleardusk.png">
+		<img id="weather" src="img/misc/cleardusk.png">
 		<<elseif $weather is "overcast">>
-<img id="weather" src="img/misc/overcastdusk.png">
+		<img id="weather" @src="'img/misc/' + _weather_display + '/overcastdusk.png'">
 		<<elseif $weather is "rain">>
-<img id="weather" src="img/misc/raindusk.gif">
+		<img id="weather" src="img/misc/raindusk.gif">
+		<<elseif $weather is "snow">>
+		<img id="weather" src="img/misc/winter/snowdusk.gif">
 		<</if>>
 		<<switch $location>>
 		<<case beach>>
-		<img id="location" src="img/misc/beachdusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/beachdusk.gif'">
 		<<case sea>>
-		<img id="location" src="img/misc/ocean_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ocean_dusk.gif'">
 		<<case home>>
-		<img id="location" src="img/misc/homedusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/homedusk.gif'">
 		<<case town>>
-		<img id="location" src="img/misc/town_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/town_dusk.png'">
 		<<case docks>>
-		<img id="location" src="img/misc/docks_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/docks_dusk.png'">
 		<<case pub>>
-		<img id="location" src="img/misc/pubdusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pubdusk.png'">
 		<<case forest>>
-		<img id="location" src="img/misc/forestdusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forestdusk.gif'">
 		<<case lake>>
-		<img id="location" src="img/misc/lakedusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/lakedusk.gif'">
 		<<case asylum>>
 			<<if $hallucinations gte 1>>
-			<img id="location" src="img/misc/asylumduskvfast.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumduskvfast.gif'">
 			<<else>>
-			<img id="location" src="img/misc/asylumduskslow.gif">
+			<img id="location" @src="'img/misc/' + _weather_display + '/asylumduskslow.gif'">
 			<</if>>
 		<<case tentworld>>
-		<img id="location" src="img/misc/tentacles_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/tentacles_dusk.gif'">
 		<<case underground>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case sewers>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case school>>
-		<img id="location" src="img/misc/schooldusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/schooldusk.png'">
 		<<case cabin>>
-		<img id="location" src="img/misc/cabindusk.gif">
+			<<if $season is "winter">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabindusk.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/cabindusk.gif'">
+			<</if>>
 		<<case pool>>
-		<img id="location" src="img/misc/pooldusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/pooldusk.gif'">
 		<<case landfill>>
-		<img id="location" src="img/misc/landfilldusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/landfilldusk.gif'">
 		<<case temple>>
-		<img id="location" src="img/misc/templedusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/templedusk.png'">
 		<<case strip_club>>
-		<img id="location" src="img/misc/strip_club_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/strip_club_dusk.png'">
 		<<case shopping_centre>>
-		<img id="location" src="img/misc/shopping_centre_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/shopping_centre_dusk.png'">
 		<<case police_station>>
-		<img id="location" src="img/misc/police_station_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/police_station_dusk.png'">
 		<<case park>>
-		<img id="location" src="img/misc/park_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/park_dusk.png'">
 		<<case museum>>
-		<img id="location" src="img/misc/museum_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/museum_dusk.png'">
 		<<case hospital>>
-		<img id="location" src="img/misc/hospital_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/hospital_dusk.png'">
 		<<case dance_studio>>
-		<img id="location" src="img/misc/dance_studio_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/dance_studio_dusk.png'">
 		<<case compound>>
-		<img id="location" src="img/misc/compound_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/compound_dusk.gif'">
 		<<case brothel>>
-		<img id="location" src="img/misc/brothel_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/brothel_dusk.png'">
 		<<case cafe>>
 			<<if $chef_state gte 9>>
-				<img id="location" src="img/misc/cafe_renovated_dusk.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_renovated_dusk.png'">
 			<<elseif $chef_state gte 7>>
-				<img id="location" src="img/misc/cafe_construction_dusk.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_construction_dusk.png'">
 			<<else>>
-				<img id="location" src="img/misc/cafe_dusk.png">
+				<img id="location" @src="'img/misc/' + _weather_display + '/cafe_dusk.png'">
 			<</if>>
 		<<case arcade>>
-		<img id="location" src="img/misc/arcade_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dusk.png'">
 		<<case farm>>
-		<img id="location" src="img/misc/farm_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
 		<<case wolf_cave>>
-		<img id="location" src="img/misc/wolf_cave_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/wolf_cave_dusk.png'">
 		<<case forest_shop>>
-		<img id="location" src="img/misc/forest_shop_dusk.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/forest_shop_dusk.png'">
 		<<case lake_ruin>>
-		<img id="location" src="img/misc/ruins_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dusk.gif'">
 		<<case moor>>
-		<img id="location" src="img/misc/moor_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
 		<<case night_monster_lair>>
-		<img id="location" src="img/misc/night_monster_lair_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dusk.gif'">
 		<<case alley>>
-		<img id="location" src="img/misc/alley_dusk.gif">
+		<<if $bus is "industrial">>
+			<img id="location" @src="'img/misc/' + _weather_display + '/indust_alley_dusk.gif'">
+		<<else>>
+			<img id="location" @src="'img/misc/' + _weather_display + '/alley_dusk.gif'">
+		<</if>>
 		<<case drain>>
-		<img id="location" src="img/misc/deepunderground.png">
+		<img id="location" @src="'img/misc/' + _weather_display + '/deepunderground.png'">
 		<<case spa>>
-		<img id="location" src="img/misc/spa_dusk.gif">
+		<img id="location" @src="'img/misc/' + _weather_display + '/spa_dusk.gif'">
 		<</switch>>
 	<</if>>
 
@@ -1859,6 +1969,8 @@
 	<<elseif $weather is "overcast">>
 		Clouds are hiding the sun.
 		<br>
+	<<elseif $weather is "snow">>
+		It's a snowy day.
 	<</if>>
 <<elseif $daystate is "night">>
 	<<if $weather is "clear">>
@@ -1870,6 +1982,8 @@
 	<<elseif $weather is "overcast">>
 		All starlight is blocked by the clouds.
 		<br>
+	<<elseif $weather is "snow">>
+		It's a snowy night.
 	<</if>>
 <<elseif $daystate is "dawn">>
 	<<if $weather is "clear">>
@@ -1881,6 +1995,8 @@
 	<<elseif $weather is "overcast">>
 		It's a cloudy morning.
 		<br>
+	<<elseif $weather is "snow">>
+		It's a snowy morning.
 	<</if>>
 <<elseif $daystate is "dusk">>
 	<<if $weather is "clear">>
@@ -1892,6 +2008,8 @@
 	<<elseif $weather is "overcast">>
 		It's cloudy evening.
 		<br>
+	<<elseif $weather is "snow">>
+		It's a snowy evening.
 	<</if>>
 <</if>>
 <</if>>
@@ -2375,24 +2493,31 @@ or $args[0] is "force">>
 
 <<widget "water">><<nobr>>
 <<if !$worn.upper.type.includes("swim") and !$worn.upper.type.includes("naked") and $args[0] isnot "waist">>
-
-<<set $upperwet to 200>>
+	<<set $upperwet to 200>>
 <</if>>
 <<if !$worn.lower.type.includes("swim") and !$worn.lower.type.includes("naked")>>
-
-<<set $lowerwet to 200>>
+	<<set $lowerwet to 200>>
 <</if>>
 <<if !$worn.under_lower.type.includes("swim") and !$worn.under_lower.type.includes("naked")>>
-
-<<set $underlowerwet to 200>>
+	<<set $underlowerwet to 200>>
 <</if>>
 <<if !$worn.under_upper.type.includes("swim") and !$worn.under_upper.type.includes("naked") and $args[0] isnot "waist">>
-
-<<set $underupperwet to 200>>
+	<<set $underupperwet to 200>>
 <</if>>
 
 <<waterwash>>
 <<set $inwater to 1>>
+<<set _water_warmth to 0>>
+<<if $location isnot "sea" and $outside is 1 and $season is "winter">>
+	<<if $worn.upper.type.includes("diving") or $worn.under_upper.type.includes("diving")>>
+		<<set _water_warmth += 1>>
+	<</if>>
+	<<if $worn.lower.type.includes("diving") or $worn.under_lower.type.includes("diving")>>
+		<<set _water_warmth += 1>>
+	<</if>>
+<<else>>
+	<<set _water_warmth to 2>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "storecleanup">><<nobr>>
@@ -2834,13 +2959,13 @@ or $args[0] is "force">>
 <</if>>
 
 <<if $waterwash gte 10>>
-<span class="lewd">Copious amounts of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<span class="lewd">Copious amounts of lewd fluid washes into the water. You hope it doesn't attract attention.</span><br>
 <<elseif $waterwash gte 5>>
-<span class="lewd">Lots of lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<span class="lewd">Lots of lewd fluid washes into the water. You hope it doesn't attract attention.</span><br>
 <<elseif $waterwash gte 2>>
-<span class="lewd">Lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<span class="lewd">Lewd fluid washes into the water. You hope it doesn't attract attention.</span><br>
 <<elseif $waterwash is 1>>
-<span class="lewd">Some lewd fluid washes into the water. You hope it doesn't attract attention.</span>
+<span class="lewd">Some lewd fluid washes into the water. You hope it doesn't attract attention.</span><br>
 <</if>>
 <<set $waterwash to 0>>
 
@@ -3267,6 +3392,29 @@ __Map__<br>
 		<br>
 	<</if>>
 <</nobr>><</widget>>
+
+<<widget "christmas_options">><<nobr>>
+<<if $christmas_wrap is 1>>
+	<<if $christmas_gift_robin is "shirt_unwrapped">>
+		<<link [[Wrap Robin's shirt and shorts (0:10)|Bedroom Robin Shirt Wrap]]>><<pass 10>><<set $christmas_gift_robin to "shirt">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+		<br>
+	<<elseif $christmas_gift_robin is "sundress_unwrapped">>
+		<<link [[Wrap Robin's sundress (0:10)|Bedroom Robin Sundress Wrap]]>><<pass 10>><<set $christmas_gift_robin to "sundress">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+		<br>
+	<<elseif $christmas_gift_robin is "kimono_unwrapped">>
+		<<link [[Wrap Robin's kimono (0:10)|Bedroom Robin Kimono Wrap]]>><<pass 10>><<set $christmas_gift_robin to "kimono">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+		<br>
+	<<elseif $christmas_gift_robin is "christmas_unwrapped">>
+		<<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Christmas Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+		<br>
+	<</if>>
+	<<if $christmas_gift is "clothes_unwrapped">>
+		<<link [[Wrap the orphan's gifts (3:00)|Bedroom Orphans Clothes Wrap]]>><<pass 180>><<set $christmas_gift to "clothes">><</link>>
+		<br>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
 
 <<widget "encountersteal">><<nobr>>
 	<<set $rng to random(1, 100)>>
@@ -4132,7 +4280,7 @@ __Map__<br>
 	<<get_pillory_npc>>
 	<<if $minute lte 15>>
 		A police officer <<print either("is releasing","has just released","is struggling to release","is about to release")>>
-		<<the_pillory_person>> from the pillory. <<if $weather is "rain">><<His>> clothes are see-through from the rain.<</if>>
+		<<the_pillory_person>> from the pillory. <<if $weather is "rain">><<His>> clothes are see-through from the rain.<<elseif $weather is "snow">><<He>> shivers in the cold.<</if>>
 	<<elseif $minute lte 30>>
 		<<The_pillory_person>> staggers away from the pillory with <<print either("tears","defiance","signs of trauma","fury")>> in <<his>> eyes.
 		<<if $weather is "rain">><<His>> clothes are see-through from the rain.<</if>>

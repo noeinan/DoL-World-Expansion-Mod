@@ -16,6 +16,9 @@ You are in your bedroom.
 <</if>>
 <<if $stress gte 10000>>
 	<<passouthome>>
+<<elseif $christmas is 1 and $monthday is 25 and $christmas_robin_visit is undefined and $christmas_robin_gift_received is undefined and $daystate isnot "night" and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
+	<<set $christmas_robin_visit to true>>
+	<<christmas_robin_visit>>
 <<else>>
 	<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
 		<<link [[Undo your bindings (0:10)|Bedroom]]>><<set $unbind to 1>><<pass 10>><<unbind>><</link>>
@@ -29,6 +32,7 @@ You are in your bedroom.
 	<</if>>
 	<<projectoptions>>
 	<<roomoptions>>
+	<<christmas_options>>
 	<<if $debug is 1>>
 		/*indev radio testing*/
 		A radio is on:
@@ -901,25 +905,29 @@ You snuggle under the covers with Robin.
 
 You are in the main hall of the orphanage.
 
-<<if $daystate is "day">>
-A couple of orphans on cleaning duty sweep the floor.
-<<elseif $daystate is "dusk">>
-You hear hushed voices.
-<<elseif $daystate is "dawn">>
-	<<if $schoolday is 1>>
-	The orphans are heading off to school.
-	<<else>>
-	The orphans are leaving to find work.
+<<if $christmas is 1 and $monthday is 25 and $daystate isnot "night">>
+	The room is alive with festive merriment.
+<<else>>
+	<<if $daystate is "day">>
+	A couple of orphans on cleaning duty sweep the floor.
+	<<elseif $daystate is "dusk">>
+	You hear hushed voices.
+	<<elseif $daystate is "dawn">>
+		<<if $schoolday is 1>>
+		The orphans are heading off to school.
+		<<else>>
+		The orphans are leaving to find work.
+		<</if>>
+	<<elseif $daystate is "night">>
+	The orphans must be asleep.
 	<</if>>
-<<elseif $daystate is "night">>
-The orphans must be asleep.
 <</if>>
 
 <br><br>
 
 <<if $stress gte 10000>>
 	<<passouthome>>
-<<elseif $exposed gte 1 and $hour lt 22 and $hour gt 6>>
+<<elseif $exposed gte 1 and $hour lt 22 and $hour gte 6>>
 	You can't bear the thought of someone catching you like this. You hasten to your bedroom.
 	<br><br>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
@@ -965,10 +973,41 @@ The orphans must be asleep.
 	<<endevent>>
 	<<link [[Next|Orphanage]]>><</link>>
 	<br>
+
 <<elseif $renttime lte 0>><<set $bus to "home">>
 	A hand rests on your shoulder from behind. It's Bailey.
 	<br><br>
 	<<rentdue>>
+<<elseif $christmas is 1 and $monthday is 25 and $christmas_gift is "clothes" and !$christmas_event_2 and $daystate isnot "night">>
+	<<set $christmas_event_2 to 1>>
+	<<pass 30>>
+	<<earnFeat "A Festive Home">>
+	The plastic tree is the centre of activity. Each orphan has at least one gift addressed to them. Unable to contain themselves, they tear through the packaging, and find the clothes you bought. Most seem happy, though one <<generatey1>><<person1>><<person>> complains. "A shirt?" <<he>> says. "That's boring. I wanted a console."
+	<br><br>
+	"Don't be ungrateful," an older <<generatey2>><<personsimple>> says. "That shirt looks nice and warm." A gust of wind blows through a gap in a faulty window as if in support.<<ggghope>><<hope 10>>
+	<br><br>
+	<<endevent>><<npc Bailey>><<person1>>
+	Bailey watches. None of the gifts seem to upset <<him>>. "Pick this mess up," <<he>> barks, gesturing at the wrapping paper strewn about. "All of you."
+	<br><br>
+	As the paper clears, Bailey sees an unclaimed gift at the base of the tree. It has <<his>> name on it. <<He>> examines it in <<his>> hands for a moment, then leaves the room with the gift held under <<his>> arm.
+	<br><br>
+	One of the newer residents smiles at the sight. The rest seem uneasy.
+	<br><br>
+	
+	<<link [[Next|Orphanage]]>><<endevent>><</link>>
+	<br>
+<<elseif $christmas is 1 and $monthday is 25 and $robinmissing isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1 and $christmas_robin_gift_received is undefined and $hour gte 7>>
+	<<set $christmas_robin_gift_received to true>>
+	You spot a present laid under the tree with your name on it. It’s from Robin.
+	<br><br>
+	You unwrap it. It's a box of cookies. You're glad Bailey isn't around.<<ltrauma>><<lstress>><<trauma -6>><<stress -6>>
+	<br><br>
+		
+	<<link [[Next|Orphanage]]>><</link>>
+	<br>
+<<elseif $christmas is 1 and $monthday is 25 and $robinmissing isnot 1 and $christmas_gift_robin_wrapped is 1 and $christmas_gift_robin_given is undefined and $daystate isnot "night">>
+	<<set $christmas_gift_robin_given to true>>
+	<<christmas_robin>>
 <<elseif $home_event is 1 and $hour gte 6 and $hour lte 21>>
 	<<set $home_event to 0>>
 	<<homeevent>>
@@ -995,6 +1034,10 @@ The orphans must be asleep.
 			<<link [[Go trick-or-treating|Robin Trick Hall]]>><</link>>
 			<br>
 		<</if>>
+	<</if>>
+	<<if $christmas is 1 and $monthday is 25 and $daystate isnot "night" and $exposed lte 0>>
+		<<link [[Celebrate Christmas (1:00)|Orphanage Christmas]]>><<pass 60>><<trauma -12>><<stress -6>><</link>><<lltrauma>><<lstress>>
+		<br>
 	<</if>>
 	<<link [[Garden (0:01)|Garden]]>><<pass 1>><</link>>
 	<br><br>
@@ -1023,6 +1066,102 @@ The orphans must be asleep.
 	<<home_outside>>
 	<br>
 <</if>>
+
+:: Orphanage Handheld [nobr]
+<<effects>>
+
+/*Not in yet*/
+
+You play a fighting game. You struggle to keep up with the move list. 
+
+--
+
+You’re playing a pixelated war game. Soldiers move across the battlefield in an orderly manner. You’re all set for the bloodshed to come as you bark your orders with buttons. 
+
+--
+
+A game set in medieval times beckons you with adventure. You spend your time cutting down trees instead. 
+
+--
+
+You’re astonished at the variety of games that have been purchased on the device. You speculate that Robin didn’t want you to get bored or was unaware of what you liked. 
+
+--
+
+
+You play a sports game. One of the players on your team suffers a career-ending injury. 
+
+--
+
+You bash and claw at your opponents in a fighting game, leaving you the victor in a tournament ladder. 
+
+--
+
+A horror game pits you against yourself. You do well to keep your sanity in an abandoned city. 
+
+--
+
+An overarching RPG leaves you a bit confused. You ponder whether you’re making the correct choices with an odd cast of characters. 
+
+--
+
+
+An arcade-style hack and slash occupy your time. An entire horde of orcs is no match for your divine strength loaned to you by the Gods. 
+
+--
+
+In a fighting game, you frustratingly try to learn a decent combo on a character. It takes some time, but you think you’ve got it figured out. 
+
+--
+
+A first-person shooter’s story leaves you pondering about your character’s actions. You ignore the implications and continue charging through the arenas. 
+
+--
+
+You find an easter egg in one of your games. The developer thanks you for playing. 
+
+--
+
+No soldier is a match for your unstoppable onslaught. Cheater. 
+
+
+:: Orphanage Christmas [nobr]
+<<effects>>
+
+You celebrate Christmas with the other residents.
+<<set $rng to random(1, 100)>>
+<<if $hour gte 20>>
+	They begin to take down decorations as the day comes to a close. 
+<<else>>
+	<<if $rng gte 91>>
+		Freshly baked cookies are passed around. You take one for yourself.<<lstress>><<stress -6>>
+	<<elseif $rng gte 81>>
+		Some chat about how cold it is outside. You can't help but agree.
+	<<elseif $rng gte 71>>
+		A <<generatey1>><<person1>><<person>> passes a gift to a <<person2>><<person>>. <<He>> look delighted, but is patient enough to resist unwrapping it on the spot.
+	<<elseif $rng gte 61>>
+		Robin passes out small bags of snacks. A <<generatey1>><<person1>><<person>> keeps watch for Bailey.
+	<<elseif $rng gte 51>>
+		Some of the tinsel decorations have fallen to the floor, so you put them back in place.
+	<<elseif $rng gte 41>>
+		Some complain about how chilly the orphanage is. <<generatey1>><<person1>>A <<person>> wants to ask Bailey to turn up the heat, but the others dissuade <<him>>.
+	<<elseif $rng gte 31>>
+		They're loud and joyous.
+	<<elseif $rng gte 21>>
+		Someone snuck in some advocaat.
+	<<elseif $rng gte 11>>
+		A <<generatey1>><<person1>><<person>> received an expensive, electronic gift from an unknown party. <<He>> catches a lot of jealousy.
+	<<else>>
+		The hall is filled with mirth.
+	<</if>>
+<</if>>
+<br><br>
+<<endevent>>
+<<link [[Next|Orphanage]]>><</link>>
+<br>
+
+
+
 
 :: Orphanage Hide [nobr]
 

@@ -2,7 +2,7 @@
 <<widget "lakeeffects">><<nobr>>
 <<if $schoolday is 1>>
 	<<if $daystate is "day" or $daystate is "dusk">>
-		<<if $hour gte 15 and $weather isnot "rain">>
+		<<if $hour gte 15 and $weather isnot "rain" and $weather isnot "snow">>
 			<<set $laketeenspresent to 1>>
 		<<else>>
 			<<set $laketeenspresent to 0>>
@@ -12,7 +12,7 @@
 	<</if>>
 <<else>>
 	<<if $daystate is "day" or $daystate is "dusk">>
-		<<if $weather isnot "rain">>
+		<<if $weather isnot "rain" and $weather isnot "snow">>
 			<<set $laketeenspresent to 1>>
 		<<else>>
 			<<set $laketeenspresent to 0>>
@@ -22,7 +22,7 @@
 	<</if>>
 <</if>>
 
-<<if $weather isnot "rain" and $hour gte 18>>
+<<if $weather isnot "rain" and $weather isnot "snow" and $hour gte 18>>
 	<<set $laketeensfire to 1>>
 <<else>>
 	<<set $laketeensfire to 0>>
@@ -66,7 +66,7 @@ You've pushed yourself too much.
 <<set $danger to random(1, 10000)>>
 
 <<if $danger gte (9900 - $allure)>>
-	<<if $laketeenspresent is 1>>
+	<<if $laketeenspresent is 1 and $season isnot "winter">>
 		<<link [[Next|Lake Mermaid]]>><</link>>
 		<br>
 	<<else>>
@@ -164,6 +164,92 @@ Someone screams. Everyone turns and backs away from the newcomer, a wolf. It sta
 	<</if>>
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "eventlakeice">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<if $rng gte 81>>
+	<<if $danceskill gte random(1, 1000)>>
+		The wind picks up, almost knocking you over, <span class="green">but you manage to keep your footing.</span>
+		<br><br>
+	<<else>>
+		The wind picks up, <span class="red">and you lose your footing,</span> slipping on the ice.<<gstress>><<gpain>><<stress 6>><<pain 4>>
+		<br><br>
+	<</if>>
+	<<destination_lake_ice>>
+<<elseif $rng gte 61>>
+	You're struck by a sudden terror. <span class="pink">You feel watched.</span> 
+	<<if $laketeenspresent is 1>>
+		The voices of the teens fade, until you're alone.
+	<</if>>
+	<br><br>
+	There's something below.
+	<br><br>
+	
+	<<link [[Ignore|Lake Ice Ignore]]>><<def 1>><</link>><<willpowerdifficulty 1 $willpowermax>>
+	<br>
+	<<link [[Look down|Lake Ice Look]]>><</link>>
+	<br>
+<<elseif $rng gte 41>>
+	You hear a heavy groan. Then another. The ice might be unsafe.
+	<br><br>
+	
+	<<link [[Be careful (0:10)|Lake Ice Careful]]>><</link>>
+	<br>
+	<<link [[Walk normally|Lake Ice Normal]]>><</link>>
+	<br>
+<<elseif $rng gte 21>>
+	<<if $weather is "snow">>
+		The snow falls heavy, and conceals the trees around the lake.
+		<<if $history gte random(1, 1000)>>
+			<span class="green">It soon passes.</span>
+			<br><br>
+		<<else>>
+			Without the trees to orient yourself, <span class="red">you lose your direction,</span> though the heavy snow soon passes.<<gstress 6>>
+			<br><br>
+		<</if>>
+	<<elseif $weather is "clear">>
+		<<if $daystate is "night">>
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+				The red moon reflects off the ice. Dread stabs at you.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
+				<br><br>
+			<<else>>
+				The moon reflects off the ice. It's cold and beautiful.<<lstress>><<stress 6>>
+				<br><br>
+			<</if>>
+		<<else>>
+			The sun's glare reflects off the ice. You shield your eyes.
+			<br><br>
+		<</if>>
+	<<else>>
+		<<if $daystate is "night">>
+			You see a fox rummaging in the snow at the lake's edge. It's ears perk, and it bounds between the trees.
+			<br><br>
+		<<else>>
+			The surrounding trees are almost invisible in the dark.<<gstress>><<stress 6>>
+			<br><br>
+		<</if>>
+	<</if>>
+	<<destination_lake_ice>>
+<<else>>
+	You slip on the ice!<<gstress>><<stress 6>>
+	<br><br>
+	
+	<<link [[Brace yourself|Lake Ice Brace]]>><<status -10>><</link>><<if $laketeenspresent is 1 and $bus is "lakeshallows">><<lcool>><</if>><<gstress>>
+	<br>
+	<<link [[Try to stay upright|Lake Ice Stay]]>><</link>><<dancedifficulty 1 600>>
+	<br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "destination_lake_ice">><<nobr>>
+<<if $bus is "lakedepths">>
+	<<link [[Next|Lake Depths Ice]]>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	<<link [[Next|Lake Shallows Ice]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "eventlake">><<nobr>>
