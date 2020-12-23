@@ -223,6 +223,9 @@ You are in the asylum, deep in the forest. The building is over a century old, a
 	<br><br>
 <<else>>
 	Other patients are relaxing in the recreation room or exercising outside. Most keep to themselves.
+	<<if $o_long_and_beautiful gte 1 and $o_long_and_beautiful lte 4 and $rng % 4 == 0>>
+		A slim girl with very long hair wanders out of sight <<print either("down a corridor.","into a private room.","into the cells.","in the garden.")>>
+	<</if>>
 	<br><br>
 	<<asylumstats>>
 <</if>>
@@ -350,12 +353,48 @@ You ask for help distracting the orderlies. You have trouble finding anyone who 
 :: Asylum Towels [nobr]
 
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
-<<generate1>><<person1>>
-You sneak to a nurse. "Excuse me," you say. <<He>> turns, and puts a hand to <<his>> mouth to conceal laughter when <<he>> sees you. <<covered>> "Can I have some towels please?"
-<br><br>
-<<He>> nods, and wraps some around you.
-<<towelup>><<fameexhibitionism 1>>
-<br><br>
+<<generate1>><<person1>><<set _towel to random(0,4)>>
+You sneak to a nurse. "Excuse me," you say. 
+<<if $suspicion gte 60>>
+	<<He>> looks at you and <<his>> face adopts a look of cold hostility. <<covered>>  "Can I have some towels please?"
+	<br><br>
+	<<He>> snorts. "Get lost. You'll get treated like a patient when you learn to behave like one."
+	<<fameexhibitionism 1>>
+<<elseif ($beauty gte ($beautymax / 3) * 2) and _towel lte 3>> /* 1 in 5 to skip beauty*/
+	<<if _towel is 0>> /*1 in 4 chance*/
+		<<He>> turns, and smiles with open lust when <<he>> sees you. <<covered>> "Can I have some towels please?"
+		<br><br>
+		"Nah, you're hot," <<he>> pulls out a phone. "I wanna watch you go and ask someone else."
+		<<fameexhibitionism 2>>
+	<<else>>
+		<<He>> turns, and smiles with open lust when <<he>> sees you. <<covered>> "Can I have some towels please?"
+		<br><br>
+		"Seems like a shame, but sure," <<he>> nods, and wraps some around you.
+		<<towelup>><<fameexhibitionism 1>>
+	<</if>>
+<<elseif $penissize gte 3>>
+	<<He>> turns, and smiles when <<he>> sees you. <<covered>> "Can I have some towels please?"
+	<br><br>
+	"One moment," <<he>> says. <<He>> pulls out a phone and takes a quick photo of your <<genitalsstop>>
+	<<He>> nods at the screen, and then wraps the towels around you. "Seems like a damn shame to cover that up."
+	<<towelup>><<fameexhibitionism 2>>
+<<elseif $breastsize gte 7>>
+	<<He>> turns, and smiles when <<he>> sees you. <<covered>> "Can I have some towels please?"
+	<br><br>
+	"One moment," <<he>> says. <<He>> pulls out a phone and takes a quick photo of your <<breastsstop>>
+	<<He>> nods at the screen, and then wraps the towels around you. "Seems like a damn shame to cover those up."
+	<<towelup>><<fameexhibitionism 2>>
+<<elseif _towel gte 2>>
+	<<He>> turns, and seems completely unphased when <<he>> sees you. <<covered>> "Can I have some towels please?"
+	<br><br>
+	<<He>> nods, and wraps some around you.
+	<<towelup>><<fameexhibitionism 1>>
+<<else>>
+	<<He>> turns, and puts a hand to <<his>> mouth to conceal laughter when <<he>> sees you. <<covered>> "Can I have some towels please?"
+	<br><br>
+	<<He>> nods, and wraps some around you.
+	<<towelup>><<fameexhibitionism 1>>
+<</if>><br><br><<unset _towel>>
 <<link [[Next|Asylum]]>><<endevent>><</link>>
 <br>
 
@@ -375,8 +414,31 @@ You sneak to a nurse. "Excuse me," you say. <<He>> turns, and puts a hand to <<h
 	Your <<lewdness>> on display makes you the centre of attention.
 	<<exhibitionism3>>
 <<else>>
-	You run around the asylum grounds. Security keeps a close eye on you, and warn you off when you jog too close to the perimeter fence.
-	<<athletics 3>><<physique 3>>
+	<<if $leftarm is "bound" and $rightarm is "bound" and $worn.upper.name is "straightjacket">>
+		Despite the straightjacket, you persist in running around the asylum grounds.
+		<<if $danceskill + $athletics gte 1600>>
+			With your agile and athletic movement, you make it an excellent training session.
+			<<athletics 2>><<physique 5>>
+		<<elseif $danceskill + $athletics gte 1100>>
+			With your skillful movement, you can still get a decent training session.
+			<<athletics 2>><<physique 4>>
+		<<elseif $danceskill + $athletics gte 650>>
+			It's tricky but thanks your reasonable agility and athleticism you can still get some kind of workout.
+			<<athletics 2>><<physique 2>>
+		<<else>>
+			You <<print either("almost immediately","soon")>>
+			<<if random(0,1)>>trip over a root and end up doing a sliding face-plant along the ground.
+			<<else>>trip on a stone and, off-balance, run face-first into a tree. Stunned, you fall back on the floor.
+			<</if>>
+			Several people clap.<<gpain>><<pain 6>><br>
+			Someone eventually helps you up. It wasn't much of a work out.
+			<<athletics 3>>
+		<</if>><br><br>
+		Security are amused by the sight of you, but still warn you off when you jog too close to the perimeter fence.
+	<<else>>
+		You run around the asylum grounds. Security keeps a close eye on you, and warn you off when you jog too close to the perimeter fence.
+		<<athletics 3>><<physique 3>>
+	<</if>>
 	<br><br>
 <</if>>
 <<asylumevents>>
@@ -399,29 +461,286 @@ You chat with the other patients.
 <<else>>
 	Most avoid you, but a few are willing to hear you out.
 <</if>>
-<<generate1>><<person1>>
-<<if $rng gte 86>>
-	"Best keep your nose clean," a <<person>> says. "If the staff are suspicious of you it'll be hard to do anything sneaky."
-	<br><br>
-<<elseif $rng gte 71>>
+<<generate1>><<person1>><br>
+<<if $rng gte 95>>
+	<<if $rng % 2>>
+		"Best keep your nose clean," a <<person>> says. "If the staff are suspicious of you it'll be hard to do anything sneaky."
+	<<else>>
+		"Fair warning: it's us against them in here," a <<person>> tells you. "If you cosy up with those guards, nurses and doctors and all the other scum,
+		don't expect any quarter from the rest of us."
+	<</if>>
+<<elseif $rng gte 90>>
+	There is a buzz of excitement in the room today. A popular patient has been cured and is being released. Patients crowd by the window
+	waving at a smiling <<personcomma>> as <<he>> stands with Dr Harper by the driveway.<br><br>
+
+	Moments later, the gates open and a vehicle drives through. It circles round the driveway and stops by the grinning former-patient.
+	<<if $rng % 2>>
+		Oddly, the vehicle isn't a taxi or mini-bus. It looks more like an animal-hauler. The driver emerges to greet them.
+		<<if $fluid_forced_stat gte 100>>You recognise the driver from somewhere.<</if>>
+		With a final flurry of waves, the <<person>> is led into the back of the vehicle. A look of confusion finally crosses <<his>> face a moment before
+		<<he>> is hidden behind the closing door.<br>
+		The driver bars and padlocks the door.
+		<<if $fluid_forced_stat gte 100>>
+			As the driver talks with Dr Harper, you suddenly remember <<him>> as one of Remy's farmhands.
+			Before you can say anything
+		<<else>>
+			After a brief exchange with Dr Harper
+		<</if>>
+		the driver clambers into the vehicle and drives away.
+	<<else>>
+		The <<person>> climbs into the waiting taxi, and waves back through the window. The engine sounds rises and the car pulls away
+		taking the <<person>> back to the town.
+	<</if>><br><br>
+	"Be well," you hear Dr Harper call after the departing vehicle.<br>
+	The watching crowd disperses.
+<<elseif $rng gte 85>><<generate2>><<generate3>><br>
+	"Be wary, friend!" a <<person>> fixes your eye. "Beware the door that's ajar!"<br>
+	"You wot, mate?" a <<person2>><<person>> nearby turns to <<person1>><<himstop>> "'ow can a door be a jar?"<br>
+	"How can..? It just is. They don't close it properly. Almost like they want the unwary to-"<br>
+	"Totally, man!" a <<person3>><<person>> nearby interrupts. "A door can totally be a jar. Like a giant jar. I mean, like, I never 
+	thought of it that way, but the building is like, the cupboard. Full of jars. Which are doors. The door is the jar, literally.
+	And we're the... the jam trying to get out to the town, which is obviously the toast in this... this... ...analogy?
+	I mean, yeah - the door is the jar - I see it. I totally see it."<br><br>
+	
+	The <<person1>><<person>> squints between them, confused. Looking back at you restores his train of thought.<br>
+	"Aye, beware that door, friend. Beware its inviting amaranthine glow; beware its seductive fragrance; beware the mellifluous winds that whisper of freedom beyond.
+	For if you pass that door, you'll find that freedom merely a mirage - a phantasm in those endless, shifting plains without."<br>
+	The <<person2>><<person>> and the <<person3>><<person>> both gaze raptly at the <<person1>><<personstop>><br>
+	"Without wot?"<br>
+	"There is no map," <<he>> goes on. "There is no 'right way' that you can learn. There is only Hunger. The endless, voracious hunger of those creatures.
+	Those creatures out there. And if you pass that way, <<if $player.gender_appearance is "f">>girl,<<else>>boy,<</if>> they will have you. This much I know."<br><br>
+	
+	<<He>> looks between <<his>> listeners.<br>
+	"Most souls who pass that door, wake up back here, broken and abused. Missing a piece. A few never show up. Where do they go? Rumour would have it they escape.
+	Ha! No. No. Know what I think? I think they're Them now. I think, lost in the plains, they eventually surrender to that rapacious hunger and it transforms them.
+	Changes their very beings into those seeping, tentacles of lust. I think they wander the plains still, only now, they search for you."
+<<elseif $rng gte 80>>
 	"They pump gas into our rooms at night, I swear," a <<person>> says. "Makes us suggestible."
-	<br><br>
-<<elseif $rng gte 56>>
-	"Security is tight," a <<person>> says. "No way you're sneaking past them. Not without a distraction."
-	<br><br>
-<<elseif $rng gte 41>>
-	"It's bad in here," a <<person>> says. "But it's worse out there."
-	<br><br>
-<<elseif $rng gte 26>>
-	"Stay out of the empty parts of the building," a <<person>> says. "Someone went there once, and vanished."
-	<br><br>
+	<<if $rng % 2>><br>"<<print either("Don't need gas to make YOU suggestible!","You're a fine one to talk about making gas!")>>" a voice mutters snidely.<br>
+	The <<person>> swears at them.<</if>>
+<<elseif $rng gte 75>>
+	<<if $o_long_and_beautiful gte 1 and $o_long_and_beautiful lte 7>><<set $o_long_and_beautiful += 1>>
+		A thin girl with extremely long, messy, tangled hair stands by a window staring at the trees across the garden.<br>
+		You stand next to her and try to strike up a conversation, but she doesn't respond at all. With her face mostly hidden 
+		in a mass of long, tangled hair, it's hard to tell if she even hears you.<br><br>
+
+		Through the window you notice a small plane passing low over the forest - or the town beyond - leaving a faint, pink contrail.<br>
+		When you glance beside you again, the long-haired girl has vanished.
+	<<else>>
+		A <<person>> stands by a window overlooking the garden and the forest beyond. <<He>> points at a plane.<br>
+		"So many planes fly over there," <<he>> says. "Every day."<br><br>
+
+		Sure enough, out the window you notice a small plane passing quite low over the tree line.<br>
+		"What do you reckon? Is that going over the forest or the town?"<br>
+		<<if $science gte 400 and $maths gte 600>>
+			You take a couple of steps left and right; make a rough calculation in your head.<br>
+			"Judging by the parallax, probably the town," you say. 
+		<<else>>
+			You shrug.<br>
+		<</if>><br>
+		
+		You can't be sure, but it looks like the plane is leaving a faint, pink contrail.
+	<</if>>
+<<elseif $rng gte 70>>
+	<<if $rng %2>>
+		"I'm not a patient here, y'know? I'm a doctor," a <<person>> says. "I'm telling you I did- I did study in-
+		in- I studied lots of things. So many things. But no one believes me anymore. I came here as a doctor, but now-
+		Now even the other doctors they- they act like I'm a patient. They don't listen. No one listens. I..."
+		<<He>> grips your arm. "I Am Not Crazy."
+	<<else>>
+		"I don't know why I'm here," a <<person>> says. "I remember I got a coach into town. I arrived at the bus station. And I remember I didn't have 
+		change for a taxi or bus home. I live near the Temple on Danube Street, so it's not far. Quite a nice walk by the Park, but... I didn't get that far.
+		I remember going out from the station and onto Elk Street... and then...
+		<<print either("","There was a sound and then...","Something... came over a fence and then...","There were guards in uniform, chasing something, and then...")>>
+		I woke up here. They say I did terrible things."
+	<</if>>
+<<elseif $rng gte 65>>
+	"I used to work at the school," a <<person>> says.
+	<<if $rng %2>>	
+		"I heard some disgusting rumours about that headteacher.
+		<<print either("They can't be true. It's probably just students trying to make trouble.","No smoke without fire, I say.","Someone should look into that.")>>"
+	<<else>>
+		<<set _num to $NPCNameList.indexOf("Winter")>><<set _pron to $NPCName[_num].gender>>
+		"You should see the disgusting things that history teacher keeps in
+		<<if _pron is "m">>his cupboard. One time a student was left in a- Well, let's just say that if people knew the truth, he
+		<<else>>her cupboard. One time a student was left in a- Well, let's just say that if people knew the truth, she
+		<</if>>would probably be sitting here with us."
+	<</if>>
+<<elseif $rng gte 60>>
+	<<if $rng % 2>>
+		"Security is tight," a <<person>> says. "No way you're sneaking past them. Not without a distraction."
+	<<else>>
+		"Sometimes they put me in a straight-jacket," a <<person>> says. "I'm so powerless. They can do whatever they want to me."<br>
+		<<He>> smiles.
+	<</if>>
+<<elseif $rng gte 55>>
+	<<if $rng % 2>>
+		"Last year the patients were campaigning for a video game system here," a <<person>> says.
+		"<<print either("What's the point of that? Thankfully the doctors said no.","The doctors said it might be disruptive. But it's not like we've got anything better to do here.")>>"
+	<<else>>
+		"Sometimes," a <<person>> mutters as much to <<himself>> as you. "I just don't think the police in this town are really looking out for our best interests."
+	<</if>>
+<<elseif $rng gte 50>>
+	"You're not sick," a <<person>> whispers to you. "None of us are. They're sick. Them.
+	<<if $rng % 2>>
+		They tell us we're sick so they can test their drugs on us. And no one will stop them. It's big pharma. It goes all the way to the top."
+	<<else>>
+		They lock people like us up because we're sane. We're a challenge to their power."
+	<</if>>
+<<elseif $rng gte 45>>
+	<<if $rng % 2>>
+		"Some of the crazies in here will tell you the staff are all lizard-people bent on world domination."
+		The <<person>> shakes <<his>> head. "What rubbish: they're obviously aliens."
+	<<else>>
+		"Some of the nutcases around here will tell you the staff are all aliens preparing us to join a Galactic federation."
+		The <<person>> rolls <<his>> eyes. "Nonsense: they're clearly lizard-people."
+	<</if>>
+<<elseif $rng gte 40>>
+	<<if $rng % 2>>
+		"It's bad in here," a <<person>> says. "But it's worse out there."
+	<<else>>
+		<<generate2>><<generate3>>
+		A <<person1>><<personcomma>> a <<person2>><<person>> and a <<person3>><<person>> plot their escape.<br><br>
+		"How though?" the <<person>> asks. "How are you getting out?"<br>
+		The <<person1>><<person>> looks wildly around the room. "With that thing!" <<he>> points at
+		<<print either("the coffee vendor.","a mysterious machine.","the water fountain.","a heavy wooden desk.","a morbidly obese patient.")>>
+		"I'm gonna put that through the fuckin' window, that's how!"<br>
+		"You're going to try to pick that up and throw it through the window?"<br>
+		"Fuckin' right, I am!" the <<person>> says.<br>
+		"By yourself?" the <<person2>><<person>> asks. "That?"<br>
+		"Didn't I just say I would?"<br>
+		"No way."<br>
+		"Bollocks,"the <<person3>><<person>> says. "I'll bet an oral fuck you can't do it!"<br>
+		"What?"<br>
+		"Yeah!"<br>
+		"What?"<br>
+		"Simple. If you do it I'll <<person1>><<if $pronoun is "m">>suck you off<<else>>eat you out<</if>> right here," the <<person3>><<person>> says.
+		"No questions. If not, you do the <<if $NPCList[0].pronoun is $NPCList[2].pronoun>>same<<else>>equivalent<</if>> for me."<br>
+		"Okay," the <<person1>><<person>> says. "You're on."<br>
+		"Me too," the <<person2>><<person>> says. "I want in on this!"<br>
+		"More the fuckin' merrier," the <<person1>><<person>> says. "I hope you bitches are ready for a big hairy <<if $pronoun is "m">>cock<<else>>cunt<</if>> in your face!"<br><br>
+
+		A couple of nearby guards watch on with amusement.
+	<</if>>
+<<elseif $rng gte 35>>
+	<<if $rng % 2>>
+		"Hello there," a <<person>> says. "Listen: if you see a patient around here who sounds like they swallowed a dictionary and keeps warning you about things,
+		I need you to punch them for me. I was in a terrible rush this morning and just didn't have the time."
+	<<else>>
+		"None of this <<print either("matters,","is real,","makes any difference,")>>" a <<person>> says. "We're all just
+		<<print either("living in some future supercomputer's artificial reality","NPCs in someone else's game","characters in a book","ghosts who don't realise we've died","katra passing through the infinite cycle of death and rebirth")>>
+		- but no-one recognises the truth."
+	<</if>>
+<<elseif $rng gte 30>>
+	<<if $rng % 2>>
+		"Stay out of the empty parts of the building," a <<person>> says. "Someone went there once, and vanished."
+	<<else>>
+		A <<person>> looks you up and down.<br>
+		"If anyone attacks you, just let me know," <<he>> smiles. "I like to watch."
+	<</if>>
+<<elseif $rng gte 25>>
+	<<if $chef_state gte 3>>
+		<<if $chef_state gte 7 and $rng gte 27>>
+			A <<person>> stares at you open mouthed.<br>
+			"You're Sam's new chef from Ocean Breeze, aren't you?" <<he>> asks. "Oh my god, I can't believe you're here.
+			I miss those buns! I don't suppose you could make some in here? Could you?!" <<lstress>><<stress -2>><<asylumstatus 2>><<gcool>>
+		<<else>>
+			"It's funny the things you miss in a place like this," a <<person>> tells you. "I miss the Ocean Breeze Cafe over on Cliff Street.
+			Sam had just hired some new chef who was making the most incredible cream buns."
+		<</if>>
+	<<else>>
+		"The one thing I miss," a <<person>> tells you. "Is sitting by the beach watching the swimmers.
+		There's this cafe called the Ocean Breeze there. If you ever get the chance, go. They have delicious cream buns. Ask for Sam."
+	<</if>>
+<<elseif $rng gte 20>>
+	<<if $rng % 2>>
+		"Don't tell anyone," a <<person>> confides. "But I'm not ill. Not really. I pretend to be because I like it here. It's nice. Crazy would be going back out there."
+	<<else>>
+		"I know everyone says this here," a <<person>> says. "But I'm actually not crazy. I'm
+		<<print either("a Detective","a Detective Inspector","a Chief Inspector", "an Officer")>>
+		with the police. Back in the Met I was a big deal. Cracked a few big cases. Newspapers and everything. Was transferred here to clean things up."<br>
+		<<He>> laughs bitterly.<br>
+		"Can you believe that? It's true. We heard rumours about this place. Nasty things. So I was sent here to be the big shining
+		white knight, come to put away the bad guys. Instead they put away me. I have 'PTSD', apparently."<br>
+		<<He>> falls silent.<br><br>
+
+		"Hey!" <<he>> says as you move to leave. "Do me a favour. If you get back out there: never trust the police in this town. There are some good apples,
+		but most are in with the criminals - by the time you know for sure it'll be too late. Like it was for me. Some of the doctors are in on it too.
+		I know that now. There's also some kind of human trafficking in east of town. People disappearing. Not sure if it's connected to some crazy in the woods.
+		When I wandered out to have a look, I got shot at. I don't think it involves the school. School seemed clean. At least I never found a link."
+	<</if>>
+<<elseif $rng gte 15>>
+	<<if $rng % 2>>
+		"The doctor never calls on me anymore," a <<person>> grumbles. "I haven't had a session in weeks.
+		<<if $beauty gte ($beautymax / 3) * 2>>I'll never get better because the doctors are always busy with pretty little things like you." <<gstress>><<stress 1>>
+		<<else>>We should complain! The doctors should help all of us, not just those attractive ones."
+		<</if>>
+	<<else>>
+		<<set _num to $NPCNameList.indexOf("Harper")>><<set _pron to $NPCName[_num].gender>>
+		"That young Doctor smelled like cow manure the other afternoon," a <<person>> whispers. "Does <<if _pron is "m">>he<<else>>she<</if>> live on a farm or something!?"
+	<</if>>
 <<elseif $rng gte 10>>
-	"The doctor makes me do such lewd things," a <<person>> says. "I used to hate it, but now I can't wait for the next treatment."
-	<br><br>
+	<<if $rng % 2>>/*11 13*/
+		"The doctor makes me do such lewd things," a <<person>> says. "I used to hate it, but now I can't wait for the next treatment."
+	<<else>>
+		Everyone is busy with their own activities right now.<br><br>
+		As you stand by a window, Dr Harper leads a naked <<if $pronoun is "m">>man<<else>>woman<</if>> into the recreation area.
+
+		Completely nude,
+		<<if $rng gte 14>>/*14*/
+			the <<person>> seems to believe <<he>> is a Doctor. Methodically, Harper leads <<him>> between different patients in the room asking
+			for a medical opinion. The <<person>> refers to an imaginary clipboard as <<he>> pronounces
+			<<if $science gte 500>>earnest but meaningless psuedo-medical 'diagnoses' for these patients.
+			<<else>>a medical diagnosis for each patient.
+			<</if>><br>
+			Whatever <<he>> says, Harper nods gravely and says, "I see. Thank you, Doctor." And leads <<him>> to another patient.<br><br>
+
+			After the seventh or eighth patient, they leave together.
+		<<else>>/*10 12*/
+			except for a collar connected a lead in Harper's hand, the <<person>> crawls on <<his>> hands and knees, seemingly
+			believing <<he>> is a dog. As Harper leads <<him>> through the room <<he>> tries to crawl under tables and sniff patients'
+			legs.<br><br>
+
+			In the middle of the room, Harper unclips the lead from the <<persons>> collar, allowing <<him>> to roam while Harper stops
+			to talk with one of the orderlies. As Harper chats, the <<person>> crawls between patients, getting them to stroke <<his>> head,
+			sniffing their groins, or rolling over so they can rub <<his>> tummy.<br>
+
+			When
+			<<if $pronoun is "m">>he suddenly raises his leg to pee against 
+			<<else>> she suddenly squats to pee by
+			<</if>>
+			a table, Harper lunges across and grabs <<his>> collar. "That's enough now."<br>
+			Harper quickly leads <<him>> from the room.
+		<</if>><br><br>
+		Many watch with amusement. Some with lust. A few with embarrassment.<br> 
+		Absolutely no one seems surprised.
+	<</if>>
+<<elseif $rng gte 5>>
+	<<if $rng % 2>>
+		"That Harper isn't a Doctor," a <<person>> mutters. "Not really. When I first came here Harper was a patient like the rest of us.
+		But now suddenly Harper's our Doctor. THEY all play along, and everyone who might remember has conveniently forgotten. Or disappeared."<br>
+		<<He>> looks sharply around.
+	<<else>>
+		A <<person>> is smiling at you. As you sit near <<him>> you notice one of <<his>> hands is under <<his>> clothes, rhythmically
+		<<if $pronoun is "m">>rubbing his dick.<<else>>rubbing her pussy.<</if>><br><br>
+
+		"Stay right there," <<he>> breathes.
+		<<if $beauty gte ($beautymax / 3) * 2 and $rng % 3>>"Looking at you is helping a lot."
+		<<elseif $breastsize gte 6>><<He>> stares at your <<breasts>> as <<his>> hand moves faster.
+		<<elseif $physique gte ($physiquesize / 7) * 6>>"With those muscles you'd dominate me like the little <<if $pronoun is "m">>bitch<<else>>whore<</if>> I am."
+		<<elseif $purity lte 400 or $awareness gte 500>>"Talk dirty to me. You look like you've seen it all."
+		<<elseif $beauty lte ($beautymax / 3)>>"Your ugly face'll help me last longer."
+		<<else>>The movement gets faster.
+		<</if>>
+	<</if>>
 <<else>>
-	"They bind our arms so tight," a <<person>> says. "Can't do much like that. Not even open our own cupboards."
-	<br><br>
-<</if>>
+	"They bind our arms so tight," a <<person>> says.
+	<<if $rng % 2>>
+		"Can't do much like that. Not even open our own cupboards."
+	<<else>>
+		"Can't even masturbate. Sometimes I have to call to the guards to scratch that itch."
+	<</if>>
+<</if>>	<br><br>
 <<endevent>>
 <<asylumevents>>
 
@@ -729,11 +1048,70 @@ You strip slowly, just fast enough to keep the orderlies at bay. By the time you
 :: Asylum Shower Wash [nobr]
 
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
-You strip and enter the showers proper. You stand in the middle of a large room and wash alongside the other patients. You notice a <<generate2>><<generate3>><<person2>><<person>> and <<person3>><<person>> checking you out, but most don't pay you any attention. You head back to your clothes, dry yourself and get dressed.
-<<exhibitionism2>>
-<<endevent>>
+<<generate2>><<generate3>>
+<<if $o_long_and_beautiful gte 1 and $o_long_and_beautiful lte 7 and $rng % 3 == 0>><<set $o_long_and_beautiful += 1>>
+	As you strip, two orderlies, a <<person2>><<person>> and a <<person3>><<person>> march toward a slender girl with long, messy, matted hair sat near you.<br>
+	"Strip," the <<person>> barks. "Now."<br>
+	She doesn't move. The <<person2>><<person>> grabs her shoulder and yanks at her top, at which the girl abruptly screeches and claws at the <<persons>> face.
+	The <<person3>><<person>> quickly grabs the girl's hair, firmly yanks back her head and drags her back to the floor. The long-haired girl goes down hard, 
+	but then flails frantically on the ground, screeching and clawing in every direction as they struggle to pin her down.<br>
+	You glance at Doctor Harper who is looking anywhere but here right now.<br>
+	With the girl pinned, the orderlies start to remove her clothes. Just as abruptly the girl falls silent. Looking down at her, her body has gone limp,
+	tears stream from her eyes as they strip her.<br>
+	Dr Harper is still studiously looking elsewhere.<br>
+	"Why do you make us do this every time," the <<person2>><<person>> spits as <<he>> removes the last of the girl's underwear. "You think we get off on this?"<br>
+	"And wash your damn hair," the <<person3>><<person>> adds. They shake their heads.<br>
+	The girl lies completely nude and completely unmoving, tears streaming from empty, vacant eyes.<br><br>
+
+	"What are you looking at?" the <<person2>><<person>> glares at you. "Do YOU need our help as well?"<br>
+	<<if $submissive gte 1150>>
+		"Sorry," you say, quickly stripping. You run to Harper. "Doctor, is- is it okay if I stay to help that girl. I- I think I know her."<br>
+		Harper looks confused at you for a moment. "Yes. Yes, okay. Just make sure you don't miss your wash. Hygiene is important."
+	<<elseif $submissive lte 850>>
+		"DOCTOR Harper," you shout. Harper turns. "I think your two geniuses here
+		<<if $science gte 600>>can't recognise a post-traumatic trigger reaction.
+		<<else>>are just making things worse.
+		<</if>>Can I stay here and look after my friend?"<br>
+		Harper looks confused at you for a moment. "Yes. Yes, okay. Just make sure neither of you miss your wash. Hygiene is important."
+	<<else>>
+		You quickly finish stripping and jog across to Harper.<br>
+		"Doctor, please. Look at that girl.
+		<<if $science gte 600>>That looks like a post-traumatic trigger reaction and <</if>>I think those two are just making things worse.
+		Is it okay if I stay back to help her. I- I think I kind of know her."<br>
+		Harper looks curious for a moment. "Yes. Yes, okay. Just make sure you don't miss your wash. Hygiene is important."
+	<</if>><br>Harper signals for the orderlies to leave you alone.
+	<<exhibitionism2>>
+	<<endevent>>
+	<<link [[Next|Asylum Shower Wash Hair]]>><</link>>
+<<else>>
+	You strip and enter the showers proper. You stand in the middle of a large room and wash alongside the other patients.
+	You notice a <<person2>><<person>> and <<person3>><<person>> checking you out, but most don't pay you any attention.
+	You head back to your clothes, dry yourself and get dressed.
+	<<exhibitionism2>>
+	<<endevent>>
+	<<link [[Next|Asylum]]>><<clotheson>><</link>>
+	<br>
+<</if>>
+
+
+:: Asylum Shower Wash Hair [nobr]
+<<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
+<<pass 25>>
+Completely naked, you sit for a time with the slim, long haired girl. You don't touch her, you just keep quietly talking to her.
+<<if $english gte 500>>After a time, you notice her looking at you. Your eloquence seems to be getting through.<<set $o_long_and_beautiful += 1>>
+<<else>>After a time, she seems to come round.
+<</if>><br><br>
+
+Finally, she whispers: "Okay."
+Together you head to the shower and wash. It is just you two, everyone else finished some time ago. The long-haired girl
+<<if $o_long_and_beautiful gte 6>>talks to you a little about her life in the asylum as she washes.
+<<elseif $o_long_and_beautiful gte 4>>washes properly. A few times you think she might be smiling at you.
+<<else>>no longer seems to notice you as she quickly washes.
+<</if>>
+You head back to your clothes, dry yourself and get dressed.<br><br>
 <<link [[Next|Asylum]]>><<clotheson>><</link>>
 <br>
+
 
 :: Asylum Harper Sex [nobr]
 
