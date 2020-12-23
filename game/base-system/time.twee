@@ -102,7 +102,8 @@
 <<set $girlsroomentered to 0>>
 <<set $famepark -= 7>>
 <<set $famepark = Math.clamp($famepark, 0, 100)>>
-<<set $robinbeachpolice to 0>>
+<<unset $robinbeachpolice>>
+<<unset $robinparksnow>>
 <<set $sewersfeeding to 0>>
 <<set $sewerssex to 0>>
 <<set $museumgreengemtouch to 0>>
@@ -196,7 +197,7 @@
 	<<set $stall_rejected = Math.clamp($stall_rejected, 0, 100)>>
 <</if>>
 <<if $mason_pond is 3>>
-	<<if $weather isnot "rain">>
+	<<if $weather isnot "rain" and $weather isnot "snow">>
 		<<set $mason_pond_timer -= 1>>
 	<</if>>
 	<<if $mason_pond_timer lte 0>>
@@ -205,6 +206,12 @@
 	<</if>>
 <</if>>
 <<unset $spa_event>>
+<<if $lake_ice_broken gte 1>>
+	<<set $lake_ice_broken -= 1>>
+<</if>>
+<<if $lake_ice_broken lte 0>>
+	<<unset $lake_ice_broken>>
+<</if>>
 
 <<set $masochism *= 0.985>>
 <<if $masochism_level is 0>>
@@ -364,6 +371,7 @@
 	<<set _monthDefault to true>>
 <</switch>>
 
+
 <<if _monthDefault is true>>
 	<<if $monthday gt _lastDay>>
 		<<set $monthday to 1>>
@@ -373,6 +381,19 @@
 		<<set $month to _months[_months.indexOf($month) + 1]>>
 	<</if>>
 <</if>>
+
+<<if _months.indexOf($month) gte 11 or _months.indexOf($month) lte 1>>
+	<<set $season to "winter">>
+<<elseif _months.indexOf($month) gte 8>>
+	<<set $season to "autumn">>
+<<elseif _months.indexOf($month) gte 5>>
+	<<set $season to "summer">>
+<<elseif _months.indexOf($month) gte 2>>
+	<<set $season to "spring">>
+<</if>>
+
+
+
 
 <<moonstate>>
 
@@ -440,6 +461,21 @@
 <<if $month is "november" and $monthday is 2>>
 	<<unset $halloween_kylar>>
 	<<unset $halloween_kylar_proposed>>
+<</if>>
+<<if $month is "december" and $monthday gte 18 and $monthday lte 25>>
+	<<set $christmas to 1>>
+<<else>>
+	<<unset $christmas>>
+	<<unset $christmas_event>>
+	<<unset $christmas_event_2>>
+	<<unset _christmas_event_robin>>
+	<<unset $christmas_gift>>
+	<<unset $christmas_gift_robin>>
+	<<unset $christmas_wrap>>
+	<<unset $christmas_gift_robin_wrapped>>
+	<<unset $christmas_robin_lewd>>
+	<<unset $christmas_robin_gift_received>>
+	<<unset $christmas_gift_robin_given>>
 <</if>>
 
 <<if $weekday isnot 1>>
@@ -589,10 +625,6 @@
 
 <<if $schoolterm is 1>>
 	<<if $weekday is 2 or $weekday is 3 or $weekday is 4 or $weekday is 5 or $weekday is 6>>
-		<<set $science_star to 0>>
-		<<set $maths_star to 0>>
-		<<set $english_star to 0>>
-		<<set $history_star to 0>>
 		<<set $delinquency -= 1>>
 		<<if $NPCName[$NPCNameList.indexOf("Leighton")].love gte $npclovehigh>>
 			<<set $delinquency -= 1>>
@@ -618,16 +650,30 @@
 	<</if>>
 <</if>>
 
+<<if $science_star gte 1>>
+	<<set $science_star = Math.clamp($science_star, 0, 3)>>
+	<<scienceskill $science_star>>
+	<<set $science_star to 0>>
+<</if>>
+<<if $maths_star gte 1>>
+	<<set $maths_star = Math.clamp($maths_star, 0, 3)>>
+	<<mathsskill $maths_star>>
+	<<set $maths_star to 0>>
+<</if>>
+<<if $english_star gte 1>>
+	<<set $english_star = Math.clamp($english_star, 0, 3)>>
+	<<englishskill $english_star>>
+	<<set $english_star to 0>>
+<</if>>
+<<if $history_star gte 1>>
+	<<set $history_star = Math.clamp($history_star, 0, 3)>>
+	<<historyskill $history_star>>
+	<<set $history_star to 0>>
+<</if>>
+
 <<set $beauty += (100 - (($trauma / $traumamax) * 100))>>
 
-<<set _weatherOptions to ["clear", "clear", "clear", "clear", "overcast", "overcast", "overcast", "overcast", "rain", "rain"]>>
-<<if $nextWeather is undefined>>
-	<<set $nextWeather to [either(_weatherOptions),either(_weatherOptions),either(_weatherOptions)]>>
-<<else>>
-	<<run $nextWeather.push(either(_weatherOptions))>>
-<</if>>
-<<set $weather to $nextWeather[0]>>
-<<run $nextWeather.deleteAt(0)>>
+<<weather_select>>
 
 <<tending_day>>
 
@@ -882,6 +928,12 @@
 	<<clearNPC bartend>>
 <</if>>
 <<set $clothingShop.spotted to false>>
+<<if $lake_ice_broken gte 1>>
+	<<set $lake_ice_broken -= 1>>
+<</if>>
+<<if $lake_ice_broken lte 0>>
+	<<unset $lake_ice_broken>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "hour">><<nobr>>
@@ -926,7 +978,38 @@
 	<<set $wolfevent to 1>>
 <</if>>
 
+<<temperature_hour>>
+
 <<set $home_gone += 1>>
+<</nobr>><</widget>>
+
+<<widget "temperature_hour">><<nobr>>
+<<set $chill to $chill_day>>
+<<if $hour gte 21 or $hour lte 5>>
+	<<if $weather is "clear">>
+		<<set $chill += 50>>
+	<<else>>
+		<<set $chill += 30>>
+	<</if>>
+<<elseif $hour gte 18>>
+	<<if $weather is "clear">>
+		<<set $chill -= 5>>
+	<<else>>
+		<<set $chill += 15>>
+	<</if>>
+<<elseif $hour gte 9>>
+	<<if $weather is "clear">>
+		<<set $chill -= 10>>
+	<<else>>
+		<<set $chill += 10>>
+	<</if>>
+<<else>>
+	<<if $weather is "clear">>
+		<<set $chill += 20>>
+	<<else>>
+		<<set $chill += 0>>
+	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "advancetohour">><<nobr>>
@@ -964,10 +1047,12 @@
 	<<set $effectsmessage to 1>><<set $history_down_message to 1>>
 	<<school_skill_down history>>
 <</if>>
-<<set $science_exam -= 7>>
-<<set $maths_exam -= 7>>
-<<set $english_exam -= 7>>
-<<set $history_exam -= 7>>
+<<if $schoolterm is 1>>
+	<<set $science_exam -= 7>>
+	<<set $maths_exam -= 7>>
+	<<set $english_exam -= 7>>
+	<<set $history_exam -= 7>>
+<</if>>
 <<exam_clamp_all>>
 
 <<exam_difficulty>>

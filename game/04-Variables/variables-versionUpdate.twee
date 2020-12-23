@@ -90,6 +90,12 @@
 	<</for>>
 <</if>>
 
+
+<<if $NPCName[21].nam is "Remy" and $NPCName[22].nam is "Alex">>/*0.2.20.0 fix for Black Wolf/Quinn/Niki only being partially implemented in rare cases.*/
+	<<set $NPCNameList.delete("Black Wolf", "Quinn", "Niki", "Remy", "Alex")>>
+	<<set $NPCName.deleteAt(21, 22)>>/*Resets Remy and Alex to ensure proper array order.*/
+<</if>>
+
 <<if $npcNamedVersion gte 2>>
 	<<updateNewNamedNpcs>>
 <</if>>
@@ -1269,9 +1275,9 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 10 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 11 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 10>>
+	<<set $objectVersion.updateClothes to 11>>
 <</if>>
 
 <<if $mathsprojectwon is 1>>
@@ -1462,8 +1468,8 @@
 	<<set $combatControls to "radio">>
 <</if>>
 
-<<if $clothing_number is 8>>
-	<<set $clothing_number to 10>>
+<<if $clothing_number isnot 11>>
+	<<set $clothing_number to 11>>
 <</if>>
 
 <<if $loveInterest is undefined>>
@@ -1804,6 +1810,69 @@
 
 <<if isNaN(parseInt($tiredness))>>
 	<<set $tiredness to 0>>
+<</if>>
+
+<<if ($minute % $time) isnot ($time - ($hour * 60))>>
+	<<set $minute to ($time - ($hour * 60))>>
+<</if>>
+
+<<if $waspdisable is undefined>>
+	<<set $waspdisable to "f">>
+<</if>>
+<<if $slugdisable is undefined>>
+	<<set $slugdisable to "f">>
+<</if>>
+
+<<if $season is undefined>>
+	<<if $month is "december" or $month is "january" or $month is "february">>
+		<<set $season to "winter">>
+	<<elseif $month is "march" or $month is "april" or $month is "may">>
+		<<set $season to "spring">>
+	<<elseif $month is "june" or $month is "july" or $month is "august">>
+		<<set $season to "summer">>
+	<<else>>
+		<<set $season to "autumn">>
+	<</if>>
+<</if>>
+
+/*
+<<if $weather is undefined or $weather.current is undefined>>
+	<<set $weather to {
+		current: either("clear", "clear", "clear", "clear", "overcast", "overcast", "overcast", "overcast", "rain", "rain"),
+		sevendayforcast:[],
+		chance: [],
+		rainydays: [],
+		rainstreak: false,
+		weekdaylist: [],
+		raindaystart: 0,
+		lastrainmax: 0
+	}>>
+	<<weatherinit>>
+<</if>>
+*/
+
+
+<<if $clothing_number isnot 12>>
+	<<set $clothing_number to 12>>
+<</if>>
+
+<<if $warmth is undefined>>
+	<<set $warmth to 0>>
+	<<set $chill_day to 0>>
+	<<switch $season>>
+	<<case "spring">>
+		<<set $chill_day += 70>>
+	<<case "summer">>
+		
+	<<case "autumn">>
+		<<set $chill_day += 80>>
+	<<case "winter">>
+		<<set $chill_day += 150>>
+	<</switch>>
+	<<if $weather is "snow">>
+		<<set $chill_day += 50>>
+	<</if>>
+	<<set $chill to $chill_day>>
 <</if>>
 
 <</nobr>><</widget>>
