@@ -82,6 +82,17 @@
 <</switch>>
 <</nobr>><</widget>>
 
+<<widget "displaySubsection">><<nobr>>
+<<if $args[0]>>
+	<<set $currentSubsection to $args[0]>>
+<</if>>
+<<switch $currentSubsection>>
+	<<case "humanSettings">><<replace #subsectionDiv>><<humanSettings>><</replace>>
+	<<case "beastSettings">><<replace #subsectionDiv>><<beastSettings>><</replace>>
+	<<default>><<replace #subsectionDiv>><<humanSettings>><</replace>>
+<</switch>>
+<</nobr>><</widget>>
+
 <<widget "settings">><<nobr>>
 <<if $passage is "Start">>
 <div id="settingsExit">
@@ -413,68 +424,18 @@
 <<widget "gameSettings">><<nobr>>
 	<span class="gold">Game Mode</span>
 	<br>
-	<label>Normal mode <<print '<<radiobutton "$gamemode" "normal" ' + ($gamemode is "normal" ? "checked" : "") + '>>'>> - Survive in a dangerous world.</label>
+	<label><span class = "green">Normal mode</span> <<print '<<radiobutton "$gamemode" "normal" ' + ($gamemode is "normal" ? "checked" : "") + '>>'>> - Survive in a dangerous world.</label>
 	<br>
-	<label>Soft mode
+	<label><span class = "blue">Soft mode</span>
 	<<print '<<radiobutton "$gamemode" "soft" ' + ($gamemode is "soft" ? "checked" : "") + '>>'>>
 	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future. Leaving the settings with soft mode will prevent you from earning feats till it is set to normal mode. Doing this will permanently prevent some feats from being earned.</span></label>
 	<br>
 	<<if $intro is 1 or $gamemode is "hard">>
-		<label>Hard mode
+		<label><span class = "purple">Hard mode</span>
 		<<print '<<radiobutton "$gamemode" "hard" ' + ($gamemode is "hard" ? "checked" : "") + '>>'>>
-		- Removes lewd stat decay (promiscuity, exhibitionism, deviancy,) making trauma and control increasingly difficult to manage. Can only be chosen at the game's start, and being incarcerated in the asylum will put you in normal mode. <span class="red">This is an experimental feature, and will be changed or removed in the future.</span></label>
+		- Removes lewd stat decay (promiscuity, exhibitionism, deviancy) making trauma and control increasingly difficult to manage. Can only be chosen at the game's start, and being incarcerated in the asylum will put you in normal mode. <span class="red">This is an experimental feature, and will be changed or removed in the future.</span></label>
 		<br>
 	<</if>>
-	<br><br>
-
-	<span class="gold">Percentage of people attracted to you that are male</span>
-	<br>
-	<<numberslider "$malechance" $malechance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Percentage of women that have penises</span>
-	<br>
-	<<numberslider "$dgchance" $dgchance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Percentage of women that have strap-on penises</span>
-	<br>
-	<<numberslider "$straponchance" $straponchance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Percentage of men that have vaginas</span>
-	<br>
-	<<numberslider "$cbchance" $cbchance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Percentage of other victims that are male</span>
-	<br>
-	<<numberslider "$malevictimchance" $malevictimchance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Proportion of same-sex couples</span>
-	<br>
-	<<numberslider "$homochance" $homochance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Average size of women's breasts</span> - A bigger number means bigger breasts in the world. At 12 everyone will have enormous breasts. At -12 everyone will have flat chests. Defaults to 0, which will result in a broad range of sizes.
-	<br>
-	<<numberslider "$breast_mod" $breast_mod -12 12 1>>
-	<br><br>
-
-	<span class="gold">Average size of NPC penises</span> - A bigger number means bigger penises in the world. At 8 everyone will have enormous penises. At -8 everyone will have tiny penises. Defaults to 0, which will result in a broad range of sizes.
-	<br>
-	<<numberslider "$penis_mod" $penis_mod -8 8 1>>
-	<br><br>
-
-	<span class="gold">Likelihood of npcs having pale skin</span>
-	<br>
-	<<numberslider "$whitechance" $whitechance 0 100 1>>
-	<br><br>
-
-	<span class="gold">Likelihood of npcs having dark skin</span>
-	<br>
-	<<numberslider "$blackchance" $blackchance 0 100 1>>
 	<br><br>
 
 	<span class="gold">The rate that events are triggered by allure</span> - Default is 1.0.
@@ -484,39 +445,127 @@
 	<<numberslider "$alluremod" $alluremod 0.2 2 0.1>>
 	<br><br>
 
-	<span class="gold">Percentage of beasts attracted to you that are male</span>
-	<br>
-	<<numberslider "$beastmalechance" $beastmalechance 0 100 1>>
-	<br><br>
 
-	<span class="gold">Percentage of beasts that are replaced with monster girls or boys</span> - Requires bestiality to be enabled.
-	<br>
-	<<numberslider "$monsterchance" $monsterchance 0 100 1>>
-	<br><br>
+	<div class="gold">
+	<<button "Human NPC Settings">>
+		<<displaySubsection "humanSettings">>
+	<</button>>
+	<<button "Beast Settings and Toggles">>
+		<<displaySubsection "beastSettings">>
+	<</button>>
+	</div>
 
-	<span class="gold">Replace beasts with monster boys and girls</span>
+	<div id="subsectionDiv">
+	</div>
 	<br>
-	<label>Only when hallucinating <<print '<<radiobutton "$monsterhallucinations" "t" ' + ($monsterhallucinations is "t" ? "checked" : "") + '>>'>></label> |
-	<label>At any time <<print '<<radiobutton "$monsterhallucinations" "f" ' + ($monsterhallucinations is "f" ? "checked" : "") + '>>'>></label>
-	<br><br>
+
+
+	<<widget "humanSettings">><<nobr>>
+		<div class="solidBorderContainer">
+		<br>
+			<span class="gold">Percentage of people attracted to you that are male</span>
+			<br>
+			<<numberslider "$malechance" $malechance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Percentage of women that have penises</span>
+			<br>
+			<<numberslider "$dgchance" $dgchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Percentage of women that have strap-on penises</span>
+			<br>
+			<<numberslider "$straponchance" $straponchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Percentage of men that have vaginas</span>
+			<br>
+			<<numberslider "$cbchance" $cbchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Percentage of other victims that are male</span>
+			<br>
+			<<numberslider "$malevictimchance" $malevictimchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Proportion of same-sex couples</span>
+			<br>
+			<<numberslider "$homochance" $homochance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Average size of women's breasts</span> - A bigger number means bigger breasts in the world. At 12 everyone will have enormous breasts. At -12 everyone will have flat chests. Defaults to 0, which will result in a broad range of sizes.
+			<br>
+			<<numberslider "$breast_mod" $breast_mod -12 12 1>>
+			<br><br>
+
+			<span class="gold">Average size of NPC penises</span> - A bigger number means bigger penises in the world. At 8 everyone will have enormous penises. At -8 everyone will have tiny penises. Defaults to 0, which will result in a broad range of sizes.
+			<br>
+			<<numberslider "$penis_mod" $penis_mod -8 8 1>>
+			<br><br>
+
+			<span class="gold">Likelihood of npcs having pale skin</span>
+			<br>
+			<<numberslider "$whitechance" $whitechance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Likelihood of npcs having dark skin</span>
+			<br>
+			<<numberslider "$blackchance" $blackchance 0 100 1>>
+			<br><br>
+		</div>
+	<</nobr>><</widget>>
+
+	<<widget "beastSettings">><<nobr>>
+		<div class="solidBorderContainer">
+		<br>
+			<span class="gold">Percentage of beasts attracted to you that are male</span>
+			<br>
+			<<numberslider "$beastmalechance" $beastmalechance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Percentage of beasts that are replaced with monster girls or boys</span> - Requires bestiality to be enabled.
+			<br>
+			<<numberslider "$monsterchance" $monsterchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Replace beasts with monster boys and girls</span>
+			<br>
+			<label>Only when hallucinating <<print '<<radiobutton "$monsterhallucinations" "t" ' + ($monsterhallucinations is "t" ? "checked" : "") + '>>'>></label> |
+			<label>At any time <<print '<<radiobutton "$monsterhallucinations" "f" ' + ($monsterhallucinations is "f" ? "checked" : "") + '>>'>></label>
+			<br><br>
+		
+			<span class="gold">Beast Toggles</span>
+			<br>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$bestialitydisable" "t" "f" ' + ($bestialitydisable is "f" ? "checked" : "") + '>>'>> Enable bestiality
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$swarmdisable" "t" "f" ' + ($swarmdisable is "f" ? "checked" : "") + '>>'>> Enable swarms (Eels, etc)
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$parasitedisable" "t" "f" ' + ($parasitedisable is "f" ? "checked" : "") + '>>'>> Enable parasites
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$slimedisable" "t" "f" ' + ($slimedisable is "f" ? "checked" : "") + '>>'>> Enable slimes
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$voredisable" "t" "f" ' + ($voredisable is "f" ? "checked" : "") + '>>'>> Enable soft monster vore
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$spiderdisable" "t" "f" ' + ($spiderdisable is "f" ? "checked" : "") + '>>'>> Enable spiders
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$slugdisable" "t" "f" ' + ($slugdisable is "f" ? "checked" : "") + '>>'>> Enable slugs
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$waspdisable" "t" "f" ' + ($waspdisable is "f" ? "checked" : "") + '>>'>> Enable wasps
+			</div></label>
+			<div style="clear:both;">/*Keep at end of toggles*/</div>
+		</div>
+	<</nobr>><</widget>>
 
 	<span class="gold">Togglable Features</span>
 	<br>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$bestialitydisable" "t" "f" ' + ($bestialitydisable is "f" ? "checked" : "") + '>>'>> Enable bestiality
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$swarmdisable" "t" "f" ' + ($swarmdisable is "f" ? "checked" : "") + '>>'>> Enable swarms (Eels, etc)
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$parasitedisable" "t" "f" ' + ($parasitedisable is "f" ? "checked" : "") + '>>'>> Enable parasites
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$slimedisable" "t" "f" ' + ($slimedisable is "f" ? "checked" : "") + '>>'>> Enable slimes
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$voredisable" "t" "f" ' + ($voredisable is "f" ? "checked" : "") + '>>'>> Enable soft monster vore
-	</div></label>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$tentacledisable" "t" "f" ' + ($tentacledisable is "f" ? "checked" : "") + '>>'>> Enable tentacles
 	</div></label>
@@ -540,15 +589,6 @@
 	</div></label>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$watersportsdisable" "t" "f" ' + ($watersportsdisable is "f" ? "checked" : "") + '>>'>> Enable watersports
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$spiderdisable" "t" "f" ' + ($spiderdisable is "f" ? "checked" : "") + '>>'>> Enable spiders
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$slugdisable" "t" "f" ' + ($slugdisable is "f" ? "checked" : "") + '>>'>> Enable slugs
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$waspdisable" "t" "f" ' + ($waspdisable is "f" ? "checked" : "") + '>>'>> Enable wasps
 	</div></label>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$bodywritingdisable" "t" "f" ' + ($bodywritingdisable is "f" ? "checked" : "") + '>>'>> Enable body-writing and forced tattoos
