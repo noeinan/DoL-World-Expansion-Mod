@@ -1,3 +1,82 @@
+window.prepareSaveDetails = function (forceRun){
+	if("dolSaveDetails" in localStorage === false || forceRun === true){
+		var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]}
+		var SugarCubeSaveDetails = Save.get();
+		if(SugarCubeSaveDetails.autosave != null){
+			saveDetails.autosave = {
+				title:SugarCubeSaveDetails.autosave.title,
+				date:SugarCubeSaveDetails.autosave.date,
+				metadata:SugarCubeSaveDetails.autosave.metadata
+			}
+			if(saveDetails.autosave.metadata === undefined){
+				saveDetails.autosave.metadata = {saveName:""};
+			}
+			if(saveDetails.autosave.metadata.saveName === undefined){
+				saveDetails.autosave.metadata.saveName = "";
+			}
+		}
+		for (var i=0; i<SugarCubeSaveDetails.slots.length;i++){
+			if(SugarCubeSaveDetails.slots[i] !== null){
+				saveDetails.slots[i] = {
+					title:SugarCubeSaveDetails.slots[i].title,
+					date:SugarCubeSaveDetails.slots[i].date,
+					metadata:SugarCubeSaveDetails.slots[i].metadata
+				};
+				if(saveDetails.slots[i].metadata === undefined){
+					saveDetails.slots[i].metadata = {saveName:"old save", saveId:0}
+				}
+				if(saveDetails.slots[i].metadata.saveName === undefined){
+					saveDetails.slots[i].metadata.saveName = "old save";
+				}
+			}else{
+				saveDetails.slots[i] = null;
+			}
+		}
+	
+		localStorage.setItem("dolSaveDetails" ,JSON.stringify(saveDetails));
+	}
+	return;
+}
+
+window.setSaveDetail = function (saveSlot, metadata, story){
+	var saveDetails = JSON.parse(localStorage.getItem("dolSaveDetails"));
+	if(saveSlot === "autosave"){
+		saveDetails.autosave = {
+			title:SugarCube.Story.get(SugarCube.State.variables.passage).description(),
+			date:Date.now(),
+			metadata:metadata
+		};
+	}else{
+		var slot = parseInt(saveSlot);
+		saveDetails.slots[slot] = {
+			title:SugarCube.Story.get(SugarCube.State.variables.passage).description(),
+			date:Date.now(),
+			metadata:metadata
+		};
+	}
+	localStorage.setItem("dolSaveDetails" ,JSON.stringify(saveDetails));
+}
+
+window.getSaveDetails = function (saveSlot){
+	if("dolSaveDetails" in localStorage) return JSON.parse(localStorage.getItem("dolSaveDetails"));
+}
+
+window.deleteSaveDetails = function (saveSlot){
+	var saveDetails = JSON.parse(localStorage.getItem("dolSaveDetails"));
+	if(saveSlot === "autosave"){
+		saveDetails.autosave = null;
+	}else{
+		var slot = parseInt(saveSlot);
+		saveDetails.slots[slot] = null;
+	}
+	localStorage.setItem("dolSaveDetails" ,JSON.stringify(saveDetails));
+}
+
+window.deleteAllSaveDetails = function (saveSlot){
+	var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]};
+	localStorage.setItem("dolSaveDetails" ,JSON.stringify(saveDetails));
+}
+
 window.returnSaveDetails = function () {
 	return Save.get();
 }
@@ -26,6 +105,7 @@ window.save = function (saveSlot, confirm, saveId, saveName) {
 	} else {
 		if (saveSlot != undefined) {
 			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
+			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
 			SugarCube.State.variables.currentOverlay = null;
 			overlayShowHide("customOverlay");
 		}
@@ -39,6 +119,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			return;
 		} else if (confirm === true) {
 			Save.clear();
+			deleteAllSaveDetails();
 		}
 	} else if (saveSlot === "auto") {
 		if (SugarCube.State.variables.confirmDelete === true && confirm === undefined) {
@@ -46,6 +127,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			return;
 		} else {
 			Save.autosave.delete();
+			deleteSaveDetails("autosave");
 		}
 	} else {
 		if (SugarCube.State.variables.confirmDelete === true && confirm === undefined) {
@@ -53,6 +135,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			return;
 		} else {
 			Save.slots.delete(saveSlot);
+			deleteSaveDetails(saveSlot)
 		}
 	}
 	new Wikifier(null, '<<resetSaveMenu>>');

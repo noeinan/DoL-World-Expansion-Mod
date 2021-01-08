@@ -15,6 +15,12 @@
 <label><<print '<<checkbox "$confirmDelete" false true '+($confirmDelete is true ? "checked" : "")+'>>'>>
 	Require Confirmation on Delete
 </label>
+<<if $debug is 1>>
+	<br>
+	<label><<print '<<checkbox "$prepareSaveDetails" false true '+($prepareSaveDetails is true ? "checked" : "")+'>>'>>
+		Run `prepareSaveDetails`. Disabling will cause saving/deleting on older version to not update the save list on newer versions but may speed up refresh loading times.
+	</label>
+<</if>>
 <br><br>
 These require a passage change (move location, enter/exit a wardrobe, etc) to apply.
 <br>
@@ -148,10 +154,11 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 <</nobr>><</widget>>
 
 <<widget "saveList">><<nobr>>
+<<run prepareSaveDetails()>>
 <<if $passage isnot "Start" and $passage isnot "Start2">>
 	<<set $saveUnlock to true>>
 <</if>>
-<<set _saveDetails = returnSaveDetails()>>
+<<set _saveDetails = getSaveDetails()>>
 <<set _currentTime to new Date().getTime()>>
 <div id="savesListContainer">
 	<div class="savesListRow">
@@ -175,7 +182,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 						<<if _saveDetails.autosave.metadata isnot undefined>>
 							<div @class="'saveName' + ($saveId is _saveDetails.autosave.metadata.saveId ? ' gold' : '')">
-								<<if _saveDetails.autosave.metadata.saveName isnot undefined and _saveDetails.autosave.metadata.saveName isnot "">>
+								<<if _saveDetails.autosave.metadata.saveName isnot "">>
 									<<print _saveDetails.autosave.metadata.saveName.slice(0,10)>>
 								<<else>>
 									<<print _saveDetails.autosave.metadata.saveId>>
@@ -212,40 +219,32 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
 							<<if $saveUnlock>>
-								<<if _saveDetails.slots[_slot].metadata isnot undefined>>
-									<<set _onclick to "save("+_slot+", false, "+_saveDetails.slots[_slot].metadata.saveId+", '"+$saveName+"')">>
-									<input type="button" class="saveMenuButton" value="Save" @onclick="clone(_onclick)"/>
-								<<else>>
-									<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',false, '+null+')"/>'>>
-								<</if>>
+								<<set _onclick to "save("+_slot+", false, "+_saveDetails.slots[_slot].metadata.saveId+", '"+$saveName+"')">>
+								<input type="button" class="saveMenuButton" value="Save" @onclick="clone(_onclick)"/>
 							<<else>>
 								<input type="button" value="Save" disabled/>
 							<</if>>
-							<<print '<input type="button" class="saveMenuButton" value="Load" onclick="loadSave('+ _slot +')"/>'>>
+							<input type="button" class="saveMenuButton" value="Load" @onclick="'loadSave('+ _slot +')'"/>
 						</div>
-							<<if _saveDetails.slots[_slot].metadata isnot undefined>>
-								<div @class="'saveName' + ($saveId is _saveDetails.slots[_slot].metadata.saveId ? ' gold' : '')">
-									<<if _saveDetails.slots[_slot].metadata.saveName isnot undefined and _saveDetails.slots[_slot].metadata.saveName isnot "">>
-										<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
-									<<else>>
-										<<print _saveDetails.slots[_slot].metadata.saveId>>
-									<</if>>
-								</div>
+						<div @class="'saveName' + ($saveId is _saveDetails.slots[_slot].metadata.saveId ? ' gold' : '')">
+							<<if _saveDetails.slots[_slot].metadata.saveName isnot "">>
+								<<print _saveDetails.slots[_slot].metadata.saveName.slice(0,10)>>
 							<<else>>
-								<div class="saveName"></div>
+								<<print _saveDetails.slots[_slot].metadata.saveId>>
 							<</if>>
+						</div>
 						<div class="saveDetails">
 							<span><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>></span>
 							<span @class="'datestamp' + (_saveDetails.slots[_slot].date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>
 						</div>
 					</div>
-					<div class="deleteButton"><<print '<input type="button" class="saveMenuButton right" value="Delete" onclick="deleteSave('+ _slot +')"/>'>></div>
+					<div class="deleteButton"><input type="button" class="saveMenuButton right" value="Delete" @onclick="'deleteSave('+ _slot +')'"/></div>
 				<<else>>
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
 							<<if $saveUnlock>>
-								<<print '<input type="button" class="saveMenuButton" value="Save" onclick="save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)"/>'>>
+								<input type="button" class="saveMenuButton" value="Save" @onclick="'save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)'"/>
 							<<else>>
 								<input type="button" value="Save" disabled/>
 							<</if>>
@@ -285,7 +284,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 <<widget "saveWarning">><<nobr>>
 <div class="saveBorder">
-	<<set _saveDetails = returnSaveDetails()>>
+	<<set _saveDetails = getSaveDetails()>>
 	<<if _saveDetails.slots[$args[0]] isnot null>>
 		<<if _saveDetails.slots[$args[0]].metadata isnot undefined>>
 			<<if _saveDetails.slots[$args[0]].metadata.saveId isnot $saveId>>
@@ -338,7 +337,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		Current Save ID: <<print $saveId>>
 		<br>
 	<</if>>
-	<<print '<input type="button" class="saveMenuButton saveMenuConfirm" value="Save" onclick="save('+ $args[0] +', true,'+$saveId+', `'+$saveName+'`)"/>'>>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="Save" @onclick="'save('+ $args[0] +', true,'+$saveId+', `'+$saveName+'`)'"/>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
 	<br>
 </div>
@@ -346,8 +345,8 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 <<widget "loadWarning">><<nobr>>
 <div class="saveBorder">
-	<<set _saveDetails = returnSaveDetails()>>
-	<h4 class="red">Load slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>>?</h4>
+	<<set _saveDetails = getSaveDetails()>>
+	<h4 class="red">Load slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>></h4>
 	<<if $args[0] is "auto">>
 		<<print _saveDetails.autosave.title>>
 		<br>
@@ -359,7 +358,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		<br>
 		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
 		<br>
-		<<print '<input type="button" class="saveMenuButton saveMenuConfirm" value="Load" onclick="loadSave('+ $args[0] +', true)"/>'>>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="Load" @onclick="'loadSave('+ $args[0] +', true)'"/>
 	<</if>>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
 	<br>
@@ -368,8 +367,8 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 <<widget "deleteWarning">><<nobr>>
 <div class="saveBorder">
-	<<set _saveDetails = returnSaveDetails()>>
-	<h4 class="red">Delete Save in slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>>?</h4>
+	<<set _saveDetails = getSaveDetails()>>
+	<h4 class="red">Delete Save in slot <<print ($args[0] is "auto"? "auto": $args[0] + 1)>></h4>
 	<br><br>
 	<<if $args[0] is "auto">>
 		<<print _saveDetails.autosave.title>>
@@ -382,7 +381,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		<br>
 		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
 		<br>
-		<<print '<input type="button" class="saveMenuButton" value="Delete" onclick="deleteSave('+ $args[0] +', true)"/>'>>
+		<input type="button" class="saveMenuButton" value="Delete" @onclick="'deleteSave('+ $args[0] +', true)'"/>
 	<</if>>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="Cancel" onclick="resetSaveMenu();"/>
 	<br>
