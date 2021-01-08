@@ -5,6 +5,7 @@ Config.history.maxStates = 1;
 State.prng.init()
 
 window.versionUpdateCheck = true;
+window.saveUpdateCheck = true;
 
 Config.saves.onLoad = function (save) {
 	window.versionUpdateCheck = true;
