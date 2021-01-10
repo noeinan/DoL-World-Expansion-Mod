@@ -7,10 +7,10 @@ window.mapMove = function (moveTo) {
 			destination_table[destination_table.length] = temp.split("]]")[0];
 		}
 	}
-	var avaliable = SugarCube.State.variables.map.avaliable;
+	var available = SugarCube.State.variables.map.available;
 
-	if (SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
-	//if(SugarCube.State.variables.debug == 1 || avaliable[currentPassage].includes(moveTo))
+	if (SugarCube.State.variables.debug == 1 || available[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
+	//if(SugarCube.State.variables.debug == 1 || available[currentPassage].includes(moveTo))
 	{
 		new Wikifier(null, '<<pass 5>>');
 		SugarCube.State.display(moveTo);
