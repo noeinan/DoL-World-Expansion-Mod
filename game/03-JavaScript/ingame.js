@@ -29,7 +29,7 @@ window.shopClothingFilterToggleTrait = function(trait) {
     }
 }
 
-window.sortOnDescribtion = function(traitOne, traitTwo) {
+window.shopClothingFilterSortOnDescription = function(traitOne, traitTwo) {
     let descriptionOne = Wikifier.wikifyEval(`<<shopTraitDescription ${traitOne}>>`).textContent.trim();
     let descriptionTwo = Wikifier.wikifyEval(`<<shopTraitDescription ${traitTwo}>>`).textContent.trim();
 
