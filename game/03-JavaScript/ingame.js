@@ -17,6 +17,25 @@ window.mapMove = function (moveTo) {
 	}
 }
 
+window.shopClothingFilterToggleTrait = function(trait) {
+    let traits = SugarCube.State.variables.shopClothingFilterTraits;
+    if (traits) {
+        let index = traits.indexOf(trait)
+        if (index == -1) {
+            traits.push(trait)
+        } else {
+            traits.splice(index, 1)
+        }
+    }
+}
+
+window.shopClothingFilterSortOnDescription = function(traitOne, traitTwo) {
+    let descriptionOne = Wikifier.wikifyEval(`<<shopTraitDescription ${traitOne}>>`).textContent.trim();
+    let descriptionTwo = Wikifier.wikifyEval(`<<shopTraitDescription ${traitTwo}>>`).textContent.trim();
+
+    return descriptionOne > descriptionTwo
+}
+
 window.wikifier = function (widget, arg1, arg2, arg3) {
 	if (arg3 !== undefined) {
 		new Wikifier(null, '<<' + widget + ' ' + arg1 + ' ' + arg2 + ' ' + arg3 + '>>');
