@@ -141,7 +141,6 @@
 <<if $parasite.right_ear.name is "slime">>
 	<<set $corruption_slime += 1>>
 <</if>>
-<<unset $street_slime>>
 <<if $chef_rework gte 1>>
 	<<set $chef_rework -= 1>>
 <</if>>
@@ -319,9 +318,14 @@
 	<<set $awarelevel to 0>>
 <</if>>
 <<if $awarelevel lte 1 and $loveInterest.secondary isnot "None">>
-	<<set $loveInterest.secondary to "None">>
-	<span class = "blue"><i>You feel that having multiple lovers is wrong.</i></span>
+	<<set $loveInterest.secondary to "None">><<set $loveInterestAwareMessage to 0>>
+	<span class = "blue"><i>You feel that having multiple lovers is wrong. You can no longer choose more than one love interest.</i></span>
 <</if>>
+<<if $awarelevel gte 2 and $loveInterest.primary isnot "None" and $loveInterest.secondary is "None" and $loveInterestAwareMessage is 0>>
+	<<set $loveInterestAwareMessage to 1>>
+	<span class = "pink"><i>Your mind is open to the possibility of multiple lovers. You may now choose a second love interest.</i></span>
+<</if>>
+
 
 <<pregProgressDay>>
 <<creatureContainersProgressDay>>
@@ -796,6 +800,7 @@
 <<unset $kylar_bodywriting>>
 <<unset $kylar_invite>>
 
+<<set $averyschoolpickup to 0>>
 <<set $averyseen to 0>>
 <<if $averydate is 1>>
 	<<set $averydate to 0>>
@@ -851,6 +856,19 @@
 		<<set $pblevel to 2>>
 	<<elseif $pbgrowth gte 1>>
 		<<set $pblevel to 1>>
+	<</if>>
+
+	<<if $player.ballsExist is true>>
+		<<set $pbgrowthballs += 1>>
+		<<if $pbgrowthballs gte 24>>
+			<<set $pblevelballs to 9>>
+		<<elseif $pbgrowthballs gte 19>>
+			<<set $pblevelballs to 7>>
+		<<elseif $pbgrowthballs gte 10>>
+			<<set $pblevelballs to 5>>
+		<<elseif $pbgrowthballs gte 5>>
+			<<set $pblevelballs to 3>>
+		<</if>>
 	<</if>>
 <</if>>
 
@@ -917,7 +935,15 @@
 <<else>>
 	<<set $clothingShop.banExtension to false>>
 <</if>>
-
+<<unset $slimeFarmNaked>>
+<<if $farm.milking.catchChance gt random(10,1000)/10>>
+	<<set $farm.milking.caught to true>>
+<</if>>
+<<if $farm.milking.catchChance gte 4>>
+	<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.90).toFixed(3)>>
+<<else>>
+	<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.95).toFixed(3)>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "noon">><<nobr>>
@@ -963,6 +989,15 @@
 	<<bimboCheck "upper">>
 	<<bimboCheck "lower">>
 	<<bimboCheck "feet">>
+	<<if $slimeDefyCooldown>>
+		<<set $slimeDefyCooldown -= 1>>
+		<<if $parasite.left_ear.name is "slime" and $parasite.right_ear.name is "slime">>
+			<<set $slimeDefyCooldown -= 1>>
+		<</if>>
+		<<if $slimeDefyCooldown lt 1>>
+			<<unset $slimeDefyCooldown>>
+		<</if>>
+	<</if>>
 	<<if $hour gte 8 and $hour lt 21>>
 		<<set $openinghours to 1>>
 	<<else>>

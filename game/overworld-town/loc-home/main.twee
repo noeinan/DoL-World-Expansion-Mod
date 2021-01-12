@@ -203,7 +203,12 @@ You are in your bedroom.
 	<</if>>
 	<<link [[Settings]]>><</link>>
 	<br>
-	<<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>
+	<<attitudesControlCheck>>
+	<<if $attitudesControl.showGoldLink is true>>
+		<span class="goldLink"><<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>  </span><span class="red">!!</span>
+	<<else>>
+		<<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>
+	<</if>>
 	<br><br>
 <</if>>
 
@@ -265,8 +270,8 @@ You are in the bathroom.
 <<else>>
 	<<link [[Have a bath (0:30)->Bath]]>><<strip>><<pass 30>><<stress -6>><<set $hygiene to 0>><</link>><<lstress>>
 	<br>
-	<!-- Check if the player is female-->
-	<<if $pbdisable is "f" and ($pblevel gte 2 or $pbstrip gte 1)>>
+	<!-- Check if there's any hair-->
+	<<if $pbdisable is "f" and ($pblevel gte 2 or $pbstrip gte 1 or $pblevelballs gte 2)>>
 		<<link [[Shave->Shave]]>><</link>>
 		<br>
 	<</if>>
@@ -287,6 +292,11 @@ You are in the bathroom.
 :: Sleep [nobr]
 
 <<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName},Story.get($passage).description())>>
+<<else>>
+	
+<</if>>
 <<sleep>><<effects>>
 <<sleepeffects>>
 <<if $robindebtwake is 1>>
@@ -1883,25 +1893,46 @@ You grab your clothes and quickly dress.
 <<dontHideForNow>><<shavestrip>>
 You take off your clothes and look at your <<genitals>>.
 <br>
-<<if $worn.genitals.type.includes("chastity")>>
+<<if $worn.genitals.name is "chastity belt">>
 The belt fits snugly against your body and it seems that reaching pubes with a razor is almost impossible.
 <br>
 <<link [[Dress up->Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 <<else>>
-<<if $pblevel gte 2 or $pbstrip gte 1>>
-	<<link [[Shave clean (0:15)->Shave clean]]>><<pass 15>><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 0>><</link>>
+<<if $worn.genitals.name is "chastity cage">>
+Your penis is locked inside the cage. Shaving around it will be a bit more tricky, but that's not a big deal.
+<br>
+<</if>>
+<<if $pblevel gte 2 or $pbstrip gte 1 or $pblevelballs gte 2>>
+	<<link [[Shave clean (0:15)->Shave clean]]>><<pass 15>><<arousal 100>><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pblevelballs to 0>><<set $pbgrowthballs to 0>><<set $pbstrip to 0>><</link>>
 	<br>
 <</if>>
 <<if $pblevel gte 5 or $pbstrip gte 2 or ($pbstrip is 1 and $pblevel gte 2)>>
-	<<link [[Form a landing strip (0:15)->Shave strip]]>><<pass 15>><<set $pbstripName to "neat landing strip">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 1>><</link>>
+	<<link [[Form a landing strip (0:15)->Shave strip]]>><<pass 15>><<arousal 100>><<set $pbstripName to "neat landing strip">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 1>><</link>>
 	<br>
 <</if>>
 <<if $pblevel gte 5 or ($pbstrip gte 2 and $pblevel gte 2)>>
-	<<link [[Form a heart (0:15)->Shave strip]]>><<pass 15>><<set $pbstripName to "cute heart shape">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 2>><</link>>
+	<<link [[Form a heart (0:15)->Shave strip]]>><<pass 15>><<arousal 100>><<set $pbstripName to "cute heart shape">><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 2>><</link>>
 	<br>
 <</if>>
-<<if $pblevel gt 5>>
-	<<link [[Trim short (0:10)->Shave trim]]>><<pass 10>><<set $pblevel to 5>><<set $pbgrowth to 7>><<set $pbstrip to 0>><</link>>
+<<if $player.ballsExist is true>>
+	<<if $pblevel gte 2 or $pbstrip gte 1>>
+		<<link [[Shave only pubis (0:10)->Shave pubis]]>><<pass 10>><<arousal 50>><<set $pblevel to 0>><<set $pbgrowth to 0>><<set $pbstrip to 0>><</link>>
+		<br>
+	<</if>>
+	<<if $pblevelballs gte 3>>
+		<<link [[Shave only balls (0:05)->Shave balls]]>><<pass 5>><<arousal 50>><<set $pblevelballs to 0>><<set $pbgrowthballs to 0>><</link>>
+		<br>
+	<</if>>
+<</if>>
+<<if $pblevel gt 5 or $pblevelballs gt 5>>
+	<<link [[Trim short (0:10)->Shave trim]]>><<pass 10>><<arousal 100>>
+		<<if $pblevel gte 5>>
+			<<set $pblevel to 5>><<set $pbgrowth to 7>><<set $pbstrip to 0>>
+		<</if>>
+		<<if $pblevelballs gte 5>>
+			<<set $pblevelballs to 5>><<set $pbgrowthballs to 10>>
+		<</if>>
+	<</link>>
 	<br>
 <</if>>
 <<link [[Don't shave anything->Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
@@ -1912,7 +1943,25 @@ The belt fits snugly against your body and it seems that reaching pubes with a r
 
 You pick up some shaving cream, a razor and sit down.
 <br>
-You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are>> now smooth and clean.
+You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are 2>> now smooth and clean.
+<br><br>
+<<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Shave pubis [nobr]
+<<effects>>
+
+You pick up some shaving cream and a razor.
+<br>
+You start carefully shaving hair. After a few minutes you are done and your pubis is now smooth and clean.
+<br><br>
+<<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
+
+:: Shave balls [nobr]
+<<effects>>
+
+You pick up some shaving cream, a razor.
+<br>
+You prop one leg on a bathtub and start carefully shaving your balls. After a few minutes you are done and your testicles are now smooth and clean.
 <br><br>
 <<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 
@@ -1921,7 +1970,7 @@ You spread your legs and start carefully shaving your pubes. After a few minutes
 
 You pick up some shaving cream, a razor and sit down.
 <br>
-You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are>> now smooth and clean with a <<print $pbstripName>> adorning your pubis.
+You spread your legs and start carefully shaving your pubes. After a few minutes you are done and your <<genitals_are 2>> now smooth and clean with a <<print $pbstripName>> adorning your pubis.
 <br><br>
 <<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 
@@ -1930,7 +1979,7 @@ You spread your legs and start carefully shaving your pubes. After a few minutes
 
 You pick up a comb with scissors and sit down.
 <br>
-You spread your legs and start carefully trimming your pubes. After a few minutes you are done and hair around your <<genitals>> is now neatly trimmed.
+You spread your legs and start carefully trimming your pubes. After a few minutes you are done and hair around your <<genitals 2>> is now neatly trimmed.
 <br><br>
 <<link [[Next|Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
 
@@ -2277,7 +2326,7 @@ Your bare skin is sensitive, and it's hard not to cry out. It becomes harder sti
 The <<person2>><<person>> takes the tub and pours it over your face. Instinct shuts your eyes, though the cream doesn't reach so high. <<He>> leans in and laps it off your skin, with movements no less chaotic than <<his>> friend. When your face is clean, <<he>> probes your lips with <<his>> tongue, trying to worm <<his>> way in.
 <br><br>
 <<if $arousal gte 10000>>
-	The <<person1>><<persons>> work on your <<breasts>> is too much. <<orgasmpassage>> You can't help but open your mouth. The <<person2>><<person>> takes advantage, and slides <<his>> tongue past your lips and over yours.
+	The <<person1>><<persons>> work on your <<breasts>> is too much. <<orgasmpassage>> You can't help but open your mouth. The <<person2>><<person>> takes advantage, and slides <<his>> tongue past your lips and over yours. <<takeKissVirginity $NPCList[1].fullDescription "rape">>
 <<else>>
 <</if>>
 At last, the pair grow bored. Or perhaps they just ran out of cream. "That wasn't so bad, was it?" the <<person2>><<person>> says as <<he>> cuts through the rope binding your arms.
