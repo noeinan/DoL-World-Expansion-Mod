@@ -1,17 +1,23 @@
 :: Widgets Forest [widget]
 <<widget "forestmove">><<nobr>>
 <<if $forestmove is "quickly">>
-You move as quickly as the rough and wooded terrain will allow. Twigs and fallen branches snap loudly beneath your feet.
+	You move as quick as the rough and wooded terrain will allow. Twigs and fallen branches snap loudly beneath your feet.
 <<elseif $forestmove is "normally">>
-You walk through the trees. The gentle sounds and scents make for a pleasant journey.
+	You walk through the trees. The gentle sounds and scents make for a pleasant journey.
 <<elseif $forestmove is "carefully">>
-You sneak through the undergrowth, causing as little disturbance as possible.
+	You sneak through the undergrowth, causing as little disturbance as possible.
 <<elseif $forestmove is "hobble">>
-You slowly step through the undergrowth, unable to move efficiently due to your footwear.
+	You slowly step through the undergrowth, unable to move efficiently due to your footwear.
 <<elseif $forestmove is "secretin">>
-The path you take would be invisible if you didn't know where to look. You soon find yourself much deeper in the forest.
+	The path you take would be invisible if you didn't know where to look. You soon find yourself much deeper in the forest.
 <<elseif $forestmove is "secretout">>
-The path you take would be invisible if you didn't know where to look. You soon find yourself near the edge of the forest.
+	The path you take would be invisible if you didn't know where to look. You soon find yourself near the edge of the forest.
+<<elseif $forestmove is "quick_search">>
+	You search as quick as the rough and wooded terrain will allow. Twigs and fallen branches snap loudly beneath your feet.
+<<elseif $forestmove is "normal_search">>
+	You search for anything of value hidden between the trees.
+<<elseif $forestmove is "careful_search">>
+	You sneak through the undergrowth, scanning the ground for anything of value.
 <</if>>
 <<set $forestmove to 0>>
 <</nobr>><</widget>>
@@ -26,18 +32,18 @@ Go deeper into the forest
 	<br>
 	<<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forest += 5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 	<br>
-	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
+	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest += 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "forestsearch">><<nobr>>
-Search this area
+Search this area <<gtreasure>>
 <br>
-<<link [[Quickly (0:05)|Forest]]>><<set $forestmod to 3>><<pass 5>><<set $forestmove to "quickly">><<if $foresthunt gte 1>><<set $foresthunt += 0.5>><</if>><</link>><<gharass>>
+<<link [[Quickly (0:05)|Forest]]>><<set $forest_search to true>><<set $forestmod to 3>><<pass 5>><<set $forestmove to "quick_search">><<if $foresthunt gte 1>><<set $foresthunt += 0.5>><</if>><</link>><<gharass>>
 <br>
-<<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
+<<link [[Normally (0:10)|Forest]]>><<set $forest_search to true>><<set $forestmod to 1.5>><<set $forestmove to "normal_search">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 <br>
-<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
+<<link [[Carefully (0:30)|Forest]]>><<set $forest_search to true>><<set $forestmod to 1>><<pass 30>><<set $forestmove to "careful_search">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
 <</nobr>><</widget>>
 
 <<widget "forestlessdeep">><<nobr>>
@@ -50,11 +56,12 @@ Go towards town
 	<br>
 	<<link [[Normally (0:10)|Forest]]>><<set $forestmod to 1.5>><<set $forest -= 5>><<set $forestmove to "normally">><<pass 10>><<if $foresthunt gte 1>><<set $foresthunt += 1>><</if>><</link>>
 	<br>
-	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>><<gtreasure>>
+	<<link [[Carefully (0:30)|Forest]]>><<set $forestmod to 1>><<set $forest -= 5>><<pass 30>><<set $forestmove to "carefully">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "eventforestoutskirts">><<nobr>>
+<<set $rng to random(1, 100)>>
 <<if $rng lte 20>>
 	<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
 	You hear a pair up ahead, on the same trail as you.
@@ -188,6 +195,7 @@ You squeeze through a thicket.
 <</nobr>><</widget>>
 
 <<widget "eventforest">><<nobr>>
+<<set $rng to random(1, 100)>>
 <<if $rng lte 20 and $foresthunt lte 0>>
 A chill runs up your spine, a warning from some primal instinct. <span class="red">Something is hunting you.</span>
 <<set $foresthunt to 1>>
@@ -224,6 +232,7 @@ You squeeze through a thicket.
 <</if>>
 <</nobr>><</widget>>
 <<widget "eventforestdeep">><<nobr>>
+<<set $rng to random(1, 100)>>
 <<if $rng lte 20 and $foresthunt lte 0>>
 A chill runs up your spine, a warning from some primal instinct. <span class="red">Something is hunting you.</span>
 <<set $foresthunt to 1>>
@@ -288,19 +297,9 @@ You squeeze through a thicket.
 <</if>>
 <</nobr>><</widget>>
 <<widget "eventforestsafe">><<nobr>>
+<<set $rng to random(1, 100)>>
 <<if $forest lte 20>>
-	<<if $rng gte 81>>
-	You find a cluster of edible mushrooms growing at the base of a tree.
-	<br><br>
-
-	<<if $scienceshroomheart lt 5>>
-	<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 0>><</link>>
-	<br>
-	<</if>>
-	<<link [[Eat one|Forest Mushrooms]]>><<stress 3>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
-	<br>
-	<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
-	<<elseif $rng gte 61>>
+	<<if $rng gte 71>>
 	You come to a fast-flowing river.
 
 		<<if $foresthunt gte 1>>
@@ -312,41 +311,11 @@ You squeeze through a thicket.
 	<<link [[Ignore it|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 
-	<<elseif $rng gte 51>>
-	<<forestarrow>>
-
 	<<elseif $rng gte 41>>
 	You find a trail which makes the going a little easier.
 	<<lstress>><<stress -2>>
 	<br><br>
 	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-	<br>
-	<<elseif $rng gte 21>>
-	You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
-	<<if $science gte 300 and !$plants_known.includes("lily")>>
-		Lilies grow among the grass and in the shadow of taller plants.
-	<</if>>
-	<<lstress>><<stress -2>>
-	<br><br>
-		<<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
-		or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
-		or $upperwetstage gte 3 and $worn.under_upper.exposed gte 1
-		or $upperwetstage gte 3 and $underupperwetstage gte 3>>
-		<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
-		<br>
-		<</if>>
-		<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
-		or $worn.lower.exposed gte 2 and $underlowerwetstage gte 3
-		or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1
-		or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
-		<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
-		<br>
-		<</if>>
-		<<if $science gte 300 and !$plants_known.includes("lily")>>
-			<<link [[Search for seeds (0:30)|Forest Lily]]>><<pass 30>><<tending 6>><<set $plants_known.push("lily")>><</link>><<gtending>>
-			<br>
-		<</if>>
-	<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 	<<else>>
 	You hear a wolf howl in the distance.
@@ -360,19 +329,7 @@ You squeeze through a thicket.
 	<br>
 	<</if>>
 <<elseif $forest lte 50>>
-	<<if $rng gte 81>>
-	You find a cluster of edible mushrooms growing at the base of a tree.
-	<br><br>
-
-	<<if $scienceshroomheart lt 5>>
-	<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 0>><</link>>
-	<br>
-	<</if>>
-
-	<<link [[Eat one|Forest Mushrooms]]>><<stress 6>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
-	<br>
-	<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
-	<<elseif $rng gte 61>>
+	<<if $rng gte 71>>
 	You come to a fast-flowing river.
 
 		<<if $foresthunt gte 1>>
@@ -384,36 +341,11 @@ You squeeze through a thicket.
 	<<link [[Ignore it|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 
-	<<elseif $rng gte 51>>
-	<<forestdagger>>
-
 	<<elseif $rng gte 41>>
 	You find a trail which makes the going a little easier.
 	<<lstress>><<stress -2>>
 	<br><br>
 	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-	<br>
-	<<elseif $rng gte 21>>
-	You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
-	<<if $science gte 400 and !$plants_known.includes("red_rose")>>
-		Wild red rose bushes dot the area.
-	<</if>>
-	<<lstress>><<stress -2>>
-	<br><br>
-	<<if $worn.upper.exposed gte 2>>
-	<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
-	<br>
-	<</if>>
-	<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-	<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
-	<br>
-	<</if>>
-	<<if $science gte 400 and !$plants_known.includes("red_rose")>>
-		<<link [[Search for seeds (0:30)|Forest Red Rose]]>><<pass 30>><<tending 6>><<set $plants_known.push("red_rose")>><<pain 6>><</link>><<gpain>><<gtending>>
-		<br>
-	<</if>>
-	<br>
-	<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
 	<<else>>
 	You hear a wolf howl in the distance.
@@ -427,72 +359,32 @@ You squeeze through a thicket.
 	<br>
 	<</if>>
 <<elseif $forest lte 100>>
-	<<if $rng gte 81>>
-	You find a cluster of edible mushrooms growing at the base of a decaying tree.
+	<<if $rng gte 71>>
+		A breeze caresses your face as you enter a clearing. Stood in the middle is a deer. It stops feeding when it notices you, but doesn't move.
+		<br><br>
 
-	<<if $science gte 200>>
-	You remember from school that they're called wolfshrooms, and were prized by warriors in ancient times.
-	<</if>>
-
-	<br><br>
-
-	<<if $scienceshroomwolf lt 5>>
-	<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 1>><</link>>
-	<br>
-	<</if>>
-
-	<<link [[Eat one|Forest Mushrooms2]]>><<set $drunk += 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
-	<br>
-	<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
-	<<elseif $rng gte 71>>
-	A breeze caresses your face as you enter a clearing. Stood in the middle is a deer. It stops feeding when it notices you, but doesn't move.
-	<br><br>
-
-	<<link [[Approach|Forest Deer]]>><</link>>
-	<br>
-	<<link [[Ignore|Forest]]>><<set $eventskip to 1>><</link>>
-	<<elseif $rng gte 61>>
-	You come to a fast-flowing river.
-
-		<<if $foresthunt gte 1>>
-		You might be able to use it to disrupt your trail and escape your pursuer, but it looks dangerous.
-		<</if>>
-	<br><br>
-	<<link [[Swim across|Forest Swim]]>><<set $foresthunt to 0>><</link>><<swimmingdifficulty 1 600>>
-	<br>
-	<<link [[Ignore it|Forest]]>><<set $eventskip to 1>><</link>>
-	<br>
-
-	<<elseif $rng gte 51>>
-	<<forestgem>>
-
-	<<elseif $rng gte 41>>
-	You find a trail which makes the going a little easier.
-	<<lstress>><<stress -2>>
-	<br><br>
-	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-	<br>
-	<<elseif $rng gte 21>>
-	You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
-	<<if $science gte 500 and !$plants_known.includes("orchid")>>
-		You spot orchids near the edge, at the base of ancient trees.
-	<</if>>
-	<<lstress>><<stress -2>>
-	<br><br>
-	<<if $worn.upper.exposed gte 2>>
-	<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
-	<br>
-	<</if>>
-	<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
-	<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
-	<br>
-	<</if>>
-	<<if $science gte 500 and !$plants_known.includes("orchid")>>
-		<<link [[Search for seeds (0:30)|Forest Orchid]]>><<pass 30>><<tending 6>><<set $plants_known.push("orchid")>><</link>><<gtending>>
+		<<link [[Approach|Forest Deer]]>><</link>>
 		<br>
-	<</if>>
-	<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
-	<br>
+		<<link [[Ignore|Forest]]>><<set $eventskip to 1>><</link>>
+		<<elseif $rng gte 61>>
+		You come to a fast-flowing river.
+
+			<<if $foresthunt gte 1>>
+			You might be able to use it to disrupt your trail and escape your pursuer, but it looks dangerous.
+			<</if>>
+		<br><br>
+		<<link [[Swim across|Forest Swim]]>><<set $foresthunt to 0>><</link>><<swimmingdifficulty 1 600>>
+		<br>
+		<<link [[Ignore it|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+
+
+		<<elseif $rng gte 41>>
+		You find a trail which makes the going a little easier.
+		<<lstress>><<stress -2>>
+		<br><br>
+		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
 	<<else>>
 	You hear a wolf howl in the distance.
 		<<if $wolfgirl gte 3>>
@@ -503,6 +395,241 @@ You squeeze through a thicket.
 	<br><br>
 	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
 	<br>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+<<widget "eventforestitem">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<if $forest lte 20>>
+	<<if $rng gte 71>>
+		You find a cluster of edible mushrooms growing at the base of a tree.
+		<br><br>
+
+		<<if $scienceshroomheart lt 5>>
+		<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 0>><</link>>
+		<br>
+		<</if>>
+		<<link [[Search for saleable specimens (0:20)|Forest Mushrooms Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+		<br>
+		<<link [[Eat one|Forest Mushrooms]]>><<stress 3>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
+		<br>
+		<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	
+	<<elseif $rng gte 51>>
+		<<forestarrow>>
+	<<else>>
+		<<set _forest_item to random(1, 2)>>
+		You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
+		<<if _forest_item is 1>>
+			Lilies grow among the grass and in the shadow of taller plants.
+		<<else>>
+			Ripe apples hang from the branches.
+		<</if>>
+		<<lstress>><<stress -2>>
+		<br><br>
+		<<if $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1
+		or $worn.upper.exposed gte 2 and $underupperwetstage gte 3
+		or $upperwetstage gte 3 and $worn.under_upper.exposed gte 1
+		or $upperwetstage gte 3 and $underupperwetstage gte 3>>
+			<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1
+		or $worn.lower.exposed gte 2 and $underlowerwetstage gte 3
+		or $lowerwetstage gte 3 and $worn.under_lower.exposed gte 1
+		or $lowerwetstage gte 3 and $underlowerwetstage gte 3>>
+			<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		
+		<<if _forest_item is 1>>
+			<<if !$plants_known.includes("lily")>>
+				<<if $science gte 300>>
+					<<link [[Search for seeds (0:30)|Forest Lily]]>><<pass 30>><<tending 6>><<set $plants_known.push("lily")>><</link>><<gtending>>
+					<br>
+				<<else>>
+					<span class="blue">A higher science skill would let you harvest lily seeds.</span>
+					<br>
+				<</if>>
+			<</if>>
+			<<if $tending gte 100>>
+				<<link [[Pick Lilies (0:20)|Forest Lily Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<else>>
+			<<link [[Pick apples (0:20)|Forest Apple Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+			<br>
+		<</if>>
+		<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<elseif $forest lte 50>>
+	<<if $rng gte 71>>
+		You find a cluster of edible mushrooms growing at the base of a tree.
+		<br><br>
+
+		<<if $scienceshroomheart lt 5>>
+			<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 0>><</link>>
+			<br>
+		<</if>>
+			<<link [[Search for saleable specimens (0:20)|Forest Mushrooms Pick]]>><<pass 20>><</link>><<tendingdifficulty 1 300>>
+			<br>
+			<<link [[Eat one|Forest Mushrooms]]>><<stress 6>><<tiredness -6>><</link>><<gstress>><<ltiredness>>
+			<br>
+		<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
+	<<elseif $rng gte 51>>
+		<<forestdagger>>
+	<<else>>
+		<<set _forest_item to random(1, 2)>>
+		You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
+		
+		<<if _forest_item is 1>>
+			Wild red rose bushes dot the area.
+		<<else>>
+			Wild pears grow from the trees.
+		<</if>>
+		
+		<<lstress>><<stress -2>>
+		<br><br>
+		<<if $worn.upper.exposed gte 2>>
+			<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
+			<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		<<if _forest_item is 1>>
+			<<if !$plants_known.includes("red_rose")>>
+				<<if $science gte 400>>
+					<<link [[Search for seeds (0:30)|Forest Red Rose]]>><<pass 30>><<tending 6>><<set $plants_known.push("red_rose")>><<pain 6>><</link>><<gpain>><<gtending>>
+					<br>
+				<<else>>
+					<span class="blue">A higher science skill would let you harvest red rose seeds.</span>
+					<br>
+				<</if>>
+			<</if>>
+			<<if $tending gte 200>>
+				<<link [[Pick red roses (0:20)|Forest Red Rose Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+			<br>
+		<<else>>
+			<<if $tending gte 100>>
+				<<link [[Pick pears (0:20)|Forest Pear Pick]]>><<pass 20>><</link>><<tendingdifficulty 100 400>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<</if>>
+		<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<if $rng gte 71>>
+		You find a cluster of edible mushrooms growing at the base of a decaying tree.
+
+		<<if $science gte 200>>
+			You remember from school that they're called wolfshrooms, and were prized by warriors in ancient times.
+		<</if>>
+
+		<br><br>
+
+		<<if $scienceshroomwolf lt 5>>
+			<<link [[Take for science project|Forest Science Shroom]]>><<set $phase to 1>><</link>>
+			<br>
+		<</if>>
+		<<if $tending gte 300>>
+			<<link [[Search for saleable specimens (0:20)|Forest Mushrooms2 Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
+			<br>
+		<<else>>
+			<span class="blue">You need a higher tending skill to pick saleable mushrooms.</span>
+			<br>
+		<</if>>
+		<<link [[Eat one|Forest Mushrooms2]]>><<set $drunk += 60>><<arousal 3000>><<trauma -3>><<transform wolf 3>><</link>><<garousal>><<ltrauma>>
+		<br>
+		<<link [[Best leave them alone|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<<elseif $rng gte 51>>
+		<<forestgem>>
+	<<elseif $rng gte 31 and $bestialitydisable is "f">>
+		You hear a gentle buzz up ahead. A large beehive hangs from a tree. Workers fly in and out in a quest for pollen. The honey would be valuable.
+		<br><br>
+		
+		<<if $tending gte 800>>
+			<<link [[Harvest honeycomb (0:20)|Forest Honey Pick]]>><<pass 20>><</link>><<tendingdifficulty 800 1100>>
+			<br>
+		<<else>>
+			<span class="blue">You need a higher tending skill to harvest wild honeycomb.</span>
+			<br>
+		<</if>>
+		<<link [[Leave|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<<else>>
+		<<set _forest_item to random(1, 2)>>
+		You come to a clearing. A gentle breeze blows against your face, and small, soft plants press beneath your feet.
+		
+		<<if _forest_item is 1>>
+			You spot orchids near the edge, at the base of ancient trees.
+		<<else>>
+			<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+				<span class="red">Red-veined</span> lemons grow from a cluster of small trees.
+			<<else>>
+				Lemons grow from a cluster of small trees.
+			<</if>>
+		<</if>>
+		
+		<<lstress>><<stress -2>>
+		<br><br>
+		<<if $worn.upper.exposed gte 2>>
+			<<link [[Make a top out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 1>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		<<if $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
+			<<link [[Make a skirt out of plants and twigs (0:20)|Forest Clearing]]>><<set $phase to 2>><<pass 20>><</link>>
+			<br>
+		<</if>>
+		<<if _forest_item is 1>>
+			<<if !$plants_known.includes("orchid")>>
+				<<if $science gte 500>>
+					<<link [[Search for seeds (0:30)|Forest Orchid]]>><<pass 30>><<tending 6>><<set $plants_known.push("orchid")>><</link>><<gtending>>
+					<br>
+				<<else>>
+					<span class="blue">A higher science skill would let you harvest orchid seeds.</span>
+					<br>
+				<</if>>
+			<</if>>
+			<<if $tending gte 300>>
+				<<link [[Pick orchids (0:20)|Forest Orchid Pick]]>><<pass 20>><</link>><<tendingdifficulty 300 600>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<<else>>
+			<<if $tending gte 200>>
+				<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+					<<link [[Pick lemons (0:20)|Forest Blood Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+					<br>
+				<<else>>
+					<<link [[Pick lemons (0:20)|Forest Lemon Pick]]>><<pass 20>><</link>><<tendingdifficulty 200 500>>
+					<br>
+				<</if>>
+			<<else>>
+				<span class="blue">You need a higher tending skill to pick saleable specimens.</span>
+				<br>
+			<</if>>
+		<</if>>
+		<<link [[Continue|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
 	<</if>>
 <</if>>
 <</nobr>><</widget>>

@@ -58,7 +58,8 @@ Inventory:
 <<set _plant_keys to Object.keys($plants)>>
 <<for _t to 0; _t lt _plant_keys.length; _t++>>
 	<<if $plants[_plant_keys[_t]].amount gte 1>>
-		<span class="gold"><<print $plants[_plant_keys[_t]].amount>></span> <<print $plants[_plant_keys[_t]].plural>> (£<<print Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost / 100)>> each) |
+		<<set _plant_value to Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost)>>
+		<span class="gold"><<print $plants[_plant_keys[_t]].amount>></span> <<print $plants[_plant_keys[_t]].plural>> (£<<print Math.trunc(_plant_value / 100)>>.<<if _plant_value % 100 lte 9>>0<</if>><<print _plant_value % 100>> each) |
 		<<set _inventory_found to 1>>
 		<<set $plant_inventory.push($plants[_plant_keys[_t]].name)>>
 		<<if $stall_expensive is undefined>>
@@ -89,7 +90,13 @@ Inventory:
 <<set $plants[$stall_plant].amount -= $stall_amount>>
 <<set $money += Math.round($stall_cost * $stall_amount)>>
 <<set $produce_sold += $stall_amount>>
-You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span class="gold">£<<print Math.round($stall_cost * $stall_amount / 100)>></span>
+You sell
+<<if $stall_amount gte 2>>
+	$stall_amount <<print setup.plants[$stall_plant].plural>>
+<<else>>
+	one <<print setup.plants[$stall_plant].name.replace(/_/g," ")>>
+<</if>>
+ for <span class="gold">£<<print Math.round($stall_cost * $stall_amount / 100)>></span>
 <<if $stall_cost * $stall_amount / 100 gte 10000>>
 	It feels good to make so much money at once.
 	<<ltrauma>><<lstress>>
@@ -208,7 +215,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<elseif $rng is 5>>
 		<<generate1>><<person1>>
 		<<stall_init>><<set $enemyarousal += 20>><<set $enemytrust -= 20>>
-		A <<person>> walks up to your display. <<He>> examines one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks. <<He>> leers at you openly.
+		A <<person>> walks up to your display. <<He>> examines one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks. <<He>> leers at you openly.
 		<br><br>
 
 		<<stall_trust>>
@@ -218,7 +225,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<elseif $rng is 6>>
 		<<generate1>><<person1>>
 		<<stall_init>><<set $enemyarousal += 20>><<set $enemytrust -= 20>>
-		A <<person>> walks up to your display. <<He>> lifts one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks. "And don't try to sweet talk me. I've heard about you."
+		A <<person>> walks up to your display. <<He>> lifts one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks. "And don't try to sweet talk me. I've heard about you."
 		<br><br>
 
 		<<stall_trust>>
@@ -228,7 +235,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<elseif $rng is 7>>
 		<<generate1>><<person1>>
 		<<stall_init>><<set $enemyarousal += 20>><<set $enemytrust -= 20>>
-		You see a <<person>> watching you from afar. <<He>> walks over when your eyes meet. <<He>> stoops to examine one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks.
+		You see a <<person>> watching you from afar. <<He>> walks over when your eyes meet. <<He>> stoops to examine one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks.
 		<br><br>
 
 		<<stall_trust>>
@@ -238,7 +245,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<elseif $rng is 8>>
 		<<generate1>><<person1>>
 		<<stall_init>><<set $enemyarousal += 20>><<set $enemytrust -= 20>>
-		A <<person>> walks by, and stops in front of your stall. <<His>> eyes flicker over your face and chest as <<he>> picks up one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks.
+		A <<person>> walks by, and stops in front of your stall. <<His>> eyes flicker over your face and chest as <<he>> picks up one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks.
 		<br><br>
 
 		<<stall_trust>>
@@ -251,7 +258,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 		A <<person>> swaggers up to your display. Without warning, <<he>> reaches forward and grasps your arm. <<He>> tugs you forward, until you're leaning over the table, then <<he>> leans in and licks your cheek.
 		<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
 		<br><br>
-		<<He>> releases you, then examines one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks, leaning against the table.
+		<<He>> releases you, then examines one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks, leaning against the table.
 		<br><br>
 
 		<<stall_trust>>
@@ -261,7 +268,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<else>>
 		<<generate1>><<person1>>
 		<<stall_init>><<set $enemyarousal += 20>><<set $enemytrust -= 20>>
-		A <<person>> walks up to your display. <<He>> sniffs one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?" <<he>> asks, leaning against the table.
+		A <<person>> walks up to your display. <<He>> sniffs one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?" <<he>> asks, leaning against the table.
 		<br><br>
 
 		<<stall_trust>>
@@ -293,8 +300,11 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 	<<stall_init>>
 	A <<person>> walks up to your stand. <<He>> lifts a <<print $stall_plant.replace(/_/g," ")>>, and sniffs it.
 	<br><br>
-
-	"How much?" <<he>> asks, picking up several more until <<he>> holds $stall_amount in <<his>> hand.
+	<<if $stall_amount gte 2>>
+		"How much?" <<he>> asks, picking up several more until <<he>> holds <<stall_amount>> in <<his>> hand.
+	<<else>>
+		"How much for one?" <<he>> asks.
+	<</if>>
 	<br><br>
 
 	<<stall_trust>>
@@ -340,7 +350,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 <<elseif $rng is 7>>
 	<<generate1>><<person1>>
 	<<stall_init>>
-	A <<person>> stops in front of your stall. "Looking for something for the <<spouse>>," <<he>> says. <<He>> leans down and sniffs one of the <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount of these?"
+	A <<person>> stops in front of your stall. "Looking for something for the <<spouse>>," <<he>> says. <<He>> leans down and sniffs one of the <<print setup.plants[$stall_plant].plural>>. "How much for <<stall_amount>> of these?"
 	<br><br>
 
 	<<stall_trust>>
@@ -366,7 +376,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 			<br><br>
 
 			<<if $exhibitionism gte 35>>
-				<<link [[Chase anwyay|Stall Chase Undies]]>><</link>><<exhibitionist3>><<athleticsdifficulty 1 1200>>
+				<<link [[Chase anyway|Stall Chase Undies]]>><</link>><<exhibitionist3>><<athleticsdifficulty 1 1200>>
 				<br>
 			<</if>>
 		<</if>>
@@ -389,7 +399,7 @@ You sell $stall_amount <<print setup.plants[$stall_plant].plural>> for <span cla
 <<else>>
 	<<generate1>><<person1>>
 	<<stall_init>>
-	A <<person1>><<person>> is impressed by your <<print setup.plants[$stall_expensive].plural>>. "How much for $stall_amount?" <<he>> asks.
+	A <<person1>><<person>> is impressed by your <<print setup.plants[$stall_plant].plural>>. "How much for $stall_amount?" <<he>> asks.
 	<br><br>
 
 	<<stall_trust>>
@@ -599,7 +609,11 @@ and your tending skill is contributing
 
 <<widget "stall_init">><<nobr>>
 <<set $stall_plant to $plant_inventory.random()>>
-<<set $stall_amount to random(11, 30)>>
+<<if setup.plants[$stall_plant].special.includes("large")>>
+	<<set $stall_amount to 1>>
+<<else>>
+	<<set $stall_amount to random(11, 30)>>
+<</if>>
 <<if $stall_amount gte $plants[$stall_plant].amount>>
 	<<set $stall_amount to clone($plants[$stall_plant].amount)>>
 <</if>>
@@ -607,4 +621,13 @@ and your tending skill is contributing
 <<set $enemyarousal to 0>>
 <<set $stall_seduced to 0>>
 <<set $stall_cost to Math.round(clone(setup.plants[$stall_plant].plant_cost))>>
+<</nobr>><</widget>>
+
+<<widget "stall_amount">><<nobr>>
+<<if $stall_amount is 1>>
+	<<set _text_output to "one">>
+<<else>>
+	<<set _text_output to $stall_amount>>
+<</if>>
+<<print _text_output>>
 <</nobr>><</widget>>

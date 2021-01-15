@@ -316,3 +316,31 @@ here. The soil quality is
 <<set $plants[$args[0]].name to clone(setup.plants[$args[0]].name)>>
 You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
 <</nobr>><</widget>>
+
+<<widget "tending_pick">><<nobr>>
+<<if $plants[$args[0]] is undefined>>
+	<<set $plants[$args[0]] to {}>>
+	<<set $plants[$args[0]].amount to 0>>
+<</if>>
+<<set $plants[$args[0]].plural to clone(setup.plants[$args[0]].plural)>>
+<<set $plants[$args[0]].name to clone(setup.plants[$args[0]].name)>>
+
+<<if $args[2] gte 1>>
+	<<set _tending_amount to random($args[1], $args[2])>>
+<<else>>
+	<<set _tending_amount to random(1, 5)>>
+<</if>>
+
+<<if !setup.plants[$args[0]].special.includes("large")>>
+	<<set _tending_amount *= (1 + ($tending / 1000))>>
+<</if>>
+<<set _tending_amount to Math.trunc(_tending_amount)>>
+<<set $plants[$args[0]].amount += _tending_amount>>
+<<set $wild_plant_stat += _tending_amount>>
+You pick 
+<<if _tending_amount is 1>>
+	a <<print setup.plants[$args[0]].name.replace(/_/g," ")>>.
+<<else>>
+	<<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
+<</if>>
+<</nobr>><</widget>>

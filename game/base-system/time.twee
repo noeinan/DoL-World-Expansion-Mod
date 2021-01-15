@@ -4,6 +4,7 @@
 
 <<earnAllFeats true>>
 <<set $noon_check to 0>>
+<<set $dawn_check to 0>>
 <<set $renttime -= 1>>
 <<set $motherwake to 0>>
 <<if $gamemode isnot "hard">>
@@ -936,13 +937,15 @@
 	<<set $clothingShop.banExtension to false>>
 <</if>>
 <<unset $slimeFarmNaked>>
-<<if $farm.milking.catchChance gt random(10,1000)/10>>
-	<<set $farm.milking.caught to true>>
-<</if>>
-<<if $farm.milking.catchChance gte 4>>
-	<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.90).toFixed(3)>>
-<<else>>
-	<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.95).toFixed(3)>>
+<<if $farm>>
+	<<if $farm.milking.catchChance gt random(10,1000)/10>>
+		<<set $farm.milking.caught to true>>
+	<</if>>
+	<<if $farm.milking.catchChance gte 4>>
+		<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.90).toFixed(3)>>
+	<<else>>
+		<<set $farm.milking.catchChance to Math.clamp($farm.milking.catchChance * 0.95).toFixed(3)>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -960,6 +963,13 @@
 <<if $lake_ice_broken lte 0>>
 	<<unset $lake_ice_broken>>
 <</if>>
+<</nobr>><</widget>>
+
+<<widget "dawn">><<nobr>>
+<<set $dawn_check to 1>>
+<<unset $skul_dock_init>>
+<<unset $skul_dock>>
+<<unset $dock_security>>
 <</nobr>><</widget>>
 
 <<widget "hour">><<nobr>>
@@ -983,6 +993,8 @@
 	<</if>>
 	<<if $hour gte 12 and $noon_check isnot 1>>
 		<<noon>>
+	<<elseif $hour gte 6 and $dawn_check isnot 1>>
+		<<dawn>>
 	<</if>>
 	<<arousal 0 true>>
 	<<wetnessCalculate>>
@@ -1096,7 +1108,7 @@
 	<<set $robindebt += 1>>
 <</if>>
 <<if $robinpaid isnot 1 and $robindebt gte $robindebtlimit and $robindebtevent lte 0>>
-	<<set $NPCName[$NPCNameList.indexOf("Robin")].trauma to 100>><<set $robineventnote to 1>><<set $robinmissing to 1>>
+	<<set $NPCName[$NPCNameList.indexOf("Robin")].trauma to 100>><<set $robin_injured to 1>><<set $robineventnote to 1>><<set $robinmissing to 1>>
 <</if>>
 <<set $robinmoney to 300>>
 

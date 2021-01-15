@@ -75,9 +75,11 @@ window.combatListColor = function (name, value, type) {
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss":
 			/*penisaction*/
 			case "othermouthescape": case "escape": case "otheranusescape":
+			/*vaginaaction*/
+			case "tribescape":
 				color = "brat";
 				break;
-
+	
 			/*leftaction or rightaction*/
 			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle":
 			/*feetaction*/
@@ -110,7 +112,7 @@ window.combatListColor = function (name, value, type) {
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
 			/*vaginaaction*/
-			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina":
+			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate":
 			/*anusaction*/
 			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub":
 				color = "sub";

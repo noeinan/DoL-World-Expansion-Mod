@@ -1,6 +1,7 @@
 :: Docks [nobr]
 
 <<set $outside to 1>><<set $location to "docks">><<dockeffects>><<effects>>
+<<skul_dock_init>>
 You are on the docks.
 <<if $daystate is "dawn">>
 They're already busy with activity as vehicles arrive to transfer cargo and shipments.
@@ -34,9 +35,9 @@ Dockers arrive for work. They won't let you join them on a school day.
 <<link [[Ask for Raise|Docks Raise]]>><<set $dockwage += 100>><<dockstatus -20>><</link>><<llcool>>
 <br>
 <</if>>
-<<if $daystate is "night" and $futureupdate is 1>>
-<<link [[Sneak inside (0:05)|Docks Sneak Start]]>><</link>>
-<br>
+<<if $daystate is "night">>
+	<<link [[Sneak inside (0:05)|Docks Sneak Start]]>><<set $bus to "S">><</link>>
+	<br>
 <</if>>
 <<storeon "docks" "check">>
 <<if _store_check is 1>>
@@ -474,7 +475,68 @@ You compare the numbers,
 You're sure it's fine. You finish recording the information.
 <br><br>
 <</if>>
+
 <<dockoptions>>
+
+:: Docks Examine Valuables [nobr]
+<<effects>>
+
+
+You keep an eye out for anything valuable. There's a lot, but you need something small enough to carry.
+<br><br>
+
+<<skulduggerycheck>>
+<<if $skulduggerysuccess is 1>>
+
+	
+	<br><br>
+		
+	<<skul_dock_contents gold>>
+	<<if !_dock_location>>
+		<<skul_dock_contents aphrodisiacs>>
+	<</if>>
+	<<if !_dock_location>>
+		<<skul_dock_contents electronics>>
+	<</if>>
+
+	<<if _dock_contents is "gold">>
+		There's a bar of gold in a container at the <<skul_dock_location _dock_location>>. <span class="green">It would sell on the black market.</span> You make a mental note of its location.
+	<<elseif _dock_contents is "aphrodisiacs">>
+		A local company is moving something special through. It's being kept near the <<skul_dock_location _dock_location>>. <span class="teal">It would sell on the black market.</span> You make a mental note of its location.
+	<<elseif _dock_contents is "electronics">>
+		There's a container full of goods, including valuable electronics, near the <<skul_dock_location _dock_location>>. <span class="lblue">They would sell on the black market.</span> You make a mental note of its location.
+	<<elseif !_dock_contents>>
+		You don't find anything suitable. Useful to know.
+		<<set _skul_dock_keys to Object.keys($skul_dock)>>
+		<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+			<<set $skul_dock[_skul_dock_keys[_i]].state to "known">>
+		<</for>>
+	<</if>>
+	<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+		<<skulduggeryskilluse>>
+	<<else>>
+		<span class="blue">That was too easy. You didn't learn anything.</span>
+		<br><br>
+	<</if>>
+
+<<else>>
+
+	Your supervisor slaps your back. There was no sign you were doing anything illicit, but you almost jump from your seat all the same. You'll be teased for that later.<<lcool>><<dockstatus -1>>
+	<br><br>
+
+	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
+		<<skulduggeryskilluse>>
+	<<else>>
+		<span class="blue">That was too easy. You didn't learn anything.</span>
+		<br><br>
+	<</if>>
+
+<</if>>
+
+<<dockoptions>>
+
 
 :: Docks Compound [nobr]
 <<set $outside to 0>><<set $location to "docks">><<dockeffects>><<effects>>
@@ -487,6 +549,22 @@ One of the workers places a crate in front of you, blocking your view. There's a
 
 It's the last crate they load into the cargo container. The <<person1>><<person>> locks it, and they climb into the vehicle before driving away.
 <br><br>
+
+<<skul_dock_contents aphrodisiacs>>
+
+<<if _dock_location is "SW">>
+	The container looks like it's going to remain in the unloading area overnight. 
+	<<if $skulduggery gte 400>>
+		<span class="teal">The contents must be valuable.</span> You make a mental note of its location.
+	<</if>>
+	<br><br>
+<<elseif _dock_location>>
+	A crane lifts the container, and carries it towards the <<skul_dock_location _dock_location>>. It will remain there overnight. 
+	<<if $skulduggery gte 400>>
+		<span class="teal">The contents must be valuable.</span> You make a mental note of its location.
+	<</if>>
+	<br><br>
+<</if>>
 
 <<dockoptions>>
 
