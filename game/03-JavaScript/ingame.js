@@ -230,3 +230,7 @@ function loveInterestFunction() {
 }
 
 DefineMacroS("loveInterestFunction", loveInterestFunction);
+
+window.between = function(x, min, max){
+	return x >= min && x <= max;
+}
