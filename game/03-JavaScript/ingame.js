@@ -18,7 +18,7 @@ window.mapMove = function (moveTo) {
 }
 
 window.shopClothingFilterToggleTrait = function(trait) {
-    let traits = SugarCube.State.variables.shopClothingFilterTraits;
+    let traits = SugarCube.State.variables.shopClothingFilter.traits;
     if (traits) {
         let index = traits.indexOf(trait)
         if (index == -1) {
