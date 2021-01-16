@@ -941,6 +941,9 @@
 
 <<widget "generalUndress">><<nobr>>
 <<if $args[0] and $args[1]>>
+	<<if _storeItemSkip is undefined>>
+		<<set _storeItemSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "hands":false, "legs":false, "feet":false}>>
+	<</if>>
 	<<unset _undressSlot>>
 	/*Checks if the current slot is part of an outfit and switches to the main piece if that is the case*/
 	<<if $worn[$args[1]].outfitSecondary isnot undefined>>
@@ -978,7 +981,7 @@
 			<</if>>
 			<<set $worn[_undressSlot] to clone(setup.clothes[_undressSlot][0])>>
 			<<run _slots.push(_undressSlot)>>
-		<<elseif $args[0]>>
+		<<elseif $args[0] and !_storeItemSkip[_undressSlot]>>
 			<<set _skip to ["naked"]>>
 			<<if !_skip.includes($worn[_undressSlot].name)>>
 				<<if _outfitPrimaryUndress isnot undefined>>
@@ -987,12 +990,16 @@
 							<<if $worn[_labelUndress].outfitSecondary[1] is $worn[_undressSlot].name>>
 								<<storeItem $args[0] _labelUndress>>
 								<<run _slots.push(_labelUndress)>>
+								<<set _storeItemSkip[_labelUndress] to true>>
 							<</if>>
 						<</if>>
 					<</for>>
 				<</if>>
 				<<storeItem $args[0] _undressSlot>>
 				<<run _slots.push(_undressSlot)>>
+			<<else>>
+				<<set _makeTempClothing to 1>>
+				<<storeItem $args[0] _undressSlot>>
 			<</if>>
 		<</if>>
 		<<if _slots.includes("upper")>>
@@ -1044,7 +1051,11 @@
 	<</if>>
 <</for>>
 <<if _makeTempClothing is 1>>
-	<<set _temp_clothing to clone($worn[$args[1]])>>
+	<<if $worn[$args[1]].name is "naked">>
+		<<set _temp_clothing to {name: "naked"}>>
+	<<else>>
+		<<set _temp_clothing to clone($worn[$args[1]])>>
+	<</if>>
 	<<set _temp_clothing.temp to 1>>
 	<<set _temp_clothing.location to $args[0]>>
 	<<set $store[$args[1]].push(clone(_temp_clothing))>>
@@ -1158,15 +1169,15 @@
 					<<set _store_check to 1>>
 				<<else>>
 					<<generalUndress "wardrobe" $args[1]>>
-					<<if $store[$args[1]][_u].temp is undefined>>
+					<<if $store[$args[1]][_u].name is "naked">>
+					<<elseif $store[$args[1]][_u].temp is undefined>>
 						<<set $worn[$args[1]] to clone($store[$args[1]][_u])>>
 						<<set $worn[$args[1]].location to 0>>
-						<<set $store[$args[1]].deleteAt(_u)>>
 					<<else>>
 						<<searchWardrobeForItem $args[1] _u>>
 						<<generalWearFromWardrobe $args[1] _wardrobeId>>
-						<<set $store[$args[1]].deleteAt(_u)>>
 					<</if>>
+					<<set $store[$args[1]].deleteAt(_u)>>
 				<</if>>
 				<<break>>
 			<</if>>
