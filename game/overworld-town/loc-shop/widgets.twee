@@ -73,10 +73,25 @@ Forth argument - item index*/
 	<<set $clothingShopSlot to $args[0]>>
 <</if>>
 <input type="button" value="DEFAULT OPTIONS" onclick="Wikifier.wikifyEval('<<shopDefaultOptionsToggle>>');">
+<input type="button" value="FILTERS" onclick="Wikifier.wikifyEval('<<shopClothingFilterToggle>>');">
 <div id="shopDefault" class="hidden">
 	<<shopDefaultOptions>>
 </div>
-<br><br>
+<br>
+<div id="shopClothingFilter" class="hidden">
+	<<shopClothingFilterSettings>>
+</div>
+<<for _label, _value range $shopClothingFilter.reveal>>
+	<<if _value is false>>
+		<<set _revealFilter to true>>
+		<<break>>
+	<</if>>
+<</for>>
+<<if $shopClothingFilter.gender isnot "none" or $shopClothingFilter.traits.length isnot 0 or _revealFilter>>
+	<br>
+	<span class="green">The filter is currently active!</span> <<link [[Reset it|$passage]]>><<shopClothingFilterReset>><</link>>
+	<br><br>
+<</if>>
 <<if $clothes_choice>>
 	<<set _temp_choice to clone(setup.clothes[$clothingShopSlot][$clothes_choice])>>
 	<<if _temp_choice.plural is 1>>
@@ -146,7 +161,6 @@ Forth argument - item index*/
 			<div id="shopFullImage" @class="($shopDefaults.invertImagesHidden is true? '' : ' hidden')"><<shopFullImage $clothingShopSlot $clothes_choice>></div>
 			<br>
 		<</if>>
-        <<shopClothingFilter>>
 		<<set _cost to clone(_temp_choice.cost)>>
 		<<unset _cursedPrevent>>
 		<<set _outfitPrimaryShop to _temp_choice.outfitPrimary>>
@@ -260,8 +274,6 @@ Forth argument - item index*/
 		<span class="red">The slime in your ear refuses to allow you to try on or buy the _temp_choice.name.</span>
 		<br>
 	<</if>>
-<<else>>
-    <<shopClothingFilter>>
 <</if>>
 <br>
 
@@ -288,22 +300,40 @@ Forth argument - item index*/
 			<<continue>>
 		<</if>>
 
-        <<if $shopClothingFilterGender isnot "none">>
-            <<if _item.gender isnot $shopClothingFilterGender>>
-                <<continue>>
-            <</if>>
-        <</if>>
+		<<if $shopClothingFilter.gender isnot "none">>
+			<<if _item.gender isnot $shopClothingFilter.gender>>
+				<<continue>>
+			<</if>>
+		<</if>>
 
-        <<set _skip to false>>
-        <<for _trait range $shopClothingFilterTraits>>
-            <<if _item.type.indexOf(_trait) is -1>>
-                <<set _skip to true>>
-                <<break>>
-            <</if>>
-        <</for>>
-        <<if _skip>>
-            <<continue>>
-        <</if>>
+		<<if $shopClothingFilter.traits.length gt 0>>
+			<<set _skip to true>>
+		<</if>>
+		<<for _trait range $shopClothingFilter.traits>>
+			<<if _item.type.includes(_trait) is true>>
+				<<set _skip to false>>
+				<<break>>
+			<</if>>
+		<</for>>
+		<<if _skip>>
+			<<continue>>
+		<</if>>
+
+		<<if between(_item.reveal, 900, 1000) and $shopClothingFilter.reveal.lewd isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 700, 899) and $shopClothingFilter.reveal.risqué isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 500, 699) and $shopClothingFilter.reveal.seductive isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 300, 499) and $shopClothingFilter.reveal.comfy isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 200, 299) and $shopClothingFilter.reveal.tasteful isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 100, 199) and $shopClothingFilter.reveal.smart isnot true>>
+			<<continue>>
+		<<elseif between(_item.reveal, 0, 99) and $shopClothingFilter.reveal.unassuming isnot true>>
+			<<continue>>
+		<</if>>
 
 		<<run _trueListCount++>>
 		<<if _listCount is $shopListMax + $shopListStartCount>>
@@ -343,9 +373,9 @@ Forth argument - item index*/
 		<br>
 	<</for>>
 	<br>
-    <<if _trueListCount is 0>>
-        //No items found//
-        <br>
+	<<if _trueListCount is 0>>
+		//No items found//
+		<br>
 	<<elseif $shopListStartCount gte $shopListMax or _listCount is $shopListMax + $shopListStartCount>>
 		<<if $shopListStartCount gte $shopListMax>>
 			<<link [["Previous Page"|$passage]]>>
@@ -378,73 +408,73 @@ Forth argument - item index*/
 <<widget "shopTraitDescription">><<nobr>>
 
 <<if $args[0] is "normal">>
-    Normal - Suitable for everyday use.
+	Normal - Suitable for everyday use.
 <</if>>
 <<if $args[0] is "formal">>
-    Formal - Suitable for important occasions, and for good etiquette among certain company.
+	Formal - Suitable for important occasions, and for good etiquette among certain company.
 <</if>>
 <<if $args[0] is "school">>
-    School - Sanctioned uniform of the local school.
+	School - Sanctioned uniform of the local school.
 <</if>>
 <<if $args[0] is "glasses">>
-    Glasses - Helps you focus, increasing the rate school skills are improved.
+	Glasses - Helps you focus, increasing the rate school skills are improved.
 <</if>>
 <<if $args[0] is "cool">>
-    Fashionable - Increases the rate status improves at school, but some teachers may dislike it.
+	Fashionable - Increases the rate status improves at school, but some teachers may dislike it.
 <</if>>
 <<if $args[0] is "swim">>
-    Swimwear - Fares well underwater.
+	Swimwear - Fares well underwater.
 <</if>>
 <<if $args[0] is "diving">>
-    Diving - Helps keep you warm in cold water.
+	Diving - Helps keep you warm in cold water.
 <</if>>
 <<if $args[0] is "dance">>
-    Dance - Flexible enough to withstand the rigours of the dance floor.
+	Dance - Flexible enough to withstand the rigours of the dance floor.
 <</if>>
 <<if $args[0] is "costume">>
-    Costume - People may look at this askance outside the right situations.
+	Costume - People may look at this askance outside the right situations.
 <</if>>
 <<if $args[0] is "serving">>
-    Serving - Encourages tips when working as a bartender, waiter or waitress if visible.
+	Serving - Encourages tips when working as a bartender, waiter or waitress if visible.
 <</if>>
 <<if $args[0] is "fetish">>
-    Fetish - Intrinsically lewd.
+	Fetish - Intrinsically lewd.
 <</if>>
 <<if $args[0] is "sleep">>
-    Sleep - Soft and cosy.
+	Sleep - Soft and cosy.
 <</if>>
 <<if $args[0] is "mask">>
-    Mask - Conceals your identity, stopping fame from increasing. Won't fool the police or people who know you.
+	Mask - Conceals your identity, stopping fame from increasing. Won't fool the police or people who know you.
 <</if>>
 <<if $args[0] is "holy">>
-    Holy - Sacred to the local faith. Increases purity gains and losses.
+	Holy - Sacred to the local faith. Increases purity gains and losses.
 <</if>>
 <<if $args[0] is "dark">>
-    Profane - Considered obscene by the local faith. Increases awareness gains and losses.
+	Profane - Considered obscene by the local faith. Increases awareness gains and losses.
 <</if>>
 <<if $args[0] is "binding">>
-    Binding - Keeps your arms firmly secure and helpless.
+	Binding - Keeps your arms firmly secure and helpless.
 <</if>>
 <<if $args[0] is "stealthy">>
-    Stealthy - Makes your crimes harder to trace.
+	Stealthy - Makes your crimes harder to trace.
 <</if>>
 <<if $args[0] is "rainproof">>
-    Rainproof - Protects you from the rain.
+	Rainproof - Protects you from the rain.
 <</if>>
 <<if $args[0] is "tanLines">>
-    Tan Lines - Protects your skin from the sun leaving tan lines.
+	Tan Lines - Protects your skin from the sun leaving tan lines.
 <</if>>
 <<if $args[0] is "bimbo">>
-    Special - Something seems special about this set of clothing.
+	Special - Something seems special about this set of clothing.
 <</if>>
 <<if $args[0] is "heels">>
-    High Heeled - Causes fatigue and tripping if you lack skilled feet. Improves kicking power.
+	High Heeled - Causes fatigue and tripping if you lack skilled feet. Improves kicking power.
 <</if>>
 <<if $args[0] is "chest_bind">>
-    Chest Binding - Fits tight around your chest, concealing your breasts.
+	Chest Binding - Fits tight around your chest, concealing your breasts.
 <</if>>
 <<if $args[0] is "eerie">>
-    Eerie - <<if $transformdisable is "f">>Protects a specific transformation.<<else>>There's something peculiar about this object.<</if>>
+	Eerie - <<if $transformdisable is "f">>Protects a specific transformation.<<else>>There's something peculiar about this object.<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -593,62 +623,82 @@ Secondary Colour:
 
 <<widget "shopDefaultOptionsToggle">><<nobr>>
 <<toggleclass #shopDefault "hidden">>
+<<addclass #shopClothingFilter "hidden">>
 <</nobr>><</widget>>
 
 <<widget "shopClothingFilterToggle">><<nobr>>
 <<toggleclass #shopClothingFilter "hidden">>
-<</nobr>><</widget>>
-
-<<widget "shopClothingFilter">><<nobr>>
-<<if $clothingFilter is true>>
-    <input type="button" value="Filter" onclick="Wikifier.wikifyEval('<<shopClothingFilterToggle>>');">
-    <br>
-    <div id="shopClothingFilter" class="hidden">
-        <<shopClothingFilterSettings>>
-        </div>
-    <br>
-
-    <<if $shopClothingFilterGender isnot "none" or $shopClothingFilterTraits.length isnot 0>>
-        <span class="pink">The filter is currently active!</span>
-        <br><br>
-    <</if>>
-<<else>>
-    <<shopClothingFilterReset>>
-<</if>>
+<<addclass #shopDefault "hidden">>
 <</nobr>><</widget>>
 
 <<widget "shopClothingFilterSettings">><<nobr>>
-<<if $shopClothingFilterGender is undefined>>
-    <<set $shopClothingFilterGender to "none">>
+<<if $shopClothingFilter is undefined>>
+	<<set $shopClothingFilter to {
+		gender: "none",
+		traits: [],
+		reveal:{
+			lewd: true,
+			risqué: true,
+			seductive: true,
+			comfy: true,
+			tasteful: true,
+			smart: true,
+			unassuming: true
+		},
+		revealColour:{
+			lewd: "red",
+			risqué: "pink",
+			seductive: "purple",
+			comfy: "blue",
+			tasteful: "lblue",
+			smart: "teal",
+			unassuming: "green"
+		}
+	}>>
+	<<unset $shopClothingFilterTraits>>
+	<<unset $shopClothingFilterGender>>
+	<<unset $clothingTraitTypes>>
 <</if>>
-<<if $shopClothingFilterTraits is undefined>>
-    <<set $shopClothingFilterTraits to []>>
-<</if>>
-
+<br>
 <b>Gender:</b>
-<br>
-<label><<radiobutton "$shopClothingFilterGender" "none" autocheck>> All</label><br>
-<label><<radiobutton "$shopClothingFilterGender" "m" autocheck>> Male</label><br>
-<label><<radiobutton "$shopClothingFilterGender" "f" autocheck>> Female</label><br>
-<label><<radiobutton "$shopClothingFilterGender" "n" autocheck>> Unisex</label><br>
+<<listbox "$shopClothingFilter.gender">>
+	<<option "All" "none">>
+	<<option "Male" "m">>
+	<<option "Female" "f">>
+	<<option "Unisex" "n">>
+<</listbox>>
+<br><br>
 
+<b>How revealing clothing items should be:</b>
 <br>
-<b>Traits:</b>
-<br>
-<<for _index, _trait range $clothingTraitTypes>>
-    <label>
-        <<if $shopClothingFilterTraits.indexOf(_trait) is -1>>
-            <input type="checkbox" @id="_trait" @value="_trait" onclick="window.shopClothingFilterToggleTrait(this.value)"><<shopTraitDescription _trait>>
-        <<else>>
-            <input type="checkbox" @id="_trait" @value="_trait" onclick="window.shopClothingFilterToggleTrait(this.value)" checked><<shopTraitDescription _trait>>
-        <</if>>
-    </label>
-    <br>
+<<for _label, _value range $shopClothingFilter.reveal>>
+	<label @class="$shopClothingFilter.revealColour[_label]"><<print '<<checkbox "$shopClothingFilter.reveal.'+_label+'" false true '+(_value ? "checked" : "")+'>>'>> <<print _label[0].toUpperCase() + _label.substring(1)>></label>
+	<br>
 <</for>>
 <br>
 
+<b>Traits (Hide's any item without any of the selected traits, does not filter when none are selected):</b>
+<br>
+<<shopClothingFilterLoadTraits>>
+<<for _index, _trait range _clothingTraitTypes>>
+	<label>
+		<<if $shopClothingFilter.traits.indexOf(_trait) is -1>>
+			<input type="checkbox" @id="_trait" @value="_trait" onclick="window.shopClothingFilterToggleTrait(this.value)"><<shopTraitDescription _trait>>
+		<<else>>
+			<input type="checkbox" @id="_trait" @value="_trait" onclick="window.shopClothingFilterToggleTrait(this.value)" checked><<shopTraitDescription _trait>>
+		<</if>>
+	</label>
+	<br>
+<</for>>
+<<link [[Select All Traits|$passage]]>>
+	<<for _index, _trait range _clothingTraitTypes>>
+		<<run $shopClothingFilter.traits.pushUnique(_trait)>>
+	<</for>>
+<</link>>
+<br><br>
+
 <<link [[Reset filters|$passage]]>>
-    <<shopClothingFilterReset>>
+	<<shopClothingFilterReset>>
 <</link>>
 <br>
 [[Apply|$passage]]
@@ -656,12 +706,21 @@ Secondary Colour:
 <</nobr>><</widget>>
 
 <<widget "shopClothingFilterReset">><<nobr>>
-<<set $shopClothingFilterGender to "none">>
-<<set $shopClothingFilterTraits to []>>
+<<set $shopClothingFilter.gender to "none">>
+<<set $shopClothingFilter.traits to []>>
+<<set $shopClothingFilter.reveal to {
+	lewd: true,
+	risqué: true,
+	seductive: true,
+	comfy: true,
+	tasteful: true,
+	smart: true,
+	unassuming: true
+}>>
 <</nobr>><</widget>>
 
 <<widget "shopClothingFilterLoadTraits">><<nobr>>
-<<set $clothingTraitTypes to [
+<<set _clothingTraitTypes to [
   "cool",
   "costume",
   "dance",
@@ -684,7 +743,7 @@ Secondary Colour:
   "tanLines"
 ]>>
 
-<<set $clothingTraitTypes to $clothingTraitTypes.sort(shopClothingFilterSortOnDescription)>>
+<<set _clothingTraitTypes to _clothingTraitTypes.sort(shopClothingFilterSortOnDescription)>>
 <</nobr>><</widget>>
 
 <<widget "shopCustomColorsToggle">><<nobr>>
