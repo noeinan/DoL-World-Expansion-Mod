@@ -3579,17 +3579,23 @@ __Map__<br>
 		<</if>>
 
 		/* Calculate the percent to the next level based on the gap between the nearest two states */
-		<<if _config.currentLevel eq 0>>
-			<<set _config.percent = 0>>
-		<<elseif _config.currentLevel eq (_config.states.length - 1)>>
-			<<set _config.percent = 100>>
+		<<if _config.percent>>
+			<<set _config.percent = Math.floor(_config.percent)>>
 		<<else>>
-			<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
+			<<if _config.currentLevel eq 0>>
+				<<set _config.percent = 0>>
+			<<elseif _config.currentLevel eq (_config.states.length - 1)>>
+				<<set _config.percent = 100>>
+			<<else>>
+				<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
+			<</if>>
 		<</if>>
-			
+		
 	<<else>>
 		<<set _config.percent= Math.floor(_config.currentValue)>>
 	<</if>>
+
+	<<set _config.barWidth = Math.clamp(_config.percent, 0, 100)>>
 
 	<div class="characteristic-box">
 		<div class="characteristic-top-line">
@@ -3625,7 +3631,7 @@ __Map__<br>
 			</div>
 		<</if>>
 		<div class="meter">
-			<div @class="(_config.meterColor ? _config.meterColor + 'bar' : 'goldbar')" @style="'width:' + _config.percent + '%'"></div>
+			<div @class="(_config.meterColor ? _config.meterColor + 'bar' : 'goldbar')" @style="'width:' + _config.barWidth + '%'"></div>
 		</div>
 	</div>
 
