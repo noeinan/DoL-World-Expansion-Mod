@@ -6,7 +6,7 @@ You are in the park.
 	There are a few people out walking or jogging. Some have dogs with them.
 <<elseif $daystate is "day">>
 	<<if $weather is "rain">>
-		A few people are out, walking around the puddles dotting the paths.
+		A few people are out, walking around the puddles that dot the paths.
 	<<elseif $weather is "snow">>
 		Many people are out, walking their dogs or jogging, wrapped up warm against the cold.
 	<<else>>
@@ -23,9 +23,9 @@ You are in the park.
 		There is no one around.
 	<</if>>
 <</if>>
-<<if $science gte 300 and !$plants_known.includes("tulip")>>
-	Tulips grow in great patches near the riverbank.
-<</if>>
+
+Tulips grow in great patches near the riverbank.
+
 <<streeteffects>>
 <br><br>
 <<if $exposed gte 1>>
@@ -84,6 +84,15 @@ You are in the park.
 		<</if>>
 	<<elseif $danger gte (9900 - $allure) and $eventskip is 0>>
 		<<eventsstreet>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and (($weekday is 7 and $hour gte 9 and $hour lte 16) or ($weekday is 1 and $hour gte 9 and $hour lte 16)) and $exposed lte 0 and $season is "winter">>
+		<<set $NPCName[$NPCNameList.indexOf("Robin")].init to 1>><<set $robindebt to 0>><<set $robindebtlimit to 5>>
+		<<npc Robin>><<initnpc Robin>><<person1>>You see someone familiar working at a stand in the park. <<He>> notices you at the same time. "Hey!" It's Robin. <<Hes>> another resident at the orphanage. <<Hes>> always looked up to you, despite being about the same age. <<He>> motions you over, while cleaning a mug. <<He>> puts it down and hugs you whn you approach.
+		<br><br>
+			"I haven't seen you at the orphanage in a while. We must keep missing each other. Remember, <span class="gold">you can visit me in my room at home</span> anytime you want. I've been waiting to show you something, I'm so excited!" <<He>> looks behind you, noticing customers approaching. "I've got to get back to work here. You're welcome to stay and help if you want." <<He>> gets back into position behind the stand.
+		<br><br>
+		<<endevent>>
+		<<link [[Next|Park]]>><<set $eventskip to 1>><</link>>
+		<br>
 	<<else>>
 		<<if $map.top is true>>
 			<<map "park">>
@@ -95,10 +104,17 @@ You are in the park.
 			<<link [[Examine lichen for science project|Park Lichen]]>><</link>>
 			<br>
 		<</if>>
-		<<if $science gte 300 and !$plants_known.includes("tulip")>>
-		<<link [[Search for seeds (0:30)|Park Tulip]]>><<set $plants_known.push("tulip")>><<pass 30>><<tending 6>><</link>><<gtending>>
-		<br>
+		<<if !$plants_known.includes("tulip")>>
+			<<if $science gte 300>>
+				<<link [[Search for seeds (0:30)|Park Tulip]]>><<set $plants_known.push("tulip")>><<pass 30>><<tending 6>><</link>><<gtending>>
+				<br>
+			<<else>>
+				<span class="blue">A higher science skill would let you harvest tulip seeds.</span>
+				<br>
+			<</if>>
 		<</if>>
+		<<link [[Pick tulips (0:20)|Park Tulip Pick]]>><<pass 20>><<crimeup 20>><</link>><<tendingdifficulty 1 200>><<crime>>
+		<br>
 		<<if $NPCName[$NPCNameList.indexOf("Robin")].init is 1 and $robinmissing isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $exposed lte 0 and $season is "winter">>
 			<<if $weekday is 7 and $hour gte 9 and $hour lte 16 or $weekday is 1 and $hour gte 9 and $hour lte 16>>
 				<<link [[Robin's Hot Chocolate Stand|Robin Chocolate]]>><</link>>
@@ -186,3 +202,24 @@ You walk through the tulips, searching for any that are seeding and careful not 
 
 <<link [[Next|Park]]>><</link>>
 <br>
+
+:: Park Tulip Pick [nobr]
+<<effects>>
+
+You search the riverbank for the prettiest tulips, the ones someone might be willing to pay for. These aren't strictly wild flowers. You try to avoid being seen.
+<br><br>
+
+<<if $tending gte random(1, 200)>>
+	<span class="green">You find some particularly vibrant specimens.</span>
+	<<tending_pick tulip>>
+	<br><br>
+	
+	<<link [[Next|Park]]>><</link>>
+	<br>
+<<else>>
+	You find some nice specimens, <span class="red">but rip them from the earth with too little care,</span> leaving them haggard and wilted.<<gtending>><<tending 2>>
+	<br><br>
+	
+	<<link [[Next|Park]]>><</link>>
+	<br>
+<</if>>

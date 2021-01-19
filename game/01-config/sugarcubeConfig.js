@@ -5,6 +5,7 @@ Config.history.maxStates = 1;
 State.prng.init()
 
 window.versionUpdateCheck = true;
+window.saveUpdateCheck = true;
 
 Config.saves.onLoad = function (save) {
 	window.versionUpdateCheck = true;
@@ -20,7 +21,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.2.20.3",
+	"version": "0.2.21.4",
 }
 
 config.saves.autosave = "autosave";

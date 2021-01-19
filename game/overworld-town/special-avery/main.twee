@@ -629,15 +629,15 @@ When the two of you finish eating, <<person1>><<he>> raises the bottle with a sm
 <br><br>
 
 
-<<link [[Accept|Avery Hotel Drink]]>><<set $phase to 0>><<set $drunk += 160>><<set $drugged += 220>><<npcincr Avery love 1>><</link>><<glove>><<garousal>>
+<<link [[Accept|Avery Hotel Drink]]>><<endevent>><<set $phase to 0>><<set $drunk += 160>><<set $drugged += 220>><<npcincr Avery love 1>><</link>><<glove>><<garousal>>
 <br>
-<<link [[Decline|Avery Hotel Drink]]>><<set $phase to 1>><</link>>
+<<link [[Decline|Avery Hotel Drink]]>><<endevent>><<set $phase to 1>><</link>>
 <br>
 <br><br>
 
 :: Avery Hotel Drink [nobr]
 <<effects>><<pass 30>>
-<<endevent>><<npc Avery>><<person1>>
+<<npc Avery>><<person1>>
 <<if $phase is 0>>
 	<<if $submissive gte 1150>>
 		"It looks expensive. Is it really okay?"
@@ -843,7 +843,7 @@ There's idle chatter, mostly Avery talking about <<his>> week. For a long while,
 	<<flashbackschool>>
 	You're snapped out of it by Avery shaking you. "Hey! What's wrong? What happened to you?"
 	<br><br>
-	You tell <<him>> about it, without really meaning to, but the words simply won't stop coming forward. <<His>> expression turns dark as <<he>> holds you close. <<npcincr Avery love 1>><<set $endear -=10>><<npcincr Avery rage -=20>><<glove>><<lendear>><<lllarage>>
+	You tell <<him>> about it, without really meaning to, but the words simply won't stop coming forward. <<His>> expression turns dark as <<he>> holds you close. <<npcincr Avery love 1>><<set $endear -=10>><<npcincr Avery rage -20>><<glove>><<lendear>><<lllarage>>
 	<br><br>
 	"Maybe we should call it an early night. I've got just the thing to keep your mind off of your troubles." <<He>> gets out of the hot tub, offering you a hand.
 	<br><br>
@@ -1156,7 +1156,7 @@ You put on the babydoll lingerie.
 	<br><br>
 	You sit down and <<he>> turns towards you, eyes glancing down your body before <<he>> pins you down against the sheets. "Is it cocky to admit that I wanted that on you just to take it off?"
 	<br><br>
-	<<link [[Kiss|Avery Hotel Sex]]>><<set $endear += 10>><<set $sexstart to 1>><</link>><<promiscuous1>><<gendear>>
+	<<link [[Kiss|Avery Hotel Sex]]>><<set $phase to 0>><<set $sexstart to 1>><<set $endear += 10>><</link>><<promiscuous1>><<gendear>>
 	<br>
 	<<link [[Roll Over|Avery Hotel No No No No Sex]]>><<npcincr Avery love -1>><<npcincr Avery rage 3>><</link>><<llove>><<garage>>
 	<br>
@@ -1266,7 +1266,7 @@ You find yourself in the commercial alleyways.
 
 <<else>>
 
-"As you wish," <<he>> says, rolling over. <<set $endear -+10>><<lendear>>
+"As you wish," <<he>> says, rolling over. <<set $endear -=10>><<lendear>>
 <br><br>
 
 <<tearful>> you drift off to sleep under the blankets in Avery's arms.
@@ -2957,17 +2957,28 @@ The rest of the journey is uneventful. Robin stays close to you the whole way.
 
 <<set $outside to 0>><<effects>>
 You climb into Avery's car, as he drives you to the orphanage.
-<<if $crime gte 1000>>
-	It seems to be the same path the bus takes, but suddenly the two of you change course towards Barb Street.
-	<br><br>
+<<if $averyCrimeTracker is undefined>>
+  <<set _crimeEvent to true>>
+<<elseif $averyCrimeTracker gte 500>>
+  <<set _crimeEvent to true>>
+<</if>>
+<<if $crime gte 1000 and _crimeEvent is true and $NPCName[$NPCNameList.indexOf("Avery")].rage gte random(20, 100) and $averyragerevealed is 1>>
+    It seems to be the same path the bus takes, but suddenly the two of you change course towards Barb Street.
+    <br><br>
 
-	Avery parks, and you notice the police station is across the road. You can’t help but feel uneasy, given your criminal activity.
-	<br><br>
+    Avery parks, and you notice the police station is across the road. You can’t help but feel uneasy, given your criminal activity.
+    <br><br>
 
-	"What's wrong?" Avery says, now in a more serious tone. "You seem nervous." You notice a couple of officers patrolling around the block. Something tells you they are looking for you.
-	"I know what you’ve been up to," <<He>> says. "Don't try to deny it." You see the officers calling out to a <<if $player.gender_appearance is "m">>boy<<else>>girl<</if>> who looks like you. It looks like they're questioning the <<if $player.gender_appearance is "m">>boy,<<else>>girl,<</if>> but leave <<if $player.gender_appearance is "m">>him<<else>>her<</if>> be after a while.
-	"It's every good citizen's duty to report any crimes they witness," <<He>> looks at you. "As well as any filthy criminals such as yourself." <<He>> smiles.
-	<br><br>
+    "What's wrong?" Avery says, now in a more serious tone. "You seem nervous." You notice a couple of officers patrolling around the block. Something tells you they are looking for you.
+	<<if $averyCrimeTracker is undefined>>
+    	"I know what you’ve been up to,"
+	<<else>>
+		"You're back on the wrong side of the law,"
+	<</if>>
+	<<He>> says. "Don't try to deny it." You see the officers calling out to a <<if $player.gender_appearance is "m">>boy<<else>>girl<</if>> who looks like you. It looks like they're questioning the <<if $player.gender_appearance is "m">>boy,<<else>>girl,<</if>> but leave <<if $player.gender_appearance is "m">>him<<else>>her<</if>> be after a while.
+    "It's every good citizen's duty to report any crimes they witness," <<He>> looks at you. "And the last thing I want is to be witnessed with a criminal." <<He>> smiles.
+    <br><br>
+	<<set $averyCrimeTracker to 0>>
 
 	<<if $submissive gte 1500>>
 		<<link [[Plead|Avery School Pickup Plead]]>><<sub 1>><<npcincr Avery rage -5>><</link>><<larage>><<submissivetext>>
@@ -3097,7 +3108,7 @@ Once there, you step out of the car without a word. <<He>> watches you for a mom
 <<effects>>
 
 <<if $athletics gte random(1, 1000)>>
-	You unlock the car door, and break into a run. "Wait, where are you-" Avery calls after you. The police officers notice you running, and Avery swears loudly. You hear <<his>> tires screech as he speeds away. The officers are already running towards you!
+	You unlock the car door, and break into a run. "Wait, where are you-" Avery calls after you. The police officers notice you running, and Avery swears loudly. You hear <<his>> tires screech as <<he>> speeds away. The officers are already running towards you!
 	<br><br>
 
 	<span class="green">You manage to outrun them and slip into an alleyway.</span> Avery is long gone, and after a few minutes, the coast seems clear.
@@ -3152,7 +3163,7 @@ You lean into Avery, placing a hand on <<his>> lap.
 <<promiscuity1>>
 
 <<if $seductionrating gte $seductionrequired>>
-	<<He>> looks surprised, as if <<he>> wasn't expecting this. <<He>> quickly sits up, and resumes his smug demeanor. "How can I say no to a request like that?"
+	<<He>> looks surprised, as if <<he>> wasn't expecting this. <<He>> quickly sits up, and resumes <<his>> smug demeanor. "How can I say no to a request like that?"
 	<br><br>
 	
 	<<link [[Next|Avery School Pickup Sex]]>><<set $sexstart to 1>><</link>>
@@ -3217,6 +3228,7 @@ You lean into Avery, placing a hand on <<his>> lap.
 
 	<<clotheson>>
 	<<endcombat>>
+	<<endevent>>
 
 	<<link [[Next|Domus Street]]>><<set $eventskip to 1>><</link>>
 	<br>
@@ -3225,10 +3237,19 @@ You lean into Avery, placing a hand on <<his>> lap.
 	<<ggarage>><<npcincr Avery rage 10>>
 	<br><br>
 
+
+<<He>> falls back against the steering wheel, giving you the chance you need.
+<<ggarage>><<npcincr Avery rage 10>>
+<br><br>
+
+<<tearful>> you make run for it. <<He>> shouts something after you, but <<he>> doesn't follow. You hear <<him>> drive away.
+
 	<<tearful>> you make run for it. <<He>> shouts something after you, but <<he>> doesn't follow. You hear <<him>> drive away.
+
 
 	<<clotheson>>
 	<<endcombat>>
+	<<endevent>>
 
 	<<link [[Next|Commercial alleyways]]>><<set $eventskip to 1>><</link>>
 	<br>
@@ -3239,11 +3260,14 @@ You lean into Avery, placing a hand on <<his>> lap.
 	The ride home passes in silence, and Avery parks across from the orphanage.
 	<br><br>
 
+
 	<<tearful>> you climb from the car. <<He>> watches you a moment before driving away.
 	<br><br>
 
+
 	<<clotheson>>
 	<<endcombat>>
+	<<endevent>>
 
 	<<link [[Next|Domus Street]]>><<set $eventskip to 1>><</link>>
 	<br>

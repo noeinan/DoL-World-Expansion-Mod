@@ -195,8 +195,13 @@ A <<generate1>><<person1>><<person>> approaches you, smiling. "Rope accident?" <
 	<<elseif $rng gte 51>>
 		You're tasked with recording cargo information onto a computer. While working through the notes you notice an inconsistency.
 		<br><br>
-		<<link [[Examine|Docks Examine]]>><<set $phase to 0>><<stress 6>><</link>> | <span class="blue">Maths</span><<gstress>>
+		<<link [[Examine the inconsistency|Docks Examine]]>><<set $phase to 0>><<stress 6>><</link>><<skill_difficulty maths "Maths" 1 1000>><<gstress>>
 		<br>
+		<<if $skulduggery gte 400>>
+			<<set $skulduggerydifficulty to 500>>
+			<<link [[Note the location of valuable goods|Docks Examine Valuables]]>><<set $phase to 2>><</link>><<skulduggerydifficulty>>
+			<br>
+		<</if>>
 		<<link [[Ignore|Docks Examine]]>><<set $phase to 1>><</link>>
 		<br>
 	<<elseif $rng gte 41>>
@@ -397,4 +402,320 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "skul_dock_init">><<nobr>>
+<<if $skul_dock_init is undefined>>
+	<<set $skul_dock_init to 1>>
+	<<set $dock_security to 1>>
+	<<set $skul_dock to {}>>
+	<<set $skul_dock.NW to {}>>
+	<<set $skul_dock.N to {}>>
+	<<set $skul_dock.NE to {}>>
+	<<set $skul_dock.W to {}>>
+	<<set $skul_dock.M to {}>>
+	<<set $skul_dock.E to {}>>
+	<<set $skul_dock.SW to {}>>
+	<<set $skul_dock.S to {}>>
+	<<set $skul_dock.SE to {}>>
+	<<set _skul_dock_keys to Object.keys($skul_dock)>>
+	<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+		<<set $rng to random(1, 100)>>
+		<<if $rng gte 100>>
+			<<set $skul_dock[_skul_dock_keys[_i]].contents to "gold">>
+		<<elseif $rng gte 95>>
+			<<set $skul_dock[_skul_dock_keys[_i]].contents to "aphrodisiacs">>
+		<<elseif $rng gte 75>>
+			<<set $skul_dock[_skul_dock_keys[_i]].contents to "electronics">>
+		<<else>>
+			<<set $skul_dock[_skul_dock_keys[_i]].contents to "none">>
+		<</if>>
+	<</for>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "skul_dock_contents">><<nobr>>
+<<set _skul_dock_keys to Object.keys($skul_dock)>>
+<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+	<<if $skul_dock[_skul_dock_keys[_i]].contents is $args[0] and $skul_dock[_skul_dock_keys[_i]].state isnot "known">>
+		<<set $skul_dock[_skul_dock_keys[_i]].state to "known">>
+		<<set _dock_location to _skul_dock_keys[_i]>>
+		<<set _dock_contents to $skul_dock[_skul_dock_keys[_i]].contents>>
+		<<break>>
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+<<widget "skul_dock_location">><<nobr>>
+<<switch $args[0]>>
+<<case "NW">>
+	<<set _text_output to "moorings">>
+<<case "N">>
+	<<set _text_output to "anchored ship">>
+<<case "NE">>
+	<<set _text_output to "warehouse">>
+<<case "W">>
+	<<set _text_output to "cranes">>
+<<case "M">>
+	<<set _text_output to "tallest stacks of cargo containers">>
+<<case "E">>
+	<<set _text_output to "office building">>
+<<case "SW">>
+	<<set _text_output to "lorry unloading area">>
+<<case "S">>
+	<<set _text_output to "front gate">>
+<<case "SE">>
+	<<set _text_output to "car park">>
+<</switch>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "skul_dock_nav">><<nobr>>
+<<if $bus is "W">>
+	<<link [[Sneak to the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>><br>
+<</if>>
+<<if $bus is "N">>
+	<<link [[Sneak off the ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NW">><</link>><<skul_dock_state NW>><br>
+<</if>>
+<<if $bus is "NW">>
+	<<link [[Sneak aboard the anchored ship (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "N">><</link>><<skul_dock_state N>><br>
+<</if>>
+<<if $bus is "E">>
+	<<link [[Sneak to the warehouse (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "NE">><</link>><<skul_dock_state NE>><br>
+<</if>>
+<<if $bus is "SW" or $bus is "NW">>
+	<<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>><br>
+<</if>>
+<<if $bus is "E">>
+	<<link [[Sneak to the tallest stacks of cargo containers|Docks Sneak]]>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>><br>
+<</if>>
+<<if $bus is "SE" or $bus is "M" or $bus is "NE">>
+	<<link [[Sneak to the office (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>><br>
+<</if>>
+<<if $bus is "W" or $bus is "S">>
+	<<link [[Sneak to the lorry unloading area (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SW">><</link>><<skul_dock_state SW>><br>
+<</if>>
+<<if $bus is "SE" or $bus is "SW">>
+	<<link [[Sneak to the gate (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "S">><</link>><<skul_dock_state S>><br>
+	<br>
+<</if>>
+<<if $bus is "S" or $bus is "E">>
+	<<link [[Sneak to the car park (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "SE">><</link>><<skul_dock_state SE>><br>
+<</if>>
+<<if $bus is "S">>
+	<<link [[Leave|Docks]]>><<set $bus to "mer">><</link>>
+	<br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "skul_dock_state">><<nobr>>
+<<if $skul_dock[$args[0]].state is "known">>
+	<<if $skul_dock[$args[0]].contents is "none">>
+		<span class="purple">The containers here contain nothing of value to you.</span>
+	<<else>>
+		<span class="teal">A container here contains valuable <<print $skul_dock[$args[0]].contents>>.</span>
+	<</if>>
+<<elseif $skul_dock[$args[0]].state is "empty">>
+	<span class="lblue">You've checked here.</span>
+<<else>>
+	<span class="blue">Unknown contents.</span>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "events_skul_dock">><<nobr>>
+<<if $dock_security gte random(1, 4)>>
+	<<set $rng to random(1, 5)>>
+	<<if $rng is 1>>
+		<<generate1>><<person1>>
+		You hear footsteps approach. You take cover behind a container, and wait for the noise to pass. You exhale.<<gstress>><<stress 6>>
+		<br><br>
+		
+		<<link [[Next|Docks Sneak]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<<elseif $rng is 2>>
+		<<generate1>><<person1>>
+		Torchlight appears on the container in front of you. Whoever's holding it is close, and getting closer.
+		<br><br>
+		You look around. The containers are packed tight. You could run the way you came, but it's some distance and you don't have long.
+		<br><br>
+		<<set $skulduggerydifficulty to 500>>
+		<<link [[Hide|Docks Hide]]>><</link>><<skulduggerydifficulty>>
+		<br>
+		<<link [[Run|Docks Run]]>><<crimeup 100>><<tiredness 6>><<dock_security 1>><</link>><<crime>><<gtiredness>><<gsecurity>>
+		<br>
+		<<if $physiquesize lte 6000>>
+			<<link [[Squeeze between the containers|Docks Squeeze]]>><</link>><<small_text>>
+			<br>
+		<</if>>
+	<<elseif $rng is 3>>
+		You hear a patter of feet on the other side of a row of containers.
+		<<if $monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")>>
+			<<if $malechance lt random(1, 100)>>
+				<<set $dock_dog to "girl">>
+				You peer between them, and see a doggirl on all fours sniffing the ground. You walked there not long ago. She has your scent.
+				<br><br>
+				"This way!" she exclaims, breaking into a run. You glimpse someone in a security uniform follow.
+				<br><br>
+			<<else>>
+				<<set $dock_dog to "boy">>
+				You peer between them, and see a dogboy on all fours sniffing the ground. You walked there not long ago. He has your scent.
+				<br><br>
+				"This way!" he exclaims, breaking into a run. You glimpse someone in a security uniform follow.
+				<br><br>
+			<</if>>
+		<<else>>
+			<<if $beastmalechance lt random(1, 100)>>
+				<<set $dock_dog to "bitch">>
+			<<else>>
+				<<set $dock_dog to "dog">>
+			<</if>>
+			You peer between them, and see a dog sniffing the ground. You walked there not long ago. It has your scent.
+			<br><br>
+			It barks and breaks into a run. You glimpse someone in a security uniform follow.
+			<br><br>
+		<</if>>
+		
+		They'll find you soon.
+		<br><br>
+		
+
+		<<link [[Ambush|Docks Ambush]]>><<dock_security 1>><</link>><<gsecurity>>
+		<br>
+		<<if $worn.upper.set is $worn.lower.set>>
+			<<link [[Sacrifice your outfit to leave a false trail|Docks Sacrifice]]>><<set $phase to 0>><<dock_security -1>><</link>><<lsecurity>>
+			<br>
+		<<else>>
+			<<if $worn.upper.name isnot "naked">>
+				<<link [[Sacrifice your top to leave a false trail|Docks Sacrifice]]>><<set $phase to 1>><<dock_security -1>><</link>><<lsecurity>>
+				<br>
+			<</if>>
+			<<if $worn.lower.name isnot "naked">>
+				<<link [[Sacrifice your bottoms to leave a false trail|Docks Sacrifice]]>><<set $phase to 2>><<dock_security -1>><</link>><<lsecurity>>
+				<br>
+			<</if>>
+		<</if>>
+		<<if $worn.under_upper.set is $worn.under_lower.set>>
+			<<link [[Sacrifice your under outfit to leave a false trail|Docks Sacrifice]]>><<set $phase to 3>><<dock_security -1>><</link>><<lsecurity>>
+			<br>
+		<<else>>
+			<<if $worn.under_upper.name isnot "naked">>
+				<<link [[Sacrifice your under top to leave a false trail|Docks Sacrifice]]>><<set $phase to 4>><<dock_security -1>><</link>><<lsecurity>>
+				<br>
+			<</if>>
+			<<if $worn.under_lower.name isnot "naked">>
+				<<link [[Sacrifice your underwear to leave a false trail|Docks Sacrifice]]>><<set $phase to 5>><<dock_security -1>><</link>><<lsecurity>>
+				<br>
+			<</if>>
+		<</if>>
+		<<if $bus is "NW" or $bus is "N" or $bus is "NE">>
+			<<link [[Dive into the sea|Docks Dive]]>><</link>>
+			<br>
+		<</if>>
+		
+	<<elseif $rng is 4>>
+		You hear a click underfoot. <span class="red">INTRUDER DETECTED.</span> Intones a voice. "DO NOT RESIST." A hatch springs open, and metal arms shoot out.
+		<br><br>
+		
+		<<link [[Dodge|Docks Machine Dodge]]>><</link>><<dancedifficulty 500 1200>>
+		<br>
+		<<link [[Struggle|Docks Machine Struggle]]>><</link>><<physiquedifficulty 12000 20000>>
+		<br>
+		<<link [[Go quietly|Docks Machine Brace]]>><</link>>
+		<br>
+	<<else>>
+		<<generate1>><<person1>>
+		A <<person>> in a security uniform rounds a corner up ahead. You dive between two containers. You don't think <<he>> saw you.
+		<<if random(1, 2) is 1>>
+			As <<he>> passes by however, <<he>> reaches into your hiding place. "Got you," <<he>> says, grasping your arm and pulling you out.
+			<br><br>
+			<<He>> reaches for <<his>> radio. "Got the blighter," <<he>> says, shoving you against a container. "Roger." <<He>> lets the radio fall to <<his>> side. "Backup will be here soon. How's about we have a little fun while we wait?"
+			<br><br>
+				
+			<<link [[Next|Docks Sneak Rape]]>><<set $molestationstart to 1>><</link>>
+			<br>
+		<<else>>
+			<<He>> passes without looking.<<gstress>><<stress 6>>
+			<br><br>
+			
+			<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><<endevent>><</link>>
+			<br>
+		<</if>>
+	<</if>>
+<<else>>
+	<<set $rng to random(1, 6)>>
+	<<if $rng is 1>>
+		<span class="red">You slip!</span> Something slick, like oil, covers the ground.
+		<br><br>
+		
+		<<link [[Hold out your arms|Docks Slip]]>><<pain 8>><<stress 6>><</link>><<ggpain>><<gstress>>
+		<br>
+		<<link [[Try to stay upright|Docks Upright]]>><</link>><<dancedifficulty 400 1200>>
+		<br>
+	<<elseif $rng is 2>>
+		<<if $weather is "clear">>
+			Moonlight reflects off the ocean. It captures you for a moment.<<lstress>><<stress -6>>
+			<br><br>
+		<<else>>
+			A cool breeze ruffles your hair.
+			<br><br>
+		<</if>>
+		<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<<elseif $rng is 3>>
+		<<generate1>><<generate2>>
+		You hear voices up ahead. Two guards are in the way.
+		<br><br>
+		
+		<<set $skulduggerydifficulty to 500>>
+		<<link [[Find a different way (0:10)|Docks Find]]>><<pass 10>><<dock_security 1>><</link>><<gsecurity>>
+		<br>
+		<<link [[Sneak by|Docks Sneak By]]>><</link>><<skulduggerydifficulty>>
+		<br>
+	<<elseif $rng is 4>>
+		You're quiet as you move through the dark, but you're leaving traces of yourself. Security is paying more attention.<<gsecurity>><<dock_security 1>>
+		<br><br>
+		
+		<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<<elseif $rng is 5>>
+		<<if $skulduggery gte random(1, 1000)>>
+			There's a security camera up ahead. You avoid it. <span class="green">You're glad you spotted it in time.</span>
+			<br><br>
+			
+			<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><</link>>
+			<br>
+		<<else>>
+			You spot a security camera <span class="red">too late.</span> You hide, but anyone paying attention would have seen you.<<gsecurity>><<dock_security 1>><<crimeup 10>><<crime>>
+			<br><br>
+			
+			<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><</link>>
+			<br>
+		<</if>>
+	<<else>>
+		These containers all look alike. They stack high around you. For a while, you're not quite sure where you are.<<gstress>><<stress 6>>
+		<br><br>
+		
+		<<link [[Next|Docks Sneak]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<</if>>
+
+<</nobr>><</widget>>
+
+<<widget "dock_security">><<nobr>>
+<<if $args[0]>>
+	<<set $dock_security += $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "dock_security_text">><<nobr>>
+<<if $dock_security gte 4>>
+	<span class="red">Security are on high alert.</span>
+<<elseif $dock_security gte 3>>
+	<span class="pink">Security are aware of an intruder.</span>
+<<elseif $dock_security gte 2>>
+	<span class="purple">Security are suspicious.</span>
+<<else>>
+	<span class="teal">Security are relaxed.</span>
+<</if>>
 <</nobr>><</widget>>

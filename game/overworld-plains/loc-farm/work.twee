@@ -2,6 +2,7 @@
 <<set $outside to 1>><<set $location to "farm">><<effects>>
 <<farm_work_update>>
 You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Other buildings nestle between trees and hedgerows.
+<<if $exhibitionism lt 75 and $exposed gte 2 and $farm_naked is 1>>With so many places to hide your <<lewdness>>, you do your best to avoid exposing yourself and avoid Alex where you can.<</if>>
 <br><br>
 
 You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hour worked.
@@ -62,6 +63,24 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 
 <<if $stress gte 10000>>
 	<<passoutfarmroad>>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined and $rng lte ($corruption_slime / 2) and $slimeFarmNakedStored is undefined and $exposed lt 2>>
+	<span class="lewd">You feel the slime in your head commands you to expose yourself and and hide your clothes while you work today.</span> It promises rewards if you comply, and threatens consequences if you do not.
+	<br><br>
+
+	<<link [[Obey|Farm Slime Strip Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<set $submissive += 1>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
+	<br>
+	<<link [[Defy|Farm Slime Strip Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<set $submissive -= 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
+	<br>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is true and $slimeFarmNakedStored is undefined>>
+	Following the slimes command, you find a spot where you think your clothes will be safe and strip before heading to work.
+	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is true and ($worn.lower.name.includes("towel") or $worn.upper.name.includes("towel")) and $farm_naked is 1>>
+	<<generalRuined "upper">><<generalRuined "lower">>
+	Following the slimes command, you leave the towel for Alex to find.
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
 <<elseif $hour lte 5 or $hour gte 22 or ($hour is 21 and $farm_end is 1)>>
 	<<link [[Sneak into the barn (0:05)|Farm Barn]]>><<pass 5>><</link>>
 	<br><br>
@@ -73,8 +92,23 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 	<<if $exhibitionism gte 75>>
 		<<link [[Work anyway|Farm Work Naked]]>><<npcincr Alex lust 3>><<set $farm_naked to 1>><</link>><<exhibitionist5>><<gglust>>
 		<br>
+	<<elseif $slimeFarmNakedStored is true>>
+		<<if $exhibitionism gte 55>>
+			<<set _stress to 10>>
+			<<set _trauma to 0>>
+		<<elseif $exhibitionism gte 35>>
+			<<set _stress to 20>>
+			<<set _trauma to 10>>
+		<<else>>
+			<<set _stress to 40>>
+			<<set _trauma to 40>>
+		<</if>>
+		<<link [[Work anyway|Farm Work Naked]]>><<npcincr Alex lust 3>><<set $farm_naked to 1>><<stress _stress>><<trauma _trauma>><</link>><<gglust>>
+		<<if _stress is 40>><<ggstress>><<else>><<gstress>><</if>>
+		<<if _trauma is 40>><<ggtrauma>><<elseif _trauma is 5>><<gtrauma>><</if>>
+		<br>
 	<</if>>
-	<<if $farm_work.alex isnot undefined and $farm_work.alex isnot "shower" and $hour gte 6 and $hour lte 20>>
+	<<if $farm_work.alex isnot undefined and $farm_work.alex isnot "shower" and $hour gte 6 and $hour lte 20 and $slimeFarmNakedStored is undefined>>
 		<<if $worn.upper.exposed gte 2 or $worn.lower.exposed gte 2>>
 			<<link [[Ask Alex for clothes (0:05)|Farm Alex Clothes]]>><<farm_yield -1>><<npcincr Alex dom 1>><<npcincr Alex lust 1>><</link>><<exhibitionist1>><<lfarm>><<gdom>><<glust>>
 			<br>
@@ -191,7 +225,13 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 <<elseif $hour is 21 and $farm_end is undefined>>
 	<<set $farm_end to 1>>
 	<<npc Alex>><<person1>>
-	Alex wipes the sweat off <<his>> forehead as <<he>> approaches you. "Done for another day," <<he>> says, smiling.
+	<<if $exposed gt 0 and $season is "winter">>
+		Alex wipes the sweat off <<his>> forehead as <<he>> approaches you. "Done for another day," <<he>> says, blushing, "it's getting rather cold, you might want to wear something warmer". <<glust>><<npcincr Alex lust 1>>
+	<<elseif $exposed gt 0>>
+		Alex wipes the sweat off <<his>> forehead as <<he>> approaches you. "Done for another day," <<he>> says, blushing, "it'll be getting colder, you might want to wear a little more". <<glust>><<npcincr Alex lust 1>>
+	<<else>>
+		Alex wipes the sweat off <<his>> forehead as <<he>> approaches you. "Done for another day," <<he>> says, smiling.
+	<</if>>
 	<<if $farm_count gte 1>>
 		<<set $money += $farm.wage>>
 		"Here's a little extra." <<He>> hands you <span class="gold">£<<print $farm.wage / 100>></span>.
@@ -228,7 +268,6 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 
 		<<link [[Next|Farm Work]]>><<endevent>><</link>>
 		<br>
-
 		<<unset $farm_yield_alex>>
 	<<elseif $farm_work.recent_shift gte $farm_work.event_time and $farm_event isnot 1>>
 		<<set $farm_event to 1>>
@@ -241,17 +280,42 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 
 		<<link [[Leave|Farmland]]>><</link>>
 		<br>
+		<<if ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined>>
+			<<set $slimeFarmNaked to false>>
+		<</if>>
 	<</if>>
 <</if>>
 
+:: Farm Slime Strip Obey [nobr]
+<<effects>>
+Following the slimes command, you find a spot where you think your clothes will be safe and strip before heading to work.
 
+<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
 
+<br><br>
 
+<<link [[Next|Farm Work]]>><</link>>
+
+:: Farm Slime Strip Defy [nobr]
+<<effects>>
+<<if $corruption_slime gte ($willpower / 10)>>
+	You try to ignore the slime but and feel a jolt of pain as it punishes you for defiance. However, <span class="red">you fail</span> to resist its influence.<<ggwillpower>><<willpower 3>>
+	<br><br>
+	Following the slimes command, you find a spot where you think your clothes will be safe and strip before heading to work.
+	<<undressclothes "farmHidingSpot">><<set $slimeFarmNakedStored to true>><<set $slimeFarmNaked to true>>
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><</link>>
+<<else>>
+	You try to ignore the slime but and feel a jolt of pain as it punishes you for defiance. You feel it try, <span class="green">but fail,</span> to force you to expose yourself.<<gwillpower>><<willpower 1>><<set $slimeFarmNaked to false>>
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+<</if>>
 
 :: Farm Work Naked [nobr]
 <<effects>>
 
-<<if $farm_naked_alex is 1>>
+<<if $farm_naked_alex is 1 and $exhibitionism gte 75>>
 	<<unset $farm_naked_alex>>
 
 	<<npc Alex>><<person1>>
@@ -282,13 +346,48 @@ You'll earn <span class="gold">£<<print $farm.wage / 100>></span> for every hou
 
 	<<link [[Next|Farm Work]]>><<endevent>><</link>>
 	<br>
+<<elseif $farm_naked_alex is 1>>
+	<<unset $farm_naked_alex>>
+
+	<<npc Alex>><<person1>>
+	<<embarrassment>> Despite that you step out from your hiding place, just as Alex enters the yard. "Thanks for he-" <<he>> begins, before looking your way and cutting off. <<stress 10>><<gstress>><<trauma 10>><<gtrauma>>
+	<br><br>
+
+	<<if $worn.lower.exposed gte 1 or $worn.upper.exposed gte 1 and $player.gender_appearance isnot "m">>
+		<<if $submissive gte 1150>>
+			"I-Is something wrong?" you ask. "I was worried about my clothes tearing, so I decided to wear less."
+		<<elseif $submissive lte 850>>
+			"Eyes are up here," you say. "Didn't want my clothes ruined, but that doesn't mean you can look as you please."
+		<<else>>
+			"I don't mean to startle," you say. "But I was worried about my clothes tearing."
+		<</if>>
+	<<else>>
+		<<if $submissive gte 1150>>
+			"I-Is something wrong?" you ask. "I'm fed up with changing wet clothes all the time."
+		<<elseif $submissive lte 850>>
+			"Eyes are up here," you say. "My clothes will only get wet again. I'll soldier through."
+		<<else>>
+			"I don't mean to startle," you say. "But I'm fed up with having to change wet clothes all the time."
+		<</if>>
+	<</if>>
+
+	Alex looks away again, blushing. "A-Alright," <<he>> stammers. "J-Just be careful." <<He>> continues in a hurry, but you suspect <<he>> will be sneaking glances later.
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $exhibitionism lt 75>>
+	<<embarrassment>> Despite that you step out from your hiding place, ready for work. Alex walks by, and pretends not to look.
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
 <<else>>
 	<<flaunting>> you step out from your hiding place, ready for work. Alex walks by, and pretends not to look.
-	<<exhibitionism5>>
-
+	<br><br>
 	<<link [[Next|Farm Work]]>><</link>>
 	<br>
 <</if>>
+
 
 :: Farm Alex Dry [nobr]
 <<effects>>
@@ -313,6 +412,7 @@ You follow <<him>> to the farmhouse. Alex need only turn to see your <<lewdness>
 
 <<link [[Next|Farm Alex Dry 2]]>><</link>>
 <br>
+
 
 
 
@@ -1571,7 +1671,7 @@ You sneak up to the shed, and push the door open.
 		The sun beats down as you help Alex water the crops.
 	<</if>>
 <<elseif $weather is "snow">>
-	You endure the rain as you help Alex search for invasive weeds, digging them up at the roots before they can strangle the crops.
+	You endure the cold as you help Alex search for invasive weeds, digging them up at the roots before they can strangle the crops.
 <<else>>
 	<<if $rng gte 51>>
 		You help Alex search for invasive weeds, digging them up at the roots before they can strangle the crops.
@@ -1893,9 +1993,13 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 <</if>>
 You take two of the suction tubes, and attach them to your <<breasts>>.
 <br><br>
-
-The machine comes alive, and sucks your chest. You gasp at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
-<br><br>
+<<if $daystate is "night">>
+	The machine comes alive, and sucks your chest. You gasp at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
+	<br><br>
+<<else>>
+	The machine comes alive, and sucks your chest. You gasp at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction.<<gggarousal>><<arousal 2000>>
+	<br><br>
+<</if>>
 
 
 <<link [[Next|Farm Barn Breasts 2]]>><</link>>
@@ -1905,13 +2009,11 @@ The machine comes alive, and sucks your chest. You gasp at the sensation, almost
 :: Farm Barn Breasts 2 [nobr]
 <<effects>>
 
-	The machine continues its devilish work, sucking with more intensity. You feel a warmth build.<<arousal 10000>>
-	<<orgasmpassage>>
-	<br>
+The machine continues its devilish work, sucking with more intensity. You feel a warmth build.<<arousal 10000>>
+<<orgasmpassage>>
+<br>
 <<if $lactating is 1>>
-
-
-
+	
 
 	Milk leaks from your buds as your body shakes. Your fluid is sucked into the machine, where it drips into a glass tank.
 	<br><br>
@@ -1927,15 +2029,15 @@ The machine comes alive, and sucks your chest. You gasp at the sensation, almost
 		<<set $farm_breast_milk to 1>>
 	<</if>>
 	<<if $farm_breast_milk gte 10>>
-		<span class="green">The tank almost overflows with milk.</span><<gggfarm>>
+		<span class="green">The tank almost overflows with milk.</span><<gggfarm>><<farmCatchChance 0.4>>
 	<<elseif $farm_breast_milk gte 6>>
-		<span class="teal">The tanks is over half full of your milk.</span><<ggfarm>>
+		<span class="teal">The tanks is over half full of your milk.</span><<ggfarm>><<farmCatchChance 0.2>>
 	<<elseif $farm_breast_milk gte 3>>
-		<span class="lblue">There's a large volume of milk in the tank.</span><<ggfarm>>
+		<span class="lblue">There's a large volume of milk in the tank.</span><<ggfarm>><<farmCatchChance 0.1>>
 	<<elseif $farm_breast_milk gte 1>>
-		<span class="blue">There's a decent volume of milk in the tank.</span><<gfarm>>
+		<span class="blue">There's a decent volume of milk in the tank.</span><<gfarm>><<farmCatchChance 0.05>>
 	<<else>>
-		<span class="purple">There's only a dribble of milk in the tank.</span><<gfarm>>
+		<span class="purple">There's only a dribble of milk in the tank.</span><<gfarm>><<farmCatchChance 0.01>>
 	<</if>>
 	<br><br>
 
@@ -1948,11 +2050,26 @@ The machine comes alive, and sucks your chest. You gasp at the sensation, almost
 	<br><br>
 <</if>>
 
-You remove the suction tubes with shaking hands, and rise to your feet.
-<<deviancy2>>
+<<if $farm.milking.dayMilking is true and $hour gte 7 and $hour lte 21 and $farm_end is undefined>>
+	You remove the suction tube with a shaking hand, and rise to your feet.
+	<<deviancy2>>
 
-<<link [[Next|Farm Barn]]>><<clotheson>><<endcombat>><</link>>
-<br>
+	<<link [[Next|Farm Cattle Milk]]>><<clotheson>><<endcombat>><</link>>
+	<br>
+<<elseif $farm.milking.caught is true and $farm.milking.alexNightEvent is false>>
+	<<set $farm.milking.alexNightEvent to true>>
+	<<set $farm.milking.dayMilking to true>>
+	As you remove the suction tubes with shaking hands.
+	<<deviancy2>>
+	<<link [[Next|Farm Barn Caught]]>><<endcombat>><<endevent>><</link>>
+	<br>
+<<else>>
+	You remove the suction tubes with shaking hands, and rise to your feet.
+	<<deviancy2>>
+
+	<<link [[Next|Farm Barn]]>><<clotheson>><<endcombat>><</link>>
+	<br>
+<</if>>
 
 :: Farm Barn Penis [nobr]
 <<effects>>
@@ -1977,8 +2094,13 @@ You remove the suction tubes with shaking hands, and rise to your feet.
 You take one of the suction tubes, and attach it to your <<penis>>.
 <br><br>
 
-The machine comes alive, and sucks at your penis. You gasp at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
+<<if $daystate is "night">>
+	The machine comes alive, and sucks at your penis. You gasp at the sensation, almost waking one of the <<farm_text cattle>>s.<<gggarousal>><<arousal 2000>>
 <br><br>
+<<else>>
+	The machine comes alive, and sucks at your penis. You gasp at the sensation, causing one of the <<farm_text cattle>> to turn their head in your direction.<<gggarousal>><<arousal 2000>>
+	<br><br>
+<</if>>
 
 <<link [[Next|Farm Barn Penis 2]]>><</link>>
 <br>
@@ -2001,8 +2123,6 @@ Your semen is sucked up the tube, where it drips into a glass tank. The machine 
 You remain on your hands and knees as the machine milks you again and again, sucking everything it can take. Just when you fear you're about to pass out, the machine comes to a halt.
 <br><br>
 
-
-
 <<set $semen_amoun -= $farm_penis_milk>>
 <<set $semen_produced_stat += $farm_penis_milk>>
 
@@ -2011,24 +2131,50 @@ You remain on your hands and knees as the machine milks you again and again, suc
 	<<set $farm_penis_milk to 1>>
 <</if>>
 <<if $farm_penis_milk gte 10>>
-	<span class="green">The tank almost overflows with semen.</span><<gggfarm>>
+	<span class="green">The tank almost overflows with semen.</span><<gggfarm>><<farmCatchChance 0.4>>
 <<elseif $farm_penis_milk gte 6>>
-	<span class="teal">The tanks is over half full of your semen.</span><<ggfarm>>
+	<span class="teal">The tanks is over half full of your semen.</span><<ggfarm>><<farmCatchChance 0.2>>
 <<elseif $farm_penis_milk gte 3>>
-	<span class="lblue">There's a large volume of semen in the tank.</span><<ggfarm>>
+	<span class="lblue">There's a large volume of semen in the tank.</span><<ggfarm>><<farmCatchChance 0.1>>
 <<elseif $farm_penis_milk gte 1>>
-	<span class="blue">There's a decent volume of semen in the tank.</span><<gfarm>>
+	<span class="blue">There's a decent volume of semen in the tank.</span><<gfarm>><<farmCatchChance 0.05>>
 <<else>>
-	<span class="purple">There's only a dribble of semen in the tank.</span><<gfarm>>
+	<span class="purple">There's only a dribble of semen in the tank.</span><<gfarm>><<farmCatchChance 0.01>>
 <</if>>
 <br><br>
 
 <<farm_yield $farm_penis_milk>>
 <<unset $farm_penis_milk>>
 <<barn_img penis>>
-You remove the suction tube with a shaking hand, and rise to your feet.
-<<deviancy2>>
 
+<<if $farm.milking.dayMilking is true and $hour gte 7 and $hour lte 21 and $farm_end is undefined>>
+	You remove the suction tube with a shaking hand, and rise to your feet.
+	<<deviancy2>>
 
-<<link [[Next|Farm Barn]]>><<clotheson>><<endcombat>><</link>>
-<br>
+	<<link [[Next|Farm Cattle Milk]]>><<clotheson>><<endcombat>><</link>>
+	<br>
+<<elseif $farm.milking.caught is true and $farm.milking.alexNightEvent is false>>
+	<<set $farm.milking.alexNightEvent to true>>
+	<<set $farm.milking.dayMilking to true>>
+	As you remove the suction tube with a shaking hand.
+	<<deviancy2>>
+	<<link [[Next|Farm Barn Caught]]>><<endcombat>><<endevent>><</link>>
+	<br>
+<<else>>
+	You remove the suction tube with a shaking hand, and rise to your feet.
+	<<deviancy2>>
+
+	<<link [[Next|Farm Barn]]>><<clotheson>><<endcombat>><</link>>
+	<br>
+<</if>>
+
+:: Farm Barn Caught [nobr]
+<<effects>>
+<<npc Alex>><<person1>>
+Alex comes out of the shadows of the barn.
+<br><br>
+"So your the reason why i've been finding filled tanks that should be empty," <<he>> say, blushing, "I know I asked for your help, I just didn't expect you to go this far." <<npcincr Alex love 1>><<glove>><<npcincr Alex lust 1>><<glust>>
+<br><br>
+<<He>> turns to leave the barn and continues, "As long as the cattle are milked first, feel free to use the milking machines, just don't overdo it or neglect your other work."
+<br><br>
+<<link [[Next|Farm Barn]]>><<endevent>><</link>>

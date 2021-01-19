@@ -88,13 +88,66 @@ Breast Pills
 <</if>>
 
 <br><br>
+Bottom Pills
+<br>
+<<if _pills.bottom.owned[_pillTypes[0]] gt 0 or _pills.bottom.owned[_pillTypes[1]] gt 0>>
+	There are warning labels on the <<if _pills.bottom.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.bottom.owned[_pillTypes[0]] gt 0 and _pills.bottom.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.bottom.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
+<</if>>
+<ul class="nostyle">
+	<<for _i to 0; _i lt _pillNames.length; _i += 1>>
+		<<if _pills.bottom.owned[_pillTypes[_i]] isnot 0>>
+			<li><label>
+				<<print '<<radiobutton "_checked" _i ' + (_pills.bottom.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
+				<<print _pillNames[_i]>>
+				<<if _pillNames[_i] isnot "None">><<print '['+_pills.bottom.owned[_pillTypes[_i]]+']'>><</if>>
+				<<if _pills.bottom.type is _pillTypes[_i] and _pillTypes[_i] isnot null>>
+					<<print '[Taken ' + _pills.bottom.doseTaken + ' dose' + (_pills.bottom.doseTaken gt 1 ? "s" : "") +']'>>
+				<</if>>
+				<<if _pills.bottom.autoTake is _pillTypes[_i] and _pillTypes[_i] isnot null>>[Auto]<</if>>
+			</label></li>
+		<</if>>
+	<</for>>
+</ul>
+
+<<if _pills.bottom.type is null>>
+	<<link [[Take pills|PillCollection]]>><<managePill "bottom" _pillTypes[_checked] -1 true false>><</link>>
+<<elseif _pills.bottom.doseTaken is 1 and _pills.bottom.type isnot "blocker" and _pills.bottom.owned[_pills.bottom.type] gt 0>>
+	<<print'<<link [[Take a second dose of '+ _pills.bottom.type +' pills|PillCollectionSecondDose]]>><<managePill "bottom" _pills.bottom.type -1 true false>><<set $secondDose to "bottom">><</link>>'>>
+<<elseif _pills.bottom.type is "blocker" or _pills.bottom.owned[_pills.bottom.type] is 0>>
+	You have already taken a dose of bottom growth <<print _pills.bottom.type>> pills today.
+<<else>>
+	You have already taken 2 doses of bottom <<print _pills.bottom.type>> pills today.
+<</if>>
+<br>
+<<link [[Take every morning|PillCollection]]>><<set _pills.bottom.autoTake to clone(_pillTypes[_checked])>><</link>>
+
+
+<br><br>
 <<link [[Step away|Bedroom]]>><</link>>
 
 :: PillCollectionSecondDose [nobr]
 <<set $outside to 0>><<set $location to "home">><<effects>>
 
 <<set _pills to $sexStats.pills>>
-<<if ($secondDose is "penis" and _pills.breast.doseTaken is 2) or $secondDose is "breast" and _pills.penis.doseTaken is 2>>
+<<set _secondDoses to 0>>
+<<set _breastDoses to false>>
+<<set _penisDoses to false>>
+<<set _bottomDoses to false>>
+<<if _pills.breast.doseTaken is 2>>
+	<<set _secondDoses += 1>>
+	<<set _breastDoses to true>>
+<</if>>
+<<if _pills.penis.doseTaken is 2>>
+	<<set _secondDoses += 1>>
+	<<set _penisDoses to true>>
+<</if>>
+<<if _pills.bottom.doseTaken is 2>>
+	<<set _secondDoses += 1>>
+	<<set _bottomDoses to true>>
+<</if>>
+<<if _secondDoses is 3>>
+	<<set _risk to random(10,40)>>
+<<elseif _secondDoses is 2>>
 	<<set _risk to random(5,20)>>
 <<else>>
 	<<set _risk to 0>>
@@ -106,22 +159,38 @@ Disregarding the warning label, you take a second dose of <<print $secondDose>> 
 <<if _result gte 80 + _risk>>
 	<<set $timePassed to 2>> Despite the warning, nothing wrong seems to happen.
 <<elseif _result gte 70 + _risk>>
-	<<set $timePassed to 2>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> feel a little odd for a few minutes but feel fine afterwards.
+	<<set $timePassed to 2>> Your <<print ($secondDose is "breast" ? "breasts feel" : $secondDose + " feels")>> a little odd for a few minutes but feel fine afterwards.
 <<elseif _result gte 60 + _risk>>
-	<<set $timePassed to 10>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> feel a little warm for a few minutes but feel fine afterwards.
+	<<set $timePassed to 10>> Your <<print ($secondDose is "breast" ? "breasts feel" : $secondDose + " feels")>> a little warm for a few minutes but feel fine afterwards.
 	<<garousal>><<arousal 500>>
 <<elseif _result gte 40 + _risk>>
-	<<set $timePassed to 20>> Your <<print ($secondDose is "breast" ? "breasts" : "penis")>> suddenly starts to feel really warm and itchy which makes you unable to concentrate on anything else till it passes.
+	<<set $timePassed to 20>> Your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>> suddenly starts to feel really warm and itchy which makes you unable to concentrate on anything else till it passes.
 	<<garousal>><<gpain>><<set $pain += 10>><<arousal 2000>>
 <<elseif _result gte 5 + _risk>>
 	<<set $timePassed to 30>>
-	You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : "penis")>><<if _risk gt 0>>, followed by another sharp pain in your <<print ($secondDose is "breast" ? "penis" : "breasts")>><<set $pain += 50>><<set $timePassed += 30>><</if>>.
+	<<switch _secondDoses>>
+		<<case 1>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>.
+		<<case 2>>
+			<<set _secondaryPill to ($secondDose is "breast" ? (_penisDoses ? "penis" : "bottom") : ($secondDose is "penis" ? (_breastDoses ? "breasts" : "bottom") : (_breastDoses ? "breasts" : "penis")))>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>, followed by another sharp pain in your <<print _secondaryPill>><<set $pain += 50>><<set $timePassed += 30>>.
+		<<case 3>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>, followed by more sharp pains in your <<print ($secondDose is "breast" ? "penis and bottom" : ($secondDose is "penis" ? "breasts and bottom" : "breasts and penis"))>><<set $pain += 50>><<set $timePassed += 30>>.
+	<</switch>>
 	<<gpain>><<set $pain += 50>>
 	<br><br>
 	It takes some time but you gradually feel better.
 <<else>>
 	<<set $timePassed to random(120, 420)>>
-	You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : "penis")>><<if _risk gt 0>>, followed by another sharp pain in your <<print ($secondDose is "breast" ? "penis" : "breasts")>><<set $pain += 100>><<set $timePassed += 30>><</if>>. It continues to get worse until you pass out.
+	<<switch _secondDoses>>
+		<<case 1>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>. It continues to get worse until you pass out.
+		<<case 2>>
+			<<set _secondaryPill to ($secondDose is "breast" ? (_penisDoses ? "penis" : "bottom") : ($secondDose is "penis" ? (_breastDoses ? "breasts" : "bottom") : (_breastDoses ? "breasts" : "penis")))>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>, followed by another sharp pain in your <<print _secondaryPill>><<set $pain += 50>><<set $timePassed += 30>>. It continues to get worse until you pass out.
+		<<case 3>>
+			You feel a sharp pain in your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>, followed by more sharp pains in your <<print ($secondDose is "breast" ? "penis and bottom" : ($secondDose is "penis" ? "breasts and bottom" : "breasts and penis"))>><<set $pain += 50>><<set $timePassed += 30>>. It continues to get worse until you pass out.
+	<</switch>>
 	<<ggstress>><<gtrauma>><<gpain>>
 	<<set $pain += 400>><<set $stress += 4000>><<set $trauma += 500>>
 	<<set _passout to true>>
@@ -140,14 +209,14 @@ Disregarding the warning label, you take a second dose of <<print $secondDose>> 
 :: PillCollectionPassOut[nobr]
 <<set $outside to 0>><<set $location to "home">><<effects>>
 <<set _pills to $sexStats.pills>><<set $pain += 300>>
-You end up waking in agony and wondering what had happened to you. After a brief feel around your body, you shriek in pain after briefly touching your <<print ($secondDose is "breast" ? "breasts" : "penis")>>. You end up spending more time lying down till you feel like you can move without something else happening to you.
+You end up waking in agony and wondering what had happened to you. After a brief feel around your body, you shriek in pain after briefly touching your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>. You end up spending more time lying down till you feel like you can move without something else happening to you.
 
 <br><br>
 As you get up, you check the time to find that<<if $timePassed gt 240>> many <<else>> only a couple of <</if>>hours have passed since you took that pill.
 
 <<set _change to random(100, 500)>>
 <<if _change gte 200>>
-	You give your <<print ($secondDose is "breast" ? "breasts" : "penis")>> a check over, you think something might have changed about them.
+	You give your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>> a check over, you think something might have changed about <<print ($secondDose is "breast" ? "them" : "it")>>.
 <</if>>
 <<if $secondDose is "breast">>
 	<<if _pills.breast.type is "growth">>
@@ -155,11 +224,17 @@ As you get up, you check the time to find that<<if $timePassed gt 240>> many <<e
 	<<else>>
 		<<set $breastgrowthtimer += _change>>
 	<</if>>
-<<else>>
+<<elseif $secondDose is "penis">>
 	<<if _pills.penis.type is "growth">>
 		<<set $penisgrowthtimer -= _change>>
 	<<else>>
 		<<set $penisgrowthtimer += _change>>
+	<</if>>
+<<else>>
+	<<if _pills.bottom.type is "growth">>
+		<<set $bottomgrowthtimer -= _change>>
+	<<else>>
+		<<set $bottomgrowthtimer += _change>>
 	<</if>>
 <</if>>
 <<if $genitalsensitivity lt 6>>

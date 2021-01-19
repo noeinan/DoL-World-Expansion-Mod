@@ -17,7 +17,7 @@
 		You are at the shore of the frozen lake. You can see your reflection in its surface. You could walk out to the swimmers docks if you wanted.
 	<</if>>
 	<<if $weather is "snow">>
-		Snow settles on its surface
+		Snow settles on its surface.
 	<<else>>
 		The ice is serene.
 	<</if>>
@@ -178,10 +178,10 @@ There's a rocky alcove where you could store your clothes.
 	<<elseif $daystate is "dusk" or $daystate is "dawn">>
 		You are on the Fishing Rock. It's peaceful, though the nearby trees are foreboding.
 	<<else>>
-		You are on the Fishing Rock. From here you have a clear view of the entire lake. The ice is serene.
+		You are on the Fishing Rock. From here you have a clear view of the entire lake.
 	<</if>>
 	<<if $weather is "snow">>
-		Snow settles on the ice
+		Snow settles on the ice.
 	<<else>>
 		The ice is serene.
 	<</if>>
@@ -516,7 +516,11 @@ There's a rocky alcove where you could store your clothes.
 <<elseif $danger gte (9900 - ($allure / 2)) and $eventskip is 0>>
 	<<eventlakeice>>
 <<else>>
+	
+	<<lakereturnjourney>>
 
+	<<link [[Ice skate (0:30)|Lake Skate]]>><<pass 30>><<tiredness 5>><<danceskill 5>><</link>><<gtiredness>> | <span class="green">+ Dancing Skill</span>
+	<br>
 	<<if $science gte 400 and !$plants_known.includes("lotus")>>
 		<<link [[Search for seeds (0:30)|Lake Lotus Ice]]>><<set $plants_known.push("lotus")>><<pass 30>><<tending 6>><</link>><<gtending>>
 		<br>
@@ -690,17 +694,22 @@ You free the lotus flowers from the ice, gathering the seeds.  <span class="gold
 	<</if>>
 <</if>>
 <br><br>
-<<if $lake_ice_broken is undefined>>
-	Someone left equipment on the swimming dock, including a shovel. The ice is thin here. You could break through, with some effort.
+<<if $schoolday isnot 1 and $weather is "snow" and $daystate is "day">>
+	Someone's dug through the ice beside the swimming dock.
 	<br><br>
 <<else>>
-	There's a hole in the ice, allowing access to the water below.
-	<br><br>
+	<<if $lake_ice_broken is undefined>>
+		Someone left equipment on the swimming dock, including a shovel. The ice is thin here. You could break through, with some effort.
+		<br><br>
+	<<else>>
+		There's a hole in the ice, allowing access to the water below.
+		<br><br>
+	<</if>>
 <</if>>
 <<if $exposed gte 1>>
-	<<covered>> There's nowhere to hide out here.
-	<br><br>
-<</if>>
+		<<covered>> There's nowhere to hide out here.
+		<br><br>
+	<</if>>
 
 <<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
 <<if $stress gte 10000>>
@@ -710,6 +719,9 @@ You free the lotus flowers from the ice, gathering the seeds.  <span class="gold
 <<elseif $danger gte (9900 - ($allure / 2)) and $eventskip is 0>>
 	<<eventlakeice>>
 <<else>>
+	<<if $schoolday isnot 1 and $weather is "snow" and $daystate is "day">>
+		<<set $lake_ice_broken to 1>>
+	<</if>>
 	<<if $lake_ice_broken is undefined>>
 		<<link [[Break the Ice (0:30)|Lake Ice Break]]>><<pass 30>><<set $lake_ice_broken to 2>><<tiredness 3>><</link>><<gtiredness>>
 		<br>

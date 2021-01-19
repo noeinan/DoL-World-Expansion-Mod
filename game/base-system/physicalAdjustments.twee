@@ -20,7 +20,7 @@
 			}
 		},
 		"pills":{
-			"type": ["penis", "breast"],
+			"type": ["penis", "breast", "bottom"],
 			"penis": {
 				"type": null,
 				"doseTaken": null,
@@ -33,6 +33,17 @@
 				}
 			},
 			"breast": {
+				"type": null,
+				"doseTaken": null,
+				"autoTake": null,
+				"overdose": false,
+				"owned": {
+					"growth": 0,
+					"reduction": 0,
+					"blocker": 0,
+				}
+			},
+			"bottom": {
 				"type": null,
 				"doseTaken": null,
 				"autoTake": null,
@@ -71,8 +82,8 @@
 	}>>
 <</if>>
 
-<<if $sexStats.pills.type is undefined>>
-	<<set _quantity to [0,0,0,0,0,0]>>
+<<if $sexStats.pills.type is undefined or $sexStats.pills.type.length lt 3>>
+	<<set _quantity to [0,0,0,0,0,0,0,0,0]>>
 	<<if $sexStats.pills.breastOwned isnot undefined and $sexStats.pills.boughtOnce is true>>
 		<<set _quantity[0] to Math.floor($sexStats.pills.penisOwned[5] + ($sexStats.pills.penisOwned[4] / 2))>>
 		<<set _quantity[1] to Math.floor($sexStats.pills.penisOwned[0] + ($sexStats.pills.penisOwned[1] / 2))>>
@@ -80,6 +91,13 @@
 		<<set _quantity[3] to Math.floor($sexStats.pills.breastOwned[5] + ($sexStats.pills.breastOwned[4] / 2))>>
 		<<set _quantity[4] to Math.floor($sexStats.pills.breastOwned[0] + ($sexStats.pills.breastOwned[1] / 2))>>
 		<<set _quantity[5] to clone($sexStats.pills.breastOwned[2])>>
+	<<elseif $sexStats.pills.breast isnot undefined and $sexStats.pills.boughtOnce is true>>
+		<<set _quantity[0] to clone($sexStats.pills.penis.owned.growth)>>
+		<<set _quantity[1] to clone($sexStats.pills.penis.owned.reduction)>>
+		<<set _quantity[2] to clone($sexStats.pills.penis.owned.blocker)>>
+		<<set _quantity[3] to clone($sexStats.pills.breast.owned.growth)>>
+		<<set _quantity[4] to clone($sexStats.pills.breast.owned.reduction)>>
+		<<set _quantity[5] to clone($sexStats.pills.breast.owned.blocker)>>
 	<</if>>
 	<<if $sexStats.pills.boughtOnce is true>>
 		<<set _boughtOnce to true>>
@@ -88,7 +106,7 @@
 	<</if>>
 
 	<<set $sexStats.pills to {
-		"type": ["penis", "breast"],
+		"type": ["penis", "breast", "bottom"],
 		"penis": {
 			"type": null,
 			"doseTaken": null,
@@ -111,6 +129,17 @@
 				"blocker": clone(_quantity[5]),
 			}
 		},
+		"bottom": {
+			"type": null,
+			"doseTaken": null,
+			"autoTake": null,
+			"overdose": false,
+			"owned": {
+				"growth": clone(_quantity[6]),
+				"reduction": clone(_quantity[7]),
+				"blocker": clone(_quantity[8]),
+			}
+		},
 		"boughtOnce": _boughtOnce,
 	}>>
 <</if>>
@@ -121,6 +150,9 @@
 <<set _pills.breast.owned.growth to Math.clamp(_pills.breast.owned.growth, 0, 1000)>>
 <<set _pills.breast.owned.reduction to Math.clamp(_pills.breast.owned.reduction, 0, 1000)>>
 <<set _pills.breast.owned.blocker to Math.clamp(_pills.breast.owned.blocker, 0, 1000)>>
+<<set _pills.bottom.owned.growth to Math.clamp(_pills.bottom.owned.growth, 0, 1000)>>
+<<set _pills.bottom.owned.reduction to Math.clamp(_pills.bottom.owned.reduction, 0, 1000)>>
+<<set _pills.bottom.owned.blocker to Math.clamp(_pills.bottom.owned.blocker, 0, 1000)>>
 
 <</nobr>><</widget>>
 
@@ -259,33 +291,72 @@
 <</if>>
 
 /*Bottom*/
-<<if $purity lt 1000>>
-<<set $bottomgrowthtimer -= ((1000 - $purity) / 2)>>
-<</if>>
+<<switch $sexStats.pills.bottom.type>>
+	<<case "growth">>
+		<<set _bottomMulti to 1 + (2.25 * $sexStats.pills.bottom.doseTaken)>>
+	<<case "reduction">>
+		<<set _bottomMulti to -1 + (-2.25 * $sexStats.pills.bottom.doseTaken)>>
+	<<case "blocker">>
+		<<set _bottomMulti to 0>>
+	<<default>>
+		<<set _bottomMulti to 1>>
+<</switch>>
 
-<<if $cow gte 6>>
-	<<set $bottomgrowthtimer -= 300>>
+<<if _bottomMulti isnot 0>>
+	<<set _totalReduction to $workouts * 2.5>>
+	<<set _totalIncrease to $sexStats.creampie.self.anus * 2>>
+
+	<<set _bottomMulti += (500 - $purity) / 500>>
+
+	<<if $cow gte 6>>
+		<<set _bottomMulti += 1>>
+	<</if>>
+
+	<<if _bottomMulti gt 1>>
+		<<set _totalIncrease += 10>>
+		<<set _totalIncrease *= _bottomMulti>>
+	<<elseif _bottomMulti lt 0>>
+		<<set _totalReduction += 10>>
+		<<set _totalReduction *= _bottomMulti * -1>>
+	<</if>>
+
+	<<set _negativeChange to _totalReduction - _totalIncrease>>
+	<<set _positiveChange to _totalIncrease - _totalReduction>>
+
+	<<if _negativeChange gt 0>>
+		<<set _purityBoost to 1 + ($purity / 500)>>
+
+		<<set $bottomgrowthtimer += _negativeChange>>
+		<<set $bottomgrowthtimer += _purityBoost * _negativeChange>>
+	<<elseif _positiveChange gt 0>>
+		<<set _impurityBoost to 1 + ((1000 - $purity) / 500)>>
+
+		<<set $bottomgrowthtimer -= _positiveChange>>
+		<<set $bottomgrowthtimer -= _impurityBoost * _positiveChange>>
+	<</if>>
+
+
+	<<if $parasite.bottom.name is "urchin">>
+		<<set $bottomgrowthtimer -= 300>>
+	<</if>>
+	<<if $parasite.bottom.name is "slime">>
+		<<set $bottomgrowthtimer += 300>>
+	<</if>>
+	<<if $bottomgrowthtimer lte 0 and $bottomsize lt $bottomsizemax>>
+		<<set $bottomsize += 1>>
+		<<set $bottomgrowthtimer += 700>>
+		<<set $bottomgrowthmessage to $bottomsize>><<set $effectsmessage to 1>>
+	<<elseif $bottomgrowthtimer gte 1000 and $bottomsize gt 0>>
+		<<set $bottomsize -= 1>>
+		<<set $bottomgrowthtimer -= 700>>
+		<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
+	<<elseif $bottomgrowthtimer gte 1200 and $bottomsize lte 0 and $bottomsize gt $bottomsizemin>>
+		<<set $bottomsize -= 1>>
+		<<set $bottomgrowthtimer -= 1000>>
+		<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
+	<</if>>
+	<<set $bottomgrowthtimer to Math.clamp($bottomgrowthtimer, 0, 1000)>>
 <</if>>
-<<if $parasite.bottom.name is "urchin">>
-	<<set $bottomgrowthtimer -= 300>>
-<</if>>
-<<if $parasite.bottom.name is "slime">>
-	<<set $bottomgrowthtimer += 300>>
-<</if>>
-<<if $bottomgrowthtimer lte 0 and $bottomsize lt $bottomsizemax>>
-	<<set $bottomsize += 1>>
-	<<set $bottomgrowthtimer += 700>>
-	<<set $bottomgrowthmessage to $bottomsize>><<set $effectsmessage to 1>>
-<<elseif $bottomgrowthtimer gte 1000 and $bottomsize gt 0>>
-	<<set $bottomsize -= 1>>
-	<<set $bottomgrowthtimer -= 700>>
-	<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
-<<elseif $bottomgrowthtimer gte 1200 and $bottomsize lte 0 and $bottomsize gt $bottomsizemin>>
-	<<set $bottomsize -= 1>>
-	<<set $bottomgrowthtimer -= 1000>>
-	<<set $bottomshrinkmessage to $bottomsize>><<set $effectsmessage to 1>>
-<</if>>
-<<set $bottomgrowthtimer to Math.clamp($bottomgrowthtimer, 0, 1000)>>
 
 /*Resetting of values*/
 
@@ -297,6 +368,7 @@
 <<set $sexStats.creampie.self.mouth to 0>>
 <<set $sexStats.creampie.self.vagina to 0>>
 <<set $sexStats.breasts.playedWith to 0>>
+<<set $workouts to 0>>
 
 <<set _pills to $sexStats.pills>>
 <<if $location is "home">>
@@ -323,6 +395,8 @@
 	<<set _pills.penis.doseTaken to 0>>
 	<<set _pills.breast.type to null>>
 	<<set _pills.breast.doseTaken to 0>>
+	<<set _pills.bottom.type to null>>
+	<<set _pills.bottom.doseTaken to 0>>
 <</if>>
 <</nobr>><</widget>>
 
