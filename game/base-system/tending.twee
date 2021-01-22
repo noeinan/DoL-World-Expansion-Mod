@@ -19,13 +19,47 @@
 <</nobr>><</widget>>
 
 <<widget "clear_plot">><<nobr>>/*Returns a plot to its default state. First argument: location. Second argument: index of plot to be reset.*/
-	<<set _size to $plots[$args[0]][$args[1]].size>>
-	<<set _quality to $plots[$args[0]][$args[1]].quality>>
-	<<set _bed to $plots[$args[0]][$args[1]].bed>>
-	<<set $plots[$args[0]][$args[1]] to clone(setup.plot_base)>>
-	<<set $plots[$args[0]][$args[1]].bed to _bed>>
-	<<set $plots[$args[0]][$args[1]].quality to _quality>>
-	<<set $plots[$args[0]][$args[1]].size to _size>>
+	<<if $plots[$args[0]][$args[1]].baseQuality isnot undefined and $backgroundTraits.includes("greenthumb") is false>>
+		<<if $plots[$args[0]][$args[1]].fertiliserDecay gt 0>>
+			<<set $plots[$args[0]][$args[1]].fertiliserDecay-->>
+		<</if>>
+		<<if $plots[$args[0]][$args[1]].fertiliserDecay is 0 and $plots[$args[0]][$args[1]].quality > $plots[$args[0]][$args[1]].baseQuality>>
+			<<set $plots[$args[0]][$args[1]].quality-->>
+			<<set $plotDecay to 2>>
+			<<if $plots[$args[0]][$args[1]].quality > $plots[$args[0]][$args[1]].baseQuality>>
+				<<set $plots[$args[0]][$args[1]].fertiliserDecay to 2>>
+				<<if $plots[$args[0]][$args[1]].size isnot "large">>
+					<<set $plots[$args[0]][$args[1]].fertiliserDecay++>>
+				<</if>>
+				<<set $plotDecay to 1>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<set $plots[$args[0]][$args[1]].water to 0>>
+	<<set $plots[$args[0]][$args[1]].days to 0>>
+	<<set $plots[$args[0]][$args[1]].plant to "none">>
+	<<set $plots[$args[0]][$args[1]].till to 0>>
+	<<set $plots[$args[0]][$args[1]].stage to 0>>
+<</nobr>><</widget>>
+
+<<widget "display_quality">><<nobr>>
+<<silently>>
+<<switch $plots[$args[0]][$args[1]].bed>>
+	<<case "water">><<set _bedType to "water">>
+	<<case "earth">><<set _bedType to "soil">>
+	<<default>><<set _bedType to clone($plots[$args[0]][$args[1]].bed)>>
+<</switch>>
+<<if $plots[$args[0]][$args[1]].quality is 1>>
+	<<set $_result to `<span class="blue">poor `+_bedType+`</span>`>>
+<<elseif $plots[$args[0]][$args[1]].quality is 2>>
+	<<set $_result to `<span class="lblue">decent `+_bedType+`</span>`>>
+<<elseif $plots[$args[0]][$args[1]].quality is 3>>
+	<<set $_result to `<span class="teal">good `+_bedType+`</span>`>>
+<<elseif $plots[$args[0]][$args[1]].quality gt 3>>
+	<<set $_result to `<span class="green">excellent `+_bedType+`</span>`>>
+<</if>>
+<</silently>><<print $_result>>
 <</nobr>><</widget>>
 
 <<widget "display_plot">><<nobr>>/*Argument is the plot location you want to display.*/
@@ -38,28 +72,19 @@ There are <<print $plots[$args[0]].length>> tillable
 <<else>>
 	<span class="green">fields</span>
 <</if>>
-here. The soil quality is
-<<if $plots[$args[0]][0].quality is 1>>
-	<span class="blue">poor.</span>
-<<elseif $plots[$args[0]][0].quality is 2>>
-	<span class="lblue">decent.</span>
-<<elseif $plots[$args[0]][0].quality is 3>>
-	<span class="teal">good.</span>
-<<else>>
-	<span class="green">excellent.</span>
-<</if>>
+here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertiliser.current fertiliser right now.<</if>>
 <br><br>
 <<for _i to 0; _i lt $plots[$args[0]].length; _i++>>
 <<set _tending_temp to _i>>
 <<capture _tending_temp>>
-<span class="gold"><<wordify_i _i cap>> plot <<if $plots[$args[0]][_i].bed isnot "earth">>(<<print $plots[$args[0]][_i].bed>>)<</if>>:</span>
+<span class="gold"><<wordify_i _i cap>> plot (<<display_quality $args[0] _tending_temp>>):</span>
 	<<if $plots[$args[0]][_i].stage gte 5>>
 		<span class="green">The <<print setup.plants[$plots[$args[0]][_i].name].plural>> are flowering, and ready for picking.</span>
 		<br>
-		<<if $plots[$args[0]][_i].size is "small">>
+		<<if $plots[$args[0]][_tending_temp].size is "small">>
 			<<link [[Pick (0:05)|$passage]]>><<pass 5>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "small">><<set $tending_harvest_quality to clone($plots[$args[0]][_tending_temp].quality)>><<clear_plot $args[0] _tending_temp>><</link>>
 			<br>
-		<<elseif $plots[$args[0]][_i].size is "medium">>
+		<<elseif $plots[$args[0]][_tending_temp].size is "medium">>
 			<<link [[Pick (0:15)|$passage]]>><<pass 15>><<set $tending_harvest to 1>><<set $tending_harvest_name to clone($plots[$args[0]][_tending_temp].name)>><<set $tending_harvest_size to "medium">><<set $tending_harvest_quality to clone($plots[$args[0]][_tending_temp].quality)>><<clear_plot $args[0] _tending_temp>><</link>>
 			<br>
 		<<else>>
@@ -100,66 +125,88 @@ here. The soil quality is
 		<<else>>
 			The soil is ready for tilling.
 			<br>
-			<<if $plots[$args[0]][_i].size is "small">>
-				<<if $tending gte 1000>>
-					<<link [[Till (0:05)|$passage]]>><<set $plot_tilled to 1>><<tiredness 1>><<physique 1>><<pass 5>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 800>>
-					<<link [[Till (0:10)|$passage]]>><<set $plot_tilled to 1>><<tiredness 1>><<physique 1>><<pass 10>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 600>>
-					<<link [[Till (0:15)|$passage]]>><<set $plot_tilled to 1>><<tiredness 2>><<physique 2>><<pass 15>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 400>>
-					<<link [[Till (0:20)|$passage]]>><<set $plot_tilled to 1>><<tiredness 2>><<physique 2>><<pass 20>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 200>>
-					<<link [[Till (0:25)|$passage]]>><<set $plot_tilled to 1>><<tiredness 3>><<physique 3>><<pass 25>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<else>>
-					<<link [[Till (0:30)|$passage]]>><<set $plot_tilled to 1>><<tiredness 3>><<physique 3>><<pass 30>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<</if>>
-			<<elseif $plots[$args[0]][_i].size is "medium">>
-				<<if $tending gte 1000>>
-					<<link [[Till (0:15)|$passage]]>><<set $plot_tilled to 1>><<tiredness 2>><<physique 2>><<pass 15>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 800>>
-					<<link [[Till (0:30)|$passage]]>><<set $plot_tilled to 1>><<tiredness 3>><<physique 3>><<pass 30>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 600>>
-					<<link [[Till (0:45)|$passage]]>><<set $plot_tilled to 1>><<tiredness 5>><<physique 5>><<pass 45>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 400>>
-					<<link [[Till (1:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 6>><<physique 6>><<pass 60>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 200>>
-					<<link [[Till (1:15)|$passage]]>><<set $plot_tilled to 1>><<tiredness 8>><<physique 8>><<pass 75>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<ggtiredness>>
-					<br>
-				<<else>>
-					<<link [[Till (1:30)|$passage]]>><<set $plot_tilled to 1>><<tiredness 9>><<physique 9>><<pass 90>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<ggtiredness>>
-					<br>
-				<</if>>
+			<<if $tending gte 1000>>
+				<<set _baseTime to 5>>
+				<<set _baseTiredsness to 1>>
+			<<elseif $tending gte 800>>
+				<<set _baseTime to 10>>
+				<<set _baseTiredsness to 2>>
+			<<elseif $tending gte 600>>
+				<<set _baseTime to 15>>
+				<<set _baseTiredsness to 3>>
+			<<elseif $tending gte 400>>
+				<<set _baseTime to 20>>
+				<<set _baseTiredsness to 4>>
+			<<elseif $tending gte 200>>
+				<<set _baseTime to 25>>
+				<<set _baseTiredsness to 5>>
 			<<else>>
-				<<if $tending gte 1000>>
-					<<link [[Till (1:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 6>><<physique 6>><<pass 1 hour>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gtiredness>>
-					<br>
-				<<elseif $tending gte 800>>
-					<<link [[Till (2:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 12>><<physique 12>><<pass 2 hours>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<ggtiredness>>
-					<br>
-				<<elseif $tending gte 600>>
-					<<link [[Till (3:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 18>><<physique 18>><<pass 3 hours>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<ggtiredness>>
-					<br>
-				<<elseif $tending gte 400>>
-					<<link [[Till (4:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 24>><<physique 24>><<pass 4 hours>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gggtiredness>>
-					<br>
-				<<elseif $tending gte 200>>
-					<<link [[Till (5:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 30>><<physique 30>><<pass 5 hours>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gggtiredness>>
-					<br>
-				<<else>>
-					<<link [[Till (6:00)|$passage]]>><<set $plot_tilled to 1>><<tiredness 36>><<physique 30>><<pass 6 hours>><<set $plots[$args[0]][_tending_temp].till to 1>><</link>><<gggtiredness>>
-					<br>
+				<<set _baseTime to 30>>
+				<<set _baseTiredsness to 6>>
+			<</if>>
+			<<if $plots[$args[0]][_i].size is "medium">>
+				<<set _baseTime *= 3>>
+				<<set _baseTiredsness *= 2>>
+			<<elseif $plots[$args[0]][_i].size is "large">>
+				<<set _baseTime *= 12>>
+				<<set _baseTiredsness *= 6>>
+			<</if>>
+			<<if _baseTime % 60 is 0>>
+				<<set _baseHours to _baseTime / 60>>
+			<</if>>
+			<<set _displayedMinutes to _baseTime % 60>>
+			<<set _displayedHours to (_baseTime - _displayedMinutes) / 60>>
+			<<if _displayedMinutes lt 10>>
+				<<set _displayedMinutes to "0" + _displayedMinutes>>
+			<</if>>
+			<<capture _baseTiredsness _baseHours _baseTime>>
+				<<link [["Till (" + _displayedHours + ":" + _displayedMinutes + ")"|$passage]]>>
+					<<set $plot_tilled to 1>>
+					<<tiredness _baseTiredsness>><<physique _baseTiredsness>>
+					<<if _baseHours>>
+						<<pass _baseHours hours>>
+					<<else>>
+						<<pass _baseTime>>
+					<</if>>
+					<<set $plots[$args[0]][_tending_temp].till to 1>>
+				<</link>><<gtiredness>>
+			<</capture>>
+			<br>
+			<<if $fertiliser.current gte 1 and $plots[$args[0]][_i].quality lt 4 and $tending gte 400>>
+				<<set _baseTimeFert to Math.floor(_baseTime * 1.5)>>
+				<<if _baseTimeFert % 60 is 0>>
+					<<set _baseHoursFert to _baseTimeFert / 60>>
 				<</if>>
+				<<set _displayedMinutesFert to _baseTimeFert % 60>>
+				<<set _displayedHoursFert to (_baseTimeFert - _displayedMinutesFert) / 60>>
+				<<if _displayedMinutesFert lt 10>>
+					<<set _displayedMinutesFert to "0" + _displayedMinutesFert>>
+				<</if>>
+				<<capture _baseTimeFert _baseHoursFert _baseTiredsness>>
+					<<link [["Till and apply fertiliser (" + _displayedHoursFert + ":" + _displayedMinutesFert + ")"|$passage]]>>
+						<<set $plot_tilled_fertiliser to 1>>
+						<<tiredness `Math.floor(_baseTiredsness * 1.5)`>>
+						<<physique `Math.floor(_baseTiredsness * 1.5)`>>
+						<<if _baseHoursFert>>
+							<<pass _baseHoursFert hours>>
+						<<else>>
+							<<pass _baseTimeFert>>
+						<</if>>
+						<<set $plots[$args[0]][_tending_temp].till to 1>>
+						<<set $fertiliser.current-->><<set $fertiliser.used++>>
+						<<set $plots[$args[0]][_tending_temp].quality++>>
+						<<if $backgroundTraits.includes("greenthumb") is false>>
+							<<if $plots[$args[0]][_tending_temp].baseQuality is undefined>>
+								<<set $plots[$args[0]][_tending_temp].baseQuality to clone($plots[$args[0]][_tending_temp].quality)>>
+							<</if>>
+							<<set $plots[$args[0]][_tending_temp].fertiliserDecay to 2>>
+							<<if $plots[$args[0]][_tending_temp].size isnot "large">>
+								<<set $plots[$args[0]][_tending_temp].fertiliserDecay++>>
+							<</if>>
+						<</if>>
+					<</link>><<gtiredness>>
+				<</capture>>
+				<br>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -249,6 +296,10 @@ here. The soil quality is
 	<<unset $plot_tilled>>
 	<br>
 <</if>>
+<<if $plot_tilled_fertiliser is 1>>
+	You get to work removing weeds and tilling the soil while mixing in some fertiliser. It's hard going, but when you're done the soil is ready for planting. <span class="gold">You get a good workout.</span>
+	<<unset $plot_tilled_fertiliser>>
+<</if>>
 <<if $plot_planted is 1>>
 	You plant the seeds in the cool earth.
 	<<unset $plot_planted>>
@@ -310,11 +361,23 @@ here. The soil quality is
 <<elseif $args[1] is 2>>
 	<<set _tending_amount *= 1.2>>
 <</if>>
+<<if !$backgroundTraits.includes("greenthumb") and $tending is 1000 and ($fertiliser.used gte 50 or ($fertiliser.used gte 30 and $farm_stage gte 6)) and $plants_known.length gte 8>>
+	<<run $backgroundTraits.pushUnique("greenthumb")>>
+	<span class="gold">Spending a large amount of time in the dirt has given you a green thumb.</span>
+	<br>
+<</if>>
+<<if $backgroundTraits.includes("greenthumb")>>
+	<<set _tending_amount *= 1.2>>
+<</if>>
 <<set _tending_amount to Math.trunc(_tending_amount)>>
 <<set $plants[$args[0]].amount += _tending_amount>>
 <<set $plants[$args[0]].plural to clone(setup.plants[$args[0]].plural)>>
 <<set $plants[$args[0]].name to clone(setup.plants[$args[0]].name)>>
 You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
+<<if $plotDecay>>
+	The fertiliser effect has decayed<<if $plotDecay is 2>> completely<</if>>.
+	<<unset $plotDecay>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "tending_pick">><<nobr>>
@@ -333,6 +396,9 @@ You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
 
 <<if !setup.plants[$args[0]].special.includes("large")>>
 	<<set _tending_amount *= (1 + ($tending / 1000))>>
+<</if>>
+<<if $backgroundTraits.includes("greenthumb")>>
+	<<set _tending_amount *= 1.2>>
 <</if>>
 <<set _tending_amount to Math.trunc(_tending_amount)>>
 <<set $plants[$args[0]].amount += _tending_amount>>

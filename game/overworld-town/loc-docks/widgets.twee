@@ -419,18 +419,47 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 	<<set $skul_dock.S to {}>>
 	<<set $skul_dock.SE to {}>>
 	<<set _skul_dock_keys to Object.keys($skul_dock)>>
+	<<set _count to 0>>
 	<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
 		<<set $rng to random(1, 100)>>
 		<<if $rng gte 100>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "gold">>
+			<<set _count++>>
 		<<elseif $rng gte 95>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "aphrodisiacs">>
+			<<set _count++>>
 		<<elseif $rng gte 75>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "electronics">>
+			<<set _count++>>
+		<<elseif $rng gte 65>>
+			<<set $skul_dock[_skul_dock_keys[_i]].contents to "fertiliser">>
+			<<set _count++>>
 		<<else>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "none">>
 		<</if>>
 	<</for>>
+	<<if _count lte 1>>
+		<<for _i to 0; _i lt _skul_dock_keys.length; _i++>>
+			<<if $skul_dock[_skul_dock_keys[_i]].contents is "none">>
+				<<set $rng to random(1, 100)>>
+				<<if $rng gte 95>>
+					<<set $skul_dock[_skul_dock_keys.pluck()].contents to "aphrodisiacs">>
+					<<set _count++>>
+				<<elseif $rng gte 75>>
+					<<set $skul_dock[_skul_dock_keys.pluck()].contents to "electronics">>
+					<<set _count++>>
+				<<elseif $rng gte 65>>
+					<<set $skul_dock[_skul_dock_keys.pluck()].contents to "fertiliser">>
+					<<set _count++>>
+				<</if>>
+				<<if _count is 2>>
+					<<break>>
+				<</if>>
+			<</if>>
+		<</for>>
+		<!--Added in case the variable gets use elsewhere-->
+		<<set _skul_dock_keys to Object.keys($skul_dock)>>
+	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -511,6 +540,8 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 <<widget "skul_dock_state">><<nobr>>
 <<if $skul_dock[$args[0]].state is "known">>
 	<<if $skul_dock[$args[0]].contents is "none">>
+		<span class="purple">The containers here contain nothing of value to you.</span>
+	<<elseif $skul_dock[$args[0]].contents is "fertiliser" and $tending lt 400>>
 		<span class="purple">The containers here contain nothing of value to you.</span>
 	<<else>>
 		<span class="teal">A container here contains valuable <<print $skul_dock[$args[0]].contents>>.</span>
