@@ -1,6 +1,24 @@
 :: Pharmacy [nobr]
+<<if $pharmClosed is true>>
+A "Closed" sign hangs on the door. You tug the door but it's locked.<br><br>
+<<link [[Go back|Hospital Foyer]]>><</link>>
+<<else>>
+
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
-You are inside the hospital pharmacy. The nurse at the till looks at you briefly then continues reading her book.
+<<generateNPC 1 t $pharmNurseGender $pharmNurseGender $pharmNurseLvl>>
+<<set $pronoun = $NPCList[0].pronoun>>
+<<set $description = $NPCList[0].description>>
+
+You are inside the hospital pharmacy. 
+<<if $pharmTriedSeduction != true>>
+	A young nurse at the till looks at you briefly then continues reading <<his>> book.
+<<elseif $pharmSexFinished == true>>
+	A <<person>> sits by the till and reads a book.
+<<else>>
+	<br>
+	"Hey, you're back," nurse notices you, then goes back to <<his>> book.
+<</if>>
+<br>
 Looking at the items on the shelves, you notice a few objects of interest.
 <br>
 <<if $penisexist is 1>>
@@ -29,33 +47,49 @@ Looking at the items on the shelves, you notice a few objects of interest.
 
 <br><br>
 <<link [[Return to Foyer|Hospital Foyer]]>><</link>>
+<</if>>
 
 :: Pharmacy Sale [nobr]
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
 The nurse looks at the item you're holding,
 <<switch $pharmacyItem>>
-	<<case "penis reduction">>"That'll be £150. So is it too big, or do you just want it to be tiny?"
+	<<case "penis reduction">>
+	"That'll be £150.<<if $pharmTriedSeduction != true>> So is it too big, or do you just want it to be tiny?<</if>>"
 	<br><br>
 	<<if $money gte 15000>>
 	<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<managePill "penis" "reduction" 14 false>><<boughtOnce>><</link>>
 	<<else>>
 	<span class="purple">You cannot afford them.</span>
 	<</if>>
+	<<if $promiscuity gte 15 and $pharmTriedSeduction != true>>
+	<br>
+	<<link [[Seduce|Pharmacy Seduction]]>><<set $choice to "reduction">><<set $price to 150>><</link>><<seductiondifficulty>><<promiscuous2>>
+	<</if>>
 
-	<<case "penis growth">>"That'll be £150. So you think yours is too small?"
+	<<case "penis growth">>
+	"That'll be £150.<<if $pharmTriedSeduction != true>> So you think yours is too small?<</if>>"
 	<br><br>
 	<<if $money gte 15000>>
 	<<link [[Hand over the money|Pharmacy]]>><<set $money -= 15000>><<managePill "penis" "growth" 14 false>><<boughtOnce>><</link>>
 	<<else>>
 	<span class="purple">You cannot afford them.</span>
 	<</if>>
+	<<if $promiscuity gte 15 and $pharmTriedSeduction != true>>
+	<br>
+	<<link [[Seduce|Pharmacy Seduction]]>><<set $choice to "growth">><<set $price to 150>><</link>><<seductiondifficulty>><<promiscuous2>>
+	<</if>>
 
-	<<case "penis growth blocker">>"£200.00 please. I wonder how big you are."
+	<<case "penis growth blocker">>
+	"£200.00 please.<<if $pharmTriedSeduction != true>> I wonder how big you are.<</if>>"
 	<br><br>
 	<<if $money gte 20000>>
 	<<link [[Hand over the money|Pharmacy]]>><<set $money -= 20000>><<managePill "penis" "blocker" 14 false>><<boughtOnce>><</link>>
 	<<else>>
 	<span class="purple">You cannot afford them.</span>
+	<</if>>
+	<<if $promiscuity gte 15 and $pharmTriedSeduction != true>>
+	<br>
+	<<link [[Seduce|Pharmacy Seduction]]>><<set $choice to "blocker">><<set $price to 200>><</link>><<seductiondifficulty>><<promiscuous2>>
 	<</if>>
 
 	<<case "breast reduction">>"£150.00 please. The effects will vary."
@@ -115,3 +149,191 @@ The nurse looks at the item you're holding,
 <<widget "boughtOnce">><<nobr>>
 <<set $sexStats.pills.boughtOnce to true>>
 <</nobr>><</widget>>
+
+:: Pharmacy Seduction [nobr]
+<<set $pharmTriedSeduction = true>>
+"Why don't you see it for yourself?" you say gazing into <<his>> eyes.<br><br>
+
+<<set $seductiondifficulty to (8888 - ($rng * 20) - ($choice == "growth" ? 500 : 1000))>>
+<<seductioncheck>>
+<br><br>
+<<if $seductionskill lt 1000>><span class="gold">You feel more confident in your powers of seduction.</span><</if>><<seductionskilluse>><<promiscuity2>>
+
+<<if $seductionrating gte $seductionrequired>>
+<<He>> rises one brow in surprise and then <<his>> face slowly fills with blush. A mischievous spark flashes in <<his>> eyes. <<He>> playfully bites <<his>> lip and glances around to make sure you are alone. Satisfied, <<he>> takes you by the hand and leads you behind the counter.<br>
+<<He>> pushes you against the wall, drops down on <<his>> knees and hastily starts to undo your <<if $worn.lower.name != "naked">>$worn.lower.name<<else>>$worn.under_lower.name<</if>>.<br><br>
+<br><br>
+<<set $sexstart to 1>>
+<<link [[Next|Pharmacy Encounter Sex]]>><</link>>
+<<else>>
+After a brief pause <<he>> burst into a ringing laugh.<<ggstress>><<stress 23>>
+<br>
+"Nice try, <<lass>>!" <<he>> finally said still smiling.<br>
+"So, are you buying them or what?"<br><br>
+
+A box of penis $choice pills lays on the table.<br><br>
+
+<<link [["Pay £" + $price|Pharmacy Seduction End]]>><<set $phase to "pay">><</link>><br>
+<<link [[Nevermind|Pharmacy Seduction End]]>><<set $phase to "nevermind">><</link>>
+<</if>>
+
+::Pharmacy Seduction End [nobr]
+<<switch $phase>>
+	<<case "nevermind">>
+	You mutter something unintelligible as you turn around and quickly leave.<br>
+	"Hey, i didn't mean to upset you!" you hear <<he>> says apologetically.<br><br>
+	<<link [[Next|Hospital Foyer]]>><</link>>
+
+	<<case "pay">>
+	You hand over the money in awkward silence, take your box of pills and leave.<br><br>
+	<<set $money -= $price * 100>><<managePill "penis" $choice 14 false>><<boughtOnce>>
+	<<link [[Next|Hospital Foyer]]>><</link>>
+
+<</switch>>
+
+:: Pharmacy Encounter Sex [nobr]
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<pharmnurseinit>>
+	<<set $enemytrust += 100>>
+	<<set $position = "doggy">>
+	<br><br>
+<</if>>
+
+<!-- Reaction to seeing penis for the first time during encounter -->
+<<if $exposed is 2 and $exposedPrev lt 2>> <!-- if penis was exposed just now -->
+	<<if $worn.genitals.type.includes("chastity")>>
+		"Dude. What the fuck is this?" <<he>> looks at your <<genitals>>. "That's not funny!"
+		<br><<He>> stays silent for a moment.
+		<br>"I don't know dude, i don't really wanna go on now, so buckle your pants and get out."
+		<br>"What a bummer," <<he>> adds quietly.
+		<<set $finish = 1>><<set $phase = "chastity">>
+	<<elseif $penissize is 0>>
+		<<He>> froze the moment your <<penis>> floped out. 
+		<br>"Dude, what the fuck? You kidding me? //This// is what you wanted me to see?" <<he>> starts to chuckle.
+		<br><<He>> doesn't say anything for a while.
+		<br>"Yeah, now i lost my boner... Thanks, dude."
+		<<incggpenisinsecurity>>
+		<br><<He>> gets up, fixes <<his>> clothing and returns to the till and <<his>> book.
+		<<set $finish = 1>><<set $phase = "tiny">>
+	<<elseif $penissize is 1>>
+		<<if $rng gte 70>>
+		You hear a snigger coming from below as your <<penis>> flops out, but <<he>> doesn't say anything and keeps going.
+		<<else>>
+		<br><br><<He>> stopped short the moment your <<penis>> floped out. 
+		<br>"Oh, and that's it? Dude, you sounded like you have something special in your pants," <<he>> says.
+		<br>"I'm not impressed. And i kinda lost all desire to go on. Buy some pills and come back when you're bigger."
+		<<incggpenisinsecurity>>
+		<br><<He>> gets up, fixes <<his>> clothing and returns to the till and <<his>> book.
+		<<set $finish = 1>><<set $phase = "small">>
+		<</if>>
+	<<elseif $penissize is 3>>
+		You hear a gasp of surprise coming from down below as your <<penis>> flops out.
+		<br>You look at <<his>> face and see <<his>> eyes light up.
+	<<elseif $penissize gte 4>>
+		"Holy ssshhit..." you hear a quiet whisper from down below as your <<penis>> flops out.
+		<br>You look down and see <<him>> fervently staring at your dick with <<his>> mouth agape.
+		<<if $insecurity_penis_big gte 1 and $penissize gte 4 and $acceptance_penis_big lte 999>>
+			<<acceptance "penis_big" 10>><<gacceptance>>
+		<</if>>
+	<</if>>
+	<br><br>
+<</if>>
+<<if $finish isnot 1>>
+	<<set $exposedPrev to $exposed>>
+	<<effectsman>><<man>>
+	<<stateman>>
+	<<actionsman>>
+<</if>>
+
+<<if $finish is 1 or $enemyhealth lte 0 or $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Pharmacy Encounter Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Pharmacy Encounter Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Pharmacy Encounter Sex Finish [nobr]
+<<set $outside to 0>><<set $location to "hospital">><<effects>>
+<<set $pharmSexFinished = true>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+
+	"This was... wow!" <<he>> pants as <<he>> gets up and leans on the counter, <<his>> legs are trembling. <<tearful>> you gather yourself.<br><br>
+
+	<<clotheson>>
+
+	After taking a breath <<he>> fixes <<his>> clothing and walks back to the till.<br>
+	<<if $choice isnot "reduction" or $penissize lt 3>>
+		"I think you've earned a discount, sweetie. You can have these pills for £<<print $price / 2>>."<br>
+		"Please come back for more," <<he>> winks at you.
+		<br><br><<endcombat>>
+		<<link [["Buy penis " + $choice + " pills for £" + $price / 2|Pharmacy]]>>
+			<<set $eventskip to 1>>
+			<<set $money -= $price * 50>><<managePill "penis" $choice 14 false>><<boughtOnce>>
+		<</link>>
+	<<else>>
+		"Sorry, sweatheart, i can't sell you these reduction pills after what you've done to me with your juicy cock. I just can't. I want it to stay as big as it is."<br>
+		"If you want i can sell you growth blocker pills with a discount instead," <<he>> smiles.
+		<br><br><<endcombat>>
+		<<link [[Buy blocker pills for £100|Pharmacy]]>>
+			<<set $eventskip to 1>>
+			<<set $money -= 10000>><<managePill "penis" "blocker" 14 false>><<boughtOnce>>
+		<</link>>
+	<</if>>
+	<br>
+	<<link [[Don't buy|Pharmacy]]>><<set $eventskip to 1>><</link>>
+
+<<elseif $enemyhealth lte 0>>
+	Covered in bruises, <<personsimple>> drops on the floor and starts crying, leaving you alone. <<tearful>> you gather yourself.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	You look at the counter and see the box of penis $choice pills you tried to purchase.<br><br>
+
+	<<link [[Steal the pills before the nurse picks themselves up|Hospital Foyer]]>>
+		<<set $eventskip to 1>>
+		<<set $pharmClosed = true>>
+		<<crimeup $price>><<managePill "penis" $choice 14 false>><<boughtOnce>>
+	<</link>><<crime>>
+	<br>
+	<<link [[Just leave|Hospital Foyer]]>><<set $eventskip to 1>><<set $pharmClosed = true>><</link>>
+
+<<elseif $finish is 1>>
+
+	<<switch $phase>>
+		<<case "chastity">>
+		Embarrassed, you stand still in silence. <<clotheson>><<endcombat>>
+		<br>
+
+		<<case "tiny">>
+		Face red from intense embarrassment, you stand still in silence. <<clotheson>>
+		The nurse doesn't even look your way.<br><br>
+		<<endcombat>>
+
+		<<case "small">>
+		Embarrassed, you don't know what to say. <<clotheson>>
+		"Don't forget your pills," nurse says. <<if $choice is "growth">>"You need them."<</if>>
+		<br><br>
+		<<endcombat>>
+
+		<<link [["Pay £" + $price + " for penis " + $choice + " pills"|Pharmacy]]>>
+			<<set $eventskip to 1>>
+			<<set $money -= $price * 100>><<managePill "penis" $choice 14 false>><<boughtOnce>>
+		<</link>><br>
+
+		<<default>>
+		The <<personsimple>> looks dejected as <<he>> gets up and fixes <<his>> clothing. <<He>> silently walks towards the till and picks up <<his>> book.<br>
+		<<clotheson>><<endcombat>>
+	<</switch>>
+
+	<<link [[Leave|Hospital Foyer]]>><<set $eventskip to 1>><</link>>
+<<else>>
+	<br><br>
+	<<link [[Next|Hospital Foyer]]>><<set $eventskip to 1>><</link>>
+<</if>>
