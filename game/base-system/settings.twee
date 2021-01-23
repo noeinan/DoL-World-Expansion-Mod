@@ -67,10 +67,12 @@
 <<if $args[0]>>
 	<<set $currentSettings to $args[0]>>
 <</if>>
-<<if $passage isnot "Start" and ($currentSettings is "characterSettings" or $currentSettings is "featSettings")>>
+<<if $passage isnot "Start" and ["quickStart", "presetConfirm", "characterSettings", "featSettings"].includes($currentSettings)>>
 	<<set $currentSettings to "gameSettings">>
 <</if>>
 <<switch $currentSettings>>
+	<<case "quickStart">><<replace #settingsDiv>><<quickStart>><</replace>>
+	<<case "presetConfirmDetails">><<replace #settingsDiv>><<presetConfirmDetails>><</replace>>
 	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>>
 	<<case "featSettings">><<replace #settingsDiv>><<featSettings>><</replace>>
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
@@ -102,6 +104,9 @@
 <</if>>
 <div class="gold">
 	<<if $passage is "Start">>
+		<<button "Quick Start<span class='red'>*</span>">>
+			<<displaySettings "quickStart">>
+		<</button>>
 		<<button "Character Creation<span class='red'>*</span>">>
 			<<displaySettings "characterSettings">>
 		<</button>>
@@ -131,13 +136,12 @@
 		<<displaySettings "exportsettings">>
 	<</button>>
 </div>
-
 <br>
 <div id="settingsDiv">
 	<<if $passage is "Start">>
-	<<characterSettings>><<set $currentSettings to "characterSettings">>
+		<<quickStart>><<set $currentSettings to "characterSettings">>
 	<<else>>
-	<<gameSettings>><<set $currentSettings to "gameSettings">>
+		<<gameSettings>><<set $currentSettings to "gameSettings">>
 	<</if>>
 </div>
 <br>
@@ -208,6 +212,63 @@
 	<<unset $settingsExitPassage>>
 	<<run State.display(_settingsExitPassage)>>
 	<<set $saveName to $saveName.replace(/[^a-zA-Z 0-9]+/g,"")>>
+<</nobr>><</widget>>
+
+<<widget "quickStartOptions">><<nobr>>
+<<if _quickStartOptions is undefined>>
+	<<set _quickStartOptions to {
+		complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},
+		player:{"":""},
+		genericNpc:{"Default Genders":"genericNpcDefaultGender", "All Male":"genericNpcAllMaleGender", "All Female":"genericNpcAllFemaleGender"},
+		namedNpc:{"Default Genders":"namedNpcDefaultGender", "All Male":"namedNpcAllMaleGender", "All Female":"namedNpcAllFemaleGender"},
+		beasts:{"Default Genders":"beastDefaultGenders", "All Male":"beastMaleGenders", "All Female":"beastFemaleGenders"},
+		monsters:{"Default monsters":"monstersDefault", "No Monsters":"monstersNone", "All Monsters":"monstersAll"},
+		game:{
+			"Normal":"gameNormal","Soft":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Journalist":"gameSoftCheats","Normal with cheats":"gameNormalCheats","Hard with cheats":"gameHardCheats","Masochist with cheats":"gameMasochistCheats"
+		},
+		images:{"Default":"imagesdefault","High Quality":"imagesHigh","Low Quality":"imagesLow","Performance Mode":"imagesPerformance","Disable images":"imagesDisable"},
+		settings:{"PC, tips":"settingPCTip","PC, no tips":"settingPCNoTip","Mobile, tips":"settingMobileTips","Mobile, no tips":"settingMobileNoTips"},
+	}>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "quickStart">><<nobr>>
+<<quickStartOptions>>
+<span class="red">The quick start and boosts tab can only be accessed at the beginning.</span>
+<br><br>
+<span class="gold">Complete Contributor Preset:</span> <<listbox "_completePreset" autoselect>><<optionsfrom _quickStartOptions.complete>><</listbox>> |
+<<link Set>><<presets _completePreset>><</link>>
+<br><br>
+
+<span class="gold">Player Preset:</span> <<listbox "_playerPreset" autoselect>><<optionsfrom _quickStartOptions.player>><</listbox>> |
+<<link Set>><<presets _playerPreset>><</link>>
+<br><br>
+
+<span class="gold">Generic NPC Preset:</span> <<listbox "_genericNpcPreset" autoselect>><<optionsfrom _quickStartOptions.genericNpc>><</listbox>> |
+<<link Set>><<presets _genericNpcPreset>><</link>>
+<br><br>
+<span class="gold">Named NPC Preset:</span> <<listbox "_namedNpcPreset" autoselect>><<optionsfrom _quickStartOptions.namedNpc>><</listbox>> |
+<<link Set>><<presets _namedNpcPreset>><</link>>
+<br><br>
+
+<span class="gold">Beasts Preset:</span> <<listbox "_beastPreset" autoselect>><<optionsfrom _quickStartOptions.beasts>><</listbox>> |
+<<link Set>><<presets _beastPreset>><</link>>
+<br><br>
+<span class="gold">Beasts as monsters Preset:</span> <<listbox "_monstersPreset" autoselect>><<optionsfrom _quickStartOptions.monsters>><</listbox>> |
+<<link Set>><<presets _monstersPreset>><</link>>
+<br><br>
+
+<span class="gold">Game difficult Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
+<<link Set>><<presets _gamePreset>><</link>>
+<br><br>
+<<if $images is 1>>
+	<span class="gold">Images Preset:</span> <<listbox "_imagesPreset" autoselect>><<optionsfrom _quickStartOptions.images>><</listbox>> |
+	<<link Set>><<presets _imagesPreset>><</link>>
+	<br><br>
+<</if>>
+<span class="gold">Settings Preset:</span> <<listbox "_settingsPreset" autoselect>><<optionsfrom _quickStartOptions.settings>><</listbox>> |
+<<link Set>><<presets _settingsPreset>><</link>>
+<br><br>
 <</nobr>><</widget>>
 
 <<widget "characterSettings">><<nobr>>
@@ -418,9 +479,19 @@
 		<</link>><span class="red"> This will remove all feats that have been earned so far, meaning you will have to collect them again.</span>
 		Loading your last save with these feats will revert this.
 		<br><br>
+		<<set _upgradeNames to Object.keys($featsBoosts.upgrades)>>
+		<<set _featOptionsList to {}>>
+		<<for _i to 0; _i lt _upgradeNames.length; _i++>>
+			<<if $featsBoosts.upgradeDetails[_upgradeNames[_i]].count gte $featsBoosts.upgradeDetails[_upgradeNames[_i]].minCount>>
+				<<set _featOptionsList[$featsBoosts.name[_upgradeNames[_i]]] = _upgradeNames[_i]>>
+			<<else>>
+				<<set _featOptionsList["?????"] = _upgradeNames[_i]>>
+			<</if>>
+		<</for>>
 		<div id="featsPointsMenu">
 			<<featsPointsMenu>>
 		</div>
+		<<featsPointsMenuReset>>
 	<</if>>
 <</nobr>><</widget>>
 
