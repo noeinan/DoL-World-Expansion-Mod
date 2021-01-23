@@ -211,7 +211,7 @@ function hairdressersReset() {
 DefineMacroS("hairdressersReset", hairdressersReset);
 
 function NPCSettingsReset() {
-	jQuery(document).on('change', '.macro-listbox', function (e) {
+	jQuery(document).on('change', '#listbox--npcid', function (e) {
 		new Wikifier(null, '<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>');
 	});
 	return "";
@@ -234,3 +234,12 @@ DefineMacroS("loveInterestFunction", loveInterestFunction);
 window.between = function(x, min, max){
 	return x >= min && x <= max;
 }
+
+function featsPointsMenuReset() {
+	jQuery(document).on('change', '#listbox--upgradename', function (e) {
+		new Wikifier(null, '<<updateFeatsPointsMenu>>');
+	});
+	return "";
+}
+
+DefineMacroS("featsPointsMenuReset", featsPointsMenuReset);

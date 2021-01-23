@@ -132,22 +132,57 @@ Filter by:
 
 /*Feat Points Menu*/
 <<widget "featsPointsMenu">><<nobr>>
+
 <div id="featsStats">
-	<<featsPointsMenuStats>>
+	You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.pointsUsed>> VrelCoins</span> remaining.
 </div>
-<<set _upgradeNames to Object.keys($featsBoosts.upgrades)>>
-<<for _i to 0; _i lt _upgradeNames.length; _i++>>
-	<div @id="'feats-' + _upgradeNames[_i]">
-		<<featsMenu _upgradeNames[_i]>>
-	</div>
-	<br>
-<</for>>
-
-<</nobr>><</widget>>
-
-<<widget "featsPointsMenuStats">><<nobr>>
-You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.pointsUsed>> VrelCoins</span> remaining. You have spent <<print $featsBoosts.pointsUsed>> so far.
+<br>
+<<listbox "_upgradeName" autoselect>>
+	<<optionsfrom _featOptionsList>>
+<</listbox>> |
+<<link Previous>>
+	<<set _id to _upgradeNames.indexOf(_upgradeName) - 1>>
+	<<if _id lt 0>>
+		<<set _id to _upgradeNames.length - 1>>
+	<</if>>
+	<<set _upgradeName to _upgradeNames[_id]>>
+	<<updateFeatsPointsMenu>>
+<</link>> |
+<<link Next>>
+	<<set _id to _upgradeNames.indexOf(_upgradeName) + 1>>
+	<<if _id gte _upgradeNames.length>>
+		<<set _id to 0>>
+	<</if>>
+	<<set _upgradeName to _upgradeNames[_id]>>
+	<<updateFeatsPointsMenu>>
+	<<updateFeatsPointsMenu>>
+<</link>> |
 <br><br>
+<div @id="'feats-' + _upgradeName">
+	<<featsMenu _upgradeName>>
+</div>
+<br>
+<<if $featsBoosts.pointsUsed is 0>>
+	You have spent <span class="green"><<print $featsBoosts.pointsUsed>> VrelCoins</span> so far.
+	<br><br>
+<<else>>
+	You have spent <span class="green"><<print $featsBoosts.pointsUsed>> VrelCoins</span> so far on:
+	<br>
+	<ul>
+		<<for $_i to 0; $_i lt _upgradeNames.length; $_i++>>
+			<<if $featsBoosts.upgrades[_upgradeNames[$_i]] gt 0>>
+				<li>
+				<<switch _upgradeNames[$_i]>>
+					<<case "randomClothing">>
+						<<print $featsBoosts.clothingGender>> <<print $featsBoosts.name[_upgradeNames[$_i]]>>: <<print $featsBoosts.upgrades[_upgradeNames[$_i]]>>
+					<<default>>
+						<<print $featsBoosts.name[_upgradeNames[$_i]]>>: <<print $featsBoosts.upgrades[_upgradeNames[$_i]]>>
+				<</switch>>
+				</li>
+			<</if>>
+		<</for>>
+	</ul>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "featsMenu">><<nobr>>
@@ -173,6 +208,8 @@ You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.point
 				<span class="gold">Starting tattoos:</span> +<<print $featsBoosts.upgrades.tattoos / _details.cost>>
 			<<case "defaultMoves">>
 				<span class="gold">Extra default moves:</span> +<<print $featsBoosts.upgrades.defaultMoves / _details.cost>>
+			<<case "specialClothing">>
+				<span class="gold">Unlock previously unlocked special clothes:</span> <<print ($featsBoosts.upgrades.specialClothing is 0?"False":"True")>>
 			<<default>>
 				<span class="gold">Starting _name grade:</span> +<<print $featsBoosts.upgrades[_name] / _details.cost>>
 		<</switch>>
@@ -190,10 +227,6 @@ You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.point
 			<span class="gold">Enable Custom Colour (expect crazy results): </span>
 				<label><<print '<<radiobutton "$featsBoosts.clothingCustomColors" false ' + ($featsBoosts.clothingCustomColors is false ? "checked" : "") + '>>'>>No</label> |
 				<label><<print '<<radiobutton "$featsBoosts.clothingCustomColors" true ' + ($featsBoosts.clothingCustomColors is true ? "checked" : "") + '>>'>>Yes</label>
-			<br>
-		<</if>>
-		<<if _name is "hermaphrodite">>
-			<label><<print '<<checkbox "$featsBoosts.futaBalls" false true ' + ($featsBoosts.futaBalls is true ? "checked" : "") + '>>'>> Keep testicles visible</label>
 			<br>
 		<</if>>
 		<<if _details.exclusive is "" or $featsBoosts.upgrades[_details.exclusive] is 0>>

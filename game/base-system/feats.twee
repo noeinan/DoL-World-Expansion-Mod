@@ -50,6 +50,21 @@
 		<</if>>
 	<</for>>
 	<<set $feats.allSaves.points to _points>>
+
+	<!--Store a record of which clothes the player has unlocked-->
+	<<if _recalledFeats.specialClothes isnot undefined>>
+		<<set $feats.allSaves.specialClothes to _recalledFeats.specialClothes>>
+	<<else>>
+		<<set $feats.allSaves.specialClothes to {}>>
+	<</if>>
+	<<if $specialClothes>>
+		<<for $_label, $_value range $specialClothes>>
+			<<if $_value is "unlocked">>
+				<<set $feats.allSaves.specialClothes[$_label] to $_value>>
+			<</if>>
+		<</for>>
+	<</if>>
+
 	<<if _passageCheck is "Start">>
 	<<else>>
 		<<set localStorage.setItem("dolFeats",JSON.stringify($feats.allSaves))>>
@@ -69,8 +84,6 @@
 
 	<<set _tattoosFeats to _keys.count("A Living Canvas") + _keys.count("Billboard")>>
 
-	<<set _hermaphroditeFeats to _keys.count("Being a Boy") + _keys.count("Being a Girl")>>
-
 	<<set $featsBoosts to {
 		upgrades:{
 			money:0,
@@ -86,7 +99,7 @@
 			tattoos:0,
 			defaultMoves: 0,
 			randomClothing:0,
-			hermaphrodite:0,
+			specialClothing:0,
 		},
 		upgradeDetails:{
 			money:{cost:5, limit: _moneyFeatsLimit, minCount: 1, count:_moneyFeats, exclusive:""},
@@ -102,7 +115,7 @@
 			tattoos:{cost:5, limit: 25, minCount: 2, count:_tattoosFeats, exclusive:""},
 			defaultMoves:{cost:5, limit: 25, minCount: 1, count:_keys.count("A New Life"), exclusive:""},
 			randomClothing:{cost:1, limit: 20, minCount: 0, count:0, exclusive:""},
-			hermaphrodite:{cost:25, limit: 25, minCount: 3, count:_hermaphroditeFeats, exclusive:""},
+			specialClothing:{cost:40, limit: 40, minCount: 1, count:_keys.count("Curious Attire"), exclusive:""},
 		},
 		missing:{
 			money:"Missing money feat",
@@ -118,7 +131,23 @@
 			tattoos:"Missing 'Billboard' and 'A Living Canvas' feats",
 			defaultMoves:"Missing a '?????' feat",
 			randomClothing:"",
-			hermaphrodite:"",
+			specialClothing:"Missing a '?????' feat",
+		},
+		name:{
+			money:"Money",
+			grades:"School grades",
+			skulduggery:"Skulduggery grade",
+			dancing:"Dancing grade",
+			swimming:"Swimming grade",
+			seduction:"Seduction grade",
+			purity:"Daily purity",
+			impurity:"Daily impurity",
+			newLife:"New Life",
+			aNewBestFriend:"A new best friend",
+			tattoos:"Tattoos",
+			defaultMoves:"Default Moves",
+			randomClothing:"Random Clothing",
+			specialClothing:"Special Clothing",
 		},
 		pointsUsed: 0,
 		clothingGender:"Either",
@@ -130,12 +159,7 @@
 			4:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
 			5:{bodypart:"Random",tattoo:"Random",pen:"Tattoo"},
 		},
-		futaBalls: true,
 	}>>
-	<<if $debug is 1>>
-		<<set $featsBoosts.upgradeDetails.hermaphrodite.minCount to 0>>
-		<<set $featsBoosts.missing.hermaphrodite to "Skilled with both sets of gear">>
-	<</if>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -361,19 +385,12 @@
 <<if _upgrades.defaultMoves gt 0>>
 	<<set $maxDefaultActionSets to 2 + _upgrades.defaultMoves / _details.defaultMoves.cost>>
 <</if>>
-<<if _upgrades.hermaphrodite gt 0>>
-	<<if $player.gender is "f">>
-		<<set $penisuse to 0>>
-		<<set $penisstate to 0>>
-		<<set $penisexist to 1>>
-	<<elseif $player.gender is "m">>
-		<<set $vaginause to 0>>
-		<<set $vaginastate to 0>>
-		<<set $vaginaexist to 1>>
-	<</if>>
-	<<set $player.gender to "h">>
-	<<set $player.sex to "h">>
-	<<set $player.ballsExist to clone($featsBoosts.futaBalls)>>
+<<if _upgrades.specialClothing gt 0>>
+	<<set _unlocked to $feats.allSaves.specialClothes>>
+	<<specialClothesSetup>>
+	<<for $_label, $_value range _unlocked>>
+		<<set $specialClothes[$_label] to $_value>>
+	<</for>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -504,6 +521,7 @@
 				<<earnFeat "Animal Tender">>
 			<</if>>
 		<</if>>
+		<<specialClothesUpdate>>
 	<</if>>
 	<<if $money gte 100000>>
 		<<earnFeat "Pocket Change">>
@@ -1459,6 +1477,15 @@
 			series: "",
 			filter: ["All", "Special"],
 			hint: "Hint: Rake it in."
+		},
+		"Curious Attire":{
+			title: "Curious Attire",
+			desc: "Unlocked all the special clothing items.",
+			difficulty: 2,
+			series: "",
+			filter: ["All", "Special"],
+			hint: "Hint: Able to wear them all.",
+			softLockable: true,
 		},
 		"My Collection of Feats":{
 			title: "My Collection of Feats",

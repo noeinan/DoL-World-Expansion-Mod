@@ -211,17 +211,21 @@ window.copySavedata = function (id) {
 }
 
 window.importSettings = function (data, type) {
-	if (type === "text") {
-		var textArea = document.getElementById("settingsDataInput");
-		importSettingsData(textArea.value);
-	}
-	else if (type === "file") {
-		//console.log("data", data);
-		var reader = new FileReader();
-		reader.addEventListener('load', function (e) {
-			importSettingsData(e.target.result);
-		});
-		reader.readAsBinaryString(data[0]);
+	switch(type){
+		case "text":
+			var textArea = document.getElementById("settingsDataInput");
+			importSettingsData(textArea.value);
+			break;
+		case "file":
+			var reader = new FileReader();
+			reader.addEventListener('load', function (e) {
+				importSettingsData(e.target.result);
+			});
+			reader.readAsBinaryString(data[0]);
+			break;
+		case "function":
+			importSettingsData(data);
+			break;
 	}
 }
 
@@ -435,8 +439,7 @@ var settingsObjects = function (type) {
 				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful"] },
 				gamemode: { strings: ["normal", "soft", "hard"] },
 				player: {
-					gender: { strings: ["m", "f"] },
-					gender: { strings: ["m", "f", "a"] }
+					gender: { strings: ["m", "f", "h"] }
 				},
 				skinColor: {
 					natural: { strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"] },
@@ -449,6 +452,8 @@ var settingsObjects = function (type) {
 				malechance: { min: 0, max: 100, decimals: 0 },
 				dgchance: { min: 0, max: 100, decimals: 0 },
 				cbchance: { min: 0, max: 100, decimals: 0 },
+				malevictimchance: { min: 0, max: 100, decimals: 0 },
+				homochance: { min: 0, max: 100, decimals: 0 },
 				breast_mod: { min: -12, max: 12, decimals: 0 },
 				penis_mod: { min: -8, max: 8, decimals: 0 },
 				whitechance: { min: 0, max: 100, decimals: 0 },
@@ -458,6 +463,7 @@ var settingsObjects = function (type) {
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
 				monsterhallucinations: { boolLetter: true },
+				blackwolfmonster: { min: 0, max: 1, decimals: 0 },
 				bestialitydisable: { boolLetter: true },
 				swarmdisable: { boolLetter: true },
 				slimedisable: { boolLetter: true },
@@ -478,6 +484,7 @@ var settingsObjects = function (type) {
 				images: { min: 0, max: 1, decimals: 0 },
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
+				bodywritingImages: { bool: true },
 				silhouettedisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
@@ -489,8 +496,9 @@ var settingsObjects = function (type) {
 				confirmLoad: { bool: true },
 				confirmDelete: { bool: true },
 				newWardrobeStyle: { bool: true },
-				imgLighten: { bool: true },
+				imgLighten: { strings: ["", "imgLighten", "imgLighten2"] },
 				sidebarStats: { strings: ["Disabled", "Limited", "All"] },
+				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
 				map: {
