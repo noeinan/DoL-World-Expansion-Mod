@@ -90,9 +90,12 @@ window.ensureIsArray = function (x) {
 	return [x];
 }
 
-function DefineMacro(macroName, macroFunction) {
+function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
-		isWidget: true, handler: function () {
+		isWidget: true, 
+		tags: tags,
+		skipArgs: skipArgs,
+		handler: function (args) {
 			var oldArgs = State.variables.args;
 			State.variables.args = this.args.slice();
 			macroFunction.apply(this, this.args);
@@ -108,10 +111,10 @@ function DefineMacro(macroName, macroFunction) {
 /**
  * Define macro, where macroFunction returns text to wikify & print
  */
-function DefineMacroS(macroName, macroFunction) {
+function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext) {
 	DefineMacro(macroName, function () {
-		$(this.output).wiki(macroFunction.apply(null, this.args))
-	});
+		$(this.output).wiki(macroFunction.apply(maintainContext ? this : null, this.args))
+	}, tags, skipArgs);
 }
 
 function underlowerintegrity() {
@@ -198,6 +201,76 @@ function genitalsintegrity() {
 	return output;
 }
 DefineMacroS("genitalsintegrity", genitalsintegrity);
+
+function processedSvg(width, height) {
+	let svgElem = jQuery(document.createElementNS("http://www.w3.org/2000/svg", "svg"))
+		.attr('xmlns',"http://www.w3.org/2000/svg")
+		.attr('viewBox', '0 0 ' + width + ' ' + height)
+		.css({ width: width, height: height })
+		.wiki(this.payload[0].contents.replace(/^\n/, ""));
+
+		let supportedChildElements = ['img', 'image', 'a', 'rect'];
+		let commonAttributes = ['class', 'x', 'y', 'width', 'height', 'style', 'onclick'];
+
+		//Some browsers really don't like working with svg elements unless you specify their namespace upon creation, raw insertion won't render. 
+		let fixSVGNameSpace = function(type, elem, newParent = null) {
+			if(type == 'img')
+				type = 'image';
+
+			let oldElem = $(elem);
+			let newElem = document.createElementNS('http://www.w3.org/2000/svg', type);
+
+			//Set common attributes of new svg namespaced element
+			for(let attr of commonAttributes) {
+				if(oldElem.attr(attr))
+					newElem.setAttribute(attr, oldElem.attr(attr));
+			}
+
+			//Set unique attributes of specific types of elements
+			switch (type) {
+				case 'image':
+					newElem.setAttributeNS('http://www.w3.org/1999/xlink', 'href', oldElem.attr('href') || oldElem.attr('xlink:href') || '');
+					break;
+				case 'rect':
+					//No unique properties
+					break;
+				case 'a':
+					newElem.setAttributeNS('http://www.w3.org/1999/xlink', 'title', oldElem.attr('alt') || oldElem.attr('xlink:alt') || '');
+					newElem.setAttributeNS('http://www.w3.org/1999/xlink', 'alt', oldElem.attr('title') || oldElem.attr('xlink:title') || '');
+					break;
+				default:
+					break;
+			}
+
+			if(newParent)
+				newParent.appendChild(newElem);
+			else
+				oldElem.replaceWith(newElem);
+
+			//Recursively process nested children if they exist
+			for(let htmlElem of supportedChildElements) {
+				$(oldElem).children(htmlElem).each(function(i, elem) {
+					fixSVGNameSpace(htmlElem, elem, newElem);
+				});
+			}
+		}
+		
+		//Because the payload got processed as HTML, fix the namespacing and rendering issues to make it a proper SVG again
+		jQuery(document).one(':passagerender', function (ev) {
+			for(let htmlElem of supportedChildElements) {
+				$(ev.content).find('svg ' + htmlElem).each(function(i, elem) {
+					fixSVGNameSpace(htmlElem, elem);
+				});
+			}
+		});
+
+	//This macro works a little different because we can't rely on the normal wikify method to properly translate SVG elements. We need to manually edit the output variable.
+	svgElem.appendTo(this.output);
+
+	return '';
+}
+
+DefineMacroS("svg", processedSvg, null, false, true);
 
 /*! <<numberpool>> macro set for SugarCube v2 */
 
