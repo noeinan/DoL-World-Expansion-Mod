@@ -3,7 +3,10 @@
 <<widget "initsettings">><<nobr>>
 <<set $player.gender to "f">>
 <<set $player.sex to "f">>
+<<set $player.gender_body to "a">>
+<<set $player.ballsExist to false>>
 <<set $devlevel to 12>>
+<<set $bodysize to 2>>
 <<set $breastsize to 0>>
 <<set $breastsensitivity to 1>>
 <<set $penissize to 1>>
@@ -56,6 +59,7 @@
 <<set $newWardrobeStyle to false>>
 <<set $imgLighten to false>>
 <<set $sidebarStats to "Disabled">>
+<<set $sidebarTime to "Disabled">>
 <<set $combatControls to "radio">>
 <<set $reducedLineHeight to false>>
 <<set $sidebarAnimations to true>>
@@ -80,8 +84,12 @@
 	<<case "npcSettings">><<replace #settingsDiv>><<npcSettings>><</replace>>
 	<<case "generalSettings">><<replace #settingsDiv>><<generalSettings>><</replace>>
 	<<case "exportsettings">><<replace #settingsDiv>><<exportsettings>><</replace>>
+	<<case "importConfirmDetails">><<replace #settingsDiv>><<importConfirmDetails>><</replace>>
 	<<default>><<replace #settingsDiv>><<gameSettings>><</replace>>
 <</switch>>
+<<if $currentSettings isnot "importConfirmDetails">>
+	<<unset $importString>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "displaySubsection">><<nobr>>
@@ -212,29 +220,30 @@
 	<<unset $settingsExitPassage>>
 	<<run State.display(_settingsExitPassage)>>
 	<<set $saveName to $saveName.replace(/[^a-zA-Z 0-9]+/g,"")>>
+	<<unset $importString>>
 <</nobr>><</widget>>
 
 <<widget "quickStartOptions">><<nobr>>
 <<if _quickStartOptions is undefined>>
 	<<set _quickStartOptions to {
 		complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},
-		player:{"":""},
+		player:{"Female Waif":"femaleWaif","Male Waif":"maleWaif", "Hermaphrodite Waif":"hermaphroditeWaif", "Vrelnir PC":"vrel", "Crossdresser":"crossdresser","Tough Guy":"toughGuy"},
 		genericNpc:{"Default Genders":"genericNpcDefaultGender", "All Male":"genericNpcAllMaleGender", "All Female":"genericNpcAllFemaleGender"},
 		namedNpc:{"Default Genders":"namedNpcDefaultGender", "All Male":"namedNpcAllMaleGender", "All Female":"namedNpcAllFemaleGender"},
 		beasts:{"Default Genders":"beastDefaultGenders", "All Male":"beastMaleGenders", "All Female":"beastFemaleGenders"},
-		monsters:{"Default monsters":"monstersDefault", "No Monsters":"monstersNone", "All Monsters":"monstersAll"},
+		monsters:{"Default Monsters":"monstersDefault", "No Monsters":"monstersNone", "All Monsters":"monstersAll"},
 		game:{
-			"Normal":"gameNormal","Soft":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Journalist":"gameSoftCheats","Normal with cheats":"gameNormalCheats","Hard with cheats":"gameHardCheats","Masochist with cheats":"gameMasochistCheats"
+			"Normal":"gameNormal","Soft":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Journalist":"gameSoftCheats","Normal with Cheats":"gameNormalCheats","Hard with Cheats":"gameHardCheats","Masochist with Cheats":"gameMasochistCheats"
 		},
 		images:{"Default":"imagesdefault","High Quality":"imagesHigh","Low Quality":"imagesLow","Performance Mode":"imagesPerformance","Disable images":"imagesDisable"},
-		settings:{"PC, tips":"settingPCTip","PC, no tips":"settingPCNoTip","Mobile, tips":"settingMobileTips","Mobile, no tips":"settingMobileNoTips"},
+		settings:{"PC, Tips":"settingPCTip","PC, no Tips":"settingPCNoTip","Mobile, Tips":"settingMobileTips","Mobile, no Tips":"settingMobileNoTips"},
 	}>>
 <</if>>
 <</nobr>><</widget>>
 
 <<widget "quickStart">><<nobr>>
 <<quickStartOptions>>
-<span class="red">The quick start and boosts tab can only be accessed at the beginning.</span>
+<span class="red">The quick start tab can only be accessed at the beginning. You may want to at least edit your character and boosts after this as those tabs can also only be accessed at the beginning.</span>
 <br><br>
 <span class="gold">Complete Contributor Preset:</span> <<listbox "_completePreset" autoselect>><<optionsfrom _quickStartOptions.complete>><</listbox>> |
 <<link Set>><<presets _completePreset>><</link>>
@@ -258,10 +267,10 @@
 <<link Set>><<presets _monstersPreset>><</link>>
 <br><br>
 
-<span class="gold">Game difficult Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
+<span class="gold">Game difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
 <<link Set>><<presets _gamePreset>><</link>>
 <br><br>
-<<if $images is 1>>
+<<if StartConfig.enableImages is true>>
 	<span class="gold">Images Preset:</span> <<listbox "_imagesPreset" autoselect>><<optionsfrom _quickStartOptions.images>><</listbox>> |
 	<<link Set>><<presets _imagesPreset>><</link>>
 	<br><br>
@@ -285,10 +294,10 @@
 	<<else>>
 		<span class="gold">Body size</span> - A smaller body makes you inflict less damage during encounters, making defiance harder.
 		<br>
-		<label>Tiny <<print '<<radiobutton "$devlevel" 6 ' + ($devlevel is 6 ? "checked" : "") + '>>'>></label> |
-		<label>Small <<print '<<radiobutton "$devlevel" 10 ' + ($devlevel is 10 ? "checked" : "") + '>>'>></label> |
-		<label>Normal <<print '<<radiobutton "$devlevel" 12 ' + ($devlevel is 12 ? "checked" : "") + '>>'>></label> |
-		<label>Large <<print '<<radiobutton "$devlevel" 16 ' + ($devlevel is 16 ? "checked" : "") + '>>'>></label>
+		<label>Tiny <<print '<<radiobutton "$bodysize" 0 ' + ($bodysize is 0 ? "checked" : "") + '>>'>></label> |
+		<label>Small <<print '<<radiobutton "$bodysize" 1 ' + ($bodysize is 1 ? "checked" : "") + '>>'>></label> |
+		<label>Normal <<print '<<radiobutton "$bodysize" 2 ' + ($bodysize is 2 ? "checked" : "") + '>>'>></label> |
+		<label>Large <<print '<<radiobutton "$bodysize" 3 ' + ($bodysize is 3 ? "checked" : "") + '>>'>></label>
 		<br><br>
 	<</if>>
 
