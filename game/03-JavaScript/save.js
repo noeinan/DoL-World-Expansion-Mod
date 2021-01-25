@@ -213,13 +213,14 @@ window.copySavedata = function (id) {
 window.importSettings = function (data, type) {
 	switch(type){
 		case "text":
-			var textArea = document.getElementById("settingsDataInput");
-			importSettingsData(textArea.value);
+			SugarCube.State.variables.importString = document.getElementById("settingsDataInput").value
+			new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
 			break;
 		case "file":
 			var reader = new FileReader();
 			reader.addEventListener('load', function (e) {
-				importSettingsData(e.target.result);
+				SugarCube.State.variables.importString = e.target.result;
+				new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
 			});
 			reader.readAsBinaryString(data[0]);
 			break;
@@ -293,7 +294,11 @@ var importSettingsData = function (data) {
 			for (var i = 0; i < V.NPCNameList.length; i++) {
 				if (S.npc[V.NPCNameList[i]] != undefined) {
 					for (var j = 0; j < listKey.length; j++) {
-						if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
+						//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
+						if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none"){
+							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+						}
+						else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 					}
@@ -303,7 +308,7 @@ var importSettingsData = function (data) {
 	}
 }
 
-var validateValue = function (keys, value) {
+window.validateValue = function (keys, value) {
 	//console.log("validateValue",keys,value);
 	var keyArray = Object.keys(keys);
 	var valid = false;
@@ -403,7 +408,11 @@ window.exportSettings = function (data, type) {
 	for (var i = 0; i < V.NPCNameList.length; i++) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (var j = 0; j < listKey.length; j++) {
-			if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
+			//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
+			if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none"){
+				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
+			}
+			else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
 			}
 		}
@@ -421,12 +430,12 @@ window.exportSettings = function (data, type) {
 	}
 }
 
-var settingsObjects = function (type) {
+window.settingsObjects = function (type) {
 	var result = undefined;
 	switch (type) {
 		case "starting":
 			result = {
-				devlevel: { min: 6, max: 16, decimals: 0 },
+				bodysize: { min: 0, max: 3, decimals: 0 },
 				penissize: { min: 0, max: 3, decimals: 0 },
 				breastsize: { min: 0, max: 4, decimals: 0 },
 				bottomsize: { min: 0, max: 3, decimals: 0 },
@@ -436,10 +445,12 @@ var settingsObjects = function (type) {
 				hairselect: { strings: ["red", "black", "brown", "lightbrown", "blond", "platinumblond", "strawberryblond", "ginger"] },
 				hairlength: { min: 0, max: 400, decimals: 0 },
 				awareselect: { strings: ["innocent", "knowledgeable"] },
-				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful"] },
+				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "greenthumb"] },
 				gamemode: { strings: ["normal", "soft", "hard"] },
 				player: {
-					gender: { strings: ["m", "f", "h"] }
+					gender: { strings: ["m", "f", "h"] },
+					gender_body: { strings: ["m", "f", "a"] },
+					ballsExist: { bool: true },
 				},
 				skinColor: {
 					natural: { strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"] },
