@@ -22,8 +22,13 @@
 		<br><br>
 		<<link [[Take Robin to the hospital (1:00)|Robin Hospital]]>><<unset $robin_injured>><<pass 1 hour>><<npcincr Robin love 1>><<npcincr Robin dom -1>><<npcincr Robin trauma -16>><</link>><<glove>><<ldom>>
 		<br><br>
+
 	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 40>>
 		You knock on the door. Robin opens it and smiles. <<His>> eyes are red. "Hey," <<he>> says. "Come in." You enter and sit on the bed. <<He>> sits beside you.
+		<br><br>
+
+	<<elseif $robinpaid is 1 and $robinPayout is 0 and $robinmoney gte 20 and $NPCName[$NPCNameList.indexOf("Robin")].love gte 80 and $NPCName[$NPCNameList.indexOf("Robin")].trauma lte 20>>
+		<<robinPayout>>
 		<br><br>
 
 	<<elseif $halloween is 1 and !$halloween_robin>><<set $halloween_robin to 1>><<set $halloween_robin_costume to "ghost">>
@@ -199,11 +204,11 @@
 			<br>
 		<</if>>
 		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 20 and $cat gte 6>>
-			<<link [[Request headpats (0:20)|Robin Cat]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>> | <span class="blue">Cat</span><<gdom>><<glove>><<ltrauma>><<lstress>>
+			<<link [[Request headpats (0:20)|Robin Cat]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>><<cat>><<gdom>><<glove>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
 		<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma lt 80 and $livestock_robin gte 1 and $cow gte 6>>
-			<<link [[Moo for attention (0:20)|Robin Cow]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>> | <span class="blue">Cow</span><<gdom>><<glove>><<ltrauma>><<lstress>>
+			<<link [[Moo for attention (0:20)|Robin Cow]]>><<pass 20>><<trauma -2>><<stress -2>><<npcincr Robin love 1>><<npcincr Robin dom 1>><</link>><<cow>><<gdom>><<glove>><<ltrauma>><<lstress>>
 			<br>
 		<</if>>
 		<<if $NPCName[$NPCNameList.indexOf("Robin")].lovestage gte 1 and $milkshake gte 2>>
@@ -288,4 +293,33 @@
 		<<set _robin_location to "orphanage">>
 	<</if>>
 <</if>>
+<</nobr>><</widget>>
+
+<<widget "robinPayout">><<nobr>>
+<<set $robinPayout to 1>>
+You knock on the door. Robin throws it open and hugs you. "Come in," <<he>> says, pulling you inside. <<He>> fumbles around in <<his>> drawer for a moment, before handing you <span class="gold">£<<print $robinmoney>></span>.
+<br><br>
+<<set $money += ($robinmoney * 100)>><<set $robinmoney to 0>>
+<<if $robinPayoutIntro is undefined>>
+	<<set $robinPayoutIntro to 0>>
+	You look down at the money, confused. <<He>> gently places it into your hands, and looks you in the eyes. "You're paying for me. I'd be a lousy <<if $robinromance is 1>><<nnpc_girlfriend "Robin">><<else>>friend<</if>> if I didn't at least try to help."
+<<else>>
+	"<<print either(
+	"I hope this helps, at least a little.", 
+	"Bailey keeps reminding me that I'm dead weight now. I'm a little worried, but not scared. Not anymore.", 
+	"I wish I could make more, so I could help you more.", 
+	"How do you make so much? I want to be more useful to you.", 
+	"Maybe one day, I'll be paying for you instead!", 
+	"I don't have much to spend it on, I have everything I need right here.<<set _hand to 1>>",
+	"Thank you, so much. I'm really lucky to have you.", 
+	"I always keep £20 in case of an emergency. I hope that's alright.",
+	"Do you ever think about running away? I used to think about it a lot.",
+	"Some day, we won't have to pay anymore. Bad people always get what's coming to them, right?",
+	"That's all I have, is it enough? I can work harder next week!",
+	"You're worth every penny, and more."
+	)>>"
+	<<if _hand is 1>><<He>> squeezes your hand.<</if>><<npcincr Robin dom 3>><<gdom>>
+<</if>>
+<br><br>
+<<He>> sits on the bed beside the television and picks up the controller.
 <</nobr>><</widget>>
