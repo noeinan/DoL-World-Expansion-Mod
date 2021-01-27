@@ -3613,6 +3613,221 @@ __Map__<br>
 
 <</nobr>><</widget>>
 
+<<widget "social-text">><<nobr>>
+	<<set _config = $args[0]>>
+
+	<<if _config.states and _config.states.length gt 0>>
+
+		<<set _config.currentLevel = _config.states[0]>>
+		<<if _config.currentLevel.secondaryStates>>
+			<<set _config.currentLevel = _config.currentLevel.secondaryStates[0]>>
+		<</if>>
+
+		/* Loop through the provided states to find the one we are currently at*/
+		<<script>>
+			for(let i = 0; i < State.temporary.config.states.length; i++) {
+				
+				if(State.temporary.config.currentValue >= State.temporary.config.states[i].requiredValue) {
+	
+					if(State.temporary.config.states[i].secondaryStates) {
+						
+						for(let j = 0; j < State.temporary.config.states[i].secondaryStates.length; j++) {
+							if(State.temporary.config.secondaryValue >= State.temporary.config.states[i].secondaryStates[j].requiredValue) {
+								State.temporary.config.currentLevel = State.temporary.config.states[i].secondaryStates[j];
+							}
+						}
+
+					} else {
+						State.temporary.config.currentLevel = State.temporary.config.states[i];
+					}
+				}
+			}
+
+		<</script>>
+
+		/* Set the details to show from the current state */
+		<<set _config.preText = 	_config.currentLevel.preText || _config.preText>>
+		<<set _config.description = _config.currentLevel.description>>
+		<<set _config.postText = 	_config.currentLevel.postText || _config.postText>>
+		<<set _config.color = 		_config.currentLevel.color>>
+	<</if>>
+
+
+	<<if _config.preText>>
+		_config.preText
+	<</if>>
+	<span @class="_config.color">_config.description</span>
+	<<if _config.postText>>
+		_config.postText
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "social-box-simple">><<nobr>>
+	<<set _boxConfig = $args[0]>>
+	<div class="social-box" @style="(_boxConfig.style || '')">
+		<<if _boxConfig.name>>
+			<div class="social-top-line">
+				<<if $images and _boxConfig.icon>>
+						<img class="social-icon" @src="_boxConfig.icon" />
+				<</if>>
+				<span class="social-name">_boxConfig.name</span>
+			</div>
+		<</if>>
+		<div class="social-description">
+			_boxConfig.description
+		</div>
+	</div>
+<</nobr>><</widget>>
+
+<<widget "social-box">><<nobr>>
+	<<silently>>
+		<<set _npcData = $args[0]>>
+		<<set _npcOverrides = $args[1] || {}>>
+
+		<<script>>
+
+			/* Returns true/false based on wether the requirements to display a stat are met, automatically true if no requirement specified */
+			State.temporary.checkRequirements = function (stat) {
+				let statOverrides =  State.temporary.npcOverrides[stat];
+
+				return !statOverrides?.hasOwnProperty("requirements") || statOverrides?.requirements;
+			};
+
+			State.temporary.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			State.temporary.otherNpcStats = ["love", "lust"];
+
+			let statDefaults = {
+				"love" : {
+					name : "Love",
+					value : State.temporary.npcData.love,
+					activeIcon : 'img/ui/heart.png',
+					inactiveIcon: 'img/ui/emptyheart.png',
+					color: 'red'
+				},
+				"lust" : {
+					name : "Lust",
+					value : State.temporary.npcData.lust,
+					iconOrientation : 'vertical',
+					activeIcon : 'img/ui/vial.png',
+					inactiveIcon : 'img/ui/emptyvial.png',
+					color: 'pink'
+				},
+				"dom" : {
+					name : "Dominance",
+					value : State.temporary.npcData.dom,
+					activeIcon : "img/ui/collar.png",
+					color: 'purple'
+				},
+				"trauma" : {
+					name : "Trauma",
+					value : State.temporary.npcData.trauma,
+					activeIcon : "img/ui/redbolt.png",
+					color: 'teal'
+				}, 
+				"rage" : {
+					name : "Rage",
+					value : State.temporary.npcData.rage,
+					activeIcon : "img/ui/rage.png",
+					color: 'gold'
+				}
+			};
+
+			State.temporary.getStatConfig = function(stat) {
+				let baseConfig =  statDefaults[stat] || {};
+				
+				return Object.assign({}, baseConfig, State.temporary.npcOverrides[stat]);
+			};
+
+			/* Check if this is a main love interest */
+			if (State.variables.loveInterest.primary == State.temporary.npcData.nam) {
+				State.temporary.loveInterest = true;
+			} else if (State.variables.loveInterest.secondary == State.temporary.npcData.nam) {
+				State.temporary.loveInterest = true;
+			} else if (State.variables.loveInterest.tertiary == State.temporary.npcData.nam) {
+				State.temporary.loveInterest = true;
+			} else {
+				State.temporary.loveInterest = false;
+			}
+		<</script>>
+	<</silently>>
+	<<if _npcData?.init is 1>>
+		<<if _npcOverrides?.important>>
+			<div class="social-box">
+				<div class="social-top-line">
+					<span class="social-name">
+						_npcData.nam
+						<small class="social-title black"><i>The _npcData.title</i></small>
+					</span>
+					<<if _loveInterest>>
+						<img class="love-interest-icon" src="img/ui/love_interest.png" alt="Love Interest" title="Love Interest"/>
+					<</if>>
+				</div>
+				<div class="social-description">
+					<<npcrelationship _npcData.nam>>
+				</div>
+				<div @class="'relation-stat-list' + ($images ? '' : ' no-images')">
+					<<for _j = 0; _j lt _importantNpcStats.length; _j++>>
+						<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
+							<<social-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
+						<</if>>
+					<</for>>
+				</div>
+			</div>
+		<<else>>
+			<div class="social-box">
+				<div class="social-top-line">
+					<span class="social-name">
+						_npcData.nam
+						<small class="social-title black"><i>The _npcData.title</i></small>
+					</span>
+					<div class="quick-stats">
+						<<for _j = 0; _j lt _otherNpcStats.length; _j++>>
+							<<if _npcData[_otherNpcStats[_j]] gt 0 and _checkRequirements(_otherNpcStats[_j])>>
+								<<social-box-stat _getStatConfig(_importantNpcStats[_j])>>
+							<</if>>
+						<</for>>
+					</div>
+				</div>
+				<div class="social-description">
+					<<npcrelationship _npcData.nam>>
+				</div>
+			</div>
+		<</if>>
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "social-box-stat">><<nobr>>
+	<<silently>>
+		<<set _config = $args[0]>>
+		<<set _important = $args[1]>>
+
+		<<set _config.progress = Math.floor(Math.clamp(100*((_config.value - (_config.minValue || 0)) / (_config.maxValue || 100)), 0, 100))>>
+	<</silently>>
+	<div class="relation-stat-block" @style="'--progress: ' + _config.progress + '%;'">
+		<<if _important>>
+			<label>_config.name</label>
+		<</if>>
+		<<if $images>>
+			<div class="relation-stat">
+				<span @class="'relation-stat-icon ' + (_config.iconOrientation || 'horizontal')">
+					<img class="active-icon-img" @src="_config.activeIcon">
+					<<if _config.inactiveIcon>>
+						<img class="inactive-icon-img" @src="_config.inactiveIcon">
+					<<else>>
+						<img class="inactive-icon-img outlined" @src="_config.activeIcon">
+					<</if>>
+				</span>
+				<span class="relation-stat-percent black">_config.progress<small>%</small></span>
+			</div>
+		<<else>>
+			<<if _important>>
+				<span class="relation-stat-percent black" style="margin-left: 0.3em;">_config.progress<small>%</small></span>
+				<div @class="'progress-bar ' + _config.color + 'bar'" style="width: var(--progress);"></div>
+			<</if>>
+		<</if>>
+	</div>
+<</nobr>><</widget>>
+
 <<widget "connector-box">><<nobr>>
 	<div @class="'connector-box ' + ($args[3] ? 'invert' : '')" @style="'--connector-height: ' + $args[0] + 'px; --center-offset: ' + ($args[1] || 50) + '%; --end-offset: ' + ($args[2] || 0) + 'px;'">
 		<div class="connector-box-top"></div>
