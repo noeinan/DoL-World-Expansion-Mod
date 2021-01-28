@@ -1,7 +1,7 @@
 function colourContainerClasses() {
 	var V = State.variables;
 	return 'hair-' + (V.haircolour || '').replace(/ /g, '-') +
-		' ' + 'eye-' + (V.eyecolour || '').replace(/ /g, '-') +
+		' ' + 'eye-' + (V.makeup.eyelenses != 0 ? V.makeup.eyelenses : (V.eyecolour || '')).replace(/ /g, '-') +
 		' ' + 'upper-' + (V.upperwet > 100 ? 'wet' : '') + (V.worn.upper.colour_combat || V.worn.upper.colour || '').replace(/ /g, '-') +
 		' ' + 'lower-' + (V.lowerwet > 100 ? 'wet' : '') + (V.worn.lower.colour_combat || V.worn.lower.colour || '').replace(/ /g, '-') +
 		' ' + 'under_lower-' + (V.underlowerwet > 100 ? 'wet' : '') + (V.worn.under_lower.colour || '').replace(/ /g, '-') +
@@ -28,7 +28,7 @@ window.colourContainerClasses = colourContainerClasses; // export function
 function limitedColourContainerClasses() {
 	var V = State.variables;
 	return 'hair-' + (V.haircolour || '').replace(/ /g, '-') +
-		' ' + 'eye-' + (V.eyecolour || '').replace(/ /g, '-')
+		' ' + 'eye-' + (V.makeup.eyelenses != 0 ? V.makeup.eyelenses : (V.eyecolour || '')).replace(/ /g, '-')
 }
 window.limitedColourContainerClasses = limitedColourContainerClasses; // export function
 

@@ -61,7 +61,9 @@ You are in the hairdressers. Here you can have your hair cut or dyed.
 <br>
 "Hair cut: £30
 <br>
-Hair dye: £60"
+Hair dye: £60
+<br>
+Eyebrows dye: £20"
 <br><br>
 <<set $hairOption to $hairlength>>
 <<set $fringeOption to $fringelength>>
@@ -97,6 +99,32 @@ You hand over the money and <<he>> gets to work.
 	<<set $fringelength to clone($fringeOption)>>
 	<<set _pass += 15>>
 	<<unset $fringeOption>>
+<</if>>
+
+<<if $browsDyeOption is "removeDye">>
+	<<if _pass gt 0>>
+		Then <<he>> asks you to tilt your head back. <<He>> applies a liquid smelling of artificial chemicals to your eyebrows. Hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
+		<<He>> brings up a mirror for you to see your eyebrows back in its natural $naturalhaircolour colour.
+	<<else>>
+		<<He>> applies a liquid smelling of artificial chemicals to your eyebrows. Hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
+		<<He>> brings up a mirror for you to see your eyebrows back in its natural $naturalhaircolour colour.
+	<</if>>
+	<br><br>
+	<<set $makeup.browscolour to clone($naturalhaircolour)>>
+	<<set _pass += 10>>
+	<<unset $browsDyeOption>>
+<<elseif $browsDyeOption isnot "noChange">>
+	<<set $makeup.browscolour to clone($browsDyeOption)>>
+	<<if _pass gt 0>>
+		Then <<he>> asks you to tilt your head back. <<He>> applies selected eyebrow tint to a small brush and then brushes your eyebrows for a few minutes.
+		Soon <<he>> brings up a mirror for you to see your newly <<haircolourtext $makeup.browscolour>> eyebrows.
+	<<else>>
+		The hairdresser begins to apply selected eyebrow tint to a small brush and then brushes your eyebrows for a few minutes.
+		Soon <<he>> brings up a mirror for you to see your newly <<haircolourtext $makeup.browscolour>> eyebrows.
+	<</if>>
+	<br><br>
+	<<set _pass += 10>>
+	<<unset $browsDyeOption>>
 <</if>>
 
 <<if $dyeOption is "removeDye">>
@@ -201,6 +229,9 @@ You hand over the money and <<he>> gets to work.
 	<br><br><br>
 <</if>>
 
+<<set _dyeNames to ["Red", "Black", "Blond", "Platinum blond", "Ashy blond", "Strawberry blond", "Dark Brown", "Brown", "Light brown", "Ginger", "Blood Orange", "Blue", "Deep Blue", "Neon Blue", "Green", "Toxic Green", "Teal", "Pink", "Hot pink", "Soft pink", "Crimson", "Purple", "Bright Purple", "White", "Snow white"]>>
+<<set $hairdressersHairColour to ["red", "black", "blond", "platinumblond", "ashyblond", "strawberryblond", "darkbrown", "brown", "lightbrown", "ginger", "bloodorange", "blue", "deepblue", "neonblue", "green", "toxicgreen", "teal", "pink", "hotpink", "softpink", "crimson", "purple", "brightpurple", "white", "snowwhite"]>>
+
 <<if $money gte _currentCost + 3000 or $dyeOption isnot "noChange">>
 	<<if $dyeOption is "removeDye">>
 		<<set _currentCost += 3000>>
@@ -210,8 +241,6 @@ You hand over the money and <<he>> gets to work.
 	Have your hair dyed<<if $haircolour isnot $naturalhaircolour>> or cleared of hair dye<</if>>:
 	<br>
 
-	<<set _dyeNames to ["Red", "Black", "Blond", "Platinum blond", "Strawberry blond", "Brown", "Light brown", "Ginger", "Blue", "Green", "Teal", "Pink", "Hot pink", "Soft pink", "Crimson", "Purple", "White", "Snow white", "Deep Blue"]>>
-	<<set $hairdressersHairColour to ["red", "black", "blond", "platinumblond", "strawberryblond", "brown", "lightbrown", "ginger", "blue", "green", "teal", "pink", "hotpink", "softpink", "crimson", "purple", "white", "snowwhite", "deepblue"]>>
 	<<set _dyeOptions to {"Don't dye":"noChange"}>>
 	<<if $haircolour isnot $naturalhaircolour>>
 		<<set _dyeOptions["Remove dye"] to "removeDye">>
@@ -233,7 +262,41 @@ You hand over the money and <<he>> gets to work.
 		</div>
 		<br>
 	<<else>>
+		<br><br>
+	<</if>>
+<</if>>
+
+<<if $money gte _currentCost + 1000 or $browsDyeOption isnot "noChange">>
+	<<if $browsDyeOption is "removeDye">>
+		<<set _currentCost += 1000>>
+	<<elseif $browsDyeOption isnot "noChange">>
+		<<set _currentCost += 2000>>
+	<</if>>
+	Have your eyebrows dyed<<if $makeup.browscolour isnot $naturalhaircolour>> or cleared of hair dye<</if>>:
+	<br>
+
+	<<set _browsDyeOptions to {"Don't dye":"noChange"}>>
+	<<if $makeup.browscolour isnot $naturalhaircolour>>
+		<<set _browsDyeOptions["Remove dye"] to "removeDye">>
+	<</if>>
+	<<if $money gte _currentCost + 2000 or ($browsDyeOption isnot "noChange" and $browsDyeOption isnot "removeDye")>>
+		<<for _i to 0; _i lt _dyeNames.length; _i++>>
+			<<if $makeup.browscolour is $hairdressersHairColour[_i] or $naturalhaircolour is $hairdressersHairColour[_i]>>
+				<<continue>>
+			<</if>>
+			<<set _browsDyeOptions[_dyeNames[_i]] to $hairdressersHairColour[_i]>>
+		<</for>>
+	<</if>>
+	<<listbox "$browsDyeOption" autoselect>>
+		<<optionsfrom _browsDyeOptions>>
+	<</listbox>>
+	<<if $browsDyeOption isnot "noChange"and $browsDyeOption isnot "removeDye">>
+		<div @class="'hair-'+$browsDyeOption">
+			<div style="height: 25px; width: 100px; margin-top:5px; background-color: #fd6064; border:1px solid #ccc;" class="colour-hair"></div>
+		</div>
 		<br>
+	<<else>>
+		<br><br>
 	<</if>>
 <</if>>
 

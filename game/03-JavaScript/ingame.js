@@ -210,6 +210,15 @@ function hairdressersReset() {
 
 DefineMacroS("hairdressersReset", hairdressersReset);
 
+function browsDyeReset() {
+	jQuery(document).on('change', '.macro-listbox', function (e) {
+		new Wikifier(null, '<<replace #browsColourPreview>><<browsColourPreview>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("browsDyeReset", browsDyeReset);
+
 function NPCSettingsReset() {
 	jQuery(document).on('change', '#listbox--npcid', function (e) {
 		new Wikifier(null, '<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>');
