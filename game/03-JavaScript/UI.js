@@ -285,3 +285,8 @@ window.zoom = function (size, set) {
 		}
 	}
 }
+
+// Checks if image was loaded with errors, input is the id: '#idOfImg'
+window.isImageOk = function (id) {
+	return jQuery(id).naturalWidth !== 0 || true;
+}

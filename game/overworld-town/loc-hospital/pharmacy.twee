@@ -46,8 +46,45 @@ Looking at the items on the shelves, you notice a few objects of interest.
 <<link [[Pack of 14 butt growth blocker|Pharmacy Sale]]>><<set $pharmacyItem to "bottom growth blocker">><</link>>
 
 <br><br>
+<<link [[Take a look at the contact lenses display|Pharmacy Lenses]]>><</link>>
+
+<br><br>
 <<link [[Return to Foyer|Hospital Foyer]]>><</link>>
 <</if>>
+
+:: Pharmacy Lenses [nobr]
+An assortment of colourful contact lenses is displayed behind the glass. You can purchase lenses to change the colour of your eyes.
+<<if $makeup.owned.eyelenses.length gt 0>>
+	<br>
+	You already own lenses of the following colours: 
+	<<for _i, _colour range $makeup.owned.eyelenses>>
+		<span @class="'eye-' + _colour.replace(/ /g, '-')"><span class="colour-eye" style="color:#6E4E11;">_colour</span></span>
+		<<if _i < $makeup.owned.eyelenses.length - 1>>, <</if>>
+	<</for>>.
+<</if>>
+
+<br><br>
+<<set _availableColours = ["dark blue", "light blue", "purple", "hazel", "amber", "green", "light green", "grey", "red", "pink"].filter(x => !$makeup.owned.eyelenses.includes(x))>>
+<<if _availableColours.length == 0>>
+	You have collected all available colours of contact lenses, there's nothing left for you to buy.
+	<br><br>
+<<else>>
+	Each pair of lenses costs <span class="gold">£200</span>.
+	<br>
+	<<set _lensChoice = _availableColours[0]>>
+	<<for _i, _colour range _availableColours>>
+		<label><span class="grey-shadow"><span @class="'eye-' + _colour.replace(/ /g, '-')"><span class="colour-eye" style="color:#6E4E11;">_colour</span></span></span>&nbsp;<<print '<<radiobutton "_lensChoice" "'+_colour+'" ' + (_lensChoice is _colour ? "checked" : "") + '>>'>></label> | 
+	<</for>>
+
+	<br><br>
+	<<if $money gte 20000>>
+		<<link [[Buy and send home|Pharmacy Lenses]]>><<set $money -= 20000>><<set $makeup.owned.eyelenses.push(_lensChoice)>><</link>><br>
+		<<link [[Buy and wear|Pharmacy]]>><<set $money -= 20000>><<set $makeup.owned.eyelenses.push(_lensChoice)>><<set $makeup.eyelenses = _lensChoice>><</link>><br>
+	<<else>>
+		<span class="purple">You can't afford the purchase.</span><br>
+	<</if>>
+<</if>>
+<<link [[Go back|Pharmacy]]>><</link>>
 
 :: Pharmacy Sale [nobr]
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
