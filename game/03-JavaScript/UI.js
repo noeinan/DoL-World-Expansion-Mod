@@ -290,3 +290,21 @@ window.zoom = function (size, set) {
 window.isImageOk = function (id) {
 	return jQuery(id).naturalWidth !== 0 || true;
 }
+
+window.beastTogglesCheck = function () {
+	let vars = SugarCube.State.variables; 
+	let temp = SugarCube.State.temporary;
+	temp.beastVars = [ 
+		"bestialitydisable", 
+		"swarmdisable", 
+		"parasitedisable", 
+		"analpregdisable", 
+		"tentacledisable", 
+		"slimedisable", 
+		"voredisable", 
+		"spiderdisable", 
+		"slugdisable", 
+		"waspdisable"
+	];
+	temp.anyBeastOn = temp.beastVars.some(x => vars[x] == 'f');
+}
