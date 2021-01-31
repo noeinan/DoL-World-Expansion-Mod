@@ -442,7 +442,7 @@ window.settingsObjects = function (type) {
 				breastsensitivity: { min: 0, max: 5, decimals: 0 },
 				genitalsensitivity: { min: 0, max: 5, decimals: 0 },
 				eyeselect: { strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "red", "pink", "grey"] },
-				hairselect: { strings: ["red", "black", "brown", "lightbrown", "blond", "platinumblond", "strawberryblond", "ginger"] },
+				hairselect: { strings: ["red", "jetblack", "black", "brown", "softbrown", "lightbrown", "burntorange", "blond", "softblond", "platinumblond", "ashyblond", "strawberryblond", "ginger"] },
 				hairlength: { min: 0, max: 400, decimals: 0 },
 				awareselect: { strings: ["innocent", "knowledgeable"] },
 				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "greenthumb"] },
@@ -451,6 +451,7 @@ window.settingsObjects = function (type) {
 					gender: { strings: ["m", "f", "h"] },
 					gender_body: { strings: ["m", "f", "a"] },
 					ballsExist: { bool: true },
+					freckles: { bool: true, strings: ["random"] },
 				},
 				skinColor: {
 					natural: { strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"] },

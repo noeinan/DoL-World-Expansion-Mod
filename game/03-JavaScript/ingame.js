@@ -111,10 +111,11 @@ window.combatListColor = function (name, value, type) {
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
+			case "vaginaEdging": case "anusEdging":
 			/*vaginaaction*/
-			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate":
+			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate": case "penisEdging":
 			/*anusaction*/
-			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub":
+			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub": case "penisEdging":
 				color = "sub";
 				break;
 
@@ -252,3 +253,12 @@ function featsPointsMenuReset() {
 }
 
 DefineMacroS("featsPointsMenuReset", featsPointsMenuReset);
+
+function startingPlayerImageReset() {
+	jQuery(document).on('change', '#settingsDiv .macro-radiobutton,#settingsDiv .macro-numberslider,#settingsDiv .macro-checkbox', function (e) {
+		new Wikifier(null, '<<startingPlayerImageUpdate>>');
+	});
+	return "";
+}
+
+DefineMacroS("startingPlayerImageReset", startingPlayerImageReset);
