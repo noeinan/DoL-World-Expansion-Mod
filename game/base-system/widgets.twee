@@ -395,6 +395,30 @@
 	<</if>>
 <</nobr>><</widget>>
 
+<!--$args[0] is the base value, $args[1] is the skill-->
+<<widget "sexControl">><<nobr>>
+<<if $args[0] and $args[1] gte 800>>
+	<<if $args[1] gte 1000>>
+		<<set _loss to 5 * $args[0]>>
+	<<elseif between($args[1], 900, 1000)>>
+		<<set _loss to 4 * $args[0]>>
+	<<else>>
+		<<set _loss to 3 * $args[0]>>
+	<</if>>
+	<<if $enemyarousal gte $enemyarousalmax * 0.7>>
+		<<set _loss *= 2>>
+	<</if>>
+	<<if $enemyarousal gte $enemyarousalmax * 0.9>>
+		<<set _loss *= 2>>
+	<</if>>
+	<<set _loss *= $enemyArousalLossReduction>>
+	<<if $enemyArousalLossReduction gt 20>>
+		<<set $enemyArousalLossReduction -= 0.04>>
+	<</if>>
+	<<set $enemyarousal -= Math.round(_loss)>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "violence">><<nobr>>
 <!-- NG tuning v2.7 $arousal from $masochism/50 to /7. PC now orgasms at least once during spanking encounter at 50% masocism level and twice at 100% masoohism. /10 at max is required to orgasm once at 100% masochism. -->
 <!-- NG added stress reduction for masochists. Trauma left same -->
@@ -3755,16 +3779,17 @@ __Map__<br>
 				
 				return Object.assign({}, baseConfig, State.temporary.npcOverrides[stat]);
 			};
-
-			/* Check if this is a main love interest */
-			if (State.variables.loveInterest.primary == State.temporary.npcData.nam) {
-				State.temporary.loveInterest = true;
-			} else if (State.variables.loveInterest.secondary == State.temporary.npcData.nam) {
-				State.temporary.loveInterest = true;
-			} else if (State.variables.loveInterest.tertiary == State.temporary.npcData.nam) {
-				State.temporary.loveInterest = true;
-			} else {
-				State.temporary.loveInterest = false;
+			if(State.variables.loveInterest){
+				/* Check if this is a main love interest */
+				if (State.variables.loveInterest.primary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else if (State.variables.loveInterest.secondary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else if (State.variables.loveInterest.tertiary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else {
+					State.temporary.loveInterest = false;
+				}
 			}
 		<</script>>
 	<</silently>>

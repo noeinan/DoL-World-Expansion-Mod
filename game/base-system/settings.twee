@@ -5,7 +5,7 @@
 <<set $player.sex to "f">>
 <<set $player.gender_body to "a">>
 <<set $player.ballsExist to false>>
-<<set $player.freckles to "random">>
+<<set $player.freckles to false>>
 <<set $devlevel to 12>>
 <<set $bodysize to 2>>
 <<set $breastsize to 0>>
@@ -65,7 +65,7 @@
 <<set $reducedLineHeight to false>>
 <<set $sidebarAnimations to true>>
 <<set $combatAnimations to true>>
-
+<<startingPlayerImageReset>>
 <</nobr>><</widget>>
 
 <<widget "displaySettings">><<nobr>>
@@ -78,7 +78,7 @@
 <<switch $currentSettings>>
 	<<case "quickStart">><<replace #settingsDiv>><<quickStart>><</replace>>
 	<<case "presetConfirmDetails">><<replace #settingsDiv>><<presetConfirmDetails>><</replace>>
-	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>>
+	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>><<startingPlayerImageUpdate>><<removeclass #startingPlayerImage "hidden">>
 	<<case "featSettings">><<replace #settingsDiv>><<featSettings>><</replace>>
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
@@ -291,7 +291,14 @@
 
 <<widget "characterSettings">><<nobr>>
 	<span class="red">The Character tab can only be accessed at the beginning.</span>
-	<br><br>
+	<br>
+	<<if StartConfig.enableImages is true>>
+		<span class="gold">View a preview of the character in the side bar.</span> <label>Show Clothes <<print '<<checkbox "_showClothes" false true '+(_showClothes isnot false ? "checked" : "")+'>>'>></label> <label>Show Underwear <<print '<<checkbox "_showUnderwear" false true '+(_showUnderwear isnot false ? "checked" : "")+'>>'>></label> 
+		<br>
+		<span class="red">'Visual representation of the player character's skin colour' needs to be enabled in the general tab for skin colouring to show during normal gameplay.</span>
+		<br>
+	<</if>>
+	<br>
 
 	<<if $dev is 1>>
 		<span class="gold">Difficulty</span>
@@ -392,10 +399,14 @@
 	<span class="gold">Hair Colour</span>
 	<br>
 	<label><span class="red">Red</span> <<print '<<radiobutton "$hairselect" "red" ' + ($hairselect is "red" ? "checked" : "") + '>>'>></label> |
+	<label><span class="black">Jet Black</span> <<print '<<radiobutton "$hairselect" "jetblack" ' + ($hairselect is "jetblack" ? "checked" : "") + '>>'>></label> |
 	<label><span class="black">Black</span> <<print '<<radiobutton "$hairselect" "black" ' + ($hairselect is "black" ? "checked" : "") + '>>'>></label> |
 	<label><span class="brown">Brown</span> <<print '<<radiobutton "$hairselect" "brown" ' + ($hairselect is "brown" ? "checked" : "") + '>>'>></label> |
+	<label><span class="softbrown">Soft Brown</span> <<print '<<radiobutton "$hairselect" "softbrown" ' + ($hairselect is "softbrown" ? "checked" : "") + '>>'>></label> |
 	<label><span class="lightbrown">Light brown</span> <<print '<<radiobutton "$hairselect" "lightbrown" ' + ($hairselect is "lightbrown" ? "checked" : "") + '>>'>></label> |
+	<label><span class="burntorange">Burnt Orange</span> <<print '<<radiobutton "$hairselect" "burntorange" ' + ($hairselect is "burntorange" ? "checked" : "") + '>>'>></label> |
 	<label><span class="gold">Blond</span> <<print '<<radiobutton "$hairselect" "blond" ' + ($hairselect is "blond" ? "checked" : "") + '>>'>></label> |
+	<label><span class="softblond">Soft Blond</span> <<print '<<radiobutton "$hairselect" "softblond" ' + ($hairselect is "softblond" ? "checked" : "") + '>>'>></label> |
 	<label><span class="platinum">Platinum blond</span> <<print '<<radiobutton "$hairselect" "platinumblond" ' + ($hairselect is "platinumblond" ? "checked" : "") + '>>'>></label> |
 	<label><span class="ashy">Ashy blond</span> <<print '<<radiobutton "$hairselect" "ashyblond" ' + ($hairselect is "ashyblond" ? "checked" : "") + '>>'>></label> |
 	<label><span class="strawberry">Strawberry blond</span> <<print '<<radiobutton "$hairselect" "strawberryblond" ' + ($hairselect is "strawberryblond" ? "checked" : "") + '>>'>></label> |
@@ -407,6 +418,13 @@
 	<label>Ear <<print '<<radiobutton "$hairlength" 0 ' + ($hairlength is 0 ? "checked" : "") + '>>'>></label> |
 	<label>Neck <<print '<<radiobutton "$hairlength" 200 ' + ($hairlength is 200 ? "checked" : "") + '>>'>></label> |
 	<label>Chest <<print '<<radiobutton "$hairlength" 400 ' + ($hairlength is 400 ? "checked" : "") + '>>'>></label>
+	<br><br>
+
+	<span class="gold">Freckles</span>
+	<br>
+	<label>Yes <<print '<<radiobutton "$player.freckles" true ' + ($player.freckles is true ? "checked" : "") + '>>'>></label> |
+	<label>No <<print '<<radiobutton "$player.freckles" false ' + ($player.freckles is false ? "checked" : "") + '>>'>></label> |
+	<label>Random <<print '<<radiobutton "$player.freckles" "random" ' + ($player.freckles is "random" ? "checked" : "") + '>>'>></label> |
 	<br><br>
 
 	<span class="gold">Skin Colour</span>
@@ -422,13 +440,6 @@
 	<label>Medium <<print '<<radiobutton "$skinColor.natural" "ymedium" ' + ($skinColor.natural is "ymedium" ? "checked" : "") + '>>'>></label> |
 	<label>Dark <<print '<<radiobutton "$skinColor.natural" "ydark" ' + ($skinColor.natural is "ydark" ? "checked" : "") + '>>'>></label> |
 	<label>Gyaru <<print '<<radiobutton "$skinColor.natural" "ygyaru" ' + ($skinColor.natural is "ygyaru" ? "checked" : "") + '>>'>></label>
-	<br><br>
-
-	<span class="gold">Freckles</span>
-	<br>
-	<label>Yes <<print '<<radiobutton "$player.freckles" true ' + ($player.freckles is true ? "checked" : "") + '>>'>></label> |
-	<label>No <<print '<<radiobutton "$player.freckles" false ' + ($player.freckles is false ? "checked" : "") + '>>'>></label> |
-	<label>Random <<print '<<radiobutton "$player.freckles" "random" ' + ($player.freckles is "random" ? "checked" : "") + '>>'>></label> |
 	<br><br>
 
 	<label>Initial Tan Value: <<numberslider "$skinColor.range" $skinColor.range 0 100 1>></label>
