@@ -513,6 +513,7 @@ window.settingsObjects = function (type) {
 				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
+				neverNudeMenus: { bool: false },
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
