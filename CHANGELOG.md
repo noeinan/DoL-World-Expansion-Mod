@@ -1,5 +1,240 @@
 # CHANGELOG
 
+## 0.2.21.5
+
+- Made a change that should allow google translate to translate as you play. Let me know how it goes.
+
+### Balance Changes
+
+- Avery's crime scare now requires Avery's rage to be revealed. Thanks to PurityGuy.
+- Avery's crime scare will no longer repeat until the player gains a significant amount of crime again. Thanks to PurityGuy.
+- Adjusted Avery's attitude. Thanks to PurityGuy.
+
+### Bug Fixes
+
+- Male PCs should no longer be described as having a pussy during the machine show at the brothel.
+- Fixed several errors that could appear when examining cargo at the docks.
+- Added an escape for those trapped in Robin's chocolate.
+- Fixed a softlock found at the asylum.
+- Fixed an bug that caused clothing icons to display as the wrong colour.
+
+Thanks to PurityGuy For the following fixes:
+
+- Fixed a number of errors related to clothing, including some that could break the sidebar sprite.
+- Centaur should now be properly referred to in the plural sense.
+- Fixed a few missing image errs.
+- Clothing with a "pale-" colour should now show their correct icon colour or shop preview colour.
+
+## 0.2.21.4
+
+- Fixed a softlock at Alex's farm.
+
+## 0.2.21.3
+
+- Adjusted alternative clothing colour text. Thanks to Sommar.
+- Added alternative text when the PC orgasms with a slime in both ears. Thanks to Lollipop Scythe.
+
+### Bug Fixes
+
+- The dance studio will no longer appear to take dollars.
+- Kissing Robin when accepting their love will now grant the First Kiss feat.
+- Fixed some Avery gender confusion.
+- Gym socks will no longer be blindingly white during encounters.
+- The bullied student at the lake can now be remembered as your first kiss.
+- Holding Robin's hand while walking home from school will now take your handholding virginity.
+- Fixed a bug that caused the PC to slip their hands beneath any clothes, or behind their penis, when covering their exposure.
+- Fixed some broken images found during encounters.
+- The player will no longer gasp twice during moan vocalizations towards wolves. Thanks to PurityGuy.
+- Snow will no longer be referred to as rain when tending the farm. Thanks to PurityGuy.
+- Thanks to PurityGuy for typo fixes.
+
+Thanks to braymann for the following fixes:
+
+- Fixed a typo found when picking fruit at the temple gardens.
+- The option to strip an outfit while dancing will now only appear if you have the required exhibitionism.
+- The Fully Covered feat will now properly detect when you have the Anal toggle disabled.
+- Fixed a bug that caused bottom pills to apply an effect without being taken.
+- The "Oh Bother" feat will now unlock properly.
+- Mason now has a better understanding of what should/should not be worn to swim class.
+- Fixed some issues with first kiss virginity.
+- When dancing, under outfits will now be stripped properly while wearing lower clothing.
+
+Thanks to Lollipop Scythe for the following fixes:
+
+- Handholding and kiss virginity should now be properly taken in more places.
+- Fixed an issue with clothing colour when your bottoms are destroyed by a stalker on the street.
+- Fixed some issues found when masturbating with an ear slime.
+- Minor adjustments to struggle encounters when opening the PC's mouth.
+- Removed a double link found when milking yourself at the end of the day at Alex's farm.
+- Fixed an issue with clothing colour.
+- Fixed a rare issue that could break the save menu.
+- The PC will no longer consider emptiness valuable in bulk.
+
+## 0.2.21.2
+
+- Fixed an error found when leaving shops.
+- Fixed a number of errors found in shops. Thanks to Lollipop Scythe.
+- Fixed an issue that prevented the sidebar stats from being clickable. Thanks to Lollipop Scythe.
+- Fixed a milking issue at Alex's farm. Thanks to Lollipop Scythe.
+
+## 0.2.21.1
+
+- Many adjustments and improvements to the shop filters. Thanks to Lollipop Scythe.
+
+### Balance Changes
+
+- The PC will no longer be so happy for their first kiss to go to a generic NPC.
+
+### Bug Fixes
+
+- Fixed a bug that prevented clothing descriptions from displaying properly. Thanks to Lollipop Scythe.
+- Fixed a bug that prevented some neckwear from displaying colours properly. Thanks to Lollipop Scythe.
+- Fixed a bug that broke the alignment of feat popups. Thanks to Lollipop Scythe.
+- Fixed a bug that caused the "get dressed" option in several locations to leave you wearing only the clothes you hid there. Thanks to braymann.
+- Fixed an error found when stealing from the docks at dawn.
+- Stealing from the docks at dawn should no longer cause those containers to remain empty during the following night.
+- Being kissed by Robin after a romantic movie can now be tracked as your first kiss.
+- Fixed a soft lock found at Alex's farm.
+
+Thanks to PurityGuy for the following fixes:
+
+- Fixed an error message found after wolf encounters.
+- Fixed an error found when stealing at the docks.
+- Fixed a soft lock at the docks.
+- Fixed some issues with neck item layering.
+- Classic under bottoms should no longer appear washed out in some colours.
+- Fixed a bug that caused the PC to accept Avery's champagne offer even when selecting "Decline".
+- Wearing lingerie will no longer force the player to be defiant during Avery's hotel date.
+
+## 0.2.21.0
+
+- The docks can now be broken into at night. Working there by day can reveal useful information. Requires C skulduggery.
+- Added a third Avery date location, a lavish hotel where the player character can spend the night. Exhibitionist characters will be able to get more endearment from this event. Written by Mewsic Box and PurityGuy.
+- Avery can now pick the player up from school. The probability is determined by Avery's love and the weather. Written by Burnt Toast and PurityGuy.
+- Avery may now try to scare the PC straight if they have a high crime value. Written by Burnt Toast and PurityGuy.
+- You can now ice skate on the frozen lake. Additional events can trigger if you're not alone.
+- Mushrooms and flowers encountered in the forest can now be picked and sold on Connudatus Street.
+- Fruit now grows in the forest, and can also be picked and sold.
+- Added giant bees to the deep forest. Those with high tending skill can attempt to steal valuable honeycomb.
+- Mason now swims in the frozen lake on snowy days.
+- Added more tribadism options to encounters.
+- The police's opinion of you displayed in the Social overlay will now note whether the police have enough evidence for an arrest.
+- Added the "Wild plants picked" stat to the Statistics overlay.
+- Combat sprites for clothes that lack colour options should now appear as a more appropriate colour, rather than always red.
+- Added a filter to the clothing shops, allowing only clothes with certain traits or for a specific gender to be shown. Thanks to BackgroundBoy.
+- Added a bunch more events to the asylum, expanding an existing storyline. Thanks to bsin.
+- Made asylum flavour text more responsive to the PC's status with other inmates. Thanks to bsin.
+- Added new asylum "treatments" that become more likely if the PC is unpopular with staff. Thanks to bsin.
+- Added basic pubic hair for male PC's. Thanks to Sommar.
+- Added the cloth choker, suspenders, arm sleeves, arm warmers, lace arm warmers and ankle socks to the clothing shop. Thanks to Sommar.
+- Improvements to the code responsible for displaying hand clothes on the sidebar. Thanks to Sommar.
+- Added the option to buy bottom pills from the pharmacy, and adjusted bottom growth to work with the pill system. Thanks to braymann.
+- Added the "In Red Light", "Oh Bother" and "Employee Benefits" feats.
+- Updated to SugarCube version 2.33.4. Thanks to 00c356, Lollipop Scythe and aimozg.
+
+Thanks to Lollipop Scythe for the following additions and improvements:
+
+- Added the "First Kiss" feat.
+- Losing a virginity during the tutorial encounter will now be marked as such in the Statistics overlay.
+- Ear slimes can now take control during the forest pitcher event.
+- The PC's first kiss, and their handholding virginity, are now tracked, and are viewable in the Statistics overlay.
+- Added new Christmas gift options for Robin, and improved existing code.
+- Added a small Robin dressing scene at Christmas that depends on the gift they receive.
+- Ear slimes may now try to force nudity on the PC while working at Alex's farm.
+- Added a small Alex event that allows PC milking during the day after getting caught.
+- General save system code improvements that should boost performance.
+- Minor code improvements.
+
+Thanks to PurityGuy for the following additions and improvements:
+
+- Robin's first meeting can now trigger on day 0 at the shopping centre late in the day, at their lemonade/hot chocolate stand, or in the school canteen during lunch.
+- Deleting saves now asks for confirmation by default.
+- The "Game Settings" tab now has subsections for Human NPC and Beast Settings, making it neater.
+- Made other adjustments to the settings page UI to improve clarity.
+- The player will now receive a notification when they are able to choose a second love interest, or are no longer able to.
+- The Attitudes menu will display as a gold link when a new option is available to the player.
+- The "Flaunt" option now require the full demon transformation to select, but becomes visible after the player gets any transformation.
+- Reworded the exhibitionist attitudes to improve clarity.
+- The player can now strip any article of clothing or accessory at locations such as the wolf cave, lake, and pool. They now have drop-down menus for strip options.
+- Added a new icon for the gothic gown.
+- Added an icon for the forest shop, art Courtesy of Timko.
+- Old versions of clothing, such as the original sundress, are now available at the forest shop.
+- Added sections for under tops and under outfits to the forest shop.
+- Added icons for classic clothing.
+- Added clothing category icons to the forest shop.
+
+### Balance Changes
+
+- Adjusted ear slime event cooldown timers to take more factors, such as the presence of a second ear slime, into account. Thanks to Lollipop Scythe.
+- Increased the requirement for the "My Collection of Feats" feat. Thanks to Lollipop Scythe.
+- The impact of alcohol on fatigue no longer worses as you become more drunk.
+- Finding valuables in the forest no longer depends on allure. Searching now increases the chance of finding items.
+- The dress shirt can now be worn at school, and has different colour options. Thanks to Sommar.
+- The necktie is now considered less feminine. Thanks to Sommar.
+- The attitudes menu can now be accessed from the wolf cave.
+- Increased the impact of NPC trust on whether they agree to pay after reading an advertisement written on the PC.
+- Adjusted the warmth rating on clothes, mostly reducing or removing the warmth rating on accessories.
+- The Robin hospital scene will now remain available until you choose it.
+
+### Bug Fixes
+
+- Fixed a bug that enabled a level 2 exhibitionist act while dancing with a lower than intended exhibitionism stat.
+- Fixed some grammar issues with the PC's Characteristics description.
+- Fixed a broken link found after helping Robin set up their hot chocolate stand.
+- Fixed some NPC body part issues during bus encounters.
+- The police strip event should now properly take under tops into account.
+- Plant clothes should now always appear green.
+- The cable knit turtleneck now has colour options.
+- Fixed a bug that stopped NPCs commenting on a crossdressing PC's breasts.
+- Fixed a bug that gave drunkenness an inconsistent impact on fatigue.
+- The bartering system should now handle the sale of individual items a bit better.
+- Angry NPCs will no longer skip a step when initiating tribadism.
+- Fixed an error found after Whitney asks the PC to show their underwear, or prove their lack of it, in maths class.
+- Fixed an error found after visiting Robin's bedroom on Halloween.
+- Fixed a bug that allowed stripping on the dance floor without appropriate exhibitionism.
+- Fixed a bug that would mix up flowers at your stall.
+- Non-existent clothes will no longer snag when jumping out the way of the speeding car.
+- Fixed a broken image that would appear in encounters while wearing mittens.
+- Fixed issues with the icons for dress shirts and neckties. Thanks to Sommar.
+- Fixed an issue with the dress shirt's sidebar art. Thanks to Sommar.
+- Fixed a bug that prevented pale clothing colours appearing properly on the encounter sprites. Thanks to Sommar.
+- Fixed a bug that prevented creatures attached to the PC's chest becoming satisfied, causing encounters to drag on until defiant options are selected. Thanks to KamiKaza404.
+- Fixed a bug that stopped Robin thanking the player for crossdressing as well on Halloween. Thanks to PurityGuy and braymann.
+- Fixed a bug that caused swimwear to remain equipped when getting dressed after swimming. Thanks to braymann.
+- Fixed a bug that prevented the "dress as you were" option when waking from re-equipping items that are part of your sleep set. Thanks to braymann.
+- "Defiant whelp" body-writing now counts as a combat line. Thanks to Fangi.
+- Fixed an issue with a couple of beast body-writing lines. Thanks to Fangi.
+- Fixed a bug found when adding multiple parasites to the fish tank or pond at a time. Thanks to braymann.
+- You can now wear the diving suit to swimming class without needing to wear swimwear beneath it. Thanks to braymann.
+- The lewd options at the flower stall and the option to grind against the gearstick while hitchhiking now require the correct amount of promiscuity. Thanks to braymann.
+- The number beside the "New Best Friend" feat boost will no longer increase when putting points into the "New Life" boost. Thanks to braymann.
+- Fixed a few errors where the game tries to find clothing images that don't exist. Thanks to braymann.
+- Thanks to KamiKaza404 and bsin for typo fixes.
+- Thanks to bsin for minor code improvements.
+
+Thanks to Lollipop Scythe for the following fixes.
+
+- Fixed an issue that could cause flickering sidebar images on Webkit backed browsers. Thanks to Lollipop Scythe.
+- Fixed some issues found when attending swimming lessons nude. Thanks to Lollipop Scythe.
+- Fixed a bug found when pulling away from an NPC's breasts. Thanks to Lollipop Scythe.
+- Fixed a bug that could prevent x-rays displaying. Thanks to Lollipop Scythe.
+- Fixed a bug that prevented hand items being put back on. Thanks to Lollipop Scythe.
+- Fixed a bug that allowed the use of pepper spray during consensual struggle encounters. Thanks to Lollipop Scythe.
+- Fixed an issue with NPC code on old saves. Thanks to Lollipop Scythe.
+
+Thanks to PurityGuy for the following fixes:
+
+- Fixed an NPC breaking free during Briar's gloryhole punishment.
+- Fixed a bug that caused the tentacle that appears on the town's streets being referred to as a "0" after combat.
+- Fixed a softlock at Robin's hot chocolate stand.
+- The ice on the lake is now 50% less serene during non-snowy winter weather.
+- Removed a duplicated widget.
+- Fixed a pronoun error found during one of the underground farm's riding events.
+- Various Avery scene fixes.
+- The PC will no longer be interrupted when changing into swimwear.
+- Fixed an issue with the alley icon.
+- Minor code improvements and typos.
+
 ## 0.2.20.3
 
 - Fixed an error found during the Domus Street modeling event attack.

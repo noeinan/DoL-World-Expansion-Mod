@@ -1538,7 +1538,11 @@ You try to pull your head away from the penis threatening your mouth.
 		<<if $consensual is 1>>
 			<<set $consensual to 0>><<molested>><<controlloss>>
 		<</if>>
-		<span class="red">However, <<theowner>> refuses to allow it,</span> kissing you more firmly.
+		<<if $mouthstate is "kissentrance">>
+			<span class="red">However, <<theowner>> refuses to allow it,</span> preventing you from moving away from their face.
+		<<else>>
+			<span class="red">However, <<theowner>> refuses to allow it,</span> kissing you more firmly.
+		<</if>>
 		<<violence 1>>
 	<</if>>
 <</if>>
@@ -1572,6 +1576,59 @@ You try to pull your head away from the penis threatening your mouth.
 	<<else>>
 		<span class="purple">It remains over your mouth.</span>
 	<</if>>
+<</if>>
+
+<<if $mouthaction is "headbutt">>
+	<<set $mouthaction to 0>><<set $mouthactiondefault to "headbutt">>
+	<<if $mouthstate is "kiss">>
+		You disengage from the kiss, and headbutt <<him>> in retaliation.
+	<<else>>
+		You quickly rear back and headbutt <<him>>.
+	<</if>>
+	<<He>> <<if $enemytype is "beast">>yelps and backs off<<else>>yells and stumbles back, clutching <<his>> head<</if>>.
+	<<defiance 10>><<attackstat>><<set $mouthuse to 0>><<set $mouthstate to 0>>
+	<<if $cow gte 2 and $demon gte 2>>
+		<<defiance 10>><<defiance 10>>
+	<</if>>
+	<<if $demon gte 2>>
+		<<defiance 10>>
+		You rub your horns.
+	<</if>>
+	<<if $cow gte 2>>
+		<<print either("That didn't hurt you at all!", "You remin unshaken by the blow.", "You're unharmed by the hit.")>>
+	<<else>>
+		<<pain 4>>
+		<<if $pain lte 20>>
+			Your own head immediately stings.
+		<<elseif $pain lte 60>>
+			Your ears begin to ring from the blow.
+		<<else>>
+			Your mind feels rattled by the impact.
+		<</if>>
+		<<gpain>>
+	<</if>>
+	<<set $head to 0>>
+	<<for _j = 0; _j lt $enemyno; _j++>>
+		<<if $NPCList[_j].mouth is "kissentrance">>
+			<<set $NPCList[_j].mouth to 0>>
+			<<set $NPCList[_j].location.head to 0>>
+			<<break>>
+		<</if>>
+	<</for>>
+	<<for _j = 0; _j lt $enemyno; _j++>>
+		<<if $NPCList[_j].mouth is "kissimminent">>
+			<<set $NPCList[_j].mouth to 0>>
+			<<set $NPCList[_j].location.head to 0>>
+			<<break>>
+		<</if>>
+	<</for>>
+	<<for _j = 0; _j lt $enemyno; _j++>>
+		<<if $NPCList[_j].mouth is "kiss">>
+			<<set $NPCList[_j].mouth to 0>>
+			<<set $NPCList[_j].location.head to 0>>
+			<<break>>
+		<</if>>
+	<</for>>
 <</if>>
 
 <<set $rng to random(1, 100)>>
@@ -1781,6 +1838,10 @@ You try to pull your head away from the penis threatening your mouth.
 	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "cooperate">><<actionspenisride>><<submission 20>><<vaginalskilluse>>
 <</if>>
 
+<<if $vaginaaction is "penisEdging">>
+	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "penisEdging">><<actionspenisedging>><<submission 5>><<sexControl 5 $vaginalskill>><<vaginalskilluse>><<combatpromiscuity4>>
+<</if>>
+
 <<if $vaginaaction is "take">>
 	<<set $vaginaaction to 0>><<set $vaginaactiondefault to "take">><<actionspenistake>>
 <</if>>
@@ -1911,6 +1972,10 @@ You try to pull your head away from the penis threatening your mouth.
 
 <<if $penisaction is "cooperate">>
 	<<set $penisaction to 0>><<set $penisactiondefault to "cooperate">><<actionspussythrust>><<submission 20>><<penileskilluse>>
+<</if>>
+
+<<if $penisaction is "vaginaEdging">>
+	<<set $penisaction to 0>><<set $penisactiondefault to "vaginaEdging">><<actionspussyedging>><<submission 5>><<sexControl 5 $penileskill>><<penileskilluse>><<combatpromiscuity4>>
 <</if>>
 
 <<if $penisaction is "take">>
@@ -2262,6 +2327,10 @@ You try to pull your head away from the penis threatening your mouth.
 	<<set $penisaction to 0>><<set $penisactiondefault to "otheranuscooperate">><<actionsotheranusthrust>><<submission 20>><<penileskilluse>>
 <</if>>
 
+<<if $penisaction is "otheranusEdging">>
+	<<set $penisaction to 0>><<set $penisactiondefault to "otheranusEdging">><<actionsotheranusedging>><<submission 5>><<sexControl 5 $penileskill>><<penileskilluse>><<combatpromiscuity4>>
+<</if>>
+
 <<if $penisaction is "otheranustake">>
 	<<set $penisaction to 0>><<set $penisactiondefault to "otheranustake">><<actionsotheranustake>>
 <</if>>
@@ -2288,6 +2357,10 @@ You try to pull your head away from the penis threatening your mouth.
 	<<set $anusaction to 0>><<set $anusactiondefault to "cooperate">><<actionsanusthrust>><<submission 15>><<analskilluse>>
 <</if>>
 
+<<if $anusaction is "penisEdging">>
+	<<set $anusaction to 0>><<set $anusactiondefault to "penisEdging">><<actionsanusedging>><<submission 5>><<sexControl 5 $analskill>><<vaginalskilluse>><<combatpromiscuity4>>
+<</if>>
+
 <<if $anusaction is "take">>
 	<<set $anusaction to 0>><<set $anusactiondefault to "take">><<actionsanustake>>
 <</if>>
@@ -2306,9 +2379,9 @@ You try to pull your head away from the penis threatening your mouth.
 	<<set $chestactiondefault to "rub">>
 	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $chestskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
 		<<if $breastsize is 0>>
-			You rub your <<breasts>> against <<his>> penis.
+			You <<chesttext>> rub your <<breasts>> against <<his>> penis.
 		<<else>>
-			You rub <<his>> penis between your <<breasts>>.
+			You <<chesttext>> rub <<his>> penis between your <<breasts>>.
 		<</if>>
 		<<submission 3>><<chestskilluse>><<cheststat>>
 	<<else>>

@@ -8,6 +8,8 @@
 		<<mirrorSkin>>
 	<<case "hair">>
 		<<mirrorHair>>
+	<<case "makeup">>
+		<<mirrorMakeup>>
 	<<case "transformation">>
 		<<mirrorTransformation>>
 	<<case "debug">>
@@ -125,6 +127,10 @@ __Skin__
 __Hair__
 <br>
 <<link "Change your hair style">><<replace #mirror>><<mirrorHair>><</replace>><<set $mirrorMenu to "hair">><</link>>
+<br><br>
+__Makeup__
+<br>
+<<link "Apply makeup">><<replace #mirror>><<mirrorMakeup>><</replace>><<set $mirrorMenu to "makeup">><</link>>
 <br><br>
 
 <<if $specialTransform is 1 or $physicalTransform is 1>>
@@ -265,6 +271,10 @@ Attractiveness rating:
 		Demon
 		<br>
 	<</if>>
+	<<if $makeup.lipstick != 0 or $makeup.eyeshadow != 0 or $makeup.mascara != 0>>
+		Attractive makeup
+		<br>
+	<</if>>
 	<<if $worn.head.reveal gte 50>>
 		Attractive headwear
 		<br>
@@ -380,6 +390,10 @@ Increasing your allure:
 	<</if>>
 	<<if $demon gte 6>>
 		Demon
+		<br>
+	<</if>>
+	<<if $makeup.lipstick != 0 or $makeup.eyeshadow != 0 or $makeup.mascara != 0>>
+		Alluring makeup
 		<br>
 	<</if>>
 	<<if $worn.head.reveal gte 50>>
@@ -790,6 +804,155 @@ Your fringe is in the "$fringetype" style.
 
 <br><br>
 <</nobr>><</widget>>
+
+<<widget "mirrorMakeupPart">><<nobr>>
+<<set _itemType = $args[0]>>
+<<set _singular = $args[1]>>
+<<set _plural = $args[2]>>
+<<set _cssClass = $args[3]>>
+
+<<set _items = $makeup.owned[_itemType].filter(x => x.count > 0)>>
+<<if $makeup.owned[_itemType].length == 0>>
+	You don't own any _plural.
+<<elseif _items.length == 0>>
+	You ran out of _plural.<br>
+<</if>>
+<<if _items.length != 0 or $makeup[_itemType] != 0>>
+	Apply _singular:<br>
+	<<if $makeup[_itemType] != 0>>
+		<<capture _itemType>>
+		<span class="no-numberify">
+		<<link "Remove">>
+		<<set $makeup[_itemType] = 0>>
+		<<run Engine.show()>>
+		<</link>></span>
+		<<print " | ">>
+		<</capture>>
+	<</if>>
+	<<for _i, _item range _items>>
+		<<capture _item, _itemType>>
+		<span class="capitalize no-numberify">
+		<<if $makeup[_itemType] == _item.colour>>
+			_item.colour
+		<<else>>
+			<<link _item.colour>>
+			<<set $makeup[_itemType] = _item.colour>>
+			<<set _item.count -= 1>>
+			<<run Engine.show()>>
+			<</link>>
+		<</if>>
+		</span>
+		<span @class="_cssClass+'-'+_item.colour.replace(/ /g, '-')"><span class="colour-sample"></span></span>
+		<<print "×"+_item.count+" | ">>
+		<</capture>>
+	<</for>>
+	<br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "mirrorMakeup">><<nobr>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<br><br>
+__Makeup__
+<br>
+<<mirrorMakeupPart "lipstick" "lipstick" "lipsticks" "lipstick">><br>
+<<mirrorMakeupPart "eyeshadow" "eyeshadow" "eyeshadows" "eyeshadow">><br>
+<<mirrorMakeupPart "mascara" "mascara" "mascaras" "mascara">><br>
+
+/* CONTACT LENSES */
+<<if $makeup.owned.eyelenses.length == 0>>
+	You don't own any contact lenses.<br>
+<<else>>
+	Wear contact lenses:<br>
+	<<if $makeup.eyelenses != 0>>
+		<span class="no-numberify">
+		<<link "None">>
+		<<set $makeup.eyelenses = 0>>
+		<<run Engine.show()>>
+		<</link>></span>
+		<<print " | ">>
+	<</if>>
+	<<for _i, _colour range $makeup.owned.eyelenses>>
+		<<capture _colour>>
+		<span class="capitalize no-numberify">
+		<<link _colour>>
+		<<set $makeup.eyelenses = _colour>>
+		<<run Engine.show()>>
+		<</link>></span>
+		<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes colour-eye"></span></span>
+		<<print " | ">>
+		<</capture>>
+	<</for>>
+	<br>
+<</if>>
+<br>
+
+/* DYEING EYEBROWS */
+<<browsDyeReset>>
+Dye your eyebrows:<br>
+<<set _dyes = $makeup.owned.hairdye.filter(x => x.count > 0)>>
+<<if _dyes.length == 0>>
+	You have no dyes.<br>
+<<else>>
+	<<set _browsDyeOptions to {"Don't dye":"noChange"}>>
+	<<for _i to 0; _i lt _dyes.length; _i++>>
+		<<if $makeup.browscolour is _dyes[_i].colour or $naturalhaircolour is _dyes[_i].colour>>
+			<<continue>>
+		<</if>>
+		<<set _displayName = _dyes[_i].colour.charAt(0).toUpperCase() + _dyes[_i].colour.slice(1) + " ×" + _dyes[_i].count + "">>
+		<<set _browsDyeOptions[_displayName] to _dyes[_i].colour>>
+	<</for>>
+	<<listbox "$browsDyeOption" autoselect>>
+		<<optionsfrom _browsDyeOptions>>
+	<</listbox>>
+	<<browsColourPreview>>
+	<br>
+<</if>>
+<<if $makeup.browscolour != 0>>
+You can visit a hairdresser to restore your natural brows colour.<br>
+<</if>>
+<br>
+
+/* CONCEALER */
+<<if $player.freckles == true>>
+	<<if $makeup.concealer == 0>>
+		<span class="capitalize no-numberify">
+		<<link "Apply concealer to hide freckles">>
+		<<set $makeup.concealer = 1>>
+		<<run Engine.show()>>
+		<</link>>
+		</span>
+	<<else>>
+		<span class="capitalize no-numberify">
+		<<link "Remove concealer">>
+		<<set $makeup.concealer = 0>>
+		<<run Engine.show()>>
+		<</link>>
+		</span>
+	<</if>>
+<</if>>
+
+<br><br>
+<</nobr>><</widget>>
+
+<<widget "browsColourPreview">><<nobr>>
+<span id="browsColourPreview">
+<<if $browsDyeOption isnot "noChange">>
+	<span @class="'hair-' + $browsDyeOption.replace(/ /g, '-')">
+		<span class="colour-sample bgcolour-hair colour-hair"></span>
+	</span>
+	<br><<link [[Dye eyebrows (0:15)|Mirror Dye eyebrows]]>><<pass 5>><</link>>
+<</if>>
+</span>
+<</nobr>><</widget>>
+
+:: Mirror Dye eyebrows [nobr]
+You open up the box with $browsDyeOption dye and prepare the mixture.<br>
+Using a small brush you carefully apply the dye to your eyebrows.<br>
+You wait several minutes for the dye to set and hope you didn't mess up anything.<br>
+<br>
+<<set $makeup.owned.hairdye.find(x => x.colour == $browsDyeOption).count -= 1>>
+<<link [[Next|Mirror]]>><<pass 10>><<set $makeup.browscolour = $browsDyeOption>><<unset $browsDyeOption>><</link>>
 
 <<widget "mirrorTransformation">><<nobr>>
 <<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>

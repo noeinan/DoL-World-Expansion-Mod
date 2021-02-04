@@ -85,7 +85,7 @@ window.combatListColor = function (name, value, type) {
 			/*feetaction*/
 			case "kick":
 			/*mouthaction*/
-			case "bite": case "demand": case "breastbite": case "handbite":
+			case "bite": case "demand": case "breastbite": case "handbite": case "headbutt":
 				color = "def";
 				break;
 
@@ -111,10 +111,11 @@ window.combatListColor = function (name, value, type) {
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
+			case "vaginaEdging": case "anusEdging":
 			/*vaginaaction*/
-			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate":
+			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate": case "penisEdging":
 			/*anusaction*/
-			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub":
+			case "anustopenis": case "anuspenisfuck": case "penistease": case "otherMouthAnusRub": case "otherAnusRub": case "penisEdging":
 				color = "sub";
 				break;
 
@@ -210,8 +211,17 @@ function hairdressersReset() {
 
 DefineMacroS("hairdressersReset", hairdressersReset);
 
-function NPCSettingsReset() {
+function browsDyeReset() {
 	jQuery(document).on('change', '.macro-listbox', function (e) {
+		new Wikifier(null, '<<replace #browsColourPreview>><<browsColourPreview>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("browsDyeReset", browsDyeReset);
+
+function NPCSettingsReset() {
+	jQuery(document).on('change', '#listbox--npcid', function (e) {
 		new Wikifier(null, '<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>');
 	});
 	return "";
@@ -234,3 +244,21 @@ DefineMacroS("loveInterestFunction", loveInterestFunction);
 window.between = function(x, min, max){
 	return x >= min && x <= max;
 }
+
+function featsPointsMenuReset() {
+	jQuery(document).on('change', '#listbox--upgradename', function (e) {
+		new Wikifier(null, '<<updateFeatsPointsMenu>>');
+	});
+	return "";
+}
+
+DefineMacroS("featsPointsMenuReset", featsPointsMenuReset);
+
+function startingPlayerImageReset() {
+	jQuery(document).on('change', '#settingsDiv .macro-radiobutton,#settingsDiv .macro-numberslider,#settingsDiv .macro-checkbox', function (e) {
+		new Wikifier(null, '<<startingPlayerImageUpdate>>');
+	});
+	return "";
+}
+
+DefineMacroS("startingPlayerImageReset", startingPlayerImageReset);

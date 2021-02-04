@@ -170,6 +170,10 @@
 	<<if $cow gte 6>><<set $allure += 500>><</if>>
 	<<goocount>><<set $allure += ($goocount * 50) + ($semencount * 50)>>
 
+	<<if $makeup.lipstick != 0>><<set $allure += 100>><</if>>
+	<<if $makeup.eyeshadow != 0>><<set $allure += 100>><</if>>
+	<<if $makeup.mascara != 0>><<set $allure += 100>><</if>>
+
 	<<set $allure += ($famesex / 10)>>
 	<<set $allure += ($famerape / 10)>>
 	<<set $allure += ($famebestiality / 10)>>
@@ -205,6 +209,9 @@
 	<<if $fallenangel gte 2>><<set $attractiveness += 500>><</if>>
 	<<if $cat gte 6>><<set $attractiveness += 500>><</if>>
 	<<if $cow gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $makeup.lipstick != 0>><<set $attractiveness += 100>><</if>>
+	<<if $makeup.eyeshadow != 0>><<set $attractiveness += 100>><</if>>
+	<<if $makeup.mascara != 0>><<set $attractiveness += 100>><</if>>
 	<<set $rng to random(1, 100)>>
 
 	<<if $worn.neck.collared gte 1>>
@@ -350,7 +357,10 @@
 	<</if>>
 
 <<else>>
-	<<versioninfo>>
+	<<if StartConfig.enableImages is true>>
+		<div id="startingPlayerImage" class="hidden"></div>
+	<</if>>
+	<div id="versioninfo"><<versioninfo>></div>
 
 	<<button FEATS>>
 		<<overlayReplace "startFeats">>
@@ -726,6 +736,198 @@ Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.und
 	<<if $extendedStats>>
 		$monthday<<monthday>> <<month true>>
 	<</if>>
+<</nobr>><</widget>>
+
+
+<<widget "startingPlayerImage">><<nobr>>
+<<set $naturalhaircolour to $hairselect>>
+<<set _filters to {
+	"body": skinColor("t", $skinColor.range, setup.skinColor[$skinColor.natural]),
+	"breasts": skinColor("t", $skinColor.range, setup.skinColor[$skinColor.natural]),
+	"penis": skinColor("t", $skinColor.range, setup.skinColor[$skinColor.natural]),
+	"mouth": skinColor("t", $skinColor.range, setup.skinColor[$skinColor.natural]),
+}>>
+<<set _img to setup.tanImg.sidebar["t"]>>
+<<if $hairlength gte 900>>
+	<<set _hairlengthstage to "feet">>
+<<elseif $hairlength gte 700>>
+	<<set _hairlengthstage to "thighs">>
+<<elseif $hairlength gte 600>>
+	<<set _hairlengthstage to "navel">>
+<<elseif $hairlength gte 400>>
+	<<set _hairlengthstage to "chest">>
+<<elseif $hairlength gte 200>>
+	<<set _hairlengthstage to "shoulder">>
+<<else>>
+	<<set _hairlengthstage to "short">>
+<</if>>
+
+<<set _fringelengthstage to "short">>
+<<if _showClothes is undefined>>
+	<<set _showClothes to true>>
+<</if>>
+
+<<if $player.gender is "m" or ($player.gender is "f" and $background is "crossdresser")>>
+	<<set _clothesType to "male">>
+<<elseif $player.gender is "h" and (($player.gender_body is "m" or ($player.gender_body is "a" and $breastsize lte 3)) and $background isnot "crossdresser") or (($player.gender_body is "f" or ($player.gender_body is "a" and $breastsize gt 3)) and $background is "crossdresser")>>
+	<<set _clothesType to "male">>
+<<else>>
+	<<set _clothesType to "female">>
+<</if>>
+
+<div id="img" @class="'hair-'+ $hairselect + ' eye-' + $eyeselect.replace(/ /g,'-') + ($imgLighten isnot '' ? ' '+ $imgLighten :'') + ' noAnimations'">
+	/*Prep for image checks*/
+	<<switch $breastsize>>
+	<<case 12>>
+		<<set _breastSize to 6>>
+	<<case 8 9 10 11>>
+		<<set _breastSize to 5>>
+	<<case 6 7>>
+		<<set _breastSize to 4>>
+	<<case 4 5>>
+		<<set _breastSize to 3>>
+	<<case 3>>
+		<<set _breastSize to 2>>
+	<<case 0 1 2>>
+		<<set _breastSize to 1>>
+	<</switch>>
+	<<if $player.gender is "m" or $player.gender is "h">>
+		<<switch $penissize>>
+		<<case 4>>
+			<<set _penisSize to 5>>
+		<<case 3>>
+			<<set _penisSize to 4>>
+		<<case 2>>
+			<<set _penisSize to 3>>
+		<<case 1>>
+			<<set _penisSize to 2>>
+		<<case 0 -1>>
+			<<set _penisSize to 1>>
+		<</switch>>
+	<<else>>
+		<<unset _penisSize>>
+	<</if>>
+	<<set _disabled to ["disabled","hidden"]>>
+
+	<img class="layer-base" @src="_img.basenoarms" @style="'filter: '+_filters.body">
+	<img class="layer-basehead" @src="_img.basehead" @style="'filter: '+_filters.body">
+
+	<img class="layer-breasts" @src="_img['breasts'+ _breastSize]" @style="'filter: '+_filters.breasts">
+	<<if $skinColor.tanImgEnabled is "t" and $skinColor.tanValues[0] isnot $skinColor.tanValues[1]>>
+		<img class="layer-breasts" @src="_img.baseTanBikini_UUpper + _breastSize + '.png'" @style="'filter: '+_filters.bikiniTop">
+	<</if>>
+
+	<img class="layer-base" @src="_img.leftarmidle" @style="'filter: '+_filters.body">
+			
+	<<if !_disabled.includes($transformationParts.demon.wings)>>
+		<<if $exposed gte 2 and $dontHide is false and $uncomfortable.flaunting is false>>
+			<img class="layer-tailPenisCover" @src="'img/transformations/demon/flauntwings/'+$transformationParts.demon.wings+'.png'">
+		<<else>>
+			<img class="layer-backhair" @src="'img/transformations/demon/wings/'+$transformationParts.demon.wings+'.png'">
+		<</if>>
+	<</if>>
+	<<if !_disabled.includes($transformationParts.angel.wings)>>
+		<img class="layer-backhair" @src="'img/transformations/angel/rightwing/'+$transformationParts.angel.wings+'.png'">
+	<</if>>
+	<<if !_disabled.includes($transformationParts.fallenAngel.wings)>>
+		<img class="layer-backhair" @src="'img/transformations/fallen/rightwing/'+$transformationParts.fallenAngel.wings+'.png'">
+	<</if>>
+
+	<img class="layer-base" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
+
+	<<if $hairposition is "front">>
+		<img class="layer-hairforwards colour-hair" @src="'img/hair/sides/default/' + _hairlengthstage + '.png'">
+	<<else>>
+		<img class="layer-backhair colour-hair" @src="'img/hair/sides/default/' + _hairlengthstage + '.png'">
+	<</if>>
+	<img class="layer-fronthair colour-hair" @src="'img/hair/fringe/default/' + _fringelengthstage + '.png'">
+
+	<<if _hairlengthstage is "thighs" and $hairtype is "default">>
+		<img class="layer-backhair colour-hair" src="img/hair/red/backhairthighsred.png">
+	<<elseif _hairlengthstage is "feet" and $hairtype is "default">>
+		<img class="layer-backhair colour-hair" src="img/hair/red/backhairfeetred.png">
+	<</if>>
+
+	<!-- P image insert here - This is not compatible with female pdmod, requires additional editing - add new layer in base.css-->
+	<<if _penisSize isnot undefined and _showClothes is false and _showUnderwear is false>>
+		<<if $player.virginity.penile is true>>
+			<img class="layer-penis" @src="_img['penis_virgin' + ($player.ballsExist ? '':'noballs') + _penisSize]" @style="'filter: '+_filters.penis">
+		<<else>>
+			<img class="layer-penis" @src="_img['penis' + ($player.ballsExist ? '':'noballs') + _penisSize]" @style="'filter: '+_filters.penis">
+		<</if>>
+	<</if>>
+	<<if $skinColor.tanImgEnabled is "f">>
+		<<set $skinColor.tanImgEnabled to "t">>
+		<<set _tanReset to true>>
+	<</if>>
+	<<faceimg 1>>
+	<<if _tanReset>>
+		<<set $skinColor.tanImgEnabled to "f">>
+		<<unset _tanReset>>
+	<</if>>
+	<<if _clothesType is "male">>
+		<<if _showClothes is true>>
+			<div class="clothes-div layer-upper">
+				<img class="anim-idle-2f clothes-tangerine" src="img/clothes/upper/tshirt/full.png">
+			</div>
+			<div class="clothes-div layer-rightarmclothes">
+				<img class="anim-idle-2f clothes-tangerine" src="img/clothes/upper/tshirt/right.png">
+			</div>
+			<div class="clothes-div layer-leftarmclothes">
+				<img class="anim-idle-2f clothes-tangerine" src="img/clothes/upper/tshirt/left.png">
+			</div>
+			<div class="clothes-div layer-lower">
+				<img class="anim-idle-2f clothes-blue" src="img/clothes/lower/shorts/full.png">
+			</div>
+			<div class="clothes-div layer-legs">
+				<img class="anim-idle-2f" src="img/clothes/legs/boysgymsocks/full.png">
+			</div>
+			<div class="clothes-div layer-feet">
+				<img class="anim-idle-2f" src="img/clothes/feet/schoolshoes/full.png" style="">
+			</div>
+		<</if>>
+		<<if _showUnderwear is true>>
+			<div class="clothes-div layer-under_lower">
+				<img class="anim-idle-2f clothes-black" src="img/clothes/under_lower/briefs/full.png">
+				<img class="anim-idle-2f " src="img/clothes/under_lower/briefs/acc.png">
+			</div>
+		<</if>>
+	<<elseif _clothesType is "female">>
+		<<if _showClothes is true>>
+			<div class="clothes-div layer-upper">
+				<img class="anim-idle-1f clothes-white" src="img/clothes/upper/sundress/full.png">
+				<img class="anim-idle-1f clothes-white" src="img/clothes/upper/sundress/0.png">
+			</div>
+			<div class="clothes-div layer-lower">
+				<img class="anim-idle-1f clothes-white" src="img/clothes/lower/sundress/full.png">
+				<img class="anim-idle-1f clothes-white" @src="'img/clothes/upper/sundress/'+_breastSize+'.png'">
+			</div>
+			<div class="clothes-div layer-legs">
+				<img class="anim-idle-1f" src="img/clothes/legs/girlsgymsocks/full.png">
+			</div>
+			<div class="clothes-div layer-feet">
+				<img class="anim-idle-2f" src="img/clothes/feet/schoolshoes/full.png" style="">
+			</div>
+		<</if>>
+		<<if _showUnderwear is true>>
+			<<if $breastsize gt 3>>
+				<div class="clothes-div layer-under_upper">
+					<img class="anim-idle-2f clothes-pale-white" src="img/clothes/under_upper/plainbra/full.png">
+					<img class="anim-idle-2f clothes-pale-white" @src="'img/clothes/under_upper/plainbra/'+_breastSize+'.png'">
+				</div>
+			<</if>>
+			<div class="clothes-div layer-under_lower">
+				<img class="anim-idle-1f clothes-pale-white" src="img/clothes/under_lower/plainpanties/full.png">
+			</div>
+		<</if>>
+	<</if>>
+</div>
+<</nobr>><</widget>>
+
+<<widget "startingPlayerImageUpdate">><<nobr>>
+<<replace #startingPlayerImage>>
+	<<startingPlayerImage>>
+<</replace>>
 <</nobr>><</widget>>
 
 :: StoryRightSidebar [nobr]

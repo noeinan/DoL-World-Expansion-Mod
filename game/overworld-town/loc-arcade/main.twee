@@ -57,12 +57,26 @@ The games and gambling machines lie silent.
 				You see Kylar playing on one of the cabinets.
 				<br>
 				<<link [[Approach|Kylar Arcade]]>><</link>>
-				<br><br>
+				<br>
 			<</if>>
 		<</if>>
-
+		<<if ($tenyclusPlayCount is undefined or $tenyclusPlayCount is 0) and $hallucinations gte 1 and ($tenyclusPlayed is undefined or $tenyclusPlayed is 0) and $money gte 500 and ($daystate is "day" or $daystate is "dusk") and $exposed lte 0>>
+			<<set $tenyclusPlayCount to 0>><<set $tenyclusPlayed to 0>>
+			<br>
+			You spot a lone cabinet tucked away in the corner. Oddly enough, no one else seems to notice it.
+			<br>
+			<<link [[Examine the lone cabinet|Arcade Tenyclus Intro]]>><</link>>
+			<br>
+		<</if>>
+		<<if $tenyclusPlayCount gte 1 and $tenyclusPlayCount lt 7 and $hallucinations gte 1 and $tenyclusPlayed is 0 and ($daystate is "day" or $daystate is "dusk") and $exposed lte 0>>
+			<br>
+			You spot the "Tenyclus" cabinet tucked away in the corner. No one else seems to notice it.
+			<br>
+			<<link [[Play Tenyclus|Arcade Tenyclus Play]]>><</link>>
+			<br>
+		<</if>>
 		<<link [[Leave|Starfish Street]]>><</link>>
-		<br>
+		<br><br>
 	<</if>>
 <</if>>
 
@@ -657,3 +671,296 @@ You awaken on something hard and bumpy. Just in time to see a door slam shut abo
 
 <<link [[Next|Trash Intro]]>><</link>>
 <br>
+
+:: Arcade Tenyclus Intro [nobr]
+<<set $outside to 0>><<set $location to "arcade">><<effects>>
+You didn't even know this cabinet existed. It doesn't particularly stand out from the rest of the cabinets in the arcade. Someone else wouldn't have given this a second glance.
+<br><br>
+
+A jet-black tint covers the cabinet. You can tell the cabinet isn't new, but it seems oddly pristine as well. Almost as if it was just put into place a week ago. Now that it's piqued your interest, you can't help but feel drawn to it.
+<br><br>
+
+<<link [[Play?|Arcade Tenyclus Play]]>><</link>>
+<br>
+<<link [[Leave|Arcade Tenyclus Leave]]>><</link>>
+<br><br>
+
+:: Arcade Tenyclus Leave [nobr]
+<<set $outside to 0>><<set $location to "arcade">><<effects>>
+<<if $tenyclusPlayCount is 0>>
+	You get an odd feeling about the machine that you can't quite describe, so you decide to leave it alone and look for something else to play. It remains sat in the corner, untouched by anyone else.
+	<br><br>
+	<<link [[Next|Arcade]]>><<set $eventskip to 1>><</link>>
+<<else>>
+	<<if $willpower gte random(1, $willpowermax)>>
+		<span class = "green">You manage to pull yourself away from the strange cabinet.</span> Upon looking back, the machine remains still. It’s as lifeless as when you found it.
+		<br><br>
+		
+		<<link [[Next|Arcade]]>><<endevent>><<set $tenyclusPlayed to 1>><<set $eventskip to 1>><</link>>
+		<br>
+	<<else>>
+		<span class = "red">You can't pull yourself away from the machine. You're having too much fun!</span>
+		<br><br>
+
+		<<link [[Keep playing|Arcade Tenyclus]]>><</link>>
+		<br>
+	<</if>>
+<</if>>
+
+:: Arcade Tenyclus Play [nobr]
+<<set $outside to 0>><<set $location to "arcade">><<effects>>
+<<if $tenyclusPlayCount is 0>>
+	With a coin in your hand, you look for a slot, but you can’t seem to find one.
+	<br><br>
+
+	The screen suddenly flashes to life, almost blinding you with its incandescent glow. In the center of the screen, you see the word <span class = "purple">"Tenyclus"</span> bolded with a unique font. A copyright in smaller text is seen below.
+	<br><br>
+
+	<span class = "purple">"1982, Lüsterngrad"</span>
+	<br><br>
+
+	Three words light up shortly after. <i>"Press to Start"</i>
+	<br><br>
+
+	You start to play the game. It's pretty fun for the most part, if not a bit basic. You wonder why you haven’t seen anyone else play on this cabinet.
+	<br><br>
+
+	The graphics are so primitive, you’re not really sure who or what you’re playing as. All you can make out is that it looks like you’re fighting off something. Your best guess is aliens, but it could really be anything.
+	<br><br>
+
+	<<link [[Next|Arcade Tenyclus]]>><</link>>
+<<else>>
+	You spot the strange cabinet. It’s hidden away in the corner, just like last time. As you move closer the screen flashes on, illuminating you in its almost blinding glow once more.
+	<br><br>
+
+	You see the familiar bolded title along with three words listed below:
+	<br><br>
+
+	<i>"Press to Start"</i>
+	<br><br>
+	<<link [[Play?|Arcade Tenyclus]]>><</link>>
+	<br>
+	<<link [[Leave|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br><br>
+<</if>>
+
+:: Arcade Tenyclus [nobr]
+<<set $outside to 0>><<set $location to "arcade">><<effects>>
+You are playing Tenyclus. You find your emotions and responses much more intense than normal.
+<br><br>
+
+<<tenyclusPlay>>
+<<if $tenyclusRounds gt 0 and $tenyclusLives gt 0>>
+	<<link [[Next|Arcade Tenyclus]]>><</link>>
+	<br>
+	<<link [[Stop playing|Arcade Tenyclus Leave]]>><<willpowerdifficulty 1 $willpowermax>><</link>>
+<<else>>
+	<<if $tenyclusLives lte 0>>
+		You've run out of lives. Game over. <<control -25>><<lcontrol>>
+	<<elseif $tenyclusRounds lte 0>>
+		You wipe out the last alien on screen. You've won! <<control 25>><<gcontrol>>
+	<</if>>
+	<br><br>
+	<<unset $tenyclusRounds>><<unset $tenyclusLives>><<set $tenyclusPlayed to 1>>
+	<<set $tenyclusPlayCount += 1>>
+	<<if $tenyclusPlayCount is 6 and $tentacledisable isnot "f">>
+		<<set $tenyclusPlayCount += 1>>
+	<</if>>
+	<<switch $tenyclusPlayCount>>
+		<<case 1>>
+			You swear you can hear voices creeping into your mind. It's oddly soothing, telling you all sorts of things that seem pleasing to you.
+			You look around for the source of the voice, but the moment you look away, the cabinet shuts off without warning.
+			Strangely enough, there seems to have been no power cut. Others in the arcade play happily on their own cabinets.
+			<br><br>
+
+			<span class = "red">You feel the urge to play again tomorrow.</span>
+			<br><br>
+
+			<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+		<<case 2>>
+			That was fun! You managed to score pretty high, leaving you with a sense of accomplishment. <<trauma -6>><<ltrauma>>
+			<br><br>
+
+			You're about to return to the arcade with a smile on your face, but you notice the screen shuts off immediately just like before. You wonder if something is wrong with the machine.
+			<br><br>
+
+			<span class = "red">You feel the urge to play again tomorrow.</span>
+			<br><br>
+
+			<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+		<<case 3>>
+			You feel more confident. Voices inspire you, motivating you to reach higher and higher scores. <<stress -6>><<control 10>><<lstress>><<gcontrol>>
+			<br><br>
+
+			Your new high score shows up in the leaderboards, at the very top. You feel proud of your achievement. As you take a step back to admire your work, the screen turns black without any prior warning. You return to the arcade feeling satisfied.
+			<br><br>
+
+			<span class = "red">You feel the urge to play again tomorrow.</span>
+			<br><br>
+
+			<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+		<<case 4>>
+			Voices encourage you to keep going. You begin to lose track of time, and before you know it, the screen turns black and you’re plunged into darkness.
+			<br><br>
+
+			Your eyes take a minute to adjust, but you notice
+			<<if $hour gte 21>>
+				you seem to be alone in the arcade. You wonder how security didn't notice you.
+			<<elseif $hour gte 17>>
+				that it's much darker than when you started.
+			<<else>>
+				that some time has clearly passed.
+			<</if>>
+			Just how long were you playing?
+			<br><br>
+
+			<span class = "red">You feel the urge to play again tomorrow.</span>
+			<br><br>
+
+			<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+		<<case 5>>
+			You smell something strange, but you choose to ignore it and continue playing. You feel as if the game is sucking you in, and just before you’re about to reach a new high score, <span class = "red">a splash of water hits you in the face.</span>
+			<br><br>
+
+			You look around for the culprit, but notice you're standing in neck deep water on the beach. Your head feels fuzzy. <<set $hallucinogen += 20>>
+			<br><br>
+			<<water>><<effects>>
+
+			<<link [[Next|Sea Beach]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+		<<case 6>>
+			A strange smell covers the air, just like last time. You look down and a swerve of sweet pink mist emerges from the machine. <<set $hallucinogen += 180>><<arousal 200>>
+			<br><br>
+
+			It creeps up to your face, and you feel yourself heating up with arousal. While you’re distracted, a mass of writhing tentacles reach out from the screen. They coil around your arms, trapping them.
+			<br><br>
+
+			<<link [[Next|Arcade Tentacle Rape]]>><<set $molestationstart to 1>><</link>>
+			<br>
+		<<case 7>>
+			You demolish the high score. The numbers keep rising until they no longer look like numbers.
+			<br><br>
+
+			You find that you can't move your body, and the edges of your vision grow dim. You hear a pair of footsteps behind you, followed by an unfamiliar sound, and everything fades to black.
+			<br><br>
+
+			<<link [[Next|Arcade Tenyclus Kidnapped]]>><<endevent>><</link>>
+		<<default>>
+			You managed to play the game without really playing it. This is a bug, please inform Vrelnir. <<control -100>><<lllcontrol>>
+			<br><br>
+
+			<span class = "red">You feel the urge to play again tomorrow.</span>
+			<br><br>
+
+			<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>
+	<</switch>>
+	
+<</if>>
+
+:: Arcade Tentacle Rape [nobr]
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<set $combat to 1>>
+	<<set $enemytype to "tentacles">>
+	<<controlloss>>
+	<<molested>>
+	<<tentaclestart 8 15>>
+	<<leftarmtentacledisable>><<set $tentacles[0].shaft to "leftarm">><<set $leftarm to "grappled">><<set $leftarmstate to 0>>
+	<<rightarmtentacledisable>><<set $tentacles[1].shaft to "rightarm">><<set $rightarm to "grappled">><<set $rightarmstate to 0>>
+<</if>>
+<<effects>>
+<<effectstentacles>>
+<<tentacles>>
+<<statetentacles>>
+<<actionstentacles>>
+
+<<if $tentacles.active lte ($tentacles.max / 2)>>
+	<span id="next"><<link [[Next|Arcade Tentacle Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Arcade Tentacle Rape]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Arcade Tentacle Rape Finish [nobr]
+<<effects>>
+You emerge victorious. The tentacles recoil back into the screen. A new high score appears just before the screen turns off, leaving you alone and wary. <<tearful>> you see the rest of the arcade slowly come back into focus. No one gives you a second glance.
+
+<<clotheson>>
+<<endcombat>>
+<br><br>
+<<link [[Next|Arcade]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Arcade Tenyclus Kidnapped [nobr]
+<<effects>><<set $outside to 0>><<set $location to "compound">>
+<<generate1>><<generate2>>
+You wake up to the sound of a running car engine. You're in what looks to be the back of a van. You see the Tenyclus cabinet on its side against the wall.
+<br><br>
+
+Your arms and legs are bound. Before you're able to do anything, the van backdoors open. A <<person1>> and a <<person2>> enter the back of the van, dressed in all black.
+They begin to remove your clothes, before grabbing you by the shoulder and pulling you closer towards them.
+<br><br>
+
+<<link [[Next|Arcade Tenyclus Kidnapped Rape]]>><<set $molestationstart to 1>><</link>>
+<br>
+
+:: Arcade Tenyclus Kidnapped Rape [nobr]
+<<bind>><<legbind>>
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<neutral 1>>
+	<<molested>>
+	<<maninit>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<if $enemyhealth gt 0>><<npcdamage>><</if>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Arcade Tenyclus Kidnapped Rape Finish]]>><</link>></span>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Arcade Tenyclus Kidnapped Rape Finish]]>><</link>></span>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<span id="next"><<link [[Next|Arcade Tenyclus Kidnapped Rape Finish]]>><</link>></span>
+<<else>>
+	<span id="next"><<link [[Next|Arcade Tenyclus Kidnapped Rape]]>><</link>></span>
+<</if>>
+
+:: Arcade Tenyclus Kidnapped Rape Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	They fix their clothes, before holding a damp cloth up to your face.
+	<br><br>
+	<<tearful>> your consciousness slips again.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<<elseif $enemyhealth lte 0>>
+	The <<person1>><<person>> is thrust back, tripping over the laid out arcade cabinet. You think you see the screen flash to life. You think they see it too. 
+	The <<person2>><<person>> manages to cover <<his>> eyes. Everything turns pink.
+	<br><br>
+	<<tearful>> your consciousness slips again.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<</if>>
+<br><br>
+<<link [[Next|Arcade Tenyclus Final]]>><<unbind>><</link>>
+
+:: Arcade Tenyclus Final [nobr]
+<<effects>><<set $outside to 0>><<set $location to "home">><<pass 4 hours>>
+When you open your eyes, you're back in your room at the orphanage. Your head is still spinning. How did you get here?
+<br><br>
+
+You vaguley remember a large building that resembles a factory, and the color pink. So much pink. Your thoughts begin to drift, and soon enough, the memory is gone. Something else is gone, too. <<awareness -200>><<lllawareness>>
+<br><br>
+
+<<link[[Next|Bedroom]]>><<endevent>><<set $eventskip to 1>><</link>>

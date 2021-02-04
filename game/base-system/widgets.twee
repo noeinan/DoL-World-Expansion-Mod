@@ -395,6 +395,30 @@
 	<</if>>
 <</nobr>><</widget>>
 
+<!--$args[0] is the base value, $args[1] is the skill-->
+<<widget "sexControl">><<nobr>>
+<<if $args[0] and $args[1] gte 800>>
+	<<if $args[1] gte 1000>>
+		<<set _loss to 5 * $args[0]>>
+	<<elseif between($args[1], 900, 1000)>>
+		<<set _loss to 4 * $args[0]>>
+	<<else>>
+		<<set _loss to 3 * $args[0]>>
+	<</if>>
+	<<if $enemyarousal gte $enemyarousalmax * 0.7>>
+		<<set _loss *= 2>>
+	<</if>>
+	<<if $enemyarousal gte $enemyarousalmax * 0.9>>
+		<<set _loss *= 2>>
+	<</if>>
+	<<set _loss *= $enemyArousalLossReduction>>
+	<<if $enemyArousalLossReduction gt 20>>
+		<<set $enemyArousalLossReduction -= 0.04>>
+	<</if>>
+	<<set $enemyarousal -= Math.round(_loss)>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "violence">><<nobr>>
 <!-- NG tuning v2.7 $arousal from $masochism/50 to /7. PC now orgasms at least once during spanking encounter at 50% masocism level and twice at 100% masoohism. /10 at max is required to orgasm once at 100% masochism. -->
 <!-- NG added stress reduction for masochists. Trauma left same -->
@@ -2255,6 +2279,10 @@ or $args[0] is "force">>
 	<<addfemininityofclothingarticle $worn.feet>>
 	<!-- Hair length -->
 	<<addfemininityfromfactor `Math.trunc(($hairlength - 200) / 2)` "Hair length">>
+	<!-- Makeup -->
+	<<addfemininityfromfactor `$makeup.lipstick == 0 ? 0 : 50` "Lipstick">>
+	<<addfemininityfromfactor `$makeup.eyeshadow == 0 ? 0 : 50` "Eye shadow">>
+	<<addfemininityfromfactor `$makeup.mascara == 0 ? 0 : 50` "Mascara">>
 	<!-- Body structure -->
 	<<addfemininityfromfactor
 		`Math.trunc($bottomsize * _bottom_visibility * 50)`
@@ -2944,6 +2972,16 @@ or $args[0] is "force">>
 <<set $feetgoo += 1>>
 <</nobr>><</widget>>
 
+<<widget "washmakeup">><<nobr>>
+<<if $makeup.lipstick != 0 or $makeup.eyeshadow != 0 or $makeup.mascara != 0 or $makeup.concealer != 0>>
+	<<set $makeupWashed = 1>>
+	<<set $makeup.lipstick = 0>>
+	<<set $makeup.eyeshadow = 0>>
+	<<set $makeup.mascara = 0>>
+	<<set $makeup.concealer = 0>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "waterwash">><<nobr>>
 
 <<if $combat isnot 1>>
@@ -2990,6 +3028,8 @@ or $args[0] is "force">>
 <span class="lewd">Some lewd fluid washes into the water. You hope it doesn't attract attention.</span><br>
 <</if>>
 <<set $waterwash to 0>>
+
+<<washmakeup>>
 
 <</nobr>><</widget>>
 
@@ -3049,6 +3089,7 @@ or $args[0] is "force">>
 		<<bodywriting_clear _active_bodypart>>
 	<</if>>
 <</for>>
+<<washmakeup>>
 <</nobr>><</widget>>
 
 <<widget "wash_face">><<nobr>>
@@ -3063,6 +3104,7 @@ or $args[0] is "force">>
 <<if $skin.forehead.pen is "pen">>
 	<<bodywriting_clear forehead>>
 <</if>>
+<<washmakeup>>
 <</nobr>><</widget>>
 
 <<widget "wash_mouth">><<nobr>>
@@ -3254,113 +3296,84 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget map>><<nobr>>
-<<set $map.location to $args[0]>>
-<<if $images is 1 and $map.movement is true and $map.legacy isnot true>>
-	<<set _visibility to []>>
-	<<for _i to 0; _i lt $map.arrayList.length; _i++>>
-		<<if $passage is $map.arrayList[_i]>>
-			<<set _visibility.push("current")>>
-		<<elseif $debug is 1 or $map.available[$passage].includes($map.arrayList[_i])>>
-			<<set _visibility.push(true)>>
-		<<else>>
-			<<set _visibility.push(false)>>
-		<</if>>
-	<</for>>
-	<<if $map.markers is true>>
-		<<set _opacity to 0.6>>
-	<<else>>
-		<<set _opacity to 0>>
-	<</if>>
-	<<print '
-	<svg width="260" height="130">
-		<image x="2" xlink:href="img/misc/map.png"/>
-		<image x="2" xlink:href="img/misc/maparrow'+$map.location+'.png"/>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[0]);" xlink:alt="'+$map.arrayList[0]+(_visibility[0] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[0]+(_visibility[0] is true ? " (0:05)" : "")+'">
-			<rect x="1" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[0] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[1]);" xlink:alt="'+$map.arrayList[1]+(_visibility[1] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[1]+(_visibility[1] is true ? " (0:05)" : "")+'">
-			<rect x="38" y="9" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[1] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[2]);" xlink:alt="'+$map.arrayList[2]+(_visibility[2] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[2]+(_visibility[2] is true ? " (0:05)" : "")+'">
-			<rect x="38" y="83" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[2] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[3]);" xlink:alt="'+$map.arrayList[3]+(_visibility[3] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[3]+(_visibility[3] is true ? " (0:05)" : "")+'">
-			<rect x="63" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[3] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[4]);" xlink:alt="'+$map.arrayList[4]+(_visibility[4] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[4]+(_visibility[4] is true ? " (0:05)" : "")+'">
-			<rect x="88" y="9" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[4] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[5]);" xlink:alt="'+$map.arrayList[5]+(_visibility[5] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[5]+(_visibility[5] is true ? " (0:05)" : "")+'">
-			<rect x="88" y="83" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[5] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[6]);" xlink:alt="'+$map.arrayList[6]+(_visibility[6] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[6]+(_visibility[6] is true ? " (0:05)" : "")+'">
-			<rect x="114" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[6] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[7]);" xlink:alt="'+$map.arrayList[7]+(_visibility[7] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[7]+(_visibility[7] is true ? " (0:05)" : "")+'">
-			<rect x="146" y="9" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[7] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[8]);" xlink:alt="'+$map.arrayList[8]+(_visibility[8] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[8]+(_visibility[8] is true ? " (0:05)" : "")+'">
-			<rect x="146" y="83" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[8] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[9]);" xlink:alt="'+$map.arrayList[9]+(_visibility[9] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[9]+(_visibility[9] is true ? " (0:05)" : "")+'">
-			<rect x="176" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[9] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[10]);" xlink:alt="'+$map.arrayList[10]+(_visibility[10] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[10]+(_visibility[10] is true ? " (0:05)" : "")+'">
-			<rect x="204" y="9" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[10] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[11]);" xlink:alt="'+$map.arrayList[11]+(_visibility[11] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[11]+(_visibility[11] is true ? " (0:05)" : "")+'">
-			<rect x="204" y="83" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[11] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[12]);" xlink:alt="'+$map.arrayList[12]+(_visibility[12] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[12]+(_visibility[12] is true ? " (0:05)" : "")+'">
-			<rect x="230" y="46" height="34" width="28" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[12] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[13]);" xlink:alt="'+$map.arrayList[13]+(_visibility[13] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[13]+(_visibility[13] is true ? " (0:05)" : "")+'">
-			<rect x="38" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[13] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[14]);" xlink:alt="'+$map.arrayList[14]+(_visibility[14] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[14]+(_visibility[14] is true ? " (0:05)" : "")+'">
-			<rect x="88" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[14] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[15]);" xlink:alt="'+$map.arrayList[15]+(_visibility[15] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[15]+(_visibility[15] is true ? " (0:05)" : "")+'">
-			<rect x="146" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[15] isnot false ? _opacity : "0")+';"/>
-		</a>
-		<a class="mapmove" onclick="mapMove(SugarCube.State.variables.map.arrayList[16]);" xlink:alt="'+$map.arrayList[16]+(_visibility[16] is true ? " (0:05)" : "")+'" xlink:title="'+$map.arrayList[16]+(_visibility[16] is true ? " (0:05)" : "")+'">
-			<rect x="204" y="46" height="34" width="30" style="stroke:cyan;fill-opacity:0;stroke-opacity:'+(_visibility[16] isnot false ? _opacity : "0")+';"/>
-		</a>
-	</svg>'>>
+	<<set $map.location to $args[0]>>
+	<<if $images is 1 and $map.movement is true and $map.legacy isnot true>>
+		<<set _boxLocations to [
+			{ x: 1,		y: 46}, /*Domus				*/
+			{ x: 38,	y: 9},	/*Barb				*/
+			{ x: 38,	y: 83},	/*Danube			*/
+			{ x: 63,	y: 46},	/*Connudatus		*/	
+			{ x: 88,	y: 9},	/*Cliff				*/
+			{ x: 88,	y: 83},	/*Wolf				*/
+			{ x: 114,	y: 46},	/*High				*/
+			{ x: 146,	y: 9},	/*Starfish			*/
+			{ x: 146,	y: 83},	/*Nightingale		*/
+			{ x: 176,	y: 46},	/*Oxford			*/
+			{ x: 204,	y: 9},	/*Mer				*/
+			{ x: 204,	y: 83},	/*Elk				*/
+			{ x: 230,	y: 46},	/*Harvest			*/
+			{ x: 38,	y: 46},	/*Residential Alley	*/
+			{ x: 88,	y: 46},	/*Commercial Alley	*/	
+			{ x: 146,	y: 46},	/*Park				*/
+			{ x: 204,	y: 46}	/*Industrial Alley	*/		
+		]>>
 
-<<elseif $images is 1 and $map.legacy isnot true>>
-	<<print '
-	<svg width="260" height="130">
-		<image x="2" xlink:href="img/misc/map.png"/>
-		<image x="2" xlink:href="img/misc/maparrow'+$map.location+'.png"/>
-	</svg>'>>
-<<elseif $images is 1>>
-	<<if $images is 1 and $map.movement is true>>
-		<!-- Image Map Generated by http://www.image-map.net/ -->
-		<map id="town-image-map" name="town-image-map">
-			<area class="no-numberify" alt="Barb Street" title="Barb Street" coords="62,20,39,42" shape="rect" onclick="mapMove('Barb Street')">
-			<area class="no-numberify" alt="Domus Street" title="Domus Street" coords="2,75,26,49" shape="rect" onclick="mapMove('Domus Street')">
-			<area class="no-numberify" alt="Danube Street" title="Danube Street" coords="33,110,70,84" shape="rect" onclick="mapMove('Danube Street')">
-			<area class="no-numberify" alt="Wolf Street" title="Wolf Street" coords="86,117,114,86" shape="rect" onclick="mapMove('Wolf Street')">
-			<area class="no-numberify" alt="High Street" title="High Street" coords="116,77,139,46" shape="rect" onclick="mapMove('High Street')">
-			<area class="no-numberify" alt="Connudatus Street" title="Connudatus Street" coords="64,77,88,49" shape="rect" onclick="mapMove('Connudatus Street')">
-			<area class="no-numberify" alt="Cliff Street" title="Cliff Street" coords="88,40,117,-1" shape="rect" onclick="mapMove('Cliff Street')">
-			<area class="no-numberify" alt="Starfish Street" title="Starfish Street" coords="147,41,172,12" shape="rect" onclick="mapMove('Starfish Street')">
-			<area class="no-numberify" alt="Nightingale Street" title="Nightingale Street" coords="143,115,170,82" shape="rect" onclick="mapMove('Nightingale Street')">
-			<area class="no-numberify" alt="Oxford Street" title="Oxford Street" coords="170,73,203,45" shape="rect" onclick="mapMove('Oxford Street')">
-			<area class="no-numberify" alt="Mer Street" title="Mer Street" coords="202,42,229,14" shape="rect" onclick="mapMove('Mer Street')">
-			<area class="no-numberify" alt="Elk Street" title="Elk Street" coords="197,111,238,77" shape="rect" onclick="mapMove('Elk Street')">
-			<area class="no-numberify" alt="Harvest Street" title="Harvest Street" coords="252,46,228,76" shape="rect" onclick="mapMove('Harvest Street')">
-			<area class="no-numberify" alt="Industrial Alley" title="Industrial Alley" coords="225,73,209,53" shape="rect" onclick="mapMove('Industrial alleyways')">
-			<area class="no-numberify" alt="Park" title="Park" coords="154,65,170,52" shape="rect" onclick="mapMove('Park')">
-			<area class="no-numberify" alt="Commercial Alley" title="Commercial Alley" coords="94,69,110,56" shape="rect" onclick="mapMove('Commercial alleyways')">
-			<area class="no-numberify" alt="Residential Alley" title="Residential Alley" coords="38,70,57,56" shape="rect" onclick="mapMove('Residential alleyways')">
-		</map>
+		/*This version of sugarcube doesn't perform any processing inside of SVG elements, so we need to perform those actions ourselves inside a custom macro */
+		<<svg 260 130>>
+			<image x="2" xlink:href="img/misc/map.png"> </image>
+			<image x="2" @xlink:href="'img/misc/maparrow' + $map.location + '.png'"> </image>
+
+			<<for _i to 0; _i lt $map.arrayList.length; _i++>>
+				<<set _canMoveTo = $debug || $map.available[$passage].includes($map.arrayList[_i])>>
+				<<set _showMarker = $debug || ($map.markers && (_canMoveTo || $passage is $map.arrayList[_i]))>>
+
+				<a class="mapmove" 
+						@onclick="'mapMove(SugarCube.State.variables.map.arrayList[' + _i + ']);'"
+						@alt="$map.arrayList[_i] + (_canMoveTo ? ' (0:05)' : '')" 
+						@title="$map.arrayList[_i] + (_canMoveTo ? ' (0:05)' : '')">
+
+					<rect @x="_boxLocations[_i].x" 
+						  @y="_boxLocations[_i].y" 
+						  height="34" 
+						  width="30" 
+						  @style="'stroke:cyan;fill-opacity:0;stroke-opacity:' + (_showMarker ? '0.6' : '0') + ';'">
+					</rect>
+				</a>
+			<</for>>
+		<</svg>>
+
+	<<elseif $images is 1 and $map.legacy isnot true>>
+		<svg width="260" height="130">
+			<image x="2" xlink:href="img/misc/map.png"/>
+			<image x="2" @xlink:href="'img/misc/maparrow'+$map.location+'.png'"/>
+		</svg>
+	<<elseif $images is 1>>
+		<<if $images is 1 and $map.movement is true>>
+			<!-- Image Map Generated by http://www.image-map.net/ -->
+			<map id="town-image-map" name="town-image-map">
+				<area class="no-numberify" alt="Barb Street" title="Barb Street" coords="62,20,39,42" shape="rect" onclick="mapMove('Barb Street')">
+				<area class="no-numberify" alt="Domus Street" title="Domus Street" coords="2,75,26,49" shape="rect" onclick="mapMove('Domus Street')">
+				<area class="no-numberify" alt="Danube Street" title="Danube Street" coords="33,110,70,84" shape="rect" onclick="mapMove('Danube Street')">
+				<area class="no-numberify" alt="Wolf Street" title="Wolf Street" coords="86,117,114,86" shape="rect" onclick="mapMove('Wolf Street')">
+				<area class="no-numberify" alt="High Street" title="High Street" coords="116,77,139,46" shape="rect" onclick="mapMove('High Street')">
+				<area class="no-numberify" alt="Connudatus Street" title="Connudatus Street" coords="64,77,88,49" shape="rect" onclick="mapMove('Connudatus Street')">
+				<area class="no-numberify" alt="Cliff Street" title="Cliff Street" coords="88,40,117,-1" shape="rect" onclick="mapMove('Cliff Street')">
+				<area class="no-numberify" alt="Starfish Street" title="Starfish Street" coords="147,41,172,12" shape="rect" onclick="mapMove('Starfish Street')">
+				<area class="no-numberify" alt="Nightingale Street" title="Nightingale Street" coords="143,115,170,82" shape="rect" onclick="mapMove('Nightingale Street')">
+				<area class="no-numberify" alt="Oxford Street" title="Oxford Street" coords="170,73,203,45" shape="rect" onclick="mapMove('Oxford Street')">
+				<area class="no-numberify" alt="Mer Street" title="Mer Street" coords="202,42,229,14" shape="rect" onclick="mapMove('Mer Street')">
+				<area class="no-numberify" alt="Elk Street" title="Elk Street" coords="197,111,238,77" shape="rect" onclick="mapMove('Elk Street')">
+				<area class="no-numberify" alt="Harvest Street" title="Harvest Street" coords="252,46,228,76" shape="rect" onclick="mapMove('Harvest Street')">
+				<area class="no-numberify" alt="Industrial Alley" title="Industrial Alley" coords="225,73,209,53" shape="rect" onclick="mapMove('Industrial alleyways')">
+				<area class="no-numberify" alt="Park" title="Park" coords="154,65,170,52" shape="rect" onclick="mapMove('Park')">
+				<area class="no-numberify" alt="Commercial Alley" title="Commercial Alley" coords="94,69,110,56" shape="rect" onclick="mapMove('Commercial alleyways')">
+				<area class="no-numberify" alt="Residential Alley" title="Residential Alley" coords="38,70,57,56" shape="rect" onclick="mapMove('Residential alleyways')">
+			</map>
+		<</if>>
+		<div id="divmap"><img id="map" src="img/misc/map.png"><img id="maparrow" usemap="#town-image-map" @src="'img/misc/maparrow' + $args[0] + '.png'"></div>
+	<<else>>
+		<<textmap>>
 	<</if>>
-	<div id="divmap"><img id="map" src="img/misc/map.png"><img id="maparrow" usemap="#town-image-map" @src="'img/misc/maparrow' + $args[0] + '.png'"></div>
-<<else>>
-	<<textmap>>
-<</if>>
 <</nobr>><</widget>>
 
 <<widget "rentday">><<nobr>>
@@ -3511,6 +3524,354 @@ __Map__<br>
 			<img id="statbar" src="img/ui/point.png">
 		<</if>>
 	<</if>>
+<</nobr>><</widget>>
+
+<<widget "characteristic-text">><<nobr>>
+	<<set _config = $args[0]>>
+
+	<<if _config.states and _config.states.length gt 0>>
+
+		<<set _config.currentLevel = 0>>
+		/* Loop through the provided states to find the one we are currently at*/
+		<<for _i to 0; _i lt _config.states.length; _i++>>
+			<<if _config.currentValue gte _config.states[_i].requiredValue>>
+				<<set _config.currentLevel = _i>>
+			<</if>>
+		<</for>>
+
+		/* Set the details to show from the current state */
+		<<set _config.preText = _config.states[_config.currentLevel].preText || _config.preText>>
+		<<set _config.description = _config.states[_config.currentLevel].description>>
+		<<set _config.postText = _config.states[_config.currentLevel].postText || _config.postText>>
+		<<set _config.color = 		_config.states[_config.currentLevel].color>>
+	<</if>>
+	
+	<<if _config.preText>>
+		_config.preText
+	<</if>>
+	<span @class="_config.color">_config.description</span>
+	<<if _config.postText>>
+		_config.postText
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "characteristic-box">><<nobr>>
+	<<set _config = $args[0]>>
+
+	<<if _config.states and _config.states.length gt 0>>
+
+		<<set _config.currentLevel = 0>>
+		/* Loop through the provided states to find the one we are currently at*/
+		<<for _i to 0; _i lt _config.states.length; _i++>>
+			<<if _config.currentValue gte _config.states[_i].requiredValue>>
+				<<set _config.currentLevel = _i>>
+			<</if>>
+		<</for>>
+
+		/* Set the details to show from the current state */
+		<<set _config.level = 		_config.states[_config.currentLevel].level>>
+		<<set _config.description = _config.states[_config.currentLevel].description>>
+		<<set _config.color = 		_config.states[_config.currentLevel].color>>
+
+		/* Determine the color of the bottom bar based on a few types, default is to match the level color */
+		<<if _config.meterColorType eq 'next'>>
+			<<if _config.currentLevel lt _config.states.length - 1>>
+				<<set _config.meterColor = _config.states[_config.currentLevel + 1].color>>
+			<<else>>
+				<<set _config.meterColor = _config.states[_config.currentLevel].color>>
+			<</if>>
+		<<elseif _config.meterColorType eq 'prev'>>
+			<<if _config.currentLevel gt 0>>
+				<<set _config.meterColor = _config.states[_config.currentLevel - 1].color>>
+			<<else>>
+				<<set _config.meterColor = _config.states[_config.currentLevel].color>>
+			<</if>>
+		<<elseif _config.meterColorType eq 'max'>>
+			<<if _config.currentLevel eq _config.states.length - 1>>
+				<<set _config.meterColor = _config.states[_config.currentLevel].color>>
+			<</if>>
+		<<else>>
+			<<if _config.meterColor eq undefined>>
+				<<set _config.meterColor = _config.states[_config.currentLevel].color>>
+			<</if>>
+		<</if>>
+
+		/* Calculate the percent to the next level based on the gap between the nearest two states */
+		<<if _config.percent>>
+			<<set _config.percent = Math.floor(_config.percent)>>
+		<<else>>
+			<<if _config.currentLevel eq 0>>
+				<<set _config.percent = 0>>
+			<<elseif _config.currentLevel eq (_config.states.length - 1)>>
+				<<set _config.percent = 100>>
+			<<else>>
+				<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
+			<</if>>
+		<</if>>
+		
+	<<else>>
+		<<set _config.percent= Math.floor(_config.currentValue)>>
+	<</if>>
+
+	<<set _config.barWidth = Math.clamp(_config.percent, 0, 100)>>
+
+	<div class="characteristic-box">
+		<div class="characteristic-top-line">
+			<<if $images is 1 and _config.icon>>
+				<img class="characteristic-icon" @src="'img/' + _config.icon + '.png'" />
+			<</if>>
+			<span class="characteristic-title">_config.name</span>
+			<<if _config.states>>
+				<<if _config.displayType eq "level">>
+					<span @class="'characteristic-level ' + _config.color">
+						<big>_config.level</big><small>/<<print (_config.states.length - 1)>></small>
+					</span>
+				<<elseif _config.displayType eq "grade">>
+					<span class="characteristic-level">
+						<span @class="_config.color">_config.level</span> <<if _config.level neq 'None'>><small class="grade-percent black">_config.percent%</small><</if>>
+					</span>
+				<</if>>
+			<</if>>
+		</div>
+		<<if _config.description>>
+			<span @class="'characteristic-description ' + _config.color">_config.description</span>
+		<</if>>
+		<<if _config.showStars>>
+			<span class="characteristic-description grade-progress">Daily Progress</span>
+			<div class="progress-stars">
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 0 ? 'bronze_star' : 'empty_star') + '.png'" />
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 1 ? 'silver_star' : 'empty_star') + '.png'" />
+				<img class="icon" @src="'img/ui/' + (_config.starLevel > 2 ? 'gold_star'   : 'empty_star') + '.png'" />
+			</div>
+		<</if>>
+		<div class="meter">
+			<div @class="(_config.meterColor ? _config.meterColor + 'bar' : 'goldbar')" @style="'width:' + _config.barWidth + '%'"></div>
+		</div>
+	</div>
+
+<</nobr>><</widget>>
+
+<<widget "social-text">><<nobr>>
+	<<set _config = $args[0]>>
+
+	<<if _config.states and _config.states.length gt 0>>
+
+		<<set _config.currentLevel = _config.states[0]>>
+		<<if _config.currentLevel.secondaryStates>>
+			<<set _config.currentLevel = _config.currentLevel.secondaryStates[0]>>
+		<</if>>
+
+		/* Loop through the provided states to find the one we are currently at*/
+		<<script>>
+			for(let i = 0; i < State.temporary.config.states.length; i++) {
+				
+				if(State.temporary.config.currentValue >= State.temporary.config.states[i].requiredValue) {
+	
+					if(State.temporary.config.states[i].secondaryStates) {
+						
+						for(let j = 0; j < State.temporary.config.states[i].secondaryStates.length; j++) {
+							if(State.temporary.config.secondaryValue >= State.temporary.config.states[i].secondaryStates[j].requiredValue) {
+								State.temporary.config.currentLevel = State.temporary.config.states[i].secondaryStates[j];
+							}
+						}
+
+					} else {
+						State.temporary.config.currentLevel = State.temporary.config.states[i];
+					}
+				}
+			}
+
+		<</script>>
+
+		/* Set the details to show from the current state */
+		<<set _config.preText = 	_config.currentLevel.preText || _config.preText>>
+		<<set _config.description = _config.currentLevel.description>>
+		<<set _config.postText = 	_config.currentLevel.postText || _config.postText>>
+		<<set _config.color = 		_config.currentLevel.color>>
+	<</if>>
+
+
+	<<if _config.preText>>
+		_config.preText
+	<</if>>
+	<span @class="_config.color">_config.description</span>
+	<<if _config.postText>>
+		_config.postText
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "social-box-simple">><<nobr>>
+	<<set _boxConfig = $args[0]>>
+	<div class="social-box" @style="(_boxConfig.style || '')">
+		<<if _boxConfig.name>>
+			<div class="social-top-line">
+				<<if $images and _boxConfig.icon>>
+						<img class="social-icon" @src="_boxConfig.icon" />
+				<</if>>
+				<span class="social-name">_boxConfig.name</span>
+			</div>
+		<</if>>
+		<div class="social-description">
+			_boxConfig.description
+		</div>
+	</div>
+<</nobr>><</widget>>
+
+<<widget "social-box">><<nobr>>
+	<<silently>>
+		<<set _npcData = $args[0]>>
+		<<set _npcOverrides = $args[1] || {}>>
+
+		<<script>>
+
+			/* Returns true/false based on wether the requirements to display a stat are met, automatically true if no requirement specified */
+			State.temporary.checkRequirements = function (stat) {
+				let statOverrides =  State.temporary.npcOverrides[stat];
+
+				return !statOverrides?.hasOwnProperty("requirements") || statOverrides?.requirements;
+			};
+
+			State.temporary.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			State.temporary.otherNpcStats = ["love", "lust"];
+
+			let statDefaults = {
+				"love" : {
+					name : "Love",
+					value : State.temporary.npcData.love,
+					activeIcon : 'img/ui/heart.png',
+					inactiveIcon: 'img/ui/emptyheart.png',
+					color: 'red'
+				},
+				"lust" : {
+					name : "Lust",
+					value : State.temporary.npcData.lust,
+					iconOrientation : 'vertical',
+					activeIcon : 'img/ui/vial.png',
+					inactiveIcon : 'img/ui/emptyvial.png',
+					color: 'pink'
+				},
+				"dom" : {
+					name : "Dominance",
+					value : State.temporary.npcData.dom,
+					activeIcon : "img/ui/collar.png",
+					color: 'purple'
+				},
+				"trauma" : {
+					name : "Trauma",
+					value : State.temporary.npcData.trauma,
+					activeIcon : "img/ui/redbolt.png",
+					color: 'teal'
+				}, 
+				"rage" : {
+					name : "Rage",
+					value : State.temporary.npcData.rage,
+					activeIcon : "img/ui/rage.png",
+					color: 'gold'
+				}
+			};
+
+			State.temporary.getStatConfig = function(stat) {
+				let baseConfig =  statDefaults[stat] || {};
+				
+				return Object.assign({}, baseConfig, State.temporary.npcOverrides[stat]);
+			};
+			if(State.variables.loveInterest){
+				/* Check if this is a main love interest */
+				if (State.variables.loveInterest.primary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else if (State.variables.loveInterest.secondary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else if (State.variables.loveInterest.tertiary == State.temporary.npcData.nam) {
+					State.temporary.loveInterest = true;
+				} else {
+					State.temporary.loveInterest = false;
+				}
+			}
+		<</script>>
+	<</silently>>
+	<<if _npcData?.init is 1>>
+		<<if _npcOverrides?.important>>
+			<div class="social-box">
+				<div class="social-top-line">
+					<span class="social-name">
+						_npcData.nam
+						<small class="social-title black"><i>The _npcData.title</i></small>
+					</span>
+					<<if _loveInterest>>
+						<img class="love-interest-icon" src="img/ui/love_interest.png" alt="Love Interest" title="Love Interest"/>
+					<</if>>
+				</div>
+				<div class="social-description">
+					<<npcrelationship _npcData.nam>>
+				</div>
+				<div @class="'relation-stat-list' + ($images ? '' : ' no-images')">
+					<<for _j = 0; _j lt _importantNpcStats.length; _j++>>
+						<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
+							<<social-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
+						<</if>>
+					<</for>>
+				</div>
+			</div>
+		<<else>>
+			<div class="social-box">
+				<div class="social-top-line">
+					<span class="social-name">
+						_npcData.nam
+						<small class="social-title black"><i>The _npcData.title</i></small>
+					</span>
+					<div class="quick-stats">
+						<<for _j = 0; _j lt _otherNpcStats.length; _j++>>
+							<<if _npcData[_otherNpcStats[_j]] gt 0 and _checkRequirements(_otherNpcStats[_j])>>
+								<<social-box-stat _getStatConfig(_importantNpcStats[_j])>>
+							<</if>>
+						<</for>>
+					</div>
+				</div>
+				<div class="social-description">
+					<<npcrelationship _npcData.nam>>
+				</div>
+			</div>
+		<</if>>
+	<</if>>
+<</nobr>><</widget>>
+
+<<widget "social-box-stat">><<nobr>>
+	<<silently>>
+		<<set _config = $args[0]>>
+		<<set _important = $args[1]>>
+
+		<<set _config.progress = Math.floor(Math.clamp(100*((_config.value - (_config.minValue || 0)) / (_config.maxValue || 100)), 0, 100))>>
+	<</silently>>
+	<div class="relation-stat-block" @style="'--progress: ' + _config.progress + '%;'">
+		<<if _important>>
+			<label>_config.name</label>
+		<</if>>
+		<<if $images>>
+			<div class="relation-stat">
+				<span @class="'relation-stat-icon ' + (_config.iconOrientation || 'horizontal')">
+					<img class="active-icon-img" @src="_config.activeIcon">
+					<<if _config.inactiveIcon>>
+						<img class="inactive-icon-img" @src="_config.inactiveIcon">
+					<<else>>
+						<img class="inactive-icon-img outlined" @src="_config.activeIcon">
+					<</if>>
+				</span>
+				<span class="relation-stat-percent black">_config.progress<small>%</small></span>
+			</div>
+		<<else>>
+			<<if _important>>
+				<span class="relation-stat-percent black" style="margin-left: 0.3em;">_config.progress<small>%</small></span>
+				<div @class="'progress-bar ' + _config.color + 'bar'" style="width: var(--progress);"></div>
+			<</if>>
+		<</if>>
+	</div>
+<</nobr>><</widget>>
+
+<<widget "connector-box">><<nobr>>
+	<div @class="'connector-box ' + ($args[3] ? 'invert' : '')" @style="'--connector-height: ' + $args[0] + 'px; --center-offset: ' + ($args[1] || 50) + '%; --end-offset: ' + ($args[2] || 0) + 'px;'">
+		<div class="connector-box-top"></div>
+		<div class="connector-box-bottom"></div>
+	</div>
 <</nobr>><</widget>>
 
 <<widget "oralpassage">><<nobr>>

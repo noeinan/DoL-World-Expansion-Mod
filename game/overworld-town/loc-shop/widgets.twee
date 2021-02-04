@@ -125,10 +125,10 @@ Forth argument - item index*/
 					<<set $shopDefaults.colorSet to $shopDefaults.color>>
 				<</if>>
 				<<if $colouraction is _temp_choice.colour_options[_e] or (_setChecked is false and _e is _temp_choice.colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
+					<<print '<label><span class="' + _temp_choice.colour_options[_e].replace(/ /g, '-') + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '" checked>></label> |'>>
 					<<set _setChecked to true>>
 				<<else>>
-					<<print '<label><span class="' + _temp_choice.colour_options[_e] + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
+					<<print '<label><span class="' + _temp_choice.colour_options[_e].replace(/ /g, '-') + '"> _temp_choice.colour_options[_e]</span> <<radiobutton "$colouraction" "' + _temp_choice.colour_options[_e] + '">></label> |'>>
 				<</if>>
 			<</for>>
 			<br><br>
@@ -144,10 +144,10 @@ Forth argument - item index*/
 					<<set $shopDefaults.secColorSet to $shopDefaults.secColor>>
 				<</if>>
 				<<if $accessorycolouraction is _temp_choice.accessory_colour_options[_e] or (_setChecked is false and _e is _temp_choice.accessory_colour_options.length - 1)>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
+					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e].replace(/ /g, '-') + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '" checked>></label> |'>>
 					<<set _setChecked to true>>
 				<<else>>
-					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e] + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
+					<<print '<label><span class="' + _temp_choice.accessory_colour_options[_e].replace(/ /g, '-') + '"> _temp_choice.accessory_colour_options[_e]</span> <<radiobutton "$accessorycolouraction" "' + _temp_choice.accessory_colour_options[_e] + '">></label> |'>>
 				<</if>>
 			<</for>>
 			<br><br>
@@ -839,11 +839,11 @@ Sepia:
 	<a @onclick="`wikifier('shopCustomColorsPresetsLoad',`+_i+`)`">_keys[_i]</a> |
 <</for>>
 <br>
-Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.variables.tempDisable = true;">
+Name: <input id="colorName" type="text" value="Custom" maxlength="30" onfocus="SugarCube.State.variables.tempDisable = true;">
 <br>
 <<link [["Save Set"|$passage]]>>
 	<<script>>
-		SugarCube.State.temporary.colorName = document.getElementById("colorName").value;
+		SugarCube.State.temporary.colorName = document.getElementById("colorName").value.replace(/[^a-zA-Z 0-9]+/g,"");
 	<</script>>
 	<<set $customColors.presets[_colorName] to {
 		color: $customColors.color,
@@ -1001,7 +1001,7 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 
 /*$args[0] - slot, $args[1] - itemNo, $args[2] - file, $args[3] - colour, $args[4] - custom colour*/
 <<widget "shopFullImagePart">><<nobr>>
-<img @class="'clothes-'+ $args[3] + ' layer-' + $args[0]" @src="'img/clothes/' + $args[0] + '/' + setup.clothes[$args[0]][$args[1]].variable + '/' + $args[2] + '.png'" @style="($args[3] is 'custom'? $args[4]:'')">
+<img @class="'clothes-'+ (typeof($args[3]) == 'string' ? $args[3].replace(/ /g, '-') : '') + ' layer-' + $args[0]" @src="'img/clothes/' + $args[0] + '/' + setup.clothes[$args[0]][$args[1]].variable + '/' + $args[2] + '.png'" @style="($args[3] is 'custom'? $args[4]:'')">
 <</nobr>><</widget>>
 
 <<widget "shopFullImageToggle">><<nobr>>
@@ -1088,6 +1088,16 @@ Name: <input id="colorName" type="text" value="Custom" onfocus="SugarCube.State.
 <<if $livestock_intro isnot undefined>>
 	<<set $specialClothes["cowbell"] to "unlocked">>
 <</if>>
+<<set _count to 0>>
+<<for $_label, $_value range $specialClothes>>
+	<<if $_value is "unlocked">>
+		<<set _count++>>
+	<</if>>
+<</for>>
+<<if _count is Object.keys($specialClothes).length>>
+	<<earnFeat "Curious Attire">>
+<</if>>
+
 <</nobr>><</widget>>
 
 <<widget "specialClothesHint">><<nobr>>

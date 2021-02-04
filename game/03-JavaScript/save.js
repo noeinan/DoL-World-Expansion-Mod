@@ -211,17 +211,22 @@ window.copySavedata = function (id) {
 }
 
 window.importSettings = function (data, type) {
-	if (type === "text") {
-		var textArea = document.getElementById("settingsDataInput");
-		importSettingsData(textArea.value);
-	}
-	else if (type === "file") {
-		//console.log("data", data);
-		var reader = new FileReader();
-		reader.addEventListener('load', function (e) {
-			importSettingsData(e.target.result);
-		});
-		reader.readAsBinaryString(data[0]);
+	switch(type){
+		case "text":
+			SugarCube.State.variables.importString = document.getElementById("settingsDataInput").value
+			new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
+			break;
+		case "file":
+			var reader = new FileReader();
+			reader.addEventListener('load', function (e) {
+				SugarCube.State.variables.importString = e.target.result;
+				new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
+			});
+			reader.readAsBinaryString(data[0]);
+			break;
+		case "function":
+			importSettingsData(data);
+			break;
 	}
 }
 
@@ -289,7 +294,11 @@ var importSettingsData = function (data) {
 			for (var i = 0; i < V.NPCNameList.length; i++) {
 				if (S.npc[V.NPCNameList[i]] != undefined) {
 					for (var j = 0; j < listKey.length; j++) {
-						if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
+						//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
+						if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none"){
+							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+						}
+						else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 					}
@@ -299,7 +308,7 @@ var importSettingsData = function (data) {
 	}
 }
 
-var validateValue = function (keys, value) {
+window.validateValue = function (keys, value) {
 	//console.log("validateValue",keys,value);
 	var keyArray = Object.keys(keys);
 	var valid = false;
@@ -399,7 +408,11 @@ window.exportSettings = function (data, type) {
 	for (var i = 0; i < V.NPCNameList.length; i++) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (var j = 0; j < listKey.length; j++) {
-			if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
+			//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
+			if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none"){
+				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
+			}
+			else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
 			}
 		}
@@ -417,26 +430,28 @@ window.exportSettings = function (data, type) {
 	}
 }
 
-var settingsObjects = function (type) {
+window.settingsObjects = function (type) {
 	var result = undefined;
 	switch (type) {
 		case "starting":
 			result = {
-				devlevel: { min: 6, max: 16, decimals: 0 },
+				bodysize: { min: 0, max: 3, decimals: 0 },
 				penissize: { min: 0, max: 3, decimals: 0 },
 				breastsize: { min: 0, max: 4, decimals: 0 },
 				bottomsize: { min: 0, max: 3, decimals: 0 },
 				breastsensitivity: { min: 0, max: 5, decimals: 0 },
 				genitalsensitivity: { min: 0, max: 5, decimals: 0 },
 				eyeselect: { strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "red", "pink", "grey"] },
-				hairselect: { strings: ["red", "black", "brown", "lightbrown", "blond", "platinumblond", "strawberryblond", "ginger"] },
+				hairselect: { strings: ["red", "jetblack", "black", "brown", "softbrown", "lightbrown", "burntorange", "blond", "softblond", "platinumblond", "ashyblond", "strawberryblond", "ginger"] },
 				hairlength: { min: 0, max: 400, decimals: 0 },
 				awareselect: { strings: ["innocent", "knowledgeable"] },
-				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful"] },
+				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "greenthumb"] },
 				gamemode: { strings: ["normal", "soft", "hard"] },
 				player: {
-					gender: { strings: ["m", "f"] },
-					gender: { strings: ["m", "f", "a"] }
+					gender: { strings: ["m", "f", "h"] },
+					gender_body: { strings: ["m", "f", "a"] },
+					ballsExist: { bool: true },
+					freckles: { bool: true, strings: ["random"] },
 				},
 				skinColor: {
 					natural: { strings: ["light", "medium", "dark", "gyaru", "ylight", "ymedium", "ydark", "ygyaru"] },
@@ -449,6 +464,8 @@ var settingsObjects = function (type) {
 				malechance: { min: 0, max: 100, decimals: 0 },
 				dgchance: { min: 0, max: 100, decimals: 0 },
 				cbchance: { min: 0, max: 100, decimals: 0 },
+				malevictimchance: { min: 0, max: 100, decimals: 0 },
+				homochance: { min: 0, max: 100, decimals: 0 },
 				breast_mod: { min: -12, max: 12, decimals: 0 },
 				penis_mod: { min: -8, max: 8, decimals: 0 },
 				whitechance: { min: 0, max: 100, decimals: 0 },
@@ -458,6 +475,7 @@ var settingsObjects = function (type) {
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
 				monsterhallucinations: { boolLetter: true },
+				blackwolfmonster: { min: 0, max: 1, decimals: 0 },
 				bestialitydisable: { boolLetter: true },
 				swarmdisable: { boolLetter: true },
 				slimedisable: { boolLetter: true },
@@ -478,6 +496,7 @@ var settingsObjects = function (type) {
 				images: { min: 0, max: 1, decimals: 0 },
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
+				bodywritingImages: { bool: true },
 				silhouettedisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
@@ -489,10 +508,12 @@ var settingsObjects = function (type) {
 				confirmLoad: { bool: true },
 				confirmDelete: { bool: true },
 				newWardrobeStyle: { bool: true },
-				imgLighten: { bool: true },
+				imgLighten: { strings: ["", "imgLighten", "imgLighten2"] },
 				sidebarStats: { strings: ["Disabled", "Limited", "All"] },
+				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
+				neverNudeMenus: { bool: false },
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
