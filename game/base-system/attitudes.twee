@@ -77,7 +77,7 @@ What makes you feel uncomfortable?
 	How do you feel about others? (Sets default combat actions.)
 	<br>
 	<<if $moleststat gt 0 or $debug is 1>>
-		<<set _options to ["Everyone","Strangers","Animals","Acquaintances","Robin", "Bailey"]>>
+		<<set _options to ["Everyone","Strangers","Animals","Tentacles","Acquaintances","Robin", "Bailey"]>>
 		<<set _named to ["Whitney","Kylar","Eden","Avery","Leighton"]>>
 
 		<<for _i to 0; _i lt _named.length; _i++>>
@@ -151,7 +151,11 @@ __If consensual:__
 <br>
 (Some actions require sufficient lewdity.)
 <br><br>
-<<sexDefaults false>>
+<<if _options[_currentOptions] is "Tentacles">>
+	<<tentacleDefaults false>>
+<<else>>
+	<<sexDefaults false>>
+<</if>>
 <<for _i to 0; _i lt _titles.length; _i++>>
 	<<if (_titles[_i] is "Penis" and $penisexist is 0) or (_titles[_i] is "Vagina" and $vaginaexist is 0)>>
 		<<continue>>
@@ -162,9 +166,17 @@ __If consensual:__
 	</span>
 	<br>
 <</for>>
+<<if _options[_currentOptions] is "Tentacles">>
+	<label>Auto Select different tentacle for grab actions when the current tentacle is occupied <<print '<<checkbox "$actionDefaults.Tentacles.consensual.regrab" false true ' + ($actionDefaults.Tentacles.consensual.regrab is true ? "checked" : "") + '>>'>></label>
+	<br>
+<</if>>
 
 <<if _options[_currentOptions] isnot "Robin">>
-	<<sexDefaults true>>
+	<<if _options[_currentOptions] is "Tentacles">>
+		<<tentacleDefaults true>>
+	<<else>>
+		<<sexDefaults true>>
+	<</if>>
 	<br>
 	__If assaulted:__
 	<br><br>
@@ -179,6 +191,10 @@ __If consensual:__
 		</span>
 		<br>
 	<</for>>
+	<<if _options[_currentOptions] is "Tentacles">>
+		<label>Auto Select different tentacle for grab actions when the current tentacle is occupied <<print '<<checkbox "$actionDefaults.Tentacles.rape.regrab" false true ' + ($actionDefaults.Tentacles.rape.regrab is true ? "checked" : "") + '>>'>></label>
+		<br>
+	<</if>>
 <</if>>
 <br>
 
@@ -192,6 +208,7 @@ __If consensual:__
 				<<run _loop.delete("Defiant")>>
 				<<run _loop.delete("Submissive")>>
 				<<run _loop.delete("Alternative")>>
+				<<run _loop.delete("Tentacles")>>
 				<<for _i to 0; _i lt _loop.length;_i++>>
 					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
 				<</for>>
@@ -205,6 +222,7 @@ __If consensual:__
 				<<run _loop.delete("Defiant")>>
 				<<run _loop.delete("Submissive")>>
 				<<run _loop.delete("Alternative")>>
+				<<run _loop.delete("Tentacles")>>
 				<<for _i to 0; _i lt _loop.length;_i++>>
 					<<set $actionDefaults[_loop[_i]] to clone(_override)>>
 				<</for>>
@@ -320,6 +338,11 @@ __If consensual:__
 	<<set $actionDefaults.Defiant.consensual.vaginaaction[1] to "othermouthescape">>
 	<<set $actionDefaults.Defiant.consensual.anusaction[0] to "escape">>
 	<<set $actionDefaults.Defiant.consensual.anusaction[1] to "othermouthescape">>
+<</if>>
+<<if $actionDefaults.Tentacles is undefined>>
+	<<set $actionDefaults.Tentacles to clone(_defaultObject)>>
+	<<set $actionDefaults.Tentacles.rape.regrab to false>>
+	<<set $actionDefaults.Tentacles.consensual.regrab to false>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -477,7 +500,7 @@ __If consensual:__
 <<set _penis["Take the pussy"] to "take">>
 <<set _penis["Cooperate with their pussy"] to "cooperate">>
 <<if ($promiscuity gt 54 or $deviancy gt 54 or $args[0] is true) and $penileskill gte 800>>
-   <<set _penisaction["Edge their vagina"] to "vaginaEdging">>
+   <<set _penis["Edge their vagina"] to "vaginaEdging">>
 <</if>>
 <<if $promiscuity gt 74 or $deviancy gt 74 or $args[0] is true>>
 	<<set _penis["Press against their ass"] to "penistoanus">>
@@ -499,7 +522,7 @@ __If consensual:__
 <<set _penis["Take the ass"] to "otheranustake">>
 <<set _penis["Cooperate with their ass"] to "otheranuscooperate">>
 <<if ($promiscuity gt 54 or $deviancy gt 54 or $args[0] is true) and $penileskill gte 800>>
-   <<set _penisaction["Edge their ass"] to "otheranusEdging">>
+   <<set _penis["Edge their ass"] to "otheranusEdging">>
 <</if>>
 <<set _penis["Press your thigh against their mouth"] to "thighbay">>
 <<set _penis["Rub against their face"] to "othermouthtease">>
@@ -585,6 +608,86 @@ __If consensual:__
 
 <<set _anus["Cooperate with their mouth"] to "othermouthcooperate">>
 
+<</nobr>><</widget>>
+
+<<widget "tentacleDefaults">><<nobr>>
+<<set _leftHand to {
+	"Rest":"rest",
+	"Grab the":"leftgrab"
+}>>
+<<if $deviancy gte 75>>
+	<<set _leftHand["Guide to your penis"] to "showpenis">>
+	<<set _leftHand["Guide to your pussy"] to "showvagina">>
+	<<set _leftHand["Guide to your ass"] to "showbottom">>
+<</if>>
+<<if $args[0] is true>>
+	<<set _leftHand["Strike the"] to "lefthit">>
+<</if>>
+<<set _leftHand["Milk it"] to "leftrub">>
+
+<<set _rightHand to {
+	"Rest":"rest",
+	"Grab the":"rightgrab"
+}>>
+<<if $deviancy gte 75>>
+	<<set _rightHand["Guide to your penis"] to "showpenis">>
+	<<set _rightHand["Guide to your pussy"] to "showvagina">>
+	<<set _rightHand["Guide to your ass"] to "showbottom">>
+<</if>>
+<<if $args[0] is true>>
+	<<set _rightHand["Strike the"] to "righthit">>
+<</if>>
+<<set _rightHand["Milk it"] to "rightrub">>
+
+<<set _feet to {
+	"Rest":"rest",
+	"Grab the":"feetgrab"
+}>>
+<<if $deviancy gte 75>>
+	<<set _feet["Guide to your penis"] to "showpenis">>
+	<<set _feet["Guide to your pussy"] to "showvagina">>
+	<<set _feet["Guide to your ass"] to "showbottom">>
+<</if>>
+<<if $args[0] is true>>
+	<<set _feet["Kick the"] to "feethit">>
+<</if>>
+<<set _feet["Milk it"] to "feetrub">>
+
+<<set _mouth to {
+	"Rest":"rest",
+	"Lick it":"mouthlick",
+	"Pull away":"mouthpullaway",
+	"Kiss it":"mouthkiss",
+	"Take it":"take",
+	"Cooperate":"mouthcooperate"
+}>>
+<<if $args[0] is true>>
+	<<set _mouth["Bite"] to "mouthbite">>
+<</if>>
+
+<<set _penis to {
+	"Rest":"rest",
+	"Rub":"penisrub",
+	"Pull away":"penispullaway",
+	"Take it":"take",
+	"Cooperate":"peniscooperate"
+}>>
+
+<<set _vagina to {
+	"Rest":"rest",
+	"Rub":"vaginarub",
+	"Pull away":"vaginapullaway",
+	"Take it":"take",
+	"Cooperate":"vaginacooperate"
+}>>
+
+<<set _anus to {
+	"Rest":"rest",
+	"Rub":"anusrub",
+	"Pull away":"anuspullaway",
+	"Take it":"take",
+	"Cooperate":"anuscooperate"
+}>>
 <</nobr>><</widget>>
 
 <<widget "loveInterest">><<nobr>>
