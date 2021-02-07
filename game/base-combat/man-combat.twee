@@ -5291,19 +5291,27 @@
 	<br><br>
 	<<link [[Next|Man combat suffocated]]>><</link>>
 <<else>>
-	<!-- Simulate 60 seconds of sex while passed out -->
-	<<silently>>
-	<<for _i to 0; _i lt 6; _i++>>
-		<<man>><<integritycheck>>
-	<</for>>
-	<</silently>>
-
-	<<pass 1>>
-	<<oxygenrefresh>>
-	<<set $suffocating to 0>>
-	<<unset $suffocated>>
-	You regain consciousness with a long gasp. Your body is still beeing used.
-	<br><br>
-	<<unset $phase>>
-	<<link [[Next|$previousPassage]]>><</link>>
+	<span class="red">You are unconscious.</span><br>
+	<!-- Simulate 30 seconds of sex while passed out -->
+	<<set _simTurns to 3>>
+	<<set _turn to 0>>
+	<<repeat 1.5s>>
+		<<if _turn lt _simTurns>>
+			<div class="unconscious shimmering"><<man>><<integritycheck>></div>
+			<<pass10sec>>
+		<<else>>
+			<div class="fade-in">
+			You regain consciousness with a long gasp. Your body is still beeing used.
+			<<oxygenrefresh>>
+			<<set $suffocating to 0>>
+			<<unset $suffocated>>
+			<<unset $phase>>
+			<br><br>
+			<span id="nextlink"><<link [[Next|$previousPassage]]>><</link>></span>
+			</div>
+			<<run jQuery().ready(() => Links.generateLinkNumbers(jQuery('#nextlink')))>>
+			<<stop>>
+		<</if>>
+		<<set _turn += 1>>
+	<</repeat>>
 <</if>>
