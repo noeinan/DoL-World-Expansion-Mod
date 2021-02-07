@@ -76,11 +76,6 @@
 			<<anusActionInitTentacle>>
 		</div>
 	<</if>>
-	<<if $bottomuse isnot 0>>
-		<div id="bottomaction" @class="$combatControls + 'Control'">
-			<<bottomActionInitTentacle>>
-		</div>
-	<</if>>
 	<<if $breastuse isnot 0>>
 		<div id="chestaction" @class="$combatControls + 'Control'">
 			<<chestActionInitTentacle>>
@@ -125,8 +120,43 @@
 	<</switch>>
 	<<leftActionsTentacle>>
 	<<if Object.keys(_leftaction).length gt 0>>
-		<<if $leftactiondefault is 0 or Object.values(_leftaction).includes($leftactiondefault) is false>>
-			<<set $leftactiondefault to Object.values(_leftaction)[0]>>
+		<<if Object.values(_leftaction).includes($leftactiondefault) is false or $args[0] is true or ["rest","leftgrab"].includes($leftactiondefault)>>
+			<<set _defaultsCombatAction to "leftaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["leftgrab"].includes(_actionsSet[_set]) and $leftactionTarget isnot undefined>>
+					<<for _i to 0; _i lt $tentacles.max; _i++>>
+						<<if $tentacles[_i].shaft isnot "finished">>
+							<<if $regrab and $tentacles[_i].head is 0>>
+								<<set $leftactiondefault to clone(_actionsSet[_set])>>
+								<<set $leftactionTarget to $tentacles[_i].id>>
+								<<set _pass to true>>
+								<<break>>
+							<<elseif $tentacles[_i].head is 0>>
+								<<set $leftactiondefault to clone(_actionsSet[_set])>>
+								<<set _pass to true>>
+							<</if>>
+							<<if $regrab is false>>
+								<<break>>
+							<</if>>
+						<</if>>
+					<</for>>
+				<<elseif ["leftrub","showpenis","showvagina","showbottom"].includes(_actionsSet[_set]) and _tentacleLeftOption isnot undefined>>
+					<<if Object.values(_leftaction).includes(_actionsSet[_set] + _tentacleLeftOption)>>
+						<<set $leftactiondefault to clone(_actionsSet[_set] + _tentacleLeftOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_leftaction).includes(_actionsSet[_set])>>
+					<<set $leftactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $leftactiondefault to Object.values(_leftaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $leftaction to $leftactiondefault>>
 		<<set _textColor to combatListColor('leftaction', (Object.values(_leftaction).includes($leftaction) ? $leftaction : Object.values(_leftaction)[0]), "Tentacle")>>
@@ -154,11 +184,22 @@
 <<if $combatControls is "radio">>
 	<br><br>
 	<<set _first to true>>
+	<<if $regrab>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished" and $tentacles[_i].id is $leftactionTarget>>
+					<<set _first to false>>
+					<<set $_found to $tentacles[_i].id>>
+					<<break>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
 	<<for _i to 0; _i lt $tentacles.max; _i++>>
 		<<if $tentacles[_i] isnot undefined>>
 			<<if $tentacles[_i].shaft isnot "finished">>
 				<label>
-					<<print '<<radiobutton "$leftactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					<<print '<<radiobutton "$leftactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true or $tentacles[_i].id is $_found ? "checked" : "") + '>>'>>
 					$tentacles[_i].fullDesc
 				</label> |
 				<<set _first to false>>
@@ -182,7 +223,7 @@
 	<</if>>
 	<<if _tentacle_targets_available>>
 		<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
-			<<listbox "$leftactionTarget">>
+			<<listbox "$leftactionTarget" autoselect>>
 				<<optionsfrom _availableTargets>>
 			<</listbox>>
 		</span>
@@ -279,8 +320,43 @@
 	<</switch>>
 	<<rightActionsTentacle>>
 	<<if Object.keys(_rightaction).length gt 0>>
-		<<if $rightactiondefault is 0 or Object.values(_rightaction).includes($rightactiondefault) is false>>
-			<<set $rightactiondefault to Object.values(_rightaction)[0]>>
+		<<if Object.values(_rightaction).includes($rightactiondefault) is false or $args[0] is true or ["rest","rightgrab"].includes($rightactiondefault)>>
+			<<set _defaultsCombatAction to "rightaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["rightgrab"].includes(_actionsSet[_set]) and $rightactionTarget isnot undefined>>
+					<<for _i to 0; _i lt $tentacles.max; _i++>>
+						<<if $tentacles[_i].shaft isnot "finished">>
+							<<if $regrab and $tentacles[_i].head is 0>>
+								<<set $rightactiondefault to clone(_actionsSet[_set])>>
+								<<set $rightactionTarget to $tentacles[_i].id>>
+								<<set _pass to true>>
+								<<break>>
+							<<elseif $tentacles[_i].head is 0>>
+								<<set $rightactiondefault to clone(_actionsSet[_set])>>
+								<<set _pass to true>>
+							<</if>>
+							<<if $regrab is false>>
+								<<break>>
+							<</if>>
+						<</if>>
+					<</for>>
+				<<elseif ["rightrub","showpenis","showvagina","showbottom"].includes(_actionsSet[_set]) and _tentaclerightOption isnot undefined>>
+					<<if Object.values(_rightaction).includes(_actionsSet[_set] + _tentaclerightOption)>>
+						<<set $rightactiondefault to clone(_actionsSet[_set] + _tentaclerightOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_rightaction).includes(_actionsSet[_set])>>
+					<<set $rightactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $rightactiondefault to Object.values(_rightaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $rightaction to $rightactiondefault>>
 		<<set _textColor to combatListColor('rightaction', (Object.values(_rightaction).includes($rightaction) ? $rightaction : Object.values(_rightaction)[0]), "Tentacle")>>
@@ -308,11 +384,22 @@
 <<if $combatControls is "radio">>
 	<br><br>
 	<<set _first to true>>
+	<<if $regrab>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished" and $tentacles[_i].id is $rightactionTarget>>
+					<<set _first to false>>
+					<<set $_found to $tentacles[_i].id>>
+					<<break>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
 	<<for _i to 0; _i lt $tentacles.max; _i++>>
 		<<if $tentacles[_i] isnot undefined>>
 			<<if $tentacles[_i].shaft isnot "finished">>
 				<label>
-					<<print '<<radiobutton "$rightactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					<<print '<<radiobutton "$rightactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true or $tentacles[_i].id is $_found ? "checked" : "") + '>>'>>
 					$tentacles[_i].fullDesc
 				</label> |
 				<<set _first to false>>
@@ -336,7 +423,7 @@
 	<</if>>
 	<<if _tentacle_targets_available>>
 		<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
-			<<listbox "$rightactionTarget">>
+			<<listbox "$rightactionTarget" autoselect>>
 				<<optionsfrom _availableTargets>>
 			<</listbox>>
 		</span>
@@ -430,8 +517,43 @@
 	<</if>>
 	<<feetActionsTentacle>>
 	<<if Object.keys(_feetaction).length gt 0>>
-		<<if $feetactiondefault is 0 or Object.values(_feetaction).includes($feetactiondefault) is false>>
-			<<set $feetactiondefault to Object.values(_feetaction)[0]>>
+		<<if Object.values(_feetaction).includes($feetactiondefault) is false or $args[0] is true or ["rest","feetgrab"].includes($feetactiondefault)>>
+			<<set _defaultsCombatAction to "feetaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["feetgrab"].includes(_actionsSet[_set]) and $feetactionTarget isnot undefined>>
+					<<for _i to 0; _i lt $tentacles.max; _i++>>
+						<<if $tentacles[_i].shaft isnot "finished">>
+							<<if $regrab and $tentacles[_i].head is 0>>
+								<<set $feetactiondefault to clone(_actionsSet[_set])>>
+								<<set $feetactionTarget to $tentacles[_i].id>>
+								<<set _pass to true>>
+								<<break>>
+							<<elseif $tentacles[_i].head is 0>>
+								<<set $feetactiondefault to clone(_actionsSet[_set])>>
+								<<set _pass to true>>
+							<</if>>
+							<<if $regrab is false>>
+								<<break>>
+							<</if>>
+						<</if>>
+					<</for>>
+				<<elseif ["feetrub","showpenis","showvagina","showbottom"].includes(_actionsSet[_set]) and _tentacleFeetOption isnot undefined>>
+					<<if Object.values(_feetaction).includes(_actionsSet[_set] + _tentacleFeetOption)>>
+						<<set $feetactiondefault to clone(_actionsSet[_set] + _tentacleFeetOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_feetaction).includes(_actionsSet[_set])>>
+					<<set $feetactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $feetactiondefault to Object.values(_feetaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $feetaction to $feetactiondefault>>
 		<<set _textColor to combatListColor('feetaction', (Object.values(_feetaction).includes($feetaction) ? $feetaction : Object.values(_feetaction)[0]), "Tentacle")>>
@@ -460,11 +582,22 @@
 <<if $combatControls is "radio">>
 	<br><br>
 	<<set _first to true>>
+	<<if $regrab>>
+		<<for _i to 0; _i lt $tentacles.max; _i++>>
+			<<if $tentacles[_i] isnot undefined>>
+				<<if $tentacles[_i].shaft isnot "finished" and $tentacles[_i].id is $feetactionTarget>>
+					<<set _first to false>>
+					<<set $_found to $tentacles[_i].id>>
+					<<break>>
+				<</if>>
+			<</if>>
+		<</for>>
+	<</if>>
 	<<for _i to 0; _i lt $tentacles.max; _i++>>
 		<<if $tentacles[_i] isnot undefined>>
 			<<if $tentacles[_i].shaft isnot "finished">>
 				<label>
-					<<print '<<radiobutton "$feetactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true ? "checked" : "") + '>>'>>
+					<<print '<<radiobutton "$feetactionTarget" "'+$tentacles[_i].id+'" ' + (_first is true or $tentacles[_i].id is $_found ? "checked" : "") + '>>'>>
 					$tentacles[_i].fullDesc
 				</label> |
 				<<set _first to false>>
@@ -488,7 +621,7 @@
 	<</if>>
 	<<if _tentacle_targets_available>>
 		<span @class="'whiteList ' + (_reducedWidths is true? 'reducedWidth':'')">
-			<<listbox "$feetactionTarget">>
+			<<listbox "$feetactionTarget" autoselect>>
 				<<optionsfrom _availableTargets>>
 			<</listbox>>
 		</span>
@@ -581,8 +714,26 @@
 	<</for>>
 	<<mouthActionsTentacle>>
 	<<if Object.keys(_mouthaction).length gt 0>>
-		<<if $mouthactiondefault is 0 or Object.values(_mouthaction).includes($mouthactiondefault) is false>>
-			<<set $mouthactiondefault to Object.values(_mouthaction)[0]>>
+		<<if Object.values(_mouthaction).includes($mouthactiondefault) is false or $args[0] is true or $mouthactiondefault is "rest">>
+			<<set _defaultsCombatAction to "mouthaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["mouthlick","mouthpullaway","mouthkiss","mouthcooperate","mouthbite"].includes(_actionsSet[_set]) and _tentacleMouthOption isnot undefined>>
+					<<if Object.values(_mouthaction).includes(_actionsSet[_set] + _tentacleMouthOption)>>
+						<<set $mouthactiondefault to clone(_actionsSet[_set] + _tentacleMouthOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_mouthaction).includes(_actionsSet[_set])>>
+					<<set $mouthactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $mouthactiondefault to Object.values(_mouthaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $mouthaction to $mouthactiondefault>>
 		<<set _textColor to combatListColor('mouthaction', (Object.values(_mouthaction).includes($mouthaction) ? $mouthaction : Object.values(_mouthaction)[0]), "Tentacle")>>
@@ -678,8 +829,26 @@
 	<</for>>
 	<<penisActionsTentacle>>
 	<<if Object.keys(_penisaction).length gt 0>>
-		<<if $penisactiondefault is 0 or Object.values(_penisaction).includes($penisactiondefault) is false>>
-			<<set $penisactiondefault to Object.values(_penisaction)[0]>>
+		<<if Object.values(_penisaction).includes($penisactiondefault) is false or $args[0] is true or $penisactiondefault is "rest">>
+			<<set _defaultsCombatAction to "penisaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["penisrub","penispullaway","peniscooperate"].includes(_actionsSet[_set]) and _tentaclepenisOption isnot undefined>>
+					<<if Object.values(_penisaction).includes(_actionsSet[_set] + _tentaclepenisOption)>>
+						<<set $penisactiondefault to clone(_actionsSet[_set] + _tentaclepenisOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_penisaction).includes(_actionsSet[_set])>>
+					<<set $penisactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $penisactiondefault to Object.values(_penisaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $penisaction to $penisactiondefault>>
 		<<set _textColor to combatListColor('penisaction', (Object.values(_penisaction).includes($penisaction) ? $penisaction : Object.values(_penisaction)[0]), "Tentacle")>>
@@ -769,8 +938,26 @@
 	<</for>>
 	<<vaginaActionsTentacle>>
 	<<if Object.keys(_vaginaaction).length gt 0>>
-		<<if $vaginaactiondefault is 0 or Object.values(_vaginaaction).includes($vaginaactiondefault) is false>>
-			<<set $vaginaactiondefault to Object.values(_vaginaaction)[0]>>
+		<<if Object.values(_vaginaaction).includes($vaginaactiondefault) is false or $args[0] is true or $vaginaactiondefault is "rest">>
+			<<set _defaultsCombatAction to "vaginaaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["vaginarub","vaginapullaway","vaginacooperate"].includes(_actionsSet[_set]) and _tentaclevaginaOption isnot undefined>>
+					<<if Object.values(_vaginaaction).includes(_actionsSet[_set] + _tentaclevaginaOption)>>
+						<<set $vaginaactiondefault to clone(_actionsSet[_set] + _tentaclevaginaOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_vaginaaction).includes(_actionsSet[_set])>>
+					<<set $vaginaactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $vaginaactiondefault to Object.values(_vaginaaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $vaginaaction to $vaginaactiondefault>>
 		<<set _textColor to combatListColor('vaginaaction', (Object.values(_vaginaaction).includes($vaginaaction) ? $vaginaaction : Object.values(_vaginaaction)[0]), "Tentacle")>>
@@ -849,12 +1036,37 @@
 					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle thrusts into your <<bottom>>, ejaculating deep into your bowels.</span>
 					<<break>>
 				<</if>>
+			<<case "tentaclerub">>
+				<<if $tentacles[_i].head is "anusrub">>
+					<<set _anusOptions to "anusrub">>
+					<<set _tentacleanusOption to $tentacles[_i].id>>
+					<span @class="($lastOptions.anus isnot _anusOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your butt cheeks.</span>
+					<<break>>
+				<</if>>
 		<</switch>>
 	<</for>>
 	<<anusActionsTentacle>>
 	<<if Object.keys(_anusaction).length gt 0>>
-		<<if $anusactiondefault is 0 or Object.values(_anusaction).includes($anusactiondefault) is false>>
-			<<set $anusactiondefault to Object.values(_anusaction)[0]>>
+		<<if Object.values(_anusaction).includes($anusactiondefault) is false or $args[0] is true or $anusactiondefault is "rest">>
+			<<set _defaultsCombatAction to "anusaction">>
+			<<set _actionsSet to $actionDefaults.Tentacles[$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if ["anusrub","anuspullaway","anuscooperate"].includes(_actionsSet[_set]) and _tentacleanusOption isnot undefined>>
+					<<if Object.values(_anusaction).includes(_actionsSet[_set] + _tentacleanusOption)>>
+						<<set $anusactiondefault to clone(_actionsSet[_set] + _tentacleanusOption)>>
+						<<set _pass to true>>
+						<<break>>
+					<</if>>
+				<<elseif Object.values(_anusaction).includes(_actionsSet[_set])>>
+					<<set $anusactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $anusactiondefault to Object.values(_anusaction)[0]>>
+			<</if>>
 		<</if>>
 		<<set $anusaction to $anusactiondefault>>
 		<<set _textColor to combatListColor('anusaction', (Object.values(_anusaction).includes($anusaction) ? $anusaction : Object.values(_anusaction)[0]), "Tentacle")>>
@@ -896,60 +1108,9 @@
 	<<case "penetrated">>
 		<<set _anusaction["Take it"] to "take">>
 		<<set _anusaction["Cooperate"] to "anuscooperate"+_tentacleanusOption>>
-<</switch>>
-<</nobr>><</widget>>
-
-<<widget "bottomActionInitTentacle">><<nobr>>
-	<<for _i to 0; _i lt $tentacles.max; _i++>>
-		<<switch $bottomuse>>
-			<<case "tentaclerub">>
-				<<if $tentacles[_i].head is "bottomrub">>
-					<<set _bottomOptions to "bottomrub">>
-					<<set _tentaclebottomOption to $tentacles[_i].id>>
-					<span @class="($lastOptions.bottom isnot _bottomOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your butt cheeks.</span>
-					<<break>>
-				<</if>>
-		<</switch>>
-	<</for>>
-	<<bottomActionsTentacle>>
-	<<if Object.keys(_bottomaction).length gt 0>>
-		<<if $bottomactiondefault is 0 or Object.values(_bottomaction).includes($bottomactiondefault) is false>>
-			<<set $bottomactiondefault to Object.values(_bottomaction)[0]>>
-		<</if>>
-		<<set $bottomaction to $bottomactiondefault>>
-		<<set _textColor to combatListColor('bottomaction', (Object.values(_bottomaction).includes($bottomaction) ? $bottomaction : Object.values(_bottomaction)[0]), "Tentacle")>>
-		<div class="extraMargin">
-			<<generateCombatActionTentacle _bottomaction "bottomaction" _textColor $bottomaction>>
-		</div>
-		<<if $combatControls.includes("ists")>>
-			<div id="bottomactionDifficulty">
-				<<bottomactionDifficultyTentacle>>
-			</div>
-		<</if>>
-	<</if>>
-	<<set $lastOptions.bottom to clone(_bottomOptions)>>
-<</nobr>><</widget>>
-
-<<widget "bottomactionDifficultyTentacle">><<nobr>>
-/*
-<<if $args[0] is undefined>>
-	<<set _diffAction to $bottomaction>>
-<<else>>
-	<<set _diffAction to $args[0]>>
-<</if>>
-<<switch (""+_diffAction).replace(/\d+/g,'')>>
-
-<</switch>>
-*/
-<</nobr>><</widget>>
-
-<<widget "bottomActionsTentacle">><<nobr>>
-/*Generate Actions*/
-<<set _bottomaction to {}>>
-<<switch _bottomOptions>>
-	<<case "bottomrub">>
-		<<set _bottomaction["Rest"] to "rest">>
-		<<set _bottomaction["Rub"] to "bottomrub"+_tentaclebottomOption>>
+	<<case "anusrub">>
+		<<set _anusaction["Rest"] to "rest">>
+		<<set _anusaction["Rub"] to "anusrub"+_tentacleanusOption>>
 <</switch>>
 <</nobr>><</widget>>
 
@@ -960,7 +1121,7 @@
 				<<if $tentacles[_i].head is "chestrub">>
 					<<set _chestOptions to "entrance">>
 					<<set _tentaclechestOption to $tentacles[_i].id>>
-					<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your butt cheeks.</span>
+					<span @class="($lastOptions.chest isnot _chestOptions ?'gold':'')">The $tentacles[_i].desc tentacle rubs itself between your chest.</span>
 					<<break>>
 				<</if>>
 		<</switch>>

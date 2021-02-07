@@ -117,62 +117,43 @@
 <</if>>
 <</nobr>><</widget>>
 
-<<widget "combatTrainAdvance">><<nobr>>
+<<widget "combatTrainAdvance">><<nobr>>/*For use after a beast/monster in a train is finished with their turn. Loads next in line into $NPCList[0]. Loads them all back into $NPCList if at the end of the train.*/
+<<clearnpc>>
 <<if $combatTrain.length gt 0>>
-	<<set $combatTrain.length-->>
-	<<if $combatTrain.beastTypes.length gt 0>>
-		<<run $combatTrain.beastTypes.deleteAt(0)>>
-	<</if>>
-	<<if $combatTrain.numberPerTrain.length gt 0>>
-		<<run $combatTrain.numberPerTrain.deleteAt(0)>>
-	<</if>>
+    <<set $combatTrain.length-->>
+    <<set $combatTrain.active += 1>>
+    <<loadNPC 0 `"beast_" + $combatTrain.active`>>
+<<else>>
+    <<for _e_n to 0; _e_n lt $combatTrain.total_length + 1; _e_n++>>
+        <<loadNPC _e_n `"beast_" + _e_n`>>
+        <<clearNPC `"beast_" + _e_n`>>
+    <</for>>
 <</if>>
+<<set $active_enemy to 0>>
 <</nobr>><</widget>>
 
 /*Args 0 - Combat Train Length*/
 /*Args 1 - Combat Train Beast Types, accepts a string or array, array may be smaller then length to loop*/
 /*Args 2 - Combat Train Combatants in train section, accepts a string or array,
 	should be left undefined till combat is setup for multiple beasts*/
-<<widget "beastTrainGenerate">><<nobr>>
-<<if $args[0] and $args[1]>>
-	<<set $combatTrain to {
-		length: $args[0],
-		generateInit: 1,
-		beastTypes: [],
-		numberPerTrain: [],
-	}>>
-	<<if Array.isArray($args[1])>>
-		<<set $combatTrain.beastTypes to clone($args[1])>>
-		<<if $combatTrain.beastTypes.length lt $combatTrain.length>>
-			<<set _loopLength to clone($combatTrain.length - $combatTrain.beastTypes.length)>>
-			<<set _start to 0>>
-			<<set _end to clone($combatTrain.beastTypes.length)>>
-			<<for _i to 0; _i lt _loopLength; _i++>>
-				<<run $combatTrain.beastTypes.push($combatTrain.beastTypes[_start])>>
-				<<if _start + 1 lt _end>>
-					<<set _start++>>
-				<<else>>
-					<<set _start to 0>>
-				<</if>>
-			<</for>>
-		<</if>>
-	<<else>>
-		<<for _i to 0; _i lt $combatTrain.length; _i++>>
-			<<run $combatTrain.beastTypes.push(clone($args[1]))>>
-		<</for>>
-	<</if>>
-	<<if $args[2] is undefined>>
-		<<for _i to 0; _i lt $combatTrain.length; _i++>>
-			<<run $combatTrain.numberPerTrain.push(1)>>
-		<</for>>
-	<<elseif Array.isArray($args[2])>>
-		<<set $combatTrain.numberPerTrain to clone($args[2])>>
-	<<else>>
-		<<for _i to 0; _i lt $combatTrain.length; _i++>>
-			<<run $combatTrain.numberPerTrain.push(clone($args[2]))>>
-		<</for>>
-	<</if>>
-<</if>>
+<<widget "beastTrainGenerate">><<nobr>>/*Saves all beasts/monsters in $NPCList, then loads the first into slot 0.*/
+<<set _enemyno to $enemyno - 1>>
+<<set $combatTrain to {
+    length: _enemyno,
+    total_length: _enemyno,
+    active: 0,
+    pronouns: [],
+	monsters: [],
+    beastTypes: []
+}>>
+<<for _e_n to 0; _e_n lt $enemyno; _e_n++>>
+    <<saveNPC _e_n `"beast_" + _e_n`>>
+    <<set $combatTrain.beastTypes.push($NPCList[_e_n].type)>>
+    <<set $combatTrain.pronouns.push($NPCList[_e_n].pronoun)>>
+	<<set $combatTrain.monsters.push($NPCList[_e_n].monster)>>
+<</for>>
+<<clearnpc>>
+<<loadNPC 0 beast_0>>
 <</nobr>><</widget>>
 
 <<widget "leg_position">><<nobr>>
@@ -197,4 +178,18 @@
 <<else>>
 	<<set _leg_position to "down">>
 <</if>>
+<</nobr>><</widget>>
+
+/* Should ideally only be used if you're sure one npc is in this position */
+/* Selects the NPC that has the given body part (chest, mouth, vagina) set to the given value */
+/* Useful when you know one of them is in a given position by looking at the PC, but aren't sure which */
+<<widget "selectNpcWithPartInPosition">><<nobr>>
+	<<if $args[0] and $args[1]>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j][$args[0]] is $args[1]>>
+				<<personselect _j>>
+				<<break>>
+			<</if>>
+		<</for>>
+	<</if>>
 <</nobr>><</widget>>

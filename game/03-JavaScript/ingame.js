@@ -111,7 +111,7 @@ window.combatListColor = function (name, value, type) {
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
-			case "vaginaEdging": case "anusEdging":
+			case "vaginaEdging": case "otheranusEdging":
 			/*vaginaaction*/
 			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate": case "penisEdging":
 			/*anusaction*/

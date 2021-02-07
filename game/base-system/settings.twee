@@ -55,7 +55,7 @@
 <<set $saveName to "">>
 <<set $zoom to 100>>
 <<set $checkstyle to "words">>
-<<set $blackwolfmonster to 0>>
+<<set $blackwolfmonster to 1>>
 <<set $player.ballsExist to false>>
 
 <<set $newWardrobeStyle to false>>
@@ -79,7 +79,9 @@
 <<switch $currentSettings>>
 	<<case "quickStart">><<replace #settingsDiv>><<quickStart>><</replace>>
 	<<case "presetConfirmDetails">><<replace #settingsDiv>><<presetConfirmDetails>><</replace>>
-	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>><<startingPlayerImageUpdate>><<removeclass #startingPlayerImage "hidden">>
+	<<case "characterSettings">>
+		<<replace #settingsDiv>><<characterSettings>><</replace>>
+		<<if StartConfig.enableImages>><<startingPlayerImageUpdate>><<removeclass #startingPlayerImage "hidden">><</if>>
 	<<case "featSettings">><<replace #settingsDiv>><<featSettings>><</replace>>
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
@@ -149,7 +151,7 @@
 <br>
 <div id="settingsDiv">
 	<<if $passage is "Start">>
-		<<quickStart>><<set $currentSettings to "characterSettings">>
+		<<quickStart>><<set $currentSettings to "quickStart">>
 	<<else>>
 		<<gameSettings>><<set $currentSettings to "gameSettings">>
 	<</if>>
@@ -630,12 +632,12 @@
 	<<widget "beastSettings">><<nobr>>
 		<div class="solidBorderContainer">
 		<br>
-			<span class="gold">Percentage of beasts attracted to you that are male</span>
+			<span class="gold">Percentage of beasts or monsters attracted to you that are male</span>
 			<br>
 			<<numberslider "$beastmalechance" $beastmalechance 0 100 1>>
 			<br><br>
 
-			<span class="gold">Percentage of beasts that are replaced with monster girls or boys</span> - Requires bestiality to be enabled.
+			<span class="gold">Percentage of beasts that are replaced with monster girls or boys</span>
 			<br>
 			<<numberslider "$monsterchance" $monsterchance 0 100 1>>
 			<br><br>
@@ -645,6 +647,9 @@
 			<label>Only when hallucinating <<print '<<radiobutton "$monsterhallucinations" "t" ' + ($monsterhallucinations is "t" ? "checked" : "") + '>>'>></label> |
 			<label>At any time <<print '<<radiobutton "$monsterhallucinations" "f" ' + ($monsterhallucinations is "f" ? "checked" : "") + '>>'>></label>
 			<br><br>
+
+			<span class="red">Disabling bestiality will automatically replace all beasts with monster girls or boys, regardless of the above settings.</span>
+			<br>
 		
 			<span class="gold">Beast Toggles</span>
 			<br><span style="font-size: x-small; margin-left: 5px;">
@@ -653,8 +658,8 @@
 				<<script>>
 					let val = SugarCube.State.temporary.anyBeastOn ? 't' : 'f';
 					SugarCube.State.temporary.beastVars.forEach(x => SugarCube.State.variables[x] = val);
-					SugarCube.Engine.show();
 				<</script>>
+				<<displaySubsection "beastSettings">>
 			<</button>>
 			</span><br>
 			<label><div class="settingsToggle">
@@ -732,7 +737,7 @@
 	<label><div class="settingsToggle" style="display: inline-flex;">
 	Face style 
 	<div style="margin-left: 1em; width: 62%;"><<textbox "$facestyle" $facestyle>>
-	<br><span class="x-small-description" style="margin-left: -8.9em;">Modify only if you installed any face styles other than default</span>
+	<br><span class="x-small-description" style="margin-left: -8.9em;"><span class="red">!!Modify only if you installed any face styles other than default!!</span></span>
 	</div>
 	<<script>>jQuery(document).ready(() => { jQuery('#textbox-facestyle').css('width', '100%').css('min-width', 'unset').css('height', '0.75em'); });<</script>>
 	</div></label>
@@ -1097,7 +1102,8 @@ Breast size:
 	Beast Type:
 	<br>
 	<label><<print '<<radiobutton "$blackwolfmonster" 0 ' + ($blackwolfmonster is 0 ? "checked" : "") + '>>'>> Always a beast</label> |
-	<label><<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>> Monster girl or boy when requirements met</label>
+	<label><<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>> Monster girl or boy when requirements met</label> |
+	<label><<print '<<radiobutton "$blackwolfmonster" 2 ' + ($blackwolfmonster is 2 ? "checked" : "") + '>>'>> Always a monster girl or boy</label>
 	<br><br>
 <</if>>
 <<if $debug is 1>>
