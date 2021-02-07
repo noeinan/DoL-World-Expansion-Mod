@@ -475,7 +475,7 @@ window.settingsObjects = function (type) {
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
 				monsterhallucinations: { boolLetter: true },
-				blackwolfmonster: { min: 0, max: 1, decimals: 0 },
+				blackwolfmonster: { min: 0, max: 2, decimals: 0 },
 				bestialitydisable: { boolLetter: true },
 				swarmdisable: { boolLetter: true },
 				slimedisable: { boolLetter: true },
