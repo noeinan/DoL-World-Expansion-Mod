@@ -422,44 +422,53 @@
 <<widget "violence">><<nobr>>
 <!-- NG tuning v2.7 $arousal from $masochism/50 to /7. PC now orgasms at least once during spanking encounter at 50% masocism level and twice at 100% masoohism. /10 at max is required to orgasm once at 100% masochism. -->
 <!-- NG added stress reduction for masochists. Trauma left same -->
-	<<if $args[0] gte 0 or $args[0] lt 0>>
-		<<if $drunk gte 480>>
-			<<set $stress += ($args[0] * 3) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 360>>
-			<<set $stress += ($args[0] * 4) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 240>>
-			<<set $stress += ($args[0] * 6) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 120>>
-			<<set $stress += ($args[0] * 8) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 1>>
-			<<set $stress += ($args[0] * 9) * (1 - ($masochism / 1200))>>
-		<<else>>
-			<<set $stress += ($args[0] * 10) * (1 - ($masochism / 1200))>>
-		<</if>>
-		<<combattrauma $args[0]>>
-		<<set $pain += ($args[0] * (1 - ($masochism / 1200)))>>
-		<<set _arousal to ($args[0] * (0 + ($masochism / 18)))>>
-		<<arousal _arousal>>
-		<<set $arousalmasochism += ($args[0] * (0 + ($masochism / 7)))>>
-		<<if $orgasmdown gte 1>>
-			<<if $masochism gte 800>>
-				<<set $masochism += ($args[0] / 20)>>
-			<<elseif $masochism gte 500>>
-				<<set $masochism += ($args[0] / 10)>>
-			<<elseif $masochism gte 300>>
-				<<set $masochism += ($args[0] / 6)>>
-			<<elseif $masochism gte 100>>
-				<<set $masochism += ($args[0] / 2)>>
+	<<if $args.length gte 1>>
+		<<set _violence = $args[0]>>
+		<<set _stressMod = $args[1] || 1>>
+		<<set _traumaMod = $args[2] || 1>>
+		<<set _painMod = $args[3] || 1>>
+		<<set _arousalMod = $args[4] || 1>>
+
+		<<if _violence gt 0 or _violence lt 0>>
+			<<if $drunk gte 480>>
+				<<set _drunkMod = 3>>
+			<<elseif $drunk gte 360>>
+				<<set _drunkMod = 4>>
+			<<elseif $drunk gte 240>>
+				<<set _drunkMod = 6>>
+			<<elseif $drunk gte 120>>
+				<<set _drunkMod = 8>>
+			<<elseif $drunk gte 1>>
+				<<set _drunkMod = 9>>
 			<<else>>
-				<<set $masochism += $args[0]>>
+				<<set _drunkMod = 10>>
 			<</if>>
+			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
+			<<combattrauma _violence * _traumaMod>>
+			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)))>>
+			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
+			<<arousal _arousal>>
+			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
+			<<if $orgasmdown gte 1>>
+				<<if $masochism gte 800>>
+					<<set $masochism += (_violence / 20)>>
+				<<elseif $masochism gte 500>>
+					<<set $masochism += (_violence / 10)>>
+				<<elseif $masochism gte 300>>
+					<<set $masochism += (_violence / 6)>>
+				<<elseif $masochism gte 100>>
+					<<set $masochism += (_violence / 2)>>
+				<<else>>
+					<<set $masochism += _violence>>
+				<</if>>
+			<</if>>
+			<<if _violence gte 6>>
+				<<set $enemyanger -= 5>>
+			<<else>>
+				<<set $enemyanger -= _violence>>
+			<</if>>
+			<<set $enemyarousal += 1>>
 		<</if>>
-		<<if $args[0] gte 6>>
-			<<set $enemyanger -= 5>>
-		<<else>>
-			<<set $enemyanger -= $args[0]>>
-		<</if>>
-		<<set $enemyarousal += 1>>
 	<</if>>
 <</nobr>><</widget>>
 
