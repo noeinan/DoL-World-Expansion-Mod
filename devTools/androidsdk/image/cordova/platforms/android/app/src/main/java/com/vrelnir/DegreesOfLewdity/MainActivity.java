@@ -20,13 +20,23 @@
 package com.vrelnir.DegreesOfLewdity;
 
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.widget.Toast;
 import org.apache.cordova.*;
 
-public class MainActivity extends CordovaActivity
-{
+import com.vrelnir.DegreesOfLewdity.R;
+
+public class MainActivity extends CordovaActivity {
+
+    /**
+     * Max time in ms between back presses to close the app.
+     */
+    private static final long MAX_BACK_INTERVAL = 4000L;
+
+    private long lastBackEvent = 0L;
+
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // enable Cordova apps to be started in the background
@@ -38,4 +48,18 @@ public class MainActivity extends CordovaActivity
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
     }
+
+    @Override
+    public void onBackPressed() {
+        long now = SystemClock.uptimeMillis();
+        if (now - lastBackEvent < MAX_BACK_INTERVAL) {
+            // close app only if pressed again within defined period
+            super.onBackPressed();
+        } else {
+            lastBackEvent = now;
+            // else show confirm close message
+            Toast.makeText(this, R.string.confirm_close, Toast.LENGTH_LONG).show();
+        }
+    }
+
 }
