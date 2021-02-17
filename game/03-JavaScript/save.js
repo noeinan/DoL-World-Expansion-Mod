@@ -157,6 +157,7 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 
 window.getSaveData = function () {
 	var input = document.getElementById("saveDataInput");
+	updateExportDay();
 	input.value = Save.serialize();
 }
 
@@ -207,6 +208,13 @@ window.copySavedata = function (id) {
 		var copyTextArea = document.getElementById("CopyTextArea");
 		copyTextArea.value = "Copying Error";
 		console.log('Unable to copy: ', err);
+	}
+}
+
+window.updateExportDay = function(){
+	if(SugarCube.State.variables.lastExported != undefined && SugarCube.State.history[0].variables.lastExported != undefined){
+		SugarCube.State.variables.lastExported.days = clone(SugarCube.State.variables.days);
+		SugarCube.State.history[0].variables.lastExported.days = clone(SugarCube.State.history[0].variables.days);
 	}
 }
 
