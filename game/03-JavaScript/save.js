@@ -104,6 +104,7 @@ window.save = function (saveSlot, confirm, saveId, saveName) {
 		new Wikifier(null, '<<saveConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot != undefined) {
+			updateSavesCount();
 			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
 			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
 			SugarCube.State.variables.currentOverlay = null;
@@ -212,9 +213,18 @@ window.copySavedata = function (id) {
 }
 
 window.updateExportDay = function(){
-	if(SugarCube.State.variables.lastExported != undefined && SugarCube.State.history[0].variables.lastExported != undefined){
-		SugarCube.State.variables.lastExported.days = clone(SugarCube.State.variables.days);
-		SugarCube.State.history[0].variables.lastExported.days = clone(SugarCube.State.history[0].variables.days);
+	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		SugarCube.State.variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+		SugarCube.State.history[0].variables.saveDetails.exported.days = clone(SugarCube.State.history[0].variables.days);
+		SugarCube.State.variables.saveDetails.exported.count++;
+		SugarCube.State.history[0].variables.saveDetails.exported.count++;
+	}
+}
+
+window.updateSavesCount = function(){
+	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		SugarCube.State.variables.saveDetails.slot.count++;
+		SugarCube.State.history[0].variables.saveDetails.slot.count++;
 	}
 }
 

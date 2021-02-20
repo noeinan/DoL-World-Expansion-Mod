@@ -246,7 +246,7 @@ window.between = function(x, min, max){
 }
 
 function featsPointsMenuReset() {
-	jQuery(document).on('change', '#listbox--upgradename', function (e) {
+	jQuery(document).on('change', '#listbox--upgradenameid', function (e) {
 		new Wikifier(null, '<<updateFeatsPointsMenu>>');
 	});
 	return "";
