@@ -39,7 +39,7 @@
 	<<set _disabled to ["disabled","hidden"]>>
 
 	<<if $leftarm isnot "bound" and $leftarm isnot "grappled">>
-		<<if $dontHide is false and $worn.over_upper.exposed gte 1 and $worn.upper.exposed gte 1
+		<<if $dontHide is false and $worn.over_upper.exposed gte 1 and ($worn.upper.exposed gte 1 or $upperwetstage gte 3)
 		and ($exposed gte 2 and $uncomfortable.nude is true or $exposed is 1 and $uncomfortable.underwear is true)>>
 			<<set _coverLeft to true>>
 		<<else>>
@@ -48,7 +48,7 @@
 	<</if>>
 
 	<<if $rightarm isnot "bound" and $rightarm isnot "grappled">>
-		<<if $dontHide is false and $worn.over_lower.exposed gte 1 and $worn.lower.exposed gte 1
+		<<if $dontHide is false and $worn.over_lower.exposed gte 1 and ($worn.lower.exposed gte 1 or $lowerwetstage gte 3)
 		and ($exposed gte 2 and $uncomfortable.nude is true or $exposed is 1 and $uncomfortable.underwear is true)>>
 			<<set _coverRight to true>>
 		<<else>>
@@ -88,7 +88,7 @@
 	<</if>>
 
 	<!-- new pbhair extension for main pc-->
-	<<if $pbdisable is "f" and $worn.lower.type.includes("naked")>>
+	<<if $pbdisable is "f" and $worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked")>>
 		<<set _pbColour = ($makeup.pbcolour != 0 ? $makeup.pbcolour : $naturalhaircolour).replace(/ /g, '-')>>
 		<<if $pblevel gt 1>>
 			<div @class="'layer-pbhair pbhair-' + _pbColour">
@@ -584,6 +584,9 @@
 		<!-- Tears -->
 		<<if $pain gte 20>>
 			<img class="layer-tears anim-idle-2f" @src="'img/face/' + $facestyle + '/' + 'tear' + Math.floor(Math.clamp($pain, 0, 99) / 20) + '.png'">
+			<<if $makeup.mascara != 0>>
+				<img @class="'layer-lashes ' + _blink + ' mascara-' + $makeup.mascara.replace(/ /g, '-')" @src="'img/face/' + $facestyle + '/' + 'makeup/mascara' + Math.floor(Math.clamp($pain, 0, 99) / 20) + '.png'">
+			<</if>>
 		<</if>>
 	<</if>>
 <</nobr>><</widget>>
