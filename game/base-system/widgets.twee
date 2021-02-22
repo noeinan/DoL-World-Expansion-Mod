@@ -3612,10 +3612,13 @@ __Map__<br>
 		<<if _config.percent isnot undefined>>
 			<<set _config.percent = Math.floor(_config.percent)>>
 		<<else>>
-			<<if _config.currentLevel eq 0>>
-				<<set _config.percent = 0>>
-			<<elseif _config.currentLevel eq (_config.states.length - 1)>>
-				<<set _config.percent = 100>>
+			<<if _config.currentLevel eq (_config.states.length - 1)>>
+				/* Calculate percentage above highest state if max value is specified */
+				<<if _config.maxValue>>
+					<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.maxValue - _config.states[_config.currentLevel].requiredValue))>>
+				<<else>>
+					<<set _config.percent = 100>>
+				<</if>>
 			<<else>>
 				<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
 			<</if>>
