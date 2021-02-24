@@ -339,3 +339,30 @@ window.settingsAsphyxiation = function () {
 												 .css('margin-left', '1em');
 	});
 }
+
+window.settingsNamedNpcBreastSize = function () {	
+	const breastSizes = ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"];
+	
+	let updateText = () => {
+		const npcId = SugarCube.State.temporary.npcId;
+		const npc = SugarCube.State.variables.NPCName[npcId];
+		const val = npc.breastsize;
+		
+		const text = breastSizes[val];
+
+		if (val > 0) {
+			npc.breastdesc = text + " breast";
+			npc.breastsdesc = text + " breasts";
+		} else {
+			npc.breastdesc = text;
+			npc.breastsdesc = text + "s";
+		}
+
+		jQuery('#numberslider-value-npcname-npcidbreastsize').text('').append(npc.breastsdesc);
+	};
+
+	jQuery(document).ready(() => {
+		updateText();
+		jQuery('#numberslider-input-npcname-npcidbreastsize').on('input change', function (e) { updateText(); });
+	});
+}
