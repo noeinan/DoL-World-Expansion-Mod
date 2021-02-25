@@ -66,8 +66,8 @@ window.combatListColor = function (name, value, type) {
 	if (type === "") {
 		switch (check) {
 			/*leftaction or rightaction*/
-			case "steal": case "penwhack": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus": case "rightcovervagina":
-			case "rightcoverpenis": case "rightcoveranus":
+			case "steal": case "penwhack": case "freeface": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus":
+			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
 			/*mouthaction*/
