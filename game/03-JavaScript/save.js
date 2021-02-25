@@ -524,6 +524,7 @@ window.settingsObjects = function (type) {
 				halfcloseddisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
+				checkstyle: { strings: ["percentage", "words", "skillname"] },
 				tipdisable: { boolLetter: true },
 				debugdisable: { boolLetter: true },
 				cheatdisable: { boolLetter: true },
