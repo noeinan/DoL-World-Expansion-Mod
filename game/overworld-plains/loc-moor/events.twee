@@ -399,7 +399,7 @@ in quicksand!
 	<<quicksand_end>>
 	<<passout_moor>>
 <<elseif $phase is 0>>
-	<<if $willpower gte random(1, 400)>>
+	<<if $willpowerSuccess>>
 		You focus on your breathing, <span class="green">and manage to stay calm.</span>
 		<<set $quicksand += 1>>
 		<<if $quicksand gte 5>>
@@ -480,7 +480,7 @@ in quicksand!
 	<</if>>
 <<else>>
 	You kick against the sand holding you.
-	<<if $physique gte random(1, 20000)>>
+	<<if $physiqueSuccess>>
 		<span class="green">You feel it loosen.</span>
 		<<switch $quicksand_depth>>
 		<<case 1>>
@@ -799,7 +799,7 @@ The others jostle closer.
 <<effects>>
 
 You find grasp the rough wall, and start to climb. You're halfway up when an outcrop gives way beneath your feet.
-<<if $athletics gte random(500, 1500)>>
+<<if $athleticsSuccess>>
 	You remain calm, hold tight, and search for another foothold. <span class="green">The rest of the climb proves safer.</span> You haul yourself over the crest, and lie on your back a moment, panting.
 	<br><br>
 	
@@ -997,7 +997,7 @@ You continue through the tunnel. It soon slopes upwards, and you emerge in the <
 <<water>><<effects>>
 
 The water is cold, and deep. You swim away from shore. You can see nothing ahead, but the glowing plants along the shore help keep your bearings.
-<<if $swimmingskill gte random(600, 1000)>>
+<<if $swimmingSuccess>>
 	A sudden current surges around you, threatening to pull you under, <span class="green">but you manage to keep your head above the surface.</span> The water stills.
 	<br><br>
 	
@@ -1114,7 +1114,7 @@ You leave your clothes lying beneath an overhanging outcrop, and slip into the w
 <<effects>>
 
 You pull the wild carrots from the ground,
-<<if $tending gte random(300, 600)>>
+<<if $tendingSuccess>>
 	<span class="green">and have soon gathered a large number of saleable specimens.</span>
 	<<tending_pick wild_carrot 20 50>>
 	<br><br>
@@ -1138,7 +1138,7 @@ You pull the wild carrots from the ground,
 <<effects>>
 
 You pull the onions from the ground,
-<<if $tending gte random(300, 600)>>
+<<if $tendingSuccess>>
 	<span class="green">and have soon gathered a large number of saleable specimens.</span>
 	<<tending_pick onion 15 40>>
 	<br><br>
@@ -1162,7 +1162,7 @@ You pull the onions from the ground,
 <<effects>>
 
 You pull the garlic bulbs from the ground,
-<<if $tending gte random(300, 600)>>
+<<if $tendingSuccess>>
 	<span class="green">and have soon gathered a large number of saleable specimens.</span>
 	<<tending_pick garlic_bulb 30 50>>
 	<br><br>
@@ -1342,7 +1342,7 @@ You scramble for the now-unlocked exit, but not before the <<person1>><<person>>
 <<effects>>
 
 You run.
-<<if $athletics gte random(1, 1000)>>
+<<if $athleticsSuccess>>
 	The pair chase, <span class="green">but you manage to outpace them.</span>
 	<br><br>
 	
@@ -1488,7 +1488,7 @@ The <<person2>><<person>> unties you from the vehicle, but leaves your arms boun
 <<effects>>
 
 It takes a brisk walk to keep up,
-<<if $athletics gte random(1, 200)>>
+<<if $athleticsSuccess>>
 	<span class="green">but you manage it.</span><<physique 2>>
 	<br><br>
 	
@@ -1515,7 +1515,7 @@ It takes a brisk walk to keep up,
 <<effects>>
 
 You have to jog to keep up
-<<if $athletics gte random(1, 600)>>
+<<if $athleticsSuccess>>
 	<span class="green">but you manage it.</span><<physique 2>>
 	<br><br>
 	"<<pShes>> still at it," the <<person1>><<person>> shouts. The vehicle speeds up again.
@@ -1541,7 +1541,7 @@ You have to jog to keep up
 <<effects>>
 
 You have to run to keep up,
-<<if $athletics gte random(1, 1000)>>
+<<if $athleticsSuccess>>
 	<span class="green">but you manage it.</span><<physique 6>>
 	<br><br>
 	The <<person1>><<person>> cheers your endurance. The <<person2>><<person>> glances out the window. <<He>> looks surprised.
@@ -1642,6 +1642,20 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 <<link [[Leave|Moor Flower Leave]]>><</link>><<willpowerdifficulty 1 1000>>
 <br>
 
+:: Moor Phallus Plant [nobr]
+<<effects>>
+
+You approach the odd phallus-shaped plant. The scent is alluring. You wonder why such a thing exists.
+<br><br>
+
+A heat travels down your spine, resting in your loins. You're filled with a desperate yearning.
+<br><br>
+
+<<link [[Masturbate|Moor Phallus Plant Masturbation]]>><<set $masturbationstart to 1>><<set $moorPhallusPlant to 1>><</link>>
+<br>
+<<link [[Leave|Moor Flower Leave]]>><</link>><<willpowerdifficulty 1 1000>>
+<br>
+
 :: Moor Flower Masturbation [nobr]
 <<effects>>
 <<if $masturbationstart is 1>>
@@ -1656,7 +1670,13 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 <<masturbationactions>>
 <<link [[Continue|Moor Flower Masturbation]]>><</link>><<nexttext>>
 <br>
-<<link [[Stop|Moor Flower Masturbation Finish]]>><<set $finish to 1>><</link>>
+<<if $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt ($willpower / 10)>>
+	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
+<<elseif $corruptionMasturbation isnot true>>
+	<<link [[Stop|Moor Flower Masturbation Finish]]>><<set $finish to 1>><</link>>
+<<else>>
+	The slime in your ear will not allow you to stop.
+<</if>>
 <br>
 
 :: Moor Flower Masturbation Finish [nobr]
@@ -1698,13 +1718,88 @@ A heat travels down your spine, resting in your loins. You're filled with a desp
 	<br>
 
 <</if>>
+<<unset $moorFlower>>
+
+:: Moor Phallus Plant Masturbation [nobr]
+<<effects>>
+<<if $masturbationstart is 1>>
+	<<set $masturbationstart to 0>>
+	<<set $masturbationstat += 1>>
+	<<masturbationstart>>
+	
+	You approach the plant, unable to contain your lust. You have to cum while using it. Right now.<<garousal>><<arousal 600>>
+	<br><br>
+<</if>>
+<<masturbationeffects>>
+<<masturbationactions>>
+
+<<if $masturbationorgasm gte 3 and ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
+	<<link [[Continue|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>>
+<<else>>
+	<<link [[Continue|Moor Phallus Plant Masturbation]]>><</link>><<nexttext>>
+<</if>>
+<br>
+<<if ($anususe is "mpenisflowerpenetrate" or $vaginause is "mpenisflowerpenetrate" or $mouth is "mpenisflowersuck")>>
+	<span class="red">You can't stop.</span>
+<<elseif $corruptionMasturbation isnot true and random(0,3) gt $orgasmcurrent and $corruption_slime gt ($willpower / 10)>>
+	<<link [[Stop|$passage]]>><<set $corruptionMasturbation to true>><</link>>
+<<elseif $corruptionMasturbation isnot true>>
+	<<link [[Stop|Moor Phallus Plant Masturbation Finish]]>><<set $finish to 1>><</link>>
+<<else>>
+	The slime in your ear will not allow you to stop.
+<</if>>
+
+:: Moor Phallus Plant Masturbation Finish [nobr]
+
+<<effects>>
+<<if $anususe isnot "mpenisflowerpenetrate" and $vaginause isnot "mpenisflowerpenetrate" and $mouth isnot "mpenisflowersuck">>
+	<<endmasturbation>>
+	<<endcombat>>
+
+	With great effort, you force your hands away from your body, grasping tufts of grass to keep them still. You crawl away from the flower, ignoring the ache.
+	<br><br>
+	
+	<<if $hallucinations gte 2>>
+		<span class="red">Something snags your ankle.</span> Roots erupt from the base of the flower. They whip around your waist, and drag you back.
+		<br><br>
+		
+		<<link [[Next|Moor Tentacles]]>><<set $molestationstart to 1>><</link>>
+		<br>
+	<<else>>
+		You're panting by the time you escape the scent's influence.<<gtiredness>><<ggstress>><<tiredness 6>><<stress 12>>
+		<br><br>
+
+		<<link [[Next|Moor]]>><<clotheson>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	<<if $anususe is "mpenisflowerpenetrate">>
+		<<purity -1>><<set $anusgoo += 1>><<analejacstat>><<ejacstat>>
+		Slimy fluid erupts from the tip, flooding your bowels with its warmth.
+	<<elseif $vaginause is "mpenisflowerpenetrate">>
+		<<purity -1>><<set $vaginagoo += 1>><<vaginalejacstat>><<ejacstat>>
+		Slimy fluid erupts from the tip, flooding your womb with its warmth.
+	<<elseif $mouth is "mpenisflowersuck">>
+		<<purity -1>><<set $mouthgoo += 1>><<oralejacstat>><<ejacstat>>
+		Slimy fluid erupts from the tip, flooding your mouth with its warmth.
+	<</if>>
+	You feel satisfied, and break out of the daze caused by the scent.
+	<br><br>
+
+	<<endmasturbation>>
+	<<endcombat>>
+	<<link [[Next|Moor]]>><<clotheson>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
+<<unset $moorPhallusPlant>>
+<<unset $moorFlower>>
 
 
 :: Moor Flower Ignore [nobr]
 <<effects>>
 
 You try to ignore the sweet scent, 
-<<if $willpower gte random(1, 600)>>
+<<if $willpowerSuccess>>
 	<span class="green">and manage to tear yourself away.</span> You continue your journey.
 	<br><br>
 	<<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
@@ -1713,7 +1808,11 @@ You try to ignore the sweet scent,
 	<span class="red">but can't bring yourself to walk away.</span><<gwillpower>><<willpower 3>>
 	<br><br>
 	
-	<<link [[Next|Moor Flower]]>><</link>>
+	<<if $moorFlower is "flower">>
+		<<link [[Investigate|Moor Flower]]>><<arousal 600>><<set $drugged += 60>><</link>><<garousal>>
+	<<else>>
+		<<link [[Investigate|Moor Phallus Plant]]>><<arousal 600>><<set $drugged += 60>><</link>><<garousal>>
+	<</if>>
 	<br>
 <</if>>
 
@@ -1721,7 +1820,7 @@ You try to ignore the sweet scent,
 <<effects>>
 
 You turn away,
-<<if $willpower gte random(1, 1000)>>
+<<if $willpowerSuccess>>
 	<span class="green">and manage to ignore the scent's influence.</span>
 	<br><br>
 	
@@ -1733,8 +1832,11 @@ You turn away,
 <<else>>
 	<span class="red">but the yearning is too much.</span><<gwillpower>><<willpower 3>>
 	<br><br>
-	
-	<<link [[Next|Moor Flower Masturbation]]>><<set $masturbationstart to 1>><</link>>
+	<<if $moorFlower is "flower">>
+		<<link [[Next|Moor Flower Masturbation]]>><<set $masturbationstart to 1>><</link>>
+	<<else>>
+		<<link [[Next|Moor Phallus Plant Masturbation]]>><<set $masturbationstart to 1>><<set $moorPhallusPlant to 1>><</link>>
+	<</if>>
 	<br>
 <</if>>
 
@@ -1787,8 +1889,10 @@ The roots return to the earth. The sweet scent lingers in the air.
 
 You recite the words you learned. Maybe it did nothing, but you feel a little better regardless.
 <br><br>
-<<if $moorLuck is undefined or $moorLuck is 0>>
-	<<set $moorLuck to random(3,7)>>
+<<if $moorLuck is undefined>>
+	<<set $moorLuck to 5>>
+<<elseif $moorLuck lte 5>>
+	<<set $moorLuck += 5>>
 <</if>>
 
 <<link [[Next|Moor]]>><<set $eventskip to 1>><</link>>
@@ -1798,7 +1902,7 @@ You recite the words you learned. Maybe it did nothing, but you feel a little be
 :: Moor Cliff Pull [nobr]
 <<effects>>
 
-<<if $athletics gte random(1, 1000)>>
+<<if $athleticsSuccess>>
 	<span class="green">The shrub holds</span> as you pull yourself onto the ledge. You lie there a moment as your pulse calms.
 	<br><br>
 <<else>>
@@ -1896,7 +2000,7 @@ You continue your journey.
 <<effects>>
 
 You sing a soothing tune,
-<<if $tending gte random(500, 1100)>>
+<<if $tendingSuccess>>
 	<span class="green">and the <<beastsplural>> back away from you.</span> They crouch, listening.
 	<br><br>
 	<<if $monster is 1>>

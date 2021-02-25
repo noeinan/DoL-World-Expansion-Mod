@@ -412,7 +412,7 @@
 		<<set _loss *= 2>>
 	<</if>>
 	<<set _loss *= $enemyArousalLossReduction>>
-	<<if $enemyArousalLossReduction gt 20>>
+	<<if $enemyArousalLossReduction gt 0.2>>
 		<<set $enemyArousalLossReduction -= 0.04>>
 	<</if>>
 	<<set $enemyarousal -= Math.round(_loss)>>
@@ -3572,7 +3572,6 @@ __Map__<br>
 
 <<widget "characteristic-box">><<nobr>>
 	<<set _config = $args[0]>>
-
 	<<if _config.states and _config.states.length gt 0>>
 
 		<<set _config.currentLevel = 0>>
@@ -3638,7 +3637,7 @@ __Map__<br>
 			<<if $images is 1 and _config.icon>>
 				<img class="characteristic-icon" @src="'img/' + _config.icon + '.png'" />
 			<</if>>
-			<span class="characteristic-title">_config.name</span>
+			<span class="characteristic-title">_config.name<<characteristic-box-modifier `clone(_config.modifier)`>></span>
 			<<if _config.states>>
 				<<if _config.displayType eq "level">>
 					<span @class="'characteristic-level ' + _config.color">
@@ -3667,6 +3666,18 @@ __Map__<br>
 		</div>
 	</div>
 
+<</nobr>><</widget>>
+
+<<widget "characteristic-box-modifier">><<nobr>><<silently>>
+<<if $args[0] isnot undefined or $args[0] isnot 100>>
+	<<set $_modifier to $args[0] - 100>>
+	<<if $_modifier gt 0>>
+		<<set $_result to " <small class='green characteristic-modifier'>(+"+$_modifier+"%)</small>">>
+	<<elseif $_modifier lt 0>>
+		<<set $_result to " <small class='red characteristic-modifier'>("+$_modifier+"%)</small>">>
+	<</if>>
+<</if>>
+<</silently>><<if $_result>><<print $_result>><</if>>
 <</nobr>><</widget>>
 
 <<widget "relation-text">><<nobr>>
