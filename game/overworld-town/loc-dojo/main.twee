@@ -1,0 +1,554 @@
+/*noeinan mod START*/
+/*Created a Martial Arts Dojo, where the player can learn Martial Arts.*/
+
+:: Dojo [nobr]
+
+<<set $outside to 0>><<set $location to "dojo">><<effects>>
+
+You are in the dojo. Here you can pay for self-defense lessons. There is a rumor that students get injured so often the student turnover is extremely high. Lessons cost £12.
+<br><br>
+<<if $stress gte 10000>>
+	<<passoutshop>>
+<<else>>
+	<<if $hour is $closinghour>>
+		It's closing time. The receptionist is herding everyone outside.<<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should you be found in this state of dress.<</if>>
+		<br>
+		<<storeon "dojo" "check">>
+			<<if _store_check is 1>>
+				<br>
+				You remember you left your clothes in the changing room.
+				<br>
+				<<link [[Dress before leaving|Wolf Street]]>><<storeon "dojo">><</link>>
+				<br>
+			<</if>>
+	<<elseif $openinghours is 0>>
+		You are alone in the darkness.
+		<br><br>
+	<<elseif $exposed gte 1>>
+
+		<<if $uncomfortable.nude is false>>
+		You are hiding in a cupboard, you wouldn't mind others seeing you exposed, but this time you stay put.
+		<<else>>
+		You are hiding in a cupboard to protect your dignity.
+		<</if>>
+		<br><br>
+	<</if>>
+	<<if $openinghours is 1 and $exposed lt 1>>
+		<<if $money gte 1200 and $exposed lt 1>>
+			<<link [[Take a self-defense lesson (1:00)|Self-Defense Lesson]]>><<set $phase to 0>><<set $money -= 1200>><<set $martialstage to 0>><</link>> Costs £12 <<gtiredness>> | <span class="green">+ Martial Skill</span>
+			<br>
+		<</if>>
+	<</if>>
+	<<if $hour isnot $closinghour>>
+		<<link [[Changing Room|Dojo Changing Room]]>><</link>>
+		<br>
+	<</if>>
+	<<if $openinghours is 0 and $hour isnot $closinghour and $dancestudiotheft isnot 1>>
+		<<link [[Examine the cash register|Dojo Register]]>><</link>>
+		<br>
+	<</if>>
+	<br>
+	<<storeon "dojo" "check">>
+	<<if _store_check is 1 and ($worn.upper.name is "naked" or $worn.lower.name is "naked") and $exposed is 1>>
+		You left clothes in the changing room. Your <span class="lewd"><<lewdness>></span> is fine in here, but would be considered lewd outside.
+		<br><br>
+		<<if $exhibitionism gte 15>>
+			<<link [[Go outside anyway|Dojo Outside Exhibitionism]]>><</link>><<if $ex_dojo isnot 1>><<exhibitionist2>><</if>>
+			<br>
+		<</if>>
+	<<else>>
+		[[Leave|Wolf Street]]
+		<br><br>
+	<</if>>
+<</if>>
+
+
+:: Dojo Changing Room [nobr]
+
+<<effects>>
+
+You are in the dojo's changing room. Benches line the walls, with hooks for clothes hanging above.
+<br><br>
+
+You could change into your uniform, or similar clothes that are easy to move in here.
+<br><br>
+
+<<storeon "dojo" "check">>
+<<if _store_check is 1>>
+	You left your clothes here.
+	<br>
+	<<link [[Wear|Dojo Changing Room]]>><<storeon "dojo">><</link>>
+	<br>
+<</if>>
+
+<br>
+<<link [[Leave|Dojo]]>><</link>>
+<br>
+
+:: Dojo Change [nobr]
+
+<<effects>>
+
+<<if $worn.upper.name isnot "naked">>
+	<<if $worn.lower.name isnot "naked" and $worn.upper.set isnot $worn.lower.set>>
+		You remove your $worn.lower.name, and hang it on one of the hooks.
+		<<lowerundress "dojo">>
+	<<else>>
+		You remove your $worn.upper.name, and hang it on one of the hooks.
+		<<upperundress "dojo">>
+	<</if>>
+<<elseif $worn.lower.name isnot "naked">>
+	You remove your $worn.lower.name, and hang it on one of the hooks.
+	<<lowerundress "dojo">>
+<</if>>
+<br><br>
+
+<<link [[Next|Dojo Changing Room]]>><</link>>
+<br>
+
+:: Dojo Outside Exhibitionism [nobr]
+
+<<effects>>
+
+<<flaunting>> you step outside. You're not wearing normal outdoor attire. A few people glance over and look you up and down, examining your contours.
+<<if $ex_dojo isnot 1>>
+<<set $ex_dojo to 1>><<exhibitionism3>>
+<<else>>
+<br><br>
+<</if>>
+
+Your heart beats faster as you walk away from the dojo, and away from relative safety.
+<br><br>
+
+<<link [[Next|Wolf Street]]>><</link>>
+<br>
+
+:: Dojo Lock [nobr]
+
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+<<openinghours>>
+<<if $skulduggery gte $lock>>
+	<span class="green">The lock looks easy to pick.</span>
+	<br><br>
+	<<link [[Pick it (0:10)|Dojo]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+	<br>
+<<else>>
+	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+	<br><br>
+<</if>>
+<<link [[Leave|Wolf Street]]>><</link>>
+<br>
+
+:: Self-Defense Lesson [nobr]
+
+<<effects>>
+<<if $dojointro is 1 and $phase is 0>><<pass 20>><</if>>
+<<set $outside to 0>><<set $location to "dojo">><<effects>>
+<<if $dojointro isnot 1>>
+	<<set $dojointro to 1>>
+	<<npc Aki>><<person1>>You pay the receptionist and join the other students beyond the glass partition. The wide room is clean with white walls, and there are several large, padded mats on the ground. A handful of people are already inside, standing in a straight line before the instructor. <<He>> looms menacingly over the class, breaking down each students weakness and giving extra exercises.
+	<br><br>
+	You stand at the door for several minutes before <<he>> finishes with the other students. <<He>> turns towards you, giving you your first clear look at <<his>> face. <<He>> is devastatingly handsome, but <<his>> features are sharp, and there is an aura about <<him>> that makes your knees weak. "Fresh meat. Looks like someone is out of the loop, or I've been slacking and my reputation has dropped."
+	<br><br>
+	<<He>> cackles, causing whisps of black hair to fall over <<his>> eyes. <<He>> jerks <<his>> chin, gesturing towards the other students. "Well, get in line. Are you waiting for an invitation? It's your money."
+	<<if $pronoun is "m">>
+		You can't help but notice the outline of <<his>> pecs through the gap in <<his>> loose clothes.
+	<<elseif $pronoun is "f">>
+		<<if $NPCList[0].breastsize gte 5>>
+			<<His>> generous breasts are bound tight against <<his>> torso, leaving more emphasis on <<his>> defined musculature.
+		<<elseif $NPCList[0].breastsize gte 3>>
+			<<His>> breasts are bound tight against <<his>> torso, leaving more emphasis on <<his>> defined musculature.
+		<<elseif $NPCList[0].breastsize gte 1>>
+			<<His>> small breasts are bound flat against <<his>> torso, leaving more emphasis on <<his>> defined musculature.
+		<<else>>
+			You can't help but notice the outline of <<his>> pecs through the gap in <<his>> loose clothes.
+		<</if>>
+	<</if>>
+	<br><br>
+	Your eyes suddenly meet <<his>> as <<he>> catches you checking <<him>> out. "Gutsy. We'll see how long that lasts." <<He>> sounds bemused, how do you respond?
+	<br><br>
+	<<link [[Timidly|Self-Defense Lesson]]>><<set $phase to 1>><</link>>
+	<br>
+	<<link [[Confidently|Self-Defense Lesson]]>><<npcincr Aki love 20>><<set $phase to 2>><</link>>
+	<br>
+	<<link [[Flirtatiously|Self-Defense Lesson]]>><<npcincr Aki love -10>><<stress -12>><<trauma -6>><<set $phase to 3>><</link>><<promiscuous1>><<lstress>><<ltrauma>>
+	<br>
+<<elseif $phase is 1>>
+	<<set $phase to 0>>
+	"S-Sorry, t-that wasn't, I mean..." you mumble, face flushed red in embarassment.
+	<br><br>
+	<<His>> face clearly twists in disgust at your bumbling. "If you're going to snivel, get out. I don't have time for dramatics. It's very evident you're a friendless loser, which is why you don't already know, I run a tight ship. I expect you to follow instructions without any nonsense while you're here. Address me as "Master Aki" or "sir"." <<He>> assigns you double exercises before turning <<his>> back and commencing the lesson. <<tiredness 4>>
+	<br><br>
+	<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+	<br>
+<<elseif $phase is 2>>
+	<<set $phase to 0>>
+	"Oh, I'm sure I can stick it out."
+	<br><br>
+	The instructor grins wickedly, "That's what I like to hear. You'll be fun to break." Although <<his>> general demeanor is terrifying, the sparkles in <<his>> make <<him>> look almost playful, dulling the effect. "You will address me as "Master Aki" or "sir". Let's get started." You head over as the lesson commences.
+	<br><br>
+	<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+	<br>
+<<elseif $phase is 3>>
+	<<set $phase to 0>>
+	<<promiscuity1>>"I can last all night with you as my instructor." You roll the words off of your tongue suggestively, making your intentions very clear.
+	<br><br>
+	<<His>> eyes narrow at you, followed by a cold smile that does not reach <<his>> eyes. "I've had my fair share of students like you. Don't worry, you'll get very... special treatment in this calss. You will address me as "Master Aki" or "sir". Do your best to keep up." <<He>> turns back to the rest of the class, leaning over and speaking softly to another student before assigning them as your partner. The lesson soon commences. <<set $pain += 20>>
+	<br><br>
+	<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+	<br>
+<<elseif $martialstage gte 2>>
+	<<tiredness 4>><<set $martialskill += 14>><<martialskilluse>><<wearandtear "martail">><<physique 2>>
+	The rest of the lesson passes uneventfully.
+	<br><br>
+	<<link [[Next|Dojo]]>><<endevent>><</link>>
+<<else>>
+	<<if $exposed gte 1>>
+		You seem to be distracting the class somehow. Looking down, you immediately discover why.
+		<<if $uncomfortable.nude is false>>
+		You feel a thrill at your exposure, and let the others take a quick peek of your body.
+		<br>
+		You cover yourself, trying to feign decency as another student rushes over to you with some towels.
+		<<towelup>><<garousal>><<gstress>><<gtrauma>><<arousal 100>><<npcincr Aki love -2>>
+		<br><br>
+		<<else>>
+		Yelping, you cover yourself as another student rushes over to you with some towels.
+		<<towelup>><<garousal>><<gstress>><<gtrauma>><<arousal 100>><<stress 1>><<trauma 1>><<npcincr Aki love -2>>
+		<br><br>
+		<</if>>
+	<</if>>
+	<<tiredness 4>><<set $martialstage += 1>><<set $marialskill += 14>><<martialskilluse>><<wearandtear "martial">><<physique 2>><<npc Aki>><<person1>>
+	<<if $rng lte 20>>
+		<<set $martiallesson to "barre">>
+		You stretch and work your muscles using a barre.
+		<<if $martialskill lte 200>>
+			It's hard work to stay balanced. You can see in the mirror that you look a bit silly, especially compared to the more experienced students.
+		<<elseif $martialskill lte 800>>
+			You're pretty good at staying balanced. You are able to practise more advanced techniques.
+		<<else>>
+			You are able to use it as a surrogate partner, supporting your weight as you practise airborne techniques. Some of the other students look on with envy.
+		<</if>>
+		<br><br>
+	<<elseif $rng lte 40>>
+		<<set $martiallesson to "duo">><<generate2>><<person2>>
+		You partner up with a <<person>>.
+		<<if $martialskill lte 200>>
+			<<He>> has more experience than you, so you let <<him>> take the lead.
+		<<elseif $martialskill lte 800>>
+			You practise techniques requiring a partner, taking turns supporting one another.
+		<<elseif $martialskill lte 1000>>
+			Being so experienced, you take the lead, careful not to push <<him>> too hard.
+		<</if>>
+		<br><br>
+	<<elseif $rng lte 60>>
+		<<set $mariallesson to "airbarre">>
+		You stretch and work your muscles using an air barre.
+		<<if $martialskill lte 200>>
+			More experienced students use it to develop strength and poise. You just have fun swinging around.
+		<<elseif $martialskill lte 800>>
+			You work on developing your poise.
+		<<elseif $martialskill lte 1000>>
+			Held aloft, you are able to fully demonstrate your grace and skill.
+		<</if>>
+		<br><br>
+		<<if $worn.lower.skirt is 1>>
+			You realise it may have been a mistake to wear a skirt. Performing airborne exercises without displaying your <<undies>> for the whole class to see proves to be virtually impossible.
+					<<if $uncomfortable.nude is false>>
+					<span class="lewd">You don't mind people looking.</span>
+					<<garousal>><<arousal 600>>
+					<br><br>
+					<<else>>
+					<<garousal>><<gstress>><<gtrauma>><<arousal 600>><<stress 6>><<trauma 6>>
+					<br><br>
+					<</if>>
+		<</if>>
+	<<elseif $rng lte 80>>
+		<<set $martiallesson to "instructor">>
+		Aki gives you some personal attention.
+		<<if $martialskill lte 200>>
+			<<He>> helps you with the basics.
+		<<elseif $martialskill lte 800>>
+			<<He>> demonstrates some new steps for you to try.
+		<<elseif $martialskill lte 1000>>
+			<<He>> helps you iron out some flaws in your posture.
+		<</if>>
+		<br><br>
+	<<elseif $rng lte 100>>
+		<<set $martiallesson to "noinstructor">>
+		Aki demonstrates some moves in front of the class, who do their best to emulate <<him>>.
+		<br><br>
+	<</if>>
+	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+	<<if $danger gte (9900 - $allure) and $eventskip is 0>>
+		<<eventsdojo>>
+	<<else>>
+		<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+:: Widgets Events Dojo [widget]
+
+<<widget "eventsdojo">><<nobr>>
+	<<set $dangerevent to random(1, 100)>>
+	<<if $martiallesson is "barre">>
+		<<endevent>><<generate1>><<person1>>Aki announces that they need to clear some room and asks you and a <<person>> to put away the portable barre. You manage to carry it out of the studio and into a room filled with other equipment. As you put it down however, you hear the door shut behind you. <span class="red">You turn to find the <<person>> advancing on you, lust in <<his>> eyes.</span>
+		<br><br>
+		<<link [[Next|Dojo Molestation]]>><<set $molestationstart to 1>><</link>>
+	<<elseif $martiallesson is "duo">>
+		You don't think <<he>> has to keep <<his>> hand that close to your butt. Or pull your body that close against <<his>> for that matter. <span class="blue">You can feel <<his>> hardened <<if $NPCList[1].penis is "clothed">>penis<<else>>nipples<</if>> pressing against you.</span>
+		<br><br>
+		<<link [[Endure|Dojo Duo]]>><<set $phase to 0>><</link>><<garousal>>
+		<br>
+		<<link [[Push away|Dojo Duo]]>><<set $phase to 1>><</link>>
+		<br>
+		<<if $promiscuity gte 15>>
+			<<link [[Reciprocate|Dojo Duo]]>><<set $phase to 2>><</link>><<promiscuous2>>
+			<br>
+		<</if>>
+	<<elseif $martiallesson is "airbarre">>
+		The barre gives way slightly, enough to disrupt your delicate balance. Instinct causes you to twist in an attempt to save yourself from falling. You succeed, but the barre becomes wrapped around your waist.
+		<br><br>
+		<<if $worn.lower.type.includes("naked")>>
+			<<if !$worn.under_lower.type.includes("naked")>>
+				You try to struggle back upright, but with no success. Worse, you start to slip despite the barre coiled tightly around your body. You fall onto your back with a thud.
+				<<if $uncomfortable.nude is false>>
+				As you regain your bearings, you see your $worn.under_lower.name suspended in the air above you. You take your time and wear a confident smile as you retrieve them, despite the whispers and giggling all around you.
+				<<garousal>>
+				<<else>>
+				As you regain your bearings, you see your $worn.under_lower.name suspended in the air above you. Flustered at your <<genitals>> being exposed in the middle of class like this, you hasten to recover your $worn.under_lower.name as quickly as you can, conscious of the whispers and giggling all around you.
+				<<gtrauma>><<gstress>><<garousal>>
+				<</if>>
+			<<else>>
+				<<if $uncomfortable.nude is false>>
+				You try to struggle back upright, but with no success. Worse, you start to slip despite the barre coiled tightly around your body. You fall onto your back with a thud. Your legs spread apart, giving the whole room a clear view of your <<genitals>>. You feign horror, unbothered by the whispers and giggling all around you.
+				<<garousal>>
+				<<else>>
+				You try to struggle back upright, but with no success. Worse, you start to slip despite the barre coiled tightly around your body. You fall onto your back with a thud. Your legs spread apart, giving the whole room a clear view of your <<undies>> and causing your face to flush red with embarrassment. You hasten to cover up as quickly as you can, conscious of the whispers and giggling all around you.
+				<<gtrauma>><<gstress>><<garousal>>
+				<</if>>
+			<</if>>
+		<<elseif $martialskill gte 600>>
+			You skilfully shift your weight and ride the momentum back into an upright position. That was close!
+		<<else>>
+
+			<<if $uncomfortable.underwear is false>>
+			You try to struggle back upright, but with no success. Worse, you start to slip despite the barre coiled tightly around your body. You fall onto your back with a thud. As you regain your bearings, you see your <<bottoms>> suspended in the air above you. You take your time and wear a confident smile as you retrieve them, despite the whispers and giggling all around you. You wouldn't mind showing off even more.
+			<<else>>
+			You try to struggle back upright, but with no success. Worse, you start to slip despite the barre coiled tightly around your body. You fall onto your back with a thud. As you regain your bearings, you see your <<bottoms>> suspended in the air above you. Flustered at your <<undies>> being exposed in the middle of class like this, you hasten to recover your <<bottoms>> as soon as you can, conscious of the whispers and giggling all around you.
+			<<gtrauma>><<gstress>><<garousal>>
+			<</if>>
+
+		<</if>>
+		<br><br>
+		<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+	<<elseif $martiallesson is "instructor">>
+		<<He>> presses <<his>> body against your back and holds your hands in <<his>> own so that <<he>> can more directly demonstrate to you. Despite <<him>> making no overtly sexual moves, you can't help but feel a little turned on with <<his>> toned body so intimately close to yours.
+		<<garousal>><<arousal 300>>
+		<br><br>
+		<<link [[Meek Compliment|Dojo Instructor]]>><<set $phase to 1>><</link>>
+		<br>
+		<<link [[Confident Brag|Dojo Instructor]]>><</link>>
+		<br>
+		<<if $promiscuity gte 15>>
+			<<link [[Flirt|Dojo Instructor]]>><<set $phase to 2>><</link>><<promiscuous2>>
+			<br>
+		<</if>>
+	<<else>>
+		The receptionist peeks her head through the door and looks at Aki, who seems to understand her meaning. "I need to take five." <<he>> announces. "Keep practising, I won't be long."
+		<br><br>
+		<<endevent>>
+		<<if $dojoanger gte 10>>
+			<<set $dojoanger -= 10>>
+			<<generate1>><<generate2>><<generate3>><<generate4>><<generate5>><<generate6>><<person1>>The sound of the door shutting is more ominous than usual. You soon realise why, the rest of the room is all but silent. Everyone else is looking at you. A <<person>> speaks <span class="red">"We've had enough of your shit. Time for a real lesson."</span> They rush toward you.
+			<br><br>
+			<<link [[Next|Dojo Strip]]>><<set $molestationstart to 1>><<set $timer to 10>><</link>>
+			<br>
+		<<else>>
+			How do you want to conduct yourself while Aki is away?
+			<br><br>
+			<<link [[Focus on practising|Self-Defense Lesson No Instructor]]>><</link>>
+			<br>
+			<<link [[Help other students|Self-Defense Lesson No Instructor]]>><<set $phase to 1>><</link>>
+			<br>
+			<<if $trauma gte 1 and $martialskill gte 200>>
+				<<link [[Showboat your skills in front of less experienced students|Self-Defense Lesson No Instructor]]>><<set $phase to 2>><</link>><<lstress>>
+				<br>
+			<</if>>
+		<</if>>
+	<</if>>
+<</nobr>><</widget>>
+
+:: Dojo Molestation [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<maninit>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $alarm is 1>>
+	<<if $rescue is 1>>
+	<<else>>
+		No one comes to your aid.
+		<<set $alarm to 0>>
+		<<if $drugged gte 1>>Intoxicated as you are, you couldn't cry very convincingly.<</if>>
+		<br><br>
+		<<if $enemyarousal gte $enemyarousalmax>>
+			<span id="next"><<link [[Next->Dojo Molestation Ejaculation]]>><</link>></span><<nexttext>>
+		<<elseif $enemyhealth lte 0>>
+			<span id="next"><<link [[Next->Dojo Molestation Escape]]>><</link>></span><<nexttext>>
+		<<else>>
+			<span id="next"><<link [[Next->Dojo Molestation]]>><</link>></span><<nexttext>>
+		<</if>>
+	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next->Dojo Molestation Ejaculation]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next->Dojo Molestation Escape]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next->Dojo Molestation]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Dojo Molestation Ejaculation [nobr]
+
+<<effects>>
+<<ejaculation>>
+<<if $enemyanger gte ($enemyangermax / 5) * 3>>
+	"Don't you DARE tell anyone about this." Before leaving, <<he>> spits on you for good measure.
+	<br><br>
+	<<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $facegoo += 1>>
+<<elseif $enemyanger gte 1>>
+	"Don't you dare tell anyone about this." With that, <<he>> leaves.
+	<br><br>
+<<else>>
+	<<He>> smiles at you, "Let this be our little secret, okay?" <<He>> leaves you sprawled on the floor.
+	<br><br>
+<</if>>
+<<clotheson>>
+<<tearful>> you struggle to your feet and make your way back to the studio. You hope you can put on a brave face.
+<br><br>
+<<endcombat>>
+<<link [[Next|Self-Defense Lesson]]>><</link>>
+
+:: Dojo Molestation Escape [nobr]
+
+<<effects>>
+<<He>> yells out and falls to the ground. <span class="green"><<tearful>> you use the opportunity to flee the room and escape back to the studio.</span>
+<br><br>
+<<endcombat>>
+<<npc Aki>><<person1>><<npcincr Aki love 2>>
+Aki immediately recognises that something is wrong. <<He>> pulls you aside and gently inquires. Wanting to put your ordeal behind you, you tell <<him>> that everything is fine. Aki continues the lesson, but still looks concerned.
+<br><br>
+<<clothesontowel>>
+<<endevent>>
+<<link [[Next|Self-Defense Lesson]]>><</link>>
+
+:: Dojo Duo [nobr]
+
+<<set $outside to 0>><<set $location to "dojo">><<effects>>
+<<if $phase is 0>>
+	Your reticence encourages <<him>> to be more bold. <<He>> takes every opportunity to grope and fondle you as you try your best to ignore <<him>> and focus. You breathe a sigh of relief when Aki announces that it's time for something different.
+	<<arousal 600>>
+	<br><br>
+<<elseif $phase is 1>>
+	You push <<him>> away from you, causing <<him>> to trip over <<his>> feet and falls loudly to the floor. Cursing, <<he>> stands up as Aki announces that it's time to change partners. The <<person2>><<person>> gives you one last angry look before being matched up with an elderly <<if $pronoun is "m">>woman<<else>>man<</if>>;<span class="pink"> the entire class seems irritated with your behaviour.</span>
+	<<set $dojoanger += 1>>
+	<br><br>
+<<elseif $phase is 2>>
+	<<promiscuity2>>Not wanting to be outdone, you return <<his>> fondling with your own. Hiding the lewd touching under the veneer of dance practise, you grope each other right in the middle of the room, the rest of the class ignorant of the lechery occurring right in front of them. By the time Aki calls for a stop, both you and the <<person>> are breathing far more heavily than anyone else.
+	<br><br>
+<</if>>
+<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+
+:: Dojo Instructor [nobr]
+
+<<set $outside to 0>><<set $location to "dojo">><<effects>>
+
+<<if $phase is 0>>
+	You turn your head to look at <<him>> "I hope to be as good as you someday." You avert your eyes meekly when <<he>> tries to meet your gaze.
+	<br>
+	<<He>> squeezes your hands slightly, "You will be, and sooner than you think." You swear <<he>> gives you more attention than the other students for the rest of the lesson.
+	<<npcincr Aki love 2>> <<danceskilluse>>
+	<br><br>
+	<span class="pink">The other students notice too, many give you jealous looks.</span>
+	<<set $dojooanger += 1>>
+<<elseif $phase is 1>>
+	"You'd better watch out." you announce, "I'll be bettering you soon!"
+	<br>
+	<<He>> laughs, "I hope so, means I've done my job right. Now, shut your yap a moment and watch closely..."
+<<elseif $phase is 2>>
+	You rub your butt against <<his>> crotch. "You're so fit and well formed, I don't know how you do it."
+	<br>
+	<<He>> moves <<his>> pelvis away from you, blood rushing to <<his>> face. "Y-yes. I mean, no, I mean... you're doing OK, I need to go check on someone else." <<He>> avoids looking in your direction for the rest of the lesson.
+	<<npcincr Aki love -2>><<promiscuity2>>
+<</if>>
+<br><br>
+<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+<br>
+
+:: Dojo Strip [nobr]
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	<<maninit>><<npcstrip>>
+	<<set $timer to 5>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+
+<<if $enemyhealth gt 0>><<npcdamage>><</if>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $timer gte 1>>
+	<span id="next"><<link [[Next|Dojo Strip]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Dojo Strip Finish]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Self-Defense Lesson No Instructor [nobr]
+
+<<set $outside to 0>><<set $location to "dojo">><<effects>>
+<<if $phase is 0>>
+	<<endevent>>
+	<<npc Aki>><<person1>>
+	You practise as Aki demonstrated. It's not long before <<he>> returns.
+	<<martialskilluse>>
+<<elseif $phase is 1>>
+	<<endevent>>
+	<<npc Aki>><<person1>>
+	A <<generate2>><<person2>><<person>> near you loses their balance would have fallen to the floor had you not intervened. You spend some time helping them with their balance. You don't learn much yourself, but <<he>> is clearly grateful, <span class="green">and the class seems pleased with your generosity.</span> Aki soon returns.
+	<<set $dojoanger -= 1>>
+<<elseif $phase is 2>>
+	<<endevent>>
+	<<npc Aki>><<person1>>
+	You flaunt your skill in front of the other students. It feels good to act superior, <span class="pink">but the looks you receive suggest that the other students dislike being shown up like this.</span> Aki soon returns.
+	<<stress -12>><<set $dojoanger += 1>>
+<</if>>
+<br><br>
+<<link [[Next|Self-Defense Lesson]]>><<endevent>><</link>>
+
+:: Dojo Strip Finish [nobr]
+
+<span class="green">You hear Aki's voice growing louder above the jeers of your assailants.</span> "There's more where this came from," the <<person2>><<person>> says as they cease their attack.
+<br><br>
+<<clotheson>>
+<<endcombat>>
+<br><br>
+<<link [[Leave|Dojo]]>><<endevent>>
+
+/*noeinan mod START*/
+/*WIP Check code for Dance studio to make Martial Arts dojo.*/
+/*noeinan mod END*/

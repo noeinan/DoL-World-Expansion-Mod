@@ -1432,6 +1432,15 @@ You <<tendingtext>> squeeze and rub.
 you have a bucket full of <<farm_text cattle>> milk.
 <br><br>
 
+/*noeinan mod START*/
+/*Changed so milking increases hand skill, feel it should do this to start with*/
+
+<<set $handskill += 5>>
+<span class="gold">You feel more confident in your ability to give pleasure with your hands.</span>
+<br><br>
+
+/*noeinan mod END*/
+
 <<if $farm_work.cattle_text is undefined>>
 	<<set $farm_work.cattle_text to 0>>
 <</if>>
@@ -1954,6 +1963,10 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 	<<link [[Next|Farm Work]]>><</link>>
 	<br>
 <<else>>
+	/*noeinan mod START*/
+	/*Added new action allowing player to sleep in the barn if they sneak in at night*/
+	<<link [[Sleep until dawn|Farm Barn Sleep]]>><</link>><<ltiredness>>
+	/*noeinan mod END*/
 	<<if $deviancy gte 15>>
 		<<if $breastfeedingdisable is "f" and $milk_amount gte 1>>
 			<<link [[Milk yourself (0:30)|Farm Barn Breasts]]>><<pass 30>><</link>><<deviant2>>
@@ -1968,6 +1981,75 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 	<<link [[Leave|Farm Work]]>><</link>>
 	<br>
 <</if>>
+
+
+/*noeinan mod START*/
+/*Farm Barn Sleep event lines added, allows player to sleep in barn until dawn, random pig rape event.*/
+
+:: Widgets Farm [widget]
+
+<<widget "farmbarn_sleep">><<nobr>>
+
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if $hour is 21>>
+	<<set _farmbarn_sleep to 9>>
+<<elseif $hour is 22>>
+	<<set _farmbarn_sleep to 8>>
+<<elseif $hour is 23>>
+	<<set _farmbarn_sleep to 7>>
+<<else>>
+	<<set _farmbarn_sleep to (6 - $hour)>>
+<</if>>
+<<for _l to 0; _l lt _farmbarn_sleep; _l++>>
+	<<pass 60>>
+	<<effectstime>>
+	<<if $sleeptrouble is 1 and $controlled is 0>>
+		<<set $tiredness -= 200>>
+	<<else>>
+		<<set $tiredness -= 250>>
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+
+:: Farm Barn Sleep [nobr] 
+<<effects>>
+<<farmbarn_sleep>>
+		
+/*noeinan mod START*/
+/*Added new Fox Transformation*/
+
+<<if $cow gte 6 or $wolfgirl gte 6 or $cat gte 6 or $fox gte 6>>
+	You curl up on the soft straw, wondering how you ever slept in any other way. You fall asleep within moments.
+<<elseif $cow gte 5 or $wolfgirl gte 5 or $cat gte 5 or $fox gte 5>>
+	You curl up on the soft straw, and fall asleep within moments.
+<<elseif $cow gte 4 or $wolfgirl gte 4 or $cat gte 4 or $fox gte 4>>
+	You curl up on the straw. This isn't so bad. You're awoken by a heavy rattling.
+<<elseif $cow gte 3 or $wolfgirl gte 3 or $cat gte 3 or $fox gte 3>>
+	You curl up on the straw and try to make the best of it. You're awoken by a heavy rattling.
+<<elseif $cow gte 2 or $wolfgirl gte 2 or $cat gte 2 or $fox gte 2>>
+	You gather more straw to make your bed softer. It helps, a little. Your sleep is broken by a heavy rattling.
+<<elseif $cow gte 1 or $wolfgirl gte 1 or $cat gte 1 or $fox gte 1>>
+	You lie down on the straw. It's little better than just sleeping on the floor. You don't think you'll ever be able to sleep here, but the next thing you know you're being woken by a heavy rattling.
+<<else>>
+	You sit and lean against the wall, ignoring the pile of straw. You're not an animal. It takes a while to fall asleep. You're awoken by a heavy rattling.
+<</if>>
+A weak light pierces the high windows. It's dawn.
+<br><br>
+/*noeinan mod END*/
+		
+<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+<<if $danger gte (9900 - $allure)>>
+	You feel something heavy on top of you as you start to come to. When your ese adjust, you see a <<farm_text pig>> on top of you, pinning you down on the straw. <<farm_His pig>> face is flushed and <<farm_he pig>> looks excited.
+	<br><br>
+	
+	<<link [[Next|Farm Pigs Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<<else>>
+	<<link [[Next|Farm Barn]]>><</link>>
+	<br>
+
+/*noeinan mod END*/
 
 
 :: Farm Barn Breasts [nobr]

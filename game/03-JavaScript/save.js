@@ -474,16 +474,22 @@ window.settingsObjects = function (type) {
 				alluremod: { min: 0.2, max: 2, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
-				monsterhallucinations: { boolLetter: true },
+
+				/*noeinan mod START*/
+				/*Changed beasts to always be monster boys/girls*/
+				/*Changed default fetishes enabled*/
+				/*Changed default tips enabled*/
+
+				monsterhallucinations: { boolLetter: false },
 				blackwolfmonster: { min: 0, max: 1, decimals: 0 },
-				bestialitydisable: { boolLetter: true },
+				bestialitydisable: { boolLetter: false },
 				swarmdisable: { boolLetter: true },
 				slimedisable: { boolLetter: true },
 				voredisable: { boolLetter: true },
 				tentacledisable: { boolLetter: true },
 				analdisable: { boolLetter: true },
 				transformdisable: { boolLetter: true },
-				hirsutedisable: { boolLetter: true },
+				hirsutedisable: { boolLetter: false },
 				breastfeedingdisable: { boolLetter: true },
 				analpregdisable: { boolLetter: true },
 				watersportsdisable: { boolLetter: true },
@@ -496,11 +502,14 @@ window.settingsObjects = function (type) {
 				images: { min: 0, max: 1, decimals: 0 },
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
-				bodywritingImages: { bool: true },
+				bodywritingImages: { bool: false },
 				silhouettedisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
-				tipdisable: { boolLetter: true },
+				tipdisable: { boolLetter: false },
+
+				/*noeinan mod END*/
+				
 				debugdisable: { boolLetter: true },
 				cheatdisable: { boolLetter: true },
 				showCaptionText: { bool: true },
