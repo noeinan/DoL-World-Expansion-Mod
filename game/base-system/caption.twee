@@ -15,7 +15,6 @@
 		<<removeclass body has-images>>
 		<<addclass body no-images>>
 	<</if>>
-	<<exposure>>
 	<<combateffects>>
 	
 	
@@ -197,6 +196,9 @@
 	<</if>>
 	<<set $allure *= $alluremod>>
 	<<if $allure gte 8000 * $alluremod>><<set $allure to 8000 * $alluremod>><</if>>
+	<<if $moorLuck gt 0>>
+		<<set $allure to Math.floor($allure * (1 - ($moorLuck / 100)))>>
+	<</if>>
 	<<if $allure lt 0>>
 		<<set $allure to 0>>
 	<</if>>
@@ -706,12 +708,20 @@ Your $worn.lower.name <<lowerhas>> been pulled aside, <span class="purple">revea
 
 <<elseif !$worn.under_lower.type.includes("naked") and !$worn.genitals.type.includes("chastity") and $worn.under_lower.state isnot $worn.under_lower.state_base>>
 <br>
-Your $worn.under_lower.name <<underlowerhas>> been pulled down to your $worn.under_lower.state, <span class="pink">revealing your <<genitals>>.</span>
+
+Your $worn.under_lower.name <<underlowerhas>> been pulled 
+<<if $worn.under_lower.state is "totheside">>
+	pulled aside,
+<<else>>
+	down to your $worn.under_lower.state,
+<</if>>
+<span class="pink">revealing your <<genitals>>.</span>
 <br>
 
 <<elseif !$worn.under_upper.type.includes("naked") and $worn.under_upper.state isnot $worn.under_upper.state_base>>
 <br>
-Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.under_upper.state, <span class="pink">revealing your <<breasts>>.</span>
+
+Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_upper.state, <span class="pink">revealing your <<breasts>>.</span>
 <br>
 
 <</if>>
@@ -779,12 +789,17 @@ Your $worn.under_upper.name <<underupperhas>> been pulled down to your $worn.und
 	<<set _showClothes to true>>
 <</if>>
 
-<<if $player.gender is "m" or ($player.gender is "f" and $background is "crossdresser")>>
-	<<set _clothesType to "male">>
-<<elseif $player.gender is "h" and (($player.gender_body is "m" or ($player.gender_body is "a" and $breastsize lte 3)) and $background isnot "crossdresser") or (($player.gender_body is "f" or ($player.gender_body is "a" and $breastsize gt 3)) and $background is "crossdresser")>>
-	<<set _clothesType to "male">>
-<<else>>
+<<if ($player.gender is "f" and $background isnot "crossdresser") or 
+	($player.gender is "m" and $background is "crossdresser") or 
+	($player.gender is "h" and 
+		(
+			(($player.gender_body is "m" or ($player.gender_body is "a" and $breastsize lte 3)) and $background is "crossdresser") or 
+			(($player.gender_body is "f" or ($player.gender_body is "a" and $breastsize gt 3)) and $background isnot "crossdresser")
+		)
+	)>>
 	<<set _clothesType to "female">>
+<<else>>
+	<<set _clothesType to "male">>
 <</if>>
 
 <div id="img" @class="'hair-'+ $hairselect + ' eye-' + $eyeselect.replace(/ /g,'-') + ($imgLighten isnot '' ? ' '+ $imgLighten :'') + ' noAnimations'">

@@ -30,7 +30,7 @@
 	<</switch>>
 <</if>>
 
-<<for _i = 0; _i < $NPCList.length; _i++>>
+<<for _i = 0; _i < $enemyno; _i++>>
 	<<set $NPCList[_i].intro to 1>>
 <</for>>
 
@@ -82,6 +82,7 @@
 	<<effectssteal>>
 <</if>>
 <<effectspenwhack>>
+<<effectshandsfreeface>>
 
 <<if $bodyaction is "doggy">>
 	<<set $bodyaction to 0>>
@@ -1135,37 +1136,69 @@
 <</if>>
 
 <<if $mouthaction is "plead">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "plead">>
-	<<actionsplead>><<set $speechplead to 1>>
-	<<meek `1 + $englishtrait`>>
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "plead with <<him>>">>
+	<<else>>
+		<<set $mouthactiondefault to "plead">>
+		<<actionsplead>><<set $speechplead to 1>>
+		<<meek `1 + $englishtrait`>>
+	<</if>>
 <</if>>
 
 <<if $mouthaction is "moan">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "moan">>
-	<<actionsmoan>><<set $speechmoan to 1>>
-	<<submission `1 + $englishtrait`>>
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "say something sexy" 2>><<set $speechmoan to 1>>
+	<<else>>
+		<<set $mouthactiondefault to "moan">>
+		<<actionsmoan>><<set $speechmoan to 1>>
+		<<submission `1 + $englishtrait`>>
+	<</if>>
+<</if>>
+
+<<if $mouthaction is "askchoke" and $askedtochoke isnot 1>>
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "ask to choke you" 1>>
+	<<else>>
+		<<set $askedtochoke to 1>>
+		<<set $mouthactiondefault to 0>>
+		<<actionschoke>>
+		<<submission `1 + $englishtrait`>>
+	<</if>>
 <</if>>
 
 <<if $mouthaction is "demand">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "demand">>
-	<<actionsdemand>><<set $speechdemand to 1>>
-	<<defiance `1 + $englishtrait`>>
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "demand something">>
+	<<else>>
+		<<set $mouthactiondefault to "demand">>
+		<<actionsdemand>><<set $speechdemand to 1>>
+		<<defiance `1 + $englishtrait`>>
+	<</if>>
 <</if>>
 
 <<if $mouthaction is "mock">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "mock">>
-	<<actionsmock>><<set $speechdemand to 1>>
-	<<brat `1 + $englishtrait`>>
-	<<for _j = 0; _j lt $enemyno; _j++>>
-		<<if $mockaction is $NPCList[_j].insecurity>>
-			<<if $consensual is 1>>
-				<<submission `1 + $englishtrait`>>
-			<<else>>
-				<<combatcontrol `1 + $englishtrait`>>
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "mock <<him>>">>
+	<<else>>
+		<<set $mouthactiondefault to "mock">>
+		<<actionsmock>><<set $speechdemand to 1>>
+		<<brat `1 + $englishtrait`>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $mockaction is $NPCList[_j].insecurity>>
+				<<if $consensual is 1>>
+					<<submission `1 + $englishtrait`>>
+				<<else>>
+					<<combatcontrol `1 + $englishtrait`>>
+				<</if>>
+				<<break>>
 			<</if>>
-			<<break>>
-		<</if>>
-	<</for>>
+		<</for>>
+	<</if>>
 <</if>>
 
 <<if $mouthaction is "mouth">>
@@ -1372,7 +1405,9 @@
 
 <<if $mouthaction is "scream">>
 	<<set $mouthaction to 0>>
-	<<if $drugged gt 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "scream for help">>
+	<<elseif $drugged gt 0>>
 		You try to scream for help, <span class="pink">but the aphrodisiacs make it sound like a lewd moan.</span>
 		<<neutral 1>><<set $speechmoan to 1>>
 	<<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $corruption_slime gte ($willpower / 10)>>
@@ -1402,7 +1437,9 @@
 
 <<if $mouthaction is "apologise">>
 	<<set $mouthaction to 0>>
-	<<if $enemytype is "beast">>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "apologise">>
+	<<elseif $enemytype is "beast">>
 		You tell <<him>> you're sorry for being bad.
 		<<set $mouthactiondefault to "plead">>
 		<<if $apologised is 0>>
@@ -1432,12 +1469,17 @@
 <</if>>
 
 <<if $mouthaction is "forgive">>
-	<<set $mouthaction to 0>><<set $mouthactiondefault to "plead">>
-	<<set $trauma -= $traumagain>><<set $traumagain to 0>><<set $speechforgive to 1>><<set $angelforgive to 1>>
-	<<if $enemytype is "beast">>
-		"You don't know any better. You're just a <<beasttype>>," you say. "I forgive you."
+	<<set $mouthaction to 0>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze>>
 	<<else>>
-		"Even though you're doing such a horrible thing, don't worry," you say. "I forgive you."
+		<<set $mouthactiondefault to "plead">>
+		<<set $trauma -= $traumagain>><<set $traumagain to 0>><<set $speechforgive to 1>><<set $angelforgive to 1>>
+		<<if $enemytype is "beast">>
+			"You don't know any better. You're just a <<beasttype>>," you say. "I forgive you."
+		<<else>>
+			"Even though you're doing such a horrible thing, don't worry," you say. "I forgive you."
+		<</if>>
 	<</if>>
 <</if>>
 
@@ -1758,7 +1800,7 @@ You try to pull your head away from the penis threatening your mouth.
 <<set $rng to random(1, 100)>>
 
 <<if $anusaction is "penispussy">>
-	<<set $anusaction to 0>><<meek 10>><<vaginalskilluse>><<set $anusactiondefault to "penispussy">>
+	<<set $anusaction to 0>><<meek 10>><<analskilluse>><<set $anusactiondefault to "penispussy">>
 	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $vaginalskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is "anusentrance">>
@@ -2407,7 +2449,7 @@ You try to pull your head away from the penis threatening your mouth.
 <</if>>
 
 <<if $anusaction is "penisEdging">>
-	<<set $anusaction to 0>><<set $anusactiondefault to "penisEdging">><<actionsanusedging>><<submission 5>><<sexControl 5 $analskill>><<vaginalskilluse>><<combatpromiscuity4>>
+	<<set $anusaction to 0>><<set $anusactiondefault to "penisEdging">><<actionsanusedging>><<submission 5>><<sexControl 5 $analskill>><<analskilluse>><<combatpromiscuity4>>
 <</if>>
 
 <<if $anusaction is "take">>
@@ -2502,121 +2544,169 @@ You try to pull your head away from the penis threatening your mouth.
 
 <<if $mouthaction is "finish">>
 	<<set $mouthaction to 0>>
-	<<set $mouthactiondefault to "plead">><<brat 10>>
-	You tell <<him>> you've had enough and want to stop.
-	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
-		<<set $finish to 1>>
-		<<if $trueconsensual isnot 1 and $gamemode is "soft">>
-			<<set $enemyhealth to -100>>
-		<</if>>
-		<<if $enemytype is "man">>
-			<<He>> <<if $enemyno gte 2>>look<<else>>looks<</if>> disappointed, <span class="green">but <<if $enemyno gte 2>>comply<<else>>complies<</if>>.</span>
-		<<else>>
-			It can't speak, <span class="green">but understands your tone and complies.</span>
-		<</if>>
-		<<if $gamemode is "soft">>
-			<<set $enemyhealth to -1000>>
-		<</if>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2 and $gamemode isnot "soft">>
+		<<wheeze "tell <<him>> you want to stop">>
 	<<else>>
-		<<set $consensual to 0>>
-		<<if $enemytype is "man">>
-			<span class="red"><<if $enemyno gte 2>>They refuse!<<else>><<He>> refuses!<</if>></span>
+		<<set $mouthactiondefault to "plead">><<brat 10>>
+		You tell <<him>> you've had enough and want to stop.
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<set $finish to 1>>
+			<<if $trueconsensual isnot 1 and $gamemode is "soft">>
+				<<set $enemyhealth to -100>>
+			<</if>>
+			<<if $enemytype is "man">>
+				<<He>> <<if $enemyno gte 2>>look<<else>>looks<</if>> disappointed, <span class="green">but <<if $enemyno gte 2>>comply<<else>>complies<</if>>.</span>
+			<<else>>
+				It can't speak, <span class="green">but understands your tone and complies.</span>
+			<</if>>
+			<<if $gamemode is "soft">>
+				<<set $enemyhealth to -1000>>
+			<</if>>
 		<<else>>
-			Eager to breed, <span class="red">it ignores your desire.</span>
+			<<set $consensual to 0>>
+			<<if $enemytype is "man">>
+				<span class="red"><<if $enemyno gte 2>>They refuse!<<else>><<He>> refuses!<</if>></span>
+			<<else>>
+				Eager to breed, <span class="red">it ignores your desire.</span>
+			<</if>>
+			<<molested>><<controlloss>>
 		<</if>>
-		<<molested>><<controlloss>>
 	<</if>>
 <</if>>
 
 <<if $mouthaction is "novaginal">>
 	<<set $mouthaction to 0>>
-	<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
-	<<if $player.virginity.vaginal is true>>
-		You tell <<him>> you don't want anything penetrating your vagina, you are a virgin after all.
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> you don't want anything penetrating your vagina">>
 	<<else>>
-		You tell <<him>> you don't want anything penetrating your vagina.
-	<</if>>
-	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
-		<<set $novaginal to 1>><span class="green">They nod in acknowledgement.</span>
-		<<if $vaginastate is "penetrated">>
-			<<set $vaginastate to "entrance">>
-			<<for _j = 0; _j lt $enemyno; _j++>>
-				<<if $NPCList[_j].penis is "vagina">>
-					<<personselect _j>>
-					<<set $NPCList[_j].penis to "vaginaentrance">>The <<person>> withdraws <<his>> penis from your vagina.
-				<</if>>
-			<</for>>
+		<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<if $player.virginity.vaginal is true>>
+			You tell <<him>> you don't want anything penetrating your vagina, you are a virgin after all.
+		<<else>>
+			You tell <<him>> you don't want anything penetrating your vagina.
 		<</if>>
-	<<else>>
-		<<set $consensual to 0>>
-		They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
-		<<molested>><<controlloss>>
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<set $novaginal to 1>><span class="green">They nod in acknowledgement.</span>
+			<<if $vaginastate is "penetrated">>
+				<<set $vaginastate to "entrance">>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].penis is "vagina">>
+						<<personselect _j>>
+						<<set $NPCList[_j].penis to "vaginaentrance">>The <<person>> withdraws <<his>> penis from your vagina.
+					<</if>>
+				<</for>>
+			<</if>>
+		<<else>>
+			<<set $consensual to 0>>
+			They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
+			<<molested>><<controlloss>>
+		<</if>>
 	<</if>>
 <</if>>
 
 <<if $mouthaction is "noanal">>
 	<<set $mouthaction to 0>>
-	<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
-	<<if $player.virginity.anal is true>>
-		You tell <<him>> you don't want anything inside your anus, it's dirty there!
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> you don't want anything inside your anus">>
 	<<else>>
-		You tell <<him>> you don't want anything penetrating your anus.
-	<</if>>
-	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
-		<<set $noanal to 1>><span class="green">They nod in acknowledgement.</span>
-		<<if $anusstate is "penetrated">>
-			<<set $anusstate to "entrance">>
-			<<for _j = 0; _j lt $enemyno; _j++>>
-				<<if $NPCList[_j].penis is "anus">>
-					<<personselect _j>>
-					<<set $NPCList[_j].penis to "anusentrance">>The <<person>> withdraws <<his>> penis from your anus.
-				<</if>>
-			<</for>>
+		<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<if $player.virginity.anal is true>>
+			You tell <<him>> you don't want anything inside your anus, it's dirty there!
+		<<else>>
+			You tell <<him>> you don't want anything penetrating your anus.
 		<</if>>
-	<<else>>
-		<<set $consensual to 0>>
-		They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
-		<<molested>><<controlloss>>
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<set $noanal to 1>><span class="green">They nod in acknowledgement.</span>
+			<<if $anusstate is "penetrated">>
+				<<set $anusstate to "entrance">>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].penis is "anus">>
+						<<personselect _j>>
+						<<set $NPCList[_j].penis to "anusentrance">>The <<person>> withdraws <<his>> penis from your anus.
+					<</if>>
+				<</for>>
+			<</if>>
+		<<else>>
+			<<set $consensual to 0>>
+			They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
+			<<molested>><<controlloss>>
+		<</if>>
 	<</if>>
 <</if>>
 
 <<if $mouthaction is "nopenile">>
 	<<set $mouthaction to 0>>
-	<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
-	<<if $player.virginity.penile is true>>
-		You tell <<him>> you don't want your penis put inside anything, you are a virgin after all.
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> you don't want your penis put inside anything">>
 	<<else>>
-		You tell <<him>> you don't want your penis put inside anything.
+		<<set $mouthactiondefault to "plead">><<brat 5>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<if $player.virginity.penile is true>>
+			You tell <<him>> you don't want your penis put inside anything, you are a virgin after all.
+		<<else>>
+			You tell <<him>> you don't want your penis put inside anything.
+		<</if>>
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<set $nopenile to 1>><span class="green">They nod in acknowledgement.</span>
+			<<if $penisstate is "penetrated">>
+				<<set $penisstate to "entrance">>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].vagina is "penis">>
+						<<personselect _j>>
+						<<set $NPCList[_j].vagina to "penisentrance">>The <<person>> frees your penis from <<his>> vagina.
+					<</if>>
+				<</for>>
+			<</if>>
+			<<if $penisstate is "otheranus">>
+				<<set $penisstate to "otheranusentrance">>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].penis is "otheranus">>
+						<<personselect _j>>
+						<<set $NPCList[_j].penis to "otheranusentrance">>The <<person>> frees your penis from <<his>> anus.
+					<</if>>
+				<</for>>
+			<</if>>
+			<<if $penisstate is "othermouth">>
+				<<set $penisstate to "othermouthentrance">>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].mouth is "penis">>
+						<<personselect _j>>
+						<<set $NPCList[_j].mouth to "penisentrance">>The <<person>> slips your penis out of <<his>> mouth.
+					<</if>>
+				<</for>>
+			<</if>>
+		<<else>>
+			<<set $consensual to 0>>
+			They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
+			<<molested>><<controlloss>>
+		<</if>>
 	<</if>>
-	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
-		<<set $nopenile to 1>><span class="green">They nod in acknowledgement.</span>
-		<<if $penisstate is "penetrated">>
-			<<set $penisstate to "entrance">>
-			<<for _j = 0; _j lt $enemyno; _j++>>
-				<<if $NPCList[_j].vagina is "penis">>
-					<<personselect _j>>
-					<<set $NPCList[_j].vagina to "penisentrance">>The <<person>> frees your penis from <<his>> vagina.
-				<</if>>
-			<</for>>
-		<</if>>
-		<<if $penisstate is "otheranus">>
-			<<set $penisstate to "otheranusentrance">>
-			<<for _j = 0; _j lt $enemyno; _j++>>
-				<<if $NPCList[_j].penis is "otheranus">>
-					<<personselect _j>>
-					<<set $NPCList[_j].penis to "otheranusentrance">>The <<person>> frees your penis from <<his>> anus.
-				<</if>>
-			<</for>>
-		<</if>>
-		<<if $penisstate is "othermouth">>
-			<<set $penisstate to "othermouthentrance">>
-			<<for _j = 0; _j lt $enemyno; _j++>>
-				<<if $NPCList[_j].mouth is "penis">>
-					<<personselect _j>>
-					<<set $NPCList[_j].mouth to "penisentrance">>The <<person>> slips your penis out of <<his>> mouth.
-				<</if>>
-			<</for>>
-		<</if>>
+<</if>>
+
+<<if $mouthaction is "noupper">>
+	<<set $mouthaction to 0>><<set $mouthactiondefault to "rest">><<brat 5 demanding>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+	<<set $noupperasked to 1>>
+	You tell <<him>> to leave your top on.
+	
+	<<if $combatgoal is "strip">>
+		<span class="pink">"No," they laugh. You'll look better without it."</span>
+	<<elseif (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+		<<set $noupper to 1>><span class="green">They nod in acknowledgement.</span>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j].lefthand is "upperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].lefthand to 0>>The <<person>> releases your $worn.upper.name.
+			<<elseif $NPCList[_j].lefthand is "underupperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].lefthand to 0>>The <<person>> releases your $worn.under_upper.name.
+			<</if>>
+			<<if $NPCList[_j].righthand is "upperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].righthand to 0>>The <<person>> releases your $worn.upper.name.
+			<<elseif $NPCList[_j].righthand is "underupperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].righthand to 0>>The <<person>> releases your $worn.under_upper.name.
+			<</if>>
+		<</for>>
 	<<else>>
 		<<set $consensual to 0>>
 		They pause a moment before responding, <span class="red">"Stupid slut, you think you can tell me what to do?"</span>
@@ -2634,4 +2724,17 @@ You try to pull your head away from the penis threatening your mouth.
 <<combat_lewdity_text>>
 
 </div>
+<</nobr>><</widget>>
+
+<<widget "wheeze">><<nobr>>
+	<<set _action to $args[0] or "say something">>
+	<<switch $args[1]>>
+		<<case 1>>
+			You try to _action, <span class="purple">but only a wheeze comes out because you are already being choked.</span>
+		<<case 2>>
+			You try to _action, <span class="lewd">but only a lewd moan comes out because the hand around your throat prevents you from talking.</span>
+		<<default>>
+			You try to _action, <span class="red">but only a choked wheeze comes out because of the hand squeezing your throat.</span><<gwillpower>><<willpower 1>>
+			<<set $speechwheeze to 1>>
+	<</switch>>
 <</nobr>><</widget>>

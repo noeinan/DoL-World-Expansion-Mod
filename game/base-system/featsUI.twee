@@ -137,24 +137,29 @@ Filter by:
 	You have <span class="green"><<print $feats.allSaves.points - $featsBoosts.pointsUsed>> VrelCoins</span> remaining.
 </div>
 <br>
-<<listbox "_upgradeName" autoselect>>
-	<<optionsfrom _featOptionsList>>
-<</listbox>> |
+/*Have to do this due to the `????` names*/
+<<set _listbox to '<<listbox "_upgradeNameID" autoselect>>'>>
+<<for $_i to 0; $_i lt _upgradeNames.length; $_i++>>
+	<<set _listbox += '<<option _visibleUpgradeNames[' + $_i + '] _visibleUpgradeIDs[' + $_i + ']>>'>>
+<</for>>
+<<set _listbox += '<</listbox>> |'>>
+<<print _listbox>>
+
+<<set _upgradeName to _upgradeNames[_upgradeNameID]>>
 <<link Previous>>
-	<<set _id to _upgradeNames.indexOf(_upgradeName) - 1>>
-	<<if _id lt 0>>
-		<<set _id to _upgradeNames.length - 1>>
+	<<set _upgradeNameID-->>
+	<<if _upgradeNameID lt 0>>
+		<<set _upgradeNameID to _upgradeNames.length - 1>>
 	<</if>>
-	<<set _upgradeName to _upgradeNames[_id]>>
+	<<set _upgradeName to _upgradeNames[_upgradeNameID]>>
 	<<updateFeatsPointsMenu>>
 <</link>> |
 <<link Next>>
-	<<set _id to _upgradeNames.indexOf(_upgradeName) + 1>>
-	<<if _id gte _upgradeNames.length>>
-		<<set _id to 0>>
+	<<set _upgradeNameID++>>
+	<<if _upgradeNameID gte _upgradeNames.length>>
+		<<set _upgradeNameID to 0>>
 	<</if>>
-	<<set _upgradeName to _upgradeNames[_id]>>
-	<<updateFeatsPointsMenu>>
+	<<set _upgradeName to _upgradeNames[_upgradeNameID]>>
 	<<updateFeatsPointsMenu>>
 <</link>> |
 <br><br>
