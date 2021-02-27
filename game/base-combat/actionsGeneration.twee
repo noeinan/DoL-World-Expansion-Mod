@@ -123,6 +123,9 @@
 			<<set $defaultsType to "Strangers">>
 		<</if>>
 	<<case "beast">><<set $defaultsType to "Animals">>
+	<<case "tentacles" "vore">>
+		<<set $defaultsType to "Tentacles">>
+		<<set $regrab to $actionDefaults.Tentacles[($consensual is 1?"consensual":"rape")].regrab>>
 	<<default>><<set $defaultsType to "Everyone">>
 <</switch>>
 
@@ -137,6 +140,7 @@
 <<unset $defaultsType>>
 <<unset $defaultsCombatType>>
 <<unset $replaceAction>>
+<<unset $regrab>>
 <</nobr>><</widget>>
 
 <<widget "replaceActionLink">><<nobr>>
@@ -254,7 +258,7 @@
 
 	<<leftActions>>
 	<<if Object.keys(_leftaction).length gt 0>>
-		<<if Object.values(_leftaction).includes($leftactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_leftaction).includes($leftactiondefault) is false or $args[0] is true or $leftactiondefault is "rest">>
 			<<set _defaultsCombatAction to "leftaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -312,6 +316,7 @@
 		<<leftstealnew>>
 		<<leftpenwhacknew>>
 		<<leftFixAndCoverActions>>
+		<<handsstrugglefreebodypart "left">>
 	<<case "penis">>
 		<<set _leftaction["Work their shaft"] to "leftwork">>
 		<<set _leftaction["Stop"] to "leftstoppenis">>
@@ -367,7 +372,7 @@
 
 	<<rightActions>>
 	<<if Object.keys(_rightaction).length gt 0>>
-		<<if Object.values(_rightaction).includes($rightactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_rightaction).includes($rightactiondefault) is false or $args[0] is true or $rightactiondefault is "rest">>
 			<<set _defaultsCombatAction to "rightaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -425,6 +430,7 @@
 		<<rightstealnew>>
 		<<rightpenwhacknew>>
 		<<rightFixAndCoverActions>>
+		<<handsstrugglefreebodypart "right">>
 	<<case "penis">>
 		<<set _rightaction["Work their shaft"] to "rightwork">>
 		<<set _rightaction["Stop"] to "rightstoppenis">>
@@ -471,7 +477,7 @@
 
 	<<feetActions>>
 	<<if Object.keys(_feetaction).length gt 0>>
-		<<if Object.values(_feetaction).includes($feetactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_feetaction).includes($feetactiondefault) is false or $args[0] is true or $feetactiondefault is "rest">>
 			<<set _defaultsCombatAction to "feetaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -569,6 +575,9 @@
 				<<case "nipple">>
 					<<set _mouthOptions to "nipple">>
 					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<nippleFlavorText>></span>
+				<<case "facesit">>
+					<<set _mouthOptions to "facesit">>
+					<span @class="($lastOptions.mouth isnot _mouthOptions or _mouthGold is true ?'gold':'')"><<facesitFlavorText>></span>
 				<<default>>
 					<<if $mouthuse is "righthand" or $mouthuse is "lefthand">>
 						<<set _mouthOptions to $mouthuse>>
@@ -585,7 +594,7 @@
 
 	<<mouthActions>>
 	<<if Object.keys(_mouthaction).length gt 0>>
-		<<if Object.values(_mouthaction).includes($mouthactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_mouthaction).includes($mouthactiondefault) is false or $args[0] is true or $mouthactiondefault is "rest">>
 			<<set _defaultsCombatAction to "mouthaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -631,6 +640,7 @@
 	<<case "novaginal">><<if !$gloryhole and $gamemode isnot "soft">><<seductiondifficulty>><</if>>
 	<<case "nopenile">><<if !$gloryhole and $gamemode isnot "soft">><<seductiondifficulty>><</if>>
 	<<case "noanal">><<if !$gloryhole and $gamemode isnot "soft">><<seductiondifficulty>><</if>>
+	<<case "noupper">><<if !$gloryhole and $gamemode isnot "soft">><<seductiondifficulty>><</if>>
 	<<case "mock">>
 		<<listbox "$mockaction">>
 			<<option "ethics" "ethics" `$mockaction is "ethics" ? "selected" : ""`>>
@@ -661,10 +671,14 @@
 		<<combatApologise>>
 	<<case "othervagina">>
 		<<combatOthervagina>>
+	<<case "facesit">>
+		<<combatFacesit>>
 	<<case "kiss">>
 		<<set _mouthaction["Kiss"] to "kissback">>
 		<<set _mouthaction["Pull away"] to "pullawaykiss">>
-		<<set _mouthaction["Headbutt"] to "headbutt">>
+		<<if $consensual isnot 1>>
+			<<set _mouthaction["Headbutt"] to "headbutt">>
+		<</if>>
 		<<if $mouthstate isnot "kiss" and $mouthstate isnot "kissimminent">>
 			<<speaknew>>
 		<</if>>
@@ -699,7 +713,7 @@
 			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> lips press against the tip of your <<penis>>.</span>
 		<<case "othermouth">>
 			<<set _penisOptions to "mouthPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> mouth envelopes your <<penis>>.</span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> mouth envelops your <<penis>>.</span>
 		<<case "entrance">>
 			<<set _penisOptions to "pussyEntrance">>
 			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> pussy hovers near your <<penis>>.</span>
@@ -708,7 +722,7 @@
 			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> pussy presses against your <<penis>>.</span>
 		<<case "penetrated">>
 			<<set _penisOptions to "pussyPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> vagina envelopes your <<penis>>.</span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> vagina envelops your <<penis>>.</span>
 		<<case "otheranusentrance">>
 			<<set _penisOptions to "anusEntrance">>
 			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass hovers near your <<penis>>.</span>
@@ -717,7 +731,7 @@
 			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass presses against your <<penis>>.</span>
 		<<case "otheranus">>
 			<<set _penisOptions to "anusPenetration">>
-			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass envelopes your <<penis>>.</span>
+			<span @class="($lastOptions.penis isnot _penisOptions or _penisGold is true ?'gold':'')"><<His>> ass envelops your <<penis>>.</span>
 		<<default>>
 			<<switch $penisuse>>
 				<<case "clit">>
@@ -734,7 +748,7 @@
 
 	<<penisActions>>
 	<<if Object.keys(_penisaction).length gt 0>>
-		<<if Object.values(_penisaction).includes($penisactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_penisaction).includes($penisactiondefault) is false or $args[0] is true or $penisactiondefault is "rest">>
 			<<set _defaultsCombatAction to "penisaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -859,7 +873,7 @@
 
 	<<vaginaActions>>
 	<<if Object.keys(_vaginaaction).length gt 0>>
-		<<if Object.values(_vaginaaction).includes($vaginaactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_vaginaaction).includes($vaginaactiondefault) is false or $args[0] is true or $vaginaactiondefault is "rest">>
 			<<set _defaultsCombatAction to "vaginaaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>
@@ -982,7 +996,7 @@
 
 	<<anusActions>>
 	<<if Object.keys(_anusaction).length gt 0>>
-		<<if Object.values(_anusaction).includes($anusactiondefault) is false or $args[0] is true>>
+		<<if Object.values(_anusaction).includes($anusactiondefault) is false or $args[0] is true or $anusactiondefault is "rest">>
 			<<set _defaultsCombatAction to "anusaction">>
 			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
 			<<set _pass to false>>

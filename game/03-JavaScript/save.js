@@ -104,6 +104,7 @@ window.save = function (saveSlot, confirm, saveId, saveName) {
 		new Wikifier(null, '<<saveConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot != undefined) {
+			updateSavesCount();
 			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
 			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
 			SugarCube.State.variables.currentOverlay = null;
@@ -157,6 +158,7 @@ window.SerializeGame = function () { return Save.serialize(); }; window.Deserial
 
 window.getSaveData = function () {
 	var input = document.getElementById("saveDataInput");
+	updateExportDay();
 	input.value = Save.serialize();
 }
 
@@ -207,6 +209,22 @@ window.copySavedata = function (id) {
 		var copyTextArea = document.getElementById("CopyTextArea");
 		copyTextArea.value = "Copying Error";
 		console.log('Unable to copy: ', err);
+	}
+}
+
+window.updateExportDay = function(){
+	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		SugarCube.State.variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+		SugarCube.State.history[0].variables.saveDetails.exported.days = clone(SugarCube.State.history[0].variables.days);
+		SugarCube.State.variables.saveDetails.exported.count++;
+		SugarCube.State.history[0].variables.saveDetails.exported.count++;
+	}
+}
+
+window.updateSavesCount = function(){
+	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		SugarCube.State.variables.saveDetails.slot.count++;
+		SugarCube.State.history[0].variables.saveDetails.slot.count++;
 	}
 }
 
@@ -320,7 +338,7 @@ window.validateValue = function (keys, value) {
 			valid = true;
 		}
 	}
-	if (keyArray.includes("decimals")) {
+	if (keyArray.includes("decimals") && value != undefined) {
 		if (value.toFixed(keys.decimals) != value) {
 			valid = false;
 		}
@@ -335,7 +353,7 @@ window.validateValue = function (keys, value) {
 			valid = true;
 		}
 	}
-	if (keyArray.includes("strings")) {
+	if (keyArray.includes("strings") && value != undefined) {
 		if (keys.strings.includes(value)) {
 			valid = true;
 		}
@@ -495,6 +513,10 @@ window.settingsObjects = function (type) {
 				watersportsdisable: { boolLetter: true },
 				spiderdisable: { boolLetter: true },
 				bodywritingdisable: { boolLetter: true },
+				parasitedisable: { boolLetter: true},
+				slugdisable: { boolLetter: true},
+				waspdisable: {boolLetter: true},
+				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
 				penissizemax: { min: -1, max: 4, decimals: 0 },
@@ -504,8 +526,11 @@ window.settingsObjects = function (type) {
 				combatAnimations: { bool: true },
 				bodywritingImages: { bool: false },
 				silhouettedisable: { boolLetter: true },
+				blinkingdisable: { boolLetter: true },
+				halfcloseddisable: { boolLetter: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
+				checkstyle: { strings: ["percentage", "words", "skillname"] },
 				tipdisable: { boolLetter: false },
 
 				/*noeinan mod END*/

@@ -569,6 +569,34 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 <</if>>
 <</nobr>><</widget>>
 
+:: Widgets Actions Either Hand [widget]
+/* this is for widgets done in a generic way to cover either hand in either old or new style */
+
+<<widget "handsstrugglefreebodypart">><<nobr>>
+	<<if $consensual isnot 1>>
+		<<set _hand to $args[0]>>
+		<<set _style to $args[1]>>
+		<<if _hand is "right">>
+			<<set _default to $rightactiondefault>>
+			<<set _actionVariable to "$rightaction">>
+			<<set _actions to _rightaction>>
+		<<else>>
+			<<set _default to $leftactiondefault>>
+			<<set _actionVariable to "$leftaction">>
+			<<set _actions to _leftaction>>
+		<</if>>
+
+		<<if ["breasts", "nipple", "facesit"].includes($mouthstate)
+			or ["lefthand", "righthand"].includes($mouthuse)>>
+			<<if _style is "old">>
+				| <label><span class="brat">Free your face</span><<radiobutton _actionVariable "freeface" `_default is "freeface" ? 'checked' : ''`>></label>		
+			<<else>>
+				<<set _actions["Free your face"] to "freeface">>
+			<</if>>
+		<</if>>
+	<</if>>
+<</nobr>><</widget>>
+
 :: Widgets Effects Hands [widget]
 <<widget "effectshandsclothes">><<nobr>>
 
@@ -956,4 +984,161 @@ $NPCList[5].lefthand is "pen" or $NPCList[5].righthand is "pen">>
 	<</if>>
 <</if>>
 
+<</nobr>><</widget>>
+
+<<widget "effectshandsfreeface">><<nobr>>
+	<<if $leftaction is "freeface" or $rightaction is "freeface">>
+		<<if $leftaction is "freeface" and $rightaction is "freeface">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "freeface">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "freeface">>
+			<<set _freestrength to 2.5>>
+			You try to use both hands to free your face,
+		<<elseif $leftaction is "freeface">>
+			<<set $leftaction to 0>><<set $leftactiondefault to "freeface">>
+			<<set _freestrength to 1>>
+			You try to use your hand to free your face,
+		<<elseif $rightaction is "freeface">>
+			<<set $rightaction to 0>><<set $rightactiondefault to "freeface">>
+			<<set _freestrength to 1>>
+			You try to use your hand to free your face,
+		<</if>>
+
+		<<if $mouthstate is "facesit">>
+			<<selectNpcWithPartInPosition "vagina" "facesit">>
+		<<elseif $mouthstate is "nipple">>
+			<<selectNpcWithPartInPosition "chest" "mouth">>
+		<<elseif $mouthstate is "breasts">>
+			<<selectNpcWithPartInPosition "chest" "mouthentrance">>
+		<<elseif $mouthuse is "lefthand">>
+			<<selectNpcWithPartInPosition "lefthand" "mouth">>
+		<<elseif $mouthuse is "righthand">>
+			<<selectNpcWithPartInPosition "righthand" "mouth">>
+		<</if>>
+
+		<<if (1000 - ($rng * 10) - (($physique / $physiquemax * 100) * _freestrength) + ($enemyanger * 0.5)) lte
+				(200 + $enemytrust)>>
+			<span class="green">
+				<<if $mouthstate is "facesit">>
+					<<print either(
+						"and manage to wrestle <<him>> off of your face.",
+						"and lift <<his>> hips enough for you to escape out from under <<him>>.",
+						"and manage to tip <<him>> off of your face."
+					)>>
+					<<set _npc.vagina to 0>><<set _npc.location.genitals to 0>>
+				<<elseif $mouthstate is "nipple">>
+					<<print either(
+						"and manage to extracate your mouth from <<his>> _npc.breastdesc.",
+						"and push <<his>> nipple out of your mouth, pushing away <<his>> _npc.breastdesc.",
+						"and manage to shove <<his>> _npc.breastdesc out of your face, freeing your mouth."
+					)>>
+					<<set _npc.chest to 0>><<set _npc.location.head to 0>>
+					<<if _npc.lefthand is "head_nipples">>
+						<<set _npc.lefthand to 0>>
+					<</if>>
+					<<if _npc.righthand is "head_nipples">>
+						<<set _npc.righthand to 0>>
+					<</if>>
+				<<elseif $mouthstate is "breasts">>
+					<<print either(
+						"and manage to free your face from <<if _npc.breastsize gte 6>>in between <</if>><<his>> _npc.breastsdesc.",
+						"and wriggle out from <<if _npc.breastsize gte 6>>in between <</if>><<his>> _npc.breastsdesc.",
+						"and <<if _npc.breastsize lt 6>>shove<<else>>heave<</if>> <<his>> _npc.breastsdesc away from your face."
+					)>>
+					<<set _npc.chest to 0>><<set _npc.location.head to 0>>
+					<<if _npc.lefthand is "head_breasts">>
+						<<set _npc.lefthand to 0>>
+					<</if>>
+					<<if _npc.righthand is "head_breasts">>
+						<<set _npc.righthand to 0>>
+					<</if>>
+				<<elseif ["lefthand", "righthand"].includes($mouthuse)>>
+					<<print either(
+						"and manage to wrench <<his>> hand off of your mouth.",
+						"and wrestle <<his>> hand away from your face.",
+						"and twist out of <<his>> grip, freeing your mouth."
+					)>>
+					<<if _npc.lefthand is "mouth">>
+						<<set _npc.lefthand to 0>>
+					<</if>>
+					<<if _npc.righthand is "mouth">>
+						<<set _npc.righthand to 0>>
+					<</if>>
+				<</if>>
+			</span>
+			<<set $mouthuse to 0>><<set $mouthstate to 0>><<set $mouthaction to 0>><<set $head to 0>>
+			<<brat 4>><<brat 1>>
+		<<else>>
+			<span class="red">
+				<<if $mouthstate is "facesit">>
+					<<if $rng % 4 == 0 and (_npc.lefthand is 0 or _npc.righthand is 0)>>
+						<<if _npc.lefthand is 0>>
+							<<set _npc.lefthand to "arms">>
+						<<else>>
+							<<set _npc.righthand to "arms">>
+						<</if>>
+
+						<<if $leftactiondefault is "freeface">>
+							<<set $leftarm to "grappled">>
+						<</if>>
+						<<if $rightactiondefault is "freeface">>
+							<<set $rightarm to "grappled">>
+						<</if>>
+
+						<<if _freestrength is 1>>
+							however, <<he>> seizes your arm and traps it against <<his>> thigh.
+						<<else>>
+							however, <<he>> grabs your arms and pins them against <<his>> thighs.
+						<</if>>
+					<<else>>
+						<<print either(
+							"but you can't budge <<his>> weight from off of your face.",
+							"but <<he>> settles <<himself>> down more firmly on your face.",
+							"but <<he>> adjusts <<his>> position and sits down harder."
+						)>>
+					<</if>>
+
+				<<elseif $mouthstate is "nipple">>
+					<<if $rng % 4 == 0>>
+						however, <<he>> shoves <<his>> _npc.breastdesc forcefully into your face, forcing <<his>> nipple further into your protesting mouth.
+						<<violence 3>>
+					<<else>>
+						<<print either(
+							"but cannot remove <<his>> _npc.breastdesc from your mouth.",
+							"but <<his>> nipple remains firmly plugged into your mouth.",
+							"but aren't able to push <<his>> _npc.breastdesc out of your mouth."
+						)>>
+					<</if>>
+				
+				<<elseif $mouthstate is "breasts">>
+					<<if $rng % 4 == 0>>
+						<<if _npc.breastsize gte 6>>
+							however, <<he>> more firmly squashes your face between <<his>> _npc.breastsdesc.
+							<<violence 4>><<bruise face>>
+						<<else>>
+							however, <<he>> more firmly shoves your face against <<his>> _npc.breastsdesc
+							<<violence 1>>
+						<</if>>
+					<<else>>
+						<<print either(
+							"but cannot escape <<his>> _npc.breastsdesc.",
+							"but <<his>> _npc.breastsdesc continue to <<if _npc.breastsize gte 6>>ingulf<<else>>press against<</if>> your face.",
+							"but aren't able to push <<his>> _npc.breastsdesc away from your face."
+						)>>
+					<</if>>
+				<<elseif ["lefthand", "righthand"].includes($mouthuse)>>
+					<<if $rng % 4 == 0>>
+						but <<he>> more firmly clamps down on your mouth, digging <<his>> nails into your face in <<his>> effort to keep hold.
+						<<violence 3>><<bruise face>>
+					<<else>>
+						<<print either(
+							"but you can't pull <<his>> hand away.",
+							"but <<his>> hand stays firm over your mouth.",
+							"but you can't prize <<his>> hand from off of your mouth."
+						)>>
+					<</if>>
+				<</if>>
+			</span>
+			<<brat 2>>
+		<</if>>
+	<</if>>
 <</nobr>><</widget>>

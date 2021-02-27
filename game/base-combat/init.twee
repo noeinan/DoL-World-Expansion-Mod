@@ -94,46 +94,7 @@
 <<combatinit>>
 <</nobr>><</widget>>
 
-<<widget "beastNEWinit">><<nobr>>
-<!-- NEW beast intitiation widget v2.6. Replaces beast(1-6)init widgets -->
-<!-- Args are number of beasts(1-6), Type, Gender, Genitals and Monster status-->
-<!-- Last three args are optional, and override generation based on settings. Use with care -->
-<!-- Example: <<beastNEWinit 1 dog m>> would generate 1 male dog -->
-<!-- Example: <<beastNEWinit 2 wolf f>> would generate 2 female wolves -->
-<!-- Example: <<beastNEWinit 1 horse f penis monster>> would generate 1 dickgirl centaur -->
-
-<<set _nn to $args[0]>>
-<<set _tpe to $args[1]>>
-<<set _gnn to $args[2]>>
-<<set _beast_genitals to $args[3]>>
-<<set _beast_monster to $args[4]>>
-<<set $active_enemy to 0>>
-<!-- Error Checking -->
-<<switch _tpe>>
-	<<case "dog" "cat" "pig" "wolf" "dolphin" "lizard" "bear" "boar" "creature" "horse">>
-	<!-- No action-->
-	<<default>>
-	<span class="red">ERROR: beastNEWinit unknown type</span>
-<</switch>>
-
-<<for _xx = 1; _xx < _nn+1; _xx++>>
-	<<generateBEAST _xx _tpe _gnn _beast_genitals _beast_monster>>
-<</for>>
-
-<<set $enemyhealth to 200>>
-<<set $enemyarousal to $allure / 50>>
-<<set $enemyanger to 0>>
-<<set $enemystrength to 20000>>
-<<set $combat to 1>>
-<<set $enemyarousalmax to 500>>
-<<set $enemyangermax to 200>>
-<<set $enemyhealthmax to 200>>
-<<set $enemytrust to 0>>
-<<if $dissociation gte 1>>
-	<<set $enemytrust -= 40>>
-<</if>>
-<<set $enemytype to "beast">>
-
+<<widget "beastCombatInit">><<nobr>>
 <<set $rapeavoid to 1>>
 <<set $orgasmdown to 0>>
 <<if $combatTrain.generateInit is 1>>
@@ -149,16 +110,20 @@
 <<set $stresssaved to $stress>>
 <<set $traumagain to 0>>
 <<set $stressgain to 0>>
-<<set $enemyno to _nn>>
-<<set $enemynomax to _nn>>
 
-<!-- NG This means if Beast 1 is a monster, they are all monsters -->
-<!-- This should be fixed globally later -->
-<<if $NPCList[0].monster is "monster">>
-	<<set $monster to 1>>
-<<else>>
-	<<set $monster to 0>>
+<<set $enemyhealth to 200>>
+<<set $enemyarousal to $allure / 50>>
+<<set $enemyanger to 0>>
+<<set $enemystrength to 20000>>
+<<set $combat to 1>>
+<<set $enemyarousalmax to 500>>
+<<set $enemyangermax to 200>>
+<<set $enemyhealthmax to 200>>
+<<set $enemytrust to 0>>
+<<if $dissociation gte 1>>
+	<<set $enemytrust -= 40>>
 <</if>>
+
 
 <!--Used to prevent certain variables being repeated during re-generation-->
 <<set $combatTrain.generateInit to 0>>
@@ -195,6 +160,46 @@
 <<set $enemytrust6 to $enemytrust>>
 
 <<combatinit>>
+<</nobr>><</widget>>
+
+<<widget "beastNEWinit">><<nobr>>
+<!-- NEW beast intitiation widget v2.6. Replaces beast(1-6)init widgets -->
+<!-- Args are number of beasts(1-6), Type, Gender, Genitals and Monster status-->
+<!-- Last three args are optional, and override generation based on settings. Use with care -->
+<!-- Example: <<beastNEWinit 1 dog m>> would generate 1 male dog -->
+<!-- Example: <<beastNEWinit 2 wolf f>> would generate 2 female wolves -->
+<!-- Example: <<beastNEWinit 1 horse f penis monster>> would generate 1 dickgirl centaur -->
+
+<<set _nn to $args[0]>>
+<<set _tpe to $args[1]>>
+<<set _gnn to $args[2]>>
+<<set _beast_genitals to $args[3]>>
+<<set _beast_monster to $args[4]>>
+<<set $active_enemy to 0>>
+<!-- Error Checking -->
+<<switch _tpe>>
+	<<case "dog" "cat" "pig" "wolf" "dolphin" "lizard" "bear" "boar" "creature" "horse" "fox">>
+	<!-- No action-->
+	<<default>>
+	<span class="red">ERROR: beastNEWinit unknown type</span>
+<</switch>>
+
+<<for _xx = 1; _xx < _nn+1; _xx++>>
+	<<generateBEAST _xx _tpe _gnn _beast_genitals _beast_monster>>
+<</for>>
+
+<<set $enemytype to "beast">>
+
+<<set $enemyno to _nn>>
+<<set $enemynomax to _nn>>
+
+<!-- NG This means if Beast 1 is a monster, they are all monsters -->
+<!-- This should be fixed globally later -->
+<<if $NPCList[0].monster is "monster">>
+	<<set $monster to 1>>
+<<else>>
+	<<set $monster to 0>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "beastNOGENinit">><<nobr>>
@@ -591,13 +596,13 @@
 <<if $worn.lower.name != "naked">>
 	<<set $NPCList[0].lefthand to "lowerclothes">>
 	<<set $NPCList[0].righthand to "lowerclothes">>
-<<else>>
+<<elseif $worn.under_lower.name != "naked">>
 	<<set $NPCList[0].lefthand to "underclothes">>
 	<<set $NPCList[0].righthand to "underclothes">>
 <</if>>
 <<set $NPCList[0].mouth to "penisentrance">>
 <<set $NPCList[0].location.head = "genitals">>
-<<set $NPCList[0].location.genitals = "dont">>
+<<set $NPCList[0].location.genitals = "idle">>
 <!-- 'dont' is just an invalid value so that the NPC won't know how to use its genitals, 
 otherwise there's no easy way of stopping NPC from shoving their stuff in PC's face -->
 

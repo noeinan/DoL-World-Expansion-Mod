@@ -113,7 +113,8 @@ You are at Remy's riding school. Stables surround a central courtyard. A small o
 		<<unbind>>
 		<br><br>
 	<</if>>
-	<<if $monsterchance gte 1 and $hallucinations gte 1 or $monsterchance gte 1 and $monsterhallucinations is "f">>
+	<!-- Modified for Monster People -->
+	<<if ($monsterchance gte 1 and $hallucinations gte 1) or ($monsterchance gte 1 and $monsterhallucinations is "f") or ($bestialitydisable is "t")>>
 		<<if $malechance lt random(1, 100)>>
 			Remy assigns you to a centaur, who watches as you <<thightext>> climb into the saddle.
 			<<set $steed to "female">>
@@ -164,8 +165,7 @@ You are at Remy's riding school. Stables surround a central courtyard. A small o
 		<<if $rng gte 81>>
 			Remy leads you to an open field. The steeds are eager to frolic, and become harder to control.
 			<br><br>
-
-			<<if $bestialitydisable is "f">>
+			<!-- Modified for Monster People -->
 				<<if $thighskill gte 200>>
 					Your <<steed_text>> bolts. You manage to remain steady, but nothing you do convinces the steed to stop.
 				<<else>>
@@ -181,17 +181,12 @@ You are at Remy's riding school. Stables surround a central courtyard. A small o
 				<br>
 				<<link [[Brace yourself|Riding School Lesson Brace]]>><</link>>
 				<br>
-			<<else>>
-				<<if $thighskill gte 200>>
-					You manage to keep yours in line, but some of the newer students lose control. Remy gallops after them, herding them back to the others.
-				<<else>>
-					Your <<steed_text>> lurches aside, and gallops. You throw your arms around <<steed_his>> neck and cling as hard as you can, until Remy catches up and grasps the reins, pulling you to a stop.<<gstress>><<stress 6>>
-				<</if>>
-				<br><br>
+				<!-- You manage to keep yours in line, but some of the newer students lose control. Remy gallops after them, herding them back to the others. -->
+				<!-- Your <<steed_text>> lurches aside, and gallops. You throw your arms around <<steed_his>> neck and cling as hard as you can, until Remy catches up and grasps the reins, pulling you to a stop.<<gstress>><<stress 6>> -->
+				<!-- <br><br> -->
 
-				<<link [[Next|Riding School Lesson]]>><</link>>
-				<br>
-			<</if>>
+				<!-- <<link [[Next|Riding School Lesson]]>><</link>> -->
+				<!-- <br> -->
 
 		<<elseif $rng gte 61>>
 			<<npc Remy>><<person1>>
@@ -200,38 +195,68 @@ You are at Remy's riding school. Stables surround a central courtyard. A small o
 			<<endevent>>
 			<<generate1>><<person1>>
 			You hear hooves coming up from behind.
-			<<if $worn.upper.open is 1>>
-				A <<person>> rides alongside you and grasps the top of your $worn.upper.name. <<He>> tugs it down your chest, revealing your <<undertop>>.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
-				<br><br>
+			
+			<<if $worn.upper.name is "black leather jacket" 
+				or $worn.upper.name is "brown leather jacket">>
+					<!-- Special interaction with unzipped jackets -->
+					<<if $worn.under_upper.type.includes("naked")>>
+						<!-- Revealing undertop or naked -->
+						A <<person>> rides alongside you and grasps the side of your $worn.upper.name. <<He>> pulls it open, revealing your <<breasts>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 100>>
+					<<else>>
+						<!-- Generic undertop -->
+						A <<person>> rides alongside you and grasps the side of your $worn.upper.name. <<He>> pulls it open, revealing your <<undertop>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 40>>
+					<</if>>
 
+					<br><br>
+					You bat <<his>> arm away and cover yourself before anyone else sees. <<He>> shoots you a mocking smirk before riding on.
+					<br><br>
+			
+			<<elseif $worn.upper.type.includes("naked")>>
+				<<if $worn.under_upper.type.includes("naked")>>
+					<!-- Full topless -->
+					A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>>, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 600>>
+				<<else>>
+					<!-- Generic undertop -->
+					A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>> through your $worn.under_upper.name, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 600>>
+				<</if>>
+
+					<br><br>
+					You bat <<his>> arm away before anyone sees. <<He>> shoots you a mocking smirk before riding on.
+					<br><br>
+
+			<<elseif $worn.upper.open is 1>>
+				<!-- Generic open top pulled down -->
+				<<if $worn.under_upper.type.includes("naked")>>
+					<!-- Revealing undertop or naked -->
+					A <<person>> rides alongside you and grasps the top of your $worn.upper.name. <<He>> tugs it down your chest, revealing your <<breasts>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 100>>
+				<<else>>
+					<!-- Generic undertop -->
+					A <<person>> rides alongside you and grasps the top of your $worn.upper.name. <<He>> tugs it down your chest, revealing your <<undertop>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 40>>
+				<</if>>
+
+				<br><br>
 				You bat <<his>> arm away and cover yourself before anyone else sees. <<He>> shoots you a mocking smirk before riding on.
 				<br><br>
 
 			<<elseif $worn.upper.set isnot $worn.lower.set>>
-				A <<person>> rides alongside you and grasps the bottom of your $worn.upper.name. <<He>> pulls it up your chest, revealing your <<undertop>>.<<gtrauma>><<gstress>><<trauma 6>><<stress 6>>
-				<br><br>
+				<!-- Generic closed top pulled up -->
+				<<if $worn.under_upper.type.includes("naked")>>
+					<!-- Revealing undertop or naked -->
+					A <<person>> rides alongside you and grasps the bottom of your $worn.upper.name. <<He>> pulls it up your chest, revealing your <<breasts>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 100>>
+				<<else>>
+					<!-- Generic undertop -->
+					A <<person>> rides alongside you and grasps the bottom of your $worn.upper.name. <<He>> pulls it up your chest, revealing your <<undertop>>.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 40>>
+				<</if>>
 
+				<br><br>
 				You bat <<his>> arm away and cover yourself before anyone else sees. <<He>> shoots you a mocking smirk before riding on.
 				<br><br>
-
-			<<elseif !$worn.upper.type.includes("naked")>>
-				A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>> through your $worn.upper.name, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 6>>
-				<br><br>
-
-				You bat <<his>> arm away before anyone sees. <<He>> shoots you a mocking smirk before riding on.
-				<br><br>
-
-			<<elseif !$worn.under_upper.type.includes("naked")>>
-				A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>> through your $worn.under_upper.name, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 6>>
-				<br><br>
-
-				You bat <<his>> arm away before anyone sees. <<He>> shoots you a mocking smirk before riding on.
-				<br><br>
-
+				
 			<<else>>
-				A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>>, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 6>>
-				<br><br>
+				<!-- Generic top / one-piece clothing -->
+				A <<person>> rides alongside you. <<He>> leans over and grasps your <<breasts>> through your $worn.upper.name, squeezing and fondling.<<gtrauma>><<gstress>><<garousal>><<trauma 6>><<stress 6>><<arousal 600>>
 
+				<br><br>
 				You bat <<his>> arm away before anyone sees. <<He>> shoots you a mocking smirk before riding on.
 				<br><br>
 			<</if>>
@@ -339,7 +364,7 @@ You are at Remy's riding school. Stables surround a central courtyard. A small o
 :: Riding School Lesson Stop [nobr]
 <<effects>>
 
-<<if $tending gte random(1, 700)>>
+<<if $tendingSuccess>>
 	You tell the <<steed_text>> to stop. <span class="green">It hears the urgency in your voice,</span> and halts in its tracks. You fumble with the branch until you manage to free your $worn.lower.name, then spur on your steed once more.
 	<br><br>
 
@@ -464,15 +489,15 @@ You drop to your knees, scoop out some of the debris, then squeeze into the dark
 You drop to your knees and crawl inside. The interior is dark and dusty. You get your head and shoulders through, then your chest, but your waist proves just a little too thick.
 <br><br>
 
-<<if $bestialitydisable is "f">>
+<!-- Modified for Monster People -->
 	You push against the wall and wiggle your hips. You're making progress, but then something wet touches your <<bottom>>. It's a tongue.
 
 	<<if $steed is "male" or $steed is "female">>
-		"I can't help it," says the centaur, <<steed_his>> voice muffled by the rubble. "Your skin is so salty."<<gstress>><<garousal>><<stress 6>><<arousal 6>>
+		"I can't help it," says the centaur, <<steed_his>> voice muffled by the rubble. "Your skin is so salty."<<gstress>><<garousal>><<stress 6>><<arousal 600>>
 		<br><br>
 
 	<<else>>
-		A very long tongue. Its the horse.<<gstress>><<garousal>><<stress 6>><<arousal 6>>
+		A very long tongue. Its the horse.<<gstress>><<garousal>><<stress 6>><<arousal 600>>
 		<br><br>
 	<</if>>
 
@@ -480,15 +505,14 @@ You drop to your knees and crawl inside. The interior is dark and dusty. You get
 	<br>
 	<<link [[Kick|Riding School Lesson Kick]]>><</link>><<physiquedifficulty 4000 $physiquemax>>
 	<br>
-	<<link [[Endure|Riding School Lesson Endure]]>><<trauma 6>><<stress 6>><<arousal 6>><</link>><<gtrauma>><<gstress>><<garousal>>
+	<<link [[Endure|Riding School Lesson Endure]]>><<trauma 6>><<stress 6>><<arousal 600>><</link>><<gtrauma>><<gstress>><<garousal>>
 	<br>
-<<else>>
-	You push against the wall and wiggle your hips, until you at last slide through.<<gpain>><<pain 4>>
-	<br><br>
 
-	<<link [[Next|Riding School Lesson Building]]>><</link>>
-	<br>
-<</if>>
+	<!-- You push against the wall and wiggle your hips, until you at last slide through.<<gpain>><<pain 4>> -->
+	<!-- <br><br> -->
+
+	<!-- <<link [[Next|Riding School Lesson Building]]>><</link>> -->
+	<!-- <br> -->
 
 :: Riding School Lesson Plead [nobr]
 <<effects>>
@@ -502,7 +526,7 @@ You drop to your knees and crawl inside. The interior is dark and dusty. You get
 <</if>>
 <br><br>
 
-<<if $tending gte random(400, 1200)>>
+<<if $tendingSuccess>>
 	<<if $steed is "male" or $steed is "female">>
 		"Sorry," the <<steed_text>> says. <span class="green">It backs a way from you.</span>
 	<<else>>
@@ -526,7 +550,7 @@ You drop to your knees and crawl inside. The interior is dark and dusty. You get
 :: Riding School Lesson Kick [nobr]
 <<effects>>
 
-<<if $physique gte random(4000, $physiquemax)>>
+<<if $physiqueSuccess>>
 	You kick at the <<steed_text>>, <span class="green">and <<steed_he>> backs away from you.</span>
 	<br><br>
 
@@ -745,7 +769,7 @@ You lean behind the <<person>>, and tap <<him>> on the opposite shoulder.
 :: Riding School Lesson Shove [nobr]
 <<effects>>
 
-<<if $physique gte random(1, 12000)>>
+<<if $physiqueSuccess>>
 	You shove the <<person>>, and <span class="green"><<he>> tumbles from the saddle</span>. Someone laughs.
 	<br><br>
 
@@ -780,7 +804,7 @@ You lean behind the <<person>>, and tap <<him>> on the opposite shoulder.
 	You try to remain calm, and make soothing noises as the beast approaches.
 <</if>>
 
-<<if $tending gte random(600, 1200)>>
+<<if $tendingSuccess>>
 	<span class="green">The <<steed_text>> stops.</span>
 	<<if $steed is "male" or $steed is "female">>
 		<<steed_He>> raises a palm to <<steed_his>> face and shakes <<steed_his>> head. "I'm sorry," <<steed_he>> says. "I don't know what came over me."
@@ -820,6 +844,7 @@ You brace yourself as the horse charges, knocking you down and taking position a
 <<molested>>
 
 <<steed_init>>
+	<<beastCombatInit>>
 
 <</if>>
 
