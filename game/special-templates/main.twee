@@ -1,12 +1,12 @@
 :: Test [nobr]
 <<set $location to "underground">><<set $outside to 1>><<effects>>
-<<endevent>>
 <<endcombat>>
 
 
-<<link [[Asylum Towels]]>><</link>>
-<br>
+<<link [[Next|Bath Slime]]>><<set $molestationstart to 1>><</link>>
 
+		
+	
 :: Test2 [nobr]
 <<set $NPCName[$NPCNameList.indexOf("Kylar")].state to "active">>
 
@@ -264,6 +264,8 @@ Possible text describing your attempt.
 	<<neutral 1>>
 
 	<<beastNEWinit 1 dog>>
+	<<beastCombatInit>>
+	<<beastTrainGenerate>>/* - Delete if there aren't multiple beasts*/
 <</if>>
 
 <<effects>>
@@ -339,9 +341,10 @@ Possible text describing your attempt.
 	<<violence 1>>
 	<<neutral 1>>
 	<<molested>>
-
-	<<beastNEWinit 1 dog>>
-
+	
+	<<beastNEWinit 2 dog>>
+	<<beastCombatInit>>
+	<<beastTrainGenerate>>/* - Delete if there aren't multiple beasts*/
 <</if>>
 
 <<effects>>
@@ -416,8 +419,10 @@ Possible text describing your attempt.
 	<<neutral 1>>
 	<<molested>>
 
-	<<beastTrainGenerate 2 "wolf">>
+	
 	<<beastNEWinit 1 wolf>>
+	<<beastCombatInit>>
+	<<beastTrainGenerate>>
 	<<set $rescue to 1>>/*optional*/
 <</if>>
 <<effects>>
@@ -444,12 +449,13 @@ Possible text describing your attempt.
 	<<beastwound>>
 	<<if $combatTrain.length gt 0>>
 		The <<beasttype>> recoils in pain and fear, but another is eager for a go.
-		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		
 		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Beast Gang]]
 	<<else>>
 		The <<beasttype>> recoils in pain and fear.
+		<<combatTrainAdvance>>
 		<br><br>
 		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
 	<</if>>
@@ -457,12 +463,13 @@ Possible text describing your attempt.
 	<<beastejaculation>>
 	<<if $combatTrain.length gt 0>>
 		Satisfied, the <<beasttype>> moves and another takes its turn.
-		<<beastNEWinit $combatTrain.numberPerTrain[0] $combatTrain.beastTypes[0]>>
+		
 		<<combatTrainAdvance>>
 		<br><br>
 		[[Next|Beast Gang]]
 	<<else>>
 		Satisfied, the <<beasttype>> moves away from you.
+		<<combatTrainAdvance>>
 		<br><br>
 		<<link [[Next|Beast Gang End]]>><<set $finish to 1>><</link>>
 	<</if>>
@@ -890,9 +897,10 @@ Optional text about finishing masturbating.
 
 :: Physique Check [nobr]
 
-<<physiquedifficulty>>/*On previous passage after link. Displays the difficulty. First argument is the physique required to have any chance of success. Second argument is the physique required to have a 100% chance of success. Argument 1 defaults to 1 if left blank. Argument 2 defaults to $physiquemax if left blank, which is 20000 as of 0.2.9.0.*/
+<<physiquedifficulty arg1 arg2>>/*On previous passage after link. Displays the difficulty. First argument is the physique required to have any chance of success. Second argument is the physique required to have a 100% chance of success. Argument 1 defaults to 1 if left blank. Argument 2 defaults to $physiquemax if left blank, which is 20000 as of 0.2.9.0. Argument 3 accepts true and prevents any text from showing in cases where there are multiple checks of the same time in the previous passage*/
 
-<<if $physique gte random(1, $physiquemax)>>/*Replace 1 and $physiquemax with whatever numbers/variables used as arguments in <<physiquedifficulty>>*/
+/*<<physiquedifficulty arg1 arg2 true>>Optional check just before here when there are multiple checks*/
+<<if $physiqueSuccess>>/*Replace 1 and $physiquemax with whatever numbers/variables used as arguments in <<physiquedifficulty>>*/
 
 Text about passing the physique check.
 
@@ -920,8 +928,8 @@ Text about failing the physique check.
 <<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 
 :: Monster Selection [nobr]
-
-<<if $monsterchance gte 1 and $hallucinations gte 1 or $monsterchance gte 1 and $monsterhallucinations is "f">>
+<!-- Modified for Monster People -->
+<<if ($monsterchance gte 1 and $hallucinations gte 1) or ($monsterchance gte 1 and $monsterhallucinations is "f") or ($bestialitydisable is "t")>>
 	<<if $malechance lt random(1, 100)>>
 		Monstergirl
 	<<else>>
@@ -942,7 +950,7 @@ Text about failing the physique check.
 
 :: Reminder of how to give plants to the player outside planting [nobr]
 
-<<tending_harvest red_rose 50 3>>
+<<tending_harvest red_rose medium 3>>
 
 
 :: Machine [nobr]

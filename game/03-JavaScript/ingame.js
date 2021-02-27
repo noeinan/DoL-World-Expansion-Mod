@@ -66,13 +66,13 @@ window.combatListColor = function (name, value, type) {
 	if (type === "") {
 		switch (check) {
 			/*leftaction or rightaction*/
-			case "steal": case "penwhack": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus": case "rightcovervagina":
-			case "rightcoverpenis": case "rightcoveranus":
+			case "steal": case "penwhack": case "freeface": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus":
+			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
-			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss":
+			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
 			/*penisaction*/
 			case "othermouthescape": case "escape": case "otheranusescape":
 			/*vaginaaction*/
@@ -107,11 +107,11 @@ window.combatListColor = function (name, value, type) {
 			case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
 			/*mouthaction*/
 			case "peniskiss": case "kiss": case "suck": case "lick": case "moan": case "breastsuck": case "breastlick": case "swallow": case "movetochest":
-			case "othervagina": case "mouth": case "kissback": case "vaginalick":
+			case "othervagina": case "mouth": case "kissback": case "vaginalick": case "askchoke":
 			/*penisaction*/
 			case "penistovagina": case "penistoanus": case "penisvaginafuck": case "penisanusfuck": case "othermouthtease": case "othermouthrub":
 			case "othermouthcooperate": case "tease": case "cooperate": case "otheranustease": case "otheranusrub": case "otheranuscooperate": case "clitrub":
-			case "vaginaEdging": case "anusEdging":
+			case "vaginaEdging": case "otheranusEdging":
 			/*vaginaaction*/
 			case "vaginatopenis": case "vaginapenisfuck": case "othervaginarub": case "vaginatovagina": case "vaginatovaginafuck": case "tribcooperate": case "penisEdging":
 			/*anusaction*/
@@ -246,7 +246,7 @@ window.between = function(x, min, max){
 }
 
 function featsPointsMenuReset() {
-	jQuery(document).on('change', '#listbox--upgradename', function (e) {
+	jQuery(document).on('change', '#listbox--upgradenameid', function (e) {
 		new Wikifier(null, '<<updateFeatsPointsMenu>>');
 	});
 	return "";
@@ -262,3 +262,22 @@ function startingPlayerImageReset() {
 }
 
 DefineMacroS("startingPlayerImageReset", startingPlayerImageReset);
+
+window.deck = function(){
+    var names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+    var suits = ['Hearts','Diamonds','Spades','Clubs'];
+    var cards = [];
+    
+    for( var s = 0; s < suits.length; s++ ) {
+        for( var n = 0; n < names.length; n++ ) {
+            cards.push( {value:n+2, name:names[n], suits:suits[s]} );
+        }
+    }
+
+    return cards;
+}
+
+window.shuffle = function(o) {
+    for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+};

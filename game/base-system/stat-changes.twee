@@ -173,11 +173,16 @@
 
 <<widget "arousal">><<nobr>>
 	<<if $args[0] gte 0 or $args[0] lt 0>>
+		<<set _orgasmTraitMod to 1>>
+		<<set _chokeTraitMod to 1>>
 		<<if $orgasmtrait gte 1 and $args[0] gte 1>>
-			<<set $arousal to Math.clamp($arousal + ($args[0] * 0.6), 0, $arousalmax)>>
-		<<else>>
-			<<set $arousal to Math.clamp($arousal + $args[0], 0, $arousalmax)>>
+			<<set _orgasmTraitMod to 0.6>>
 		<</if>>
+		<<if $choketrait gte 1>>
+			<!-- up to x2 arousal gain when suffocating -->
+			<<set _chokeTraitMod += ($oxygenmax - $oxygen) / 1200>>
+		<</if>>
+		<<set $arousal to Math.clamp($arousal + ($args[0] * _orgasmTraitMod * _chokeTraitMod), 0, $arousalmax)>>
 		<<if $args[0] gte 0>>
 			<<if $args[1] is true>>
 				<<if $trackedArousal.length gt 4>>

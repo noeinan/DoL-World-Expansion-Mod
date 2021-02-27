@@ -26,6 +26,8 @@ You look around the museum. The pedestals are grooved, as if awaiting specific o
 <<for _labelM, _valueM range $museumAntiques.antiques>>
 	<<switch _valueM>>
 		<<case "museum">><li><<print _museumAntiqueText[_labelM].museum>></li>
+		<<case "stolen">><li><<print _museumAntiqueText[_labelM].stolen>></li>
+		<<case "recovered">><li><<print _museumAntiqueText[_labelM].recovered>></li>
 		<<case "found" "talk">><li>You should show the <<print _museumAntiqueText[_labelM].name>> to Winter.</li>
 		<<case "notFound">><li>Empty. <<run _possibleHints.push(_labelM)>></li>
 	<</switch>>
@@ -50,11 +52,14 @@ You look around the museum. The pedestals are grooved, as if awaiting specific o
 <<if $args[0] and $args[1]>>
 	<<if ($museumAntiques.antiques[$args[0]] is "notFound" and $args[1] is "found")
 	or ($museumAntiques.antiques[$args[0]] is "found" and $args[1] is "talk")
-	or ($museumAntiques.antiques[$args[0]] is "talk" and $args[1] is "museum")>>
+	or ($museumAntiques.antiques[$args[0]] is "talk" and $args[1] is "museum")
+	or $args[1] is "stolen" or $args[1] is "recovered">>
 		<<set $museumAntiques.antiques[$args[0]] to $args[1]>>
-		<<if $args[1] is "museum">>
-			<<set $museumAntiques.museumCount++>>
-		<</if>>
+		<<switch $args[1]>>
+			<<case "museum">><<set $museumAntiques.museumCount++>>
+			<<case "stolen">><<set $museumAntiques.stolenCount++>>
+			<<case "recovered">><<set $museumAntiques.recoveredCount++>>
+		<</switch>>
 	<</if>>
 <</if>>
 <</nobr>><</widget>>
@@ -196,6 +201,28 @@ You look around the museum. The pedestals are grooved, as if awaiting specific o
 			hint:`"For a pirate map," Winter says while gesturing at an empty pedestal. "A legend says they hid treasure in the nearby countryside."<br><br> <<He>> turns away. "Sounds far-fetched, but pirates and smugglers did use a secret passage to enter town. Perhaps some of their effects are still there."`,
 			museum:"The leather map rests on the wall.",
 			name:"Leather Map"
+		},
+		"antiquebell":{
+			hint:`"For a bell," Winter says while gesturing at an empty pedestal. "A relic of the old religion. Only one was made. They used to keep it at the temple, but it was stolen."<br><br> <<He>> turns away. "Not been seen since. Surprised it hasn't turned up in a museum elsewhere."`,
+			museum:"A sheet has been drawn over the bell's pedestal, concealing its contents.",
+			stolen:"The bell's pedestal is empty, save a note from Winter, apologising that the intended display is unavailable.",
+			recovered:"",
+			name:"Sonorous Bell"
+		},
+		"antiquebullet":{
+			hint:`"For a bullet," Winter says while gesturing at an empty pedestal. "Left over from the Great War. They'd practise with live ammunition. Ramblers find them on occasion."<br><br> <<He>> turns away. "They used to drill volunteers out on the moor."`,
+			museum:"The bullet rests on a pedestal.",
+			name:"Bullet"
+		},
+		"antiqueshell":{
+			hint:`"For an explosive," Winter says while gesturing at an empty pedestal. "Left over from the Great War. Ammunition would go missing, and turn up on the black market."<br><br> <<He>> turns away. "They used to practise with live ammunition out on the moor."`,
+			museum:"The artillery shell rests on a pedestal.",
+			name:"Artillery Shell"
+		},
+		"antiquegoldring":{
+			hint:`"For an ancient gold ring," Winter says while gesturing at an empty pedestal. "Something worn by nobility."<br><br> <<He>> turns away. "It would be somewhere no one's looked. Perhaps buried."`,
+			museum:"The gold ring rests on a pedestal.",
+			name:"Gold Ring"
 		}
 	}>>
 <</if>>
@@ -232,7 +259,11 @@ You look around the museum. The pedestals are grooved, as if awaiting specific o
 			"antiquesilverdagger":"notFound",
 			"antiquerustedcutlass":"notFound",
 			"antiquecutlass":"notFound",
-			"antiqueleathermap":"notFound"
+			"antiqueleathermap":"notFound",
+			"antiquebell":"notFound",
+			"antiquebullet":"notFound",
+			"antiqueshell":"notFound",
+			"antiquegoldring":"notFound"
 		},
 		museumCount:0
 	}>>
@@ -240,13 +271,63 @@ You look around the museum. The pedestals are grooved, as if awaiting specific o
 		<<print '<<if $'+_labelM+' isnot undefined>>'+
 			'<<set $museumAntiques.antiques.'+_labelM+' to $'+_labelM+'>>'+
 		'<</if>>'>>
-		<<if $museumAntiques.antiques[_labelM] is "museum">>
+		<<if $museumAntiques.antiques[_labelM] is "museum" or $museumAntiques.antiques[_labelM] is "stolen" or $museumAntiques.antiques[_labelM] is "recovered">>
 			<<set $museumAntiques.museumCount++>>
 		<</if>>
 	<</for>>
 <</if>>
 <<if $winterHint is undefined>>
 	<<set $winterHint to "notGiven">>
+<</if>>
+<<if $bell_stolen is 1>>
+	<<unset $bell_stolen>>
+	<<museumAntiqueStatus "antiquebell" "stolen">>
+<</if>>
+<<if $museumAntiques.stolenCount is undefined>>
+	<<set $museumAntiques.stolenCount to 0>>
+	<<set $museumAntiques.recoveredCount to 0>>
+<</if>>
+<<if $museumAntiques.antiques.antiquecoppercompass is undefined>>
+	<<set $museumAntiques.antiques.antiquecoppercompass to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquegrenade is undefined>>
+	<<set $museumAntiques.antiques.antiquegrenade to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquestonetalisman is undefined>>
+	<<set $museumAntiques.antiques.antiquestonetalisman to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquesilvermask is undefined>>
+	<<set $museumAntiques.antiques.antiquesilvermask to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquediamond is undefined>>
+	<<set $museumAntiques.antiques.antiquediamond to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquesilvercompass is undefined>>
+	<<set $museumAntiques.antiques.antiquesilvercompass to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquesilverdagger is undefined>>
+	<<set $museumAntiques.antiques.antiquesilverdagger to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquerustedcutlass is undefined>>
+	<<set $museumAntiques.antiques.antiquerustedcutlass to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquecutlass is undefined>>
+	<<set $museumAntiques.antiques.antiquecutlass to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiqueleathermap is undefined>>
+	<<set $museumAntiques.antiques.antiqueleathermap to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquebell is undefined>>
+	<<set $museumAntiques.antiques.antiquebell to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquebullet is undefined>>
+	<<set $museumAntiques.antiques.antiquebullet to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiqueshell is undefined>>
+	<<set $museumAntiques.antiques.antiqueshell to "notFound">>
+<</if>>
+<<if $museumAntiques.antiques.antiquegoldring is undefined>>
+	<<set $museumAntiques.antiques.antiquegoldring to "notFound">>
 <</if>>
 
 /*Should be the last to always run*/

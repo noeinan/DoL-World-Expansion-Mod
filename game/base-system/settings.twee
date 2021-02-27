@@ -50,6 +50,7 @@
 <<set $hirsutedisable to "t">>
 <<set $breastfeedingdisable to "t">>
 <<set $analpregdisable to "t">>
+<<set $asphyxiaLvl to 3>>
 <<set $tipdisable to "f">>
 <<set $bodywritingImages to false>>
 <<if $debug is 1>>
@@ -65,6 +66,8 @@
 <<set $checkstyle to "percentage">>
 <<set $blackwolfmonster to 1>>
 <<set $player.ballsExist to false>>
+<<set $blinkingdisable to "f">>
+<<set $halfcloseddisable to "f">>
 
 /*noeinan mod END*/
 
@@ -89,7 +92,9 @@
 <<switch $currentSettings>>
 	<<case "quickStart">><<replace #settingsDiv>><<quickStart>><</replace>>
 	<<case "presetConfirmDetails">><<replace #settingsDiv>><<presetConfirmDetails>><</replace>>
-	<<case "characterSettings">><<replace #settingsDiv>><<characterSettings>><</replace>><<startingPlayerImageUpdate>><<removeclass #startingPlayerImage "hidden">>
+	<<case "characterSettings">>
+		<<replace #settingsDiv>><<characterSettings>><</replace>>
+		<<if StartConfig.enableImages and $passage is "Start">><<startingPlayerImageUpdate>><<removeclass #startingPlayerImage "hidden">><</if>>
 	<<case "featSettings">><<replace #settingsDiv>><<featSettings>><</replace>>
 	<<case "gameSettings">><<replace #settingsDiv>><<gameSettings>><</replace>>
 	<<case "sizeLimitsSettings">><<replace #settingsDiv>><<sizeLimitsSettings>><</replace>>
@@ -157,9 +162,9 @@
 	<</button>>
 </div>
 <br>
-<div id="settingsDiv">
+<div id="settingsDiv" class="no-numberify">
 	<<if $passage is "Start">>
-		<<quickStart>><<set $currentSettings to "characterSettings">>
+		<<quickStart>><<set $currentSettings to "quickStart">>
 	<<else>>
 		<<gameSettings>><<set $currentSettings to "gameSettings">>
 	<</if>>
@@ -242,18 +247,18 @@
 	<<set $saveName to $saveName.replace(/[^a-zA-Z 0-9]+/g,"")>>
 	<<unset $importString>>
 <</nobr>><</widget>>
-
+/*complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},*/
 <<widget "quickStartOptions">><<nobr>>
 <<if _quickStartOptions is undefined>>
 	<<set _quickStartOptions to {
-		complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},
 		player:{"Female Waif":"femaleWaif","Male Waif":"maleWaif", "Hermaphrodite Waif":"hermaphroditeWaif", "Vrelnir PC":"vrel", "Crossdresser":"crossdresser","Tough Guy":"toughGuy"},
 		genericNpc:{"Default Genders":"genericNpcDefaultGender", "All Male":"genericNpcAllMaleGender", "All Female":"genericNpcAllFemaleGender"},
 		namedNpc:{"Default Genders":"namedNpcDefaultGender", "All Male":"namedNpcAllMaleGender", "All Female":"namedNpcAllFemaleGender"},
 		beasts:{"Default Genders":"beastDefaultGenders", "All Male":"beastMaleGenders", "All Female":"beastFemaleGenders"},
-		monsters:{"Default Monsters":"monstersDefault", "No Monsters":"monstersNone", "All Monsters":"monstersAll"},
+		monsters:{"When Hallucinating":"monstersDefault", "No Monsters":"monstersNone", "All Monsters":"monstersAll"},
+		kink:{"Reasonably Debauched":"kinkDefault", "Vanilla":"kinkVanilla", "No Beasts":"kinkNoBeasts", "Everything Goes":"kinkEverything"},
 		game:{
-			"Normal":"gameNormal","Soft":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Journalist":"gameSoftCheats","Normal with Cheats":"gameNormalCheats","Hard with Cheats":"gameHardCheats","Masochist with Cheats":"gameMasochistCheats"
+			"Normal ":"gameNormal","Soft (No Feats)":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Soft with Cheats (No Feats)":"gameSoftCheats","Normal with Cheats (No Feats)":"gameNormalCheats","Hard with Cheats (No Feats)":"gameHardCheats","Masochist with Cheats (No Feats)":"gameMasochistCheats"
 		},
 		images:{"Default":"imagesdefault","High Quality":"imagesHigh","Low Quality":"imagesLow","Performance Mode":"imagesPerformance","Disable images":"imagesDisable"},
 		settings:{"PC, Tips":"settingPCTip","PC, no Tips":"settingPCNoTip","Mobile, Tips":"settingMobileTips","Mobile, no Tips":"settingMobileNoTips"},
@@ -263,15 +268,19 @@
 
 <<widget "quickStart">><<nobr>>
 <<quickStartOptions>>
-<span class="red">The quick start tab can only be accessed at the beginning. You may want to at least edit your character and boosts after this as those tabs can also only be accessed at the beginning.</span>
+<i>Gender ratios and kinks can be fine-tuned in the Game Settings Tab.</i>
 <br><br>
+/*
 <span class="gold">Complete Contributor Preset:</span> <<listbox "_completePreset" autoselect>><<optionsfrom _quickStartOptions.complete>><</listbox>> |
 <<link Set>><<presets _completePreset>><</link>>
 <br><br>
+*/
 
+/*
 <span class="gold">Player Preset:</span> <<listbox "_playerPreset" autoselect>><<optionsfrom _quickStartOptions.player>><</listbox>> |
 <<link Set>><<presets _playerPreset>><</link>>
 <br><br>
+*/
 
 <span class="gold">Generic NPC Preset:</span> <<listbox "_genericNpcPreset" autoselect>><<optionsfrom _quickStartOptions.genericNpc>><</listbox>> |
 <<link Set>><<presets _genericNpcPreset>><</link>>
@@ -287,7 +296,11 @@
 <<link Set>><<presets _monstersPreset>><</link>>
 <br><br>
 
-<span class="gold">Game difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
+<span class="gold">Kinks Preset:</span> <<listbox "_kinkPreset" autoselect>><<optionsfrom _quickStartOptions.kink>><</listbox>> |
+<<link Set>><<presets _kinkPreset>><</link>>
+<br><br>
+
+<span class="gold">Difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
 <<link Set>><<presets _gamePreset>><</link>>
 <br><br>
 <<if StartConfig.enableImages is true>>
@@ -301,8 +314,7 @@
 <</nobr>><</widget>>
 
 <<widget "characterSettings">><<nobr>>
-	<span class="red">The Character tab can only be accessed at the beginning.</span>
-	<br>
+	
 	<<if StartConfig.enableImages is true>>
 		<span class="gold">View a preview of the character in the side bar.</span> <label>Show Clothes <<print '<<checkbox "_showClothes" false true '+(_showClothes isnot false ? "checked" : "")+'>>'>></label> <label>Show Underwear <<print '<<checkbox "_showUnderwear" false true '+(_showUnderwear isnot false ? "checked" : "")+'>>'>></label> 
 		<br>
@@ -515,8 +527,7 @@
 <</nobr>><</widget>>
 
 <<widget "featSettings">><<nobr>>
-	<span class="red">The Feat Boost tab can only be accessed at the beginning.</span>
-	<br><br>
+	
 	<<if $feats.allSaves.points is undefined or $feats.allSaves.points is 0>>
 		<span class="red">You have 0 VrelCoins to use on boosts at the moment. If this is incorrect, please load your last save and restart.</span>
 	<<else>>
@@ -537,12 +548,15 @@
 		Loading your last save with these feats will revert this.
 		<br><br>
 		<<set _upgradeNames to Object.keys($featsBoosts.upgrades)>>
-		<<set _featOptionsList to {}>>
+		<<set _visibleUpgradeNames to []>>
+		<<set _visibleUpgradeIDs to []>>
 		<<for _i to 0; _i lt _upgradeNames.length; _i++>>
 			<<if $featsBoosts.upgradeDetails[_upgradeNames[_i]].count gte $featsBoosts.upgradeDetails[_upgradeNames[_i]].minCount>>
-				<<set _featOptionsList[$featsBoosts.name[_upgradeNames[_i]]] = _upgradeNames[_i]>>
+				<<set _visibleUpgradeNames.push($featsBoosts.name[_upgradeNames[_i]])>>
+				<<set _visibleUpgradeIDs.push(clone(_i))>>
 			<<else>>
-				<<set _featOptionsList["?????"] = _upgradeNames[_i]>>
+				<<set _visibleUpgradeNames.push("?????")>>
+				<<set _visibleUpgradeIDs.push(clone(_i))>>
 			<</if>>
 		<</for>>
 		<div id="featsPointsMenu">
@@ -669,8 +683,8 @@
 				<<script>>
 					let val = SugarCube.State.temporary.anyBeastOn ? 't' : 'f';
 					SugarCube.State.temporary.beastVars.forEach(x => SugarCube.State.variables[x] = val);
-					SugarCube.Engine.show();
 				<</script>>
+				<<displaySubsection "beastSettings">>
 			<</button>>
 			</span><br>
 			<label><div class="settingsToggle">
@@ -732,20 +746,11 @@
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$bodywritingdisable" "t" "f" ' + ($bodywritingdisable is "f" ? "checked" : "") + '>>'>> Enable body-writing and forced tattoos
 	</div></label>
-	<div style="clear:both;">/*Keep at end of toggles*/</div>
-
-	<span class="gold">Advanced Visual Settings</span>
-	<br>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$blinkingdisable" "t" "f" ' + ($blinkingdisable is "t" ? "" : "checked") + '>>'>> Animate eyes blinking
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$halfcloseddisable" "t" "f" ' + ($halfcloseddisable is "t" ? "" : "checked") + '>>'>> Enable half-closed eyes graphics
-	</div></label>
-	<label><div class="settingsToggle">
-	Face style <<textbox "$facestyle" $facestyle>>
-	<br><span style="font-size: x-small; color: grey;">Modify only if you installed any face styles other than default</span>
-	</div></label>
+	<div class="settingsToggle" style="display: inline-flex;">
+	Asphyxiation
+	<<numberslider "$asphyxiaLvl" $asphyxiaLvl 0 3 1>>
+	<<run settingsAsphyxiation()>>
+	</div>
 	<div style="clear:both;">/*Keep at end of toggles*/</div>
 <</nobr>><</widget>>
 
@@ -788,32 +793,26 @@
 	<span class="gold">Images</span>
 	<br>
 	<<if StartConfig.enableImages is true>>
-		Images may not load properly on older Androids.
-		<br>
-		<label>Enable images <<print '<<radiobutton "$images" 1 ' + ($images is 1 ? "checked" : "") + '>>'>></label> |
-		<label>Disable images <<print '<<radiobutton "$images" 0 ' + ($images is 0 ? "checked" : "") + '>>'>></label>
-		<br><br>
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$images" 0 1 ' + ($images is 1 ? "checked" : "") + '>>'>> Enable images
+		<div class="description">Images may not load properly on older Androids.</div>
+		</div></label>
 
-		CSS animations (Disabling may help improve performance and prevent images from loading incorrectly. Gif images will not be affected). Try disabling sidebar images first.
-		<br>
-		Sidebar:
-		<label>Enable <<print '<<radiobutton "$sidebarAnimations" true ' + ($sidebarAnimations isnot false ? "checked" : "") + '>>'>></label> |
-		<label>Disable <<print '<<radiobutton "$sidebarAnimations" false ' + ($sidebarAnimations is false ? "checked" : "") + '>>'>></label>
-		<br>
-		Combat:
-		<label>Enable <<print '<<radiobutton "$combatAnimations" true ' + ($combatAnimations isnot false ? "checked" : "") + '>>'>></label> |
-		<label>Disable <<print '<<radiobutton "$combatAnimations" false ' + ($combatAnimations is false ? "checked" : "") + '>>'>></label>
-		<br><br>
+		<label><div class="settingsToggleBig">
+		CSS animations
+		<div><label><<print '<<checkbox "$sidebarAnimations" false true ' + ($sidebarAnimations is true ? "checked" : "") + '>>'>> Sidebar animations</label></div>
+		<div><label><<print '<<checkbox "$combatAnimations" false true ' + ($combatAnimations is true ? "checked" : "") + '>>'>> Combat animations</label></div>
+		<div class="description">Disabling may help improve performance and prevent images from loading incorrectly. Gif images will not be affected. Try disabling sidebar images first.</div>
+		</div></label>
 
-		Body-writing Images (Disabling may improve performance and potentially prevent images from not loading correctly).
-		<br>
-		<label>Enable body-writing images <<print '<<radiobutton "$bodywritingImages" true ' + ($bodywritingImages is true ? "checked" : "") + '>>'>></label> |
-		<label>Disable body-writing images <<print '<<radiobutton "$bodywritingImages" false ' + ($bodywritingImages is false ? "checked" : "") + '>>'>></label>
-		<br><br>
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$bodywritingImages" false true ' + ($bodywritingImages is true ? "checked" : "") + '>>'>> Enable body-writing Images
+		<div class="description">Disabling may improve performance and potentially prevent images from not loading correctly.</div>
+		</div></label>
 
-		<label>Enable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>></label> |
-		<label>Disable NPC silhouettes <<print '<<radiobutton "$silhouettedisable" "t" ' + ($silhouettedisable is "t" ? "checked" : "") + '>>'>></label>
-		<br><br>
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$silhouettedisable" "t" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>> Enable NPC silhouettes
+		</div></label>
 
 		<<if $skinColor.init is false and $passage isnot "Start">>
 			<span class="gold">You can now choose your character's skin colour. Click "Test" to preview the setting on the paperdolls. Click "Confirm" when you've made your selection.</span> This can cause performance issues on some devices. Should this be an issue, the option to disable the new skin system will appear here.
@@ -855,27 +854,46 @@
 				<</if>>
 			<</link>> - <span class="red">These settings can not be changed after Confirming.</span>
 		<<else>>
-		Visual representation of the player character's skin colour - <span class="pink">May hinder performance on some devices</span>
-		<br>
-			<label>On <<print '<<radiobutton "$skinColor.tanImgEnabled" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>></label> |
-			<label>Off <<print '<<radiobutton "$skinColor.tanImgEnabled" "f" ' + ($skinColor.tanImgEnabled is "f" ? "checked" : "") + '>>'>></label>
-
-			<br><br>
-			Tanning changes - Whether tan will change due to sun exposure, or the lack of it.
-			<br>
-			<label>On <<print '<<radiobutton "$skinColor.tanningEnabled" true ' + ($skinColor.tanningEnabled is true ? "checked" : "") + '>>'>></label> |
-			<label>Off <<print '<<radiobutton "$skinColor.tanningEnabled" false ' + ($skinColor.tanningEnabled is false ? "checked" : "") + '>>'>></label>
-			- <span class="red">(Option to disable may be removed at a later date)</span>
+			<label><div class="settingsToggleBig">
+			<<print '<<checkbox "$skinColor.tanImgEnabled" "f" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>> Visual representation of the player character's skin colour
+			<div class="description"><span class="pink">May hinder performance on some devices.</span></div>
+			</div></label>
+			<label><div class="settingsToggleBig">
+			<<print '<<checkbox "$skinColor.tanningEnabled" false true ' + ($skinColor.tanningEnabled is true ? "checked" : "") + '>>'>> Tanning changes due to sun exposure
+			<div class="description"><span class="red">Option to disable may be removed at a later date.</span></div>
+			</div></label>
 		<</if>>
+
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$blinkingdisable" "t" "f" ' + ($blinkingdisable is "t" ? "" : "checked") + '>>'>> Animate eyes blinking
+		<div class="description">Works only if CSS animations are enabled.</div>
+		</div></label>
+		<<if $eyelidTEST is true>>
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$halfcloseddisable" "t" "f" ' + ($halfcloseddisable is "t" ? "" : "checked") + '>>'>> Enable half-closed eyes graphics
+		<div class="description">Draw eyelids in sidebar as half-closed when highly aroused.</div>
+		</div></label>
+		<</if>>
+		<<if $debug is 1>>
+			<label><div class="settingsToggleBig"><div style="display: inline-flex;">
+			Face style 
+			<div style="margin-left: 1em;"><<textbox "$facestyle" $facestyle>></div></div>
+			<div class="description">This setting works only if you have installed face styles other than default.</div>
+			<<script>>jQuery(document).ready(() => { jQuery('#textbox-facestyle').css('width', '100%').css('min-width', 'unset').css('height', '0.75em'); });<</script>>
+			</div></label>
+		<</if>>
+		<br>
 	<<else>>
 		Not Available
 	<</if>>
-	<br><br>
+	<div id="spacer" class="">&nbsp;</div>
 	<span class="gold">Numbered link navigation</span>
 	<br>
 	<<if StartConfig.enableLinkNumberify is true>>
-	<label>Enable numbered link navigation <<print '<<radiobutton "$numberify_enabled" 1 ' + ($numberify_enabled is 1 ? "checked" : "") + '>>'>></label> |
-	<label>Disable numbered link navigation <<print '<<radiobutton "$numberify_enabled" 0 ' + ($numberify_enabled is 0 ? "checked" : "") + '>>'>></label>
+		<label><div class="settingsToggleBig">
+		<<print '<<checkbox "$numberify_enabled" 0 1 ' + ($numberify_enabled is 1 ? "checked" : "") + '>>'>> Enable numbered link navigation
+		<div class="description">Allows navigation with keyboard.</div>
+		</div></label>
 	<<else>>
 		Not Available
 	<</if>>
@@ -890,28 +908,32 @@
 	<span class="gold">Skill check display</span>
 	<br>
 	<label>Show exact percentage <<print '<<radiobutton "$checkstyle" "percentage" ' + ($checkstyle is "percentage" ? "checked" : "") + '>>'>></label> |
-	<label>Show only general description <<print '<<radiobutton "$checkstyle" "words" ' + ($checkstyle is "words" ? "checked" : "") + '>>'>></label>
+	<label>Show only general description <<print '<<radiobutton "$checkstyle" "words" ' + ($checkstyle is "words" ? "checked" : "") + '>>'>></label> |
+	<label>Show only skill name <<print '<<radiobutton "$checkstyle" "skillname" ' + ($checkstyle is "skillname" ? "checked" : "") + '>>'>></label> |
 	<br><br>
 
-	<span class="gold">In game hints and tips</span> - Shows in the sidebar
+	<span class="gold">In game hints and tips</span>
 	<br>
-	<label>Enable hints and tips <<print '<<radiobutton "$tipdisable" "f" ' + ($tipdisable is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Disable hints and tips <<print '<<radiobutton "$tipdisable" "t" ' + ($tipdisable is "t" ? "checked" : "") + '>>'>></label>
-	<br>
-	<<link [["View all tips"|Tips]]>><<set $lastPassage to $passage>><</link>>
+	<label><div class="settingsToggleBig">
+	<<print '<<checkbox "$tipdisable" "t" "f" ' + ($tipdisable is "f" ? "checked" : "") + '>>'>> Enable hints and tips
+	<div class="description">Shows in the sidebar.</div>
+	<div><<link [["View all tips"|Tips]]>><<set $lastPassage to $passage>><</link>></div>
+	</div></label>
 	<br><br>
 
-	<span class="gold">Additional error information</span> - Shows in the sidebar
+	<span class="gold">Additional error information</span>
 	<br>
-	<label>Enable additional error messages <<print '<<radiobutton "$debugdisable" "f" ' + ($debugdisable is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Disable additional error messages <<print '<<radiobutton "$debugdisable" "t" ' + ($debugdisable is "t" ? "checked" : "") + '>>'>></label>
+	<label><div class="settingsToggleBig">
+	<<print '<<checkbox "$debugdisable" "t" "f" ' + ($debugdisable is "f" ? "checked" : "") + '>>'>> Enable additional error messages
+	<div class="description">Shows in the sidebar.</div>
+	</div></label>
 	<br><br>
 
-	<span class="gold">Save Name</span> - Shows in the save menu in place of the save id
-	<br>
-	<span class="red">Only 10 characters at most will show in the save menu, leave empty to show the save ID</span>
+	<span class="gold">Save Name</span>
 	<br>
 	<<textbox "$saveName" $saveName>>
+	<div class="description">Shows in the save menu in place of the save id.</div>
+	<div class="description"><span class="red">Only 10 characters at most will show in the save menu, leave empty to show the save ID.</span></div>
 	<br><br>
 	<span class="gold">Game Zoom</span> -Will allow you to adjust the size of game elements and text. 100 is the default value.
 	A value of 50 will zoom the page out to half of its original size, while a value of 200 will zoom the page in to double its size.
@@ -928,12 +950,12 @@
 	<input type="button" value="Reset Zoom" onclick="zoom(100, true)"/>
 	<input type="button" value="Set Zoom" onclick="zoom(undefined, true)"/>
 	<br><br>
-	<span class="gold">Cheats menu</span> - Button shows in sidebar
+	<span class="gold">Cheats menu</span>
 	<br>
-	<span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span>
-	<br>
-	<label>Enable cheats <<print '<<radiobutton "$cheatdisable" "f" ' + ($cheatdisable is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Disable cheats <<print '<<radiobutton "$cheatdisable" "t" ' + ($cheatdisable is "t" ? "checked" : "") + '>>'>></label>
+	<label><div class="settingsToggleBig">
+	<<print '<<checkbox "$cheatdisable" "t" "f" ' + ($cheatdisable is "f" ? "checked" : "") + '>>'>> Enable cheats
+	<div class="description">Button shows in sidebar. <span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span></div>
+	</div></label>
 	<br><br>
 	<<if version.major gt 2 or version.minor gt 29>>
 		<<link [["Character Viewer"|Clothes Testing]]>>
@@ -1090,18 +1112,12 @@ Penis size - if applicable:
 <</for>>
 <br><br>
 
-Breast size:
-<br>
-<<for _j to 0; _j lt _breastDescription.length; _j++>>
-	<label>
-		<<set _onclick to "SugarCube.State.variables.NPCName["+_npcId+"].breastsize="+ _j + ";">>
-		<<set _onclick += "SugarCube.State.variables.NPCName["+_npcId+"].breastdesc='" + _breastDescriptionNPC[_j] + "';">>
-		<<set _onclick += "SugarCube.State.variables.NPCName["+_npcId+"].breastsdesc='" + _breastsDescriptionNPC[_j] + "';">>
-		<<print '<input type="radio" name="breastSize" @value="_j" @onclick="clone(_onclick)" '+($NPCName[_npcId].breastsize is (_j) ? "checked" : "") +'/>'>>
-		<<print _breastDescription[_j]>>
-	</label> |
-<</for>>
-<br><br>
+<div class="settingsToggle" style="display: inline-flex;">
+Breast size
+<<numberslider "$NPCName[_npcId].breastsize" $NPCName[_npcId].breastsize 0 12 1>>
+<<run settingsNamedNpcBreastSize()>>
+</div>
+<div style="clear:both;">/*Keep at end of toggles*/</div>
 
 <<if $NPCName[_npcId].nam is "Black Wolf">>
 

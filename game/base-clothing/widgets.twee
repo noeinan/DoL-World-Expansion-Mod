@@ -55,7 +55,9 @@
 		<<set $worn[$args[0]].colourCustom to 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+') sepia(' + $customColors.sepia.primary + ')'>>
 	<</if>>
 <<elseif $worn[$args[0]].colour_options.length gt 0>>
-	<<set $worn[$args[0]].colour to clone($worn[$args[0]].colour_options.random())>>
+	<<set _colorOption to clone($worn[$args[0]].colour_options)>>
+	<<run _colorOption.delete("custom")>>
+	<<set $worn[$args[0]].colour to clone(_colorOption.random())>>
 <</if>>
 <<if $args[3] and $worn[$args[0]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
 	<<set $worn[$args[0]].accessory_colour to $args[3]>>
@@ -63,7 +65,9 @@
 		<<set $worn[$args[0]].accessory_colourCustom to 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+') sepia(' + $customColors.sepia.secondary + ')'>>
 	<</if>>
 <<elseif setup.clothes[$args[0]][$args[1]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
-	<<set $worn[$args[0]].accessory_colour to clone($worn[$args[0]].accessory_colour_options.random())>>
+	<<set _accessoryColorOption to clone($worn[$args[0]].accessory_colour_options)>>
+	<<run _accessoryColorOption.delete("custom")>>
+	<<set $worn[$args[0]].accessory_colour to clone(_accessoryColorOption.random())>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -156,7 +160,12 @@
 <<if $args[2] and $wardrobe[$args[0]].last().colour_options.length isnot 0>>
 	<<set $wardrobe[$args[0]].last().colour to $args[2]>>
 	<<if $wardrobe[$args[0]].last().colour is "custom">>
-		<<set $wardrobe[$args[0]].last().colourCustom to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
+		<<if _colourCustom isnot undefined>>
+			<<set $wardrobe[$args[0]].last().colourCustom to _colourCustom>>
+			<<unset _colourCustom>>
+		<<else>>
+			<<set $wardrobe[$args[0]].last().colourCustom to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
+		<</if>>
 	<</if>>
 <<elseif $wardrobe[$args[0]].last().colour_options.length gt 0>>
 	<<set $wardrobe[$args[0]].last().colour to clone($wardrobe[$args[0]].last().colour_options.random())>>
@@ -164,7 +173,12 @@
 <<if $args[3] and $wardrobe[$args[0]].last().accessory is 1 and $wardrobe[$args[0]].last().accessory_colour_options.length isnot 0>>
 	<<set $wardrobe[$args[0]].last().accessory_colour to $args[3]>>
 	<<if $wardrobe[$args[0]].last().accessory_colour is "custom">>
-		<<set $wardrobe[$args[0]].last().accessory_colourCustom to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
+		<<if _accessory_colourCustom isnot undefined>>
+			<<set $wardrobe[$args[0]].last().accessory_colourCustom to _accessory_colourCustom>>
+			<<unset _accessory_colourCustom>>
+		<<else>>
+			<<set $wardrobe[$args[0]].last().accessory_colourCustom to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
+		<</if>>
 	<</if>>
 <<elseif $wardrobe[$args[0]].last().accessory_colour_options.length gt 0 and $wardrobe[$args[0]].last().accessory is 1>>
 	<<set $wardrobe[$args[0]].last().accessory_colour to clone($wardrobe[$args[0]].last().accessory_colour_options.random())>>
@@ -432,6 +446,8 @@
 					<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($carried[$args[0]].name))>>
 				<</if>>
 			<<elseif $clothingrebuy is 1 and $worn[$args[0]].one_piece isnot "broken" and $worn[$args[0]].shop.length gt 0>>
+				<<if $worn[$args[0]].colourCustom isnot undefined>><<set _colourCustom to $worn[$args[0]].colourCustom>><</if>>
+				<<if $worn[$args[0]].accessory_colourCustom isnot undefined>><<set _accessory_colourCustom to $worn[$args[0]].accessory_colourCustom>><</if>>
 				<<if $worn[$args[0]].outfitSecondary isnot undefined>>
 					<<if $args[0] is "lower">>
 						<<if $money gte Math.trunc($worn["upper"].cost * 1.5)>>
@@ -1266,7 +1282,7 @@
 		<<if $wardrobe[_slot][_j].accessory_colour isnot "custom">>
 			<<set _matched++>>
 		<<elseif _item.accessory_colourCustom isnot undefined and $wardrobe[_slot][_j].accessory_colourCustom isnot undefined>>
-			<<if _item.accessory_colourCustom is $wardrobe[_lab_slotelWW][_j].accessory_colourCustom>>
+			<<if _item.accessory_colourCustom is $wardrobe[_slot][_j].accessory_colourCustom>>
 				<<set _matched++>>
 			<</if>>
 		<</if>>

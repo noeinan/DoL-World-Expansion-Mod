@@ -412,7 +412,7 @@
 		<<set _loss *= 2>>
 	<</if>>
 	<<set _loss *= $enemyArousalLossReduction>>
-	<<if $enemyArousalLossReduction gt 20>>
+	<<if $enemyArousalLossReduction gt 0.2>>
 		<<set $enemyArousalLossReduction -= 0.04>>
 	<</if>>
 	<<set $enemyarousal -= Math.round(_loss)>>
@@ -422,44 +422,53 @@
 <<widget "violence">><<nobr>>
 <!-- NG tuning v2.7 $arousal from $masochism/50 to /7. PC now orgasms at least once during spanking encounter at 50% masocism level and twice at 100% masoohism. /10 at max is required to orgasm once at 100% masochism. -->
 <!-- NG added stress reduction for masochists. Trauma left same -->
-	<<if $args[0] gte 0 or $args[0] lt 0>>
-		<<if $drunk gte 480>>
-			<<set $stress += ($args[0] * 3) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 360>>
-			<<set $stress += ($args[0] * 4) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 240>>
-			<<set $stress += ($args[0] * 6) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 120>>
-			<<set $stress += ($args[0] * 8) * (1 - ($masochism / 1200))>>
-		<<elseif $drunk gte 1>>
-			<<set $stress += ($args[0] * 9) * (1 - ($masochism / 1200))>>
-		<<else>>
-			<<set $stress += ($args[0] * 10) * (1 - ($masochism / 1200))>>
-		<</if>>
-		<<combattrauma $args[0]>>
-		<<set $pain += ($args[0] * (1 - ($masochism / 1200)))>>
-		<<set _arousal to ($args[0] * (0 + ($masochism / 18)))>>
-		<<arousal _arousal>>
-		<<set $arousalmasochism += ($args[0] * (0 + ($masochism / 7)))>>
-		<<if $orgasmdown gte 1>>
-			<<if $masochism gte 800>>
-				<<set $masochism += ($args[0] / 20)>>
-			<<elseif $masochism gte 500>>
-				<<set $masochism += ($args[0] / 10)>>
-			<<elseif $masochism gte 300>>
-				<<set $masochism += ($args[0] / 6)>>
-			<<elseif $masochism gte 100>>
-				<<set $masochism += ($args[0] / 2)>>
+	<<if $args.length gte 1>>
+		<<set _violence = $args[0]>>
+		<<set _stressMod = $args[1] || 1>>
+		<<set _traumaMod = $args[2] || 1>>
+		<<set _painMod = $args[3] || 1>>
+		<<set _arousalMod = $args[4] || 1>>
+
+		<<if _violence gt 0 or _violence lt 0>>
+			<<if $drunk gte 480>>
+				<<set _drunkMod = 3>>
+			<<elseif $drunk gte 360>>
+				<<set _drunkMod = 4>>
+			<<elseif $drunk gte 240>>
+				<<set _drunkMod = 6>>
+			<<elseif $drunk gte 120>>
+				<<set _drunkMod = 8>>
+			<<elseif $drunk gte 1>>
+				<<set _drunkMod = 9>>
 			<<else>>
-				<<set $masochism += $args[0]>>
+				<<set _drunkMod = 10>>
 			<</if>>
+			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
+			<<combattrauma _violence * _traumaMod>>
+			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)))>>
+			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
+			<<arousal _arousal>>
+			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
+			<<if $orgasmdown gte 1>>
+				<<if $masochism gte 800>>
+					<<set $masochism += (_violence / 20)>>
+				<<elseif $masochism gte 500>>
+					<<set $masochism += (_violence / 10)>>
+				<<elseif $masochism gte 300>>
+					<<set $masochism += (_violence / 6)>>
+				<<elseif $masochism gte 100>>
+					<<set $masochism += (_violence / 2)>>
+				<<else>>
+					<<set $masochism += _violence>>
+				<</if>>
+			<</if>>
+			<<if _violence gte 6>>
+				<<set $enemyanger -= 5>>
+			<<else>>
+				<<set $enemyanger -= _violence>>
+			<</if>>
+			<<set $enemyarousal += 1>>
 		<</if>>
-		<<if $args[0] gte 6>>
-			<<set $enemyanger -= 5>>
-		<<else>>
-			<<set $enemyanger -= $args[0]>>
-		<</if>>
-		<<set $enemyarousal += 1>>
 	<</if>>
 <</nobr>><</widget>>
 
@@ -529,7 +538,11 @@
 			<<set $stress += ($args[0] * 10)>>
 		<</if>>
 		<<combattrauma _negargs>>
-		<<set $enemyanger += 5 * $args[0]>>
+		<<if $args[1] is "demanding">>
+			<<set $enemyanger += 20 * $args[0]>>
+		<<else>>
+			<<set $enemyanger += 5 * $args[0]>>
+		<</if>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 2>>
 	<</if>>
@@ -558,8 +571,8 @@
 	<</if>>
 <</for>>
 	<<if $args[0]>>
-		<<set $crime += ($args[0] * _crime_up)>>
-		<<set $crimehistory += ($args[0] * _crime_up)>>
+		<<set $crime += Math.trunc($args[0] * _crime_up)>>
+		<<set $crimehistory += Math.trunc($args[0] * _crime_up)>>
 	<</if>>
 	<<if $slimeEvent is "steal something">>
 		<<unset $slimeEvent>>
@@ -846,13 +859,12 @@
 <</nobr>><</widget>>
 
 <<widget "physique">><<nobr>>
-	<<if $args[0]>><<set _temp to $args[0]>><<else>><<set _temp to 1>><</if>>
+	<<if $args[0]>><<set _temp to $args[0]>><<set $workouts += $args[0]>><<else>><<set _temp to 1>><<set $workouts += 1>><</if>>
 	<<if $exposed gte 2>>
 		<<set _temp *= 1.2>>
 	<<elseif $exposed is 1>>
 		<<set _temp *= 1.1>>
 	<</if>>
-	<<set $workouts++>>
 	<<set $physique += 10 * _temp>><<set $physiqueuse += _temp>>
 	<<if $combat isnot 1>>
 		<span class="gold"> You get a good workout.</span>
@@ -1565,7 +1577,7 @@
 <</nobr>><</widget>>
 
 <<widget "beastescape">><<nobr>>
-<<trauma 12>><<set $pain += 40>><<set $stress += 400>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gstress>><<gtrauma>>
+<<trauma 12>><<pain 6>><<stress 12>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gpain>><<gstress>><<gtrauma>>
 <</nobr>><</widget>>
 
 <<widget "weatherdisplay">><<nobr>>
@@ -2395,7 +2407,7 @@ or $args[0] is "force">>
 
 <<widget "exposure">><<nobr>>
 
-<<if $location isnot "beach" and $location isnot "pool" and $location isnot "sea" and $location isnot "lake">>
+<<if $location isnot "beach" and $location isnot "pool" and $location isnot "sea" and $location isnot "lake" and $location isnot "lake_ruin">>
 	<<set $libertine to 0>>
 <<else>>
 	<<set $libertine to 1>>
@@ -3496,6 +3508,9 @@ __Map__<br>
 		<<case "gothic_gown_unwrapped">>
 			<<link [[Wrap Robin's gothic gown (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "gothic gown">><<set $christmas_gift_robin_wrapped to 1>><</link>>
 			<br>
+		<<case "christmas_unwrapped">>
+			<<link [[Wrap Robin's Christmas outfit (0:10)|Bedroom Robin Wrap]]>><<pass 10>><<set $christmas_gift_robin to "christmas">><<set $christmas_gift_robin_wrapped to 1>><</link>>
+			<br>
 	<</switch>>
 	<<if $christmas_gift is "clothes_unwrapped">>
 		<<link [[Wrap the orphan's gifts (3:00)|Bedroom Orphans Clothes Wrap]]>><<pass 180>><<set $christmas_gift to "clothes">><</link>>
@@ -3607,7 +3622,6 @@ __Map__<br>
 
 <<widget "characteristic-box">><<nobr>>
 	<<set _config = $args[0]>>
-
 	<<if _config.states and _config.states.length gt 0>>
 
 		<<set _config.currentLevel = 0>>
@@ -3647,13 +3661,16 @@ __Map__<br>
 		<</if>>
 
 		/* Calculate the percent to the next level based on the gap between the nearest two states */
-		<<if _config.percent>>
+		<<if _config.percent isnot undefined>>
 			<<set _config.percent = Math.floor(_config.percent)>>
 		<<else>>
-			<<if _config.currentLevel eq 0>>
-				<<set _config.percent = 0>>
-			<<elseif _config.currentLevel eq (_config.states.length - 1)>>
-				<<set _config.percent = 100>>
+			<<if _config.currentLevel eq (_config.states.length - 1)>>
+				/* Calculate percentage above highest state if max value is specified */
+				<<if _config.maxValue>>
+					<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.maxValue - _config.states[_config.currentLevel].requiredValue))>>
+				<<else>>
+					<<set _config.percent = 100>>
+				<</if>>
 			<<else>>
 				<<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
 			<</if>>
@@ -3670,7 +3687,7 @@ __Map__<br>
 			<<if $images is 1 and _config.icon>>
 				<img class="characteristic-icon" @src="'img/' + _config.icon + '.png'" />
 			<</if>>
-			<span class="characteristic-title">_config.name</span>
+			<span class="characteristic-title">_config.name<<characteristic-box-modifier `clone(_config.modifier)`>></span>
 			<<if _config.states>>
 				<<if _config.displayType eq "level">>
 					<span @class="'characteristic-level ' + _config.color">
@@ -3701,7 +3718,19 @@ __Map__<br>
 
 <</nobr>><</widget>>
 
-<<widget "social-text">><<nobr>>
+<<widget "characteristic-box-modifier">><<nobr>><<silently>>
+<<if $args[0] isnot undefined or $args[0] isnot 100>>
+	<<set $_modifier to $args[0] - 100>>
+	<<if $_modifier gt 0>>
+		<<set $_result to " <small class='green characteristic-modifier'>(+"+$_modifier+"%)</small>">>
+	<<elseif $_modifier lt 0>>
+		<<set $_result to " <small class='red characteristic-modifier'>("+$_modifier+"%)</small>">>
+	<</if>>
+<</if>>
+<</silently>><<if $_result>><<print $_result>><</if>>
+<</nobr>><</widget>>
+
+<<widget "relation-text">><<nobr>>
 	<<set _config = $args[0]>>
 
 	<<if _config.states and _config.states.length gt 0>>
@@ -3750,24 +3779,24 @@ __Map__<br>
 	<</if>>
 <</nobr>><</widget>>
 
-<<widget "social-box-simple">><<nobr>>
+<<widget "relation-box-simple">><<nobr>>
 	<<set _boxConfig = $args[0]>>
-	<div class="social-box" @style="(_boxConfig.style || '')">
+	<div class="relation-box" @style="(_boxConfig.style || '')">
 		<<if _boxConfig.name>>
-			<div class="social-top-line">
+			<div class="relation-top-line">
 				<<if $images and _boxConfig.icon>>
-						<img class="social-icon" @src="_boxConfig.icon" />
+						<img class="relation-icon" @src="_boxConfig.icon" />
 				<</if>>
-				<span class="social-name">_boxConfig.name</span>
+				<span class="relation-name">_boxConfig.name</span>
 			</div>
 		<</if>>
-		<div class="social-description">
+		<div class="relation-description">
 			_boxConfig.description
 		</div>
 	</div>
 <</nobr>><</widget>>
 
-<<widget "social-box">><<nobr>>
+<<widget "relation-box">><<nobr>>
 	<<silently>>
 		<<set _npcData = $args[0]>>
 		<<set _npcOverrides = $args[1] || {}>>
@@ -3778,7 +3807,10 @@ __Map__<br>
 			State.temporary.checkRequirements = function (stat) {
 				let statOverrides =  State.temporary.npcOverrides[stat];
 
-				return !statOverrides?.hasOwnProperty("requirements") || statOverrides?.requirements;
+				if(statOverrides)
+					return !statOverrides.hasOwnProperty("requirements") || statOverrides.requirements;
+				else
+					return true;
 			};
 
 			State.temporary.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
@@ -3839,45 +3871,45 @@ __Map__<br>
 			}
 		<</script>>
 	<</silently>>
-	<<if _npcData?.init is 1>>
-		<<if _npcOverrides?.important>>
-			<div class="social-box">
-				<div class="social-top-line">
-					<span class="social-name">
+	<<if _npcData and _npcData.init is 1>>
+		<<if _npcOverrides and _npcOverrides.important>>
+			<div class="relation-box">
+				<div class="relation-top-line">
+					<span class="relation-name">
 						_npcData.nam
-						<small class="social-title black"><i>The _npcData.title</i></small>
+						<small class="relation-title black"><i>The _npcData.title</i></small>
 					</span>
 					<<if _loveInterest>>
 						<img class="love-interest-icon" src="img/ui/love_interest.png" alt="Love Interest" title="Love Interest"/>
 					<</if>>
 				</div>
-				<div class="social-description">
+				<div class="relation-description">
 					<<npcrelationship _npcData.nam>>
 				</div>
 				<div @class="'relation-stat-list' + ($images ? '' : ' no-images')">
 					<<for _j = 0; _j lt _importantNpcStats.length; _j++>>
 						<<if _npcData[_importantNpcStats[_j]] gt 0 and _checkRequirements(_importantNpcStats[_j])>>
-							<<social-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
+							<<relation-box-stat _getStatConfig(_importantNpcStats[_j]) true>>
 						<</if>>
 					<</for>>
 				</div>
 			</div>
 		<<else>>
-			<div class="social-box">
-				<div class="social-top-line">
-					<span class="social-name">
+			<div class="relation-box">
+				<div class="relation-top-line">
+					<span class="relation-name">
 						_npcData.nam
-						<small class="social-title black"><i>The _npcData.title</i></small>
+						<small class="relation-title black"><i>The _npcData.title</i></small>
 					</span>
 					<div class="quick-stats">
 						<<for _j = 0; _j lt _otherNpcStats.length; _j++>>
 							<<if _npcData[_otherNpcStats[_j]] gt 0 and _checkRequirements(_otherNpcStats[_j])>>
-								<<social-box-stat _getStatConfig(_importantNpcStats[_j])>>
+								<<relation-box-stat _getStatConfig(_importantNpcStats[_j])>>
 							<</if>>
 						<</for>>
 					</div>
 				</div>
-				<div class="social-description">
+				<div class="relation-description">
 					<<npcrelationship _npcData.nam>>
 				</div>
 			</div>
@@ -3885,7 +3917,7 @@ __Map__<br>
 	<</if>>
 <</nobr>><</widget>>
 
-<<widget "social-box-stat">><<nobr>>
+<<widget "relation-box-stat">><<nobr>>
 	<<silently>>
 		<<set _config = $args[0]>>
 		<<set _important = $args[1]>>
@@ -5006,5 +5038,17 @@ __Map__<br>
 	<<set $historytrait to 1>>
 <<else>>
 	<<set $historytrait to 0>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "beast_next">><<nobr>>
+<<if $monster is 1>>
+	<<if $beastgender is "m">>
+		<<print "$combatTrain.beastTypes[0]" + "boy">>
+	<<else>>
+		<<print "$combatTrain.beastTypes[0]" + "girl">>
+	<</if>>
+<<else>>
+	<<print $combatTrain.beastTypes[0]>>
 <</if>>
 <</nobr>><</widget>>
