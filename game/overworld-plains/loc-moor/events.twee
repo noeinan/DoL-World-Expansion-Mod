@@ -611,7 +611,7 @@ You crest a hill, and see farms beyond. You emerge on a road ten minutes later.
 The pair turn and hike back into the moor.
 <br><br>
 
-<<link [[Next|Farmland]]>><<endevent>><<set $moor to 0>><<set $forestmod to 1>><</link>>
+<<link [[Next|Farmland]]>><<endevent>><<set $moor to 0>><<unset $moor_hunt>><<set $forestmod to 1>><</link>>
 <br>
 
 
@@ -1252,7 +1252,7 @@ You keep low within the heather. The vehicle closes in, until heavy wheels rumbl
 	<<He>> pulls onto a proper road, and comes to a stop. You bid the pair farewell, and they drive away.
 	<br><br>
 	
-	<<link [[Next|Farmland]]>><<endevent>><<set $moor to 0>><</link>>
+	<<link [[Next|Farmland]]>><<endevent>><<set $moor to 0>><<unset $moor_hunt>><</link>>
 	<br>
 <<elseif $phase is 1>>
 	The <<person2>><<person>> drives you through the moor. <<He>> can't move too fast, but it's faster than on foot.
@@ -2123,7 +2123,384 @@ You sing a soothing tune,
 	<br>
 <</if>>
 
+:: Moor Bird Hide [nobr]
+<<effects>>
+
+<<npc "Great Hawk">>
+You drop to your knees, and squeeze into a crack, legs-first so you can see outside.
+<br><br>
+
+Your pursuer circles overhead, before swooping to a nearby rock.
+<<if $monster is 1>>
+	The harpy's talons bite into the stone as <<bhe>> scans <<bhis>> surroundings, watching for any movement.
+<<else>>
+	The giant hawk scans <<bhis>> surroundings from <<bhis>> perch, watching for any movement.
+<</if>>
+You shuffle deeper into the dark.
+<br><br>
+
+<<if $rng gte 51>>
+	The <<beasttype>> releases a frustrated shriek, and beats <<bhis>> wings. The gust ruffles your hair as it takes to the sky once more.
+	<br><br>
+	
+	You wait a few minutes before emerging from your hiding place.
+	<br><br>
+	
+	<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	<span class="red">Something prods your <<bottom>>.</span> You almost jump forward in fright, but manage to stop yourself. The <<beasttype>> would see you.
+	<br><br>
+	
+	<<if $leftarm is "bound" and $rightarm is "bound">>
+		You press your mouth against the earth as something mounts you.
+	<<else>>
+		You put a hand over your mouth as something mounts you.
+	<</if>>
+	<span class="blue">Too much noise would be dangerous.</span>
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Moor Bird Rape]]>><<set $molestationstart to 1>><</link>>
+	<br>
+	
+<</if>>
+
+:: Moor Bird Rape [nobr]
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+	
+	<<beastNEWinit 1 creature>>
+	<<beastCombatInit>>
+	<<if $penisexist is 1>>
+		<<set $position to "missionary">>
+	<<else>>
+		<<set $position to "doggy">>
+	<</if>>
+	<<set $NPCList[0].stance to "top">>
+	<<set $rescue to 1>>
+	<<set $timer to 10>>
+<</if>>
+
+<<if $timer gte 5>>
+	<span class="pink">The terror perches on the rock, scanning the terrain.</span>
+<<elseif $timer is 4>>
+	<span class="purple">The terror watches the base of the cliff. It's eyes almost meet yours.</span>
+<<elseif $timer gte 1>>
+	<span class="blue">The terror watches the base of the cliff.</span>
+<<else>>
+	<span class="blue">The terror looks impatient.</span>
+<</if>>
+<br><br>
+
+<<effects>>
+<<effectsman>>
+<br><br>
+<<beast $enemyno>>
+<br><br>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $orgasmdown gte 1>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $pain gte 100 and $willpowerpain is 0>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $timer lte 0>>
+	<span id="next"><<link [[Next|Moor Bird Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+<</if>>
+
+:: Moor Bird Rape Finish [nobr]
+<<effects>>
+
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<set _moor_bird_escape to true>>
+	<<beastejaculation>>
+
+	Satisfied, the creature disappears. You breathe a sigh of relief.
+	<br><br>
+
+	
+	<<endcombat>>
+
+<<elseif $enemyhealth lte 0>>
+	<<set _moor_bird_escape to true>>
+	The creature flees in fright, disappearing into the darkness.
+	<br><br>
+
+	
+	<<endcombat>>
+
+<<elseif $timer lte 0>>
+	<<endcombat>>
+	<<set _moor_bird_escape to true>>
+
+<<else>>
+	<<set _moor_bird_escape to false>>
+	<<endcombat>>
+	<<set $stealtextskip to 1>>
+	<<stealclothes>>
+	<br><br>
+
+	<<npc "Great Hawk">>
+	<span class="red">The <<beasttype>>'s eyes snap to yours</span>, alerted by your cry. It unleashes a terrible shriek, sending the other creature scrambling deeper into the dark. You try to shuffle deeper yourself, but the <<beasttype>> leaps closer, its talons piercing the earth an inch from your face.
+	<br><br>
+	
+	It takes to the air, and grasps your shoulders with its claws. You leave the ground behind.
+	<br><br>
+	
+	<<link [[Next|Bird Capture]]>><</link>>
+	<br>
+
+<</if>>
+
+
+<<if _moor_bird_escape isnot false>>
+	<<npc "Great Hawk">>
+	<<unset $moor_hunt>>
+	The underground creature flees as the <<beasttype>> releases a frustrated shriek, and beats <<bhis>> wings.
+	The gust ruffles your hair as <<bhe>> takes to the sky once more.
+	<br><br>
+	<<clotheson>>
+	<<tearful>> you breathe a sigh of relief. You wait a few minutes before emerging from your hiding place.
+	<br><br>
+	
+	<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
 
 
 
+:: Moor Bird Pool [nobr]
+
+
+<<npc "Great Hawk">>
+You take a deep breath, and dive into the pool. You peer through the surface as the <<beasttype>> circles above.<<water>><<effects>>
+<br><br>
+<<if $swimmingSuccess is 1>>
+	<span class="green">You manage to hold your breath.</span>
+	<<if $rng gte 21>>
+		<span class="blue">The <<beasttype>> dives through the air,</span> landing at the edge of the pool. <<bHe>> scans <<bhis>> surroundings, but only spares a glance at your hiding place.
+		<br><br>
+		
+		<<link [[Stay Hidden (0:01)|Moor Bird Pool 2]]>><<pass 1>><</link>><<swimmingdifficulty 1 500>>
+		<br>
+		<<link [[Emerge|Moor Bird Emerge]]>><</link>>
+		<br>
+	<<else>>
+		The <<beasttype>> releases a frustrated shriek, <span class="green">and flies away.</span>
+		<br><br>
+		<<unset $moor_hunt>>
+		You emerge and gasp for breath.
+		<br><br>
+		
+		<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	You wait as long as you can, <span class="red">but can't hold your breath any longer.</span> You emerge, gasping for breath.
+	<br><br>
+	
+	You've barely recovered when you hear another shriek. <span class="red">This one close.</span> You glance up, and see the <<beasttype>> diving towards you, talons outstretched. You try to slip back beneath the water, but it's too late. <<bHis>> claws grasp your shoulders. You leave the pool far below.
+	<br><br>
+	
+	<<link [[Next|Bird Capture]]>><</link>>
+	<br>
+<</if>>
+
+
+:: Moor Bird Pool 2 [nobr]
+<<water>><<effects>>
+
+You remain underwater.
+<<if $swimmingSuccess is 1>>
+	<span class="green">You manage to hold your breath.</span>
+	<<if $rng gte 41>>
+		<span class="purple">The <<beasttype>> hops to the pool's edge,</span> a couple of feet away, and stares at the far bank.
+		<br><br>
+		
+		<<link [[Stay Hidden (0:01)|Moor Bird Pool 3]]>><<pass 1>><</link>><<swimmingdifficulty 1 700>>
+		<br>
+		<<link [[Emerge|Moor Bird Emerge]]>><</link>>
+		<br>
+	<<else>>
+		<<bHe>> shrieks in frustration, beats <<bhis>> wings, <span class="green">and flies away.</span>
+		<br><br>
+		<<unset $moor_hunt>>
+		You emerge from the water, and gasp for air.
+		<br><br>
+		
+		<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	You wait as long as you can, <span class="red">but can't hold your breath any longer.</span> You emerge, gasping for breath.
+	<br><br>
+	
+	The <<beasttype>> shrieks again. <<bHe>> grasps your shoulders with <<bhis>> claws before your vision cleans. You leave the pool far below.
+	<br><br>
+	
+	<<link [[Next|Bird Capture]]>><</link>>
+	<br>
+<</if>>
+
+:: Moor Bird Pool 3 [nobr]
+<<water>><<effects>>
+
+You remain underwater.
+<<if $swimmingSuccess is 1>>
+	<span class="green">You manage to hold your breath.</span>
+	<<if $rng gte 61>>
+		<span class="purple">The <<beasttype>>'s head jerks in your direction</span>, and stares right through you, before flicking elsewhere. It can't see beneath the surface.
+		<br><br>
+		
+		<<link [[Stay Hidden (0:01)|Moor Bird Pool 4]]>><<pass 1>><</link>><<swimmingdifficulty 1 900>>
+		<br>
+		<<link [[Emerge|Moor Bird Emerge]]>><</link>>
+		<br>
+	<<else>>
+		<<bHe>> shrieks in frustration, beats <<bhis>> wings, <span class="green">and flies away.</span>
+		<br><br>
+		<<unset $moor_hunt>>
+		You emerge from the water, and gasp for air.
+		<br><br>
+		
+		<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<<else>>
+	You wait as long as you can, <span class="red">but can't hold your breath any longer.</span> You emerge, gasping for breath.
+	<br><br>
+	
+	The <<beasttype>> shrieks again. <<bHe>> grasps your shoulders with <<bhis>> claws before your vision cleans. You leave the pool far below.
+	<br><br>
+	
+	<<link [[Next|Bird Capture]]>><</link>>
+	<br>
+<</if>>
+
+:: Moor Bird Pool 4 [nobr]
+<<effects>>
+
+You remain underwater,
+<<if $swimmingSuccess is 1>>
+	<span class="green">and manage to hold your breath.</span> The <<beasttype>> shrieks in frustration, beats <<bhis>> wings, <span class="green">and flies away.</span>
+	<br><br>
+		<<unset $moor_hunt>>
+	You emerge from the water, and gasp for air.
+	<br><br>
+		
+	<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	You wait as long as you can, <span class="red">but can't hold your breath any longer.</span> You emerge, gasping for breath.
+	<br><br>
+	
+	The <<beasttype>> shrieks again. <<bHe>> grasps your shoulders with <<bhis>> claws before your vision cleans. You leave the pool far below.
+	<br><br>
+	
+	<<link [[Next|Bird Capture]]>><</link>>
+	<br>
+<</if>>
+
+:: Moor Bird Emerge [nobr]
+<<effects>>
+
+You emerge from the pool, gasping for air. <span class="red">Claws grasp your shoulders</span> before your vision clears. You leave the pool far below.
+<br><br>
+
+<<link [[Next|Bird Capture]]>><</link>>
+<br>
+
+
+:: Moor Bird Screech [nobr]
+<<effects>>
+
+<<npc "Great Hawk">>
+You screech at the sky. The <<beasttype>> hears you, and swoops closer. <<bHe>> lands nearby.
+<br><br>
+
+<<if $monster is 1>>
+	"All well, <<if $player.gender_appearance is "m">>husband?<<else>>wife?<</if>>" <<bhe>> asks.
+<<else>>
+	<<bHe>> gives you an affectionate pet.
+<</if>>
+<br><br>
+
+<<link [[Ask for a ride to the nest (0:20)|Moor Bird Screech Nest]]>><<pass 20>><</link>>
+<br>
+<<link [[Ask for a ride to the farmlands (0:20)|Moor Bird Screech Farmlands]]>><<pass 20>><</link>>
+<br>
+<<link [[Just groom (0:05)|Moor Bird Screech Stroke]]>><<transform bird 1>><<pass 5>><<stress -6>><<trauma -6>><</link>><<ltrauma>><<lstress>>
+<br>
+
+:: Moor Bird Screech Nest [nobr]
+<<effects>>
+
+<<if $monster gte 1>>
+	The <<beasttype>> wraps <<bhis>> arms around your chest, and lifts you into the air. <<bHe>> pants by the time you make it back to the nest.
+	<br><br>
+<<else>>
+	The <<beasttype>> lifts you by your shoulders, and flies you over the moor. <<bHe>> struggles to stay airborne by the time you make it back to the nest.
+	<br><br>
+<</if>>
+
+<<link [[Next|Bird Tower]]>><<endevent>><</link>>
+<br>
+
+:: Moor Bird Screech Farmlands [nobr]
+<<effects>>
+
+<<if $monster gte 1>>
+	The <<beasttype>> hesitates. "Close to landbound," <<bhe>> warns. "But if you want." <<bHe>> wraps <<bhis>> arms around your chest, and lifts you into the air. Together, you soar across the moor. You land near the road.
+	<br><br>
+	"Be careful," <<bhe>> says. <<bHe>> takes to the sky once more.
+	<br><br>
+<<else>>
+	The <<beasttype>> hesitates before lifting you by the shouldres. <<bHe>> flies you over the moor, and lands near the road.
+	<br><br>
+	
+	<<bHe>> gives a worried chirp before taking to the skies once more.
+	<br><br>
+<</if>>
+
+<<link [[Next|Moor]]>><<endevent>><<set $moor to 0>><<set $eventskip to 1>><</link>>
+<br>
+
+
+
+:: Moor Bird Screech Stroke [nobr]
+<<effects>>
+
+You stroke the <<beasttype>>'s feathers.
+
+<<if $monster is 1>>
+	<<bHe>> laughs, and returns the favour.
+	<br><br>
+	
+	"Be careful," <<bhe>> says while giving you a parting hug. <<bHe>> takes to the skies.
+	<br><br>
+<<else>>
+	<<bHe>> chirps, and returns the favour, stroking you with <<bhis>> beak.
+	<br><br>
+	
+	<<bHe>> wraps a wing around you for a moment, before taking to the skies once more.
+	<br><br>
+<</if>>
+
+<<link [[Next|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
 

@@ -387,7 +387,7 @@ window.exportSettings = function (data, type) {
 			map: {},
 			skinColor: {},
 		},
-		npc: {},
+		npc: {}
 	};
 	if (V.passage === "Start") {
 		S.starting = {
