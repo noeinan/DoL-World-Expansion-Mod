@@ -670,7 +670,7 @@ You herd the chickens into their coop, then perform a head count to make sure yo
 
 <<set $danger to random(1, 10000)>>
 <<if $danger gte (9900 - $allure)>>
-	<<if $rng gte 50>>
+	<<if $rng gte 51>>
 		You're missing one.
 		<br><br>
 
@@ -1978,12 +1978,19 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 	<<link [[Next|Farm Work]]>><</link>>
 	<br>
 <<else>>
+
 	/*noeinan mod START*/
 	/*Added new action allowing player to sleep in the barn if they sneak in at night*/
+
 	<<link [[Sleep until dawn|Farm Barn Sleep]]>><</link>><<ltiredness>>
+	<br>
 	/*noeinan mod END*/
+
+	/*noeinan mod START*/
+	/*Per @note leven, changed barn milking breasts to only occur while lactating.*/
+
 	<<if $deviancy gte 15>>
-		<<if $breastfeedingdisable is "f" and $milk_amount gte 1>>
+		<<if $breastfeedingdisable is "f" and $milk_amount gte 1 and $lactating is 1>>
 			<<link [[Milk yourself (0:30)|Farm Barn Breasts]]>><<pass 30>><</link>><<deviant2>>
 			<br>
 		<</if>>
@@ -1992,6 +1999,9 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 			<br>
 		<</if>>
 	<</if>>
+
+	/*noeinan mod END*/
+
 	<br>
 	<<link [[Leave|Farm Work]]>><</link>>
 	<br>
@@ -2000,6 +2010,7 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 
 /*noeinan mod START*/
 /*Farm Barn Sleep event lines added, allows player to sleep in barn until dawn, random pig rape event.*/
+/*Per @note leven, reduced chance of triggering rape when sleeping on farm, and split the chance between cattle and pigs*/
 
 :: Widgets Farm [widget]
 
@@ -2052,13 +2063,32 @@ You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking 
 <</if>>
 A weak light pierces the high windows. It's dawn.
 <br><br>
-		
+
 <<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-<<if $danger gte (9900 - $allure)>>
-	You feel something heavy on top of you as you start to come to. When your eyes adjust, you see a <<farm_text cattle>> on top of you, pinning you down on the straw. <<farm_His cattle>> face is flushed and <<farm_he cattle>> looks excited.
-	<br><br>
-	
-	<<link [[Next|Farm Cow Rape]]>><<set $molestationstart to 1>><</link>>
+<<if $danger gte (9900 - $allure / 2)>>
+    <<if $rng gte 51>>
+        <<farm_gen cattle>>
+        <<if $farm_work.cattle.monster is true>>
+            <<beastNEWinit 1 cattle $farm_work.cattle.gender $farm_work.cattle.genitals monster>>
+        <<else>>
+            <<beastNEWinit 1 cattle $farm_work.cattle.gender $farm_work.cattle.genitals beast>>
+        <</if>>
+        You feel something heavy on top of you as you start to come to. When your eyes adjust, you see a <<farm_text cattle>> on top of you, pinning you down on the straw. <<farm_His cattle>> face is flushed and <<farm_he cattle>> looks excited.
+        <br><br>
+        
+        <<link [[Next|Farm Cow Rape]]>><<set $molestationstart to 1>><</link>>
+    <<else>>
+        <<farm_gen pig>>
+        <<if $farm_work.pig.monster is true>>
+            <<beastNEWinit 1 pig $farm_work.pig.gender $farm_work.pig.genitals monster>>
+        <<else>>
+            <<beastNEWinit 1 pig $farm_work.pig.gender $farm_work.pig.genitals beast>>
+        <</if>>
+        You feel something heavy on top of you as you start to come to. When your eyes adjust, you see a <<farm_text pig>> on top of you, pinning you down on the straw. <<farm_His pig>> face is flushed and <<farm_he pig>> looks excited.
+        <br><br>
+        
+        <<link [[Next|Farm Pigs Rape]]>><<set $molestationstart to 1>><</link>>
+    <</if>>
 	<br>
 <<else>>
 	<<link [[Next|Farm Barn]]>><</link>>
