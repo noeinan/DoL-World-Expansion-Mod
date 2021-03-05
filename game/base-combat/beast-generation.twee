@@ -19,14 +19,12 @@
 /*noeinan mod START*/
 /*Added fox to beast types*/
 /*Added cow to beast types*/
+/*Added code by @note leven to simplify code and make adding new beast types easier in the future*/
 
 <!-- Check that Type is known -->
-<<switch _type>>
-	<<case "dog" "cat" "pig" "wolf" "dolphin" "lizard" "bear" "boar" "creature" "horse" "fox" "cattle">>
-	<!-- No action-->
-	<<default>>
-	<span class="red">ERROR: generateBEAST unknown type</span>
-<</switch>>
+<<if $BeastList.indexOf(_type) lt 0>>
+    <span class="red">ERROR: generateBEAST _type is not on the BeastList</span>
+<</if>>
 
 /*noeinan mod END*/
 
@@ -96,13 +94,18 @@
 /*noeinan mod START*/
 /*Added fox to beast types*/
 /*Added cow to beast types*/
+/*Added code by @note leven to simplify code and make adding new beast types easier in the future*/
+/*Added code by @note leven to allow monster girls to have breasts, apparently base game doesn't have this wtf*/
 
 <<set _h to [200,150,200,300,200,250,200,500,200,500,200,500]>>
-<<set _t to ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox", "cattle"]>>
+<<set _t to $BeastList>> 
+<!-- as of 0.2.22.2, ["dog","cat","pig","wolf","dolphin","lizard","bear","boar","creature","horse","fox","cattle"] -->
 <<set _d to ["large","large","fat","enormous","bottlenose","scaly","brown","hairy","strange","huge","large","huge"]>>
 <<set _pd to ["knotted penis","spiked penis","penis","knotted penis","strange penis","penis","penis","penis","penis","equine cock","knotted penis","bovine cock"]>>
 /% <<set _cla to [1,1,0,1,0,1,1,1,1,0,1,0]>> %/
 <<set _ps to [2,2,2,3,2,2,3,3,2,5,2,5]>>
+<<set _blo to [0,0,4,0,0,0,0,0,0,0,0,8]>>
+<<set _bhi to [12,12,12,12,2,12,12,12,0,12,12,12]>>
 
 /*noeinan mod END*/
 
@@ -150,6 +153,9 @@
 
 /*noeinan mod END*/
 
+/*noeinan mod START*/
+/*Added code by @note leven to allow monster girls to have breasts, apparently base game doesn't have this wtf*/
+
 <!-- Gender-swap monsters if needed -->
 <<if $NPCList[_n].monster is "monster" and _beast_genitals is undefined>>
 	<<if $NPCList[_n].gender is "m">>
@@ -168,8 +174,25 @@
 			<<set $NPCList[_n].penis to 0>>
 			<<set $NPCList[_n].vagina to "none">>
 		<</if>>
+		<!-- monster girls shall have bewbs, too! -->
+        <<set _brdes to ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"]>>
+        <<if $breast_mod gte _blo[_i]>><<set _blo[_i] to $breast_mod>><</if>>
+        <<if $breast_mod gte _bhi[_i]>><<set _bhi[_i] to $breast_mod>><</if>>
+        <<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
+        <<set _rng to random(_blo[_i], _bhi[_i])>>
+        <<set $NPCList[_n].breastsize to _rng>>
+        <<switch _rng>>
+            <<case 0>>
+                <<set $NPCList[_n].breastsdesc to "nipples">>
+                <<set $NPCList[_n].breastdesc to "nipple">>
+            <<default>>
+                <<set $NPCList[_n].breastsdesc to _brdes[_rng]+" breasts">>
+                <<set $NPCList[_n].breastdesc to _brdes[_rng]+" breast">>
+        <</switch>>
 	<</if>>
 <</if>>
+
+/*noeinan mod END*/
 
 <<if $NPCList[_n].penis isnot "none">>
 	<<set $NPCList[_n].penisdesc to _pd[_i]>>
