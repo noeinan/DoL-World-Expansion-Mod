@@ -1576,7 +1576,7 @@
 <</nobr>><</widget>>
 
 <<widget "beastescape">><<nobr>>
-<<trauma 12>><<pain 6>><<stress 12>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gpain>><<gstress>><<gtrauma>>
+<<trauma 12>><<pain 6>><<stress 12>><<set $worn.over_lower.integrity -= 20>><<set $worn.over_upper.integrity -= 20>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gpain>><<gstress>><<gtrauma>>
 <</nobr>><</widget>>
 
 <<widget "weatherdisplay">><<nobr>>
@@ -2114,20 +2114,26 @@
 
 <<widget "wearandtear">><<nobr>>
 <<if $args[0] is "dance">>
+	<<if !$worn.over_upper.type.includes("dance")>>
+		<<set $worn.over_upper.integrity -= 1>>
+	<</if>>
+	<<if !$worn.over_lower.type.includes("dance")>>
+		<<set $worn.over_lower.integrity -= 1>>
+	<</if>>
 	<<if !$worn.upper.type.includes("dance")>>
-	<<set $worn.upper.integrity -= 1>>
+		<<set $worn.upper.integrity -= 1>>
 	<</if>>
 	<<if !$worn.lower.type.includes("dance")>>
-	<<set $worn.lower.integrity -= 1>>
+		<<set $worn.lower.integrity -= 1>>
 	<</if>>
 	<<if !$worn.under_lower.type.includes("dance")>>
-	<<set $worn.under_lower.integrity -= 1>>
+		<<set $worn.under_lower.integrity -= 1>>
 	<</if>>
 	<<if !$worn.under_upper.type.includes("dance")>>
-	<<set $worn.under_upper.integrity -= 1>>
+		<<set $worn.under_upper.integrity -= 1>>
 	<</if>>
 <<else>>
-<<set $worn.upper.integrity -= 1>><<set $worn.lower.integrity -= 1>><<set $worn.under_lower.integrity -= 1>><<set $worn.under_upper.integrity -= 1>>
+	<<set $worn.over_upper.integrity -= 1>><<set $worn.over_lower.integrity -= 1>><<set $worn.upper.integrity -= 1>><<set $worn.lower.integrity -= 1>><<set $worn.under_lower.integrity -= 1>><<set $worn.under_upper.integrity -= 1>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -2263,13 +2269,16 @@ or $args[0] is "force">>
 	<</if>>
 
 	<!-- Determine how visible the player's bottom is -->
-	<<if $worn.lower.skirt is 1 and $worn.lower.skirt_down is 1 and $worn.lower.state is "waist">>
+	<<if ($worn.lower.skirt is 1 and $worn.lower.skirt_down is 1 and $worn.lower.state is "waist") or
+	($worn.over_lower.skirt is 1 and $worn.over_lower.skirt_down is 1 and $worn.over_lower.state is "waist")>>
 		<<set _bottom_visibility to 0>>
 	<<else>>
 		<<set _bottom_visibility to 1>>
 	<</if>>
 
 	<!-- Special handling to allow simulating removal of top clothing layer -->
+	<<set _lower_visible to _ignore_overwear or $worn.over_lower.exposed gte 2>>
+	<<set _upper_visible to _ignore_overwear or $worn.over_upper.exposed gte 2>>
 	<<set _under_lower_visible to _ignore_overwear or $worn.lower.exposed gte 2>>
 	<<set _under_upper_visible to _ignore_overwear or $worn.upper.exposed gte 2>>
 
@@ -2279,8 +2288,11 @@ or $args[0] is "force">>
 	<<set _breast_indicator to 0>>
 
 	<!-- Lower clothing, bulge, and genitals -->
-	<<addfemininityofclothingarticle $worn.lower>>
-	<<if _under_lower_visible>>
+	<<addfemininityofclothingarticle $worn.over_lower>>
+	<<if _lower_visible>>
+		<<addfemininityofclothingarticle $worn.lower>>
+	<</if>>
+	<<if _under_lower_visible and _lower_visible>>
 		<!-- Lower underwear is visible -->
 		<<addfemininityofclothingarticle $worn.under_lower>>
 		<<if $worn.under_lower.exposed gte 1>>
@@ -2312,8 +2324,11 @@ or $args[0] is "force">>
 		)` "Bulge visible through clothing">>
 	<</if>>
 	<!-- Upper clothing and breasts -->
-	<<addfemininityofclothingarticle $worn.upper>>
-	<<if _under_upper_visible>>
+	<<addfemininityofclothingarticle $worn.over_upper>>
+	<<if _upper_visible>>
+		<<addfemininityofclothingarticle $worn.upper>>
+	<</if>>
+	<<if _under_upper_visible and _upper_visible>>
 		<!-- Upper underwear is visible -->
 		<<addfemininityofclothingarticle $worn.under_upper>>
 		<<if $worn.under_upper.exposed gte 1>>
@@ -2332,8 +2347,11 @@ or $args[0] is "force">>
 			($breastsize - 4) * 100, 0, Infinity
 		)` "Breast size visible through clothing">>
 	<</if>>
-	<!-- Always visible clothing -->
+	
+	<!-- Head clothing -->
+	<<addfemininityofclothingarticle $worn.over_head>>
 	<<addfemininityofclothingarticle $worn.head>>
+	<!-- Always visible clothing -->
 	<<addfemininityofclothingarticle $worn.face>>
 	<<addfemininityofclothingarticle $worn.neck>>
 	<<addfemininityofclothingarticle $worn.legs>>
@@ -2415,6 +2433,8 @@ or $args[0] is "force">>
 	<<set $libertine to 1>>
 <</if>>
 
+<<set $worn.over_upper.exposedcarry to $worn.over_upper.exposed>>
+<<set $worn.over_lower.exposedcarry to $worn.over_lower.exposed>>
 <<set $worn.upper.exposedcarry to $worn.upper.exposed>>
 <<set $worn.lower.exposedcarry to $worn.lower.exposed>>
 <<set $worn.under_lower.exposedcarry to $worn.under_lower.exposed>>
@@ -2436,14 +2456,14 @@ or $args[0] is "force">>
 <<exposedcheck>>
 
 <<set $exposed to 0>>
-<<if $worn.upper.exposed gte 1>>
+<<if $worn.upper.exposed gte 1 and $worn.over_upper.exposed gte 1>>
 	<<if $player.gender_appearance is "m">>
 	<<elseif $libertine gte 1>>
 	<<else>>
 		<<set $exposed to 1>>
 	<</if>>
 <</if>>
-<<if $worn.upper.exposed gte 2 and $player.gender_appearance isnot "m">>
+<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 	<<if $libertine is 1>>
 		<<set $topless to 1>>
 	<<else>>
@@ -2452,14 +2472,14 @@ or $args[0] is "force">>
 <<else>>
 <<set $topless to 0>>
 <</if>>
-<<if $worn.lower.exposed gte 1>>
+<<if $worn.lower.exposed gte 1 and $worn.over_lower.exposed gte 1>>
 	<<if $libertine gte 1>>
 	<<else>>
 	<<set $exposed to 1>>
 	<</if>>
 <</if>>
 
-<<if $worn.lower.exposed gte 2>>
+<<if $worn.lower.exposed gte 2 and $worn.over_lower.exposed gte 2>>
 	<<if $worn.under_lower.exposed gte 1>>
 	<<set $exposed to 2>>
 	<<elseif $libertine gte 1>>
@@ -2468,6 +2488,8 @@ or $args[0] is "force">>
 	<</if>>
 <</if>>
 
+<<set $worn.over_upper.exposed to $worn.over_upper.exposedcarry>>
+<<set $worn.over_lower.exposed to $worn.over_lower.exposedcarry>>
 <<set $worn.upper.exposed to $worn.upper.exposedcarry>>
 <<set $worn.lower.exposed to $worn.lower.exposedcarry>>
 <<set $worn.under_lower.exposed to $worn.under_lower.exposedcarry>>
@@ -2476,6 +2498,26 @@ or $args[0] is "force">>
 <</nobr>><</widget>>
 
 <<widget "integritycheck">><<nobr>>
+<<if $worn.over_upper.name isnot "naked">>
+	<<if $worn.over_upper.integrity lte 0>>
+		<<set $worn.over_upper.type.push("broken")>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.over_upper.name <<upperplural>> ripped into scraps<<if $worn.upper.exposed gte 2>>, exposing your <<breasts>><</if>>.</span>
+			<br>
+		<</if>>
+	<<overupperruined>><<clothesruinstat>><<if $worn.upper.exposed gte 2>><<set $upperoff to 0>><</if>>
+	<</if>>
+<</if>>
+<<if $worn.over_lower.name isnot "naked">>
+	<<if $worn.over_lower.integrity lte 0>>
+		<<set $worn.over_lower.type.push("broken")>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.over_lower.name <<upperplural>> ripped into scraps<<if $worn.lower.exposed gte 2>>, exposing your <<undies>><</if>>.</span>
+			<br>
+		<</if>>
+	<<overlowerruined>><<clothesruinstat>><<if $worn.lower.exposed gte 2>><<set $upperoff to 0>><</if>>
+	<</if>>
+<</if>>
 <<if $worn.upper.name isnot "naked">>
 	<<if $worn.upper.integrity lte 0>>
 		<<set $worn.upper.type.push("broken")>>
@@ -2519,7 +2561,7 @@ or $args[0] is "force">>
 <<if $worn.genitals.name isnot "naked">>
 	<<if $worn.genitals.integrity lte 0>>
 		<<if $args[0] isnot "no_text">>
-			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<if $penisexist is 1>><<penis>>.<<else>><<pussy>>.<</if>></span>
+			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<genitals>>.</span>
 			<br>
 		<</if>>
 		<<if $worn.genitals.type.includes("chastity")>>
@@ -4042,6 +4084,26 @@ __Map__<br>
 			<br>
 		<</if>>
 	<</if>>
+<</nobr>><</widget>>
+
+<<widget "overupperclothescolour">><<nobr>>
+<<if $worn.over_upper.colour isnot 0 and $worn.over_upper.colour isnot undefined>>
+	<<if $worn.over_upper.colour.substring(0, 3) is "wet">>
+		<<print $worn.over_upper.colour.substring(3)>>
+	<<elseif $worn.over_upper.colour_sidebar is 1>>
+		$worn.over_upper.colour
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "overlowerclothescolour">><<nobr>>
+<<if $worn.over_lower.colour isnot 0 and $worn.over_lower.colour isnot undefined>>
+	<<if $worn.over_lower.colour.substring(0, 3) is "wet">>
+		<<print $worn.over_lower.colour.substring(3)>>
+	<<elseif $worn.over_lower.colour_sidebar is 1>>
+		$worn.over_lower.colour
+	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "upperclothescolour">><<nobr>>

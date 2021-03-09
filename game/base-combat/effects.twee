@@ -772,8 +772,15 @@
 	<</if>>
 <</if>>
 
-<<if $leftaction is "leftlowerpull" and $rightaction is "rightlowerpull">>
-	<<set $leftaction to 0>><<set $rightaction to 0>><<brat 1>><<set $leftactiondefault to "leftlowerpull">><<set $rightactiondefault to "rightlowerpull">>
+<<if $leftaction is "leftlowerpull" or $rightaction is "rightlowerpull">>
+	<<set $_strength to 0>>
+	<<if $leftaction is "leftlowerpull">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "leftlowerpull">><<set $_strength++>>
+	<</if>>
+	<<if $rightaction is "rightlowerpull">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rightlowerpull">><<set $_strength++>>
+	<</if>>
+	<<brat 1>>
 	<<if $worn.lower.name is "naked">>
 		You clutch the tattered remains of your clothing.
 		<<brat 2>>
@@ -781,12 +788,18 @@
 		<<if $understruggle is 0>>
 			<<for _j = 0; _j lt $enemyno; _j++>>
 				<<if $NPCList[_j].lefthand is "lowerclothes" or $NPCList[_j].righthand is "lowerclothes" or (_j is 0 and $NPCList[_j].mouth is "lowerclothes")>>
-					You struggle for control of your $worn.lower.name.
-					<<brat 2>><<set $lowerstruggle to 1>>
-					<<break>>
+					<<if $_strength is 2>>
+						You struggle for control of your $worn.lower.name.
+						<<brat 2>><<set $lowerstruggle to 1>><<set _lowerpull to "failed">>
+						<<break>>
+					<<else>>
+						You try to pull up your $worn.lower.name, but you aren't strong enough.
+						<<brat 1>><<set _lowerpull to "failed">>
+						<<break>>
+					<</if>>
 				<</if>>
 			<</for>>
-			<<if $lowerstruggle is 0>>
+			<<if _leftlowerpull isnot "failed">>
 				<<if $vaginause isnot 0 and $vaginause isnot "none">>
 					Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
 				<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
@@ -794,11 +807,16 @@
 				<<elseif $anususe isnot 0>>
 					Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<bottom>> is threatened.
 				<<else>>
-					You fix your $worn.lower.name, concealing your
-					<<if $worn.under_lower.exposed gte 1>>
-						<<genitals>>.
+					You fix your
+					<<if $worn.over_lower.exposed gt 0>>
+						$worn.lower.name, concealing your
+						<<if $worn.under_lower.exposed gte 1>>
+							<<genitals>>.
+						<<else>>
+							$worn.under_lower.name.
+						<</if>>
 					<<else>>
-						$worn.under_lower.name.
+						$worn.lower.name.
 					<</if>>
 					<<brat 5>><<set $worn.lower.state to $worn.lower.state_base>>
 					<<if $worn.lower.skirt is 1>><<set $worn.lower.skirt_down to 1>><</if>>
@@ -810,90 +828,88 @@
 	<</if>>
 <</if>>
 
-<<if $leftaction is "leftlowerpull">>
-	<<set $leftaction to 0>><<brat 1>><<set $leftactiondefault to "leftlowerpull">>
-	<<if $worn.lower.name is "naked">>
+<<if $leftaction is "leftoverlowerpull" or $rightaction is "rightoverlowerpull">>
+	<<set $_strength to 0>>
+	<<if $leftaction is "leftoverlowerpull">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "leftoverlowerpull">><<set $_strength++>>
+	<</if>>
+	<<if $rightaction is "rightoverlowerpull">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rightoverlowerpull">><<set $_strength++>>
+	<</if>>
+	<<brat 1>>
+	<<if $worn.over_lower.name is "naked">>
 		You clutch the tattered remains of your clothing.
-		<<brat 1>>
+		<<brat 2>>
 	<<else>>
-		<<for _j = 0; _j lt $enemyno; _j++>>
-			<<if $NPCList[_j].lefthand is "lowerclothes" or $NPCList[_j].righthand is "lowerclothes" or (_j is 0 and $NPCList[_j].mouth is "lowerclothes")>>
-				You try to pull up your $worn.lower.name, but you aren't strong enough.
-				<<brat 1>><<set _leftlowerpull to "failed">>
-				<<break>>
-			<</if>>
-		<</for>>
-		<<if _leftlowerpull isnot "failed">>
-			<<if $vaginause isnot 0 and $vaginause isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
-			<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<penis>> is threatened.
-			<<elseif $anususe isnot 0>>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<bottom>> is threatened.
-			<<else>>
-				You fix your $worn.lower.name, concealing your
-				<<if $worn.under_lower.exposed gte 1>>
-					<<genitals>>.
-				<<else>>
-					$worn.under_lower.name.
+		<<if $understruggle is 0>>
+			<<for _j = 0; _j lt $enemyno; _j++>>
+				<<if $NPCList[_j].lefthand is "overlowerclothes" or $NPCList[_j].righthand is "overlowerclothes" or (_j is 0 and $NPCList[_j].mouth is "overlowerclothes")>>
+					<<if $_strength is 2>>
+						You struggle for control of your $worn.over_lower.name.
+						<<brat 2>><<set $overlowerstruggle to 1>><<set _overlowerpull to "failed">>
+						<<break>>
+					<<else>>
+						You try to pull up your $worn.over_lower.name, but you aren't strong enough.
+						<<brat 1>><<set _overlowerpull to "failed">>
+						<<break>>
+					<</if>>
 				<</if>>
-				<<brat 5>><<set $worn.lower.state to $worn.lower.state_base>>
-				<<if $worn.lower.skirt is 1>><<set $worn.lower.skirt_down to 1>><</if>>
-				<<set $worn.lower.vagina_exposed to $worn.lower.vagina_exposed_base>>
-				<<set $worn.lower.anus_exposed to $worn.lower.anus_exposed_base>><<set $worn.lower.exposed to $worn.lower.exposed_base>>
+			<</for>>
+			<<if _overlowerpull isnot "failed">>
+				<<if $vaginause isnot 0 and $vaginause isnot "none">>
+					Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<pussy>> is threatened.
+				<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
+					Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<penis>> is threatened.
+				<<elseif $anususe isnot 0>>
+					Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<bottom>> is threatened.
+				<<else>>
+					You fix your
+					<<if $worn.lower.exposed gt 0>>
+						$worn.over_lower.name, concealing your
+						<<if $worn.under_lower.exposed gte 1>>
+							<<genitals>>.
+						<<else>>
+							$worn.under_lower.name.
+						<</if>>
+					<<else>>
+						$worn.over_lower.name.
+					<</if>>
+					<<brat 5>><<set $worn.over_lower.state to $worn.over_lower.state_base>>
+					<<if $worn.over_lower.skirt is 1>><<set $worn.over_lower.skirt_down to 1>><</if>>
+					<<set $worn.over_lower.vagina_exposed to $worn.over_lower.vagina_exposed_base>>
+					<<set $worn.over_lower.anus_exposed to $worn.over_lower.anus_exposed_base>><<set $worn.over_lower.exposed to $worn.over_lower.exposed_base>>
+				<</if>>
 			<</if>>
 		<</if>>
 	<</if>>
 <</if>>
 
-<<if $rightaction is "rightlowerpull">>
-	<<set $rightaction to 0>><<brat 1>><<set $rightactiondefault to "rightlowerpull">>
-	<<if $worn.lower.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<else>>
-		<<for _j = 0; _j lt $enemyno; _j++>>
-			<<if $NPCList[_j].lefthand is "lowerclothes" or $NPCList[_j].righthand is "lowerclothes" or (_j is 0 and $NPCList[_j].mouth is "lowerclothes")>>
-				You try to pull up your $worn.lower.name, but you aren't strong enough.
-				<<brat 1>><<set _rightlowerpull to "failed">>
-				<<break>>
-			<</if>>
-		<</for>>
-		<<if _rightlowerpull isnot "failed">>
-			<<if $vaginause isnot 0 and $vaginause isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
-			<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<penis>> is threatened.
-			<<elseif $anususe isnot 0>>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<bottom>> is threatened.
-			<<else>>
-				You fix your $worn.lower.name, concealing your
-				<<if $worn.under_lower.exposed gte 1>>
-					<<genitals>>.
-				<<else>>
-					$worn.under_lower.name.
-				<</if>>
-				<<brat 5>><<set $worn.lower.state to $worn.lower.state_base>>
-				<<if $worn.lower.skirt is 1>><<set $worn.lower.skirt_down to 1>><</if>>
-				<<set $worn.lower.vagina_exposed to $worn.lower.vagina_exposed_base>>
-				<<set $worn.lower.anus_exposed to $worn.lower.anus_exposed_base>><<set $worn.lower.exposed to $worn.lower.exposed_base>>
-			<</if>>
-		<</if>>
+<<if $leftaction is "leftupperpull" or $rightaction is "rightupperpull">>
+	<<set $_strength to 0>>
+	<<if $leftaction is "leftupperpull">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "leftupperpull">><<set $_strength++>>
 	<</if>>
-<</if>>
-
-<<if $leftaction is "leftupperpull" and $rightaction is "rightupperpull">>
-	<<set $leftaction to 0>><<set $rightaction to 0>><<brat 1>><<set $leftactiondefault to "leftupperpull">><<set $rightactiondefault to "rightupperpull">>
+	<<if $rightaction is "rightupperpull">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rightupperpull">><<set $_strength++>>
+	<</if>>
+	<<brat 1>>
 	<<if $worn.upper.name is "naked">>
 		You clutch the tattered remains of your clothing.
 	<<else>>
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].lefthand is "upperclothes" or $NPCList[_j].righthand is "upperclothes" or (_j is 0 and $NPCList[_j].mouth is "upperclothes")>>
-				You struggle for control of your $worn.upper.name.
-				<<brat 2>><<set $upperstruggle to 1>>
-				<<break>>
+				<<if $_strength is 2>>
+					You struggle for control of your $worn.upper.name.
+					<<brat 2>><<set $upperstruggle to 1>><<set _upperpull to "failed">>
+					<<break>>
+				<<else>>
+					You struggle for your $worn.upper.name, but you aren't strong enough.
+					<<brat 1>><<set _upperpull to "failed">>
+					<<break>>
+				<</if>>
 			<</if>>
 		<</for>>
-		<<if $upperstruggle is 0>>
+		<<if _upperpull isnot "failed">>
 			<<if $vaginause isnot 0 and $vaginause isnot "none">>
 				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
 			<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
@@ -901,11 +917,17 @@
 			<<elseif $anususe isnot 0>>
 				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<bottom>> is threatened.
 			<<elseif $worn.lower.set is $worn.upper.set>>
-				You fix your $worn.upper.name, concealing your <<breasts>> and
-				<<if $worn.under_lower.exposed gte 1>>
-					<<genitals>>.
+				You fix your
+				<<if $worn.over_upper.exposed gt 0 or $worn.over_lower.exposed gt 0>>
+					$worn.upper.name, concealing your<<if $worn.over_upper.exposed gt 0>><<breasts>> <<if $worn.over_lower.exposed gt 0>>and<</if>><</if>>
+					<<if $worn.over_lower.exposed is 0>>
+					<<elseif $worn.under_lower.exposed gte 1>>
+						<<genitals>>.
+					<<else>>
+						$worn.under_lower.name.
+					<</if>>
 				<<else>>
-					$worn.under_lower.name.
+					$worn.upper.name.
 				<</if>>
 				<<brat 5>><<set $worn.upper.state to $worn.upper.state_base>><<set $worn.upper.state_top to $worn.upper.state_top_base>>
 				<<set $worn.upper.exposed to $worn.upper.exposed_base>><<set $worn.lower.state to $worn.lower.state_base>>
@@ -920,79 +942,59 @@
 	<</if>>
 <</if>>
 
-<<if $leftaction is "leftupperpull">>
-	<<set $leftaction to 0>><<brat 1>><<set $leftactiondefault to "leftupperpull">>
-	<<if $worn.upper.name is "naked">>
-		You clutch the tattered remains of your clothing.
-	<<else>>
-		<<for _j = 0; _j lt $enemyno; _j++>>
-			<<if $NPCList[_j].lefthand is "upperclothes" or $NPCList[_j].righthand is "upperclothes" or (_j is 0 and $NPCList[_j].mouth is "upperclothes")>>
-				You struggle for your $worn.upper.name, but you aren't strong enough.
-				<<brat 1>><<set _leftupperpull to "failed">>
-				<<break>>
-			<</if>>
-		<</for>>
-		<<if _leftupperpull isnot "failed">>
-			<<if $vaginause isnot 0 and $vaginause isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<pussy>> is threatened.
-			<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<penis>> is threatened.
-			<<elseif $anususe isnot 0>>
-				Your $worn.lower.name hang loosely, but you can't adjust <<lowerit>> while your <<bottom>> is threatened.
-			<<elseif $worn.lower.set is $worn.upper.set>>
-				You fix your $worn.upper.name, concealing your <<breasts>> and
-				<<if $worn.under_lower.exposed gte 1>>
-					<<genitals>>.
-				<<else>>
-					$worn.under_lower.name.
-				<</if>>
-				<<brat 5>><<set $worn.upper.state to $worn.upper.state_base>><<set $worn.upper.state_top to $worn.upper.state_top_base>>
-				<<set $worn.upper.exposed to $worn.upper.exposed_base>><<set $worn.lower.state to $worn.lower.state_base>>
-				<<if $worn.lower.skirt is 1>><<set $worn.lower.skirt_down to 1>><</if>><<set $worn.lower.vagina_exposed to $worn.lower.vagina_exposed_base>>
-				<<set $worn.lower.anus_exposed to $worn.lower.anus_exposed_base>><<set $worn.lower.exposed to $worn.lower.exposed_base>>
-			<<else>>
-				You fix your $worn.upper.name, concealing your <<breasts>>.
-				<<brat 5>><<set $worn.upper.state to $worn.upper.state_base>><<set $worn.upper.state_top to $worn.upper.state_top_base>>
-				<<set $worn.upper.exposed to $worn.upper.exposed_base>>
-			<</if>>
-		<</if>>
+<<if $leftaction is "leftoverupperpull" or $rightaction is "rightoverupperpull">>
+	<<set $_strength to 0>>
+	<<if $leftaction is "leftoverupperpull">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "leftoverupperpull">><<set $_strength++>>
 	<</if>>
-<</if>>
-
-<<if $rightaction is "rightupperpull">>
-	<<set $rightaction to 0>><<brat 1>><<set $rightactiondefault to "rightupperpull">>
-	<<if $worn.upper.name is "naked">>
+	<<if $rightaction is "rightoverupperpull">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rightoverupperpull">><<set $_strength++>>
+	<</if>>
+	<<brat 1>>
+	<<if $worn.over_upper.name is "naked">>
 		You clutch the tattered remains of your clothing.
 	<<else>>
 		<<for _j = 0; _j lt $enemyno; _j++>>
-			<<if $NPCList[_j].lefthand is "upperclothes" or $NPCList[_j].righthand is "upperclothes" or (_j is 0 and $NPCList[_j].mouth is "upperclothes")>>
-				You struggle for your $worn.upper.name, but you aren't strong enough.
-				<<brat 1>><<set _rightupperpull to "failed">>
-				<<break>>
+			<<if $NPCList[_j].lefthand is "overupperclothes" or $NPCList[_j].righthand is "overupperclothes" or (_j is 0 and $NPCList[_j].mouth is "overupperclothes")>>
+				<<if $_strength is 2>>
+					You struggle for control of your $worn.over_upper.name.
+					<<brat 2>><<set $overupperstruggle to 1>><<set _overupperpull to "failed">>
+					<<break>>
+				<<else>>
+					You struggle for your $worn.over_upper.name, but you aren't strong enough.
+					<<brat 1>><<set _overupperpull to "failed">>
+					<<break>>
+				<</if>>
 			<</if>>
 		<</for>>
-		<<if _rightupperpull isnot "failed">>
+		<<if _overupperpull isnot "failed">>
 			<<if $vaginause isnot 0 and $vaginause isnot "none">>
-				Your $worn.upper.name hang loosely, but you can't adjust <<upperit>> while your <<pussy>> is threatened.
+				Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<pussy>> is threatened.
 			<<elseif $penisuse isnot 0 and $penisuse isnot "none">>
-				Your $worn.upper.name hang loosely, but you can't adjust <<upperit>> while your <<penis>> is threatened.
+				Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<penis>> is threatened.
 			<<elseif $anususe isnot 0>>
-				Your $worn.upper.name hang loosely, but you can't adjust <<upperit>> while your <<bottom>> is threatened.
-			<<elseif $worn.lower.set is $worn.upper.set>>
-				You fix your $worn.upper.name, concealing your <<breasts>> and
-				<<if $worn.under_lower.exposed gte 1>>
-					<<genitals>>.
+				Your $worn.over_lower.name hang loosely, but you can't adjust <<overlowerit>> while your <<bottom>> is threatened.
+			<<elseif $worn.over_lower.set is $worn.over_upper.set>>
+				You fix your
+				<<if $worn.upper.exposed gt 0 or $worn.lower.exposed gt 0>>
+					$worn.over_upper.name, concealing your <<if $worn.upper.exposed gt 0>><<breasts>> <<if $worn.lower.exposed gt 0>>and<</if>><</if>>
+					<<if $worn.lower.exposed is 0>>
+					<<elseif $worn.under_lower.exposed gte 1>>
+						<<genitals>>.
+					<<else>>
+						$worn.under_lower.name.
+					<</if>>
 				<<else>>
-					$worn.under_lower.name.
+					$worn.over_upper.name.
 				<</if>>
-				<<brat 5>><<set $worn.upper.state to $worn.upper.state_base>><<set $worn.upper.state_top to $worn.upper.state_top_base>>
-				<<set $worn.upper.exposed to $worn.upper.exposed_base>><<set $worn.lower.state to $worn.lower.state_base>>
-				<<if $worn.lower.skirt is 1>><<set $worn.lower.skirt_down to 1>><</if>><<set $worn.lower.vagina_exposed to $worn.lower.vagina_exposed_base>>
-				<<set $worn.lower.anus_exposed to $worn.lower.anus_exposed_base>><<set $worn.lower.exposed to $worn.lower.exposed_base>>
+				<<brat 5>><<set $worn.over_upper.state to $worn.over_upper.state_base>><<set $worn.over_upper.state_top to $worn.over_upper.state_top_base>>
+				<<set $worn.over_upper.exposed to $worn.over_upper.exposed_base>><<set $worn.over_lower.state to $worn.over_lower.state_base>>
+				<<if $worn.over_lower.skirt is 1>><<set $worn.over_lower.skirt_down to 1>><</if>><<set $worn.over_lower.vagina_exposed to $worn.over_lower.vagina_exposed_base>>
+				<<set $worn.over_lower.anus_exposed to $worn.over_lower.anus_exposed_base>><<set $worn.over_lower.exposed to $worn.over_lower.exposed_base>>
 			<<else>>
-				You fix your $worn.upper.name, concealing your <<breasts>>.
-				<<brat 5>><<set $worn.upper.state to $worn.upper.state_base>>
-				<<set $worn.upper.state_top to $worn.upper.state_top_base>><<set $worn.upper.exposed to $worn.upper.exposed_base>>
+				You fix your $worn.over_upper.name<<if $worn.upper.exposed gt 0>>, concealing your <<breasts>><</if>>.
+				<<brat 5>><<set $worn.over_upper.state to $worn.over_upper.state_base>>
+				<<set $worn.over_upper.state_top to $worn.over_upper.state_top_base>><<set $worn.over_upper.exposed to $worn.over_upper.exposed_base>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -2692,7 +2694,10 @@ You try to pull your head away from the penis threatening your mouth.
 	<<elseif (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
 		<<set $noupper to 1>><span class="green">They nod in acknowledgement.</span>
 		<<for _j = 0; _j lt $enemyno; _j++>>
-			<<if $NPCList[_j].lefthand is "upperclothes">>
+			<<if $NPCList[_j].lefthand is "overupperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].lefthand to 0>>The <<person>> releases your $worn.over_upper.name.
+			<<elseif $NPCList[_j].lefthand is "upperclothes">>
 				<<personselect _j>>
 				<<set $NPCList[_j].lefthand to 0>>The <<person>> releases your $worn.upper.name.
 			<<elseif $NPCList[_j].lefthand is "underupperclothes">>
@@ -2700,6 +2705,9 @@ You try to pull your head away from the penis threatening your mouth.
 				<<set $NPCList[_j].lefthand to 0>>The <<person>> releases your $worn.under_upper.name.
 			<</if>>
 			<<if $NPCList[_j].righthand is "upperclothes">>
+				<<personselect _j>>
+				<<set $NPCList[_j].righthand to 0>>The <<person>> releases your $worn.over_upper.name.
+			<<elseif $NPCList[_j].righthand is "upperclothes">>
 				<<personselect _j>>
 				<<set $NPCList[_j].righthand to 0>>The <<person>> releases your $worn.upper.name.
 			<<elseif $NPCList[_j].righthand is "underupperclothes">>

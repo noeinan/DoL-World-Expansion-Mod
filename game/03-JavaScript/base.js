@@ -151,6 +151,23 @@ function underupperintegrity() {
 }
 DefineMacroS("underupperintegrity", underupperintegrity);
 
+function overlowerintegrity() {
+	var output = '';
+	var V = State.variables.worn.over_lower;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
+			output += "tattered \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
+			output += "torn \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
+			output += "frayed \t";
+		} else {
+		}
+	}
+	return output;
+}
+DefineMacroS("overlowerintegrity", overlowerintegrity);
+
 function lowerintegrity() {
 	var output = '';
 	var V = State.variables.worn.lower;
@@ -167,6 +184,23 @@ function lowerintegrity() {
 	return output;
 }
 DefineMacroS("lowerintegrity", lowerintegrity);
+
+function overupperintegrity() {
+	var output = '';
+	var V = State.variables.worn.over_upper;
+	if (V.integrity_max !== 0) {
+		if (V.integrity <= (V.integrity_max / 10) * 2) {
+			output += "tattered \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
+			output += "torn \t";
+		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
+			output += "frayed \t";
+		} else {
+		}
+	}
+	return output;
+}
+DefineMacroS("overupperintegrity", overupperintegrity);
 
 function upperintegrity() {
 	var output = '';
