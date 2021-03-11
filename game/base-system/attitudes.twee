@@ -170,6 +170,11 @@ __If consensual:__
 	<label>Auto Select different tentacle for grab actions when the current tentacle is occupied <<print '<<checkbox "$actionDefaults.Tentacles.consensual.regrab" false true ' + ($actionDefaults.Tentacles.consensual.regrab is true ? "checked" : "") + '>>'>></label>
 	<br>
 <</if>>
+<<if $actionDefaults[_options[_currentOptions]].consensual.askActions isnot undefined>>
+	<label>Mouth "Ask them" default option
+	<<print '<<listbox "'+_stringDefault+'.consensual.askActions['+_currentActionSet+']" autoselect>><<optionsfrom _askActions>><</listbox>>'>></label>
+	<br>
+<</if>>
 
 <<if _options[_currentOptions] isnot "Robin">>
 	<<if _options[_currentOptions] is "Tentacles">>
@@ -193,6 +198,11 @@ __If consensual:__
 	<</for>>
 	<<if _options[_currentOptions] is "Tentacles">>
 		<label>Auto Select different tentacle for grab actions when the current tentacle is occupied <<print '<<checkbox "$actionDefaults.Tentacles.rape.regrab" false true ' + ($actionDefaults.Tentacles.rape.regrab is true ? "checked" : "") + '>>'>></label>
+		<br>
+	<</if>>
+	<<if $actionDefaults[_options[_currentOptions]].rape.askActions isnot undefined>>
+		<label>Mouth "Ask them" default option
+		<<print '<<listbox "'+_stringDefault+'.rape.askActions['+_currentActionSet+']" autoselect>><<optionsfrom _askActions>><</listbox>>'>></label>
 		<br>
 	<</if>>
 <</if>>
@@ -344,6 +354,30 @@ __If consensual:__
 	<<set $actionDefaults.Tentacles.rape.regrab to false>>
 	<<set $actionDefaults.Tentacles.consensual.regrab to false>>
 <</if>>
+<<if $actionDefaults.Everyone.consensual.askActions is undefined>>
+	<<set $actionDefaults.Everyone.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Everyone.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Strangers.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Strangers.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Acquaintances.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Acquaintances.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Animals.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Animals.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Robin.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Robin.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Bailey.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Bailey.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Whitney.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Whitney.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Kylar.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Kylar.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Eden.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Eden.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Avery.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Avery.consensual.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Leighton.rape.askActions to clone(_defaultItem)>>
+	<<set $actionDefaults.Leighton.consensual.askActions to clone(_defaultItem)>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "sexDefaults">><<nobr>>
@@ -462,23 +496,33 @@ __If consensual:__
 	<<set _mouth["Bite their breasts"] to "breastbite">>
 <</if>>
 <<set _mouth["Keep your mouth closed"] to "breastclosed">>
-<<if $args[0] is false>>
-	<<if $penisexist is 1>>
-		<<set _mouth["Tell them you don't want your penis inside anything"] to "nopenile">>
-	<</if>>
-	<<if $vaginaexist is 1>>
-		<<set _mouth["Tell them you don't want anything in your pussy"] to "novaginal">>
-	<</if>>
-	<<set _mouth["Tell them you don't want anything in your ass"] to "noanal">>
-	<<set _mouth["Tell them you don't want your top removed"] to "noupper">>
-	<<if $asphyxiaLvl gte 1 and ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
-		<<set _mouth["Ask them to choke you"] to "askchoke">>
-	<</if>>
-<</if>>
 
 <<if $args[0] is true>>
 	<<set _mouth["Headbutt"] to "headbutt">>
 <</if>>
+
+<<set _mouth["Ask them"] to "ask">>
+
+<<set _askActions to {"Nothing":"rest"}>>
+<<if $args[0] is false>>
+	<<set _askActions["to stop"] to "finish">>
+	<<if $vaginaexist is 1>>
+		<<set _askActions["to not put anything in your pussy"] to "novaginal">>
+	<</if>>
+	<<if $penisexist is 1>>
+		<<set _askActions["to not put your penis in anything"] to "nopenile">>
+	<</if>>
+	<<if $vaginaexist is 1>>
+		<<set _askActions["to not put anything in your anus"] to "noanal">>
+	<</if>>
+<</if>>
+<<set _askActions["to leave your top on"] to "noupper">>
+
+<<if $asphyxiaLvl gte 1 and $args[0] is false and
+($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
+	<<set _askActions["to choke you"] to "askchoke">>
+<</if>>
+
 
 <<set _penis to {
 	"Rest":"rest",
