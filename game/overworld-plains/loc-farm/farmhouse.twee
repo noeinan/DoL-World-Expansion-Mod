@@ -481,27 +481,58 @@ You snuggle under the covers.
 
 <<sleepeffects>>
 
-<<if $schoolwake is 1>><<set $schoolwake to 0>><<set $alexbed to 1>>
-	<<npc Alex>><<person1>>
-	<<if _orgasm is true>>
-		Alex starts groping. <<He>> feels the moistness around your crotch. "You were waiting for me tonight?" <<he>> says, rubbing up against you.
+<<if $phase is 0>>
+	<<if ($danger gte (9900 -$allure / 2) and $rng gte 30 and $daystate isnot "night")>>
+		<<if $schoolwake is 1>><<set $schoolwake to 0>><<set $alexbed to 1>>
+			<<npc Alex>><<person1>>
+			<<if _orgasm is true>>
+				Alex starts groping. <<He>> feels the moistness around your crotch. "You were waiting for me tonight?" <<he>> says, rubbing up against you.
+			<<else>>
+				You wake up to Alex's groping. <<He>> starts rubbing up against you.
+			<</if>>
+			<br><br>
+
+			<<link [[Let it happen|Alex Sleep Sex]]>><<set $sexstart to 1>><<set $phase to 0>><</link>><<promiscuous1>>
+			<br>
+			<<link [[Push away|Alex Sleep Push]]>><<set $phase to 0>><</link>>
+			<br>
+		<<else>>
+			<br><br>
+
+			<<link [[Get out of bed|Farmhouse Guest Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
+			<br><br>
+		<</if>>
 	<<else>>
-		You wake up to Alex's groping. <<He>> starts rubbing up against you.
+		<<set $schoolwake to 0>><<set $alexbed to 0>>
+		<br><br>
+
+		<<link [[Get out of bed|Farmhouse Guest Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
+		<br><br>
 	<</if>>
-	<br><br>
-
-	<<link [[Let it happen|Alex Sleep Sex]]>><<set $sexstart to 1>><</link>><<promiscuous1>>
-	<br>
-	<<link [[Push away|Alex Sleep Push]]>><</link>>
-	<br>
 <<else>>
-	<br><br>
+	<<if $schoolwake is 1>><<set $schoolwake to 0>><<set $alexbed to 0>>
+		<<npc Alex>><<person1>>
+		<<if _orgasm is true>>
+			Alex starts groping. <<He>> feels the moistness around your crotch. "Mm, open your legs more," <<he>> says, rubbing up against you.
+		<<else>>
+			You wake up to Alex's groping. <<He>> starts rubbing up against you.
+		<</if>>
+		<br><br>
 
-	<<link [[Get out of bed|Farmhouse Guest Bedroom]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
-	<br><br>
+		<<link [[Let it happen|Alex Sleep Sex]]>><<set $sexstart to 1>><<set $phase to 1>><</link>><<promiscuous1>>
+		<br>
+		<<link [[Push away|Alex Sleep Push]]>><<set $phase to 1>><</link>>
+		<br>
+	<<else>>
+		<br><br>
+
+		<<link [[Get out of bed|Alex's Room]]>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
+		<br><br>
+	<</if>>
 <</if>>
 
 <<set $phase to 0>>
+
 
 :: Alex Farmhouse Sleep [nobr]
 <<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
@@ -539,9 +570,9 @@ You snuggle under the covers.
 	<</if>>
 	<br><br>
 
-	<<link [[Let it happen|Alex Sleep Sex]]>><<set $sexstart to 1>><</link>><<promiscuous1>>
+	<<link [[Let it happen|Alex Sleep Sex]]>><<set $sexstart to 1>><<set $phase to 1>><</link>><<promiscuous1>>
 	<br>
-	<<link [[Push away|Alex Sleep Push]]>><</link>>
+	<<link [[Push away|Alex Sleep Push]]>><<set $phase to 1>><</link>>
 	<br>
 <<else>>
 	<br><br>
@@ -598,23 +629,26 @@ You shove <<him>> away from you.
 <<npcincr Alex love -1>><<npcincr Alex dom -1>>
 
 <<if $NPCName[$NPCNameList.indexOf("Alex")].love - $NPCName[$NPCNameList.indexOf("Alex")].lust gte 1>>
+	<<He>> grumbles something and rolls over. <<Hes>> asleep within moments.
+	<br><br>
 
-<<He>> grumbles something and rolls over. <<Hes>> asleep within moments.
-<br><br>
-
-<<link [[Back to sleep|Farmhouse Alex Bed]]>><<endevent>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
-<br>
-<<link [[Get up|Alex's Room]]>><<endevent>><</link>>
-<br>
-
+	<<if $phase is 0>>
+		<<link [[Back to sleep|Farmhouse Guest Bed]]>><<endevent>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
+		<br>
+		<<link [[Get up|Farmhouse Guest Bedroom]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Back to sleep|Farmhouse Alex Bed]]>><<endevent>><<storeon "bed">><<set $wardrobe_location to "wardrobe">><</link>>
+		<br>
+		<<link [[Get up|Alex's Room]]>><<endevent>><</link>>
+		<br>
+	<</if>>
 <<else>>
+	<<He>> starts groping more forcefully.
+	<br><br>
 
-<<He>> starts groping more forcefully.
-<br><br>
-
-<<link [[Next|Alex Sleep Sex]]>><<set $molestationstart to 1>><</link>>
-<br>
-
+	<<link [[Next|Alex Sleep Sex]]>><<set $molestationstart to 1>><</link>>
+	<br>
 <</if>>
 
 :: Alex Sleep Sex Finish [nobr]
@@ -630,7 +664,11 @@ You shove <<him>> away from you.
 	<<endcombat>>
 	<br><br>
 
-	<<link [[Next|Farmhouse Alex Bed]]>><</link>>
+	<<if $phase is 0>>
+		<<link [[Next|Farmhouse Guest Bed]]>><</link>>
+	<<else>>
+		<<link [[Next|Farmhouse Alex Bed]]>><</link>>
+	<</if>>
 
 <<elseif $enemyhealth lte 0>>
 	You shove Alex and <<his>> head hits the bed board. "Fuck!" <<He>> rubs the back of <<his>> head and groans.
@@ -639,14 +677,22 @@ You shove <<him>> away from you.
 	As you gather your clothes <<he>> speaks up, "Sorry if I took it too far."
 	<br><br>
 
-	<<tearful>> you close the door, returning to the guest bedroom to sleep.
-	<br><br>
+	<<if $phase is 0>>
+		<<tearful>> you hide under the covers, listening as Alex leaves the room. <<set $alexbed to 0>>
+		<br><br>
+	<<else>>
+		<<tearful>> you close the door, returning to the guest bedroom to sleep.
+		<br><br>
+	<</if>>
 
 	<<clotheson>>
 	<<endcombat>>
 
-	<<link [[Next|Farmhouse Guest Bed]]>><<endevent>><</link>>
-	<br>
+	<<if $phase is 0>>
+		<<link [[Next|Farmhouse Guest Bed]]>><</link>>
+	<<else>>
+		<<link [[Next|Farmhouse Alex Bed]]>><</link>>
+	<</if>>
 <<elseif $finish is 1>>
 
 	<<He>> rolls over. You hear <<him>> snore moments later.
@@ -656,7 +702,11 @@ You shove <<him>> away from you.
 	<<endcombat>>
 	<br><br>
 
-	<<link [[Next|Alex Farmhouse Bed]]>><</link>>
+	<<if $phase is 0>>
+		<<link [[Next|Farmhouse Guest Bed]]>><</link>>
+	<<else>>
+		<<link [[Next|Farmhouse Alex Bed]]>><</link>>
+	<</if>>
 <</if>>
 
 :: Alex Breakfast [nobr]
