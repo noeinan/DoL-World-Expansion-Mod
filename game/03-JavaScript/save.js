@@ -218,6 +218,16 @@ window.updateExportDay = function(){
 		SugarCube.State.history[0].variables.saveDetails.exported.days = clone(SugarCube.State.history[0].variables.days);
 		SugarCube.State.variables.saveDetails.exported.count++;
 		SugarCube.State.history[0].variables.saveDetails.exported.count++;
+		SugarCube.State.variables.saveDetails.exported.dayCount++;
+		SugarCube.State.history[0].variables.saveDetails.exported.dayCount++;
+		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
+		if(sessionJson != undefined){
+			var session = JSON.parse(sessionJson);
+			session.delta[0].variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+			session.delta[0].variables.saveDetails.exported.dayCount++;
+			session.delta[0].variables.saveDetails.exported.count++;
+			sessionStorage.setItem(SugarCube.Story.domId + ".state", JSON.stringify(session));
+		}
 	}
 }
 
@@ -225,6 +235,15 @@ window.updateSavesCount = function(){
 	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
 		SugarCube.State.variables.saveDetails.slot.count++;
 		SugarCube.State.history[0].variables.saveDetails.slot.count++;
+		SugarCube.State.variables.saveDetails.slot.dayCount++;
+		SugarCube.State.history[0].variables.saveDetails.slot.dayCount++;
+		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
+		if(sessionJson != undefined){
+			var session = JSON.parse(sessionJson);
+			session.delta[0].variables.saveDetails.slot.dayCount++;
+			session.delta[0].variables.saveDetails.slot.count++;
+			sessionStorage.setItem(SugarCube.Story.domId + ".state", JSON.stringify(session));
+		}
 	}
 }
 
