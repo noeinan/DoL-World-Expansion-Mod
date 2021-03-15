@@ -155,7 +155,7 @@ The <<beasttype>> flies above the ruins of a castle, and begins a circling desce
 
 
 <<if $bird.state is undefined>>
-You look around the circular room. Small bones litter the ground. There's no way out, other than the broken wall. There's a pool formed from broken masonry near the precipice, exposed to the sky and full of rainwater. A nest sits beside it, made from small logs and twigs. You see a large wooden trap door at the back of the room, but it's sealed by a rusted iron lock.
+You look around the circular room. Small bones litter the ground. There's no way out, other than the broken wall. There's a large pool formed from broken masonry, exposed to the sky and full of rainwater. A nest sits on the other side of the room near the precipice, made from small logs and twigs. You see a large wooden trap door at the back of the room, but it's sealed by a rusted iron lock.
 <br><br>
 	<<bird_init>>
 	<<set $hunger to 2000>>
@@ -260,8 +260,6 @@ You remain still. The <<beasttype>> watches you a moment longer, then beats <<bh
 You are inside a ruined tower, deep in the moor. 
 <<if $syndromebird isnot 1>><<hunger_description>><</if>>
 <br><br>
-	
-
 
 <<npc "Great Hawk">>
 <<if $bird.state is "home">>
@@ -280,6 +278,19 @@ You are inside a ruined tower, deep in the moor.
 	<</switch>>
 <<else>>
 	The <<beasttype>> is out hunting.
+<</if>>
+<<if $exposed gte 1>>
+	<<if $syndromebird is 1>>
+		<<if $arousal gte 5000 and $bird.state isnot "home">>
+			You find yourself craving your <<if $monster is 1>><<if $NPCName[$NPCNameList.indexOf("Great Hawk")].pronoun is "m">>husband<<else>>wife<</if>><<else>>partner<</if>>'s wings to keep you warm.
+		<</if>>
+	<<else>>
+		<<if $bird.state isnot "home">>
+			You feel relieved to have some privacy in your exposed state.
+		<<else>>
+			You feel embarrassed to be exposed around the <<beasttype>>.
+		<</if>>
+	<</if>>
 <</if>>
 <<endevent>>
 <br><br>
@@ -385,15 +396,12 @@ You are inside a ruined tower, deep in the moor.
 <<else>>
 	<<link [[Approach the perch|Bird Tower Perch]]>><</link>>
 	<br>
-	<<if $bird.activity is "bathe" and $bird.state is "home">>
-		<<link [[Wash (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><</link>>
-		<br>
-	<<else>>
-		<<link [[Wash (0:30)|Bird Tower Bathe]]>><<bird_pass 30>><</link>>
+	<<link [[Sit by the rainwater pool|Bird Tower Rainwater Pool]]>><</link>>
+	<br>
+	<<if $syndromebird isnot 1>>
+		<<link [[Look out the tower (0:05)|Bird Tower Look]]>><<bird_pass 5>><</link>>
 		<br>
 	<</if>>
-	<<link [[Look out the tower (0:05)|Bird Tower Look]]>><<bird_pass 5>><</link>>
-	<br>
 	<<if $bird.lock is 1>>
 		<<link [[Examine the trap door(0:05)|Bird Tower Door]]>><<bird_pass 5>><</link>>
 		<br>
@@ -408,11 +416,11 @@ You are inside a ruined tower, deep in the moor.
 		<br>
 	<</if>>
 	<<if $bird.mirror is 1>>
-		<<link [[Look in mirror|Bird Tower Mirror]]>><</link>>
+		<br>
+		<<link [[Mirror|Bird Tower Mirror]]>><</link>>
 		<br>
 	<</if>>
 	<<if $syndromebird is 1>>
-		<br>
 		<<link [[Settings]]>><<set $settingsExitPassage to "Bird Tower">><</link>>
 		<br>
 		<<attitudesControlCheck>>
@@ -858,11 +866,8 @@ It fills you with a strange warmth.<<set $drugged += 60>>
 <i><<bHe>> will be <span class="blue">much</span> less likely to bring you lurkers in the future. <<bHe>> will bring other items instead.</i>
 <br><br>
 
-
-
 <<link [[Next|Bird Tower]]>><<endevent>><</link>>
 <br>
-
 
 
 :: Bird Tower Lurker Nothing [nobr]
@@ -903,7 +908,6 @@ You remain still.
 
 <<link [[Next|Bird Tower]]>><<endevent>><</link>>
 <br>
-
 
 
 :: Bird Tower Trash Scold [nobr]
@@ -1329,6 +1333,52 @@ You don't move.
 <<link [[Climb out of bed|Bird Tower]]>><</link>>
 <br><br>
 
+:: Bird Tower Rainwater Pool [nobr]
+<<effects>><<set $outside to 0>>
+You sit by the rainwater pool.
+<<npc "Great Hawk">>
+<<if $bird.state is "home">>
+	<<switch $bird.activity>>
+	<<case "sing">>
+		The <<beasttype>> is singing at the edge of the tower.
+	<<case "bathe">>
+		<<print either(
+			"The <<beasttype>> playfully splashes at you.",
+			"The <<beasttype>> beckons for you to join <<bhim>>.",
+			"The <<beasttype>> continues bathing.",
+			"The <<beasttype>> shakes <<bhis>> wings off, flinging some water your way.",
+		)>>
+	<<case "groom">>
+		The <<beasttype>> sits on <<bhis>> perch, cleaning <<bhis>> feathers.
+	<<case "build">>
+		The <<beasttype>> is adding to the nest.
+	<<default>>
+		The <<beasttype>> rests in <<bhis>> nest.
+		<<set $birdSleep to 1>>
+	<</switch>>
+<<else>>
+	The <<beasttype>> is out hunting.
+<</if>>
+<<if $syndromebird is 1>>
+	<<storeon "birdtower" "check">>
+	<<if _store_check is 1>>
+		Your clothes sit atop a slab of stone.
+	<<else>>
+		There's a massive slab of stone nearby that you could keep your clothes on.
+	<</if>>
+	<br><br>
+	<<storeactions "birdtower">>
+<</if>>
+<<endevent>>
+
+<<if $bird.activity is "bathe" and $bird.state is "home">>
+	<<link [[Wash (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><</link>>
+	<br>
+<<else>>
+	<<link [[Wash (0:30)|Bird Tower Bathe]]>><<bird_pass 30>><</link>>
+	<br>
+<</if>>
+<<link [[Get up|Bird Tower]]>><</link>>
 
 :: Bird Tower Sleep [nobr]
 <<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
