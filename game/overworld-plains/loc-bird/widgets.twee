@@ -87,13 +87,13 @@
 <</switch>>
 <</nobr>><</widget>>
 
-<<widget "select_random_clothes">><<nobr>>/*Selects random clothes from shops. Sets _random_clothes to the item name, and _random_index to its index. Ignores forest shop, and secondary parts of outfits. _random_clothes outputs "fabric" when clothes are ignored this way.*/
+<<widget "select_random_clothes">><<nobr>>/*Selects random clothes from shops. Sets _random_clothes to the item name, and _random_index to its index. Ignores forest shop, and secondary parts of outfits. _random_clothes outputs "piece of fabric" when clothes are ignored this way.*/
 <<set _random_slot to either("upper", "lower", "under_upper", "under_lower", "head", "face", "neck", "hands", "legs", "feet")>>
 <<set _random_index to random(0, (setup.clothes[_random_slot].length - 1))>>
 <<if !setup.clothes[_random_slot][_random_index].shop.includes("forest") and !setup.clothes[_random_slot].outfitSecondary>>
-	<<set _random_clothes to setup.clothes[_random_slot][_random_index]>>
+	<<set _random_clothes to setup.clothes[_random_slot][_random_index].name>>
 <<else>>
-	<<set _random_clothes to "fabric">>
+	<<set _random_clothes to "piece of fabric">>
 <</if>>
 <</nobr>><</widget>>
 
@@ -297,10 +297,10 @@
 		at your feet, then looks at you, awaiting your response.
 		<br><br>
 		
-		<<if $worn[_random_slot].name isnot "naked">>
+		<<if $worn[_random_slot].name isnot "naked" and _random_clothes isnot "piece of fabric">>
 			<<link [[Wear|Bird Tower Clothes]]>><<generalWear _random_slot _random_index>><<bird_loot clothes 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<set $bird.fabric += 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
 			<span class="blue">Your $worn[_random_slot].name will be replaced.</span> | <span class="green">+ Fabric</span>
-		<<else>>
+		<<elseif _random_clothes isnot "piece of fabric">>
 			<<link [[Wear|Bird Tower Clothes]]>><<generalWear _random_slot _random_index>><<bird_loot clothes 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
 		<</if>>
 		<br>
@@ -353,7 +353,7 @@
 	<<endevent>>
 	<<npc "Great Hawk">>
 	<<if $monster is 1>>
-		The <<beasttype>> steps to the edge of the perch.
+		The <<beasttype>><<if $birdBask is 1>> gingerly helps you stand, and<</if>> steps to the edge of the perch.
 		"<<print either(
 			"I crave a hunt.",
 			"The wild beckons me.",
@@ -367,13 +367,14 @@
 	<br><br>
 	<<set $bird.timer to random(30, 60)>>
 	<<set $bird.state to "hunting">>
+	<<unset $birdPerch>><<unset $birdBask>>
 	<<if $birdSingIntro is 1>>
 		<<link [[Sing (0:30)|Bird Tower Sing]]>><<set $birdSingAbsent to 1>><<transform bird 1>><<bird_pass 30>><<endevent>><</link>><br>
 	<</if>>
 	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
 	<br>
 <<elseif $bird.activity is "sleep" and $birdSleep is undefined and $bird.state is "home">>
-	<<set $birdSleep to 1>>
+	<<set $birdSleep to 1>><<unset $birdPerch>><<unset $birdBask>>
 	<<endevent>>
 	<<npc "Great Hawk">>
 	<<if $monster gte 1>>
@@ -405,9 +406,14 @@
 	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
 	<<link [[Get up|Bird Tower Perch]]>><<set $birdBask to 0>><<endevent>><</link>><br>
 	<<link [[Leave|Bird Tower Bask Leave]]>><<unset $birdBask>><<unset $birdPerch>><<endevent>><</link>><br>
+<<elseif $bird.activity is "sing" and $bird.state is "home">>
+	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<endevent>><</link>><br>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+	<<bird_fly_options>>
 <<else>>
 	<<if $birdSingIntro is 1>>
-		<<link [[Sing (0:30)|Bird Tower Sing]]>><<set $birdSingAbsent to 1>><<transform bird 1>><<bird_pass 30>><<endevent>><</link>><br>
+		<<link [[Sing (0:30)|Bird Tower Sing]]>><<set $birdSingAbsent to 1>><<transform bird 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
 	<</if>>
 	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
 	<br>
@@ -426,7 +432,7 @@
 		<<link [[Glide to the base of the tower (0:01)|Bird Tower Glide 2]]>><<unset $birdPerch>><<bird_pass 1>><<endevent>><</link>><<flight_text>><br>
 	<</if>>
 	<<if $birdFly isnot 1 and $bird.activity is "sing" and $bird.state is "home">>
-		<<link [[Ask the Great Hawk to teach you to fly|Bird Tower Fly Intro]]>><</link>><<gggwillpower>><br>
+		<<link [[Ask the Great Hawk to teach you to fly|Bird Tower Fly Intro]]>><</link>><<flight_text>><br>
 	<<elseif $birdFly is 1>>
 		<<link [[Fly to the farmlands (0:30)|Bird Tower Farmlands]]>><<unset $birdPerch>><<bird_pass 30>><<tiredness 9>><<endevent>><</link>><<flight_text>><<ggtiredness>>
 		<br>
@@ -452,8 +458,8 @@
 <</nobr>><</widget>>
 
 <<widget "bird_greeting">><<nobr>>
-<<if $hawkDailyGreeting isnot 1>>
-	<<set $hawkDailyGreeting to 1>>
+<<if $birdDailyGreeting isnot 1>>
+	<<set $birdDailyGreeting to 1>>
 	<<if $monster is 1>>
 		<<if $hour lte 3 or $hour gte 18>>
 			"Good evening,
