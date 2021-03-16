@@ -172,6 +172,12 @@ You look around the circular room. Small bones litter the ground. There's no way
 <</if>>
 <br><br>
 
+<<if ($leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound")>>
+	<<bHe>> looks at your bindings curiously, before sharply kicking <<bhis>> talons towards you. You flinch, but when you look down, <span class="green">your bindings are in tatters at your feet.</span>
+	<<unbind>>
+	<br><br>
+<</if>>
+
 
 <<set $bird.state to "hunting">>
 <<set $bird.timer to 20>>
@@ -237,6 +243,12 @@ You remain still. The <<beasttype>> watches you a moment longer, then beats <<bh
 	
 	<<bHis>> wing tightens around you for a moment, before giving you more space.
 	<br><br>
+
+	<<if ($leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound")>>
+		<<bHe>> looks at your bindings curiously, before sharply kicking <<bhis>> talons towards you. <span class="green">Your bindings fall to tatters at your feet.</span>
+		<<unbind>>
+		<br><br>
+	<</if>>
 		
 	<<set $bird.timer to 60>>
 	<<set $bird.state to "home">>
@@ -394,6 +406,10 @@ You are inside a ruined tower, deep in the moor.
 	<<link [[Next|Bird Tower]]>><</link>>
 	<br>
 <<else>>
+	<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
+		<<link [[Undo your bindings (0:10)|Bird Tower Unbind]]>><<bird_pass 10>><<unbind>><</link>>
+		<br><br>
+	<</if>>
 	<<link [[Approach the perch|Bird Tower Perch]]>><</link>>
 	<br>
 	<<link [[Sit by the rainwater pool|Bird Tower Rainwater Pool]]>><</link>>
@@ -577,7 +593,7 @@ You have <<print $bird.fabric>> spare materials.
 		Tear up your <<link [[$worn.face.name|Bird Tower Rope Clothes]]>><<set $bird.fabric += 1>><<faceruined>><</link>>
 		<br>
 	<</if>>
-	<<if $worn.neck.name isnot "naked">>
+	<<if $worn.neck.name isnot "naked" $worn.neck.name isnot "collar" and $worn.neck.collared isnot 1>>
 		Tear up your <<link [[$worn.neck.name|Bird Tower Rope Clothes]]>><<set $bird.fabric += 1>><<neckruined>><</link>>
 		<br>
 	<</if>>
@@ -1773,12 +1789,13 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 				You arch your back in <<bhis>> arms, letting out a cry of pleasure into the <<if $daystate is "dawn">>morning air<<elseif $daystate is "dusk">>evening air<<else>>wind<</if>>. <<bHe>> holds you closely. "Your mating song is pleasing. We will clean together soon."
 				You lightly tremble, and <<bhe>> begins cooing quietly to you.	
 			<<else>>
-				You arch your back, causing <<bhim>> to wrap <<bhis>> wings around you to keep you from falling. <<Bhe>> coos quietly to you.
+				You arch your back, causing <<bhim>> to wrap <<bhis>> wings around you to keep you from falling. <<bHe>> coos quietly to you.
 			<</if>>
 			<<npcincr "Great Hawk" dom 5>><<ggdom>>
 			<br><br>
-
-			<<link [[Reward|Bird Tower Perch Sex]]>><<set $sexstart to 1>><<set $phase to 1>><<transform bird 1>><<npcincr "Great Hawk" love 1>><</link>><<deviant1>><<glove>>
+			<<if $bird.activity is "sing" or $bird.activity is "groom">>
+				<<link [[Reward|Bird Tower Perch Sex]]>><<set $sexstart to 1>><<set $phase to 1>><<transform bird 1>><<npcincr "Great Hawk" love 1>><</link>><<deviant1>><<glove>><br>
+			<</if>>
 			<<bird_perch_options>>
 		<<else>>
 			<br><br>
@@ -2016,7 +2033,9 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 			"Mine."
 		)>>"
 		<br><br>
-		<<link [[Kiss|Bird Perch Monster Kiss]]>><<npcincr "Great Hawk" love 1>><</link>><<glove>><<kissvirginitywarning>><br>
+		<<if $bird.activity is "sing" or $bird.activity is "groom">>
+			<<link [[Kiss|Bird Perch Monster Kiss]]>><<npcincr "Great Hawk" love 1>><</link>><<glove>><<kissvirginitywarning>><br>
+		<</if>>
 		<<bird_perch_options>>
 	<<else>>
 		rests <<bhis>> head on your shoulder.
@@ -2419,4 +2438,22 @@ You wonder if anything you just experienced was real for a moment. The vertigo a
 <br><br>
 
 <<link [[Next|Bird Tower Bed]]>><<endevent>><</link>>
+<br>
+
+:: Bird Tower Unbind [nobr]
+<<effects>>
+<<if $bird.state is "home">>
+	<<npc "Great Hawk">>
+	You begin to rub away at the material binding you. The <<beasttype>> turns <<bhis>> head at the sound.
+	<<if $monster is 1>>
+		<<bHe>> stops what <<bhe>>'s doing, and walks over to you. "Your wings will never stay clipped." <<bHe>> effortlessly breaks your bindings.
+	<<else>>
+		<<bHe>> hops over and sharply kicks <<bhis>> talons at you. Your bindings fall at your feet.
+	<</if>>
+<<else>>
+	You rub your bindings against some jagged stone. It takes some effort, but eventually the material yields, freeing your limbs.
+	<br><br>
+<</if>>
+<br><br>
+<<link [[Next|Bird Tower]]>><<endevent>><</link>>
 <br>
