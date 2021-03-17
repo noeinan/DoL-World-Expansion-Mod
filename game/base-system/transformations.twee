@@ -17,6 +17,7 @@
 			/*noeinan mod END*/
 
 			wolf: {ears:"disabled", tail:"disabled", pubes:"disabled", pits:"disabled"},
+			bird: {tail:"disabled", wings:"disabled", eyes:"disabled", malar:"disabled", plumage:"disabled"}
 		}>>
 		<<if $specialTransform is 1>>
 			<<if $angel gte 4>>
@@ -104,6 +105,9 @@
 			<<set $transformationParts.wolf.cheeks to "disabled">>
 		<</if>>
 	<</if>>
+	<<if $transformationParts.bird is undefined>>
+		<<set $transformationParts.bird to {tail:"disabled", wings:"disabled", eyes:"disabled", malar:"disabled", plumage:"disabled"}>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "transformationStateUpdate">><<nobr>>
@@ -118,6 +122,10 @@
 
 <<if $cowbuild gte 1 and $worn.neck.name isnot "cow bell">>
 	<<transform cow -1>>
+<</if>>
+
+<<if $birdbuild gte 1 and $worn.head.name isnot "feathered hair clip">>
+	<<transform bird -1>>
 <</if>>
 
 /*noeinan mod START*/
@@ -277,6 +285,9 @@
 			<<set $angel to 6>>
 			<span class="gold">You feel lighter. Your new wings caress your face.</span>
 			<<set $transformationParts.angel.wings to "default">>
+			<<if $transformationParts.bird.wings is "default">>
+				<<set $transformationParts.angel.wings to "hidden">>
+			<</if>>
 			<<earnFeat "Angel">>
 			<br><br>
 		<<elseif $angelbuild lt 45>>
@@ -357,6 +368,9 @@
 			<span class="gold">You feel lighter. Your new wings caress your face.</span>
 			<<garousal>><<arousal 600>>
 			<<set $transformationParts.demon.wings to "default">>
+			<<if $transformationParts.bird.wings is "default">>
+				<<set $transformationParts.demon.wings to "hidden">>
+			<</if>>
 			<<earnFeat "Demon">>
 			<br><br>
 		<<elseif $demonbuild lt 25>>
@@ -522,6 +536,89 @@
 		<</if>>
 <</switch>>
 
+<<switch $harpy>>
+	<<case 0>>
+		<<if $birdbuild gte 5 and $transformdisable is "f" and $physicalTransform isnot 1>>
+			<<set $harpy to 1>><<set $physicalTransform to 1>>
+			<span class="gold">Your vision feels sharper.</span>
+			<br><br>
+		<</if>>
+	<<case 1>>
+		<<if $birdbuild gte 10 and $transformdisable is "f">>
+			<<set $harpy to 2>>
+			<span class="gold">Your eyes feel strange. Your vision has improved.</span>
+			<<set $transformationParts.bird.eyes to "default">>
+			<<set $transformationParts.bird.malar to "default">>
+			<br><br>
+		<<elseif $birdbuild lt 5>>
+			<<set $harpy to 0>><<set $physicalTransform to 0>>
+			<span class="gold">Your vision has returned to normal.</span>
+			<br><br>
+		<</if>>
+	<<case 2>>
+		<<if $birdbuild gte 15 and $transformdisable is "f">>
+			<<set $harpy to 3>>
+			<span class="gold">Your lower back itches.</span>
+			<br><br>
+		<<elseif $birdbuild lt 10>>
+			<<set $harpy to 1>>
+			<span class="gold">Your vision is no longer so sharp.</span>
+			<<set $transformationParts.bird.eyes to "disabled">>
+			<<set $transformationParts.bird.malar to "disabled">>
+			<br><br>
+		<</if>>
+	<<case 3>>
+		<<if $birdbuild gte 20 and $transformdisable is "f">>
+			<<set $harpy to 4>>
+			<span class="gold">Your bottom feels lighter. You reach behind you, and grasp a feathered tail.</span>
+			<<set $transformationParts.bird.tail to "default">>
+			<<set $transformationParts.bird.plumage to "default">>
+			<br><br>
+		<<elseif $birdbuild lt 15>>
+			<<set $harpy to 2>>
+			<span class="gold">The itching in your lower back stops.</span>
+			<br><br>
+		<</if>>
+	<<case 4>>
+		<<if $birdbuild gte 25 and $transformdisable is "f">>
+			<<set $harpy to 5>>
+			<span class="gold">Your back itches.</span>
+			<br><br>
+		<<elseif $birdbuild lte 20>>
+			<<set $harpy to 3>>
+			<span class="gold">Your feathered tail has disappeared.</span>
+			<<set $transformationParts.bird.tail to "disabled">>
+			<<set $transformationParts.bird.plumage to "disabled">>
+			<br><br>
+		<</if>>
+	<<case 5>>
+		<<if $birdbuild gte 30 and $transformdisable is "f">>
+			<<set $harpy to 6>>
+			<span class="gold">You feel light as a feather. Wings caress your face.</span>
+			<<earnFeat "Harpy">>
+			<<set $transformationParts.bird.wings to "default">>
+			<<if $transformationParts.angel.wings is "default">>
+				<<set $transformationParts.angel.wings to "hidden">>
+			<<elseif $transformationParts.fallenAngel.wings is "default">>
+				<<set $transformationParts.fallenAngel.wings to "hidden">>
+			<<elseif $transformationParts.demon.wings is "default">>
+				<<set $transformationParts.demon.wings to "hidden">>
+			<</if>>
+			<br><br>
+		<<elseif $birdbuild lt 25>>
+			<<set $harpy to 4>>
+			<span class="gold">You feel heavier.</span>
+			<br><br>
+		<</if>>
+	<<case 6>>
+		<<if $birdbuild lt 30>>
+			<span class="gold">You feel heavier. Your feathered wings have disappeared.</span>
+			<<set $harpy to 5>>
+			<<set $transformationParts.bird.wings to "disabled">>
+			<br><br>
+		<</if>>
+<</switch>>
+
 /*noeinan mod START*/
 /*Added new Fox Transformation to Transformation Widget*/
 /*Added Fox Transformation and decay text*/
@@ -598,7 +695,7 @@
 
 /*noeinan mod END*/
 
-<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0>>
+<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0 or $harpy gt 0 or $foxgirl gt 0>>
 	<<set $physicalTransform to 1>>
 <<else>>
 	<<set $physicalTransform to 0>>

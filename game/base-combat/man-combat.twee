@@ -2170,20 +2170,20 @@
 	<<activebodypart>>
 		<<if $NPCList[_n].lefthand is "pen" + "_" + _active_bodypart>>
 			<<He>> scrawls on your <<bodypart _active_bodypart>>:
-			<<bodywriting_npc _active_bodypart>>
-			<<set $NPCList[_n].lefthand to 0>>
+			<<bodywriting_npc _active_bodypart $NPCList[_n].lefttool>>
+			<<set $NPCList[_n].lefthand to 0>><<set $NPCList[_n].lefttool to 0>>
 		<</if>>
 		<<if $NPCList[_n].righthand is "pen" + "_" + _active_bodypart>>
 			<<He>> scrawls on your <<bodypart _active_bodypart>>:
-			<<bodywriting_npc _active_bodypart>>
-			<<set $NPCList[_n].righthand to 0>>
+			<<bodywriting_npc _active_bodypart $NPCList[_n].righttool>>
+			<<set $NPCList[_n].righthand to 0>><<set $NPCList[_n].righttool to 0>>
 		<</if>>
 	<</for>>
 	<<if $NPCList[_n].lefthand is "pen">>/*NPC chooses which bodypart to draw on*/
-		<<bodywriting_npc_bodypart left>>
+		<<bodywriting_npc_bodypart left $NPCList[_n].lefttool>>
 	<</if>>
 	<<if $NPCList[_n].righthand is "pen">>
-		<<bodywriting_npc_bodypart right>>
+		<<bodywriting_npc_bodypart right $NPCList[_n].righttool>>
 	<</if>>
 	<<if $NPCList[_n].lefthand is "lube">>
 		<<if $NPCList[_n].penis is "vaginaentrance">>
@@ -2266,7 +2266,20 @@
 				<<set $NPCList[_n].mouth to 0>>
 			<</if>>
 		<<elseif $rng lte 0 and $consensual isnot 1 and $bodywritingdisable is "f">>
-			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<set _rng to random(1, 5)>>
+			<<if _rng is 5>>
+				<span class="purple"><<He>> pulls a <span class="pink">permanent</span> marker pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].lefttool to "marker">>
+			<<elseif _rng is 4 and $NPCList[_n].pronoun is "f">>
+				<span class="purple"><<He>> pulls lipstick from <<his>> pocket, and pushes out the tip.</span>
+				<<set $NPCList[_n].lefttool to "lipstick">>
+			<<elseif _rng is 3 and $outside is 1 and ($location is "forest" or $location is "moor" or $location is "farmlands")>>
+				<span class="purple"><<He>> lifts a handful of mud from the ground.</span>
+				<<set $NPCList[_n].lefttool to "mud">>
+			<<else>>
+				<span class="purple"><<He>> pulls a pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].lefttool to "pen">>
+			<</if>>
 			<<set $NPCList[_n].lefthand to "pen">><<neutral 1>>
 		<<elseif $enemyanger + $rng lte 20>>
 			<<if $worn.over_lower.name isnot "naked">>
@@ -2932,7 +2945,19 @@
 				<<set $NPCList[_n].mouth to 0>>
 			<</if>>
 		<<elseif $rng lte 7 and $consensual isnot 1 and $bodywritingdisable is "f">>
-			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<if _rng is 5>>
+				<span class="purple"><<He>> pulls a <span class="pink">permanent</span> marker pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].righttool to "marker">>
+			<<elseif _rng is 4 and $NPCList[_n].pronoun is "f">>
+				<span class="purple"><<He>> pulls lipstick from <<his>> pocket, and pushes out the tip.</span>
+				<<set $NPCList[_n].righttool to "lipstick">>
+			<<elseif _rng is 3 and $outside is 1 and ($location is "forest" or $location is "moor" or $location is "farmlands")>>
+				<span class="purple"><<He>> lifts a handful of mud from the ground.</span>
+				<<set $NPCList[_n].righttool to "mud">>
+			<<else>>
+				<span class="purple"><<He>> pulls a pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].righttool to "pen">>
+			<</if>>
 			<<set $NPCList[_n].righthand to "pen">><<neutral 1>>
 		<<elseif $enemyanger + $rng lte 20>>
 			<<if $worn.over_lower.name isnot "naked">>
@@ -5944,16 +5969,18 @@
 <</nobr>><</widget>>
 
 <<widget "gaspair">><<nobr>>
-<<if $oxygen gte 900>>
-	You inhale sharply.
-<<elseif $oxygen gte 600>>
-	You gasp for air.
-<<elseif $oxygen gte 1>>
-	You hungrily gasp for air.
-<<else>>
-	You hungrily gasp for air and cough.
-<</if>>
+<<if $underwater isnot 1>>
+	<<if $oxygen gte 900>>
+		You inhale sharply.
+	<<elseif $oxygen gte 600>>
+		You gasp for air.
+	<<elseif $oxygen gte 1>>
+		You hungrily gasp for air.
+	<<else>>
+		You hungrily gasp for air and cough.
+	<</if>>
 <<oxygen 300>>
+<</if>>
 <<set $suffocating to 0>>
 <</nobr>><</widget>>
 
