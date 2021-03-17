@@ -74,7 +74,7 @@ function sugarCubeGlobals() {
 		"SugarCube.State": typeof SugarCube !== 'undefined' ? (SugarCube || {}).State || '' : '',
 		"window.State": window.State || '',
 		"window.SugarCube": window.SugarCube || '',
-		"window.SugarCube.State": (window.SugarCube || {}).State || '',
+		"window.SugarCube.State": (window.SugarCube || {}).State || ''
 	}
 }
 $(document).on(':passageinit', () => {

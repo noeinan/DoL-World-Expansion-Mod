@@ -11,11 +11,37 @@
 <</nobr>><</widget>>
 
 :: PillCollection [nobr]
-<<set $outside to 0>><<set $location to "home">><<effects>>
+<<set $outside to 0>><<effects>>
 <<set _pills to $sexStats.pills>>
 <<set _pillNames to ["Growth", "Reduction", "Blocker", "None"]>>
 <<set _pillTypes to ["growth", "reduction", "blocker", null]>>
 
+
+<<if $pillstaken is 1>>
+	<<unset $pillstaken>>
+	You take the pills Doctor Harper prescribed. You feel dizzy.
+	<<awareness -1>><<control 10>>
+	<br><br>
+<</if>>
+<<if $asylumpillstaken is 1>>
+	<<unset $asylumpillstaken>>
+	You take the pills prescribed in the asylum. You feel hazy.
+	<<awareness -5>><<control 25>>
+	<br><br>
+<</if>>
+<<if $pills gte 1 and $medicated is 0 or $asylumpills gte 1 and $asylummedicated is 0>>
+	Medication
+	<br>
+<</if>>
+<<if $pills gte 1 and $medicated is 0>>
+	<<icon "pills">><<link "Take pills">><<set $medicated += 1>><<set $pillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<gcontrol>><<lawareness>>
+	<br>
+<</if>>
+<<if $asylumpills gte 1 and $asylummedicated is 0>>
+	<<icon "strong pills">><<link "Take strong pills">><<set $asylummedicated += 1>><<set $asylumpillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>><<ggcontrol>><<llawareness>>
+	<br>
+<</if>>
+<hr>
 Breast Pills
 <br>
 <<if _pills.breast.owned[_pillTypes[0]] gt 0 or _pills.breast.owned[_pillTypes[1]] gt 0>>
@@ -25,6 +51,11 @@ Breast Pills
 	<<for _i to 0; _i lt _pillNames.length; _i += 1>>
 		<<if _pills.breast.owned[_pillTypes[_i]] isnot 0>>
 			<li><label>
+				<<if _pillNames[_i] is "None">>
+					<<ind>>
+				<<else>>
+					<<icon `"breast" + _pillNames[_i]`>>
+				<</if>>
 				<<print '<<radiobutton "_checked" _i ' + (_pills.breast.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
 				<<print _pillNames[_i]>>
 				<<if _pillNames[_i] isnot "None">><<print '['+_pills.breast.owned[_pillTypes[_i]]+']'>><</if>>
@@ -61,6 +92,11 @@ Breast Pills
 		<<for _i to 0; _i lt _pillNames.length; _i += 1>>
 			<<if _pills.penis.owned[_pillTypes[_i]] isnot 0>>
 				<li><label>
+				<<if _pillNames[_i] is "None">>
+					<<ind>>
+				<<else>>
+					<<icon `"penis" + _pillNames[_i]`>>
+				<</if>>
 				<<print '<<radiobutton "_checked2" _i ' + (_pills.penis.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
 				<<print _pillNames[_i]>>
 				<<if _pillNames[_i] isnot "None">><<print '['+_pills.penis.owned[_pillTypes[_i]]+']'>><</if>>
@@ -97,6 +133,11 @@ Butt Pills
 	<<for _i to 0; _i lt _pillNames.length; _i += 1>>
 		<<if _pills.bottom.owned[_pillTypes[_i]] isnot 0>>
 			<li><label>
+				<<if _pillNames[_i] is "None">>
+					<<ind>>
+				<<else>>
+					<<icon `"bottom" + _pillNames[_i]`>>
+				<</if>>
 				<<print '<<radiobutton "_checked" _i ' + (_pills.bottom.type is _pillTypes[_i] ? "checked" : "") + '>>'>>
 				<<print _pillNames[_i]>>
 				<<if _pillNames[_i] isnot "None">><<print '['+_pills.bottom.owned[_pillTypes[_i]]+']'>><</if>>
@@ -123,7 +164,7 @@ Butt Pills
 
 
 <br><br>
-<<link [[Step away|Bedroom]]>><</link>>
+<<link [[Step away|$pillsExitPassage]]>><</link>>
 
 :: PillCollectionSecondDose [nobr]
 <<set $outside to 0>><<set $location to "home">><<effects>>
@@ -207,7 +248,7 @@ Disregarding the warning label, you take a second dose of <<print ($secondDose i
 <</if>>
 
 :: PillCollectionPassOut[nobr]
-<<set $outside to 0>><<set $location to "home">><<effects>>
+<<set $outside to 0>><<effects>>
 <<set _pills to $sexStats.pills>><<set $pain += 300>>
 You end up waking in agony and wondering what had happened to you. After a brief feel around your body, you shriek in pain after briefly touching your <<print ($secondDose is "breast" ? "breasts" : $secondDose)>>. You end up spending more time lying down till you feel like you can move without something else happening to you.
 

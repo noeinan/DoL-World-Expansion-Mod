@@ -872,6 +872,12 @@
 	<</if>>
 <</nobr>><</widget>>
 
+<<widget "physique_loss">><<nobr>>
+<<if $args[0]>>
+	<<set $physique -= 10 * $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "bruise">><<nobr>>
 	<<if $args[0]>>
 		<<switch $args[0]>>
@@ -1249,7 +1255,9 @@
 
 	<<if $allure gte 8000>><<set $allure to 8000>><</if>>
 	<<if $alluretest is 1>>
-	<<set $allure += 100000>>
+		<<set $allure += 100000>>
+	<<elseif $alluretest is 2>>
+		<<set $allure -= 100000>>
 	<</if>>
 
 	<div style="clear:both;"></div>
@@ -1684,6 +1692,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_day.gif'">
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_day.gif'">
 		<<case alley>>
@@ -1809,6 +1819,8 @@
 			<</if>>
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_night.gif'">
 		<<case alley>>
@@ -1928,6 +1940,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dawn.gif'">
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dawn.gif'">
 		<<case alley>>
@@ -2038,6 +2052,8 @@
 		<<case lake_ruin>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dusk.gif'">
 		<<case moor>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
+		<<case tower>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dusk.gif'">
@@ -2233,7 +2249,7 @@ or $args[0] is "force">>
 	<<set _apparent_femininity += _femininity_mod>>
 	<<run _gender_appearance_factors.push({
 		femininity: _femininity_mod,
-		factor: _factor_description,
+		factor: _factor_description
 	})>>
 <</nobr>><</widget>>
 
@@ -2560,6 +2576,7 @@ or $args[0] is "force">>
 <</if>>
 <<if $worn.genitals.name isnot "naked">>
 	<<if $worn.genitals.integrity lte 0>>
+		<<set _chastityBreak to 1>>
 		<<if $args[0] isnot "no_text">>
 			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<genitals>>.</span>
 			<br>
@@ -3188,7 +3205,7 @@ or $args[0] is "force">>
 
 <<for _e to 0; _e lt $bodypart_number; _e++>>
 	<<activebodypart>>
-	<<if $skin[_active_bodypart].pen is "pen">>
+	<<if $skin[_active_bodypart].pen is "pen" or $skin[_active_bodypart].pen is "lipstick" or $skin[_active_bodypart].pen is "mud">>
 		<<bodywriting_clear _active_bodypart>>
 	<</if>>
 <</for>>
@@ -3198,13 +3215,13 @@ or $args[0] is "force">>
 <<widget "wash_face">><<nobr>>
 <<set $facesemen to 0>>
 <<set $facegoo to 0>>
-<<if $skin.left_cheek.pen is "pen">>
+<<if $skin.left_cheek.pen is "pen" or $skin.left_cheek.pen is "lipstick" or $skin.left_cheek.pen is "mud">>
 	<<bodywriting_clear left_cheek>>
 <</if>>
-<<if $skin.right_cheek.pen is "pen">>
+<<if $skin.right_cheek.pen is "pen" or $skin.right_cheek.pen is "lipstick" or $skin.right_cheek.pen is "mud">>
 	<<bodywriting_clear right_cheek>>
 <</if>>
-<<if $skin.forehead.pen is "pen">>
+<<if $skin.forehead.pen is "pen" or $skin.forehead.pen is "lipstick" or $skin.forehead.pen is "mud">>
 	<<bodywriting_clear forehead>>
 <</if>>
 <<washmakeup>>
@@ -3504,29 +3521,8 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget "roomoptions">><<nobr>>
-	<<pilloptions>>
-	<br>
-<</nobr>><</widget>>
-
-<<widget "pilloptions">><<nobr>>
-	<<if $pillstaken is 1>>
-		<<set $pillstaken to 0>>
-		You take the pills Doctor Harper prescribed. You feel dizzy.
-		<<gcontrol>><<lawareness>><<awareness -1>><<control 10>>
-		<br><br>
-	<</if>>
-	<<if $pills gte 1 and $medicated is 0>>
-		<<link "Take pills">><<set $medicated += 1>><<set $pillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>>
-		<br>
-	<</if>>
-	<<if $asylumpillstaken is 1>>
-		<<set $asylumpillstaken to 0>>
-		You take the pills prescribed in the asylum. You feel hazy.
-		<<ggcontrol>><<llawareness>><<awareness -5>><<control 25>>
-		<br><br>
-	<</if>>
-	<<if $asylumpills gte 1 and $asylummedicated lt 1>>
-		<<link "Take strong pills">><<set $asylummedicated += 1>><<set $asylumpillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>>
+	<<if $sexStats.pills.boughtOnce is true or $pills gte 1 or $asylumpills gte 1>>
+		<<icon "pill collection">><<link [[Check your pills|PillCollection]]>><<set $pillsExitPassage to $passage>><</link>>
 		<br>
 	<</if>>
 <</nobr>><</widget>>
@@ -4031,6 +4027,9 @@ __Map__<br>
 	<<set _i to $NPCNameList.indexOf("Avery")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].rage = Math.clamp($NPCName[_i].rage, 0, 100)>>
+	<<set _i to $NPCNameList.indexOf("Great Hawk")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
 	/*noeinan mod START*/
 	/*Added Alex Love Interest Bars*/
 	<<set _i to $NPCNameList.indexOf("Alex")>>
@@ -4946,7 +4945,7 @@ __Map__<br>
 	<</if>>
 	<<if $args[0] is "bird">>
 		<<set $birdbuild += $args[1]>>
-		<<set $birdbuild = Math.clamp($wolfbuild, 0, 100)>>
+		<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
 	<</if>>
 	<<if $args[0] is "fox">>
 		<<set $foxbuild += $args[1]>>

@@ -48,6 +48,10 @@
 		<<elseif $location is "forest" and $wolfpackferocity gte 10 and $wolfwake isnot 1>>
 			<<set $schoolwake to 1>>
 			<<set $wolfwake to 1>>
+		<<elseif $location is "tower" and $bird.state is "hunting" and $bird.timer lte 0>>
+			<<set $schoolwake to 1>>
+		<<elseif $location is "tower" and $bird.state is "home" and $bird.satisfied isnot true and random(1, 10) is 10>>
+			<<set $schoolwake to 1>>
 		<<elseif $location is "home" and $corruption_slime gte ($willpower / 20) and random(0,100) lt 3 and $daystate is "night" and $slimeSleepEvent is 0>>
 			<<set $slimeWake to 1>>
 			<<break>>
@@ -60,7 +64,11 @@
 			<<else>>
 				<<set $tiredness -= 250>>
 			<</if>>
-			<<pass 1 hour>>
+			<<if $location isnot "tower">>
+				<<pass 1 hour>>
+			<<else>>
+				<<bird_pass 60>>
+			<</if>>
 			<<if $nightmares gte 1 and $controlled is 0>>
 				<<stress 6>>
 			<</if>>

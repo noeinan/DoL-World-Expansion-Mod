@@ -1,5 +1,427 @@
 # CHANGELOG
 
+## 0.2.22.6
+
+- Fixed a number of issues found when accosted by a pair of assailants while wearing a collar at night.
+- Fixed a continued issue with the groom dance action. Thanks to bsmith.
+- Fixed a softlock found at the Connudatus stall. Thanks to braymann.
+- Automatic clothing rebuy will now properly order clothing with custom colors. Thanks to braymann.
+- Fixed an error found when sleeping with clothing with custom accessory colors. Thanks to braymann.
+- Fixed an error found after meeting dolphins in the sea.
+- Fixed an error found after asking for help distracting orderlies.
+
+## 0.2.22.5
+
+- Added running mascara to the sidebar sprite when the PC is in tears. Art courtesy of Mist.
+- Added an export warning with a quick link to the export menu. The time between warnings can be adjusted in SAVES/OPTIONS. Thanks to Lollipop Scythe.
+- Added statistics for the new save counts. Thanks to Lollipop Scythe.
+- NPCs can now initiate oral while sitting on the PC's face. Thanks to ndarkflame.
+- Improved the riding lesson strip event, and added a unique outcome if the PC is wearing a leather jacket. Thanks to Sommar.
+- The final five points of promiscuity, exhibitionism and deviancy will now display in the Characteristics overlay. Thanks to RedStar.
+
+### Balance Changes
+
+- Increased the integrity and cost of jockstraps, and they now leave your ass open.
+- Reduced the amount of fluid required to satisfy Robin at their hot chocolate stand.
+
+### Bug Fixes
+
+- Fixed an error found when teasing a bit cat in the residential alleys.
+- Fixed an error found when abducted on the moor.
+- Fixed an error found after soothing tentacles in a Danube Street garden.
+- Changing clothes at the lake will no longer take an extra turn to update temperature.
+- Fixed an error found after demanding money from a stranger at Alex's farm.
+- Fixed an issue with Robin's pronouns during a Christmas scene.
+- Closed the portal hidden under Robin's hot chocolate stand, leading from the park to the beach.
+- The social overlay should no longer trip adblockers. Thanks to RedStar.
+- Fixed some broken variables in the image presets.
+- Fixed graphical issues with the soccer and scout shirts.
+- The sidebar sprite will now cover wet clothing.
+- Clothes can now be fixed following the attack after flaunting on the street.
+- The cheat menu should now ignore maximum and minimum size settings for asses, penises, and balls.
+- Robin should no longer mistakenly believe the PC is wearing a chastity belt when rubbing their penis against the PC's ass.
+- Fixed a broken athletics check during the moor abduction sequence.
+- Fixed a bug that cause the vaginally penetrated stat to increment improperly.
+- Whitney will no longer materialise in the seat beside you after masturbating in maths class, despite being locked in the dungeon, or having never met the PC.
+- Fixed a sidebar error found when panties are pulled aside.
+- Fixed an error found after crossing a flyover while undressed.
+- Fixed an error found after escaping Morgan.
+- Fixed an error found after refusing Leighton during detention.
+- The prison warden will no longer allow Kylar to make day trips to the arcade during winter.
+- The PC's top should now be properly considered when an NPC pinches their nipples.
+- Fixed an issue with clothing during a riding lesson event. Thanks to Sommar and ThatPersonOverThere.
+- Beasts that lack art will no longer appear as dogs when mounting the PC's face.
+- NPCS involved in the asylum bukkake sequence should now have appropriate genitals.
+- Fixed a bug that allowed the PC to grab multiple tentacles at once.
+- The PC should no longer be more modest beneath the lake than above it.
+- Fixed some issues with genital inspection days referencing the wrong clothes.
+- Fixed some issues with the groom dance action. Thanks to bsmith.
+- Robin's captors will no longer let them return to the orphanage to let them take part in Christmas celebrations.
+- Fixed an error found when abducted by Kylar.
+- Generic NPCs will no longer pick up the behaviour of certain named NPCs when ejaculating at the end of the same encounter.
+
+Thanks to Lollipop Scythe for the following fixes:
+
+- Fixed an issue with the feat boost drop down menu.
+- Tided up some of the sleeping code.
+- Fixed a bug that prevented clothes reequipping properly at the forest shop.
+- Fixed an issue with the special clothing feat boost.
+
+Thanks to braymann for the following fixes:
+
+- Fixed an error found while attacked by a pack of dogs while blindfolded.
+- You'll no longer feel sunshine when running along the coastal path at night.
+- Fixed a bug that broke text outputs.
+- Fixed an error found when using the cow/bull transformation power on the tentacle plains.
+- Fixed a bug that caused the PC to want to hide their body after getting dressed at Alex's farm.
+- Fixed an error found when breaking into mansions.
+- Fixed a bug that caused understanding to be displayed as 100% when you're actually at 0%.
+- Fixed a bug that caused some clothing to remain unequipped after getting dressed.
+- Calling for help when sinking in quicksand will now show the correct chance of success.
+- Fixed a bug that caused customers at market to ask about a different item than the one they buy.
+- Some typos.
+
+## 0.2.22.4
+
+- Added icons for the mummy facewrap, mummy top, mummy skirt, and jockstrap. Art courtesy of ΩMEGA.
+
+### Bug Fixes
+
+- The sonorous bell will now be stolen should you give up when facing down the thief.
+- Fixed an error found after ignoring a crying orphan.
+- The default dance action should now properly reset when grooming the last of the slime or semen covering you while dancing with the cat transformation.
+- Fixed an error found during the maths competition.
+- Harper's penis chart now has a proper entry for average penises.
+- Fixed a centaur pronoun issue.
+- Fixed some genital confusion found when rescuing a victim on the streets at night.
+- Fixed a couple of errors found when passing out in the hospital.
+- Fixed the rendering of close up images while wearing a chastity belt. Thanks to Sommar.
+- The PC should no longer blush when arousal is 0. Thanks to Sommar.
+- Fixed an issue with the test screen. Thanks to PurityGuy and Lollipop Scythe.
+- Removed some leftover debug code. Thanks to PurityGuy and Lollipop Scythe.
+- Fixed an issue with quicksand. Thanks to Lollipop Scythe.
+- Adjusted several clothing icons. Art courtesy of ΩMEGA.
+- Watering all plots will no longer water wet plots a second time. Thanks to readthemanual.
+
+Thanks to braymann for the following fixes:
+
+- Asking to not have your penis put in anything will now work properly again.
+- Choosing to buy and wear all the clothes you're trying on at the clothing store will now return your previous clothes to your wardrobe.
+- The old wardrobe style will now be clearer about how it separates regular tops and outfits.
+- Trying on a top at the clothing store while wearing the broken top of an outfit will no longer cause your lower clothing to vanish into thin air.
+- Fixed a typo in the night monster's lair.
+- Fixed a number of bugs caused by passing out during combat while being choked, including one that broke the PC's money.
+- Fixed a visual bug found while passed out.
+
+Thanks to PurityGuy for the following fixes:
+
+- Fixed a few errors found after a successful hunt with the pack.
+- Removed another 0 dog found during the English outbuilding event.
+- Fixed a bug that prevented several moor events from triggering, among other errors on the moor.
+- Fixed another error in Leighton's private show.
+- Fixed an error message found when being milked on the tentacle plains.
+- Fixed an undefined orphan in the orphanage eavesdrop event.
+- Fixed an NPC breaking free after stealing on Domus Street.
+- Fixed NPCs breaking free from the alleyway dog following events.
+- Fixed an incorrect link name in the temple garden.
+- Fix for an NPC on the moor being so excited to see your genitals that they stutter their dialogue.
+
+## 0.2.22.3
+
+- The hairdresser will no longer give you an eyebrow dye tab.
+- Fixed errors found when attacked by a cat on the moor. Thanks to PurityGuy.
+- Fixed a bug that caused a lot more vegetables to be harvested on the moor than intended.
+- Fixed error found during the pig scenes at Remy's farm.
+- Fixed an error found during the pig show at the brothel. Thanks to PurityGuy.
+- Fixed a soft lock found in the school toilets. Thanks to PurityGuy.
+- Fixed an error found when having a group of dogs unleashed on you while blindfolded on the town's streets. Thanks to PurityGuy.
+- Fixed an error found when escaping dogs outside Domus Street homes. Thanks to PurityGuy.
+- Fixed some issues found when choosing between the high and low ranking wolves in the wolf cave.
+- Fixed an error found after being gangbanged by your maths class.
+- Fixed a number of errors found when trying to speak while being choked.
+- Fixed an error found when calming cats found in Danube Street mansions.
+- The new clothing icons should now display properly on old saves. Thanks to Lollipop Scythe.
+- Fixed an error found when swallowed by a whale. Thanks to Lollipop Scythe.
+- Fixed an error found when your nipples are pinched following an encounter. Thanks to Lollipop Scythe.
+- Fixed bug that prevented the social overlay from rendering on older browsers. Thanks to Redstar.
+- Adjusted Social overlay UI. Thanks to RedStar.
+- Fixed a Settings issue outside the start page. Thanks to Lollipop Scythe.
+- Fixed a soft lock at the asylum.
+- The final stage of the "o long and beautiful" sequence can no longer be missed.
+
+## 0.2.22.2
+
+- Reduced the number of vegetables foraged on the moor per event.
+- Fixed a number of issues caused by beast/monster scenes failing to end properly.
+- Fixed a bug that gave animals the power of speech.
+- Fixed a bug found during the English outbuilding event.
+- Armwear will now be properly hidden when your arms are restrained during encounters. Thanks to braymann.
+- The skulduggery improvement message at midnight will no longer show up if skulduggery was improved with cheats. Thanks to braymann.
+- Undid a change that caused all your pepper spray canisters to be hidden if they were all empty. Thanks to braymann.
+
+Thanks to PurityGuy for the following fixes:
+
+- Fixed many errors found in different beast scenes.
+- Fixed a dozen beasts breaking free.
+- Fixed many incorrect beast referrals.
+- Updated a tip about wolves to reflect beasts being disabled.
+- Fixed some logic with the farm pig job.
+- Fix for improper colours on the closed mouth sprite in combat.
+- Fix for monster people penises not layering correctly during oral.
+- Fix for a third wolf showing up during the consensual wolf pair event, which then undefined itself and vomited an error all over your screen like a very naughty pooch.
+- Fix for a wolfperson incorrectly calling you a pack member when you aren't.
+- Fixed many errors in the Street Follow event.
+- Foxed an error caused by a fox sighting on the moor.
+- Jockstraps are no longer free.
+- Fixed errors found when passing out in the moor and being kidnapped. The player will no longer be called "Good breeding stock" by \_text_outputs.
+- Stopped a wolf speaking after a link.
+- Fixed a bug that caused the cat that appears while masturbating to undefine itself.
+- Fixed three cases of the beastsplural widget not being closed properly.
+- Typo fixes.
+
+Thanks to Lollipop Scythe for the following fixes.
+
+- Fixed an inconsistent antique description after the hooded figure leaves the museum.
+- Fixed a bug that made romancing Robin always give the first kiss feat.
+- You can now add add "Ask them to choke you" to default sex options.
+- Fixed a bug that caused Avery to take your first kiss instead of Robin.
+- Fixed an issue with Bailey's pronouns.
+- Fixed a bug with the tanning enable/disable option.
+- Minor fixes for mobile users.
+
+## 0.2.22.1
+
+- Added a secret gift to one of the moor events. Thanks to Lollipop Scythe.
+
+### Balance Changes
+
+- Less vegetables now grow per plot, but they are worth more individually.
+
+### Bug Fixes
+
+- Fixed an error found while searching for clothes in the temple garden.
+- Fixed an error found at the pharmacy.
+- Fixed a bug that could cause the PC to teleport deep into the moor when entering from the farmlands.
+- The strange arcade cabinet can now drug the PC with aphrodisiacs.
+- Fixed a softlock found when captured by Remy's goons.
+- Armwear should no longer float beside the PC while arms are bound. Thanks to braymann.
+- Fixed a couple of anal actions that were increasing vaginal skill instead. Thanks to braymann.
+- Fixed an error found when approached by dolphins at sea.
+- Kylar will no longer spend all night at the arcade, insisting they're about to leave, but never doing so.
+- You should longer be accosted by a 0 after being attacked by a dog during the English outbuilding event.
+- Fixed an error found when being rescued following a dog attack in front of a house on Domus Street.
+- You will no longer receive the message that your skulduggery increased to F+ after you use the skulduggery feat boost. Thanks to braymann.
+- You can no longer steal money from Raul when reading Raul and Janet. Thanks to braymann.
+
+Thanks to Lollipop Scythe for the following fixes:
+
+- Added no-numberify class to the hidden elements of the shop and the preset settings.
+- Fixed an issue with the mirror.
+- Fixed an error found during Avery's scenes.
+- Fixed an issue with the starting clothes.
+- Fixed a number of soft locks at the moor.
+- Re-ordered the actions of the moor to match the forest.
+- Fixed a bug that caused picking garlic to break your plots.
+- Fixed an error found when loading a preset.
+- Fixed an error found on the moor.
+- Fixed an error found when your collar is noticed on the street.
+
+Thanks to PurityGuy for the following fixes:
+
+- The player characters can no longer headbutt in consensual encounters.
+- Fixed an error found in the fox clothes thievery event.
+- Fixed a softlocked caused by a fox appearing in the moor.
+- Fixed an NPC error in the arcade cabinet event.
+- Fixed an error and soft lock found when encountering the wolf pair in the forest.
+- Fixed a beast error in the cream event.
+- The dog during the English class event should no longer be referred to as a 0.
+- The dog that appears during Whitney's event should no longer be referred to as a 0.
+
+## 0.2.22.0
+
+- Added the moor.
+- Landry's black box mission will sometimes send you to a different area.
+- You can now ask NPCs to leave your top on during encounters.
+- Winter is searching for four additional antiques.
+- Reworked the characteristics and social overlays, improving the layout, and improving the code under the hood. Thanks to RedStar.
+- Every beast scene in the game should now refer to monsterboys/girls when available, instead of only once an encounter starts. 9 events were adjusted by Fangi. 53 were adjusted by PurityGuy, plus more wolf events in the forest, and others.
+- Added a strange cabinet to the arcade, which can only be seen by hallucinating characters. Written by Fangi and PurityGuy.
+- Added a small event to the orphanage. Written by Porcuspine and PurityGuy.
+- Positive fame can now influence the hooded figure street event. Written by YetAnotherUser and PurityGuy.
+- Added an icon for the flower crown. Art courtesy of KG, and coded by PurityGuy.
+- Added a pair of ice skates to the clothing shop. Art courtesy of KG, and coded by PurityGuy.
+- Female NPCs can now sit on the PC's face, potentially suffocating the PC if angry. Thanks to ndarkflame.
+- Added a new pass out scene variant that can trigger at school. Thanks to ndarkflame.
+- Added unique encounter dialogue for wolfboys/girls. Written by Fangi and coded by PurityGuy.
+- Improved the code behind the clickable map, fixing some issues and making it more expandable in the future. Thanks to RedStar.
+- Added long boots, scout shorts, scout shirt, soccer shorts, soccer shirt, and jockstrap to the clothing shop. Art courtesy of namelessone.
+- Adjusted the small sailor hat, sailor shirt, and short sailor shirt. Thanks to namelessone.
+- The clothing selection box for hiding clothes will now select an initial item, and will not appear at all if no items are available. Thanks to PubNut.
+- You now need to tap the back button twice to close the app on Android, which should help prevent accidental closes. Thanks to PubNut.
+- Added icons for arm warmers, lace arm warmers, fingerless gloves, swimming goggles, diving suit, flippers, heeled boots, platform heels, micro pleated skirt, and tie-front top. Art courtesy of ΩMEGA.
+- Thanks to ndarkflame for minor code improvements.
+- Added the "Not Like the Movies", "Slippery", "Wet and Ruined" and "Buried Treasure" feats.
+
+Thanks to Lollipop Scythe for the following additions and improvements:
+
+- Adjusted kissing in encounters, so that it's possible to prevent your first kiss being stolen.
+- Fertiliser can now be stolen from the docks, which lets you boost the quality of farm plots.
+- Added the quick start tab to the game's start, letting you pick from a selection of settings presets.
+- Added the green thumb background. Can be earned mid-game by finding all seeds and using enough fertiliser. Fixing up Alex's farm reduces the fertiliser requirement.
+- Adjusted background traits in the cheat menu.
+- Added the Curious Attire feat, and a related feat boost.
+- Improved the feats UI to shorten the page.
+- Fixed an issue with CSS on Safari devices.
+- Expanded the option for a lighter background to the combat sprite, and improved its settings.
+- Improved the settings importer/exporter.
+- Added settings presets to the start of the game.
+- Added feat unlock explanation to the feat overlay.
+- Added tentacle combat defaults, though some moves aren't included.
+- The game will now autosave when sleeping at the Hotel with Avery.
+- Code improvements.
+
+Thanks to PurityGuy for the following additions and improvements:
+
+- You can now headbutt NPCs who kiss or attempt to kiss you. Inflicts pain on both the NPC and PC.
+- Added the "Horns" trait for demon and cow player characters. Demon horns inflict twice the damage. Cow horns prevent damage to the PC. Hellcow headbutts are something to be feared.
+- Cow and cat player characters now have unique options in the tentacle plains.
+- Reimplemented the old idle facial expressions and hair animations for the combat sprites. Made new assets to fill in for the missionary position.
+- Robin will now pay their protector each week.
+- Improved the way Robin's money is tracked.
+- Added the swim shirt to the clothing shop. It is school-appropriate, conceals breasts, and has art for the doggy and missionary sprites.
+- Kylar's introduction now differs slightly depending on the PC's body size. Tiny characters are shorter than them.
+- Disabling beasts now replaces them with monster people.
+- The black wolf can now be set to "Always a monster boy or girl."
+- Renamed some feats.
+- Reworked some text in the social and statistics overlays, should beasts be disabled.
+- Modified the beast events at the farm to take advantage of code improvements.
+- Code improvements that should make development easier.
+
+Thanks to Sommar for the following additions and improvements:
+
+- A cosmetics shop has opened on the second floor of the shopping centre, selling makeup and hair dyes.
+- You can apply makeup at the mirror in the orphanage, boosting femininity, attractiveness, and allure. Makeup washes away when submerged in water.
+- Eyebrows and pubes can now be dyed separately.
+- Added contact lenses. The hospital pharmacy sells them.
+- The sidebar sprite now occasionally blinks.
+- NPCs will now sometimes pull aside certain underwear to access your groin, instead of always pulling them down.
+- Buying penis pills at the hospital may now attract attention from a nurse, potentially leading to an encounter.
+- Improved the text descriptions of pale and light-coloured clothes.
+- Added the ashy blonde natural hair colour, and the neon blue, toxic green, blood orange, and bright purple hair dyes.
+- The player character no longer frowns when shaving at the mirror.
+- The close up vagina images now change a little when the PC is aroused.
+- Added the "Bermuda Triangle" pubic hair style.
+- You can now choose to have freckles at character creation.
+- Adjusted pubic hair to match the game's pixel resolution, and the PC's hair colour.
+- Added choking to consensual encounters. The PC can now ask to be choked.
+- Added Asphyxiation options to the Settings page, allowing choking to be restricted or disabled.
+- Added the Asphyxiophilia trait, which increases arousal gained as oxygen drops.
+- Improvements to the sidebar sprite to pave the way for future improvements.
+- Improvements to the code responsible for close up images.
+
+### Balance changes
+
+- Reduced the pain caused by certain small replacement events that can appear if beasts are disabled. Those events now also indicate that they cause pain.
+- There will now always be at least two useful containers at the docks. Thanks to Lollipop Scythe.
+- Reduced the default minimum penis size. Thanks to Lollipop Scythe.
+- Avery will now try to pick the player character up from school more often. They will now always pick them up on Mondays after a small amount of love is gained. Thanks to PurityGuy.
+- Avery is now less likely to scare delinquent player characters. Thanks to PurityGuy.
+- Panties now become soaked by lewd fluid more easily. Thanks to Sommar.
+- Experiencing multiple orgasms during consensual encounters or while influenced by aphrodisiacs can now apply the drunkenness effect to the PC. Thanks to Sommar.
+- The PC now suffocates faster while being choked in combat. Thanks to Sommar.
+- The PC can no longer speak while being choked. Thanks to Sommar.
+- The PC can now briefly pass out mid-encounter when strangled. Thanks to Sommar.
+- Slightly reduced the impact from working out on butt size. Thanks to braymann.
+- Increased the stress reduced by touching the green gem in the museum.
+- Arm sleeves now have an appropriate impact on allure.
+- Beasts and monsters now default to 80% male.
+- Monsters now have a 50% chance to appear by default, but still require hallucinations.
+- Passing out in or near the farmlands no longer risks sending the PC straight to cow jail.
+
+### Bug Fixes
+
+- Escaping the hospital basement via water will now take the PC to the storm drains, rather than the sea.
+- Fixed a bug that prevented the bee encounter from working as intended.
+- Fixed some Whitney gender confusion during their Halloween sequence.
+- Another event should no longer trigger immediately after meeting a deer in the forest.
+- Fixed an error found after meeting Mason at the pond near the lake.
+- Kissing Kylar in a school cupboard will now take your first kiss.
+- Fixed an error found after bumping into someone carrying a package on the street.
+- Fixed a bug that could prevent bra images from displaying properly in the missionary position. Thanks to Sommar.
+- Fixed an issue with pubic hair rendering. Thanks to Sommar.
+- The success chance of passing a dark crack in the cave should no longer become negative.
+- Taking Robin's hands in your own when accepting their confession will now take your handholding virginity.
+- Fixed an error message found when entering the school pool.
+- Fixed an error found when entering the tanning salon.
+- Avery should now take handholding virginity in a few more spots.
+- Increased the likelihood that NPCs will try to initiate oral. Thanks to ndarkflame.
+- Kissing another student in front of Leighton at the brothel will now take your first kiss.
+- Fixed a bug that prevented lurkers and similar creatures from properly taking virginities.
+- Being held by the hand when Whitney drags you from the pub will now take your handholding virginity.
+- Fixed a number of arousal boosts that were having an insignificant effect on arousal.
+- Fixed a bug that cause Leighton to be referred to as "he" regardless of their actual gender. Thanks to ndarkflame.
+- The nun/monk you can spy on at the soup kitchen will no longer be showering with soup.
+
+Thanks to Lollipop Scythe for the following fixes:
+
+- Reworked clothing colour, fixing some issues.
+- Fixed an issue with some tops and their interaction with breasts.
+- Fixed an issue with textboxes.
+- Twisting your ankle will no be correctly marked as a + + + Pain event.
+- Added missing settings to the settings exporter/importer.
+- Fixed an issue with named NPC breast size.
+- Fixed an issue with the tentacle chest action.
+- Dancing with Avery will now take your handholding virginity when appropriate.
+- Fixed an event in the forest that would trigger another event right after.
+- Fixed an issue with custom colours.
+- NPCs will no longer insert a finger into an orifice after being convinced not to penetrate.
+- Fixed an issue that stopped the game accurately determining how many Avery dates the PC has been on.
+- Fixed an issue with clit and penis parasites involving chastity.
+- Performance improvements.
+- Other minor fixes.
+
+Thanks to PurityGuy for the following fixes:
+
+- Fixed broken images found when wearing ankle socks in the missionary position, and lace arm warmers in the doggy position.
+- Fixed a line break issue at the asylum.
+- Fixed a bug that prevented orphans with high hope reacting appropriately to the PC's return.
+- The player character's semen will no longer teleport into Robin's womb or bowels when Robin helps the player finish.
+- The player will now be properly informed if Robin didn't tell the player of their debt when they go missing.
+- The player character no longer has infinite semen when milking themselves at the farm.
+- "NPC Dominance" should no longer appear instead of "Robin's Confidence" or "Whitney's Dominance."
+- Fixed some gender confusion at the asylum.
+- Improved the new clothing code.
+- Fixed incorrect grammar when referring to the loincloth.
+- Fixed a bug that prevented the wolf transformation from influencing an event at Remy's farm.
+- Fixed a bug that prevented custom colours working in the doggy position.
+- The player character will no longer appear to be crying in combat once they start moving.
+- Fixed an issue with body-writing and tattoos overlapping legwear in combat.
+- Fixed a pronoun issue with Avery.
+- Avery should no longer lose love instead of gaining it when you take their hand during the chef event.
+- Fixed an error found during Avery's hotel date.
+- Avery will no longer pick the player up from school at 3 in the morning.
+- Robin will no longer hide from the rain on day 0, and will no longer attempt to show up on the ninth day of the week.
+- Fixed a missing image error for the ankle socks.
+- Fixed a double link found when walking into swim class naked.
+- Fixed an issue found when begging for clothes on Domus Street.
+- Typo fixes.
+
+Thanks to braymann for the following fixes:
+
+- Renamed bottom pills to something clearer.
+- Fixed an error found when choosing to get dressed.
+- Giving a boobjob will now mention how skilfully you perform.
+- The option to keep cuddling Eden now correctly indicates that it increases their love.
+- Whitney will no longer hang around the school gate once the player characters has already encountered them there that day.
+- Fixed a bug that caused pajama outfits to get deleted from your list of outfits instead of getting worn when going to bed.
+- Fixed a bug that allowed working an extra hour at the spa after it closes.
+- Butt reduction from working out is now determined by the effectiveness of each workout, not just the total number of workouts.
+- Police will no longer try to remove your "naked" when searching a PC. with a chastity belt.
+- You will now put your clothes back on after escaping rapists at the beach party.
+- You can no longer gain sexual fame or have your anal parasites fertilised by reading Raul and Janet in the library.
+- Automatic Rebuy will no longer buy the clothes Janet was wearing in the book.
+- Virginities taken by the tutorial npc will now show as being taken by "Tutorial Woman" if they were, in fact, a woman.
+
 ## 0.2.21.5
 
 - Made a change that should allow google translate to translate as you play. Let me know how it goes.
