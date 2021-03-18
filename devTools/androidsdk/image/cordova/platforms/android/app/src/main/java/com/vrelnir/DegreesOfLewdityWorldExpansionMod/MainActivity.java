@@ -17,14 +17,14 @@
        under the License.
  */
 
-package com.vrelnir.DegreesOfLewdity;
+package com.vrelnir.DegreesOfLewdityWorldExpansionMod;
 
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.widget.Toast;
 import org.apache.cordova.*;
 
-import com.vrelnir.DegreesOfLewdity.R;
+import com.vrelnir.DegreesOfLewdityWorldExpansionMod.R;
 
 public class MainActivity extends CordovaActivity {
 
