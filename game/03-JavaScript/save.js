@@ -509,6 +509,7 @@ window.settingsObjects = function (type) {
 				blackchance: { min: 0, max: 100, decimals: 0 },
 				straponchance: { min: 0, max: 100, decimals: 0 },
 				alluremod: { min: 0.2, max: 2, decimals: 1 },
+				clothesPrice: { min: 1, max: 10, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
 				monsterhallucinations: { boolLetter: true },
