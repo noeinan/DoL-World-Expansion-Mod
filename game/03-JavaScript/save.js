@@ -593,3 +593,23 @@ window.loadExternalExportFile = function () {
 			button.value = "Error Loading";
 		});
 }
+
+// !!Hack warning!! Don't use it maybe?
+window.updateMoment = function () {
+	// change last (and only) moment in local history
+	State.history[State.history.length - 1].variables = JSON.parse(JSON.stringify(State.variables));
+	// prepare the moment object with modified history
+	let moment = SugarCube.State.marshalForSave();
+	// replace moment.history with moment.delta, because that's what SugarCube expects to find
+	// this is a bad thing to do probably btw, because while history and delta appear to look very similar, 
+	// they're not always the same thing, SugarCube actually decodes delta into history (see: https://github.com/tmedwards/sugarcube-2/blob/36a8e1600160817c44866205bc4d2b7730b2e70c/src/state.js#L527)
+	// but for my purpose it works (i think?)
+	delete Object.assign(moment, {delta: moment.history}).history;
+	// replace saved moment in session with the new one
+	let gameName = SugarCube.Story.domId;
+	sessionStorage[gameName + ".state"] = JSON.stringify(moment);
+	// it appears that this line is not necessary for it to work
+	//SugarCube.session._engine[gameName + ".state"] = JSON.stringify(moment);
+
+	// Voilà! F5 will reload the current state now without going to another passage!
+}
