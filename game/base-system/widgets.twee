@@ -5038,3 +5038,79 @@ __Map__<br>
 	<<print $combatTrain.beastTypes[0]>>
 <</if>>
 <</nobr>><</widget>>
+
+/*
+	Argument 1 is base amount. You can also use decimals.
+	Argument 2 is variation.
+	Argument 3 is crime.
+	<<moneyGain 1>> will give £1.00 which is not stolen.
+    <<moneyGain 1 false false>> will give £1.00 which is not stolen.
+    <<moneyGain 1 true>> will give between £0.80 and £1.20 which is not stolen.
+    <<moneyGain 1 true true>> will give between £0.80 and £1.20 which is stolen, and can scale further with skulduggery.
+    <<moneyGain 1 false true>> will give £1.00 which is stolen, and can scale with skulduggery.
+*/
+<<widget "moneyGain">><<nobr>><<silently>>
+<<if $args[0]>>
+    <<set _base_amount to $args[0] * 100>>
+<<else>>
+    <<set _base_amount to 100>>
+<</if>>
+<<if $args[1]>>
+    <<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
+<<else>>
+    <<set _variation to 0>>
+<</if>>
+<<if $args[2]>>
+    <<set _skulduggery to clone($skulduggery)>>
+    <<if $moorLuck gt 0>>
+        <<set _skulduggery to Math.floor(_skulduggery * (1 + ($moorLuck / 100)))>>
+    <</if>>
+    <<if $worn.hands.type.includes("sticky_fingers")>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<if $harpy gte 2 or $cat gte 2>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<set _skulduggeryMulti to (1 + (_skulduggery / 2000))>>
+<<else>>
+    <<set _skulduggeryMulti to 1>>
+<</if>>
+<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
+<<if $args[2]>>
+    <<crimeup `_money_gain / 100`>>
+<</if>>
+<<set $money += _money_gain>>
+<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</nobr>><</widget>>
+
+/*
+	Used like above, but only shows the money amount, doesn't add money or crime.
+	Use <<crimeup `_money_gain / 100`>> and <<set $money += _money_gain>> where necessary in links, etc.
+*/
+<<widget "moneyGainDisplay">><<nobr>><<silently>>
+<<if $args[0]>>
+    <<set _base_amount to $args[0] * 100>>
+<<else>>
+    <<set _base_amount to 100>>
+<</if>>
+<<if $args[1]>>
+    <<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
+<<else>>
+    <<set _variation to 0>>
+<</if>>
+<<if $args[2]>>
+    <<set _skulduggery to clone($skulduggery)>>
+    <<if $moorLuck gt 0>>
+        <<set _skulduggery to Math.floor(_skulduggery * (1 + ($moorLuck / 100)))>>
+    <</if>>
+    <<if $worn.hands.type.includes("sticky_fingers")>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<if $harpy gte 2 or $cat gte 2>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<set _skulduggeryMulti to (1 + (_skulduggery / 2000))>>
+<<else>>
+    <<set _skulduggeryMulti to 1>>
+<</if>>
+<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
+<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</nobr>><</widget>>
