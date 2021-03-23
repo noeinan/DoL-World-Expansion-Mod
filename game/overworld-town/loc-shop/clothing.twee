@@ -1,121 +1,153 @@
 :: Clothing Shop [nobr]
-<<if $tryOn.autoReset isnot false>><<tryOnReset>><</if>><<unset $tempDisable>>
-<<set $outside to 0>><<set $location to "shopping_centre">><<effects>>
-<input type="button" value="DEFAULT OPTIONS" onclick="Wikifier.wikifyEval('<<shopDefaultOptionsToggle>>');">
-<input type="button" value="FILTERS" onclick="Wikifier.wikifyEval('<<shopClothingFilterToggle>>');">
-<div id="shopDefault" class="hidden">
-	<<shopDefaultOptions>>
+<div id="clothingShop-div" class="main-shop-div">
+	<<clothingShop-main>>
 </div>
-<br>
-<div id="shopClothingFilter" class="hidden no-numberify">
-	<<shopClothingFilterSettings>>
-</div>
-<br>
-You are in the clothing shop. It has a large selection of ordinary clothes, but you'll need to go elsewhere if you're looking for something exotic.
-<br><br>
 
-<<if $stress gte 10000>>
-<<passoutshop>>
-<<else>>
-	<<if $hour is 21>>
-		It's closing time. Security is herding everyone outside. <<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
-		<br><br>
+:: Clothing Shop Widgets [widget]
 
-		<<if $exposed lte 0>>
-			<<link [[Go Outside|High Street]]>><</link>>
-			<br>
-		<<else>>
-			<<link [[Hide until it's over (1:00)|Clothing Shop]]>><<pass 1 hour>><</link>>
-		<</if>>
+<<widget "clothingShop-main">><<nobr>>
+	<<if $tryOn.autoReset isnot false>><<tryOnReset>><</if>><<unset $tempDisable>>
+	<<set $outside to 0>><<set $location to "shopping_centre">><<effects>>
+	<<set $shopName = "clothing">>
+
+	You are in the clothing shop. It has a large selection of ordinary clothes, but you'll need to go elsewhere if you're looking for something exotic.
+	<br><br>
+
+	<<if $stress gte 10000>>
+	<<passoutshop>>
 	<<else>>
-		<<tryOnStats>><<unset $shopListStartCount>>
-
-		<<if $daystate is "night">>
-			You are alone in the darkness.
+		<<if $hour is 21>>
+			It's closing time. Security is herding everyone outside. <<if $exposed gte 1>>Panic swells within you as you realise how exposed you'll be should security find you in this state of dress.<</if>>
 			<br><br>
-		<<elseif $exposed gte 1>>
-			You are hiding within a clothing stand to protect your dignity.
-			<br><br>
-		<</if>>
-		<<warmth_description>>
-		<br><br>
-		<<if $debug is 1>>
-			<img id="icon" src="img/misc/icon/clothes/categories/overoutfit.png">
-			[[View over outfits|Over Outfit Shop]]
-			<br><br>
-		<</if>>
-		<img id="icon" src="img/misc/icon/clothes/categories/outfit.png">
-		[[View outfits|Outfit Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/upper.png">
-		[[View tops|Top Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/lower.png">
-		[[View bottoms|Bottom Shop]]
-		<br><br>
-		<img id="icon" src="img/misc/icon/clothes/categories/underoutfit.png">
-		[[View under outfits|Under Outfit Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/underupper.png">
-		[[View under tops|Under Top Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/underlower.png">
-		[[View under bottoms|Under Bottom Shop]]
-		<br><br>
-		<img id="icon" src="img/misc/icon/clothes/categories/head.png">
-		[[View Head Accessories|Head Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/face.png">
-		[[View Face Accessories|Face Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/neck.png">
-		[[View Neck Accessories|Neck Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/hand.png">
-		[[View Hand Accessories|Hands Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/legs.png">
-		[[View Legwear|Legs Shop]]
-		<br>
-		<img id="icon" src="img/misc/icon/clothes/categories/feet.png">
-		[[View Shoes|Shoe Shop]]
-		<br><br>
-		<<if $clothingrebuy is 1>>
-			[[Disable automatic clothing Rebuy|Rebuy Shop]]
-			<br>
-		<<else>>
-			[[Enable automatic clothing rebuy|Rebuy Shop]]
-			<br>
-		<</if>>
 
-		<<if $daystate is "night" and $hour isnot $closinghour and $clothingshoptheft isnot 1>>
-			<<link [[Examine the cash register|Clothing Shop Register]]>><</link>>
-			<br>
-		<</if>>
-
-		<br>
-
-		<<if $daystate is "night" or $tryOn.value is 0>>
-			<<if $daystate is "night" and $clothingShop.spotted is true and $clothingShop.stolenClothes gt 0>>
-				<<link[[Leave|Clothing Shop Night Guard Found]]>><<shopClothingFilterReset>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">><<set $tryOn.autoReset to true>><</link>>
+			<<if $exposed lte 0>>
+				<<link [[Go Outside|High Street]]>><</link>>
+				<br>
 			<<else>>
-				<<link[[Leave|Shopping Centre Top]]>><<shopClothingFilterReset>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">><<set $tryOn.autoReset to true>><</link>>
+				<<link [[Hide until it's over (1:00)|Clothing Shop]]>><<pass 1 hour>><</link>>
 			<</if>>
+		<<else>>
+			<div id="tryonstats-div"><<tryOnStats>></div>
+			<<unset $shopListStartCount>>
+			<<unset $clothes_choice>>
+			<<set $shopPage = 0>>
+
+			<<if $daystate is "night">>
+				You are alone in the darkness.
+				<br><br>
+			<<elseif $exposed gte 1>>
+				You are hiding within a clothing stand to protect your dignity.
+				<br><br>
+			<</if>>
+			
+			<span>Warmth:</span>
+            <<warmthscale>>
+            <div id="warmth-description">
+                <<warmth_description>>
+            </div>
 			<br><br>
-		<<elseif $tryOn.value gt 0>>
-			<<link[[Return clothes|$passage]]>><<clothingReset>><</link>>
+			<<if $debug is 1>>
+				<<clothingcategoryicon "overoutfit">>
+				<<link "View over outfits">><<replace "#clothingShop-div">><<OverOutfitShop>><</replace>><</link>>
+				<br><br>
+			<</if>>
+			<<clothingcategoryicon "outfit">>
+			<<link "View outfits">><<replace "#clothingShop-div">><<OutfitShop>><</replace>><</link>>
 			<br>
-			<<if $tryOn.value lt $money>>
-				<<link[[Buy clothes|$passage]]>><<buyTryOnClothes "wear">><</link>>
+			<<clothingcategoryicon "upper">>
+			<<link "View tops">><<replace "#clothingShop-div">><<TopShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "lower">>
+			<<link "View bottoms">><<replace "#clothingShop-div">><<BottomShop>><</replace>><</link>>
+			<br><br>
+			<<clothingcategoryicon "underoutfit">>
+			<<link "View under outfits">><<replace "#clothingShop-div">><<UnderOutfitShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "underupper">>
+			<<link "View under tops">><<replace "#clothingShop-div">><<UnderTopShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "underlower">>
+			<<link "View under bottoms">><<replace "#clothingShop-div">><<UnderBottomShop>><</replace>><</link>>
+			<br><br>
+			<<clothingcategoryicon "head">>
+			<<link "View Head Accessories">><<replace "#clothingShop-div">><<HeadShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "face">>
+			<<link "View Face Accessories">><<replace "#clothingShop-div">><<FaceShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "neck">>
+			<<link "View Neck Accessories">><<replace "#clothingShop-div">><<NeckShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "hand">>
+			<<link "View Hand Accessories">><<replace "#clothingShop-div">><<HandsShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "legs">>
+			<<link "View Legwear">><<replace "#clothingShop-div">><<LegsShop>><</replace>><</link>>
+			<br>
+			<<clothingcategoryicon "feet">>
+			<<link "View Shoes">><<replace "#clothingShop-div">><<FeetShop>><</replace>><</link>>
+			<br><br>
+			<<run linkifyDivs('.button-back-to-shop')>>
+
+			<<if $clothingrebuy is 1>>
+				[[Disable automatic clothing Rebuy|Rebuy Shop]]
 				<br>
-				<<link[[Buy clothes and send to wardrobe|$passage]]>><<buyTryOnClothes "wardrobe">><</link>>
+			<<else>>
+				[[Enable automatic clothing rebuy|Rebuy Shop]]
 				<br>
 			<</if>>
-			<<link[[Leave with stolen clothes|Stolen Clothing Shop Result]]>><<shopClothingFilterReset>><</link>>
+
+			<<if $daystate is "night" and $hour isnot $closinghour and $clothingshoptheft isnot 1>>
+				<<link [[Examine the cash register|Clothing Shop Register]]>><</link>>
+				<br>
+			<</if>>
+
 			<br>
+
+			<<if $daystate is "night" or $tryOn.value is 0>>
+				<<if $daystate is "night" and $clothingShop.spotted is true and $clothingShop.stolenClothes gt 0>>
+					<<link[[Leave|Clothing Shop Night Guard Found]]>><<shopClothingFilterReset>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">><<set $tryOn.autoReset to true>><</link>>
+				<<else>>
+					<<link[[Leave|Shopping Centre Top]]>><<shopClothingFilterReset>><<ShowUnderEquip "normal">><<ShowUnderEquip "over">><<set $tryOn.autoReset to true>><</link>>
+				<</if>>
+				<br><br>
+			<<elseif $tryOn.value gt 0>>
+				<<link "Return clothes">><<clothingReset>>
+					<<updatesidebarimg>>
+					<<updatesidebardescription>>
+					<<updateallure>>
+					<<updatewarmthscale>>
+					<<updatewarmthdescription>>
+					<<updateclothingshop>>
+					<<run updateMoment()>>
+				<</link>>
+				<br>
+				<<if $tryOn.value lt $money>>
+					<<link "Buy clothes">><<buyTryOnClothes "wear">><<updateclothingshop>><</link>>
+					<br>
+					<<link "Buy clothes and send to wardrobe">>
+						<<buyTryOnClothes "wardrobe">>
+						<<updatesidebarmoney>>
+						<<updatesidebarimg>>
+						<<updatesidebardescription>>
+						<<updateallure>>
+						<<updatewarmthscale>>
+						<<updatewarmthdescription>>
+						<<updateclothingshop>>
+						<<run updateMoment()>>
+					<</link>>
+					<br>
+				<</if>>
+				<<link [[Leave with stolen clothes|Stolen Clothing Shop Result]]>><<shopClothingFilterReset>><</link>>
+				<br>
+			<</if>>
 		<</if>>
 	<</if>>
-<</if>>
+<</nobr>><</widget>>
+
+<<widget "clothingcategoryicon">><<nobr>>
+	<<if $images is 1>><img id="icon" @src="'img/misc/icon/clothes/categories/' + $args[0] + '.png'"><</if>>
+<</nobr>><</widget>>
 
 :: Clothing Shop Sneak [nobr]
 <<set $outside to 0>><<effects>><<set $lock to 0>>
@@ -170,223 +202,42 @@ Would you like to enable this?
 <<link [[No|Clothing Shop]]>><</link>>
 <br>
 
+<!-- Redirects for passages that were removed, so that old saves won't break in case they saved in one of these -->
 :: Over Outfit Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "over_upper">>
-	<<else>>
-		<<shopbuy "over_upper" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "over_upper" "reset">>
-<</if>>
-<<clothingShop "over_upper" "outfits">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Outfit Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "upper">>
-	<<else>>
-		<<shopbuy "upper" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "upper" "reset">>
-<</if>>
-<<clothingShop "upper" "outfits">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Top Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "upper">>
-	<<else>>
-		<<shopbuy "upper" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "upper" "reset">>
-<</if>>
-<<clothingShop "upper" "non-outfits">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Bottom Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "lower">>
-	<<else>>
-		<<shopbuy "lower" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "lower" "reset">>
-<</if>>
-<<clothingShop "lower">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Under Outfit Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "under_upper">>
-	<<else>>
-		<<shopbuy "under_upper" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "under_upper" "reset">>
-<</if>>
-<<clothingShop "under_upper" "outfits">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Under Top Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "under_upper">>
-	<<else>>
-		<<shopbuy "under_upper" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "under_upper" "reset">>
-<</if>>
-<<clothingShop "under_upper" "non-outfits">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Under Bottom Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "under_lower">>
-	<<else>>
-		<<shopbuy "under_lower" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "under_lower" "reset">>
-<</if>>
-<<clothingShop "under_lower">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Head Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "head">>
-	<<else>>
-		<<shopbuy "head" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "head" "reset">>
-<</if>>
-<<clothingShop "head">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Face Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "face">>
-	<<else>>
-		<<shopbuy "face" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "face" "reset">>
-<</if>>
-<<clothingShop "face">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Neck Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "neck">>
-	<<else>>
-		<<shopbuy "neck" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "neck" "reset">>
-<</if>>
-<<clothingShop "neck">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Hands Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "hands">>
-	<<else>>
-		<<shopbuy "hands" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "hands" "reset">>
-<</if>>
-<<clothingShop "hands">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Legs Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "legs">>
-	<<else>>
-		<<shopbuy "legs" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "legs" "reset">>
-<</if>>
-<<clothingShop "legs">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
 
 :: Shoe Shop [nobr]
-<<set $outside to 0>><<effects>>
-
-<<if $clothes_choice and $clothes_choice_previous>>
-	<<if $clothes_choice is $clothes_choice_previous>>
-		<<shopbuy "feet">>
-	<<else>>
-		<<shopbuy "feet" "reset">>
-	<</if>>
-<<else>>
-	<<shopbuy "feet" "reset">>
-<</if>>
-<<clothingShop "feet">>
-<br>
-
-<<link [[Back to shop|Clothing Shop]]>><<unset $clothes_choice>><</link>>
+<<goto "Clothing Shop">>
