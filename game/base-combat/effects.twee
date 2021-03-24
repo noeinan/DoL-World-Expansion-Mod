@@ -968,6 +968,104 @@
 	<</if>>
 <</if>>
 
+<<unset $keepchoke>>
+<<if $leftaction is "keepchoke" or $rightaction is "keepchoke">>
+	<<if $neckuse is "hand">>
+		<<set _npcId = $NPCList.findIndex(x => x.lefthand == "throat" or x.righthand == "throat")>>
+		<<personselect _npcId>>
+
+		<<if $leftactioncarry is "keepchoke" or $rightactioncarry is "keepchoke">>
+			You keep pressing <<his>> hand against your neck.
+		<<else>>
+			You reach out to <<his>> hand holding your neck and push it harder against your soft skin. <span class="sub"><<His>> grip tightens around your throat.</span>
+		<</if>>
+	<</if>>
+	<<if $leftaction is "keepchoke">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "keepchoke">><<submission 1>>
+	<</if>>
+	<<if $rightaction is "keepchoke">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "keepchoke">><<submission 1>>
+	<</if>>
+	<<set $keepchoke = 1>>
+<</if>>
+
+<<if $leftaction is "stopchoke" or $rightaction is "stopchoke">>
+	<<if $leftaction is "stopchoke">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "stopchoke">>
+		<<brat 1>>
+	<</if>>
+	<<if $rightaction is "stopchoke">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "stopchoke">>
+		<<brat 1>>
+	<</if>>
+	
+	<<set _npcId = $NPCList.findIndex(x => x.lefthand == "throat" or x.righthand == "throat")>>
+	<<personselect _npcId>>
+
+	<<if $neckuse is "hand">>
+		You reach out to <<his>> hand on your neck and gently pull it away. <<He>> doesn't resist.
+		<<unset $neckuse>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j].lefthand == "throat">>
+				<<set $NPCList[_j].lefthand = 0>>
+			<</if>>
+			<<if $NPCList[_j].righthand == "throat">>
+				<<set $NPCList[_j].righthand = 0>>
+			<</if>>
+		<</for>>
+	<</if>>
+<</if>>
+
+
+<<if $leftaction is "stopchokenoncon" or $rightaction is "stopchokenoncon">>
+	<<set _handsCount = 0>>
+	<<if $leftaction is "stopchokenoncon">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "stopchokenoncon">>
+		<<defiance 2>>
+		<<set _handsCount++>>
+	<</if>>
+	<<if $rightaction is "stopchokenoncon">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "stopchokenoncon">>
+		<<defiance 2>>
+		<<set _handsCount++>>
+	<</if>>
+	
+	<<set _npcId = $NPCList.findIndex(x => x.lefthand == "throat" or x.righthand == "throat")>>
+	<<personselect _npcId>>
+
+	<<if $neckuse is "hand">>
+		You dig your nails into <<his>> hand around your throat and pull it.
+		<<defiance 2>><<set $speechstruggle to 1>>
+		<<if $physique gte random(1, 60000/_handsCount)>>
+			<span class="teal">You manage to rip his hand off your throat.</span>
+			<<defiance 5>>
+			<<unset $neckuse>>
+			<<gaspair>>
+
+			<<if $leftactiondefault == "stopchokenoncon">>
+				<<set $leftactiondefault to "rest">>
+			<</if>>
+			<<if $rightactiondefault == "stopchokenoncon">>
+				<<set $rightactiondefault to "rest">>
+			<</if>>
+			
+			<<for _j = 0; _j lt $enemyno; _j++>>
+				<<if $NPCList[_j].lefthand == "throat">>
+					<<set $NPCList[_j].lefthand = 0>>
+				<</if>>
+				<<if $NPCList[_j].righthand == "throat">>
+					<<set $NPCList[_j].righthand = 0>>
+				<</if>>
+			<</for>>
+		<<elseif $physique gte random(1, 40000/_handsCount)>>
+			<<His>> hand doesn't move, however <span class="blue">you manage to gasp for a bit of air when <<his>> grip weakens momentarily</span>.
+			<<oxygen 200>>
+		<<else>>
+			<span class="purple"><<His>> hand remains on your throat.</span>
+		<</if>>
+	<</if>>
+<</if>>
+
 <<if $feetaction is "grab">>
 	<<set $feetaction to 0>><<set $feetactiondefault to "grab">><<combatpromiscuity3>>
 	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $feetskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>

@@ -70,6 +70,7 @@ window.combatListColor = function (name, value, type) {
 			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
+			case "stopchoke":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
@@ -81,7 +82,7 @@ window.combatListColor = function (name, value, type) {
 				break;
 	
 			/*leftaction or rightaction*/
-			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle":
+			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle": case "stopchokenoncon":
 			/*feetaction*/
 			case "kick":
 			/*mouthaction*/
@@ -103,6 +104,7 @@ window.combatListColor = function (name, value, type) {
 			/*leftaction or rightaction*/
 			case "leftplay": case "leftgrab": case "leftstroke": case "leftchest": case "rightplay": case "rightgrab": case "rightstroke": case "rightchest":
 			case "leftchest": case "rightchest": case "leftwork": case "rightwork": case "leftclit": case "rightclit":
+			case "keepchoke":
 			/*feetaction*/
 			case "grab": case "vaginagrab": case "grabrub": case "vaginagrabrub": case "rub":
 			/*mouthaction*/
