@@ -70,6 +70,9 @@
 <<set $sidebarAnimations to true>>
 <<set $combatAnimations to true>>
 <<set $clothesPrice to 1>>
+<<set $clothesPriceUnderwear to 1>>
+<<set $clothesPriceSchool to 1>>
+<<set $clothesPriceLewd to 1>>
 <<startingPlayerImageReset>>
 <</nobr>><</widget>>
 
@@ -107,6 +110,7 @@
 <<switch $currentSubsection>>
 	<<case "humanSettings">><<replace #subsectionDiv>><<humanSettings>><</replace>>
 	<<case "beastSettings">><<replace #subsectionDiv>><<beastSettings>><</replace>>
+	<<case "priceSettings">><<replace #subsectionDiv>><<priceSettings>><</replace>>
 	<<default>><<replace #subsectionDiv>><<humanSettings>><</replace>>
 <</switch>>
 <</nobr>><</widget>>
@@ -578,18 +582,15 @@
 	<<numberslider "$alluremod" $alluremod 0.2 2 0.1>>
 	<br><br>
 
-	<span class="gold">Clothing Price</span> - Default is 1, 2 is recommended for hard mode.
-	<br>
-	Will multiply the clothing cost by the number set. This includes the cost for buying, the automatic re-buy and repairing. Towels are still free.
-	<<numberslider "$clothesPrice" $clothesPrice 1 10 1>>
-	<br><br>
-
 	<div class="gold widerButton">
 	<<button "Human NPC Settings">>
 		<<displaySubsection "humanSettings">>
 	<</button>>
 	<<button "Beast Settings and Toggles">>
 		<<displaySubsection "beastSettings">>
+	<</button>>
+	<<button "Clothing Price Settings">>
+		<<displaySubsection "priceSettings">>
 	<</button>>
 	</div>
 
@@ -717,6 +718,49 @@
 			<<print '<<checkbox "$waspdisable" "t" "f" ' + ($waspdisable is "f" ? "checked" : "") + '>>'>> Enable wasps
 			</div></label>
 			<div style="clear:both;">/*Keep at end of toggles*/</div>
+		</div>
+	<</nobr>><</widget>>
+
+	<<widget "priceSettings">><<nobr>>
+		<div class="solidBorderContainer clothes-price-container">
+			<span class="bold gold">Clothing Price</span>
+			<div class="small-description">Modify cost of clothing items. This includes the cost for buying, the automatic re-buy and repairing. Towels are still free.</div>
+			<div class="numberslider-group">
+				<div class="numberslider-inline">
+					<span class="gold">All Clothes</span>
+					<div class="small-description">For hard mode 200% is recommended.</div>
+					<<numberslider "$clothesPrice" $clothesPrice 1 10 0.5>>
+				</div>
+			</div>
+			<div class="numberslider-group">
+				<div class="numberslider-inline">
+					<span class="gold">Underwear</span>
+					<<numberslider "$clothesPriceUnderwear" $clothesPriceUnderwear 1 10 0.5>>
+				</div>
+				<div class="numberslider-inline">
+					<span class="gold">School Clothes</span>
+					<<numberslider "$clothesPriceSchool" $clothesPriceSchool 1 10 0.5>>
+				</div>
+				<div class="numberslider-inline">
+					<span class="gold">Lewd Clothes</span>
+					<<numberslider "$clothesPriceLewd" $clothesPriceLewd 0.1 2 0.1>>
+				</div>
+			</div>
+			
+			<!-- Make it show % instead of fractions and add some colour -->
+			<<run $(() => { $('.clothes-price-container input').on('input change', e => { 
+					let valSpan = $(e.currentTarget).siblings().first();
+					let value = valSpan.text();
+					
+					valSpan.text((i, value) => Math.round(value * 100) + '%');
+					
+					if (value > 1)
+						valSpan.css('color', 'gold');
+					else if (value < 1)
+						valSpan.css('color', 'green');
+					else
+						valSpan.css('color', 'unset');
+				}).trigger('change') })>>
 		</div>
 	<</nobr>><</widget>>
 
