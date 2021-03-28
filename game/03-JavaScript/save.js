@@ -274,6 +274,12 @@ var importSettingsData = function (data) {
 	if (result != null && result != undefined) {
 		//console.log("json",JSON.parse(result));
 		S = JSON.parse(result);
+		if (V.passage === "Start" && S.starting != undefined) {
+			S.starting = settingsConvert(false, "starting", S.starting)
+		}
+		if(S.general != undefined){
+			S.general = settingsConvert(false, "general", S.general)
+		}
 
 		if (V.passage === "Start" && S.starting != undefined) {
 			var listObject = settingsObjects("starting");
@@ -455,6 +461,11 @@ window.exportSettings = function (data, type) {
 		}
 	}
 
+	if (V.passage === "Start") {
+		S.starting = settingsConvert(true, "starting", S.starting)
+	}
+	S.general = settingsConvert(true, "general", S.general)
+
 	//console.log(S);
 	var result = JSON.stringify(S);
 	if (type === "text") {
@@ -469,6 +480,7 @@ window.exportSettings = function (data, type) {
 
 window.settingsObjects = function (type) {
 	var result = undefined;
+	/*boolLetter type also requires the bool type aswell*/
 	switch (type) {
 		case "starting":
 			result = {
@@ -512,24 +524,24 @@ window.settingsObjects = function (type) {
 				clothesPrice: { min: 1, max: 10, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
-				monsterhallucinations: { boolLetter: true },
+				monsterhallucinations: { boolLetter: true, bool: true },
 				blackwolfmonster: { min: 0, max: 2, decimals: 0 },
-				bestialitydisable: { boolLetter: true },
-				swarmdisable: { boolLetter: true },
-				slimedisable: { boolLetter: true },
-				voredisable: { boolLetter: true },
-				tentacledisable: { boolLetter: true },
-				analdisable: { boolLetter: true },
-				transformdisable: { boolLetter: true },
-				hirsutedisable: { boolLetter: true },
-				breastfeedingdisable: { boolLetter: true },
-				analpregdisable: { boolLetter: true },
-				watersportsdisable: { boolLetter: true },
-				spiderdisable: { boolLetter: true },
-				bodywritingdisable: { boolLetter: true },
-				parasitedisable: { boolLetter: true},
-				slugdisable: { boolLetter: true},
-				waspdisable: {boolLetter: true},
+				bestialitydisable: { boolLetter: true, bool: true },
+				swarmdisable: { boolLetter: true, bool: true },
+				slimedisable: { boolLetter: true, bool: true },
+				voredisable: { boolLetter: true, bool: true },
+				tentacledisable: { boolLetter: true, bool: true },
+				analdisable: { boolLetter: true, bool: true },
+				transformdisable: { boolLetter: true, bool: true },
+				hirsutedisable: { boolLetter: true, bool: true },
+				breastfeedingdisable: { boolLetter: true, bool: true },
+				analpregdisable: { boolLetter: true, bool: true },
+				watersportsdisable: { boolLetter: true, bool: true },
+				spiderdisable: { boolLetter: true, bool: true },
+				bodywritingdisable: { boolLetter: true, bool: true },
+				parasitedisable: { boolLetter: true, bool: true},
+				slugdisable: { boolLetter: true, bool: true},
+				waspdisable: {boolLetter: true, bool: true},
 				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
@@ -539,15 +551,15 @@ window.settingsObjects = function (type) {
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
 				bodywritingImages: { bool: true },
-				silhouettedisable: { boolLetter: true },
-				blinkingdisable: { boolLetter: true },
-				halfcloseddisable: { boolLetter: true },
+				silhouettedisable: { boolLetter: true, bool: true },
+				blinkingdisable: { boolLetter: true, bool: true },
+				halfcloseddisable: { boolLetter: true, bool: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
 				checkstyle: { strings: ["percentage", "words", "skillname"] },
-				tipdisable: { boolLetter: true },
-				debugdisable: { boolLetter: true },
-				cheatdisable: { boolLetter: true },
+				tipdisable: { boolLetter: true, bool: true },
+				debugdisable: { boolLetter: true, bool: true },
+				cheatdisable: { boolLetter: true, bool: true },
 				showCaptionText: { bool: true },
 				confirmSave: { bool: true },
 				confirmLoad: { bool: true },
@@ -558,14 +570,14 @@ window.settingsObjects = function (type) {
 				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
-				neverNudeMenus: { bool: false },
+				neverNudeMenus: { bool: true },
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
 					markers: { bool: true },
 				},
 				skinColor: {
-					tanImgEnabled: { boolLetter: true },
+					tanImgEnabled: { boolLetter: true, bool: true },
 					tanningEnabled: { bool: true },
 				}
 			};
@@ -578,6 +590,56 @@ window.settingsObjects = function (type) {
 				breastsize: { min: 0, max: 5, decimals: 0 },
 			}
 			break;
+	}
+	return result;
+}
+
+/*Converts specific settings to so they dont look so chaotic to players*/
+window.settingsConvert = function(exportType, type, settings){
+	var listObject = settingsObjects(type);
+	var result = settings;
+	var keys = Object.keys(listObject);
+	for (var i = 0; i < keys.length; i++){
+		if (result[keys[i]] === undefined) continue;
+		if(["map", "skinColor", "player"].includes(keys[i])){
+			var itemKey = Object.keys(listObject[keys[i]]);
+			for (var j = 0; j < itemKey.length; j++) {
+				if (result[keys[i]][itemKey[j]] === undefined) continue;
+				var keyArray = Object.keys(listObject[keys[i]][itemKey[j]]);
+				if(exportType){
+					if (result[keys[i]][itemKey[j]] === "t") {
+						result[keys[i]][itemKey[j]] = true;
+					}else if(result[keys[i]][itemKey[j]] === "f"){
+						result[keys[i]][itemKey[j]] = false;
+					}
+				}else{
+					if (result[keys[i]][itemKey[j]] === true) {
+						result[keys[i]][itemKey[j]] = "t";
+					}else if(result[keys[i]][itemKey[j]] === false){
+						result[keys[i]][itemKey[j]] = "f";
+					}
+				}	
+			}
+		}else{
+			var keyArray = Object.keys(listObject[keys[i]]);
+			if(exportType){
+				if (keyArray.includes("boolLetter")) {
+					if (result[keys[i]] === "t") {
+						result[keys[i]] = true;
+					}else if(result[keys[i]] === "f"){
+						result[keys[i]] = false;
+					}
+				}
+			}else{
+				if (keyArray.includes("boolLetter")) {
+					if (result[keys[i]] === true) {
+						result[keys[i]] = "t";
+					}else if(result[keys[i]] === false){
+						result[keys[i]] = "f";
+					}
+				}
+			}
+		}
 	}
 	return result;
 }
