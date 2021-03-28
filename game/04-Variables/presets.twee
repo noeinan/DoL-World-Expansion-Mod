@@ -117,62 +117,62 @@
 
 <<widget "importDetailsDisplay">><<nobr>>
 <<if $args[0]>>
-<div class="presetConfirm">
-	<<if $args[0].starting isnot undefined>>
-		<span class="gold">"starting":{</span>
-		<<set _validatorObject to settingsObjects("starting")>>
-		<<presetConfirm $args[0].starting>>
-	<</if>>
-	<<if $args[0].starting is undefined>>
-	<<elseif $args[0].starting.player isnot undefined>>
-		"player":
-		<<set _validatorObject to settingsObjects("starting")>>
-		{<<presetConfirm $args[0].starting.player>>}
-	<</if>>
-	<<if $args[0].starting is undefined>>
-	<<elseif $args[0].starting.skinColor isnot undefined>>
-		"skinColor":
-		<<set _validatorObject to settingsObjects("starting")>>
-		{<<presetConfirm $args[0].starting.skinColor>>}
-	<</if>>
-	<<if $args[0].starting isnot undefined>>
-		<span class="gold">}</span>
-		<br>
-	<</if>>
+	<div class="presetConfirm">
+		<<if $args[0].starting isnot undefined>>
+			<span class="gold">"starting":{</span>
+			<<set _validatorObject to settingsObjects("starting")>>
+			<<presetConfirm $args[0].starting>>
+		<</if>>
+		<<if $args[0].starting is undefined>>
+		<<elseif $args[0].starting.player isnot undefined>>
+			"player":
+			<<set _validatorObject to settingsObjects("starting")>>
+			{<<presetConfirm $args[0].starting.player>>}
+		<</if>>
+		<<if $args[0].starting is undefined>>
+		<<elseif $args[0].starting.skinColor isnot undefined>>
+			"skinColor":
+			<<set _validatorObject to settingsObjects("starting")>>
+			{<<presetConfirm $args[0].starting.skinColor>>}
+		<</if>>
+		<<if $args[0].starting isnot undefined>>
+			<span class="gold">}</span>
+			<br>
+		<</if>>
 
-	<<if $args[0].general isnot undefined>>
-		<span class="gold">"general":{</span>
-		<<set _validatorObject to settingsObjects("general")>>
-		<<presetConfirm $args[0].general>>
-	<</if>>
-	<<if $args[0].general is undefined>>
-	<<elseif $args[0].general.skinColor isnot undefined>>
-		"skinColour":
-		<<set _validatorObject to settingsObjects("general")>>
-		{<<presetConfirm $args[0].general.skinColor>>}
-	<</if>>
-	<<if $args[0].general is undefined>>
-	<<elseif $args[0].general.map isnot undefined>>
-		"map":
-		<<set _validatorObject to settingsObjects("general")>>
-		{<<presetConfirm $args[0].general.map>>}
-	<</if>>
-	<<if $args[0].general isnot undefined>>
-		<span class="gold">}</span>
-		<br>
-	<</if>>
+		<<if $args[0].general isnot undefined>>
+			<span class="gold">"general":{</span>
+			<<set _validatorObject to settingsObjects("general")>>
+			<<presetConfirm $args[0].general>>
+		<</if>>
+		<<if $args[0].general is undefined>>
+		<<elseif $args[0].general.skinColor isnot undefined>>
+			"skinColour":
+			<<set _validatorObject to settingsObjects("general")>>
+			{<<presetConfirm $args[0].general.skinColor>>}
+		<</if>>
+		<<if $args[0].general is undefined>>
+		<<elseif $args[0].general.map isnot undefined>>
+			"map":
+			<<set _validatorObject to settingsObjects("general")>>
+			{<<presetConfirm $args[0].general.map>>}
+		<</if>>
+		<<if $args[0].general isnot undefined>>
+			<span class="gold">}</span>
+			<br>
+		<</if>>
 
-	<<if $args[0].npc isnot undefined>>
-		<span class="gold">"npc":{</span>
-		<<set _validatorObject to settingsObjects("npc")>>
-		<br>
-		<<for $_label, $_value range $args[0].npc>>
-			"<<print $_label>>":
-			{<<presetConfirm $_value $_label>>}
-		<</for>>
-		<span class="gold">}</span>
-	<</if>>
-</div>
+		<<if $args[0].npc isnot undefined>>
+			<span class="gold">"npc":{</span>
+			<<set _validatorObject to settingsObjects("npc")>>
+			<br>
+			<<for $_label, $_value range $args[0].npc>>
+				"<<print $_label>>":
+				{<<presetConfirm $_value $_label>>}
+			<</for>>
+			<span class="gold">}</span>
+		<</if>>
+	</div>
 <</if>>
 <</nobr>><</widget>>
 
@@ -180,6 +180,8 @@
 <<if $args[0]>>
 	<ul>
 	<<for $_label, $_value range $args[0]>>
+		<<unset _altValue>>
+		<<unset _altValue2>>
 		<<if ["player","skinColor","map"].includes($_label)>>
 			<<continue>>
 		<</if>>
@@ -188,34 +190,47 @@
 		<<set _object to _validatorObject[$_label]>>
 		<<if _object isnot undefined>>
 			<<set _valid to validateValue(_object, $_value)>>
+			<<if Object.keys(_object).includes("boolLetter")>>
+				<<print "<<set _oldValue to $" + $_label + ">>">>
+				<<if _oldValue is "t">>
+					<<set _altValue to "true">>
+				<<elseif _oldValue is "f">>
+					<<set _altValue to "false">>
+				<</if>>
+				<<if $_value is "t">>
+					<<set _altValue2 to "true">>
+				<<elseif $_value is "f">>
+					<<set _altValue2 to "false">>
+				<</if>>
+			<</if>>
 		<</if>>
 		<li>
 			<<switch $_label>>
 				<<case "numberify_enabled">>
-					Changes <<print $_label>> from <span class="green"><<print `$`+$_label>></span> to <span class="green">$_value</span> (Numbered link navigation)
+					Changes <<print $_label>> from <span class="green"><<print (_altValue isnot undefined ? _altValue :`$`+$_label)>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (Numbered link navigation)
 				<<case "dgchance">>
-					Changes <<print $_label>> from <span class="green"><<print `$`+$_label>></span> to <span class="green">$_value</span> (Percentage of women that have penises)
+					Changes <<print $_label>> from <span class="green"><<print (_altValue isnot undefined ? _altValue :`$`+$_label)>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (Percentage of women that have penises)
 				<<case "cbchance">>
-					Changes <<print $_label>> from <span class="green"><<print `$`+$_label>></span> to <span class="green">$_value</span> (Percentage of men that have vaginas)
+					Changes <<print $_label>> from <span class="green"><<print (_altValue isnot undefined ? _altValue :`$`+$_label)>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (Percentage of men that have vaginas)
 				<<case "timestyle">>
-					Changes <<print $_label>> from <span class="green"><<print $timestyle>></span> to <span class="green"><<print $_value>></span> (military is 24-hour, ampm is 12-hour)
+					Changes <<print $_label>> from <span class="green"><<print $timestyle>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (military is 24-hour, ampm is 12-hour)
 				<<case "natural" "range" "tanImgEnabled" "tanningEnabled">>
 					<<set _object to _validatorObject["skinColor"][$_label]>>
 					<<if _object isnot undefined>>
 						<<set _valid to validateValue(_object, $_value)>>
 					<</if>>
-					Changes <<print $_label>> from <span class="green"><<print `$skinColor.`+$_label>></span> to <span class="green">$_value</span>
+					Changes <<print $_label>> from <span class="green"><<print `$skinColor.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 				<<case "movement" "top" "markers">>
 					<<set _object to _validatorObject["map"][$_label]>>
 					<<if _object isnot undefined>>
 						<<set _valid to validateValue(_object, $_value)>>
 					<</if>>
-					Changes <<print $_label>> from <span class="green"><<print `$map.`+$_label>></span> to <span class="green">$_value</span>
+					Changes <<print $_label>> from <span class="green"><<print `$map.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 				<<case "pronoun" "gender" "penissize" "breastsize">>
 					<<if $args[1]>>
 						Changes <<print $_label>> from
 						<span class="green"><<print $NPCName[$NPCNameList.indexOf($args[1])][$_label]>></span>
-						to <span class="green">$_value</span>
+						to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 						<<if $_value is "none" and $passage is "Start">>
 							<<set _valid to true>>
 						<</if>>
@@ -224,30 +239,30 @@
 						<<if _object isnot undefined>>
 							<<set _valid to validateValue(_object, $_value)>>
 						<</if>>
-						Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green">$_value</span>
+						Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 					<<else>>
-						Changes <<print $_label>> from <span class="green"><<print `$`+$_label>></span> to <span class="green">$_value</span>
+						Changes <<print $_label>> from <span class="green"><<print (_altValue isnot undefined ? _altValue :`$`+$_label)>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 					<</if>>
 				<<case "gender_body">>
 					<<set _object to _validatorObject["player"][$_label]>>
 					<<if _object isnot undefined>>
 						<<set _valid to validateValue(_object, $_value)>>
 					<</if>>
-					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green">$_value</span> (Natural features)
+					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (Natural features)
 				<<case "ballsExist">>
 					<<set _object to _validatorObject["player"][$_label]>>
 					<<if _object isnot undefined>>
 						<<set _valid to validateValue(_object, $_value)>>
 					<</if>>
-					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green">$_value</span> (Hermaphrodite Testes)
+					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span> (Hermaphrodite Testes)
 				<<case "freckles">>
 					<<set _object to _validatorObject["player"][$_label]>>
 					<<if _object isnot undefined>>
 						<<set _valid to validateValue(_object, $_value)>>
 					<</if>>
-					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green">$_value</span>
+					Changes <<print $_label>> from <span class="green"><<print `$player.`+$_label>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 				<<default>>
-					Changes <<print $_label>> from <span class="green"><<print `$`+$_label>></span> to <span class="green">$_value</span>
+					Changes <<print $_label>> from <span class="green"><<print (_altValue isnot undefined ? _altValue :`$`+$_label)>></span> to <span class="green"><<print (_altValue2 isnot undefined ? _altValue2 : $_value)>></span>
 			<</switch>>
 			<<if _valid is undefined>>
 				<span class="red">(Setting is not recognised so will not be imported)</span>
