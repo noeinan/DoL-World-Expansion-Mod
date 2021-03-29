@@ -1,8 +1,8 @@
 :: Widgets Avery [widget]
 <<widget "streetavery">><<nobr>>
 
-<<if $NPCName[$NPCNameList.indexOf("Avery")].init isnot 1>><<set $NPCName[$NPCNameList.indexOf("Avery")].init to 1>>
-	<<npc Avery>><<generate2>><<generate3>>A <<person2>><<person>> blocks your path. You try to walk around <<him>>, but <<he>> steps in your way. "What's a <<girl>> like you doing walking alone?" <<he>> asks. "You're gonna get hurt." <<He>> grasps your arm and tries to pull you with <<him>>, until a <<person1>><<if $pronoun is "m">>man<<else>>woman<</if>> taps <<person2>><<him>> on the shoulder.
+<<if $NPCName[$NPCNameList.indexOf("Avery")].init isnot 1>>
+	<<npc Avery>><<initnpc Avery>><<generate2>><<generate3>>A <<person2>><<person>> blocks your path. You try to walk around <<him>>, but <<he>> steps in your way. "What's a <<girl>> like you doing walking alone?" <<he>> asks. "You're gonna get hurt." <<He>> grasps your arm and tries to pull you with <<him>>, until a <<person1>><<if $pronoun is "m">>man<<else>>woman<</if>> taps <<person2>><<him>> on the shoulder.
 	<br><br>
 
 	"Walk away," the newcomer says. "Now."
@@ -18,6 +18,14 @@
 	<<link [[Accept (0:30)|Park Lichen Accept]]>><<pass 30>><</link>>
 	<br>
 	<<link [[Refuse|Park Lichen Refuse]]>><</link>>
+	<br>
+<<elseif $NPCName[$NPCNameList.indexOf("Avery")].rage gte 96 and $averyragerevealed is 1>>
+	<<npc Avery>><<person1>>
+	You're walking along the street, casting a wary glance at it so often. Sure enough, you soon see a familiar car coming up to you. It's Avery.
+	<br><br>
+	<<link [[Hide in an alleyway|Avery Dismissal Intro]]>><<set $phase to 1>><</link>>
+	<br>
+	<<link [[Stay where you are|Avery Dismissal Intro]]>><<set $phase to 2>><</link>>
 	<br>
 <<elseif $averydatemissed is 1>><<set $averydatemissed to 0>>
 	<<if $NPCName[$NPCNameList.indexOf("Avery")].rage gte random(20, 100)>><<set $averyragerevealed to 1>>
@@ -131,6 +139,36 @@ Endearment:
 <</if>>
 <br><br>
 
+<</nobr>><</widget>>
+
+<!-- Dismisses Avery, cleans up anything unneeded and gives the dismissal message. -->
+<<widget "dismissAvery">><<nobr>>
+<<npcset Avery state "dismissed">>
+<<unset $averyPub>>
+<<unset $avery_location>>
+<<unset $averyCrimeTracker>>
+<<unset $averydate>>
+<<unset $averydateattended>>
+<<unset $averydatedone>>
+<<unset $averyschoolpickup>>
+<<set $averyDismissalSceneWait to 1>>
+<<if $loveInterest.primary is "Avery">>
+	<<if $loveInterest.secondary isnot "None">>
+		<<set $loveInterest.primary to $loveInterest.secondary>>
+		<<set $loveInterest.secondary to "None">>
+	<<else>>
+		<<set $loveInterest.primary to "None">>
+	<</if>>
+	<span class = "red">Avery is no longer your love interest.</span>
+<<elseif $loveInterest.secondary is "Avery">>
+	<<set $loveInterest.secondary to "None">>
+	<span class = "red">Avery is no longer your love interest.</span>
+<<elseif $dateCount.Avery gte 3>>
+	<span class = "red">Avery can no longer be claimed as your love interest.</span>
+<<else>>
+	<span class = "red">Avery has moved on.</span>
+<</if>>
+<br><br>
 <</nobr>><</widget>>
 
 :: Street Avery Car Apologise [nobr]
@@ -317,7 +355,7 @@ Avery slams the door after you, then gets in the front. The doors lock as you dr
 	<<neutral 1>>
 	<<molested>>
 
-	<<maninit>><<set $enemytrust -= 40>><<set $enemyanger += $averyrage>>
+	<<maninit>><<set $enemytrust -= 40>><<set $enemyanger += $NPCName[$NPCNameList.indexOf("Avery")].rage>>
 <</if>>
 
 <<effects>>
@@ -392,7 +430,7 @@ Avery slams the door after you, then gets in the front. The doors lock as you dr
 <<else>>
 	says.
 <</if>>
-
+<<set $averyLastApp to $player.gender_appearance>>
 <<if $worn.upper.type.includes("formal") or $worn.lower.type.includes("formal")>>
 	"You look <<if $player.gender_appearance is "m">>handsome<<else>>beautiful<</if>>."
 	<br><br>
@@ -3361,3 +3399,384 @@ You lean into Avery, placing a hand on <<his>> lap.
 	<<link [[Next|Domus Street]]>><<set $eventskip to 1>><</link>>
 	<br>
 <</if>>
+
+:: Avery Dismissal Intro [nobr]
+<<effects>>
+<<if $phase is 1>>
+	You duck into the nearby alleyway and wait, but Avery does not stop driving. Running out, you find that there's a
+<<else>>
+	The car passes you by without stopping. You see a
+<</if>>
+<<if $averyLastApp>>
+	<<generateNPC 2 t $averyLastApp>>
+<<else>>
+	<<generateNPC 2 t $player.gender_appearance>>
+<</if>>
+<<person2>><<person>> sitting in the front seat.
+<<if $phase is 2>>
+	Avery was talking to <<him>> while keeping <<person1>><<his>> eyes on the road. If <<he>> saw you, <<he>> had not given away any indication.
+<</if>>
+<<saveNPC 1 avery_sidepiece>>
+<<set $averyPub to 1>>
+<<if $bus is "harvest">>
+	They slow to a stop some way down, <span class="blue">across the street from the pub.</span>
+	<br><br>
+
+	<<endevent>>
+	<<destinationeventend>>
+<<else>>
+	Judging by the direction, they're headed towards <span class="blue">Harvest Street.</span>
+	<br><br>
+
+	<<endevent>>
+	<<destinationeventend>>
+<</if>>
+
+:: Avery Dismissal Restroom [nobr]
+<<effects>>
+<<person2>>
+You keep away from the bar and enter the restroom, finding the <<person>> <<if $pronoun is "m">>adjusting <<his>> clothes<<else>>primping <<himself>><</if>> anxiously by the sinks.
+<<if $player.gender_appearance isnot $pronoun>>
+	<<He>> seems taken back from seeing you in the wrong gender's bathroom, but relaxes after recognising you. <<He>> goes back to fixing <<his>> appearance in the mirror.
+<<else>>
+	<<He>> glances at you as you enter and recognises you, waving a friendly greeting.
+<</if>>
+<br><br>
+<<link [[Encourage date|Avery Dismissal Encourage]]>><<trauma 6>><<stress 6>><<hope 2>><</link>><<gtrauma>><<gstress>><<ghope>><br>
+<<link [[Warn about Avery|Avery Dismissal Warn]]>><<trauma -20>><<stress -20>><<hope -1>><</link>><<lltrauma>><<llstress>><<lhope>><br>
+<<link [[Threaten|Avery Dismissal Threaten]]>><<stress 6>><<reb -1>><</link>><<gstress>><<lreb>><br>
+
+:: Avery Dismissal Encourage [nobr]
+<<effects>>
+<<if $submissive gte 1150>>
+	"Are you nervous about your date outside?" you ask. "Don't be. I think you two will look good together."
+<<elseif $submissive lte 850>>
+	"You're behind on Bailey's payments, right?" you ask. "I bet that <<nnpc_gender "Avery">> pays well. Really well."
+<<else>>
+	"Who's the cutie with you?" you lie, "Seems like quite the catch! I'm jealous."
+<</if>>
+<br><br>
+You keep talking up Avery without giving away too much. Though you're worried that you may have come across as too eager, the <<person>> seems to be mollified by your words.
+<<He>> thanks you for the encouragement and leaves the restroom with a new spring in <<his>> step. <<ghope>>
+<br><br>
+
+You wait a few minutes, and leave the restroom after <<him>>. You see <<him>> leaning into Avery at the bar, and they both look happy.
+<br><br>
+
+You can only hope that Avery will treat <<him>> better than <<nnpc_he "Avery">> had treated you.
+<br><br>
+<<set $averyDismissalScene to 1>>
+<<dismissAvery>>
+
+<<link [[Leave the pub|Harvest Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Avery Dismissal Warn [nobr]
+<<effects>>
+<<person1>>
+<<if $submissive gte 1150>>
+	"Avery is dangerous," you plead. "Please don't continue this. <<he>> will hurt you."
+<<elseif $submissive lte 850>>
+	"There are easier targets out there than Avery," you say. "That rich sleaze? Not worth it."
+<<else>>
+	"Be careful," you say, "Avery's not as charming as <<he>> looks."
+<</if>>
+<br><br>
+"How did you know <<his>> name?" The <<person2>><<person>> asks. You spend the next few minutes describing the dates you had with Avery. You then show <<him>> some of the bruises you earned from your previous fights, and briefly share your experiences when you refused Avery's advances. 
+The <<person>> nods, shocked at the events you described. 
+<<if $loft_kylar>>
+	<<He>> then lifts <<his>><<if $pronoun is "m">>shirt<<else>>dress<</if>>, revealing a can of pepper spray. "I'd like to see <<nnpc_him "Avery">> try that with me... but you're right,"
+<<elseif $orphan_hope lte 0>>
+	"I really needed the money from this... but you're right, it isn't worth it,"
+<<else>>
+	"Thank you for warning me,"
+<</if>>
+<<he>> says, "What should we do now?" <<lhope>>
+<br><br>
+You suggest that <<he>> leaves the bar while you distract Avery. <<He>> squeezes your forearm in solidarity as the two of you go your separate ways.
+<br><br>
+<<set $averyDismissalScene to 2>>
+
+<<link [[Next|Avery Dismissal Confront]]>><</link>>
+<br>
+
+:: Avery Dismissal Threaten [nobr]
+<<effects>>
+<<if $submissive gte 1150>>
+	"You should stop talking to the <<nnpc_gender "Avery">> outside," you say with determination. "I insist."
+<<elseif $submissive lte 850>>
+	You walk up to the <<person>> and order, "Avery is mine. Stay away from <<nnpc_him "Avery">>!"
+<<else>>
+	"I wouldn't continue this date of yours," you say. "if you know what's best for you."
+<</if>>
+
+The <<person>> sees your menacing gaze, decides that it's not a good idea to further provoke you, and flees the bathroom. After a few moments of fixing your appearance in the mirror, you leave to find your lover. <<lreb>>
+<br><br>
+
+<<link [[Next|Avery Dismissal Bar]]>><</link>>
+<br>
+
+:: Avery Dismissal Bar [nobr]
+<<effects>>
+You slide into the seat the <<person2>><<person>> abandoned. <span class="green">She left her drink behind as well.</span> Avery notices you and frowns, but doesn't do anything else, looking straight ahead.
+You wonder how different this would go if you weren't in public.
+<br><br>
+<<person1>>
+<<if $submissive gte 1150>>
+	The two of you sit in silence for a while. You have no idea how to proceed, now that <<hes>> right next to you.
+<<elseif $submissive lte 850>>
+	"How could you?" you spit in anger. "How dare you see another <<person2>><<personsimple>><<person1>> behind my back?"
+<<else>>
+	"I know we aren't exactly exclusive," you try for a joke, "But surely I'm enough of a handful for you?"
+<</if>>
+<br><br>
+"I thought this was what you wanted," Avery finally says, "For me to leave you alone. Perhaps you could extend the same civility towards me."
+<<He>> sips <<his>> wine casually, but you can see that <<he>> has a tight grip on <<his>> glass. 
+<br><br>
+
+<<link [[Apologise|Avery Dismissal Apologise]]>><</link>><br>
+<<link [[Break-up with Avery|Avery Dismissal Break]]>><</link>><br>
+<<link [[Throw the drink in Avery's face|Avery Dismissal Throw]]>><<trauma -20>><<stress -20>><</link>><<lltrauma>><<llstress>><br>
+
+:: Avery Dismissal Confront [nobr]
+<<effects>>
+<<person1>>
+You walk right up to the bar where Avery is. <<He>> notices your approach, but doesn't move from <<his>> seat.
+<<person2>>
+<<if $submissive gte 1150>>
+	"I warned <<him>> about you," you say. "You won't hurt any more people."
+<<elseif $submissive lte 850>>
+	"<<Hes>> not coming back," you proudly announce. "I hate being a snitch, but your ugly face deserves it."
+<<else>>
+	"<<Hes>> not coming back," you announce. "I warned <<him>> about your little rage issues."
+<</if>>
+<<endevent>>
+<<npc Avery>><<person1>>
+<br><br>
+You step backwards, about to run after making your proclamation, but Avery is faster. <<He>> grabs your arm, drags you to a secluded area of the pub, and throws you onto the ground. <<trauma 20>><<pain 3>><<ggtrauma>><<gpain>>
+<br><br>
+
+<<link [[Next|Avery Dismissal Fight]]>><<set $fightstart to 1>><</link>>
+<br>
+
+:: Avery Dismissal Break [nobr]
+<<effects>>
+<<if $NPCName[$NPCNameList.indexOf("Avery")].love lt 50>>
+	<<if $submissive gte 1150>>
+		"Okay," you say. "It's for the best. I hope you treat <<person2>><<him>> better than you treated me. Goodbye."
+	<<elseif $submissive lte 850>>
+		"Finally!" you reply. "You're someone else's problem now. See you never!"
+	<<else>>
+		"Good," you reply. "I'm glad that you can take the hint."
+	<</if>>
+<<else>>
+	<<if $submissive gte 1150>>
+		You feel like you're about to cry. "Thank you for taking care of me," you say in place of a goodbye.
+	<<elseif $submissive lte 850>>
+		"Fine. Just know that you're not breaking up with me, I'm the one who's breaking up with you!" you exclaim in a show of bravado. Your outburst is ignored.
+	<<else>>
+		"Sure. I know when I'm not wanted too," you reply. "See you around, I guess. Or maybe not. Whatever."
+	<</if>>
+<</if>>
+<br><br>
+You raise up from your seat and walk away, feeling a strange sense of calm now that you'll likely never see Avery again. <<trauma -50>><<stress -100>><<llltrauma>><<lllstress>>
+<br><br>
+<<set $averyDismissalScene to 1>>
+<<dismissAvery>>
+
+<<link [[Leave the pub|Harvest Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Avery Dismissal Apologise [nobr]
+<<effects>>
+<<person1>>
+<<if $submissive gte 1150>>
+	"I'm sorry for being bad," you apologise, looking down at the floor shamefully. "Really, I... I didn't mean for this to happen..."
+<<elseif $submissive lte 850>>
+	"Come on, give me a second chance?" you say.
+<<else>>
+	"Maybe we can try and talk it out. I still want to fix this," you say.
+<</if>>
+<br><br>
+Avery turns and faces you. "I had given you plenty of chances to fix your behaviour, and yet you never did. Why should I stay with an insolent <<girl>> like you?"
+<<He>> stops paying attention to you and returns to <<his>> glass of wine. The conversation is clearly over.
+<br><br>
+
+<<link [[Get on your knees and beg|Avery Dismissal Beg]]>><<trauma 3>><<stress 3>><<npcincr Avery love 5>><<npcincr Avery rage -70>><</link>><<gtrauma>><<gstress>><<gglove>><<lllarage>><br>
+<<link [[Break-up with Avery|Avery Dismissal Break]]>><</link>><br>
+<<link [[Throw the drink in Avery's face|Avery Dismissal Throw]]>><<trauma -20>><<stress -20>><</link>><<lltrauma>><<llstress>><br>
+
+:: Avery Dismissal Beg [nobr]
+<<effects>>
+<<person1>>
+You get down on your knees in front of Avery. The few other people currently in the pub look towards the bar in interest, waiting to see how this will play out.
+They're whispering amongst themselves, but the distance makes it hard to hear exactly what they're saying. You keep your eyes on the floor and stay in place, wondering how <<he>> will respond.
+
+<br><br>
+<<if $NPCName[$NPCNameList.indexOf("Avery")].love lt 25>>
+	Moments later, you hear Avery standing up from <<his>> chair. You then hear the <<if $pronoun is "m">>steps of <<his>> shoes<<else>>clicking of <<his>> heels<</if>> as <<he>> leaves the pub. <<stress 20>><<ggstress>>
+	<br><br>
+
+	You stay kneeling, hoping that that <<he>> will return, hoping that you haven't seen the last of <<him>>. The bartender eventually comes over and asks you to leave.
+	<br><br>
+	<<set $averyDismissalScene to 1>>
+	<<dismissAvery>>
+
+	<<link [[Leave the pub|Harvest Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	A few quiet moments past. You feel a pair of hands grasping under your shoulders, and bringing you off the floor. You look up and see that it's Avery.
+	<<He>> places a hand on your cheek and gazes at you tenderly.
+	<br><br>
+	"How can I refuse such a devoted gesture?" <<he>> says, "But you're embarrassing yourself. There are better ways to show how sorry you are. Come with me."
+	<<He>> takes your hand and leads you outside. <<takeHandholdingVirginity "Avery" "romantic">>
+	<<endevent>><<npc Avery>><<person1>>
+	<br><br>
+	<<link[[Next|Avery Dismissal Sex]]>><<set $sexstart to 1>><</link>>
+	<br>
+<</if>>
+
+:: Avery Dismissal Throw [nobr]
+<<effects>>
+<<endevent>>
+<<npc Avery>><<person1>>
+Angered by his words, <span class="red">you pick up the abandoned drink and throw it onto Avery's face.</span>
+You know you'll regret your actions immediately afterwards, but seeing Avery's face and clothes drenched in wine brings you a thrilling satisfaction.
+<br><br>
+
+Sure enough, Avery responds by grabbing your arm. <<He>> drags you to a secluded area of the pub, and throws you onto the ground. <<trauma 20>><<pain 3>><<ggtrauma>><<gpain>>
+<<set $averyDismissalScene to 1>>
+<br><br>
+
+<<link [[Next|Avery Dismissal Fight]]>><<set $fightstart to 1>><</link>>
+<br>
+
+:: Avery Dismissal Fight [nobr]
+<<if $fightstart is 1>>
+	<<set $fightstart to 0>>
+	<<neutral 1>>
+	<<maninit>>
+	<<set $enemytrust -= 100>>
+	<<set $enemyanger += 200>>
+	<<set $rescue to 1>>
+	<<npcidlegenitals>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Avery Dismissal Fight Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Avery Dismissal Fight Finish]]>><</link>></span><<nexttext>>
+<<elseif $pain gte 100 and $willpowerpain is 0>>
+	<span id="next"><<link [[Next|Avery Dismissal Fight Finish]]>><</link>></span><<nexttext>>
+<<elseif $rescue is 1 and $alarm is 1>>
+	<span id="next"><<link [[Next|Avery Dismissal Fight Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Avery Dismissal Fight]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Avery Dismissal Fight Finish [nobr]
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	You take the moment to push Avery off you. "It’s over!" you declare to <<him>>. <<tearful>> you back off.
+	<br><br>
+	The other patrons of the bar stare after you, but you ignore them as you walk out.
+<<elseif $enemyhealth lte 0>>
+	Avery recoils and drops to the floor. "Never touch me, or anyone else from the orphanage, ever again!" you shout at <<him>>.
+	<<tearful>> you flee the scene.
+	<br><br>
+	You see a few of the patrons staring at you with concern, but you ignore their gazes as you rush outside.
+<<elseif $rescue is 1 and $alarm is 1>><<set $rescued += 1>>
+	Your calls attract the attention of the bartender, a <<generate2>><<person2>><<person>>. <<He>> grabs Avery and pulls <<him>> off of you. You call out your thanks to <<him>> as you run out of the bar.
+	You hear <<him>> yelling something about calling the police, but you're outside before hearing the rest.
+<<else>>
+	You withdraw yourself into a ball, too overwhelmed to continue to fight back Avery's assault.
+	<<He>> spits on your face and stares at your defeated form as <<he>> smooths <<his>> disheveled clothes back down. 
+	<br><br>
+	"Goodbye." <<He>> kicks you one last time. You watch as <<he>> strides out of the pub. 
+	You lay still and try your best not to think of the pain. The bartender, a <<generate2>><<person2>><<person>>, comes over and helps you up to a nearby seat.
+	<<Hes>> concerned, but you brush off <<his>> offer of calling the cops. <<He>> leaves you be after bringing you a glass of water.
+<</if>>
+<<clotheson>>
+<<endcombat>>
+You doubt you will ever see Avery again.
+<br><br>
+<<dismissAvery>>
+<<link [[Leave the pub|Harvest Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Avery Dismissal Sex [nobr]
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $enemytrust -= 200>>
+	Avery takes you to <<his>> car and opens the back door. <<He>> pushes you gently onto the back seat as <<he>> touches you all over.
+<</if>>
+
+<<effects>>
+<<effectsman>><<man>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Avery Dismissal Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Avery Dismissal Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Avery Dismissal Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Avery Dismissal Sex Finish [nobr]
+<<set $outside to 0>><<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	Avery holds you close. You rest your head on <<his>> chest and catch your breath.
+
+	<<if $submissive gte 1150>>
+		"I will never make you angry again," you promise.
+	<<elseif $submissive lte 850>>
+		"I missed this. I really did," you grudgingly admit.
+	<<else>>
+		"I wish we had never fought," you finally say.
+	<</if>>
+	<br><br>
+	<<He>> doesn't reply, but <<he>> keeps stroking your back. The two of you stay pressed together for a long while. <<lllarage>>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Avery Dismissal Home]]>><</link>>
+<<else>>
+	Avery's face slams into the steering wheel, causing a loud honk. <<He>> manages to push you out of the car onto the hard pavement.
+	"After all I did for you!" <<he>> shouts at you. <<He>> speeds away, leaving you coughing in a cloud of dust and exhaust.
+	<<clotheson>>
+	<<endcombat>>
+	You doubt you will ever see Avery again.
+	<br><br>
+	<<set $averyDismissalScene to 1>>
+	<<dismissAvery>>
+	<<link [[Next|Harvest Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
+
+:: Avery Dismissal Home [nobr]
+<<effects>>
+<<npc Avery>><<person1>>
+You are driven home by Avery. The two of you didn't talk at all on the way, but the quiet is a peaceful one.
+<br><br>
+You step back outside and wave goodbye as Avery's car speeds away. You expect that <<he>> will find you to settle on a date next week, as always.
+<br><br>
+<span class="green"><i><<Hes>> forgiven you, for now. It'd be best to not make <<him>> angry again.</i></span>
+<br><br>
+<<unset $averyPub>>
+<<unset $averyDismissalScene>>
+<<link [[Next|Domus Street]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>

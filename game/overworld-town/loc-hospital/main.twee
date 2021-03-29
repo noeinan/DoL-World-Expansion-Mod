@@ -358,7 +358,7 @@ A nurse helps you to your feet, and you soon find yourself being discharged.
 It's dark out. Maybe you should wait until morning.
 <br><br>
 
-<<link [[Wait|Hospital Wait]]>><<pass 10>><<endevent>><</link>><<ltiredness>>
+<<link [[Wait|Hospital Wait]]>><<pass 10>><<endevent>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
 <br>
 
 	<<if $renttime lte 0>>
@@ -415,7 +415,7 @@ A nurse helps you to your feet, and you soon find yourself being discharged.
 It's dark out. Maybe you should wait until morning.
 <br><br>
 
-<<link [[Wait|Hospital Wait]]>><<pass 10>><<endevent>><</link>><<ltiredness>>
+<<link [[Wait|Hospital Wait]]>><<pass 10>><<endevent>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
 <br>
 
 	<<if $renttime lte 0>>
@@ -633,46 +633,19 @@ You fall to the ground, too hurt to move.
 
 :: Hospital Wait [nobr]
 <<set $outside to 0>><<set $location to "hospital">><<effects>>
-
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
 <</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
-<<if $daystate is "night">>
-<<pass 1 hour>><<tiredness -12>><<effects>>
-<</if>>
+<<set _hour to clone($hour)>>
+<<for _i to 0; _i lt 12; _i++>>
+	<<set _hour++>>
+	<<if _hour % 24 gte 6 and _hour % 24 lte 9>>
+		<<set _multi to _hour - $hour>>
+		<<pass `1 * _multi` hour>><<tiredness `-12 * _multi`>><<effects>>
+		<<break>>
+	<</if>>
+<</for>>
 
 The nurse lets you stay in the waiting room until the sun rises.
 <br><br>
