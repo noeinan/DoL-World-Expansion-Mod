@@ -333,8 +333,8 @@
 								<<else>>
 									<span class="clothing-stats-text">W.</span>
 								<</if>>
-								<<set _warInf = getWarmthInfo(_item.warmth)>>
-								<<for _i = 0; _i lt 4; _i++>>
+								<<set _warInf = getWarmthInfo(getTrueWarmth(_item))>>
+								<<for _i = 0; _i lt 5; _i++>>
 									<span @class="'stats-ball ' + (_i < _warInf[0] ? _warInf[1] : '')">&nbsp;</span>
 								<</for>>
 							</div>
@@ -406,9 +406,10 @@
 		<<elseif _temp_choice.gender is "f">>
 			<span class="pink">For girls.</span>
 		<</if>>
-		<<print _temp_choice.description>> Costs <span class="gold">£<<print _temp_choice.cost * $clothesPrice / 100>>.</span>
+		<<print _temp_choice.description>> Costs <span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>>.</span>
 		<br>
-		<<warmth _temp_choice.warmth>>
+		<<set _truewarmth = getTrueWarmth(_temp_choice)>>
+		<<warmth _truewarmth>>
 		<br><br>
 		<<shoptraits>>
 		<<set _slimeSlots to ["over_upper","over_lower","upper","lower","under_upper","under_lower"]>>
@@ -482,7 +483,7 @@
 							<<updatesidebardescription>>
 							<<updateallure>>
 							<<updatewarmthscale>>
-							<<updatewarmthdescription>>
+							<<if $shopDefaults.disableReturn>><<updatewarmthdescription>><</if>>
 							<<run updateMoment()>>
 						<</link>><<crime>>
 						<br>
@@ -503,7 +504,7 @@
 					<span class="red">You can't carry any more clothes with you.</span> You should take them to your wardrobe.
 					<br>
 				<</if>>
-			<<elseif $money >= _temp_choice.cost * $clothesPrice / 100>>
+			<<elseif $money >= _temp_choice.cost * $clothesPrice>>
 				<<if _cursedPrevent>>
 					<<printcursed>>
 				<</if>>
@@ -518,7 +519,7 @@
 								<<link "Buy and wear">>
 									<<clothingReset $clothingShopSlot>>
 									<<shopbuyv2 $clothingShopSlot "buy" "wear" $clothes_choice>>
-									<<set $money -= _temp_choice.cost * $clothesPrice / 100>>
+									<<set $money -= _temp_choice.cost * $clothesPrice>>
 									<<unset $clothes_choice>>
 									<<updateclotheslist>>
 									<<updatesidebarimg>>
@@ -526,10 +527,10 @@
 									<<updatesidebardescription>>
 									<<updateallure>>
 									<<updatewarmthscale>>
-									<<updatewarmthdescription>>
+									<<if $shopDefaults.disableReturn>><<updatewarmthdescription>><</if>>
 									<<run updateMoment()>>
 								<</link>>
-								<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice / 100>></span>)</span>
+								<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>></span>)</span>
 							<</if>>
 						</div>
 					</div>
@@ -583,14 +584,14 @@
 <</nobr>><</widget>>
 
 <<widget "printbuysendhome">><<nobr>>
-	<<set _canAfford = ($money >= _temp_choice.cost * $clothesPrice * $buyMultiple / 100 and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
+	<<set _canAfford = ($money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
 	<div class="buy-button">
 		<div @class="'buy-button-inner buy-multiple div-link ' + _canAfford">
 				<<link `'Buy and send home × ' + $buyMultiple`>>
-					<<if $money >= _temp_choice.cost * $clothesPrice * $buyMultiple / 100 and _spaceLeft >= $buyMultiple>>
+					<<if $money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple>>
 						<<clothingReset $clothingShopSlot>>
 						<<shopbuyv2 $clothingShopSlot "buy" "send" $clothes_choice $buyMultiple>>
-						<<set $money -= _temp_choice.cost * $clothesPrice * $buyMultiple / 100>>
+						<<set $money -= _temp_choice.cost * $clothesPrice * $buyMultiple>>
 						<<if $shopDefaults.disableReturn is false>>
 							<<unset $clothes_choice>>
 						<</if>>
@@ -600,7 +601,7 @@
 						<<run updateMoment()>>
 					<</if>>
 				<</link>>
-				<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * $buyMultiple / 100>></span>)</span>
+				<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01>></span>)</span>
 		</div>
 
 		<div id="buy-multiple-slider" class="buy-multiple-slider">
@@ -615,8 +616,8 @@
 				text.push($buyMultiple);
 				el.text(text.join(' '));
 
-				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + _temp_choice.cost * $clothesPrice * $buyMultiple / 100);
-				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < _temp_choice.cost * $clothesPrice * $buyMultiple / 100 or _spaceLeft < $buyMultiple);
+				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01);
+				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < _temp_choice.cost * $clothesPrice * $buyMultiple or _spaceLeft < $buyMultiple);
 			});
 		})>>
 	</div>
@@ -892,8 +893,15 @@
 
 				<<unset _styleP>>
 				<<unset _styleS>>
-				<!-- Skips 2nd iteration if not an outfit -->
-				<<for _outfit = 0; _outfit < 2; _outfit++>>
+				<!-- Draw primary and all secondary items -->
+				<<set _items_list = [{slot: _slot, item: _item}]>>
+				<<if _item.outfitPrimary>>
+					<<set _items_list = _items_list.concat(Object.keys(_item.outfitPrimary).map(s => { return {slot: s, item: setup.clothes[s].find(x => x.name == _item.outfitPrimary[s])} }))>>
+				<</if>>
+				<<for _clothing range _items_list>>
+					<<set _item = _clothing.item>>
+					<<set _slot = _clothing.slot>>
+
 					<<if _col is "custom">>
 						<<set _styleP = getCustomColourStyle('primary')>>
 					<</if>>
@@ -935,16 +943,6 @@
 							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/right_acc.png'">
 						<</if>>
 					</div>
-
-					<!-- Find lower piece of an outfit and render it in the second iteration of for -->
-					<<if _item.set != _slot and _slot.includes('upper')>>
-						<<set _slot = _slot.replace('upper', 'lower')>>
-						<<set _item = setup.clothes[_slot].find(x => x.set == _item.set)>>
-						<<if !_item>><<break>><</if>>
-					<<else>>
-						<!-- Not an outfit, don't do the second iteration -->
-						<<break>>
-					<</if>>
 				<</for>>
 			</div>
 			<div class="div-link mannequin-gender-textbutton no-numberify">
