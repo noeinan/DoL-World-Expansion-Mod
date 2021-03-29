@@ -31,6 +31,8 @@ window.getRevealInfo = function (reveal) {
 }
 
 window.getWarmthInfo = function (warmth) {
+	if (warmth >= 75)
+		return [5, "warm-4"];
 	if (warmth >= 50)
 		return [4, "warm-3"];
 	if (warmth >= 25)
@@ -38,6 +40,33 @@ window.getWarmthInfo = function (warmth) {
 	if (warmth >= 10)
 		return [2, "warm-1"];
     return [1, "warm-0"];
+}
+
+// for outfits it adds the lower piece's warmth too
+window.getTrueWarmth = function (item) {
+    let warmth = item.warmth || 0;
+    
+    if (item.outfitPrimary) {
+        // sum of warmth of every secondary piece
+        // outfitPrimary looks like this {'lower': 'item_name', 'head': 'item_name'}
+        warmth += Object.keys(item.outfitPrimary) // loop through secondary items list
+        .map(x => setup.clothes[x].find(z => z.name == item.outfitPrimary[x])) // find items in setup.clothes
+        .reduce((sum, x) => sum + (x.warmth || 0), 0); // calculate sum of their warmth field
+    }
+    
+    if (item.outfitSecondary) {
+        if (item.outfitSecondary.length % 2 != 0)
+            console.log("WARNING: " + item.name + " has bad .outfitSecondary data!");
+        
+        // outfitSecondary looks like this ['upper', 'item_name', 'head', 'item_name']
+        item.outfitSecondary.forEach((x, i) => {
+            if (i % 2 == 0) {
+                warmth += setup.clothes[x].find(z => z.name == item.outfitSecondary[i + 1]).warmth || 0;
+            }
+        });
+    }
+
+    return warmth;
 }
 
 window.clothingSlotToIconName = function (slotName, outfits) {
@@ -209,17 +238,27 @@ window.getWarmthScaleData = function(newWarmth) {
 
 window.getWarmthWithOtherClothing = function(slot, clothingId) {
     let newClothing = setup.clothes[slot][clothingId];
-    let newIsOutfit = newClothing.set && newClothing.set != slot;
-    let oldIsOutfit = State.variables.worn[slot].set && State.variables.worn[slot].set != slot;
-    let secondSlot = slot.contains('upper') ? slot.replace('upper', 'lower') : slot.replace('lower', 'upper');
+    let worn = State.variables.worn;
 
-    let newWarmth = State.variables.warmth - State.variables.worn[slot].warmth;
-    if (oldIsOutfit)
-        newWarmth -= State.variables.worn[secondSlot].warmth;
+    let newWarmth = State.variables.warmth + getTrueWarmth(newClothing);
     
-    newWarmth += newClothing.warmth;
-    if (newIsOutfit)
-        newWarmth += setup.clothes[secondSlot].find(x => x.set == newClothing.set).warmth;
-    
+    // subtract warmth of all clothes that would be taken off
+    if (newClothing.outfitPrimary) {
+        //newWarmth -= Object.keys(newClothing.outfitPrimary).reduce((sum, x) => sum + (worn[x].warmth || 0), 0);
+        
+        // compile a list of all primary clothes to be removed. It implies that item may have only one primary piece
+        let clothesToRemove = [slot, ...Object.keys(newClothing.outfitPrimary)].map(x => worn[x].outfitSecondary ? setup.clothes[worn[x].outfitSecondary[0]].find(z => z.name == worn[x].outfitSecondary[1]) : worn[x])
+        let removedClothes = new Set();
+        
+        clothesToRemove.forEach(x => {
+            if (!removedClothes.has(x.name)) {
+                newWarmth -= getTrueWarmth(x);
+                removedClothes.add(x.name);
+            }
+        });
+    }
+    else
+        newWarmth -= worn[slot];
+
     return newWarmth;
 }
