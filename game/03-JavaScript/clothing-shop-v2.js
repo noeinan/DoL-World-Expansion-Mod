@@ -119,7 +119,7 @@ window.updateMannequin = function(slot = "") {
 window.getCustomColourStyle = function (type, valueOnly = false) {
     if (type != 'primary' && type != 'secondary')
         return;
-    return (valueOnly ? '' : 'filter: ') + 'hue-rotate(' + State.variables.customColors.color[type] + 'deg) brightness(' + State.variables.customColors.brightness[type] + ') saturate(' + State.variables.customColors.saturation[type] + ') contrast(' + State.variables.customColors.contrast[type] + ')' + (valueOnly ? '' : ';');
+    return (valueOnly ? '' : 'filter: ') + 'hue-rotate(' + State.variables.customColors.color[type] + 'deg) saturate(' + State.variables.customColors.saturation[type] + ') brightness(' + State.variables.customColors.brightness[type] + ') contrast(' + State.variables.customColors.contrast[type] + ')' + (valueOnly ? '' : ';');
 }
 
 window.saveCustomColourPreset = function (slot = "primary") {
