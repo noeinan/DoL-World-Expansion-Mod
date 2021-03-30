@@ -258,7 +258,7 @@ window.getWarmthWithOtherClothing = function(slot, clothingId) {
         });
     }
     else
-        newWarmth -= worn[slot];
+        newWarmth -= worn[slot].warmth;
 
     return newWarmth;
 }
