@@ -50,6 +50,7 @@ window.getTrueWarmth = function (item) {
         // sum of warmth of every secondary piece
         // outfitPrimary looks like this {'lower': 'item_name', 'head': 'item_name'}
         warmth += Object.keys(item.outfitPrimary) // loop through secondary items list
+        .filter(x => item.outfitPrimary[x] != "broken") // filter out broken pieces
         .map(x => setup.clothes[x].find(z => z.name == item.outfitPrimary[x])) // find items in setup.clothes
         .reduce((sum, x) => sum + (x.warmth || 0), 0); // calculate sum of their warmth field
     }
@@ -60,7 +61,7 @@ window.getTrueWarmth = function (item) {
         
         // outfitSecondary looks like this ['upper', 'item_name', 'head', 'item_name']
         item.outfitSecondary.forEach((x, i) => {
-            if (i % 2 == 0) {
+            if (i % 2 == 0 && item.outfitSecondary[i + 1] != "broken") {
                 warmth += setup.clothes[x].find(z => z.name == item.outfitSecondary[i + 1]).warmth || 0;
             }
         });
@@ -247,7 +248,7 @@ window.getWarmthWithOtherClothing = function(slot, clothingId) {
         //newWarmth -= Object.keys(newClothing.outfitPrimary).reduce((sum, x) => sum + (worn[x].warmth || 0), 0);
         
         // compile a list of all primary clothes to be removed. It implies that item may have only one primary piece
-        let clothesToRemove = [slot, ...Object.keys(newClothing.outfitPrimary)].map(x => worn[x].outfitSecondary ? setup.clothes[worn[x].outfitSecondary[0]].find(z => z.name == worn[x].outfitSecondary[1]) : worn[x])
+        let clothesToRemove = [slot, ...Object.keys(newClothing.outfitPrimary)].map(x => (worn[x].outfitSecondary && worn[x].outfitSecondary[1] != "broken") ? setup.clothes[worn[x].outfitSecondary[0]].find(z => z.name == worn[x].outfitSecondary[1]) : worn[x])
         let removedClothes = new Set();
         
         clothesToRemove.forEach(x => {
