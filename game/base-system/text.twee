@@ -121,6 +121,16 @@
 
 <<widget "lowerbodyparts">><<print either("hands", "feet", "thighs", "bottom")>><</widget>>
 
+<<widget "overupperword">><<nobr>><<silently>>
+<<if $worn.over_upper.word is "a">><<set _text_output to "a">><</if>>
+<<if $worn.over_upper.word is "n">><<set _text_output to "">><</if>>
+<</silently>>_text_output <</nobr>><</widget>>
+
+<<widget "overlowerword">><<nobr>><<silently>>
+<<if $worn.over_lower.word is "a">><<set _text_output to "a">><</if>>
+<<if $worn.over_lower.word is "n">><<set _text_output to "">><</if>>
+<</silently>>_text_output <</nobr>><</widget>>
+
 <<widget "upperword">><<nobr>><<silently>>
 <<if $worn.upper.name is "oversized sweater">>
 <<set _text_output to "an">>
@@ -150,8 +160,18 @@
 <<if $worn.genitals.word is "n">><<set _text_output to "">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
+<<widget "overupperplural">><<nobr>><<silently>>
+<<if $worn.over_upper.plural is 1>><<set _text_output to "are">>
+<<else>><<set _text_output to "is">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
 <<widget "upperplural">><<nobr>><<silently>>
 <<if $worn.upper.plural is 1>><<set _text_output to "are">>
+<<else>><<set _text_output to "is">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "overlowerplural">><<nobr>><<silently>>
+<<if $worn.over_lower.plural is 1>><<set _text_output to "are">>
 <<else>><<set _text_output to "is">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
@@ -175,6 +195,16 @@
 <<else>><<set _text_output to "is">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
+<<widget "overupperitis">><<nobr>><<silently>>
+<<if $worn.over_upper.plural is 1>><<set _text_output to "they are">>
+<<else>><<set _text_output to "it is">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "overloweritis">><<nobr>><<silently>>
+<<if $worn.over_lower.plural is 1>><<set _text_output to "they are">>
+<<else>><<set _text_output to "it is">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
 <<widget "upperitis">><<nobr>><<silently>>
 <<if $worn.upper.plural is 1>><<set _text_output to "they are">>
 <<else>><<set _text_output to "it is">><</if>>
@@ -195,8 +225,18 @@
 <<else>><<set _text_output to "it is">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
+<<widget "overupperit">><<nobr>><<silently>>
+<<if $worn.over_upper.plural is 1>><<set _text_output to "them">>
+<<else>><<set _text_output to "it">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
 <<widget "upperit">><<nobr>><<silently>>
 <<if $worn.upper.plural is 1>><<set _text_output to "them">>
+<<else>><<set _text_output to "it">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "overlowerit">><<nobr>><<silently>>
+<<if $worn.over_lower.plural is 1>><<set _text_output to "them">>
 <<else>><<set _text_output to "it">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
@@ -215,8 +255,18 @@
 <<else>><<set _text_output to "it">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
+<<widget "overupperhas">><<nobr>><<silently>>
+<<if $worn.over_upper.plural is 1>><<set _text_output to "have">>
+<<else>><<set _text_output to "has">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
 <<widget "upperhas">><<nobr>><<silently>>
 <<if $worn.upper.plural is 1>><<set _text_output to "have">>
+<<else>><<set _text_output to "has">><</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "overlowerhas">><<nobr>><<silently>>
+<<if $worn.over_lower.plural is 1>><<set _text_output to "have">>
 <<else>><<set _text_output to "has">><</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
@@ -1081,7 +1131,9 @@
 <</nobr>><</widget>>
 
 <<widget "warmth">><<nobr>>
-<<if $args[0] gte 50>>
+<<if $args[0] gte 75>>
+	Very warm.
+<<elseif $args[0] gte 50>>
 	Warm and snug.
 <<elseif $args[0] gte 25>>
 	Should help keep the chill off.
@@ -1090,7 +1142,11 @@
 <<else>>
 	Light and cool.
 <</if>>
-(Warmth rating: $args[0])
+<<if $images is 1>>
+	(<span class="cold-resist-icon">$args[0]</span>)
+<<else>>
+	(Warmth rating: $args[0])
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "strokes">><<nobr>>
@@ -1324,7 +1380,7 @@
 <</nobr>><</widget>>
 
 <<widget "genitals">><<nobr>><<silently>>
-<<if $worn.genitals.type.includes("chastity") and $args[0] is undefined>>
+<<if $worn.genitals.type.includes("chastity") and $args[0] is undefined and _chastityBreak isnot 1>>
 	<<set _text_output to $worn.genitals.name>>
 <<else>>
 	<<set _text_output to "">>
@@ -2307,6 +2363,14 @@
 <span class="green">+ Knowledge</span>
 <</nobr>><</widget>>
 
+<<widget "flight_text">><<nobr>> |
+<<if $harpy gte 6 and $birdFly gte 1>>
+	<span class="gold">Strong wings</span>
+<<elseif $angel gte 6 or $demon gte 6 or $fallenangel gte 6 or $harpy gte 6>>
+	<span class="gold">Wings</span>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "ginsecurity">><<nobr>>
 
 <<if $args[0] is "penis_tiny">>
@@ -2803,6 +2867,30 @@ A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>
 <br>
 <</nobr>><</widget>>
 
+<<widget "exposedupper">><<nobr>><<silently>>
+<<if $worn.over_upper.exposed is 0>>
+	<<set _text_output to $worn.over_upper.name>>
+<<elseif $worn.upper.exposed is 0>>
+	<<set _text_output to $worn.upper.name>>
+<<elseif $worn.under_upper.exposed is 0>>
+	<<set _text_output to $worn.under_upper.name>>
+<<else>>
+	<<breasts>>
+<</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "exposedlower">><<nobr>><<silently>>
+<<if $worn.over_lower.exposed is 0>>
+	<<set _text_output to $worn.over_lower.name>>
+<<elseif $worn.lower.exposed is 0>>
+	<<set _text_output to $worn.lower.name>>
+<<elseif $worn.under_lower.exposed is 0>>
+	<<set _text_output to $worn.under_lower.name>>
+<<else>>
+	<<genitals>>
+<</if>>
+<</silently>>_text_output<</nobr>><</widget>>
+
 <<widget "groin">><<nobr>><<silently>>
 <<genitals>>
 <<if !$worn.lower.type.includes("naked") and $worn.lower.skirt isnot 1>>
@@ -2815,12 +2903,14 @@ A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>
 <</silently>>_text_output<</nobr>><</widget>>
 
 <<widget "crotch">><<nobr>><<silently>>
-<<if !$worn.lower.type.includes("naked")>>
-<<set _text_output to $worn.lower.name>>
+<<if !$worn.over_lower.type.includes("naked")>>
+	<<set _text_output to $worn.over_lower.name>>
+<<elseif !$worn.lower.type.includes("naked")>>
+	<<set _text_output to $worn.lower.name>>
 <<elseif !$worn.under_lower.type.includes("naked")>>
-<<set _text_output to $worn.under_lower.name>>
+	<<set _text_output to $worn.under_lower.name>>
 <<else>>
-<<genitals>>
+	<<genitals>>
 <</if>>
 <</silently>>_text_output<</nobr>><</widget>>
 
@@ -2835,7 +2925,8 @@ A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>
 <</silently>><<print _text_output>><</nobr>><</widget>>
 
 <<widget "bottoms">><<nobr>><<silently>>
-<<if $worn.upper.set is $worn.lower.set>>
+<<outfitChecks>>
+<<if _middleOutfit>>
 	<<set _text_output to $worn.upper.name>>
 <<else>>
 	<<set _text_output to $worn.lower.name>>
@@ -2843,12 +2934,29 @@ A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>
 <</silently>>_text_output<</nobr>><</widget>>
 
 <<widget "underbottoms">><<nobr>><<silently>>
-<<if $worn.under_upper.set is $worn.under_lower.set>>
+<<outfitChecks>>
+<<if _underOutfit>>
 	<<set _text_output to $worn.under_upper.name>>
 <<else>>
 	<<set _text_output to $worn.under_lower.name>>
 <</if>>
 <</silently>>_text_output<</nobr>><</widget>>
+
+<<widget "allTops">><<nobr>>
+<<if $worn.over_upper.name isnot "naked">>$worn.over_upper.name<</if>><<if $worn.upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked">> and <</if>>$worn.upper.name<</if>>
+<</nobr>><</widget>>
+
+<<widget "allBottoms">><<nobr>>
+<<if $worn.over_lower.name isnot "naked">>$worn.over_lower.name<</if>><<if $worn.lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked">> and <</if>>$worn.lower.name<</if>>
+<</nobr>><</widget>>
+
+<<widget "allTopsUnderwear">><<nobr>>
+<<if $worn.over_upper.name isnot "naked">>$worn.over_upper.name<</if>><<if $worn.upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked">> and <</if>>$worn.upper.name<</if>><<if $worn.under_upper.name isnot "naked">><<if $worn.over_upper.name isnot "naked" or $worn.upper.name isnot "naked">>and<</if>>$worn.under_upper.name<</if>>
+<</nobr>><</widget>>
+
+<<widget "allBottomsUnderwear">><<nobr>>
+<<if $worn.over_lower.name isnot "naked">>$worn.over_lower.name<</if>><<if $worn.lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked" and $worn.under_lower.name isnot "naked">>, <<elseif $worn.over_lower.name isnot "naked">> and <</if>>$worn.lower.name<</if>><<if $worn.under_lower.name isnot "naked">><<if $worn.over_lower.name isnot "naked" or $worn.lower.name isnot "naked">>and<</if>>$worn.under_lower.name<</if>>
+<</nobr>><</widget>>
 
 <<widget "top">><<nobr>><<silently>>
 <<if !$worn.upper.type.includes("naked")>>
@@ -2881,7 +2989,8 @@ A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>
 <</silently>>_text_output<</nobr>><</widget>>
 
 <<widget "outfit">><<nobr>><<silently>>
-<<if $worn.upper.set is $worn.lower.set>>
+<<outfitChecks>>
+<<if _middleOutfit>>
 	<<set _text_output to $worn.upper.name>>
 	<<set $stripset to 1>>
 <<else>>
@@ -4377,51 +4486,83 @@ School finishes on the first Monday of December.
 <</nobr>><</widget>>
 
 <<widget "pullup">><<nobr>>
-
 <<if $worn.upper.set is $worn.lower.set>>
-pull down
+	pull down
 <<elseif !$worn.upper.type.includes("naked")>>
-pull up
+	pull up
 <<else>>
-bare
+	bare
 <</if>>
-
 <</nobr>><</widget>>
 
 <<widget "pulldown">><<nobr>>
-
 <<if $worn.lower.skirt is 1>>
-lift up
+	lift up
 <<elseif $worn.lower.set isnot $worn.upper.set>>
-pull down
+	pull down
 <<else>>
-bare
+	bare
 <</if>>
-
 <</nobr>><</widget>>
 
 <<widget "pullsup">><<nobr>>
-
 <<if $worn.upper.set is $worn.lower.set>>
-pulls down
+	pulls down
 <<elseif !$worn.upper.type.includes("naked")>>
-pulls up
+	pulls up
 <<else>>
-bares
+	bares
 <</if>>
-
 <</nobr>><</widget>>
 
 <<widget "pullsdown">><<nobr>>
-
 <<if $worn.lower.skirt is 1>>
-lifts up
+	lifts up
 <<elseif $worn.lower.set isnot $worn.upper.set>>
-pulls down
+	pulls down
 <<else>>
-bares
+	bares
 <</if>>
+<</nobr>><</widget>>
 
+<<widget "overpullup">><<nobr>>
+<<if $worn.over_upper.set is $worn.over_lower.set>>
+	pull down
+<<elseif !$worn.over_upper.type.includes("naked")>>
+	pull up
+<<else>>
+	bare
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "overpulldown">><<nobr>>
+<<if $worn.over_lower.skirt is 1>>
+	lift up
+<<elseif $worn.over_lower.set isnot $worn.over_upper.set>>
+	pull down
+<<else>>
+	bare
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "overpullsup">><<nobr>>
+<<if $worn.over_upper.set is $worn.over_lower.set>>
+	pulls down
+<<elseif !$worn.over_upper.type.includes("naked")>>
+	pulls up
+<<else>>
+	bares
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "overpullsdown">><<nobr>>
+<<if $worn.over_lower.skirt is 1>>
+	lifts up
+<<elseif $worn.over_lower.set isnot $worn.over_upper.set>>
+	pulls down
+<<else>>
+	bares
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "glans">><<nobr>><<silently>>
@@ -4616,6 +4757,14 @@ nun,
 
 <</nobr>><</widget>>
 
+<<widget "harpy">><<nobr>>
+<<if $hallucinations gte 2 or $bestialitydisable is "t">>
+ | <span class="gold">Harpy</span>
+<<else>>
+ | <span class="gold">Bird</span>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "angel">><<nobr>>
 
  | <span class="gold">Angel</span>
@@ -4754,7 +4903,7 @@ a teacher
 	<<if (_malespresent isnot true or _femalespresent isnot true)>>
 		<<set _text_output to "<<beasttype>>s">>
 	<<elseif $NPCList[2].pronoun is 0>>
-		<<print "$NPCList[0].type and $NPCList[1].type">>
+		<<set _text_output to "$NPCList[0].type and $NPCList[1].type">>
 	<<else>>
 		<<switch $NPCList[0].type>>
 			<<case "lizardgirl" "lizardboy">><<set _text_output to "lizardgirls and lizardboys">>
@@ -4953,6 +5102,10 @@ a teacher
 				<<set _text_output to "whimper">>
 			<<elseif $cat gte 4>>
 				<<set _text_output to "mewl">>
+			<<elseif $cow gte 4>>
+				<<set _text_output to "moo">>
+			<<elseif $harpy gte 4>>
+				<<set _text_output to "chirp">>
 			<<else>>
 				<<set _text_output to "plead">>
 			<</if>>
@@ -4982,6 +5135,10 @@ a teacher
 			<<set _text_output to "pant">>
 		<<elseif $cat gte 4>>
 			<<set _text_output to "purr">>
+		<<elseif $cow gte 4>>
+			<<set _text_output to "moo">>
+		<<elseif $harpy gte 4>>
+			<<set _text_output to "chirp">>
 		<<else>>
 			<<set _text_output to "moan">>
 		<</if>>
@@ -4995,6 +5152,10 @@ a teacher
 				<<set _text_output to "bark">>
 			<<elseif $cat gte 4>>
 				<<set _text_output to "hiss">>
+			<<elseif $cow gte 4>>
+				<<set _text_output to "exhale through your nostrils threateningly">>
+			<<elseif $harpy gte 4>>
+				<<set _text_output to "screech">>
 			<<else>>
 				<<set _text_output to "spit">>
 			<</if>>
@@ -5440,6 +5601,86 @@ a teacher
 	<<else>>
 		<<set _text_output to "night breeze">>
 	<</if>>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "printTo">><<nobr>>
+to
+<</nobr>><</widget>>
+
+<<widget "printAnd">><<nobr>>
+and
+<</nobr>><</widget>>
+
+<<widget "timeAfterXHours">><<nobr>><<silently>>
+<<if $args[0]>>
+	<<if $timestyle is "military">>
+		<<set $_hour to ($hour + $args[0]) % 24>>
+		<<print $_hour>>:<<print $minute + ($minute lt 10? "0":"")>>
+		<<set _text_output to ($_hour lt 10 ? "0":"") + $_hour + ":" + ($minute lt 10 ? "0":"") + $minute>>
+	<<else>>
+		<<set $_hour to ($hour + $args[0]) % 24>>
+		<<if $_hour gte 13>>
+			<<set _text_output to ($_hour - 12) + ":" + ($minute lt 10 ? "0":"") + $minute + "pm">>
+		<<else>>
+			<<set _text_output to ($_hour is 0 ? "12" : $_hour) + ":" + ($minute lt 10 ? "0":"") + $minute + ($_hour is 12? "pm": "am")>>
+		<</if>>
+	<</if>>
+<</if>>
+<</silently>><<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_jaws_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "beak">>
+<<else>>
+	<<set _text_output to "jaws">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_Jaws_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "Beak">>
+<<else>>
+	<<set _text_output to "Jaws">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_teeth_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "beak">>
+<<else>>
+	<<set _text_output to "teeth">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_claws_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "talons">>
+<<else>>
+	<<set _text_output to "claws">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_growls_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "squawks">>
+<<else>>
+	<<set _text_output to "growls">>
+<</if>>
+<<print _text_output>>
+<</nobr>><</widget>>
+
+<<widget "beast_growling_text">><<nobr>>
+<<if $NPCList[_n].type is "hawk">>
+	<<set _text_output to "squawking">>
+<<else>>
+	<<set _text_output to "growling">>
 <</if>>
 <<print _text_output>>
 <</nobr>><</widget>>

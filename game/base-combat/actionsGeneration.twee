@@ -19,7 +19,7 @@
 <<for _labelC, _valueC range $args[0]>>
 	<label>
 		<<print '<<radiobutton "$'+$args[1]+'" "'+_valueC+'" ' + (_valueC is $args[2] ? "checked" : "") + '>>'>>
-		<span @class="combatListColor('', _valueC, '')"><<print _labelC>></span>
+		<span @id="(_valueC isnot 'ask' ?'':'askLabel')" @class="(_valueC isnot 'ask' ? combatListColor('', _valueC, '') : $askActionColour)"><<print _labelC>></span>
 		<<print '<<'+$args[1]+'Difficulty "'+_valueC+'">>'>> |
 	</label>
 <</for>>
@@ -46,10 +46,6 @@
 /*Generates the required divs and calls each type of action*/
 <<widget "generateActionsMan">><<nobr>>
 <br>
-<<if $oldControls is true>>
-	__New Controls__
-	<br>
-<</if>>
 <<if $defaultsType is undefined>>
 	<<getCombatDefaultsType>>
 <</if>>
@@ -102,11 +98,6 @@
 		</div>
 	<</if>>
 </div>
-<br>
-<<if $oldControls is true>>
-	__Old Controls__
-	<br>
-<</if>>
 <</nobr>><</widget>>
 
 /*Generates the required values for defaults to be setup based on the situation*/
@@ -316,6 +307,7 @@
 		<<leftstealnew>>
 		<<leftpenwhacknew>>
 		<<leftFixAndCoverActions>>
+		<<leftchoke>>
 		<<handsstrugglefreebodypart "left">>
 	<<case "penis">>
 		<<set _leftaction["Work their shaft"] to "leftwork">>
@@ -430,6 +422,7 @@
 		<<rightstealnew>>
 		<<rightpenwhacknew>>
 		<<rightFixAndCoverActions>>
+		<<rightchoke>>
 		<<handsstrugglefreebodypart "right">>
 	<<case "penis">>
 		<<set _rightaction["Work their shaft"] to "rightwork">>
@@ -650,6 +643,21 @@
 			<<option "penis" "penis" `$mockaction is "penis" ? "selected" : ""`>>
 			<<option "pussy" "vagina" `$mockaction is "vagina" ? "selected" : ""`>>
 		<</listbox>>
+		<<run $(() => { $('#listbox-mockaction').on('change', () => $('#listbox-mockaction').parent().click()) })>>
+	<<case "ask">>
+		<<switch $askAction>>
+			<<case "askchoke">>
+				<<set $_label to "subList">>
+			<<default>>
+				<<set $_label to "bratList">>
+		<</switch>>
+		<div id="askDifficulty" @class="($combatControls is 'radio' ? '' : $_label)" style="display:inline;">
+			<<listbox "$askAction" autoselect>>
+				<<optionsfrom _askActions>>
+			<</listbox>>
+		</div>
+		<<if _runOnce isnot true>><<updateAskColour>><<set _runOnce to true>><</if>>
+		<<run $(() => { $('#askDifficulty select').on('change', () => $('#askDifficulty').click()) })>>
 <</switch>>
 <</nobr>><</widget>>
 
@@ -667,7 +675,7 @@
 			<</if>>
 		<</if>>
 		<<oralnew>>
-		<<speaknew>>
+		<<speak>>
 		<<combatApologise>>
 	<<case "othervagina">>
 		<<combatOthervagina>>
@@ -680,7 +688,7 @@
 			<<set _mouthaction["Headbutt"] to "headbutt">>
 		<</if>>
 		<<if $mouthstate isnot "kiss" and $mouthstate isnot "kissimminent">>
-			<<speaknew>>
+			<<speak>>
 		<</if>>
 	<<case "gagged">>
 	<<case "penisEntrance">>

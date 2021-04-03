@@ -246,6 +246,8 @@
 /*The "...strip" widgets remove the player character's clothing. The clothing remains with the player character, ready to be put back on.*/
 
 <<widget "strip">><<nobr>>
+<<overupperstrip>>
+<<overlowerstrip>>
 <<upperstrip>>
 <<lowerstrip>>
 <<underupperstrip>>
@@ -259,6 +261,8 @@
 <</nobr>><</widget>>
 
 <<widget "clothesstrip">><<nobr>>
+<<overupperstrip>>
+<<overlowerstrip>>
 <<upperstrip>>
 <<lowerstrip>>
 <<underupperstrip>>
@@ -266,6 +270,8 @@
 <</nobr>><</widget>>
 
 <<widget "shavestrip">><<nobr>>
+<<overupperstrip>>
+<<overlowerstrip>>
 <<upperstrip>>
 <<lowerstrip>>
 <<underlowerstrip>>
@@ -275,6 +281,8 @@
 
 <<widget "shavestrip">><<nobr>>
 
+<<overupperstrip>>
+<<overlowerstrip>>
 <<upperstrip>>
 <<lowerstrip>>
 <<underlowerstrip>>
@@ -395,6 +403,8 @@
 /*The "...ruined" widgets destroy the player character's current clothing, whether worn or carried.*/
 
 <<widget "ruined">><<nobr>>
+<<overupperruined>>
+<<overlowerruined>>
 <<upperruined>>
 <<lowerruined>>
 <<underupperruined>>
@@ -408,6 +418,8 @@
 <</nobr>><</widget>>
 
 <<widget "clothesruined">><<nobr>>
+<<overupperruined>>
+<<overlowerruined>>
 <<upperruined>>
 <<lowerruined>>
 <<underupperruined>>
@@ -438,9 +450,9 @@
 		/*Re-buy*/
 		<<if $args[0] isnot "genitals">>
 			<<if $carried[$args[0]].name isnot "naked" and $clothingrebuy is 1 and $carried[$args[0]].one_piece isnot "broken" and $carried[$args[0]].shop.length gt 0>>
-				<<if $money gte Math.trunc($carried[$args[0]].cost * 1.5)>>
+				<<if $money gte Math.trunc($carried[$args[0]].cost * 1.5 * $clothesPrice)>>
 					<<generalSend "wardrobe" $args[0] $carried[$args[0]].index $carried[$args[0]].colour $carried[$args[0]].accessory_colour>>
-					<<set $money -= Math.trunc($carried[$args[0]].cost * 1.5)>>
+					<<set $money -= Math.trunc($carried[$args[0]].cost * 1.5 * $clothesPrice)>>
 					<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($carried[$args[0]].name))>>
 				<<else>>
 					<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($carried[$args[0]].name))>>
@@ -450,21 +462,21 @@
 				<<if $worn[$args[0]].accessory_colourCustom isnot undefined>><<set _accessory_colourCustom to $worn[$args[0]].accessory_colourCustom>><</if>>
 				<<if $worn[$args[0]].outfitSecondary isnot undefined>>
 					<<if $args[0] is "lower">>
-						<<if $money gte Math.trunc($worn["upper"].cost * 1.5)>>
+						<<if $money gte Math.trunc($worn["upper"].cost * 1.5 * $clothesPrice)>>
 							<<generalSend "wardrobe" "upper" $worn["upper"].index $worn["upper"].colour $worn["upper"].accessory_colour>>
-							<<set $money -= Math.trunc($worn["upper"].cost * 1.5)>>
+							<<set $money -= Math.trunc($worn["upper"].cost * 1.5 * $clothesPrice)>>
 							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["upper"].name))>>
 						<</if>>
 					<<elseif $args[0] is "under_lower">>
-						<<if $money gte Math.trunc($worn["under_upper"].cost * 1.5)>>
+						<<if $money gte Math.trunc($worn["under_upper"].cost * 1.5 * $clothesPrice)>>
 							<<generalSend "wardrobe" "under_upper" $worn["under_upper"].index $worn["under_upper"].colour $worn["under_upper"].accessory_colour>>
-							<<set $money -= Math.trunc($worn["under_upper"].cost * 1.5)>>
+							<<set $money -= Math.trunc($worn["under_upper"].cost * 1.5 * $clothesPrice)>>
 							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["under_upper"].name))>>
 						<</if>>
 					<</if>>
-				<<elseif $money gte Math.trunc($worn[$args[0]].cost * 1.5)>>
+				<<elseif $money gte Math.trunc($worn[$args[0]].cost * 1.5 * $clothesPrice)>>
 					<<generalSend "wardrobe" $args[0] $worn[$args[0]].index $worn[$args[0]].colour $worn[$args[0]].accessory_colour>>
-					<<set $money -= Math.trunc($worn[$args[0]].cost * 1.5)>>
+					<<set $money -= Math.trunc($worn[$args[0]].cost * 1.5 * $clothesPrice)>>
 					<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn[$args[0]].name))>>
 				<<else>>
 					<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($worn[$args[0]].name))>>
@@ -590,15 +602,20 @@
 /*The "...on" widgets put on clothing removed with the "...strip" widgets.*/
 
 <<widget "outfiton">><<nobr>>
+<<overupperon>>
+<<overloweron>>
 <<upperon>>
 <<loweron>>
 <</nobr>><</widget>>
 
 <<widget "clotheson">><<nobr>>
+<<overupperon>>
+<<overloweron>>
 <<upperon>>
 <<loweron>>
 <<underupperon>>
 <<underloweron>>
+<<overheadon>>
 <<headon>>
 <<faceon>>
 <<neckon>>
@@ -682,10 +699,24 @@
 
 <<widget "overupperon">><<nobr>>
 <<generalOn "over_upper">>
+<<if $worn.over_upper.name isnot "naked">>
+	<<set $worn.over_upper.exposed to $worn.over_upper.exposed_base>>
+	<<set $worn.over_upper.state to $worn.over_upper.state_base>>
+	<<set $worn.over_upper.state_top to $worn.over_upper.state_top_base>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "overloweron">><<nobr>>
 <<generalOn "over_lower">>
+<<if $worn.over_lower.name isnot "naked">>
+	<<set $worn.over_lower.exposed to $worn.over_lower.exposed_base>>
+	<<set $worn.over_lower.vagina_exposed to $worn.over_lower.vagina_exposed_base>>
+	<<set $worn.over_lower.anus_exposed to $worn.over_lower.anus_exposed_base>>
+	<<set $worn.over_lower.state to $worn.over_lower.state_base>>
+	<<if $worn.over_lower.skirt is 1>>
+		<<set $worn.over_lower.skirt_down to 1>>
+	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "upperon">><<nobr>>
@@ -1179,7 +1210,10 @@
 	<<else>>
 		<<for _u to 0; _u lt $store[$args[1]].length; _u++>>
 			<<if $args[0] is $store[$args[1]][_u].location>>
-				<<if $args[2] is "delete">>
+				<<if $args[2] is "wardrobe">>
+					<<set $wardrobe[$args[1]].push(clone($store[$args[1]][_u]))>>
+					<<set $store[$args[1]].deleteAt(_u)>>
+				<<elseif $args[2] is "delete">>
 					<<set $store[$args[1]].deleteAt(_u)>>
 				<<elseif $args[2] is "check">>
 					<<set _store_check to 1>>
@@ -1408,3 +1442,40 @@
 <</if>>
 <</nobr>><</widget>>
 
+<<widget "outfitChecks">><<nobr>>
+<<if $worn.under_lower.outfitSecondary is undefined>>
+	<<set _underOutfit to false>>
+<<elseif $worn.under_lower.outfitSecondary[1] is "broken">>
+	<<set _underOutfit to false>>
+<<elseif $worn.under_lower.outfitSecondary[1] is $worn.under_upper.name>>
+	<<set _underOutfit to true>>
+<<else>>
+	<<set _underOutfit to false>>
+<</if>>
+<<if $worn.lower.outfitSecondary is undefined>>
+	<<set _middleOutfit to false>>
+<<elseif $worn.lower.outfitSecondary[1] is "broken">>
+	<<set _middleOutfit to false>>
+<<elseif $worn.lower.outfitSecondary[1] is $worn.upper.name>>
+	<<set _middleOutfit to true>>
+<<else>>
+	<<set _middleOutfit to false>>
+<</if>>
+<<if $worn.over_lower.outfitSecondary is undefined>>
+	<<set _overOutfit to false>>
+<<elseif $worn.over_lower.outfitSecondary[1] is "broken">>
+	<<set _overOutfit to false>>
+<<elseif $worn.over_lower.outfitSecondary[1] is $worn.over_upper.name>>
+	<<set _overOutfit to true>>
+<<else>>
+	<<set _overOutfit to false>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "noClothingCheck">><<nobr>>
+<<if $worn.over_head.name is "naked" and $worn.over_upper.name is "naked" and $worn.over_lower.name is "naked" and $worn.upper.name is "naked" and $worn.lower.name is "naked" and $worn.under_upper.name is "naked" and $worn.under_lower.name is "naked" and $worn.head.name is "naked" and $worn.neck.name is "naked" and $worn.face.name is "naked" and $worn.hands.name is "naked" and $worn.legs.name is "naked" and $worn.feet.name is "naked">>
+	<<set _nude to true>>
+<<else>>
+	<<set _nude to false>>
+<</if>>
+<</nobr>><</widget>>

@@ -1,0 +1,485 @@
+:: Widgets Bird [widget]
+<<widget "bird_init">><<nobr>>
+<<set $bird to {}>>
+<<set $bird.lock to 1>>
+<<set $bird.rope to 0>>
+<<set $bird.fabric to 0>>
+<<set $bird.loot to {}>>
+<<set $bird.loot.lurker to 100>>
+<<set $bird.loot.trash to 0>>
+<<set $bird.loot.valuables to 0>>
+<<set $bird.loot.food to 0>>
+<<set $bird.loot.clothes to 0>>
+<<set $bird.state to "hunting">>
+<<set $bird.timer to 20>>
+<<set $bird.syndrome to 0>>
+<</nobr>><</widget>>
+
+<<widget "bird_loot">><<nobr>>
+<<set $bird.loot[$args[0]] += $args[1]>>
+<<set $bird.loot[$args[0]] to Math.clamp($bird.loot[$args[0]], 90, 2)>>
+<<set _bird_keys to Object.keys($bird.loot)>>
+<<for _s to 0; _s lt _bird_keys.length; _s++>>
+	<<if _bird_keys[_s] isnot $args[0]>>
+		<<set $bird.loot[_bird_keys[_s]] -= ($args[1] / 4)>>
+		<<if $bird.loot[_bird_keys[_s]] lt 0>>
+			<<set $bird.loot[_bird_keys[_s]] to Math.clamp($bird.loot[_bird_keys[_s]], 90, 2.5)>>
+		<</if>>
+	<</if>>
+<</for>>
+<</nobr>><</widget>>
+
+<<widget "bird_pass">><<nobr>>
+<<if $args[0]>>
+	<<pass $args[0]>>
+	<<if $bird.timer>>
+		<<set $bird.timer -= $args[0]>>
+		<<if $syndromebird isnot 1>>
+			<<hunger $args[0]>>
+			<<if $hunger gte 2000>>
+				<<trauma `$args[0] / 4`>>
+				/*<<physique_loss `$args[0] / 10`>>
+				<<willpower `$args[0] / 10`>>*/
+			<</if>>
+		<</if>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_loot_select">><<nobr>>
+<<set $rng to random(1, 100)>>
+<<set _bird_loot_selector to 0>>
+<<set _bird_keys to Object.keys($bird.loot)>>
+<<for _s to 0; _s lt _bird_keys.length; _s++>>
+	<<set _bird_loot_selector += $bird.loot[_bird_keys[_s]]>>
+	<<if _bird_loot_selector gte $rng>>
+		<<switch _s>>
+		<<case 0>>
+			<<set _bird_loot_select to "lurker">>
+		<<case 1>>
+			<<set _bird_loot_select to "trash">>
+		<<case 2>>
+			<<set _bird_loot_select to "valuables">>
+		<<case 3>>
+			<<set _bird_loot_select to "food">>
+		<<case 4>>
+			<<set _bird_loot_select to "clothes">>
+		<<default>>
+			<<bird_loot_random>>
+		<</switch>>
+		<<break>>
+	<</if>>
+<</for>>
+
+<</nobr>><</widget>>
+
+<<widget "bird_loot_random">><<nobr>>
+<<set _rng to random(1, 5)>>
+<<switch _rng>>
+<<case 0>>
+	<<set _bird_loot_select to "lurker">>
+<<case 1>>
+	<<set _bird_loot_select to "trash">>
+<<case 2>>
+	<<set _bird_loot_select to "valuables">>
+<<case 3>>
+	<<set _bird_loot_select to "food">>
+<<default>>
+	<<set _bird_loot_select to "clothes">>
+<</switch>>
+<</nobr>><</widget>>
+
+<<widget "select_random_clothes">><<nobr>>/*Selects random clothes from shops. Sets _random_clothes to the item name, and _random_index to its index. Ignores forest shop, and secondary parts of outfits. _random_clothes outputs "piece of fabric" when clothes are ignored this way.*/
+<<set _random_slot to either("upper", "lower", "under_upper", "under_lower", "head", "face", "neck", "hands", "legs", "feet")>>
+<<set _random_index to random(0, (setup.clothes[_random_slot].length - 1))>>
+<<if !setup.clothes[_random_slot][_random_index].shop.includes("forest") and !setup.clothes[_random_slot][_random_index].outfitSecondary and setup.clothes[_random_slot][_random_index].cursed isnot 1 and !setup.clothes[_random_slot][_random_index].type.includes("eerie") and !setup.clothes[_random_slot][_random_index].type.includes("naked")>>
+	<<set _random_clothes to setup.clothes[_random_slot][_random_index].name>>
+<<else>>
+	<<set _random_clothes to "piece of fabric">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_hunt_return">><<nobr>>
+<<bird_loot_select>>
+	<<set $bird.timer to random(30, 90)>>
+	<<set $bird.state to "home">>
+	<<switch _bird_loot_select>>
+	<<case "lurker">>
+		<<bHe>> carries a strange, leathery and many-limbed creature in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. <<bHe>> dumps it at your feet, then tears out a chunk of flesh. 
+		<<if $monster is 1>>
+			<<bHe>> hungrily rips into the meat with <<bhis>> teeth.
+			"<<print either(
+			"Common prey here. Their meat is sweet.",
+			"It won't bite. Promise.",
+			"You can eat by yourself, yes? I don't need to feed you like baby bird?",
+			"Nasty creatures, but nourishing.",
+			"Keep your strength up.",
+			"They're egg eaters, don't feel bad for them.",
+			"Food for you.",
+			"Great Hawk hunts well.",
+			"Fresh kill. Should go down easy."
+			)>>"
+		<<else>>
+			<<bHe>> holds <<bhis>> head back as <<bhe>> swallows the meat whole.
+		<</if>>
+		<<bHe>> looks at you, waiting for a response.
+		<br><br>
+		
+		<<if $syndromebird is 1>>
+			<<link [[Eat|Bird Tower Lurker]]>><<hunger -2000>><<bird_loot lurker 5>><<trauma -6>><<transform bird 1>><<npcincr "Great Hawk" love 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>><<ltrauma>><<lllhunger>>
+			<br>
+		<<else>>
+			<<link [[Eat|Bird Tower Lurker]]>><<set $hunger to 1>><<bird_loot lurker 5>><<transform bird 1>><<npcincr "Great Hawk" love 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>><<lllhunger>>
+			<br>
+		<</if>>
+		<<link [[Scold|Bird Tower Lurker Scold]]>><<bird_loot lurker -20>><<transform bird 1>><<npcincr "Great Hawk" dom -1>><<def 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<ldom>>
+		<br>
+		<<link [[Do nothing|Bird Tower Lurker Nothing]]>><<bird_loot lurker -10>><<npcincr "Great Hawk" love -1>><</link>><<llove>>
+		<br>
+	<<case "trash">>
+		<<bHe>> carries 
+		<<set $rng to random(1, 10)>>
+		<<switch $rng>>
+		<<case 1>>
+			an empty crisp packet
+		<<case 2>>
+			an empty drink can
+		<<case 3>>
+			an empty tin can
+		<<case 4>>
+			an empty chocolate wrapper
+		<<case 5>>
+			a plastic bag
+		<<case 6>>
+			half a plastic bottle
+		<<case 7>>
+			a bottle cap
+		<<case 8>>
+			a plastic straw
+		<<case 9>>
+			a plastic lid
+		<<default>>
+			a ruined shoe
+		<</switch>>
+		in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>.
+		<<if $monster is 1>>
+			"<<print either(
+			"Things from humans.",
+			"Wingless ones, so wasteful.",
+			"Do landbound ones value these?",
+			"Trinkets? I enjoy collecting things like this.",
+			"Not my best hunt."
+			)>>"
+		<</if>>
+			<<bHe>> drops it at your feet, then looks at you, awaiting your response.
+		<br><br>
+		 
+		<<link [[Thank|Bird Tower Trash]]>><<bird_loot trash 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+		<br>
+		<<link [[Scold|Bird Tower Trash Scold]]>><<bird_loot trash -20>><<npcincr "Great Hawk" dom -1>><<transform bird 1>><<def 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<ldom>>
+		<br>
+		<<link [[Do nothing|Bird Tower Trash Nothing]]>><<bird_loot trash -10>><<npcincr "Great Hawk" love -1>><</link>><<llove>>
+		<br>
+	<<case "valuables">>
+		<<if $monster is 1>>
+			"<<print either(
+			"I found shiny things.",
+			"Treasures from the landbound.",
+			"Couldn't help it, too shiny.",
+			"For you?",
+			"Snatched from wingless ones.",
+			"Looks valuable. Made me think of you.",
+			"Treasures for you."
+			)>>"
+		<</if>>
+		<<bHe>> carries
+		<<set $rng to random(1, 5)>>
+		<<switch $rng>>
+		<<case 1>>
+			a watch in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. It's probably stolen. <<bHe>> drops it at your feet, then looks at you, awaiting your response.
+			<br><br>
+			<<link [[Take it|Bird Tower Watch]]>><<bird_loot valuables 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<br>
+		<<case 2>>
+			a necklace in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. It's probably stolen. <<bHe>> drops it at your feet, then looks at you, awaiting your response.
+			<br><br>
+			<<link [[Take it|Bird Tower Necklace]]>><<bird_loot valuables 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<br>
+		<<case 3>>
+			a wedding ring in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. It's probably stolen. <<bHe>> drops it at your feet, then looks at you, awaiting your response.
+			<br><br>
+			<<link [[Take it|Bird Tower Ring]]>><<bird_loot valuables 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<br>
+		<<case 4>>
+			a wallet in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. It's probably stolen, but there might be money or other valuables inside. <<bHe>> drops it at your feet, then looks at you, awaiting your response.
+			<br><br>
+			<<link [[Take it|Bird Tower Wallet]]>><<bird_loot valuables 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<br>
+		<<default>>
+			a purse in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>. It's probably stolen, but there might be money or other valuables inside. <<bHe>> drops it at your feet, then looks at you, awaiting your response.
+			<br><br>
+			<<link [[Take it|Bird Tower Wallet]]>><<bird_loot valuables 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<br>
+		<</switch>>
+		<<link [[Scold|Bird Tower Valuables Scold]]>><<bird_loot valuables -20>><<npcincr "Great Hawk" dom -1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<ldom>>
+		<br>
+		<<link [[Do nothing|Bird Tower Valuables Nothing]]>><<bird_loot valuables -10>><<npcincr "Great Hawk" love -1>><</link>><<llove>>
+		<br>
+	<<case "food">>
+		<<bHe>> carries
+		<<set $rng to random(1, 10)>>
+		<<switch $rng>>
+		<<case 1>>
+			a half-eaten pasty<<set $bird_food to "pasty">>
+		<<case 2>>
+			a donut<<set $bird_food to "donut">>
+		<<case 3>>
+			a bag of nuts<<set $bird_food to "nuts">>
+		<<case 4>>
+			a bag of crisps<<set $bird_food to "crisps">>
+		<<case 5>>
+			a large chocolate bar<<set $bird_food to "chocolate">>
+		<<case 6>>
+			an apple<<set $bird_food to "apple">>
+		<<case 7>>
+			a carrot<<set $bird_food to "carrot">>
+		<<case 8>>
+			a tin of baked beans<<set $bird_food to "beans">>
+		<<case 9>>
+			a tin of tuna<<set $bird_food to "tuna">>
+		<<default>>
+			a tin of custard<<set $bird_food to "custard">>
+		<</switch>>
+		in <<bhis>> <<if $monster is 1>>talons<<else>>mouth<</if>>.
+		<<if $monster is 1>>
+			"<<print either(
+			"Saw wingless ones eating these.",
+			"Maybe more your taste?",
+			"Food for you.",
+			"Don't understand landbound tastes, but for you...",
+			"Wingless ones left their food unguarded. Poor move.",
+			"Smelled from far away. Easy to take.",
+			"Scavenged from landbound ones. No prey today."
+			)>>"
+		<</if>>
+		<<bHe>> drops it at your feet, then looks at you, awaiting your response.
+		<br><br>
+		
+		<<link [[Eat|Bird Tower Food]]>><<bird_loot food 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>><<lhunger>>
+		<br>
+		<<link [[Scold|Bird Tower Food Scold]]>><<bird_loot food -20>><<npcincr "Great Hawk" dom -1>><<transform bird 1>><<def 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<ldom>>
+		<br>
+		<<link [[Do nothing|Bird Tower Food Nothing]]>><<bird_loot food -10>><<npcincr "Great Hawk" love -1>><</link>><<llove>>
+		<br>
+	<<default>>
+		<<bHe>> carries
+		<<select_random_clothes>>
+		<<if setup.clothes[_random_slot][_random_index].plural isnot 1>>
+			a
+		<</if>>
+		_random_clothes in <<bhis>> <<if $monster is 1>>talons<<else>>beak<</if>>.
+		<<if $monster is 1>>
+			"<<print either(
+			"You looked cold.",
+			"I don't understand how you wear these, but... here.",
+			"This is how wingless attract mates, yes?",
+			"Colors caught my eye from far.",
+			"Your plumage is pleasing, I thought this would help.",
+			"Landbound left this out of sight. Yelled at me as I flew off with it.",
+			"I like how this feels. Do you?",
+			"Hope this helps keep you warm when I'm away. These... do help you stay warm, right?"
+			)>>"
+		<</if>>
+		<<bHe>> drops
+		<<if setup.clothes[_random_slot][_random_index].plural isnot 1>>
+			it
+		<<else>>
+			them
+		<</if>>
+		at your feet, then looks at you, awaiting your response.
+		<br><br>
+		
+		<<if $worn[_random_slot].name isnot "naked" and _random_clothes isnot "piece of fabric">>
+			<<link [[Wear|Bird Tower Clothes]]>><<generalWear _random_slot _random_index>><<bird_loot clothes 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<set $bird.fabric += 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+			<span class="blue">Your $worn[_random_slot].name will be replaced.</span> | <span class="green">+ Fabric</span>
+		<<elseif _random_clothes isnot "piece of fabric">>
+			<<link [[Wear|Bird Tower Clothes]]>><<generalWear _random_slot _random_index>><<bird_loot clothes 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>>
+		<</if>>
+		<br>
+		<<link [[Thank|Bird Tower Fabric]]>><<bird_loot clothes 20>><<npcincr "Great Hawk" love 1>><<transform bird 1>><<set $bird.fabric += 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<glove>> | <span class="green">+ Fabric</span>
+		<br>
+		<<link [[Scold|Bird Tower Clothes Scold]]>><<bird_loot clothes -20>><<npcincr "Great Hawk" dom -1>><<transform bird 1>><<def 1>><<set $bird.fabric += 1>><<bird_stockholm 1>><</link>><<gbirdstockholm>><<ldom>> | <span class="green">+ Fabric</span>
+		<br>
+		<<link [[Do nothing|Bird Tower Clothes Nothing]]>><<bird_loot clothes -10>><<npcincr "Great Hawk" love -1>><<set $bird.fabric += 1>><</link>><<llove>> | <span class="green">+ Fabric</span>
+		<br>
+	<</switch>>
+<</nobr>><</widget>>
+
+<<widget "bird_stockholm">><<nobr>>
+<<if $args[0] and $bird.syndrome isnot undefined>>
+	<<set $bird.syndrome += $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "gbirdstockholm">><<nobr>>
+<<if $syndromebird isnot 1>>
+	<<gstockholm>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_schedule">><<nobr>>
+<<if $hour gte 21 or $hour lte 5>>
+	<<set $bird.activity to "sleep">>
+<<elseif $hour lte 9>>
+	<<set $bird.activity to "sing">>
+<<elseif $hour lte 12>>
+	<<set $bird.activity to "bathe">>
+<<elseif $hour lte 15>>
+	<<set $bird.activity to "build">>
+<<elseif $hour lte 17>>
+	<<set $bird.activity to "groom">>
+<<else>>
+	<<set $bird.activity to "sing">>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_perch_options">><<nobr>>
+<<if $bird.state is "hunting" and $bird.timer lte 0>>
+	<<endevent>>
+	<<npc "Great Hawk">>
+	You hear the flap of wings as the <<beasttype>> returns.
+	
+	<<bHe>> lands and <<if $monster is 1>>walks<<else>>hops<</if>> over to you.
+	<<bird_hunt_return>>
+<<elseif $bird.state is "home" and $bird.activity isnot "sleep" and $bird.activity isnot "sing" and $bird.activity isnot "groom" and $bird.timer lte 0>>
+	<<endevent>>
+	<<npc "Great Hawk">>
+	<<if $monster is 1>>
+		The <<beasttype>><<if $birdBask is 1>> gingerly helps you stand, and<</if>> steps to the edge of the perch.
+		"<<print either(
+			"I crave a hunt.",
+			"The wild beckons me.",
+			"My talons itch for prey.",
+			"The winds call me.",
+			"I must stretch my wings."
+		)>> I will return with a gift." <<bHe>> spreads <<bhis>> wings, and launches from the tower.
+	<<else>>
+		The <<beasttype>> rises from <<bhis>> nest, spreads <<bhis>> wings, and launches from the tower.
+	<</if>>
+	<br><br>
+	<<set $bird.timer to random(30, 60)>>
+	<<set $bird.state to "hunting">>
+	<<unset $birdPerch>><<unset $birdBask>>
+	<<if $birdSingIntro is 1>>
+		<<link [[Sing (0:30)|Bird Tower Sing]]>><<set $birdSingAbsent to 1>><<bird_pass 30>><<endevent>><</link>><br>
+	<</if>>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+<<elseif $bird.activity is "sleep" and $birdSleep is undefined and $bird.state is "home">>
+	<<set $birdSleep to 1>><<unset $birdPerch>><<unset $birdBask>>
+	<<endevent>>
+	<<npc "Great Hawk">>
+	<<if $monster gte 1>>
+		The <<beasttype>> scoops you in <<bhis>> arms. "Night has come," <<bhe>> says. "Let me take you to bed."
+		<br><br>
+	<<else>>
+		The <<beasttype>> hops from the perch, towards the nest. <<bHe>> glances at you.
+		<br><br>
+	<</if>>
+	
+	<<link [[Nest|Bird Tower Perch Nest]]>><</link>>
+	<br>
+	<<link [[Stay up|Bird Tower]]>><<endevent>><</link>>
+	<br>
+<<elseif $syndromebird is 1 and $bird.activity is "sing" and $birdBask is undefined and $bird.state is "home">>
+	<<link [[Bask (0:30)|Bird Tower Bask]]>><<bird_pass 30>><<stress -12>><<endevent>><</link>><<llstress>><br>
+	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+	<<bird_fly_options>>
+<<elseif $syndromebird is 1 and $bird.activity is "groom" and $birdBask is undefined and $bird.state is "home">>
+	<<link [[Bask (0:30)|Bird Tower Bask]]>><<bird_pass 30>><<stress -12>><<endevent>><</link>><<llstress>><br>
+	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+	<<bird_fly_options>>
+<<elseif $birdBask is 1 and ($bird.activity is "sing" or $bird.activity is "groom") and $bird.state is "home">>
+	<<link [[Continue to bask (0:30)|Bird Tower Bask]]>><<bird_pass 30>><<stress -12>><<endevent>><</link>><<llstress>><br>
+	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
+	<<link [[Get up|Bird Tower Perch]]>><<set $birdBask to 0>><<endevent>><</link>><br>
+	<<link [[Leave|Bird Tower Bask Leave]]>><<unset $birdBask>><<unset $birdPerch>><<endevent>><</link>><br>
+<<elseif $bird.activity is "sing" and $bird.state is "home">>
+	<<link [[Sing (0:30)|Bird Tower Sing]]>><<transform bird 1>><<bird_pass 30>><<endevent>><</link>><br>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+	<<bird_fly_options>>
+<<else>>
+	<<if $birdSingIntro is 1>>
+		<<link [[Sing (0:30)|Bird Tower Sing]]>><<set $birdSingAbsent to 1>><<bird_pass 30>><<trauma -3>><<endevent>><</link>><<ltrauma>><br>
+	<</if>>
+	<<link [[Go back inside|Bird Tower]]>><<unset $birdPerch>><<endevent>><</link>><br>
+	<br>
+	<<bird_fly_options>>
+<</if>>
+<<unset $birdSingAbsent>>
+<</nobr>><</widget>>
+
+<<widget "bird_fly_options">><<nobr>>
+<<if $harpy gte 6>>
+	The wind could carry you a long way<<if $birdFly isnot 1>>, <span class="red">but you don't know how to fly.</span> Your wings should at least carry you down safely<</if>>.
+	<<if $syndromebird isnot 1 and $bird.activity is "sing" and $bird.state is "home">>
+		<span class="red">However, you won't be getting far with the Great Hawk watching you.</span>
+	<<else>>
+		<br><br>
+		<<link [[Glide to the base of the tower (0:01)|Bird Tower Glide 2]]>><<unset $birdPerch>><<bird_pass 1>><<endevent>><</link>><<flight_text>><br>
+	<</if>>
+	<<if $birdFly isnot 1 and $bird.activity is "sing" and $bird.state is "home">>
+		<<link [[Ask the Great Hawk to teach you to fly|Bird Tower Fly Intro]]>><</link>><<flight_text>><br>
+	<<elseif $birdFly is 1>>
+		<<link [[Fly to the farmlands (0:30)|Bird Tower Farmlands]]>><<unset $birdPerch>><<bird_pass 30>><<tiredness 9>><<endevent>><</link>><<flight_text>><<ggtiredness>>
+		<br>
+		<<link [[Fly to town (0:45)|Bird Tower Town]]>><<unset $birdPerch>><<bird_pass 45>><<tiredness 12>><<endevent>><</link>><<flight_text>><<ggtiredness>>
+		<br>
+		<<link [[Fly to the forest (0:30)|Bird Tower Forest]]>><<unset $birdPerch>><<bird_pass 30>><<tiredness 9>><<endevent>><</link>><<flight_text>><<ggtiredness>>
+		<br>
+	<</if>>
+<<elseif $angel gte 6 or $demon gte 6 or $fallenangel gte 2>>
+	<<if $pain gte 20>>
+		Your wings should carry you down, <span class="purple">but you're too injured for such a risky jump right now.</span>
+		<br><br>
+	<<else>>
+		Your wings should carry you down.
+		<<if $syndromebird isnot 1 and $bird.activity is "sing" and $bird.state is "home">>
+			<span class="red">However, you won't be getting far with the Great Hawk watching you.</span>
+		<<elseif $birdFly is 1 or $birdGlide is 1>>
+			<br><br>
+			<<link [[Glide down (0:02)|Bird Tower Glide]]>><<unset $birdPerch>><<bird_pass 2>><<endevent>><</link>><<flight_text>>
+		<<elseif $willpower lt 250>>
+			<span class="red">But you don't have the will or courage to attempt it.</span>
+		<<elseif $glideScared>>
+			<span class="red">Your too scared to try again right now.</span>
+		<<else>>
+			<br><br>
+			<<link [[Attempt to glide down (0:02)|Bird Tower Glide Attempt]]>><<unset $birdPerch>><<bird_pass 2>><<endevent>><</link>><<flight_text>><<willpowerdifficulty 250 1100>>
+		<</if>>
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "bird_greeting">><<nobr>>
+<<if $birdDailyGreeting isnot 1>>
+	<<set $birdDailyGreeting to 1>>
+	<<if $monster is 1>>
+		<<if $hour lte 3 or $hour gte 18>>
+			"Good evening,
+		<<elseif $hour lte 12>>
+			"Good morning,
+		<<else>>
+			"Good afternoon,
+		<</if>>
+		<<wife>>."
+	<<else>>
+		<<bHe>> greets you with a few low chirps.
+	<</if>>
+<</if>>
+<</nobr>><</widget>>		

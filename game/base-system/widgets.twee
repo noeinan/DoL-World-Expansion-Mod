@@ -823,6 +823,12 @@
 	<</if>>
 <</nobr>><</widget>>
 
+<<widget "physique_loss">><<nobr>>
+<<if $args[0]>>
+	<<set $physique -= 10 * $args[0]>>
+<</if>>
+<</nobr>><</widget>>
+
 <<widget "bruise">><<nobr>>
 	<<if $args[0]>>
 		<<switch $args[0]>>
@@ -1024,7 +1030,7 @@
 <</nobr>><</widget>>
 
 <<widget "stresscaption">><<nobr>>
-<div>
+<div id="stresscaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Stress:
 		<<if $showCaptionText is true>>
@@ -1053,7 +1059,7 @@
 <</nobr>><</widget>>
 
 <<widget "traumacaption">><<nobr>>
-<div>
+<div id="traumacaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Trauma:
 		<<if $showCaptionText is true>>
@@ -1081,7 +1087,7 @@
 <</nobr>><</widget>>
 
 <<widget "innocencecaption">><<nobr>>
-<div>
+<div id="innocencecaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Innocence:
 		<<if $showCaptionText is true>>
@@ -1109,7 +1115,7 @@
 <</nobr>><</widget>>
 
 <<widget "controlcaption">><<nobr>>
-<div>
+<div id="controlcaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Control:
 		<<if $showCaptionText is true>>
@@ -1137,7 +1143,7 @@
 <</nobr>><</widget>>
 
 <<widget "arousalcaption">><<nobr>>
-<div>
+<div id="arousalcaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Arousal:
 		<<if $showCaptionText is true>>
@@ -1165,7 +1171,7 @@
 <</nobr>><</widget>>
 
 <<widget "allurecaption">><<nobr>>
-<div>
+<div id="allurecaption">
 	<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 		Allure:
 		<<if $showCaptionText is true>>
@@ -1200,15 +1206,22 @@
 
 	<<if $allure gte 8000>><<set $allure to 8000>><</if>>
 	<<if $alluretest is 1>>
-	<<set $allure += 100000>>
+		<<set $allure += 100000>>
+	<<elseif $alluretest is 2>>
+		<<set $allure -= 100000>>
 	<</if>>
 
 	<div style="clear:both;"></div>
 </div>
 <</nobr>><</widget>>
 
+<<widget "updateallure">><<nobr>>
+	<<run new Wikifier(null, '<<calculateallure>>')>>
+	<<run $('#allurecaption').replaceWith(new Wikifier(null, '<<allurecaption>>').output)>>
+<</nobr>><</widget>>
+
 <<widget "oxygencaption">><<nobr>>
-<div>
+<div id="oxygencaption">
 	<<if $args[0] is true>>
 		<div @class="($showCaptionText is true ? '' : 'rightMeterText')">
 			Air:
@@ -1527,7 +1540,7 @@
 <</nobr>><</widget>>
 
 <<widget "beastescape">><<nobr>>
-<<trauma 12>><<pain 6>><<stress 12>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gpain>><<gstress>><<gtrauma>>
+<<trauma 12>><<pain 6>><<stress 12>><<set $worn.over_lower.integrity -= 20>><<set $worn.over_upper.integrity -= 20>><<set $worn.lower.integrity -= 20>><<set $worn.upper.integrity -= 20>><<set $worn.under_lower.integrity -= 20>><<set $worn.under_upper.integrity -= 20>><<bruise full>><<gpain>><<gstress>><<gtrauma>>
 <</nobr>><</widget>>
 
 <<widget "weatherdisplay">><<nobr>>
@@ -1634,6 +1647,8 @@
 		<<case lake_ruin>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_day.gif'">
 		<<case moor>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
+		<<case tower>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_day.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_day.gif'">
@@ -1760,6 +1775,8 @@
 			<</if>>
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_night.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_night.gif'">
 		<<case alley>>
@@ -1879,6 +1896,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dawn.gif'">
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dawn.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dawn.gif'">
 		<<case alley>>
@@ -1990,6 +2009,8 @@
 		<img id="location" @src="'img/misc/' + _weather_display + '/ruins_dusk.gif'">
 		<<case moor>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
+		<<case tower>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/moor_dusk.gif'">
 		<<case night_monster_lair>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/night_monster_lair_dusk.gif'">
 		<<case alley>>
@@ -2065,20 +2086,26 @@
 
 <<widget "wearandtear">><<nobr>>
 <<if $args[0] is "dance">>
+	<<if !$worn.over_upper.type.includes("dance")>>
+		<<set $worn.over_upper.integrity -= 1>>
+	<</if>>
+	<<if !$worn.over_lower.type.includes("dance")>>
+		<<set $worn.over_lower.integrity -= 1>>
+	<</if>>
 	<<if !$worn.upper.type.includes("dance")>>
-	<<set $worn.upper.integrity -= 1>>
+		<<set $worn.upper.integrity -= 1>>
 	<</if>>
 	<<if !$worn.lower.type.includes("dance")>>
-	<<set $worn.lower.integrity -= 1>>
+		<<set $worn.lower.integrity -= 1>>
 	<</if>>
 	<<if !$worn.under_lower.type.includes("dance")>>
-	<<set $worn.under_lower.integrity -= 1>>
+		<<set $worn.under_lower.integrity -= 1>>
 	<</if>>
 	<<if !$worn.under_upper.type.includes("dance")>>
-	<<set $worn.under_upper.integrity -= 1>>
+		<<set $worn.under_upper.integrity -= 1>>
 	<</if>>
 <<else>>
-<<set $worn.upper.integrity -= 1>><<set $worn.lower.integrity -= 1>><<set $worn.under_lower.integrity -= 1>><<set $worn.under_upper.integrity -= 1>>
+	<<set $worn.over_upper.integrity -= 1>><<set $worn.over_lower.integrity -= 1>><<set $worn.upper.integrity -= 1>><<set $worn.lower.integrity -= 1>><<set $worn.under_lower.integrity -= 1>><<set $worn.under_upper.integrity -= 1>>
 <</if>>
 <</nobr>><</widget>>
 
@@ -2178,7 +2205,7 @@ or $args[0] is "force">>
 	<<set _apparent_femininity += _femininity_mod>>
 	<<run _gender_appearance_factors.push({
 		femininity: _femininity_mod,
-		factor: _factor_description,
+		factor: _factor_description
 	})>>
 <</nobr>><</widget>>
 
@@ -2214,13 +2241,16 @@ or $args[0] is "force">>
 	<</if>>
 
 	<!-- Determine how visible the player's bottom is -->
-	<<if $worn.lower.skirt is 1 and $worn.lower.skirt_down is 1 and $worn.lower.state is "waist">>
+	<<if ($worn.lower.skirt is 1 and $worn.lower.skirt_down is 1 and $worn.lower.state is "waist") or
+	($worn.over_lower.skirt is 1 and $worn.over_lower.skirt_down is 1 and $worn.over_lower.state is "waist")>>
 		<<set _bottom_visibility to 0>>
 	<<else>>
 		<<set _bottom_visibility to 1>>
 	<</if>>
 
 	<!-- Special handling to allow simulating removal of top clothing layer -->
+	<<set _lower_visible to _ignore_overwear or $worn.over_lower.exposed gte 2>>
+	<<set _upper_visible to _ignore_overwear or $worn.over_upper.exposed gte 2>>
 	<<set _under_lower_visible to _ignore_overwear or $worn.lower.exposed gte 2>>
 	<<set _under_upper_visible to _ignore_overwear or $worn.upper.exposed gte 2>>
 
@@ -2230,8 +2260,11 @@ or $args[0] is "force">>
 	<<set _breast_indicator to 0>>
 
 	<!-- Lower clothing, bulge, and genitals -->
-	<<addfemininityofclothingarticle $worn.lower>>
-	<<if _under_lower_visible>>
+	<<addfemininityofclothingarticle $worn.over_lower>>
+	<<if _lower_visible>>
+		<<addfemininityofclothingarticle $worn.lower>>
+	<</if>>
+	<<if _under_lower_visible and _lower_visible>>
 		<!-- Lower underwear is visible -->
 		<<addfemininityofclothingarticle $worn.under_lower>>
 		<<if $worn.under_lower.exposed gte 1>>
@@ -2263,8 +2296,11 @@ or $args[0] is "force">>
 		)` "Bulge visible through clothing">>
 	<</if>>
 	<!-- Upper clothing and breasts -->
-	<<addfemininityofclothingarticle $worn.upper>>
-	<<if _under_upper_visible>>
+	<<addfemininityofclothingarticle $worn.over_upper>>
+	<<if _upper_visible>>
+		<<addfemininityofclothingarticle $worn.upper>>
+	<</if>>
+	<<if _under_upper_visible and _upper_visible>>
 		<!-- Upper underwear is visible -->
 		<<addfemininityofclothingarticle $worn.under_upper>>
 		<<if $worn.under_upper.exposed gte 1>>
@@ -2283,8 +2319,11 @@ or $args[0] is "force">>
 			($breastsize - 4) * 100, 0, Infinity
 		)` "Breast size visible through clothing">>
 	<</if>>
-	<!-- Always visible clothing -->
+	
+	<!-- Head clothing -->
+	<<addfemininityofclothingarticle $worn.over_head>>
 	<<addfemininityofclothingarticle $worn.head>>
+	<!-- Always visible clothing -->
 	<<addfemininityofclothingarticle $worn.face>>
 	<<addfemininityofclothingarticle $worn.neck>>
 	<<addfemininityofclothingarticle $worn.legs>>
@@ -2366,6 +2405,8 @@ or $args[0] is "force">>
 	<<set $libertine to 1>>
 <</if>>
 
+<<set $worn.over_upper.exposedcarry to $worn.over_upper.exposed>>
+<<set $worn.over_lower.exposedcarry to $worn.over_lower.exposed>>
 <<set $worn.upper.exposedcarry to $worn.upper.exposed>>
 <<set $worn.lower.exposedcarry to $worn.lower.exposed>>
 <<set $worn.under_lower.exposedcarry to $worn.under_lower.exposed>>
@@ -2387,14 +2428,14 @@ or $args[0] is "force">>
 <<exposedcheck>>
 
 <<set $exposed to 0>>
-<<if $worn.upper.exposed gte 1>>
+<<if $worn.upper.exposed gte 1 and $worn.over_upper.exposed gte 1>>
 	<<if $player.gender_appearance is "m">>
 	<<elseif $libertine gte 1>>
 	<<else>>
 		<<set $exposed to 1>>
 	<</if>>
 <</if>>
-<<if $worn.upper.exposed gte 2 and $player.gender_appearance isnot "m">>
+<<if $worn.upper.exposed gte 2 and $worn.over_upper.exposed gte 2 and $player.gender_appearance isnot "m">>
 	<<if $libertine is 1>>
 		<<set $topless to 1>>
 	<<else>>
@@ -2403,14 +2444,14 @@ or $args[0] is "force">>
 <<else>>
 <<set $topless to 0>>
 <</if>>
-<<if $worn.lower.exposed gte 1>>
+<<if $worn.lower.exposed gte 1 and $worn.over_lower.exposed gte 1>>
 	<<if $libertine gte 1>>
 	<<else>>
 	<<set $exposed to 1>>
 	<</if>>
 <</if>>
 
-<<if $worn.lower.exposed gte 2>>
+<<if $worn.lower.exposed gte 2 and $worn.over_lower.exposed gte 2>>
 	<<if $worn.under_lower.exposed gte 1>>
 	<<set $exposed to 2>>
 	<<elseif $libertine gte 1>>
@@ -2419,6 +2460,8 @@ or $args[0] is "force">>
 	<</if>>
 <</if>>
 
+<<set $worn.over_upper.exposed to $worn.over_upper.exposedcarry>>
+<<set $worn.over_lower.exposed to $worn.over_lower.exposedcarry>>
 <<set $worn.upper.exposed to $worn.upper.exposedcarry>>
 <<set $worn.lower.exposed to $worn.lower.exposedcarry>>
 <<set $worn.under_lower.exposed to $worn.under_lower.exposedcarry>>
@@ -2427,6 +2470,26 @@ or $args[0] is "force">>
 <</nobr>><</widget>>
 
 <<widget "integritycheck">><<nobr>>
+<<if $worn.over_upper.name isnot "naked">>
+	<<if $worn.over_upper.integrity lte 0>>
+		<<set $worn.over_upper.type.push("broken")>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.over_upper.name <<upperplural>> ripped into scraps<<if $worn.upper.exposed gte 2>>, exposing your <<breasts>><</if>>.</span>
+			<br>
+		<</if>>
+	<<overupperruined>><<clothesruinstat>><<if $worn.upper.exposed gte 2>><<set $upperoff to 0>><</if>>
+	<</if>>
+<</if>>
+<<if $worn.over_lower.name isnot "naked">>
+	<<if $worn.over_lower.integrity lte 0>>
+		<<set $worn.over_lower.type.push("broken")>>
+		<<if $args[0] isnot "no_text">>
+			<span class="lewd">Your $worn.over_lower.name <<upperplural>> ripped into scraps<<if $worn.lower.exposed gte 2>>, exposing your <<undies>><</if>>.</span>
+			<br>
+		<</if>>
+	<<overlowerruined>><<clothesruinstat>><<if $worn.lower.exposed gte 2>><<set $upperoff to 0>><</if>>
+	<</if>>
+<</if>>
 <<if $worn.upper.name isnot "naked">>
 	<<if $worn.upper.integrity lte 0>>
 		<<set $worn.upper.type.push("broken")>>
@@ -2469,8 +2532,9 @@ or $args[0] is "force">>
 <</if>>
 <<if $worn.genitals.name isnot "naked">>
 	<<if $worn.genitals.integrity lte 0>>
+		<<set _chastityBreak to 1>>
 		<<if $args[0] isnot "no_text">>
-			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<if $penisexist is 1>><<penis>>.<<else>><<pussy>>.<</if>></span>
+			<span class="lewd">Your $worn.genitals.name breaks, exposing your <<genitals>>.</span>
 			<br>
 		<</if>>
 		<<if $worn.genitals.type.includes("chastity")>>
@@ -3097,7 +3161,7 @@ or $args[0] is "force">>
 
 <<for _e to 0; _e lt $bodypart_number; _e++>>
 	<<activebodypart>>
-	<<if $skin[_active_bodypart].pen is "pen">>
+	<<if $skin[_active_bodypart].pen is "pen" or $skin[_active_bodypart].pen is "lipstick" or $skin[_active_bodypart].pen is "mud">>
 		<<bodywriting_clear _active_bodypart>>
 	<</if>>
 <</for>>
@@ -3107,13 +3171,13 @@ or $args[0] is "force">>
 <<widget "wash_face">><<nobr>>
 <<set $facesemen to 0>>
 <<set $facegoo to 0>>
-<<if $skin.left_cheek.pen is "pen">>
+<<if $skin.left_cheek.pen is "pen" or $skin.left_cheek.pen is "lipstick" or $skin.left_cheek.pen is "mud">>
 	<<bodywriting_clear left_cheek>>
 <</if>>
-<<if $skin.right_cheek.pen is "pen">>
+<<if $skin.right_cheek.pen is "pen" or $skin.right_cheek.pen is "lipstick" or $skin.right_cheek.pen is "mud">>
 	<<bodywriting_clear right_cheek>>
 <</if>>
-<<if $skin.forehead.pen is "pen">>
+<<if $skin.forehead.pen is "pen" or $skin.forehead.pen is "lipstick" or $skin.forehead.pen is "mud">>
 	<<bodywriting_clear forehead>>
 <</if>>
 <<washmakeup>>
@@ -3413,29 +3477,8 @@ __Map__<br>
 <</nobr>><</widget>>
 
 <<widget "roomoptions">><<nobr>>
-	<<pilloptions>>
-	<br>
-<</nobr>><</widget>>
-
-<<widget "pilloptions">><<nobr>>
-	<<if $pillstaken is 1>>
-		<<set $pillstaken to 0>>
-		You take the pills Doctor Harper prescribed. You feel dizzy.
-		<<gcontrol>><<lawareness>><<awareness -1>><<control 10>>
-		<br><br>
-	<</if>>
-	<<if $pills gte 1 and $medicated is 0>>
-		<<link "Take pills">><<set $medicated += 1>><<set $pillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>>
-		<br>
-	<</if>>
-	<<if $asylumpillstaken is 1>>
-		<<set $asylumpillstaken to 0>>
-		You take the pills prescribed in the asylum. You feel hazy.
-		<<ggcontrol>><<llawareness>><<awareness -5>><<control 25>>
-		<br><br>
-	<</if>>
-	<<if $asylumpills gte 1 and $asylummedicated lt 1>>
-		<<link "Take strong pills">><<set $asylummedicated += 1>><<set $asylumpillstaken to 1>><<script>>state.display(state.active.title, null)<</script>><</link>>
+	<<if $sexStats.pills.boughtOnce is true or $pills gte 1 or $asylumpills gte 1>>
+		<<icon "pill collection">><<link [[Check your pills|PillCollection]]>><<set $pillsExitPassage to $passage>><</link>>
 		<br>
 	<</if>>
 <</nobr>><</widget>>
@@ -3929,6 +3972,9 @@ __Map__<br>
 	<<set _i to $NPCNameList.indexOf("Avery")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].rage = Math.clamp($NPCName[_i].rage, 0, 100)>>
+	<<set _i to $NPCNameList.indexOf("Great Hawk")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
 <</nobr>><</widget>>
 
 <<widget "fringecheck">><<nobr>>
@@ -3985,6 +4031,26 @@ __Map__<br>
 			<br>
 		<</if>>
 	<</if>>
+<</nobr>><</widget>>
+
+<<widget "overupperclothescolour">><<nobr>>
+<<if $worn.over_upper.colour isnot 0 and $worn.over_upper.colour isnot undefined>>
+	<<if $worn.over_upper.colour.substring(0, 3) is "wet">>
+		<<print $worn.over_upper.colour.substring(3)>>
+	<<elseif $worn.over_upper.colour_sidebar is 1>>
+		$worn.over_upper.colour
+	<</if>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "overlowerclothescolour">><<nobr>>
+<<if $worn.over_lower.colour isnot 0 and $worn.over_lower.colour isnot undefined>>
+	<<if $worn.over_lower.colour.substring(0, 3) is "wet">>
+		<<print $worn.over_lower.colour.substring(3)>>
+	<<elseif $worn.over_lower.colour_sidebar is 1>>
+		$worn.over_lower.colour
+	<</if>>
+<</if>>
 <</nobr>><</widget>>
 
 <<widget "upperclothescolour">><<nobr>>
@@ -4813,7 +4879,7 @@ __Map__<br>
 	<</if>>
 	<<if $args[0] is "bird">>
 		<<set $birdbuild += $args[1]>>
-		<<set $birdbuild = Math.clamp($wolfbuild, 0, 100)>>
+		<<set $birdbuild = Math.clamp($birdbuild, 0, 100)>>
 	<</if>>
 <</if>>
 <<if $args[1] gte 1>>
@@ -4972,3 +5038,79 @@ __Map__<br>
 	<<print $combatTrain.beastTypes[0]>>
 <</if>>
 <</nobr>><</widget>>
+
+/*
+	Argument 1 is base amount. You can also use decimals.
+	Argument 2 is variation.
+	Argument 3 is crime.
+	<<moneyGain 1>> will give £1.00 which is not stolen.
+    <<moneyGain 1 false false>> will give £1.00 which is not stolen.
+    <<moneyGain 1 true>> will give between £0.80 and £1.20 which is not stolen.
+    <<moneyGain 1 true true>> will give between £0.80 and £1.20 which is stolen, and can scale further with skulduggery.
+    <<moneyGain 1 false true>> will give £1.00 which is stolen, and can scale with skulduggery.
+*/
+<<widget "moneyGain">><<nobr>><<silently>>
+<<if $args[0]>>
+    <<set _base_amount to $args[0] * 100>>
+<<else>>
+    <<set _base_amount to 100>>
+<</if>>
+<<if $args[1]>>
+    <<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
+<<else>>
+    <<set _variation to 0>>
+<</if>>
+<<if $args[2]>>
+    <<set _skulduggery to clone($skulduggery)>>
+    <<if $moorLuck gt 0>>
+        <<set _skulduggery to Math.floor(_skulduggery * (1 + ($moorLuck / 100)))>>
+    <</if>>
+    <<if $worn.hands.type.includes("sticky_fingers")>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<if $harpy gte 2 or $cat gte 2>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<set _skulduggeryMulti to (1 + (_skulduggery / 2000))>>
+<<else>>
+    <<set _skulduggeryMulti to 1>>
+<</if>>
+<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
+<<if $args[2]>>
+    <<crimeup `_money_gain / 100`>>
+<</if>>
+<<set $money += _money_gain>>
+<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</nobr>><</widget>>
+
+/*
+	Used like above, but only shows the money amount, doesn't add money or crime.
+	Use <<crimeup `_money_gain / 100`>> and <<set $money += _money_gain>> where necessary in links, etc.
+*/
+<<widget "moneyGainDisplay">><<nobr>><<silently>>
+<<if $args[0]>>
+    <<set _base_amount to $args[0] * 100>>
+<<else>>
+    <<set _base_amount to 100>>
+<</if>>
+<<if $args[1]>>
+    <<set _variation to Math.floor(random(Math.floor(_base_amount / 5 * -1), Math.floor(_base_amount / 5)))>>
+<<else>>
+    <<set _variation to 0>>
+<</if>>
+<<if $args[2]>>
+    <<set _skulduggery to clone($skulduggery)>>
+    <<if $moorLuck gt 0>>
+        <<set _skulduggery to Math.floor(_skulduggery * (1 + ($moorLuck / 100)))>>
+    <</if>>
+    <<if $worn.hands.type.includes("sticky_fingers")>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<if $harpy gte 2 or $cat gte 2>>
+        <<set _skulduggery to Math.floor(_skulduggery * 1.05)>>
+    <</if>>
+    <<set _skulduggeryMulti to (1 + (_skulduggery / 2000))>>
+<<else>>
+    <<set _skulduggeryMulti to 1>>
+<</if>>
+<<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
+<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</nobr>><</widget>>

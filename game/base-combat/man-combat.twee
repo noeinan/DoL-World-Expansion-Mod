@@ -1,6 +1,7 @@
 :: Widgets Combat Man-Combat [widget]
 
 <<widget "man-combat">><<nobr>>
+	<<outfitChecks>>
 	<<set _n to $args[0]-1>>
 	<!-- Converted his1-6 to hisselect #. Person1-6 to personselect #. $intro1-6 as array $NPCList[_n].intro -->
 	<!-- Converted man1-6speech to manspeech #. Randomized penissize reaction.-->
@@ -31,8 +32,10 @@
 	<<if $NPCList[_n].lefthand is "spank">>
 		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
 		<<He>> spanks your <<bottom>>
-		<<if $worn.lower.name isnot "naked" and $worn.lower.anus_exposed is 1>>
+		<<if $worn.lower.name isnot "naked" and $worn.lower.anus_exposed is 1 and $worn.over_lower.name isnot "naked" and $worn.over_lower.anus_exposed is 1>>
 			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>through your $worn.under_lower.name.<<else>>reddening your exposed skin.<</if>>
+		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+			through your $worn.over_lower.name.
 		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
 			through your $worn.lower.name.
 		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
@@ -50,8 +53,10 @@
 	<<if $NPCList[_n].righthand is "spank">>
 		<<bruise bottom>><<hitstat>><<set $speechspank to 1>>
 		<<He>> spanks your <<bottom>>
-		<<if $worn.lower.name isnot "naked" and $worn.lower.anus_exposed is 1>>
+		<<if $worn.lower.name isnot "naked" and $worn.lower.anus_exposed is 1 and $worn.over_lower.name isnot "naked" and $worn.over_lower.anus_exposed is 1>>
 			<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.anus_exposed is 0>>through your $worn.under_lower.name.<<else>>reddening your exposed skin.<</if>>
+		<<elseif $worn.over_lower.name isnot "naked" and $worn.over_lower.state is "waist">>
+			through your $worn.over_lower.name.
 		<<elseif $worn.lower.name isnot "naked" and $worn.lower.state is "waist">>
 			through your $worn.lower.name.
 		<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state is "waist">>
@@ -428,7 +433,7 @@
 			<span class="blue"><<He>> releases <<his>> hand from your $worn.under_lower.name.</span>
 			<<set $NPCList[_n].lefthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.state is "waist">>
 					<<if $combatgoal is "strip" or $rng gt 20 or $worn.under_lower.no_aside>>
 						<<He>> pulls your $worn.under_lower.name down your thighs, <span class="lewd">revealing your <<genitals>>.</span>
@@ -489,7 +494,7 @@
 			<span class="purple"> <<He>> releases <<his>> hand from your $worn.under_lower.name.</span>
 			<<set $NPCList[_n].righthand to 0>><<set $worn.lower.skirtuse to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.state is "waist">>
 					<<if $combatgoal is "strip" or $rng gt 20 or $worn.under_lower.no_aside>>
 						<<He>> pulls your $worn.under_lower.name down your thighs, <span class="lewd">revealing your <<genitals>>.</span>
@@ -587,7 +592,7 @@
 			<<He>> releases <<his>> hand from your $worn.lower.name.
 			<<set $NPCList[_n].lefthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.lower.skirt_down is 1>>
 					<<He>> lifts up your skirt, exposing your
 					<<if $worn.under_lower.state is "waist">>
@@ -602,7 +607,7 @@
 					<</if>>
 					<<set $worn.lower.skirt_down to 0>><<set $worn.lower.vagina_exposed to 1>><<set $worn.lower.anus_exposed to 1>><<set $worn.lower.exposed to 2>>
 				<<elseif $worn.lower.skirt_down is 0>>
-					<<if $worn.lower.set is $worn.upper.set>>
+					<<if _middleOutfit>>
 						<<if $worn.upper.state is "waist">>
 							<<if $position is "wall">>
 								<<He>> tugs at your $worn.upper.name, tearing <<upperit>> before <span class="blue">letting go.</span>
@@ -627,7 +632,7 @@
 								<<set $worn.upper.state_top to 0>>
 							<</if>>
 						<</if>>
-					<<elseif $worn.lower.set isnot $worn.upper.set>>
+					<<elseif _middleOutfit is false>>
 						<<if $worn.lower.state is "waist">>
 							<<He>> pulls your $worn.lower.name down to your thighs.
 							<<set $worn.lower.state to "thighs">><<neutral 1>>
@@ -643,7 +648,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.upper.set is $worn.lower.set>>
+			<<elseif _middleOutfit>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.upper.state_top is "chest">>
 						<<He>> tugs your $worn.lower.name, pulling down your $worn.upper.name and <span class="lewd">revealing your <<breasts>>.</span>
@@ -699,7 +704,7 @@
 					<<He>> tugs at your $worn.lower.name, tearing <<lowerit>> before <span class="blue">letting go.</span>
 					<<set $NPCList[_n].lefthand to 0>><<set $worn.lower.integrity -= 10>><<neutral 1>>
 				<</if>>
-			<<elseif $worn.upper.set isnot $worn.lower.set>>
+			<<elseif _middleOutfit is false>>
 				<<if $worn.lower.state is "waist">>
 					<<He>> pulls down your $worn.lower.name, exposing your
 					<<if $worn.under_lower.state is "waist">>
@@ -740,7 +745,7 @@
 			<span class="lblue"><<He>> releases <<his>> hand from your $worn.lower.name.</span>
 			<<set $NPCList[_n].righthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.lower.skirt_down is 1>>
 					<<He>> lifts up your skirt, exposing your
 					<<if $worn.under_lower.state is "waist">>
@@ -755,7 +760,7 @@
 					<</if>>
 					<<set $worn.lower.skirt_down to 0>><<set $worn.lower.vagina_exposed to 1>><<set $worn.lower.anus_exposed to 1>><<set $worn.lower.exposed to 2>>
 				<<elseif $worn.lower.skirt_down is 0>>
-					<<if $worn.lower.set is $worn.upper.set>>
+					<<if _middleOutfit>>
 						<<if $worn.upper.state is "waist">>
 							<<if $position is "wall">>
 								<<He>> tugs at your $worn.upper.name, tearing <<upperit>> before <span class="blue">letting go.</span>
@@ -780,7 +785,7 @@
 								<<set $worn.upper.state_top to 0>>
 							<</if>>
 						<</if>>
-					<<elseif $worn.lower.set isnot $worn.upper.set>>
+					<<elseif _middleOutfit is false>>
 						<<if $worn.lower.state is "waist">>
 							<<He>> pulls your $worn.lower.name down to your thighs.
 							<<neutral 1>><<set $worn.lower.state to "thighs">>
@@ -796,7 +801,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.upper.set is $worn.lower.set>>
+			<<elseif _middleOutfit>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.upper.state_top is "chest">>
 						<<He>> tugs your $worn.lower.name, pulling down your $worn.upper.name and <span class="lewd">revealing your <<breasts>>.</span>
@@ -852,7 +857,7 @@
 					<<He>> tugs at your $worn.lower.name, tearing <<lowerit>> before <span class="blue">letting go.</span>
 					<<set $NPCList[_n].righthand to 0>><<set $worn.lower.integrity -= 10>><<neutral 1>>
 				<</if>>
-			<<elseif $worn.upper.set isnot $worn.lower.set>>
+			<<elseif _middleOutfit is false>>
 				<<if $worn.lower.state is "waist">>
 					<<He>> pulls down your $worn.lower.name, exposing your
 					<<if $worn.under_lower.state is "waist">>
@@ -881,6 +886,666 @@
 	<<bodypart_admire_chance back>>
 	<</if>>
 	<<set $rng to random(1, 100)>>
+	<<if $NPCList[_n].lefthand is "overlowerclothes">>
+		<<if $worn.over_lower.name is "naked">>
+			<span class="purple"><<He>> casts aside the fabric.</span>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $overlowerstruggle is 1>>
+			<<set $overlowerstruggle to 0>>
+			You manage to keep <<him>> from stripping you of your $worn.over_lower.name.
+			<<set $speechstripstruggle to 1>>
+		<<elseif $rng gte 101>>
+			<<He>> releases <<his>> hand from your $worn.over_lower.name.
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $rng lte 100>>
+			<<if $worn.over_lower.skirt is 1>>
+				<<if $worn.over_lower.skirt_down is 1>>
+					<<He>> lifts up your skirt, exposing your
+					<<if $worn.lower.state is "waist">>
+						$worn.lower.name.
+						<<neutral 2>>
+					<<elseif $worn.under_lower.state is "waist">>
+						$worn.under_lower.name.
+						<<neutral 2>>
+					<<elseif $worn.genitals.name isnot "naked">>
+						$worn.genitals.name.
+						<<neutral 2>>
+					<<else>>
+						<span class="lewd"><<genitals>>.</span>
+						<<neutral 5>><<set $speechgenitals to 1>>
+					<</if>>
+					<<set $worn.over_lower.skirt_down to 0>><<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>>
+				<<elseif $worn.over_lower.skirt_down is 0>>
+					<<if _overOutfit>>
+						<<if $worn.over_upper.state is "waist">>
+							<<if $position is "wall">>
+								<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+								<<set $NPCList[_n].lefthand to 0>><<neutral 1>><<set $worn.over_lower.integrity -= 10>>
+							<<else>>
+								<<He>> lifts your $worn.over_upper.name above your midriff.
+								<<set $worn.over_lower.state to "midriff">><<set $worn.over_upper.state to "midriff">><<neutral 1>>
+								<<if $worn.over_upper.state_top is "waist">>
+									<<set $worn.over_upper.state_top to "midriff">>
+								<</if>>
+							<</if>>
+						<<elseif $worn.over_upper.state is "midriff">>
+							<<He>> lifts up your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								exposing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">exposing your<<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_lower.state to "chest">><<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+							<<if $worn.upper.state_top is "midriff">>
+								<<set $worn.upper.state_top to "chest">>
+							<</if>>
+						<<elseif $worn.over_upper.state is "chest">>
+							<span class="purple"><<He>> pulls your $worn.over_upper.name off completely.</span>
+							<<set $worn.over_lower.state to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<overlowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+							<<if $worn.over_upper.state_top is "chest">>
+								<<set $worn.over_upper.state_top to 0>>
+							<</if>>
+						<</if>>
+					<<elseif _overOutfit is false>>
+						<<if $worn.over_lower.state is "waist">>
+							<<He>> pulls your $worn.over_lower.name down to your thighs.
+							<<set $worn.over_lower.state to "thighs">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "thighs">>
+							<<He>> pulls your $worn.over_lower.name down to your knees.
+							<<set $worn.over_lower.state to "knees">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "knees">>
+							<<He>> pulls your $worn.over_lower.name down to your ankles.
+							<<set $worn.over_lower.state to "ankles">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "ankles">>
+							<span class="purple"><<He>> completely pulls your $worn.over_lower.name off your legs.</span>
+							<<lowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<elseif _overOutfit>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_upper.state_top is "chest">>
+						<<He>> tugs your $worn.over_lower.name, pulling down your $worn.over_upper.name and
+						<<if $worn.upper.name isnot "naked">>
+							revealing your $worn.upper.name.
+						<<else>>
+							<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+						<</if>>
+						<<set $worn.over_upper.state_top to "midriff">><<neutral 3>><<set $worn.over_upper.exposed to 2>>
+						<<if $worn.over_upper.state is "chest">>
+							<<set $worn.over_upper.state to "midriff">>
+						<</if>>
+						<<if $worn.over_lower.state is "chest">>
+							<<set $worn.over_lower.state to "midriff">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "midriff">>
+						<<He>> tugs your $worn.over_lower.name, pulling down your $worn.over_upper.name passed your midriff.
+						<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+						<<if $worn.over_upper.state is "midriff">>
+							<<set $worn.over_upper.state to "waist">>
+						<</if>>
+						<<if $worn.over_lower.state is "midriff">>
+							<<set $worn.over_lower.state to "waist">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "waist">>
+						<<He>> pulls your $worn.over_upper.name down to your thighs, revealing your
+						<<if $worn.under_lower.state is "waist">>
+							$worn.lower.name
+							<<neutral 2>>
+						<<elseif $worn.under_lower.state is "waist">>
+							$worn.under_lower.name
+							<<neutral 2>>
+						<<else>>
+							<span class="lewd"><<genitals>>.</span>
+							<<neutral 5>><<set $speechgenitals to 1>>
+						<</if>>
+						<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+						<<if $worn.over_lower.state is "waist">>
+							<<set $worn.over_lower.state to "thighs">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "thighs">>
+						<<He>> pulls your $worn.over_upper.name down to your knees.
+						<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+						<<if $worn.over_lower.state is "thighs">>
+							<<set $worn.over_lower.state to "knees">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "knees">>
+						<<He>> pulls your $worn.over_upper.name down to your ankles.
+						<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+						<<if $worn.over_lower.state is "knees">>
+							<<set $worn.over_lower.state to "ankles">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "ankles">>
+						<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+						<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>>
+						<<if $worn.over_lower.state is "ankles">>
+							<<set $worn.over_lower.state to 0>><<overlowerstrip>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<He>> tugs at your $worn.over_lower.name, tearing <<overlowerit>> before <span class="blue">letting go.</span>
+					<<set $NPCList[_n].lefthand to 0>><<set $worn.over_lower.integrity -= 10>><<neutral 1>>
+				<</if>>
+			<<elseif _overOutfit is false>>
+				<<if $worn.over_lower.state is "waist">>
+					<<He>> pulls down your $worn.over_lower.name, exposing your
+					<<if $worn.lower.state is "waist">>
+						$worn.lower.name.
+						<<neutral 2>>
+					<<elseif $worn.under_lower.state is "waist">>
+						$worn.under_lower.name.
+						<<neutral 2>>
+					<<else>>
+						<span class="lewd"><<genitals>>.</span>
+						<<neutral 5>><<set $speechgenitals to 1>>
+					<</if>>
+					<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>><<set $worn.over_lower.state to "thighs">>
+				<<elseif $worn.over_lower.state is "thighs">>
+					<<He>> pulls your $worn.over_lower.name down to your knees.
+					<<set $worn.over_lower.state to "knees">><<neutral 1>>
+				<<elseif $worn.over_lower.state is "knees">>
+					<<He>> pulls your $worn.over_lower.name down to your ankles.
+					<<set $worn.over_lower.state to "ankles">><<neutral 1>>
+				<<elseif $worn.over_lower.state is "ankles">>
+					<span class="purple"><<He>> completely pulls your $worn.over_lower.name off your legs.</span>
+					<<overlowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+				<</if>>
+			<<else>>
+				<<He>> tugs at your $worn.over_lower.name, tearing <<overlowerit>> before <span class="blue">letting go.</span>
+				<<set $NPCList[_n].lefthand to 0>><<neutral 1>><<set $worn.over_lower.integrity -= 10>>
+			<</if>>
+		<</if>>
+	<<bodypart_admire_chance back>>
+	<</if>>
+	<<set $rng to random(1, 100)>>
+	<<if $NPCList[_n].righthand is "overlowerclothes">>
+		<<if $worn.over_lower.name is "naked">>
+			<span class="purple"><<He>> casts aside the fabric.</span>
+			<<set $NPCList[_n].righthand to 0>>
+		<<elseif $overlowerstruggle is 1>>
+			<<set $overlowerstruggle to 0>>
+			You manage to keep <<him>> from stripping you of your $worn.over_lower.name.
+			<<set $speechstripstruggle to 1>>
+		<<elseif $rng gte 101>>
+			<<He>> releases <<his>> hand from your $worn.over_lower.name.
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $rng lte 100>>
+			<<if $worn.over_lower.skirt is 1>>
+				<<if $worn.over_lower.skirt_down is 1>>
+					<<He>> lifts up your skirt, exposing your
+					<<if $worn.lower.state is "waist">>
+						$worn.lower.name.
+						<<neutral 2>>
+					<<elseif $worn.under_lower.state is "waist">>
+						$worn.under_lower.name.
+						<<neutral 2>>
+					<<elseif $worn.genitals.name isnot "naked">>
+						$worn.genitals.name.
+						<<neutral 2>>
+					<<else>>
+						<span class="lewd"><<genitals>>.</span>
+						<<neutral 5>><<set $speechgenitals to 1>>
+					<</if>>
+					<<set $worn.over_lower.skirt_down to 0>><<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>>
+				<<elseif $worn.over_lower.skirt_down is 0>>
+					<<if _overOutfit>>
+						<<if $worn.over_upper.state is "waist">>
+							<<if $position is "wall">>
+								<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+								<<set $NPCList[_n].lefthand to 0>><<neutral 1>><<set $worn.over_lower.integrity -= 10>>
+							<<else>>
+								<<He>> lifts your $worn.over_upper.name above your midriff.
+								<<set $worn.over_lower.state to "midriff">><<set $worn.over_upper.state to "midriff">><<neutral 1>>
+								<<if $worn.over_upper.state_top is "waist">>
+									<<set $worn.over_upper.state_top to "midriff">>
+								<</if>>
+							<</if>>
+						<<elseif $worn.over_upper.state is "midriff">>
+							<<He>> lifts up your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								exposing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">exposing your<<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_lower.state to "chest">><<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+							<<if $worn.upper.state_top is "midriff">>
+								<<set $worn.upper.state_top to "chest">>
+							<</if>>
+						<<elseif $worn.over_upper.state is "chest">>
+							<span class="purple"><<He>> pulls your $worn.over_upper.name off completely.</span>
+							<<set $worn.over_lower.state to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<overlowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+							<<if $worn.over_upper.state_top is "chest">>
+								<<set $worn.over_upper.state_top to 0>>
+							<</if>>
+						<</if>>
+					<<elseif _overOutfit is false>>
+						<<if $worn.over_lower.state is "waist">>
+							<<He>> pulls your $worn.over_lower.name down to your thighs.
+							<<set $worn.over_lower.state to "thighs">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "thighs">>
+							<<He>> pulls your $worn.over_lower.name down to your knees.
+							<<set $worn.over_lower.state to "knees">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "knees">>
+							<<He>> pulls your $worn.over_lower.name down to your ankles.
+							<<set $worn.over_lower.state to "ankles">><<neutral 1>>
+						<<elseif $worn.over_lower.state is "ankles">>
+							<span class="purple"><<He>> completely pulls your $worn.over_lower.name off your legs.</span>
+							<<lowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<elseif _overOutfit>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_upper.state_top is "chest">>
+						<<He>> tugs your $worn.over_lower.name, pulling down your $worn.over_upper.name and
+						<<if $worn.upper.name isnot "naked">>
+							revealing your $worn.upper.name.
+						<<else>>
+							<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+						<</if>>
+						<<set $worn.over_upper.state_top to "midriff">><<neutral 3>><<set $worn.over_upper.exposed to 2>>
+						<<if $worn.over_upper.state is "chest">>
+							<<set $worn.over_upper.state to "midriff">>
+						<</if>>
+						<<if $worn.over_lower.state is "chest">>
+							<<set $worn.over_lower.state to "midriff">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "midriff">>
+						<<He>> tugs your $worn.over_lower.name, pulling down your $worn.over_upper.name passed your midriff.
+						<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+						<<if $worn.over_upper.state is "midriff">>
+							<<set $worn.over_upper.state to "waist">>
+						<</if>>
+						<<if $worn.over_lower.state is "midriff">>
+							<<set $worn.over_lower.state to "waist">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "waist">>
+						<<He>> pulls your $worn.over_upper.name down to your thighs, revealing your
+						<<if $worn.under_lower.state is "waist">>
+							$worn.lower.name
+							<<neutral 2>>
+						<<elseif $worn.under_lower.state is "waist">>
+							$worn.under_lower.name
+							<<neutral 2>>
+						<<else>>
+							<span class="lewd"><<genitals>>.</span>
+							<<neutral 5>><<set $speechgenitals to 1>>
+						<</if>>
+						<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+						<<if $worn.over_lower.state is "waist">>
+							<<set $worn.over_lower.state to "thighs">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "thighs">>
+						<<He>> pulls your $worn.over_upper.name down to your knees.
+						<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+						<<if $worn.over_lower.state is "thighs">>
+							<<set $worn.over_lower.state to "knees">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "knees">>
+						<<He>> pulls your $worn.over_upper.name down to your ankles.
+						<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+						<<if $worn.over_lower.state is "knees">>
+							<<set $worn.over_lower.state to "ankles">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "ankles">>
+						<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+						<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>>
+						<<if $worn.over_lower.state is "ankles">>
+							<<set $worn.over_lower.state to 0>><<overlowerstrip>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<He>> tugs at your $worn.over_lower.name, tearing <<overlowerit>> before <span class="blue">letting go.</span>
+					<<set $NPCList[_n].lefthand to 0>><<set $worn.over_lower.integrity -= 10>><<neutral 1>>
+				<</if>>
+			<<elseif _overOutfit is false>>
+				<<if $worn.over_lower.state is "waist">>
+					<<He>> pulls down your $worn.over_lower.name, exposing your
+					<<if $worn.lower.state is "waist">>
+						$worn.lower.name.
+						<<neutral 2>>
+					<<elseif $worn.under_lower.state is "waist">>
+						$worn.under_lower.name.
+						<<neutral 2>>
+					<<else>>
+						<span class="lewd"><<genitals>>.</span>
+						<<neutral 5>><<set $speechgenitals to 1>>
+					<</if>>
+					<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>><<set $worn.over_lower.state to "thighs">>
+				<<elseif $worn.over_lower.state is "thighs">>
+					<<He>> pulls your $worn.over_lower.name down to your knees.
+					<<set $worn.over_lower.state to "knees">><<neutral 1>>
+				<<elseif $worn.over_lower.state is "knees">>
+					<<He>> pulls your $worn.over_lower.name down to your ankles.
+					<<set $worn.over_lower.state to "ankles">><<neutral 1>>
+				<<elseif $worn.over_lower.state is "ankles">>
+					<span class="purple"><<He>> completely pulls your $worn.over_lower.name off your legs.</span>
+					<<overlowerstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+				<</if>>
+			<<else>>
+				<<He>> tugs at your $worn.over_lower.name, tearing <<overlowerit>> before <span class="blue">letting go.</span>
+				<<set $NPCList[_n].lefthand to 0>><<neutral 1>><<set $worn.over_lower.integrity -= 10>>
+			<</if>>
+		<</if>>
+	<<bodypart_admire_chance back>>
+	<</if>>
+	<<set $rng to random(1, 100)>>
+	<<if $NPCList[_n].lefthand is "overupperclothes">>
+		<<if $worn.over_upper.name is "naked">>
+			<span class="purple"><<He>> casts aside the fabric.</span>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $overupperstruggle is 1>>
+			<<set $overupperstruggle to 0>>
+			You manage to keep <<him>> from stripping you of your $worn.over_upper.name.
+			<<set $speechstripstruggle to 1>>
+		<<elseif $rng gte 101>>
+			<span class="lblue"><<He>> releases <<his>> hand from your $worn.over_upper.name.</span>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $rng lte 100>>
+			<<if _overOutfit is false>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_upper.state_top is "chest">>
+						<<He>> pulls down your $worn.over_upper.name,
+						<<if $worn.upper.name isnot "naked">>
+							revealing your $worn.upper.name.
+						<<else>>
+							<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+						<</if>>
+						<<set $worn.over_upper.state_top to "midriff">><<neutral 3>><<set $worn.over_upper.exposed to 2>>
+						<<if $worn.over_upper.state is "chest">>
+							<<set $worn.over_upper.state to "midriff">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "midriff">>
+						<<He>> pulls your $worn.over_upper.name down past your midriff.
+						<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+						<<if $worn.over_upper.state is "midriff">>
+							<<set $worn.over_upper.state to "waist">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "waist">>
+						<<He>> pulls your $worn.over_upper.name down to your thighs.
+						<<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+					<<elseif $worn.over_upper.state_top is "thighs">>
+						<<He>> pulls your $worn.over_upper.name down to your knees.
+						<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+					<<elseif $worn.over_upper.state_top is "knees">>
+						<<He>> pulls your $worn.over_upper.name down to your ankles.
+						<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+					<<elseif $worn.over_upper.state_top is "ankles">>
+						<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+						<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<set $NPCList[_n].lefthand to 0>>
+					<</if>>
+				<<elseif $worn.over_upper.open is 0>>
+					<<if $position is "wall">>
+						<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+						<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+					<<elseif $position isnot "wall">>
+						<<if $worn.over_upper.state is "waist">>
+							<<He>> lifts up your $worn.over_upper.name, exposing your midriff.
+							<<set $worn.over_upper.state to "midriff">><<neutral 1>>
+						<<elseif $worn.over_upper.state is "midriff">>
+							<<He>> lifts up your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								revealing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+						<<elseif $worn.over_upper.state is "chest">>
+							<span class="purple"><<He>> removes your $worn.over_upper.name completely.</span>
+							<<overupperstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<elseif _overOutfit>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_lower.state is $worn.over_upper.state_top and $worn.over_lower.state is $worn.over_upper.state and $worn.over_lower.skirt is 1>>
+						<<if $position is "wall">>
+							<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+							<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+						<<elseif $position isnot "wall">>
+							<<if $worn.over_upper.state is "waist">>
+								<<He>> pulls your bundled $worn.over_upper.name up past your midriff.
+								<<set $worn.over_upper.state to "midriff">><<neutral 1>><<set $worn.lower.state to "midriff">><<set $worn.over_upper.state_top to "midriff">>
+							<<elseif $worn.over_upper.state is "midriff">>
+								<<He>> pulls your bundled $worn.over_upper.name up past your
+								<<if $worn.upper.name isnot "naked">>
+									$worn.upper.name.
+								<<else>>
+									<<breasts>>.<<set $speechbreasts to 1>>
+								<</if>>
+								<<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>><<set $worn.over_lower.state to "chest">><<set $worn.over_upper.state_top to "chest">>
+							<<elseif $worn.over_upper.state is "chest">>
+								<span class="purple"><<He>> pulls your $worn.over_upper.name off your body.</span>
+								<<overupperstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $worn.over_upper.state_top is "chest">>
+							<<He>> pulls down the top of your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								revealing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_upper.state_top to "midriff">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+							<<if $worn.over_upper.state is "chest">>
+								<<set $worn.over_upper.state to "midriff">>
+							<</if>>
+							<<if $worn.lower.state is "chest">>
+								<<set $worn.lower.state to "midriff">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "midriff">>
+							<<He>> pulls your $worn.over_upper.name down past your midriff.
+							<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+							<<if $worn.over_upper.state is "midriff">>
+								<<set $worn.over_upper.state to "waist">>
+							<</if>>
+							<<if $worn.over_lower.state is "midriff">>
+								<<set $worn.over_lower.state to "waist">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "waist">>
+							<<He>> pulls your $worn.over_upper.name down to your thighs, revealing your
+							<<if $worn.lower.state is "waist">>
+								$worn.lower.name
+								<<neutral 2>>
+							<<elseif $worn.under_lower.state is "waist">>
+								$worn.under_lower.name
+								<<neutral 2>>
+							<<else>>
+								<span class="lewd"><<genitals>>.</span>
+								<<neutral 5>><<set $speechgenitals to 1>>
+							<</if>>
+							<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>><<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+							<<if $worn.over_lower.state is "waist">>
+								<<set $worn.over_lower.state to "thighs">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "thighs">>
+							<<He>> pulls your $worn.over_upper.name down to your knees.
+							<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+							<<if $worn.over_lower.state is "thighs">>
+								<<set $worn.over_lower.state to "knees">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "knees">>
+							<<He>> pulls your $worn.over_upper.name down to your ankles.
+							<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+							<<if $worn.over_lower.state is "knees">>
+								<<set $worn.over_lower.state to "ankles">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "ankles">>
+							<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+							<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<set $NPCList[_n].lefthand to 0>>
+							<<if $worn.over_lower.state is "ankles">>
+								<<set $worn.over_lower.state to 0>><<overlowerstrip>>
+							<</if>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+					<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+				<</if>>
+			<</if>>
+		<</if>>
+		<<bodypart_admire_chance breasts>>
+	<</if>>
+	<<set $rng to random(1, 100)>>
+	<<if $NPCList[_n].righthand is "overupperclothes">>
+		<<if $worn.over_upper.name is "naked">>
+			<span class="purple"><<He>> casts aside the fabric.</span>
+			<<set $NPCList[_n].righthand to 0>>
+		<<elseif $overupperstruggle is 1>>
+			<<set $overupperstruggle to 0>>
+			You manage to keep <<him>> from stripping you of your $worn.over_upper.name.
+			<<set $speechstripstruggle to 1>>
+		<<elseif $rng gte 101>>
+			<span class="lblue"><<He>> releases <<his>> hand from your $worn.over_upper.name.</span>
+			<<set $NPCList[_n].lefthand to 0>>
+		<<elseif $rng lte 100>>
+			<<if _overOutfit is false>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_upper.state_top is "chest">>
+						<<He>> pulls down your $worn.over_upper.name,
+						<<if $worn.upper.name isnot "naked">>
+							revealing your $worn.upper.name.
+						<<else>>
+							<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+						<</if>>
+						<<set $worn.over_upper.state_top to "midriff">><<neutral 3>><<set $worn.over_upper.exposed to 2>>
+						<<if $worn.over_upper.state is "chest">>
+							<<set $worn.over_upper.state to "midriff">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "midriff">>
+						<<He>> pulls your $worn.over_upper.name down past your midriff.
+						<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+						<<if $worn.over_upper.state is "midriff">>
+							<<set $worn.over_upper.state to "waist">>
+						<</if>>
+					<<elseif $worn.over_upper.state_top is "waist">>
+						<<He>> pulls your $worn.over_upper.name down to your thighs.
+						<<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+					<<elseif $worn.over_upper.state_top is "thighs">>
+						<<He>> pulls your $worn.over_upper.name down to your knees.
+						<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+					<<elseif $worn.over_upper.state_top is "knees">>
+						<<He>> pulls your $worn.over_upper.name down to your ankles.
+						<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+					<<elseif $worn.over_upper.state_top is "ankles">>
+						<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+						<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<set $NPCList[_n].lefthand to 0>>
+					<</if>>
+				<<elseif $worn.over_upper.open is 0>>
+					<<if $position is "wall">>
+						<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+						<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+					<<elseif $position isnot "wall">>
+						<<if $worn.over_upper.state is "waist">>
+							<<He>> lifts up your $worn.over_upper.name, exposing your midriff.
+							<<set $worn.over_upper.state to "midriff">><<neutral 1>>
+						<<elseif $worn.over_upper.state is "midriff">>
+							<<He>> lifts up your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								revealing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+						<<elseif $worn.over_upper.state is "chest">>
+							<span class="purple"><<He>> removes your $worn.over_upper.name completely.</span>
+							<<overupperstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+						<</if>>
+					<</if>>
+				<</if>>
+			<<elseif _overOutfit>>
+				<<if $worn.over_upper.open is 1>>
+					<<if $worn.over_lower.state is $worn.over_upper.state_top and $worn.over_lower.state is $worn.over_upper.state and $worn.over_lower.skirt is 1>>
+						<<if $position is "wall">>
+							<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+							<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+						<<elseif $position isnot "wall">>
+							<<if $worn.over_upper.state is "waist">>
+								<<He>> pulls your bundled $worn.over_upper.name up past your midriff.
+								<<set $worn.over_upper.state to "midriff">><<neutral 1>><<set $worn.lower.state to "midriff">><<set $worn.over_upper.state_top to "midriff">>
+							<<elseif $worn.over_upper.state is "midriff">>
+								<<He>> pulls your bundled $worn.over_upper.name up past your
+								<<if $worn.upper.name isnot "naked">>
+									$worn.upper.name.
+								<<else>>
+									<<breasts>>.<<set $speechbreasts to 1>>
+								<</if>>
+								<<set $worn.over_upper.state to "chest">><<neutral 2>><<set $worn.over_upper.exposed to 2>><<set $worn.over_lower.state to "chest">><<set $worn.over_upper.state_top to "chest">>
+							<<elseif $worn.over_upper.state is "chest">>
+								<span class="purple"><<He>> pulls your $worn.over_upper.name off your body.</span>
+								<<overupperstrip>><<set $NPCList[_n].lefthand to 0>><<neutral 3>><<clothesstripstat>>
+							<</if>>
+						<</if>>
+					<<else>>
+						<<if $worn.over_upper.state_top is "chest">>
+							<<He>> pulls down the top of your $worn.over_upper.name,
+							<<if $worn.upper.name isnot "naked">>
+								revealing your $worn.upper.name.
+							<<else>>
+								<span class="lewd">revealing your <<breasts>>.</span><<set $speechbreasts to 1>>
+							<</if>>
+							<<set $worn.over_upper.state_top to "midriff">><<neutral 2>><<set $worn.over_upper.exposed to 2>>
+							<<if $worn.over_upper.state is "chest">>
+								<<set $worn.over_upper.state to "midriff">>
+							<</if>>
+							<<if $worn.lower.state is "chest">>
+								<<set $worn.lower.state to "midriff">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "midriff">>
+							<<He>> pulls your $worn.over_upper.name down past your midriff.
+							<<set $worn.over_upper.state_top to "waist">><<neutral 1>>
+							<<if $worn.over_upper.state is "midriff">>
+								<<set $worn.over_upper.state to "waist">>
+							<</if>>
+							<<if $worn.over_lower.state is "midriff">>
+								<<set $worn.over_lower.state to "waist">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "waist">>
+							<<He>> pulls your $worn.over_upper.name down to your thighs, revealing your
+							<<if $worn.lower.state is "waist">>
+								$worn.lower.name
+								<<neutral 2>>
+							<<elseif $worn.under_lower.state is "waist">>
+								$worn.under_lower.name
+								<<neutral 2>>
+							<<else>>
+								<span class="lewd"><<genitals>>.</span>
+								<<neutral 5>><<set $speechgenitals to 1>>
+							<</if>>
+							<<set $worn.over_lower.vagina_exposed to 1>><<set $worn.over_lower.anus_exposed to 1>><<set $worn.over_lower.exposed to 2>><<set $worn.over_upper.state_top to "thighs">><<set $worn.over_upper.state to "thighs">>
+							<<if $worn.over_lower.state is "waist">>
+								<<set $worn.over_lower.state to "thighs">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "thighs">>
+							<<He>> pulls your $worn.over_upper.name down to your knees.
+							<<set $worn.over_upper.state_top to "knees">><<set $worn.over_upper.state to "knees">><<neutral 1>>
+							<<if $worn.over_lower.state is "thighs">>
+								<<set $worn.over_lower.state to "knees">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "knees">>
+							<<He>> pulls your $worn.over_upper.name down to your ankles.
+							<<set $worn.over_upper.state_top to "ankles">><<set $worn.over_upper.state to "ankles">><<neutral 1>>
+							<<if $worn.over_lower.state is "knees">>
+								<<set $worn.over_lower.state to "ankles">>
+							<</if>>
+						<<elseif $worn.over_upper.state_top is "ankles">>
+							<span class="purple"><<He>> pulls your $worn.over_upper.name off the bottom of your legs.</span>
+							<<neutral 5>><<set $worn.over_upper.state_top to 0>><<set $worn.over_upper.state to 0>><<overupperstrip>><<set $NPCList[_n].lefthand to 0>>
+							<<if $worn.over_lower.state is "ankles">>
+								<<set $worn.over_lower.state to 0>><<overlowerstrip>>
+							<</if>>
+						<</if>>
+					<</if>>
+				<<else>>
+					<<He>> tugs at your $worn.over_upper.name, tearing <<overupperit>> before <span class="blue">letting go.</span>
+					<<set $NPCList[_n].lefthand to 0>><<set $worn.over_upper.integrity -= 10>><<neutral 1>>
+				<</if>>
+			<</if>>
+		<</if>>
+		<<bodypart_admire_chance breasts>>
+	<</if>>
+	<<set $rng to random(1, 100)>>
 	<<if $NPCList[_n].lefthand is "upperclothes">>
 		<<if $worn.upper.name is "naked">>
 			<span class="purple"><<He>> casts aside the fabric.</span>
@@ -893,7 +1558,7 @@
 			<span class="lblue"><<He>> releases <<his>> hand from your $worn.upper.name.</span>
 			<<set $NPCList[_n].lefthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.upper.set isnot $worn.lower.set>>
+			<<if _middleOutfit is false>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.upper.state_top is "chest">>
 						<<He>> pulls down your $worn.upper.name, <span class="lewd">revealing your <<breasts>>.</span>
@@ -937,7 +1602,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.upper.set is $worn.lower.set>>
+			<<elseif _middleOutfit>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.lower.state is $worn.upper.state_top and $worn.lower.state is $worn.upper.state and $worn.lower.skirt is 1>>
 						<<if $position is "wall">>
@@ -1028,7 +1693,7 @@
 			<span class="lblue"><<He>> releases <<his>> hand from your $worn.upper.name.</span>
 			<<set $NPCList[_n].righthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.upper.set isnot $worn.lower.set>>
+			<<if _middleOutfit is false>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.upper.state_top is "chest">>
 						<<He>> pulls down your $worn.upper.name, <span class="lewd">revealing your <<breasts>>.</span>
@@ -1072,7 +1737,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.upper.set is $worn.lower.set>>
+			<<elseif _middleOutfit>>
 				<<if $worn.upper.open is 1>>
 					<<if $worn.lower.state is $worn.upper.state_top and $worn.lower.state is $worn.upper.state and $worn.lower.skirt is 1>>
 						<<if $position is "wall">>
@@ -1163,7 +1828,7 @@
 			<span class="lblue"><<He>> releases <<his>> hand from your $worn.under_upper.name.</span>
 			<<set $NPCList[_n].lefthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.under_upper.set isnot $worn.under_lower.set>>
+			<<if _underOutfit is false>>
 				<<if $worn.under_upper.open is 1>>
 					<<if $worn.under_upper.state_top is "chest">>
 						<<He>> pulls down your $worn.under_upper.name, <span class="lewd">revealing your <<breasts>>.</span>
@@ -1207,7 +1872,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.under_upper.set is $worn.under_lower.set>>
+			<<elseif _underOutfit>>
 				<<if $worn.under_upper.open is 1>>
 					<<if $worn.under_lower.state is $worn.under_upper.state_top and $worn.under_lower.state is $worn.under_upper.state and $worn.under_lower.skirt is 1>>
 						<<if $position is "wall">>
@@ -1298,7 +1963,7 @@
 			<span class="lblue"><<He>> releases <<his>> hand from your $worn.under_upper.name.</span>
 			<<set $NPCList[_n].righthand to 0>>
 		<<elseif $rng lte 100>>
-			<<if $worn.under_upper.set isnot $worn.under_lower.set>>
+			<<if _underOutfit is false>>
 				<<if $worn.under_upper.open is 1>>
 					<<if $worn.under_upper.state_top is "chest">>
 						<<He>> pulls down your $worn.under_upper.name, <span class="lewd">revealing your <<breasts>>.</span>
@@ -1343,7 +2008,7 @@
 						<</if>>
 					<</if>>
 				<</if>>
-			<<elseif $worn.under_upper.set is $worn.under_lower.set>>
+			<<elseif _underOutfit>>
 				<<if $worn.under_upper.open is 1>>
 					<<if $worn.under_lower.state is $worn.under_upper.state_top and $worn.under_lower.state is $worn.under_upper.state and $worn.under_lower.skirt is 1>>
 						<<if $position is "wall">>
@@ -1505,20 +2170,20 @@
 	<<activebodypart>>
 		<<if $NPCList[_n].lefthand is "pen" + "_" + _active_bodypart>>
 			<<He>> scrawls on your <<bodypart _active_bodypart>>:
-			<<bodywriting_npc _active_bodypart>>
-			<<set $NPCList[_n].lefthand to 0>>
+			<<bodywriting_npc _active_bodypart $NPCList[_n].lefttool>>
+			<<set $NPCList[_n].lefthand to 0>><<set $NPCList[_n].lefttool to 0>>
 		<</if>>
 		<<if $NPCList[_n].righthand is "pen" + "_" + _active_bodypart>>
 			<<He>> scrawls on your <<bodypart _active_bodypart>>:
-			<<bodywriting_npc _active_bodypart>>
-			<<set $NPCList[_n].righthand to 0>>
+			<<bodywriting_npc _active_bodypart $NPCList[_n].righttool>>
+			<<set $NPCList[_n].righthand to 0>><<set $NPCList[_n].righttool to 0>>
 		<</if>>
 	<</for>>
 	<<if $NPCList[_n].lefthand is "pen">>/*NPC chooses which bodypart to draw on*/
-		<<bodywriting_npc_bodypart left>>
+		<<bodywriting_npc_bodypart left $NPCList[_n].lefttool>>
 	<</if>>
 	<<if $NPCList[_n].righthand is "pen">>
-		<<bodywriting_npc_bodypart right>>
+		<<bodywriting_npc_bodypart right $NPCList[_n].righttool>>
 	<</if>>
 	<<if $NPCList[_n].lefthand is "lube">>
 		<<if $NPCList[_n].penis is "vaginaentrance">>
@@ -1573,18 +2238,24 @@
 			<<set $askedtochoke to 0>>
 			<<set $NPCList[_n].lefthand to "throat">><<neutral 1>>
 		<<elseif $combatgoal is "strip">>
-			<<if $worn.lower.name isnot "naked">>
+			<<if $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].lefthand to "overlowerclothes">><<neutral 1>>
+			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].lefthand to "lowerclothes">><<neutral 1>>
 			<<elseif $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 				<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 				<<set $NPCList[_n].lefthand to "underclothes">><<neutral 1>>
-			<<elseif $worn.under_upper.name isnot "naked" and $noupper isnot 1>>
-				<span class="purple"><<He>> grasps your $worn.under_upper.name.</span>
-				<<set $NPCList[_n].lefthand to "underupperclothes">><<neutral 1>>
+			<<elseif $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+				<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+				<<set $NPCList[_n].lefthand to "upperclothes">><<neutral 1>>
 			<<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 				<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 				<<set $NPCList[_n].lefthand to "upperclothes">><<neutral 1>>
+			<<elseif $worn.under_upper.name isnot "naked" and $noupper isnot 1>>
+				<span class="purple"><<He>> grasps your $worn.under_upper.name.</span>
+				<<set $NPCList[_n].lefthand to "underupperclothes">><<neutral 1>>
 			<<elseif $worn.genitals.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 				<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
@@ -1595,10 +2266,26 @@
 				<<set $NPCList[_n].mouth to 0>>
 			<</if>>
 		<<elseif $rng lte 0 and $consensual isnot 1 and $bodywritingdisable is "f">>
-			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<set _rng to random(1, 5)>>
+			<<if _rng is 5>>
+				<span class="purple"><<He>> pulls a <span class="pink">permanent</span> marker pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].lefttool to "marker">>
+			<<elseif _rng is 4 and $NPCList[_n].pronoun is "f">>
+				<span class="purple"><<He>> pulls lipstick from <<his>> pocket, and pushes out the tip.</span>
+				<<set $NPCList[_n].lefttool to "lipstick">>
+			<<elseif _rng is 3 and $outside is 1 and ($location is "forest" or $location is "moor" or $location is "farmlands")>>
+				<span class="purple"><<He>> lifts a handful of mud from the ground.</span>
+				<<set $NPCList[_n].lefttool to "mud">>
+			<<else>>
+				<span class="purple"><<He>> pulls a pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].lefttool to "pen">>
+			<</if>>
 			<<set $NPCList[_n].lefthand to "pen">><<neutral 1>>
 		<<elseif $enemyanger + $rng lte 20>>
-			<<if $worn.lower.name isnot "naked">>
+			<<if $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].lefthand to "overlowerclothes">><<neutral 1>>
+			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].lefthand to "lowerclothes">><<neutral 1>>
 			<<elseif $worn.genitals.type.includes("chastity")>>
@@ -1613,7 +2300,10 @@
 			<</if>>
 		<<elseif $enemyanger + $rng lte 30>>
 			<<if $position is "wall">>
-				<<if $worn.lower.name isnot "naked">>
+				<<if $worn.over_lower.name isnot "naked">>
+					<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+					<<set $NPCList[_n].lefthand to "overlowerclothes">><<neutral 1>>
+				<<elseif $worn.lower.name isnot "naked">>
 					<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 					<<set $NPCList[_n].lefthand to "lowerclothes">><<neutral 1>>
 				<<elseif $worn.genitals.type.includes("chastity")>>
@@ -1628,7 +2318,10 @@
 				<</if>>
 				<<bodypart_admire_chance pubic>>
 			<<else>>
-				<<if $worn.upper.name isnot "naked" and $noupper isnot 1>>
+				<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+					<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+					<<set $NPCList[_n].lefthand to "overupperclothes">><<neutral 1>>
+				<<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 					<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 					<<set $NPCList[_n].lefthand to "upperclothes">><<neutral 1>>
 				<<elseif $worn.under_upper.name isnot "naked" and $noupper isnot 1>>
@@ -1641,7 +2334,7 @@
 				<<bodypart_admire_chance pubic>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 35>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].lefthand to "underclothes">><<neutral 1>>
@@ -1649,7 +2342,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].lefthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -1664,7 +2357,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].lefthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -1674,7 +2367,7 @@
 			<</if>>
 			<<bodypart_admire_chance back>>
 		<<elseif $enemyanger + $rng lte 40>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].lefthand to "underclothes">><<neutral 1>>
@@ -1682,7 +2375,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<pussy>>, resting a finger on your entrance.</span>
 							<<set $NPCList[_n].lefthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -1700,7 +2393,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1>>
 							<<if $vaginause is 0>>
 								<span class="purple"><<He>> presses <<his>> left hand against your <<pussy>>, resting a finger on your entrance.</span>
@@ -1871,7 +2564,10 @@
 				<<bodypart_admire_chance pubic>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 110>>
-			<<if $worn.lower.name isnot "naked">>
+			<<if $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].lefthand to "overlowerclothes">><<neutral 1>>
+			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].lefthand to "lowerclothes">><<neutral 1>>
 			<<elseif $penisexist is 1>>
@@ -1898,10 +2594,13 @@
 					<<bodypart_admire_chance right_thigh>>
 				<</if>>
 			<<else>>
-				<<if $worn.upper.name isnot "naked" and $noupper isnot 1>>
+				<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+					<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+					<<set $NPCList[_n].lefthand to "overupperclothes">><<neutral 1>>
+				<<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 					<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 					<<set $NPCList[_n].lefthand to "upperclothes">><<neutral 1>>
-				<<elseif $asphyxiaLvl gte 1 and ($neckuse isnot "hand" or $NPCList[_n].righthand is "throat")>>
+				<<elseif $asphyxiaLvl gte 1 and $nochoke isnot 1 and ($neckuse isnot "hand" or $NPCList[_n].righthand is "throat")>>
 					<span class="purple"><<He>> grabs your throat.</span>
 					<<violence 2>><<set $NPCList[_n].lefthand to "throat">><<set $neckuse to "hand">>
 				<<else>>
@@ -1915,7 +2614,7 @@
 				<</if>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 125>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].lefthand to "underclothes">><<neutral 1>>
@@ -1923,7 +2622,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].lefthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -1938,7 +2637,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].lefthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -1948,7 +2647,7 @@
 			<</if>>
 		<<bodypart_admire_chance back>>
 		<<elseif $enemyanger + $rng lte 130>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].lefthand to "underclothes">><<neutral 1>>
@@ -1956,7 +2655,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> left hand against your <<pussy>>, <<his>> finger resting on your entrance.</span>
 							<<set $NPCList[_n].lefthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -1974,7 +2673,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].lefthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1>>
 							<<if $vaginause is 0>>
 								<span class="purple"><<He>> presses <<his>> left hand against your <<pussy>>, <<his>> finger resting on your entrance.</span>
@@ -2218,12 +2917,18 @@
 			<<set $askedtochoke to 0>>
 			<<set $NPCList[_n].righthand to "throat">><<neutral 1>>
 		<<elseif $combatgoal is "strip">>
-            <<if $worn.upper.name isnot "naked" and $noupper isnot 1>>
+            <<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+				<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+				<<set $NPCList[_n].righthand to "overupperclothes">><<neutral 1>>
+            <<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 				<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 				<<set $NPCList[_n].righthand to "upperclothes">><<neutral 1>>
 			<<elseif $worn.under_upper.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.under_upper.name.</span>
 				<<set $NPCList[_n].righthand to "underupperclothes">><<neutral 1>>
+			<<elseif $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].righthand to "overlowerclothes">><<neutral 1>>
 			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].righthand to "lowerclothes">><<neutral 1>>
@@ -2240,10 +2945,25 @@
 				<<set $NPCList[_n].mouth to 0>>
 			<</if>>
 		<<elseif $rng lte 7 and $consensual isnot 1 and $bodywritingdisable is "f">>
-			<span class="purple"><<He>> pulls a marker pen from <<his>> pocket, flicking off the lid.</span>
+			<<if _rng is 5>>
+				<span class="purple"><<He>> pulls a <span class="pink">permanent</span> marker pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].righttool to "marker">>
+			<<elseif _rng is 4 and $NPCList[_n].pronoun is "f">>
+				<span class="purple"><<He>> pulls lipstick from <<his>> pocket, and pushes out the tip.</span>
+				<<set $NPCList[_n].righttool to "lipstick">>
+			<<elseif _rng is 3 and $outside is 1 and ($location is "forest" or $location is "moor" or $location is "farmlands")>>
+				<span class="purple"><<He>> lifts a handful of mud from the ground.</span>
+				<<set $NPCList[_n].righttool to "mud">>
+			<<else>>
+				<span class="purple"><<He>> pulls a pen from <<his>> pocket, flicking off the lid.</span>
+				<<set $NPCList[_n].righttool to "pen">>
+			<</if>>
 			<<set $NPCList[_n].righthand to "pen">><<neutral 1>>
 		<<elseif $enemyanger + $rng lte 20>>
-			<<if $worn.lower.name isnot "naked">>
+			<<if $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].righthand to "overlowerclothes">><<neutral 1>>
+			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].righthand to "lowerclothes">><<neutral 1>>
 			<<elseif $worn.genitals.type.includes("chastity")>>
@@ -2261,7 +2981,10 @@
 			<</if>>
 		<<elseif $enemyanger + $rng lte 30>>
 			<<if $position is "wall">>
-				<<if $worn.lower.name isnot "naked">>
+				<<if $worn.over_lower.name isnot "naked">>
+					<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+					<<set $NPCList[_n].righthand to "overlowerclothes">><<neutral 1>>
+				<<elseif $worn.lower.name isnot "naked">>
 					<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 					<<set $NPCList[_n].righthand to "lowerclothes">><<neutral 1>>
 				<<elseif $worn.genitals.type.includes("chastity")>>
@@ -2283,7 +3006,10 @@
 					<<bodypart_admire_chance right_thigh>>
 				<</if>>
 			<<else>>
-				<<if $worn.upper.name isnot "naked" and $noupper isnot 1>>
+				<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+					<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+					<<set $NPCList[_n].righthand to "overupperclothes">><<neutral 1>>
+				<<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 					<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 					<<set $NPCList[_n].righthand to "upperclothes">><<neutral 1>>
 				<<elseif $worn.under_upper.name isnot "naked">>
@@ -2296,7 +3022,7 @@
 				<<bodypart_admire_chance breasts>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 35>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].righthand to "underclothes">><<neutral 1>>
@@ -2304,7 +3030,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].righthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -2320,7 +3046,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].righthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -2330,7 +3056,7 @@
 			<</if>>
 			<<bodypart_admire_chance back>>
 		<<elseif $enemyanger + $rng lte 40>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].righthand to "underclothes">><<neutral 1>>
@@ -2338,7 +3064,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<pussy>>, resting a finger on your entrance.</span>
 							<<set $NPCList[_n].righthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -2356,7 +3082,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<pussy>>, resting a finger above your entrance.</span>
 							<<set $NPCList[_n].righthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -2536,7 +3262,10 @@
 				<<bodypart_admire_chance pubic>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 110>>
-			<<if $worn.lower.name isnot "naked">>
+			<<if $worn.over_lower.name isnot "naked">>
+				<span class="purple"><<He>> grasps your $worn.over_lower.name.</span>
+				<<set $NPCList[_n].righthand to "overlowerclothes">><<neutral 1>>
+			<<elseif $worn.lower.name isnot "naked">>
 				<span class="purple"><<He>> grasps your $worn.lower.name.</span>
 				<<set $NPCList[_n].righthand to "lowerclothes">><<neutral 1>>
 			<<elseif $penisexist is 1>>
@@ -2563,10 +3292,13 @@
 					<<bodypart_admire_chance right_thigh>>
 				<</if>>
 			<<else>>
-				<<if $worn.upper.name isnot "naked" and $noupper isnot 1>>
+				<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
+					<span class="purple"><<He>> grasps your $worn.over_upper.name.</span>
+					<<set $NPCList[_n].righthand to "overupperclothes">><<neutral 1>>
+				<<elseif $worn.upper.name isnot "naked" and $noupper isnot 1>>
 					<span class="purple"><<He>> grasps your $worn.upper.name.</span>
 					<<set $NPCList[_n].righthand to "upperclothes">><<neutral 1>>
-				<<elseif $asphyxiaLvl gte 1 and ($neckuse isnot "hand" or $NPCList[_n].lefthand is "throat")>>
+				<<elseif $asphyxiaLvl gte 1 and $nochoke isnot 1 and ($neckuse isnot "hand" or $NPCList[_n].lefthand is "throat")>>
 					<span class="purple"><<He>> grabs your throat.</span>
 					<<violence 2>><<set $NPCList[_n].righthand to "throat">><<set $neckuse to "hand">>
 				<<else>>
@@ -2580,7 +3312,7 @@
 				<</if>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 125>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].righthand to "underclothes">><<neutral 1>>
@@ -2588,14 +3320,14 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].righthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
 						<</if>>
 					<</if>>
 				<</if>>
-			<<bodypart_admire_chance back>>
+				<<bodypart_admire_chance back>>
 			<<elseif $worn.lower.name isnot "waist">>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
@@ -2604,7 +3336,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $anususe is 0 and $analdisable is "f">>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<bottom>>.</span>
 							<<set $NPCList[_n].righthand to "anusentrance">><<set $anususe to 1>><<neutral 1>>
@@ -2618,7 +3350,7 @@
 				<<bodypart_admire_chance right_bottom>>
 			<</if>>
 		<<elseif $enemyanger + $rng lte 130>>
-			<<if $worn.lower.skirt is 1>>
+			<<if $worn.lower.skirt is 1 and $worn.over_lower.skirt is 1>>
 				<<if $worn.under_lower.name isnot "naked" and $worn.under_lower.state isnot "totheside">>
 					<span class="purple"><<He>> grasps your $worn.under_lower.name.</span>
 					<<set $NPCList[_n].righthand to "underclothes">><<neutral 1>>
@@ -2626,7 +3358,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<pussy>>, <<his>> finger resting on your entrance.</span>
 							<<set $NPCList[_n].righthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -2645,7 +3377,7 @@
 					<span class="purple"><<He>> grasps your $worn.genitals.name.</span>
 					<<set $NPCList[_n].righthand to "genitals">><<neutral 1>>
 				<<elseif $worn.under_lower.vagina_exposed is 1 and $worn.genitals.vagina_exposed is 1>>
-					<<if $worn.lower.vagina_exposed is 1>>
+					<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 						<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $penisuse isnot 0 or random(0,100) gte 50)>>
 							<span class="purple"><<He>> presses <<his>> right hand against your <<pussy>>, <<his>> finger resting on your entrance.</span>
 							<<set $NPCList[_n].righthand to "vaginaentrance">><<set $vaginause to 1>><<neutral 1>>
@@ -2976,10 +3708,13 @@
 			<span class="lblue"><<He>> moves <<his>> penis away from your <<pussy>>.</span>
 			<<set $NPCList[_n].penis to 0>><<set $vaginause to 0>><<set $vaginastate to 0>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>><<set $speechvaginaentrance to 1>><<set $enemyanger += 15>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>><<set $speechvaginaentrance to 1>><<set $enemyanger += 15>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.under_lower.name.
@@ -3092,10 +3827,13 @@
 			<span class="lblue"><<He>> moves <<his>> penis away from your <<bottom>>.</span>
 			<<set $NPCList[_n].penis to 0>><<set $anususe to 0>><<set $anusstate to 0>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.anus_exposed is 0>>
+			<<if $worn.over_lower.anus_exposed is 0>>
+				<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>><<set $speechanusentrance to 1>>
+			<<elseif $worn.lower.anus_exposed is 0>>
 				<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>><<set $speechanusentrance to 1>>
-			<<elseif $worn.lower.anus_exposed is 1>>
+			<<elseif $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.anus_exposed is 0>>
 					<<He>> rubs <<his>> $NPCList[_n].penisdesc against your <<bottom>> through your $worn.under_lower.name.
@@ -3336,10 +4074,13 @@
 			<span class="lblue"><<He>> moves <<his>> ass away from your <<penis>>.</span>
 			<<set $NPCList[_n].penis to 0>><<set $penisuse to 0>><<set $penisstate to 0>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> rubs <<his>> ass against your <<penis>> through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>><<set $speechotheranusentrance to 1>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> rubs <<his>> ass against your <<penis>> through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>><<set $speechotheranusentrance to 1>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> rubs <<his>> ass against your <<penis>> through your $worn.under_lower.name.
@@ -3508,7 +4249,7 @@
 			<</if>>
 		<<elseif $enemyanger + $rng lte 170 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<if $anususe is 0 and $analdisable is "f">>
-				<<if $worn.lower.anus_exposed is 1>>
+				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 					<<if $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 						<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus, preparing to penetrate.</span>
 						<<sex 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">><<set $speechanusimminent to 1>>
@@ -3516,6 +4257,9 @@
 						<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.under_lower.name.</span>
 						<<sex 3>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.under_lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 					<</if>>
+				<<elseif $worn.over_lower.anus_exposed is 0>>
+					<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.over_lower.name.</span>
+					<<sex 2>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.over_lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 				<<elseif $worn.lower.anus_exposed is 0>>
 					<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.lower.name.</span>
 					<<sex 2>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
@@ -3524,7 +4268,7 @@
 			<</if>>
 		<<elseif $enemyanger + $rng gte 171 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<if $vaginaexist is 1 and $vaginause is 0 and ($penisexist is 0 or $anususe isnot 0 or random(0,100) gte 50)>>
-				<<if $worn.lower.vagina_exposed is 1>>
+				<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 					<<if $worn.under_lower.vagina_exposed is 1 and !$worn.genitals.type.includes("chastity")>>
 						<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>>, preparing to penetrate.</span>
 						<<sex 5>><<set $vaginause to "penis">><<set $NPCList[_n].penis to "vaginaimminent">><<set $vaginastate to "imminent">><<set $speechvaginaimminent to 1>>
@@ -3532,6 +4276,9 @@
 						<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.under_lower.name.</span>
 						<<set $worn.under_lower.integrity -= 10>><<sex 3>><<set $NPCList[_n].penis to "vaginaentrance">><<set $vaginause to "penis">><<set $vaginastate to "entrance">><<set $speechvaginaentrance to 1>>
 					<</if>>
+				<<elseif $worn.over_lower.vagina_exposed is 0>>
+					<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.over_lower.name.</span>
+					<<sex 2>><<set $NPCList[_n].penis to "vaginaentrance">><<set $vaginause to "penis">><<set $worn.over_lower.integrity -= 10>><<set $vaginastate to "entrance">><<set $speechvaginaentrance to 1>>
 				<<elseif $worn.lower.vagina_exposed is 0>>
 					<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>> through your $worn.lower.name.</span>
 					<<sex 2>><<set $NPCList[_n].penis to "vaginaentrance">><<set $vaginause to "penis">><<set $worn.lower.integrity -= 10>><<set $vaginastate to "entrance">><<set $speechvaginaentrance to 1>>
@@ -3539,7 +4286,7 @@
 				<<set $NPCList[_n].location.genitals to "genitals">>
 			<<elseif $penisexist is 1>>
 				<<if $anususe is 0 and $analdisable is "f">>
-					<<if $worn.lower.anus_exposed is 1>>
+					<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 						<<if $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 							<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus, preparing to penetrate.</span>
 							<<sex 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusimminent">><<set $anusstate to "imminent">><<set $speechanusimminent to 1>>
@@ -3547,6 +4294,9 @@
 							<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.under_lower.name.</span>
 							<<sex 3>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.under_lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 						<</if>>
+					<<elseif $worn.over_lower.anus_exposed is 0>>
+						<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.over_lower.name.</span>
+						<<sex 2>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.over_lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 					<<elseif $worn.lower.anus_exposed is 0>>
 						<span class="blue"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus through your $worn.lower.name.</span>
 						<<sex 2>><<set $NPCList[_n].penis to "anusentrance">><<set $anususe to "penis">><<set $worn.lower.integrity -= 10>><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
@@ -3651,10 +4401,13 @@
 			<span class="lblue"><<He>> moves <<his>> pussy away from your <<penis>>.</span>
 			<<set $NPCList[_n].vagina to 0>><<set $penisuse to 0>><<set $penisstate to 0>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> rubs <<his>> pussy against your <<penis>> through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>><<set $speechpenisentrance to 1>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> rubs <<his>> pussy against your <<penis>> through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>><<set $speechpenisentrance to 1>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> rubs <<his>> pussy against your <<penis>> through your $worn.under_lower.name.
@@ -3915,10 +4668,13 @@
 			<span class="lblue"><<He>> moves <<his>> ass away from your <<penis>>.</span>
 			<<set $NPCList[_n].vagina to 0>><<set $penisuse to 0>><<set $penisstate to 0>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> rubs <<his>> ass against your <<penis>> through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>><<set $speechotheranusentrance to 1>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> rubs <<his>> ass against your <<penis>> through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>><<set $speechotheranusentrance to 1>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> rubs <<his>> ass against your <<penis>> through your $worn.under_lower.name.
@@ -4055,19 +4811,19 @@
 		<<elseif $enemyanger + $rng lte 80>>
 			<<He>> rubs <<his>> pussy against your thigh.
 			<<neutral 2>>
-		<<elseif $enemyanger + $rng lte 100 and $penisuse is 0 and $penisexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
+		<<elseif $enemyanger + $rng lte 100 and $penisuse is 0 and $penisexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisentrance">><<set $penisstate to "entrance">>
 			<span class="blue"><<He>> straddles you, <<his>> pussy hovering close to your <<penis>>.</span>
 			<<set $NPCList[_n].location.genitals = "genitals">>
-		<<elseif $enemyanger + $rng lte 100 and $vaginause is 0 and $vaginaexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
+		<<elseif $enemyanger + $rng lte 100 and $vaginause is 0 and $vaginaexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<set $vaginause to "othervagina">><<set $vaginastate to "othervaginaentrance">><<set $NPCList[_n].vagina to "vaginaentrance">><<sex 5>>
 			<span class="blue"><<He>> moves <<his>> pussy close to yours.</span>
 			<<set $NPCList[_n].location.genitals = "genitals">><<set $speechtribentrance to 1>>
-		<<elseif $enemyanger + $rng lte 120 and $penisuse is 0 and $penisexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and !$worn.genitals.type.includes("chastity")>>
+		<<elseif $enemyanger + $rng lte 120 and $penisuse is 0 and $penisexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and !$worn.genitals.type.includes("chastity")>>
 			<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisimminent">><<set $penisstate to "imminent">>
 			<span class="purple"><<He>> wraps <<his>> legs around your pelvis, pressing <<his>> pussy against your <<genitals>>.</span>
 			<<set $NPCList[_n].location.genitals = "genitals">>
-		<<elseif $enemyanger + $rng lte 120 and $vaginause is 0 and $vaginaexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
+		<<elseif $enemyanger + $rng lte 120 and $vaginause is 0 and $vaginaexist is 1 and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals">>
 			<<set $vaginause to "othervagina">><<set $vaginastate to "othervaginaimminent">><<set $NPCList[_n].vagina to "vaginaimminent">><<sex 20>>
 			<span class="purple"><<He>> pushes <<his>> pussy close to yours.</span>
 			<<set $NPCList[_n].location.genitals = "genitals">>
@@ -4225,10 +4981,13 @@
 				<<set $NPCList[_n].penis to 0>>
 			<</if>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.anus_exposed is 0>>
+			<<if $worn.over_lower.anus_exposed is 0>>
+				<<He>> circles <<his>> tongue around your anus through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>>
+			<<elseif $worn.lower.anus_exposed is 0>>
 				<<He>> circles <<his>> tongue around your anus through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>>
-			<<elseif $worn.lower.anus_exposed is 1>>
+			<<elseif $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.anus_exposed is 0>>
 					<<He>> circles <<his>> tongue around your anus through your $worn.under_lower.name.
@@ -4318,10 +5077,13 @@
 				<<set $NPCList[_n].penis to 0>>
 			<</if>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> traces the outline of your <<pussy>> with <<his>> tongue through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> traces the outline of your <<pussy>> with <<his>> tongue through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> traces the outline of your <<pussy>> with <<his>> tongue through your $worn.under_lower.name.
@@ -4413,10 +5175,13 @@
 				<<set $NPCList[_n].penis to 0>>
 			<</if>>
 		<<elseif $rng gte 1>>
-			<<if $worn.lower.vagina_exposed is 0>>
+			<<if $worn.over_lower.vagina_exposed is 0>>
+				<<He>> traces the outline of your <<penis>> with <<his>> tongue through your $worn.over_lower.name.
+				<<sex 5>><<set $worn.over_lower.integrity -= 10>>
+			<<elseif $worn.lower.vagina_exposed is 0>>
 				<<He>> traces the outline of your <<penis>> with <<his>> tongue through your $worn.lower.name.
 				<<sex 5>><<set $worn.lower.integrity -= 10>>
-			<<elseif $worn.lower.vagina_exposed is 1>>
+			<<elseif $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<set $rng to random(1, 100)>>
 				<<if $worn.under_lower.vagina_exposed is 0>>
 					<<He>> traces the outline of your <<penis>> with <<his>> tongue through your $worn.under_lower.name.
@@ -4502,10 +5267,13 @@
 				<<set $NPCList[_n].location.head to 0>>
 			<<elseif $rng lte 100>>
 				<<He>> pulls you closer and presses your lips together in a kiss.
-				<<if $npc isnot 0>>
-					<<takeKissVirginityNamed $npc>>
-				<<else>>
-					<<takeKissVirginity $NPCList[_n].fullDescription `($consensual is 1?"":"rape")`>>
+				<<if $player.virginity.kiss is true>>
+					<<set $speechkissvirgin to 1>>
+					<<if $npc isnot 0>>
+						<<takeKissVirginityNamed $npc>>
+					<<else>>
+						<<takeKissVirginity $NPCList[_n].fullDescription `($consensual is 1?"":"rape")`>>
+					<</if>>
 				<</if>>
 				<<set $NPCList[_n].mouth to "kissimminent">><<set $mouthstate to "kissimminent">><<sex 2>>
 			<<else>>
@@ -4604,139 +5372,8 @@
 		<</if>>
 	<</if>>
 	<<set $rng to random(1, 100)>>
-	<<if $npc is "Robin">>
-		<<if $speechvaginavirgin is 1>>
-			<<He>> gasps. "You saved yourself for me. I don't deserve something so special. Thank you." Tears roll down <<his>> cheeks.
-		<<elseif $speechpenisvirgin is 1>>
-			<<He>> gasps. "You saved yourself for me. I don't deserve something so special. Thank you." Tears roll down <<his>> cheeks.
-		<<elseif $speechanusvirgin is 1>>
-			<<He>> gasps. "This is so naughty!"
-		<<elseif $speechmouthvirgin is 1>>
-			<<He>> gasps. "You're making me feel funny down there."
-		<<elseif $speechnamedrop is 1>>
-			<<set $speechnamedrop to 0>>
-			<<He>> speaks. "So you're a cheater in more ways than one. (This line is a placeholder and should be unobtainable.)"
-		<</if>>
-	<<elseif $npc is "Kylar">>
-		<<if $speechvaginavirgin is 1>>
-			<<He>> gasps. "You were a virgin too," <<he>> says. "We were meant for each other."
-		<<elseif $speechpenisvirgin is 1>>
-			<<He>> gasps. "You were a virgin too," <<he>> says. "We were meant for each other."
-		<<elseif $speechnamedrop is 1>>
-			<<set $speechnamedrop to 0>>
-			<<if _loveInterest is "Black Wolf">>
-				<<His>> eyes narrow. "I can be an animal, too. Watch!"
-				<<npcincr Kylar rage 10>><<ggksuspicion>>
-			<<elseif random(1, 100) lte 50>>
-				<<switch _loveInterest>>
-				<<case "Robin">>
-					<<He>> growls. "Robin can't take care of you like I can!"
-				<<case "Whitney">>
-					<<He>> freezes. "W...Whitney can't stop me!"
-				<<default>>
-					<<He>> freezes. "Who... are you talking about...?"
-				<</switch>>
-				<<npcincr Kylar rage 10>><<ggksuspicion>>
-			<<else>>
-				<<He>> freezes. "You don't need them! You only need me!"
-				<<npcincr Kylar rage 10>><<ggksuspicion>>
-			<</if>>
-		<<elseif $kylarsexcycle is 0>>
-			<<set $kylarsexcycle += 1>>
-			<<if ($penisexist is 1 and $NPCList[_n].vagina isnot "none") or ($vaginaexist is 1 and $NPCList[_n].penis isnot "none")>>
-				<<He>> whispers into your ear. "We're going to make lots of babies."
-			<<else>>
-				"We're going to adopt lots of babies," <<he>> says.
-			<</if>>
-		<<elseif $kylarsexcycle is 1>>
-			<<set $kylarsexcycle += 1>>
-			"You'll be the best
-			<<if $player.gender_appearance is "m">>
-				daddy
-			<<else>>
-				mummy
-			<</if>>
-			ever," <<he>> says.
-		<<elseif $kylarsexcycle is 2>>
-			<<set $kylarsexcycle += 1>>
-			"You're so naughty," <<he>> says. "We're not even married yet!"
-		<<elseif $kylarsexcycle is 3>>
-			<<set $kylarsexcycle += 1>>
-			"I want you to wear me out," <<he>> says. "And then keep going."
-		<<elseif $kylarsexcycle is 4>>
-			<<set $kylarsexcycle += 1>>
-			"I'm going to do this again and again until you forget about every other
-			<<if $pronoun is "m">>
-				bastard
-			<<else>>
-				whore
-			<</if>>
-			who's looked at you," <<he>> says.
-		<<elseif $kylarsexcycle is 5>>
-			<<set $kylarsexcycle += 1>>
-			"I'll be the only one you ever think about," <<he>> says.
-		<<elseif $kylarsexcycle is 6>>
-			<<set $kylarsexcycle += 1>>
-			"Everyone is bad," <<he>> says. "Except you. You're perfect."
-		<<elseif $kylarsexcycle is 7>>
-			<<set $kylarsexcycle += 1>>
-			"I feel safe like this," <<he>> says. "I never want it to end."
-		<<elseif $kylarsexcycle is 8>>
-			<<set $kylarsexcycle += 1>>
-			"I l-love you," <<he>> says.
-		<<else>>
-			<<set $kylarsexcycle to 0>>
-			"You're so lewd and naughty and all mine," <<he>> says.
-		<</if>>
-	<<elseif $npc is "Eden" and $speechvaginavirgin is 1>>
-		<<He>> speaks. "I felt your virginity. I couldn't help it. I needed to take you."
-	<<elseif $npc is "Eden" and $speechpenisvirgin is 1>>
-		<<He>> speaks. "I felt your virginity. I couldn't help it. I needed to take you."
-	<<elseif $npc is "Eden" and $speechnamedrop is 1>>
-		<<set $speechnamedrop to 0>>
-		<<switch _loveInterest>>
-		<<case "Black Wolf">>
-			<<He>> speaks. "That thing will tear you apart the first chance it gets! Stay away from it."
-		<<default>>
-			<<He>> speaks. "Whoever that is, forget them." <<He>> sounds hurt.
-		<</switch>>
-	<<elseif $npc is "Whitney" and $speechvaginavirgin is 1>>
-		<<He>> laughs. "No one can call you a virgin after this. You're my dirty slut now."
-	<<elseif $npc is "Whitney" and $speechpenisvirgin is 1>>
-		<<He>> laughs. "No one can call you a virgin after this. You're my dirty slut now."
-	<<elseif $npc is "Whitney" and $speechnamedrop is 1>>
-		<<set $speechnamedrop to 0>>
-		<<if _loveInterest is "Black Wolf">>
-			<<if random(1, 2) lte 1>>
-				<<He>> laughs. "Did you just admit to fucking a dog? You're making this too easy."
-			<<else>>
-				<<He>> laughs. "I think I need to remind you who's bitch you actually are."
-			<</if>>
-		<<elseif random(1, 2) lte 1>>
-			<<switch _loveInterest>>
-			<<case "Robin">>
-				<<He>> laughs. "You've fallen for that weak little shit? I guess I know who to visit next."
-			<<case "Kylar">>
-				<<He>> scowls. "I should've known you'd fall for that freak."
-			<<default>>
-				<<He>> scowls. "Let me remind you why you don't have a choice."
-			<</switch>>
-		<<else>>
-			<<He>> laughs. "I don't care about your little crush. You belong to me."
-		<</if>>
-	<<elseif $npc is "Avery" and $speechpenisvirgin is 1 or $speechvaginavirgin is 1>>
-		<<He>> laughs. "How splendid. Your virginity is a wonderful gift."
-	<<elseif $npc is "Avery" and $speechnamedrop is 1>>
-		<<set $speechnamedrop to 0>>
-		<<switch _loveInterest>>
-		<<case "Robin">>
-			<<His>> face darkens. "The little brat I keep seeing you with? I should've known."
-		<<case "Black Wolf">>
-			<<His>> face darkens. "I don't pay you to let a filthy animal have its way with you."
-		<<default>>
-			<<He>> wordlessly eyes you with contempt.
-		<</switch>>
-	<<elseif $NPCList[_n].mouth is 0 and $speechdisable isnot 1 or $NPCList[_n].mouth is "speech_only" and $speechdisable isnot 1>>
+	<<namedNpcComments>>
+	<<if $NPCList[_n].mouth is 0 and $speechdisable isnot 1 or $NPCList[_n].mouth is "speech_only" and $speechdisable isnot 1 and _noNameComment>>
 		<<if $combatgoal is "strip">>
 			<<set $rng to random(1, 100)>>
 			<<if $rng lte 25>>
@@ -5186,7 +5823,7 @@
 <<set _handname = _hands == 2 ? "hands" : (_left ? "left hand" : "right hand")>>
 <<set _handvar = _left ? "lefthand" : "righthand">>
 
-<<if $enemyanger gte 100>>
+<<if $enemyanger gte 100 or $keepchoke>>
 	<<if $underwater isnot 1 and $asphyxiaLvl gte 3>>
 		<<if _hands == 2>>
 			<!-- -200 per turn with both hands: max to 0 oxygen in 6 turns -->
@@ -5262,7 +5899,7 @@
 <<set _handvar = _left ? "lefthand" : "righthand">>
 
 <!-- 97.2% probability to stop choking before you pass out if my math is correct (95% if with both hands) -->
-<<if $oxygen gt 600 or $askedtochoke gte 1 or $enemyanger gte 100 or $rng lte 55>>
+<<if $oxygen gt 600 or $askedtochoke gte 1 or $keepchoke or $enemyanger gte 100 or $rng lte 55>>
 	<<if $underwater isnot 1 and $asphyxiaLvl gte 2>>
 		<<if _hands == 2>>
 			<!-- -175 per turn with both hands: max to 0 oxygen in 7 turns -->
@@ -5332,16 +5969,18 @@
 <</nobr>><</widget>>
 
 <<widget "gaspair">><<nobr>>
-<<if $oxygen gte 900>>
-	You inhale sharply.
-<<elseif $oxygen gte 600>>
-	You gasp for air.
-<<elseif $oxygen gte 1>>
-	You hungrily gasp for air.
-<<else>>
-	You hungrily gasp for air and cough.
-<</if>>
+<<if $underwater isnot 1>>
+	<<if $oxygen gte 900>>
+		You inhale sharply.
+	<<elseif $oxygen gte 600>>
+		You gasp for air.
+	<<elseif $oxygen gte 1>>
+		You hungrily gasp for air.
+	<<else>>
+		You hungrily gasp for air and cough.
+	<</if>>
 <<oxygen 300>>
+<</if>>
 <<set $suffocating to 0>>
 <</nobr>><</widget>>
 

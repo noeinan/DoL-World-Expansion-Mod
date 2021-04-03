@@ -166,6 +166,9 @@ $(document).on('keyup', function (ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
 		return;
 
+	if (document.activeElement.tagName === "INPUT" && document.activeElement.type === "number")
+		return;
+
 	if ((ev.keyCode >= 48 && ev.keyCode <= 57) || (ev.keyCode >= 96 && ev.keyCode <= 105)) {
 		var fixedKeyIndex = (ev.keyCode < 60 ? ev.keyCode - 48 : ev.keyCode - 96);
 
@@ -263,7 +266,7 @@ window.extendStats = function () {
 	new Wikifier(null, '<<replace #stats>><<statsCaption>><</replace>>');
 }
 
-window.customColor = function (color, saturation, brightness, contrast, sepia) {
+window.customColour = function (color, saturation, brightness, contrast, sepia) {
 	return 'filter: hue-rotate(' + color + 'deg) saturate(' + saturation + ') brightness(' + brightness + ') contrast(' + contrast + ') sepia(' + sepia + ')';
 }
 

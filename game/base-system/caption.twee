@@ -10,12 +10,15 @@
 	<<if $images is 1>>
 		<<addclass body has-images>>
 		<<removeclass body no-images>>
-		<<img>>
+		<div id="sidebar-img-container">
+			<<img>>
+		</div>
 	<<else>>
 		<<removeclass body has-images>>
 		<<addclass body no-images>>
 	<</if>>
 	<<combateffects>>
+	
 	
 	
 	<<if $endeventerror isnot undefined>>
@@ -83,137 +86,14 @@
 	<</if>>
 	<<schoolday>>
 	<br>
-	<<clothingcaption>>
-	<br>
-	<<stripcaption>>
-	<<if ($player.gender is "m" or $player.gender is "h") and $player.gender_appearance is "f">>
-		<<if $breastindicator is 1>>
-			<span class="pink">Your exposed breasts will make people think you're a girl!</span>
-			<br>
-		<<elseif $exposed gte 2>>
-			<span class="pink">The way you look, people will think you're a girl!</span>
-			<br>
-		<<else>>
-			<span class="pink">The way you're dressed, people will think you're a girl!</span>
-			<br>
-		<</if>>
-	<<elseif ($player.gender is "f" or $player.gender is "h") and $player.gender_appearance is "m">>
-		<<if $breastindicator is 0 and $worn.upper.exposed is 2 and $worn.under_upper.exposed gte 1>>
-			<span class="pink">Your exposed flat chest will make people think you're a boy!</span>
-			<br>
-		<<elseif $exposed gte 2>>
-			<span class="pink">The way you look, people will think you're a boy!</span>
-		<<else>>
-			<span class="pink">The way you're dressed, people will think you're a boy!</span>
-			<br>
-		<</if>>
-	<</if>>
-	
-	<<switch $body_temperature>>
-	<<case "hot">>
-		<span class="red">You are sweltering.</span>
-	<<case "warm">>
-		<span class="purple">You are warm and sweaty.</span>
-	<<case "chilly">>
-		<<if _water_warmth>>
-			<span class="purple">You're chilled by cold water.</span>
-		<<else>>
-			<span class="purple">You are chilly.</span>
-		<</if>>
-	<<case "cold">>
-		<<if _water_warmth>>
-			<span class="red">You shiver in freezing water.</span>
-		<<else>>
-			<span class="red">You shiver.</span>
-		<</if>>
-	<<default>>
-		<<if _water_warmth>>
-			<span class="green">The water feels warm.</span>
-		<<else>>
-			<span class="green">You are snug.</span>
-		<</if>>
-	<</switch>>
+	<div id="sidebar-look-description">
+		<<sidebarlookdescription>>
+	</div>
 	<br>
 
 	<<clamp>>
 
-	<<if $daystate is "night">>
-		<<set $nightmod to 1.5>>
-	<<else>>
-		<<set $nightmod to 1>>
-	<</if>>
-
-	<<if $exposed gte 2>>
-		<<set $exposedmod to 1.4>>
-	<<elseif $exposed gte 1>>
-		<<set $exposedmod to 1.2>>
-	<<else>>
-		<<set $exposedmod to 1>>
-	<</if>>
-
-	<<set $allure to (($beauty / 3) + $hairlength / 4 + $worn.upper.reveal + $worn.lower.reveal)>>
-	<<if $worn.upper.type.includes("naked")>><<set $allure += $worn.under_upper.reveal>><</if>>
-	<<if $worn.lower.type.includes("naked")>><<set $allure += $worn.under_lower.reveal>><</if>>
-	<<set $allure *= $nightmod>>
-	<<set $allure *= $exposedmod>>
-	<<set $allure += $worn.head.reveal>>
-	<<set $allure += $worn.face.reveal>>
-	<<set $allure += $worn.neck.reveal>>
-	<<set $allure += $worn.legs.reveal>>
-	<<set $allure += $worn.feet.reveal>>
-	<<if $wolfgirl gte 6>><<set $allure += 500>><</if>>
-	<<if $demon gte 6>><<set $allure += 500>><</if>>
-	<<if $angel gte 6>><<set $allure += 500>><</if>>
-	<<if $fallenangel gte 2>><<set $allure += 500>><</if>>
-	<<if $cat gte 6>><<set $allure += 500>><</if>>
-	<<if $cow gte 6>><<set $allure += 500>><</if>>
-	<<goocount>><<set $allure += ($goocount * 50) + ($semencount * 50)>>
-
-	<<if $makeup.lipstick != 0>><<set $allure += 100>><</if>>
-	<<if $makeup.eyeshadow != 0>><<set $allure += 100>><</if>>
-	<<if $makeup.mascara != 0>><<set $allure += 100>><</if>>
-
-	<<set $allure += ($famesex / 10)>>
-	<<set $allure += ($famerape / 10)>>
-	<<set $allure += ($famebestiality / 10)>>
-	<<set $allure += ($fameexhibitionism / 10)>>
-
-	<<set $allure -= ($famescrap / 2)>>
-	<<set $allure -= ($famegood / 2)>>
-	<<set $allure -= ($famebusiness / 2)>>
-	<<set $allure -= ($famesocial / 2)>>
-	<<if $dev is 1>>
-		<<set $allure -= ($famepimp / 2)>>
-	<</if>>
-	<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
-		<<set $allure += 2000>>
-	<</if>>
-	<<set $allure *= $alluremod>>
-	<<if $allure gte 8000 * $alluremod>><<set $allure to 8000 * $alluremod>><</if>>
-	<<if $moorLuck gt 0>>
-		<<set $allure to Math.floor($allure * (1 - ($moorLuck / 100)))>>
-	<</if>>
-	<<if $allure lt 0>>
-		<<set $allure to 0>>
-	<</if>>
-
-	<<set $attractiveness to (($beauty / 3) + $hairlength / 4 + $worn.upper.reveal + $worn.lower.reveal)>>
-	<<if $worn.upper.type.includes("naked")>><<set $attractiveness += $worn.under_upper.reveal>><</if>>
-	<<if $worn.lower.type.includes("naked")>><<set $attractiveness += $worn.under_lower.reveal>><</if>>
-	<<set $attractiveness += $worn.head.reveal>>
-	<<set $attractiveness += $worn.face.reveal>>
-	<<set $attractiveness += $worn.neck.reveal>>
-	<<set $attractiveness += $worn.legs.reveal>>
-	<<set $attractiveness += $worn.feet.reveal>>
-	<<if $wolfgirl gte 6>><<set $attractiveness += 500>><</if>>
-	<<if $demon gte 6>><<set $attractiveness += 500>><</if>>
-	<<if $angel gte 6>><<set $attractiveness += 500>><</if>>
-	<<if $fallenangel gte 2>><<set $attractiveness += 500>><</if>>
-	<<if $cat gte 6>><<set $attractiveness += 500>><</if>>
-	<<if $cow gte 6>><<set $attractiveness += 500>><</if>>
-	<<if $makeup.lipstick != 0>><<set $attractiveness += 100>><</if>>
-	<<if $makeup.eyeshadow != 0>><<set $attractiveness += 100>><</if>>
-	<<if $makeup.mascara != 0>><<set $attractiveness += 100>><</if>>
+	<<calculateallure>>
 	<<set $rng to random(1, 100)>>
 
 	<<if $worn.neck.collared gte 1>>
@@ -383,8 +263,145 @@
 </div>
 
 :: Widgets Clothing Caption [widget]
-<<widget "clothingcaption">><<nobr>>
+<<widget "sidebarlookdescription">><<nobr>>
+	<!--old version
+	<<clothingcaption>>
+	<br>
+	<<stripcaption>>
+	
+	<<if ($player.gender is "m" or $player.gender is "h") and $player.gender_appearance is "f">>
+		<<if $breastindicator is 1>>
+			<span class="pink">Your exposed breasts will make people think you're a girl!</span>
+			<br>
+		<<elseif $exposed gte 2>>
+			<span class="pink">The way you look, people will think you're a girl!</span>
+			<br>
+		<<else>>
+			<span class="pink">The way you're dressed, people will think you're a girl!</span>
+			<br>
+		<</if>>
+	<<elseif ($player.gender is "f" or $player.gender is "h") and $player.gender_appearance is "m">>
+		<<if $breastindicator is 0 and $worn.upper.exposed is 2 and $worn.under_upper.exposed gte 1>>
+			<span class="pink">Your exposed flat chest will make people think you're a boy!</span>
+			<br>
+		<<elseif $exposed gte 2>>
+			<span class="pink">The way you look, people will think you're a boy!</span>
+		<<else>>
+			<span class="pink">The way you're dressed, people will think you're a boy!</span>
+			<br>
+		<</if>>
+	<</if>>-->
+	<<clothingCpationText>>
+	
+	<<switch $body_temperature>>
+	<<case "hot">>
+		<span class="red">You are sweltering.</span>
+	<<case "warm">>
+		<span class="purple">You are warm and sweaty.</span>
+	<<case "chilly">>
+		<<if _water_warmth>>
+			<span class="purple">You're chilled by cold water.</span>
+		<<else>>
+			<span class="purple">You are chilly.</span>
+		<</if>>
+	<<case "cold">>
+		<<if _water_warmth>>
+			<span class="red">You shiver in freezing water.</span>
+		<<else>>
+			<span class="red">You shiver.</span>
+		<</if>>
+	<<default>>
+		<<if _water_warmth>>
+			<span class="green">The water feels warm.</span>
+		<<else>>
+			<span class="green">You are snug.</span>
+		<</if>>
+	<</switch>>
+<</nobr>><</widget>>
 
+<<widget "calculateallure">><<nobr>>
+	<<if $daystate is "night">>
+		<<set $nightmod to 1.5>>
+	<<else>>
+		<<set $nightmod to 1>>
+	<</if>>
+
+	<<if $exposed gte 2>>
+		<<set $exposedmod to 1.4>>
+	<<elseif $exposed gte 1>>
+		<<set $exposedmod to 1.2>>
+	<<else>>
+		<<set $exposedmod to 1>>
+	<</if>>
+
+	<<set $allure to (($beauty / 3) + $hairlength / 4 + $worn.upper.reveal + $worn.lower.reveal)>>
+	<<if $worn.upper.type.includes("naked")>><<set $allure += $worn.under_upper.reveal>><</if>>
+	<<if $worn.lower.type.includes("naked")>><<set $allure += $worn.under_lower.reveal>><</if>>
+	<<set $allure *= $nightmod>>
+	<<set $allure *= $exposedmod>>
+	<<set $allure += $worn.head.reveal>>
+	<<set $allure += $worn.face.reveal>>
+	<<set $allure += $worn.neck.reveal>>
+	<<set $allure += $worn.legs.reveal>>
+	<<set $allure += $worn.feet.reveal>>
+	<<if $wolfgirl gte 6>><<set $allure += 500>><</if>>
+	<<if $demon gte 6>><<set $allure += 500>><</if>>
+	<<if $angel gte 6>><<set $allure += 500>><</if>>
+	<<if $fallenangel gte 2>><<set $allure += 500>><</if>>
+	<<if $cat gte 6>><<set $allure += 500>><</if>>
+	<<if $cow gte 6>><<set $allure += 500>><</if>>
+	<<if $harpy gte 6>><<set $allure += 500>><</if>>
+	<<goocount>><<set $allure += ($goocount * 50) + ($semencount * 50)>>
+
+	<<if $makeup.lipstick != 0>><<set $allure += 100>><</if>>
+	<<if $makeup.eyeshadow != 0>><<set $allure += 100>><</if>>
+	<<if $makeup.mascara != 0>><<set $allure += 100>><</if>>
+
+	<<set $allure += ($famesex / 10)>>
+	<<set $allure += ($famerape / 10)>>
+	<<set $allure += ($famebestiality / 10)>>
+	<<set $allure += ($fameexhibitionism / 10)>>
+
+	<<set $allure -= ($famescrap / 2)>>
+	<<set $allure -= ($famegood / 2)>>
+	<<set $allure -= ($famebusiness / 2)>>
+	<<set $allure -= ($famesocial / 2)>>
+	<<if $dev is 1>>
+		<<set $allure -= ($famepimp / 2)>>
+	<</if>>
+	<<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
+		<<set $allure += 2000>>
+	<</if>>
+	<<set $allure *= $alluremod>>
+	<<if $allure gte 8000 * $alluremod>><<set $allure to 8000 * $alluremod>><</if>>
+	<<if $moorLuck gt 0>>
+		<<set $allure to Math.floor($allure * (1 - ($moorLuck / 100)))>>
+	<</if>>
+	<<if $allure lt 0>>
+		<<set $allure to 0>>
+	<</if>>
+
+	<<set $attractiveness to (($beauty / 3) + $hairlength / 4 + $worn.upper.reveal + $worn.lower.reveal)>>
+	<<if $worn.upper.type.includes("naked")>><<set $attractiveness += $worn.under_upper.reveal>><</if>>
+	<<if $worn.lower.type.includes("naked")>><<set $attractiveness += $worn.under_lower.reveal>><</if>>
+	<<set $attractiveness += $worn.head.reveal>>
+	<<set $attractiveness += $worn.face.reveal>>
+	<<set $attractiveness += $worn.neck.reveal>>
+	<<set $attractiveness += $worn.legs.reveal>>
+	<<set $attractiveness += $worn.feet.reveal>>
+	<<if $wolfgirl gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $demon gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $angel gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $fallenangel gte 2>><<set $attractiveness += 500>><</if>>
+	<<if $cat gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $cow gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $harpy gte 6>><<set $attractiveness += 500>><</if>>
+	<<if $makeup.lipstick != 0>><<set $attractiveness += 100>><</if>>
+	<<if $makeup.eyeshadow != 0>><<set $attractiveness += 100>><</if>>
+	<<if $makeup.mascara != 0>><<set $attractiveness += 100>><</if>>
+<</nobr>><</widget>>
+
+<<widget "clothingcaption">><<nobr>>
 <<if $worn.upper.name is "naked">>
 	<<if $worn.lower.name is "naked">>
 		<<if $worn.under_lower.name is "naked" and $worn.genitals.name is "naked">>
@@ -940,9 +957,12 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 <</nobr>><</widget>>
 
 <<widget "startingPlayerImageUpdate">><<nobr>>
-<<replace #startingPlayerImage>>
-	<<startingPlayerImage>>
-<</replace>>
+<<if $passage is "Start">>
+	<<replace #settingsExit>><<settingsExit>><</replace>>
+	<<replace #startingPlayerImage>>
+		<<startingPlayerImage>>
+	<</replace>>
+<</if>>
 <</nobr>><</widget>>
 
 :: StoryRightSidebar [nobr]

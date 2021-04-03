@@ -4,7 +4,7 @@
 	"autoReset":true,
 	"value":0,
 	"showEquip": {"over_head": null, "over_upper": null, "over_lower": null},
-	"showUnderEquip": {"upper": null, "lower": null},
+	"showUnderEquip": {"upper": null, "lower": null}
 }>>
 <</nobr>><</widget>>
 
@@ -25,7 +25,7 @@
 		"under_lower":clone($worn.under_lower),
 		"under_upper":clone($worn.under_upper),
 		"upper":clone($worn.upper),
-		"over_upper":clone($worn.over_upper),
+		"over_upper":clone($worn.over_upper)
 	},
 	"tryingOn":{
 		"face":null,
@@ -40,7 +40,7 @@
 		"under_lower":null,
 		"under_upper":null,
 		"upper":null,
-		"over_upper":null,
+		"over_upper":null
 	},
 	"type": {},
 	"showEquip": {"over_head": null, "over_upper":null, "over_lower": null},
@@ -52,47 +52,53 @@
 <<if $debug is 1>>
 	<<if $tryOn.showEquip.over_head is null and $tryOn.showEquip.over_upper is null and $tryOn.showEquip.over_lower is null
 	and $worn.over_head.name isnot "naked" and $worn.over_upper.name isnot "naked" and $worn.over_lower.name isnot "naked">>
-		<<link [[Show Normal Clothes|$passage]]>><<ShowUnderEquip "over" "hide">><</link>>
+		<<link "Show Normal Clothes">><<ShowUnderEquip "over" "hide">><<updatesidebarimg>><<updatetryonstats>><</link>>
 		<br>
 	<<elseif $tryOn.showEquip.over_head isnot null or $tryOn.showEquip.over_upper isnot null or $tryOn.showEquip.over_lower isnot null>>
-		<<link [[Re-equip Over Clothes|$passage]]>><<ShowUnderEquip "over">><</link>>
+		<<link "Re-equip Over Clothes">><<ShowUnderEquip "over">><<updatesidebarimg>><<updatetryonstats>><</link>>
 		<br>
 	<</if>>
 <</if>>
 <<if $tryOn.showUnderEquip.upper is null and $tryOn.showUnderEquip.lower is null>>
-	<<link [[Show Under Clothes|$passage]]>><<ShowUnderEquip "normal" "hide">><</link>>
+	<<link "Show Under Clothes">><<ShowUnderEquip "normal" "hide">><<updatesidebarimg>><<updatetryonstats>><</link>>
 	<br><br>
 <<elseif $tryOn.showUnderEquip.upper isnot null and $tryOn.showUnderEquip.lower isnot null>>
-	<<link [[Re-equip Upper Clothes|$passage]]>><<ShowUnderEquip "normal">><</link>>
+	<<link "Re-equip Upper Clothes">><<ShowUnderEquip "normal">><<updatesidebarimg>><<updatetryonstats>><</link>>
 	<br><br>
 <</if>>
-<<if $tryOn.value gt 0>>
+<<set _slots to ["over_upper","over_lower","upper", "lower", "under_upper", "under_lower","over_head","head", "face", "neck", "hands", "legs", "feet"]>>
+<<if _slots.map(x => $tryOn.tryingOn[x]).some(x => x != null)>>
 	Clothes you are trying on total to £<<print $tryOn.value / 100>>. This includes:
 	<br>
 	<<if $passage is "Clothing Shop">>
-		<<set _equip to ["over_upper","over_lower","upper", "lower", "under_upper", "under_lower","over_head","head", "face", "neck", "hands", "legs", "feet"]>>
+		<<set _slots to ["over_upper","over_lower","upper", "lower", "under_upper", "under_lower","over_head","head", "face", "neck", "hands", "legs", "feet"]>>
 		<ul>
-		<<for _i to 0; _i lt _equip.length; _i++>>
-			<<if $tryOn.tryingOn[_equip[_i]] is null>>
-				<<continue>>
-			<</if>>
-			<<if $tryOn.tryingOn[_equip[_i]].outfitSecondary is undefined>>
-				<li>
-					<<set _color to $tryOn.tryingOn[_equip[_i]].colour>>
-					<<if _color isnot 0>>
-						<<print '<span class="' + $tryOn.tryingOn[_equip[_i]].colour + '">(_color)</span>'>>
-					<</if>>
-					<<print $tryOn.tryingOn[_equip[_i]].name_cap>> with a price tag of £<<print $tryOn.tryingOn[_equip[_i]].cost / 100>>
-					<<capture _i>>
-						| <<link [[Remove|$passage]]>><<clothingReset _equip[_i]>><</link>>
-					<</capture>>
-				</li>
-			<</if>>
+		<<for _tryon range _slots.map(x => [x, $tryOn.tryingOn[x]]).filter(x => x[1] != null && x[1].outfitSecondary is undefined)>>
+			<li>
+				<<if _tryon[1].colour isnot 0>>
+					<<print '<span class="' + _tryon[1].colour + '">(_tryon[1].colour)</span>'>>
+				<</if>>
+				<<print _tryon[1].name_cap>> with a price tag of £<<print _tryon[1].cost * $clothesPrice / 100>>
+				<<capture _tryon[0]>>
+					| <<link "Remove">><<clothingReset _tryon[0]>>
+						<<updatesidebarimg>>
+						<<updatesidebardescription>>
+						<<updateallure>>
+						<<updatewarmthscale>>
+						<<updatewarmthdescription>>
+						<<updatetryonstats>>
+						<<goto $passage>>
+					<</link>>
+				<</capture>>
+			</li>
 		<</for>>
 		</ul>
 	<</if>>
 <</if>>
+<</nobr>><</widget>>
 
+<<widget "updatetryonstats">><<nobr>>
+	<<replace "#tryonstats-div">><<tryOnStats>><</replace>>
 <</nobr>><</widget>>
 
 <<widget "buyTryOnClothes">><<nobr>>
@@ -128,6 +134,11 @@
 <<widget "clothingReset">><<nobr>>
 <<if $args[0]>>
 	<<if $tryOn.ownedStored[$args[0]] isnot null>>
+		<<if Object.keys($tryOn.showUnderEquip).includes($args[0]) and $tryOn.showUnderEquip[$args[0]] isnot null>>
+			<<ShowUnderEquip "normal">>
+		<<elseif Object.keys($tryOn.showEquip).includes($args[0]) and $tryOn.showEquip[$args[0]] isnot null>>
+			<<ShowUnderEquip "over">>
+		<</if>>
 		<<unset _outfitPrimaryCR>>
 		<<set _outfitPrimaryCR to $worn[$args[0]].outfitPrimary>>
 		<<if _outfitPrimaryCR isnot undefined>>
@@ -178,42 +189,44 @@
 <</nobr>><</widget>>
 
 <<widget "tryOnWear">><<nobr>>
-<<if $args[0] and $args[1]>>
+<<set _slotTO = $args[0]>>
+<<set _choice_indexTO = $args[1]>>
+<<if _slotTO and _choice_indexTO>>
 	<<set _items to {}>>
 
-	/*Finds the main piece of clothing and sets it colors*/
-	<<set _items[$args[0]] to clone(setup.clothes[$args[0]][$args[1]])>>
-	<<if $colouraction2 isnot undefined and _items[$args[0]].colour_options.includes($colouraction2)>>
-		<<set _items[$args[0]].colour to $colouraction2>>
-		<<if _items[$args[0]].colour is "custom">>
-			<<set _items[$args[0]].colourCustom to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
+	/*Finds the main piece of clothing and sets it colours*/
+	<<set _items[_slotTO] to clone(setup.clothes[_slotTO][_choice_indexTO])>>
+	<<if $colouraction2 isnot undefined and _items[_slotTO].colour_options.includes($colouraction2)>>
+		<<set _items[_slotTO].colour to $colouraction2>>
+		<<if _items[_slotTO].colour is "custom">>
+			<<set _items[_slotTO].colourCustom to customColour($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
 		<</if>>
 	<</if>>
-	<<if $accessorycolouraction2 isnot undefined and _items[$args[0]].accessory_colour_options.includes($accessorycolouraction2)>>
-		<<set _items[$args[0]].accessory_colour to $accessorycolouraction2>>
-		<<if _items[$args[0]].accessory_colour is "custom">>
-			<<set _items[$args[0]].accessory_colourCustom to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
+	<<if $accessorycolouraction2 isnot undefined and _items[_slotTO].accessory_colour_options.includes($accessorycolouraction2)>>
+		<<set _items[_slotTO].accessory_colour to $accessorycolouraction2>>
+		<<if _items[_slotTO].accessory_colour is "custom">>
+			<<set _items[_slotTO].accessory_colourCustom to customColour($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
 		<</if>>
 	<</if>>
 
-	/*Finds the secondary pieces of clothing and sets their colors*/
+	/*Finds the secondary pieces of clothing and sets their colours*/
 	<<unset _outfitPrimaryTO>>
-	<<set _outfitPrimaryTO to _items[$args[0]].outfitPrimary>>
+	<<set _outfitPrimaryTO to _items[_slotTO].outfitPrimary>>
 	<<if _outfitPrimaryTO isnot undefined>>
 		<<for _labelTO, _valueTO range _outfitPrimaryTO>>
 			<<for _i to 0; _i lt setup.clothes[_labelTO].length; _i++>>
 				<<if setup.clothes[_labelTO][_i].name is _valueTO>>
-					<<set _items[_labelTO] to setup.clothes[_labelTO][_i]>>
+					<<set _items[_labelTO] to clone(setup.clothes[_labelTO][_i])>>
 					<<if $colouraction2 isnot undefined and _items[_labelTO].colour_options.includes($colouraction2)>>
 						<<set _items[_labelTO].colour to $colouraction2>>
 						<<if _items[_labelTO].colour is "custom">>
-							<<set _items[_labelTO].colourCustom to customColor($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
+							<<set _items[_labelTO].colourCustom to customColour($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
 						<</if>>
 					<</if>>
 					<<if $accessorycolouraction2 isnot undefined and _items[_labelTO].accessory_colour_options.includes($accessorycolouraction2)>>
 						<<set _items[_labelTO].accessory_colour to $accessorycolouraction2>>
 						<<if _items[_labelTO].accessory_colour is "custom">>
-							<<set _items[_labelTO].accessory_colourCustom to customColor($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
+							<<set _items[_labelTO].accessory_colourCustom to customColour($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
 						<</if>>
 					<</if>>
 					<<break>>
@@ -223,6 +236,7 @@
 	<</if>>
 
 	/*Unequips the required slots*/
+	<<unset _unequipSlot>>
 	<<for _labelTO, _valueTO range _items>>
 		<<if $worn[_labelTO].name is "naked">>
 			<<continue>>
@@ -237,7 +251,7 @@
 		<</if>>
 
 		<<unset _outfitPrimaryTO>>
-		<<set _outfitPrimaryTO to $worn[$args[0]].outfitPrimary>>
+		<<set _outfitPrimaryTO to $worn[_slotTO].outfitPrimary>>
 		<<if _outfitPrimaryTO isnot undefined>>
 			<<for _labelTO2, _valueTO2 range _outfitPrimaryTO>>
 				<<if _valueTO2 isnot "broken">>
@@ -254,7 +268,7 @@
 	<<for _labelTO, _valueTO range _items>>
 		<<set $worn[_labelTO] to clone(_valueTO)>>
 		<<set $tryOn.tryingOn[_labelTO] to clone(_valueTO)>>
-		<<set $tryOn.value += $tryOn.tryingOn[_labelTO].cost>>
+		<<set $tryOn.value += $tryOn.tryingOn[_labelTO].cost * $clothesPrice>>
 	<</for>>
 <</if>>
 <</nobr>><</widget>>
@@ -278,7 +292,7 @@
 
 <<widget "removeTryingOn">><<nobr>>
 <<if $tryOn.tryingOn[$args[0]] isnot null>>
-	<<set $tryOn.value -= $tryOn.tryingOn[$args[0]].cost>>
+	<<set $tryOn.value -= $tryOn.tryingOn[$args[0]].cost * $clothesPrice>>
 	<<set $tryOn.tryingOn[$args[0]] to null>>
 <</if>>
 <</nobr>><</widget>>

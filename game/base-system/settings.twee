@@ -38,7 +38,7 @@
 <<set $tentacledisable to "f">>
 <<set $analdisable to "f">>
 <<set $transformdisable to "f">>
-<<set $hirsutedisable to "t">>
+/*<<set $hirsutedisable to "t">>*/
 <<set $breastfeedingdisable to "f">>
 <<set $analpregdisable to "f">>
 <<set $asphyxiaLvl to 3>>
@@ -56,6 +56,7 @@
 <<set $zoom to 100>>
 <<set $checkstyle to "words">>
 <<set $blackwolfmonster to 1>>
+<<set $greathawkmonster to 1>>
 <<set $player.ballsExist to false>>
 <<set $blinkingdisable to "f">>
 <<set $halfcloseddisable to "f">>
@@ -68,6 +69,7 @@
 <<set $reducedLineHeight to false>>
 <<set $sidebarAnimations to true>>
 <<set $combatAnimations to true>>
+<<set $clothesPrice to 1>>
 <<startingPlayerImageReset>>
 <</nobr>><</widget>>
 
@@ -230,12 +232,18 @@
 	<<if $facestyle is "" or isImageOk("#testImage")>>
 		<<set $facestyle = "default">>
 	<</if>>
+	<!-- Init shop mannequin gender -->
+	<<if $mannequinHasPenis is undefined>>
+		<<set $mannequinHasPenis = $player.penisexist ? 1 : 0>>
+		<<set $mannequinBreastsSize = $mannequinHasPenis ? 0 : 3>>
+	<</if>>
 	<<set _settingsExitPassage to clone($settingsExitPassage)>>
 	<<unset $settingsExitPassage>>
 	<<run State.display(_settingsExitPassage)>>
 	<<set $saveName to $saveName.replace(/[^a-zA-Z 0-9]+/g,"")>>
 	<<unset $importString>>
 <</nobr>><</widget>>
+
 /*complete:{"Vrelnir (Default)":"vrelDefault","Lollipop Scythe":"lollipopScythe","PurityGuy":"purityGuy","Fangi":"fangi"},*/
 <<widget "quickStartOptions">><<nobr>>
 <<if _quickStartOptions is undefined>>
@@ -250,7 +258,7 @@
 			"Normal ":"gameNormal","Soft (No Feats)":"gameSoft","Hard":"gameHard","Masochist":"gameMasochist","Soft with Cheats (No Feats)":"gameSoftCheats","Normal with Cheats (No Feats)":"gameNormalCheats","Hard with Cheats (No Feats)":"gameHardCheats","Masochist with Cheats (No Feats)":"gameMasochistCheats"
 		},
 		images:{"Default":"imagesdefault","High Quality":"imagesHigh","Low Quality":"imagesLow","Performance Mode":"imagesPerformance","Disable images":"imagesDisable"},
-		settings:{"PC, Tips":"settingPCTip","PC, no Tips":"settingPCNoTip","Mobile, Tips":"settingMobileTips","Mobile, no Tips":"settingMobileNoTips"},
+		settings:{"PC, Tips":"settingPCTip","PC, no Tips":"settingPCNoTip","Mobile, Tips":"settingMobileTips","Mobile, no Tips":"settingMobileNoTips"}
 	}>>
 <</if>>
 <</nobr>><</widget>>
@@ -553,7 +561,7 @@
 	<br>
 	<label><span class = "blue">Soft mode</span>
 	<<print '<<radiobutton "$gamemode" "soft" ' + ($gamemode is "soft" ? "checked" : "") + '>>'>>
-	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future. Leaving the settings with soft mode will prevent you from earning feats till it is set to normal mode. Doing this will permanently prevent some feats from being earned.</span></label>
+	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future. Leaving the settings with soft mode will prevent you from earning feats until it is set to normal mode. Doing this will permanently prevent some feats from being earned.</span></label>
 	<br>
 	<<if $intro is 1 or $gamemode is "hard">>
 		<label><span class = "purple">Hard mode</span>
@@ -565,11 +573,16 @@
 
 	<span class="gold">The rate that events are triggered by allure</span> - Default is 1.0.
 	<br>
-	<span class="red">Leaving the settings with this below 1 will prevent you from earning feats till it is increased. Doing this will permanently prevent some feats from being earned.</span>
+	<span class="red">Leaving the settings with this below 1 will prevent you from earning feats until it is increased. Doing this will permanently prevent some feats from being earned.</span>
 	<br>
 	<<numberslider "$alluremod" $alluremod 0.2 2 0.1>>
 	<br><br>
 
+	<span class="gold">Clothing Price</span> - Default is 1, 2 is recommended for hard mode.
+	<br>
+	Will multiply the clothing cost by the number set. This includes the cost for buying, the automatic re-buy and repairing. Towels are still free.
+	<<numberslider "$clothesPrice" $clothesPrice 1 10 1>>
+	<br><br>
 
 	<div class="gold widerButton">
 	<<button "Human NPC Settings">>
@@ -713,14 +726,14 @@
 	<<print '<<checkbox "$analdisable" "t" "f" ' + ($analdisable is "f" ? "checked" : "") + '>>'>> Enable anal
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$pbdisable" "t" "f" ' + ($pbdisable is "f" ? "checked" : "") + '>>'>> Enable pubic hair growth
+	<<print '<<checkbox "$pbdisable" "t" "f" ' + ($pbdisable is "t" ? "" : "checked") + '>>'>> Enable pubic hair growth
 	</div></label>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$transformdisable" "t" "f" ' + ($transformdisable is "f" ? "checked" : "") + '>>'>> Enable transformations
 	</div></label>
-	<label><div class="settingsToggle">
+	/*<label><div class="settingsToggle">
 	<<print '<<checkbox "$hirsutedisable" "t" "f" ' + ($hirsutedisable is "f" ? "checked" : "") + '>>'>> Extra hirsute/hairy wolf transformation
-	</div></label>
+	</div></label>*/
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$breastfeedingdisable" "t" "f" ' + ($breastfeedingdisable is "f" ? "checked" : "") + '>>'>> Enable lactation
 	</div></label>
@@ -1110,6 +1123,13 @@ Breast size
 	<label><<print '<<radiobutton "$blackwolfmonster" 1 ' + ($blackwolfmonster is 1 ? "checked" : "") + '>>'>> Monster girl or boy when requirements met</label> |
 	<label><<print '<<radiobutton "$blackwolfmonster" 2 ' + ($blackwolfmonster is 2 ? "checked" : "") + '>>'>> Always a monster girl or boy</label>
 	<br><br>
+<<elseif $NPCName[_npcId].nam is "Great Hawk">>
+	Beast Type:
+	<br>
+	<label><<print '<<radiobutton "$greathawkmonster" 0 ' + ($greathawkmonster is 0 ? "checked" : "") + '>>'>> Always a beast</label> |
+	<label><<print '<<radiobutton "$greathawkmonster" 1 ' + ($greathawkmonster is 1 ? "checked" : "") + '>>'>> Monster girl or boy when requirements met</label> |
+	<label><<print '<<radiobutton "$greathawkmonster" 2 ' + ($greathawkmonster is 2 ? "checked" : "") + '>>'>> Always a monster girl or boy</label>
+	<br><br>
 <</if>>
 <<if $debug is 1>>
 	Hair Colour:
@@ -1136,7 +1156,6 @@ Breast size
 <</nobr>><</widget>>
 
 :: Settings [nobr]
-<<set $settingsExitPassage to "Bedroom">>
 <<settings>>
 
 :: Attitudes [nobr]

@@ -1,0 +1,94 @@
+:: Widgets Whitney [widget]
+<<widget "whitneyoptions">><<nobr>>
+<<if $location is "park" and $daystate isnot "day">>
+	<<if $NPCName[$NPCNameList.indexOf("Whitney")].love gte 15>>
+        "I'm leaving," <<he>> says suddenly. "Don't stay out in this weather." <<He>> leaves the park without another word.
+	<<else>>
+        <<He>> walks away, leaving the park without a word.
+	<</if>>
+<<whitneyexit>>
+<<else>>
+	<<if $whitney_text_trigger is true>>
+		<<unset $whitney_text_trigger>>
+		<<if $whitney_text is 1>>
+			"Again? Piss off already, would you?" <<He>> looks away.
+		<<elseif $whitney_text is 2>>
+			"You're getting on my nerves, <<bitch>>." <<He>> looks away.
+		<<else>>
+			<<if $whitneyromance is 1 or $NPCName[$NPCNameList.indexOf("Whitney")].dom gte 10>>
+				"What's my favorite slut doing here?"
+			<<elseif $NPCName[$NPCNameList.indexOf("Whitney")].state is "rescued">>
+				<<He>> looks at you, but quickly looks away.
+			<<else>>
+				<<He>> looks annoyed.
+			<</if>>
+		<</if>>
+	<<else>>
+		<<if _whitney_attention is 1>>
+			<<if $NPCName[$NPCNameList.indexOf("Whitney")].lust gte 50>>
+				<span class="green">Whatever was on <<his>> mind is long gone. <<His>> eyes are glued to you.</span>
+			<<elseif $NPCName[$NPCNameList.indexOf("Whitney")].lust gte 20>>
+				<span class="blue">You seem to have <<his>> attention, but not all of it.</span>
+			<<else>>
+				<span class="pink">Whitney tries to ignore you.</span>
+			<</if>>
+		<<elseif $location is "park" and $rng gte 50>>
+			<<He>> stares at the fountain.
+		<<else>>
+			<<He>> takes a drag of <<his>> cigarette.
+		<</if>>
+	<</if>>
+	<br><br>
+	<<if _whitney_attention is 1>>
+		<<if $promiscuity gte 15>>
+			<<link [[Take it further (0:15)|Whitney Flirt 2]]>><<pass 15>><<npcincr Whitney lust 1>><<npcincr Whitney dom 1>><</link>><<glust>><<gdom>><<promiscuous2>><br>
+		<<else>>
+			You aren't promiscuous enough to take it further.<br>
+		<</if>>
+	<</if>>
+	<<if $whitneyromance is 1 and $whitneyFlirt is undefined>>
+		<<link [[Flirt (0:15)|Whitney Flirt]]>><<set $whitneyFlirt to 1>><<pass 15>><<npcincr Whitney love 1>><<npcincr Whitney lust 1>><</link>><<promiscuous1>><<glove>><<glust>><br>
+	<</if>>
+	<<link [[Chat (0:15)|Whitney Chat]]>><<pass 15>><<if $whitneyromance is 1>><<stress -3>><<else>><<stress 6>><</if>><<if $whitneyChat is undefined>><<set $whitneyChat to 1>><<npcincr Whitney love 1>><</if>><</link>><<if $whitneyChat is undefined>><<glove>><</if>><<if $whitneyromance is 1>><<lstress>><<else>><<gstress>><</if>><br>
+	<<if $whitneyAsk is undefined and $location is "park">>
+		<<link [[Ask if something's wrong|Whitney Ask]]>><<set $whitneyAsk to 1>><</link>><br>
+	<</if>>
+	<<whitneyoptionsleave>>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "whitneyoptionsleave">><<nobr>>
+<<if $bus is "park">>
+    <<link [[Leave|Park]]>><<endevent>><<set $eventskip to 1>><</link>>
+    <br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "whitneyexit">><<nobr>>
+<<if $bus is "park">>
+    <<set $whitney_park to 0>><<unset $whitney_text>><<unset $whitney_text_trigger>>
+    <<link [[Next|Park]]>><<endevent>><<set $eventskip to 1>><</link>>
+    <br>
+<</if>>
+<</nobr>><</widget>>
+
+<<widget "dismissWhitney">><<nobr>>
+<<npcset Whitney state "dungeon">>
+<<if $loveInterest.primary is "Whitney">>
+	<<if $loveInterest.secondary isnot "None">>
+		<<set $loveInterest.primary to $loveInterest.secondary>>
+		<<set $loveInterest.secondary to "None">>
+	<<else>>
+		<<set $loveInterest.primary to "None">>
+	<</if>>
+	<span class = "red">Whitney is no longer your love interest.</span>
+<<elseif $loveInterest.secondary is "Whitney">>
+	<<set $loveInterest.secondary to "None">>
+	<span class = "red">Whitney is no longer your love interest.</span>
+<<elseif $whitneyromance is 1>>
+	<span class = "red">Whitney can no longer be claimed as your love interest.</span>
+<<else>>
+	<span class = "red">Whitney has been taken away.</span>
+<</if>>
+<br><br>
+<</nobr>><</widget>>

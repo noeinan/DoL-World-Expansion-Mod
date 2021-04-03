@@ -250,7 +250,17 @@ Your bare foot steps on something sharp. It's a loose rock.
 		<span class="red">You stumble to your knees.</span>
 		<<gpain>><<gstress>><<pain 4>><<stress 6>>
 		<br><br>
-		<<if !$worn.lower.type.includes("naked")>>
+		<<if !$worn.over_lower.type.includes("naked")>>
+			Your $worn.over_lower.name scrapes against the ground. You hear a tear.
+			<<set $worn.over_lower.integrity -= 10>>
+			<br><br>
+			<<if $worn.over_lower.integrity lte 0>>
+				<<integritycheck>><<exposure>>
+
+				You try to hold the fabric together, but it's no use.
+				<br><br>
+			<</if>>			
+		<<elseif !$worn.lower.type.includes("naked")>>
 			Your $worn.lower.name scrapes against the ground. You hear a tear.
 			<<set $worn.lower.integrity -= 10>>
 			<br><br>
@@ -271,7 +281,17 @@ Your bare foot steps on something sharp. It's a loose rock.
 		You trip on a loose rock, and <span class="red">stumble to your knees.</span>
 		<<gpain>><<gstress>><<pain 4>><<stress 6>>
 		<br><br>
-		<<if !$worn.lower.type.includes("naked")>>
+		<<if !$worn.over_lower.type.includes("naked")>>
+			Your $worn.over_lower.name scrapes against the ground. You hear a tear.
+			<<set $worn.over_lower.integrity -= 10>>
+			<br><br>
+			<<if $worn.over_lower.integrity lte 0>>
+				<<integritycheck>><<exposure>>
+
+				You try to hold the fabric together, but it's no use.
+				<br><br>
+			<</if>>			
+		<<elseif !$worn.lower.type.includes("naked")>>
 			Your $worn.lower.name scrapes against the ground. You hear a tear.
 			<<set $worn.lower.integrity -= 10>>
 			<br><br>
@@ -416,7 +436,7 @@ You hear voices up ahead, and take cover down a stairwell leading to a basement.
 <</nobr>><</widget>>
 
 <<widget "street1">><<nobr>>
-
+<<outfitChecks>>
 <<generate1>>You hear a <<person1>><<person>> behind you. <<catcall>>
 <br><br>
 <<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
@@ -462,7 +482,7 @@ You hear voices up ahead, and take cover down a stairwell leading to a basement.
 		<<link [[Ignore|Catcall Ignore]]>><</link>><<gstress>><<gtrauma>>
 		<br>
 	<</if>>
-	<<if $worn.lower.skirt is 1>>
+	<<if ($worn.over_lower.skirt is 1 and $worn.lower.skirt is 1) or ($worn.over_lower.skirt is 1 and $worn.lower.name is "naked") or ($worn.lower.skirt is 1 and $worn.over_lower.name is "naked")>>
 		<<if $exhibitionism gte 75 and $worn.under_lower.type.includes("naked")>>
 			<<link [[Give them a show|Catcall Skirt]]>><</link>><<exhibitionist5>><<lstress>><<garousal>>
 			<br><br>
@@ -470,7 +490,7 @@ You hear voices up ahead, and take cover down a stairwell leading to a basement.
 			<<link [[Give them a show|Catcall Skirt]]>><</link>><<exhibitionist2>><<lstress>><<garousal>>
 			<br><br>
 		<</if>>
-	<<elseif $worn.upper.set isnot $worn.lower.set>>
+	<<elseif _middleOutfit is false and _overOutfit is false>>
 		<<if $exhibitionism gte 35 and $worn.under_lower.type.includes("naked")>>
 			<<link [[Give them a show|Catcall Shorts]]>><</link>><<exhibitionist3>><<lstress>><<garousal>>
 			<br><br>
@@ -597,23 +617,41 @@ You hear voices up ahead, and take cover down a stairwell leading to a basement.
 
 <<widget "street6">><<nobr>>
 
-<<if $worn.lower.skirt is 1>>
-Your $worn.lower.name snags on a passing car, <<set $worn.lower.integrity -= 10>>
+<<if $worn.over_lower.skirt is 1>>
+	Your $worn.over_lower.name snags on a passing car, <<set $worn.over_lower.integrity -= 10>>
+	<<if $worn.over_lower.integrity lte 0>>
+		<<overlowerruined>><<clothesruinstat>><<if $worn.lower.exposed gte 1>><<set $loweroff to 0>><</if>>
+		<span class="lewd">and is torn clean from your body</span><<if $worn.lower.exposed gte 1>>, leaving your <<lewdness>> displayed in the middle of the street<</if>>.
+	<<else>>
+		tearing it and leaving it worse for wear.
+	<</if>>
+	<br><br>
+	<<destinationeventend>>
+<<elseif !$worn.over_upper.type.includes("naked")>>
+	Your $worn.over_upper.name snags on a passing car, <<set $worn.over_upper.integrity -= 10>>
+	<<if $worn.over_upper.integrity lte 0>>
+		<<overupperruined>><<clothesruinstat>><<if $worn.upper.exposed gte 1>><<set $upperoff to 0>><</if>>
+		<span class="lewd">and is torn clean from your body</span><<if $worn.upper.exposed gte 1>>, leaving your <<lewdness>> displayed in the middle of the street<</if>>.
+	<<else>>
+		tearing it and leaving it worse for wear.
+	<</if>>
+	<br><br>
+	<<destinationeventend>>
+<<elseif $worn.lower.skirt is 1>>
+	Your $worn.lower.name snags on a passing car, <<set $worn.lower.integrity -= 10>>
 	<<if $worn.lower.integrity lte 0>>
 		<<lowerruined>><<clothesruinstat>><<set $loweroff to 0>>
 		<span class="lewd">and is torn clean from your body,</span> leaving your <<lewdness>> displayed in the middle of the street.
-
 	<<else>>
 		tearing it and leaving it worse for wear.
 	<</if>>
 	<br><br>
 	<<destinationeventend>>
 <<elseif !$worn.upper.type.includes("naked")>>
-Your $worn.upper.name snags on a passing car, <<set $worn.upper.integrity -= 10>>
+	Your $worn.upper.name snags on a passing car, <<set $worn.upper.integrity -= 10>>
 	<<if $worn.upper.integrity lte 0>>
 		<<upperruined>><<clothesruinstat>><<set $upperoff to 0>>
 		<span class="lewd">and is torn clean from your body,</span> leaving your <<lewdness>> displayed in the middle of the street.
-
 	<<else>>
 		tearing it and leaving it worse for wear.
 	<</if>>
@@ -670,7 +708,7 @@ You notice a <<generate1>><<person1>><<person>> stealing glances at your chest a
 <<widget "street10">><<nobr>>
 A <<generates1>><<person1>><<person>> leans out of a passing car and hurls a large water-balloon at you.
 <br><br>
-<<set $rng to random(0, 500)>>
+<<athleticsdifficulty 0 500 true>>
 <<if $athleticsSuccess>>
 	<span class="green">You reflexively soft catch the water-balloon</span> and <span class = "pink">hurl it back into the passing car.</span>
 	<br><br>
@@ -1336,22 +1374,50 @@ You stumble in your heels and fall forwards. As your face approaches the ground,
 <<elseif $dangerevent gte 41>>
 	<<set $kylarwatchedtimer -= 1>>
 
-	You feel a tug on your $worn.lower.name,
-	<<set $lowercoloursaved to $worn.lower.colour>><<set $worn.lower.integrity -= 30>>
-	<<if $worn.lower.integrity lte 0>>
-	<<lowerruined>><<exposure>>
-	then a tear as it is torn from your body by an invisible force. <<covered>> The fabric flies away from you.
-	<br><br>
+	<<if $worn.over_lower.name isnot "naked">>
+		You feel a tug on your $worn.over_lower.name,
+		<<set $lowercoloursaved to $worn.over_lower.colour>><<set $worn.over_lower.integrity -= 30>>
+		<<if $worn.over_lower.integrity lte 0>>
+			<<set _name to clone($worn.lower.name)>>
+			<<overlowerruined>><<exposure>>
+			<<if $exposed gte 1>>
+				then a tear as it is torn from your body by an invisible force. <<covered>> The fabric flies away from you.
+				<br><br>
 
-	<<link [[Chase|Street Kylar Chase]]>><<fameexhibitionism 10>><<trauma 6>><<stress 6>><</link>><<athleticsdifficulty 1 600>><<gtrauma>><<gstress>>
-	<br>
-	<<link [[Hide|Street Kylar Hide]]>><</link>>
-	<br>
+				<<link [[Chase|Street Kylar Chase]]>><<fameexhibitionism 10>><<trauma 6>><<stress 6>><</link>><<athleticsdifficulty 1 600>><<gtrauma>><<gstress>>
+				<br>
+				<<link [[Hide|Street Kylar Hide]]>><</link>>
+				<br>
+			<<else>>
+				then a tear as your _name is torn off by an invisible force. It flies through the air and disappears into an open window.
+				<br><br>
+
+				<<destinationeventend>>
+			<</if>>
+		<<else>>
+			then a tear as a piece of fabric is torn off by an invisible force. It flies through the air and disappears into an open window.
+			<br><br>
+
+			<<destinationeventend>>
+		<</if>>
 	<<else>>
-	then a tear as a piece of fabric is torn off by an invisible force. It flies through the air and disappears into an open window.
-	<br><br>
+		You feel a tug on your $worn.lower.name,
+		<<set $lowercoloursaved to $worn.lower.colour>><<set $worn.lower.integrity -= 30>>
+		<<if $worn.lower.integrity lte 0>>
+			<<lowerruined>><<exposure>>
+			then a tear as it is torn from your body by an invisible force. <<covered>> The fabric flies away from you.
+			<br><br>
 
-	<<destinationeventend>>
+			<<link [[Chase|Street Kylar Chase]]>><<fameexhibitionism 10>><<trauma 6>><<stress 6>><</link>><<athleticsdifficulty 1 600>><<gtrauma>><<gstress>>
+			<br>
+			<<link [[Hide|Street Kylar Hide]]>><</link>>
+			<br>
+		<<else>>
+			then a tear as a piece of fabric is torn off by an invisible force. It flies through the air and disappears into an open window.
+			<br><br>
+
+			<<destinationeventend>>
+		<</if>>
 	<</if>>
 
 <<elseif $NPCName[$NPCNameList.indexOf("Kylar")].lust gte 60 and $NPCName[$NPCNameList.indexOf("Kylar")].love gte 50>>
@@ -1499,6 +1565,7 @@ You stumble in your heels and fall forwards. As your face approaches the ground,
 
 <<widget "streetexhibitionismfame">><<nobr>>
 	<<set $rng to random(1, 100)>>
+	<<outfitChecks>>
 	<<if $rng gte 81>>
 		<<generate1>><<generate2>><<person1>>A <<person>> and <<person2>><<person>> walk past you. The <<person1>><<person>> looks back at you and leans toward <<his>> friend, "I recognise <<phim>>, <<pshe>> looks really good naked." The <<person2>><<person>> looks at you and laughs.
 		<<set $phase to 1>>
@@ -1522,9 +1589,9 @@ You stumble in your heels and fall forwards. As your face approaches the ground,
 		<<link [[Flaunt|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'words'>><<set $flaunt_part to 'none'>><</link>><<lstress>>
 		<br>
 	<</if>>
-	<<if $worn.lower.skirt is 1>>
+	<<if $worn.over_lower.skirt is 1 and $worn.lower.skirt is 1>>
 		<<if $exhibitionism gte 75 and $worn.under_lower.type.includes("naked") and $uncomfortable.nude is false>>
-			<<link [["Flash your "+$worn.lower.name|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'skirt'>> <<set $flaunt_part to 'genitals'>><</link>><<exhibitionist5>><<lstress>><<garousal>>
+			<<link [[Flash your skirt|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'skirt'>> <<set $flaunt_part to 'genitals'>><</link>><<exhibitionist5>><<lstress>><<garousal>>
 			<br>
 		<<elseif $exhibitionism gte 35 and $worn.genitals.type.includes("chastity") and $uncomfortable.nude is false>>
 			<<link [[Flash your skirt|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'skirt'>> <<set $flaunt_part to 'chastity'>><</link>><<exhibitionist3>><<lstress>><<garousal>>
@@ -1533,7 +1600,7 @@ You stumble in your heels and fall forwards. As your face approaches the ground,
 			<<link [[Flash your skirt|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'skirt'>> <<set $flaunt_part to 'lowerunderwear'>><</link>><<exhibitionist2>><<lstress>><<garousal>>
 			<br>
 		<</if>>
-	<<elseif $worn.upper.set isnot $worn.lower.set>>
+	<<elseif _middleOutfit or _overOutfit>>
 		<<if $exhibitionism gte 35 and $worn.under_lower.type.includes("naked") and $uncomfortable.nude is false>>
 			<<link [[Flash your bottom|Street Exhibitionism Fame Flaunt]]>><<set $flaunt_type to 'moon'>> <<set $flaunt_part to 'bottom'>><</link>><<exhibitionist3>><<lstress>><<garousal>>
 			<br>
@@ -2050,30 +2117,30 @@ You find a quiet place and open the <<wallet>>.
 <<set $rng to random(1, 100)>>
 	<<if $rng gte 91>>
 
-	You don't find much, just some loose change worth £2.
+	You don't find much, just some loose change worth <<moneyGainDisplay 2 true true>>.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 200>><<crimeup 2>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
 
 	<<elseif $rng gte 81>>
 
-	You don't find much, just some loose change worth £3.
+	You don't find much, just some loose change worth <<moneyGainDisplay 3 true true>>.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 300>><<crimeup 3>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
 
 	<<elseif $rng gte 71>>
 
-	You find £8 hidden in a secret compartment.
+	You find <<moneyGainDisplay 8 true true>> hidden in a secret compartment.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 800>><<crimeup 8>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
@@ -2090,10 +2157,10 @@ You find a quiet place and open the <<wallet>>.
 
 	<<elseif $rng gte 51>>
 
-	You find £15 tucked away.
+	You find <<moneyGainDisplay 15 true true>> tucked away.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 1500>><<crimeup 15>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
@@ -2110,10 +2177,10 @@ You find a quiet place and open the <<wallet>>.
 
 	<<elseif $rng gte 31>>
 
-	You find £25 tucked away.
+	You find <<moneyGainDisplay 25 true true>> tucked away.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 2500>><<crimeup 25>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
@@ -2140,10 +2207,10 @@ You find a quiet place and open the <<wallet>>.
 
 	<<else>>
 
-	You find £50 tucked away.
+	You find <<moneyGainDisplay 50 true true>> tucked away.
 	<br><br>
 
-	<<link [[Take it|Connudatus Street]]>><<set $money += 5000>><<crimeup 50>><</link>><<crime>>
+	<<link [[Take it|Connudatus Street]]>><<crimeup `_money_gain / 100`>><<set $money += _money_gain>><</link>><<crime>>
 	<br>
 	<<link [[Leave it|Connudatus Street]]>><</link>>
 	<br>
@@ -2396,8 +2463,9 @@ You find a quiet place and open the <<wallet>>.
 			<</if>>
 		<</if>>
 
-	<<elseif $averyseen isnot 1 and $weekday is 7 and $scienceproject is "won" and $daystate is "day" or $averyseen isnot 1 and $weekday is 7 and $scienceproject is "done" and $daystate is "day">><<set $averyseen to 1>>
-	<<streetavery>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Avery")].state isnot "dismissed" and (($averyseen isnot 1 and $weekday is 7 and $scienceproject is "won" and $daystate is "day") or ($averyseen isnot 1 and $weekday is 7 and $scienceproject is "done" and $daystate is "day"))>>
+		<<set $averyseen to 1>>
+		<<streetavery>>
 	<<elseif $rng gte 52>>
 		<<set $dangerevent to random(1, 170)>>
 		<<if $dangerevent lte 10>>

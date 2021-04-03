@@ -39,6 +39,11 @@
 <</if>>
 <<set $bullygate to 0>>
 <<set $whitney_toilet_check to 0>>
+<<unset $whitney_park>>
+<<unset $whitney_text_trigger>>
+<<unset $whitneyFlirt>>
+<<unset $whitneyChat>>
+<<unset $whitneyAsk>>
 <<set $policecollarseduceattempt to 0>>
 <<set $tenyclusPlayed to 0>>
 <<unset $beachstrip>>
@@ -89,17 +94,21 @@
 <<if $lakecouple is 1>>
 	<<set $lakecouple to 0>>
 <</if>>
-<<set $medicated *= 0.5>>
-<<set $medicated = Math.trunc($medicated)>>
-<<if $medicated gt 0>>
+<<if $medicated>>
 	<<set $medicated -= 1>>
+	<<set $medicated *= 0.5>>
+	<<set $medicated = Math.trunc($medicated)>>
+	<<if $medicated lt 0>>
+		<<set $medicated to 0>>
+	<</if>>
 <</if>>
 <<if $asylummedicated>>
-	<<if $asylummedicated gt 0>>
-		<<set $asylummedicated -= 1>>
-	<</if>>
+	<<set $asylummedicated -= 1>>
 	<<set $asylummedicated *= 0.5>>
 	<<set $asylummedicated = Math.trunc($asylummedicated)>>
+	<<if $asylummedicated lt 0>>
+		<<set $asylummedicated to 0>>
+	<</if>>
 <</if>>
 <<set $boysroomentered to 0>>
 <<set $girlsroomentered to 0>>
@@ -181,6 +190,7 @@
 <<if $syndromewolves is 1>>
 	<<wolf_cave_update>>
 <</if>>
+<<unset $blackWolfMonsterRoll>>
 <<unset $temple_pray>>
 <<unset $lake_meditate>>
 <<unset $ex_day>>
@@ -197,6 +207,10 @@
 <<unset $mason_spoken>>
 <<unset $stall_rented>>
 <<unset $rocks_pool_invite>>
+<<set $bird.satisfied to undefined>>
+<<unset $bird_wash>>
+<<unset $birdDailyGreeting>>
+<<unset $greatHawkMonsterRoll>>
 <<if $stall_rejected gte 1>>
 	<<set $stall_rejected -= 1>>
 	<<set $stall_rejected = Math.clamp($stall_rejected, 0, 100)>>
@@ -789,8 +803,22 @@
 
 <<set $edenbreakfast to 0>>
 <<set $edenbath to 0>>
+<<set $edenwalk to 0>>
+<<set $edenfix to 0>>
+<<set $edenwash to 0>>
 <<set $edenchoplust to 0>>
 <<set $edenhunting to 0>>
+<<set $edenhuntcaught to 0>>
+<<if $edenradio is 1>>
+	<<set $edenradio to 1>>
+<<else>>
+	<<set $edenradio to 0>>
+<</if>>
+<<if $edenradiointro is 2>>
+	<<set $edenradiointro to 2>>
+<<else>>
+	<<set $edenradiointro to 0>>
+<</if>>
 <<set $edendays += 1>>
 <<if $edengarden gte 1>>
 	<<set $edengarden -= 1>>
@@ -813,17 +841,32 @@
 <<set $kylarstreettimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
 <<unset $kylar_bodywriting>>
 <<unset $kylar_invite>>
-
-<<set $averyschoolpickup to 0>>
-<<set $averyseen to 0>>
-<<if $averydate is 1>>
-	<<set $averydate to 0>>
-	<<if $averydateattended isnot 1>>
-		<<set $averydatemissed to 1>>
-	<</if>>
-	<<set $averydateattended to 0>>
+<<set $kylarwalk to 0>>
+<<if $kylarFountainIntro is 1 and random(1,100) gte 20>>
+	<<set $kylarFountain to 1>>
+<<else>>
+	<<set $kylarFountain to 0>>
 <</if>>
-<<unset $averydatedone>>
+
+<<if $NPCName[$NPCNameList.indexOf("Avery")].state isnot "dismissed">>
+	<<set $averyschoolpickup to 0>>
+	<<set $averyseen to 0>>
+	<<if $averydate is 1>>
+		<<set $averydate to 0>>
+		<<if $averydateattended isnot 1>>
+			<<set $averydatemissed to 1>>
+		<</if>>
+		<<set $averydateattended to 0>>
+	<</if>>
+	<<unset $averydatedone>>
+	<<if $averyPub is 1>>
+		<<unset $averyPub>>
+		<<clearNPC 1 avery_sidepiece>>
+	<</if>>
+<<else>>
+	<<unset $averyDismissalSceneWait>>
+<</if>>
+
 
 <<if $skulduggery gte 100 and $skulduggeryday lt 100>>
 	<span class="gold">Your skulduggery has improved to</span> <span class="pink">F+.</span>
@@ -963,6 +1006,7 @@
 <<if $moorLuck gt 0>>
 	<<set $moorLuck-->>
 <</if>>
+<<unset $glideScared>>
 <</nobr>><</widget>>
 
 <<widget "noon">><<nobr>>
@@ -979,6 +1023,8 @@
 <<if $lake_ice_broken lte 0>>
 	<<unset $lake_ice_broken>>
 <</if>>
+<<unset $birdSleep>>
+<<unset $glideScared>>
 <</nobr>><</widget>>
 
 <<widget "dawn">><<nobr>>

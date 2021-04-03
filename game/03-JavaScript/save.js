@@ -218,6 +218,16 @@ window.updateExportDay = function(){
 		SugarCube.State.history[0].variables.saveDetails.exported.days = clone(SugarCube.State.history[0].variables.days);
 		SugarCube.State.variables.saveDetails.exported.count++;
 		SugarCube.State.history[0].variables.saveDetails.exported.count++;
+		SugarCube.State.variables.saveDetails.exported.dayCount++;
+		SugarCube.State.history[0].variables.saveDetails.exported.dayCount++;
+		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
+		if(sessionJson != undefined){
+			var session = JSON.parse(sessionJson);
+			session.delta[0].variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+			session.delta[0].variables.saveDetails.exported.dayCount++;
+			session.delta[0].variables.saveDetails.exported.count++;
+			sessionStorage.setItem(SugarCube.Story.domId + ".state", JSON.stringify(session));
+		}
 	}
 }
 
@@ -225,6 +235,15 @@ window.updateSavesCount = function(){
 	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
 		SugarCube.State.variables.saveDetails.slot.count++;
 		SugarCube.State.history[0].variables.saveDetails.slot.count++;
+		SugarCube.State.variables.saveDetails.slot.dayCount++;
+		SugarCube.State.history[0].variables.saveDetails.slot.dayCount++;
+		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
+		if(sessionJson != undefined){
+			var session = JSON.parse(sessionJson);
+			session.delta[0].variables.saveDetails.slot.dayCount++;
+			session.delta[0].variables.saveDetails.slot.count++;
+			sessionStorage.setItem(SugarCube.Story.domId + ".state", JSON.stringify(session));
+		}
 	}
 }
 
@@ -255,6 +274,12 @@ var importSettingsData = function (data) {
 	if (result != null && result != undefined) {
 		//console.log("json",JSON.parse(result));
 		S = JSON.parse(result);
+		if (V.passage === "Start" && S.starting != undefined) {
+			S.starting = settingsConvert(false, "starting", S.starting)
+		}
+		if(S.general != undefined){
+			S.general = settingsConvert(false, "general", S.general)
+		}
 
 		if (V.passage === "Start" && S.starting != undefined) {
 			var listObject = settingsObjects("starting");
@@ -368,7 +393,7 @@ window.exportSettings = function (data, type) {
 			map: {},
 			skinColor: {},
 		},
-		npc: {},
+		npc: {}
 	};
 	if (V.passage === "Start") {
 		S.starting = {
@@ -436,6 +461,11 @@ window.exportSettings = function (data, type) {
 		}
 	}
 
+	if (V.passage === "Start") {
+		S.starting = settingsConvert(true, "starting", S.starting)
+	}
+	S.general = settingsConvert(true, "general", S.general)
+
 	//console.log(S);
 	var result = JSON.stringify(S);
 	if (type === "text") {
@@ -450,6 +480,7 @@ window.exportSettings = function (data, type) {
 
 window.settingsObjects = function (type) {
 	var result = undefined;
+	/*boolLetter type also requires the bool type aswell*/
 	switch (type) {
 		case "starting":
 			result = {
@@ -490,26 +521,27 @@ window.settingsObjects = function (type) {
 				blackchance: { min: 0, max: 100, decimals: 0 },
 				straponchance: { min: 0, max: 100, decimals: 0 },
 				alluremod: { min: 0.2, max: 2, decimals: 1 },
+				clothesPrice: { min: 1, max: 10, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
-				monsterhallucinations: { boolLetter: true },
+				monsterhallucinations: { boolLetter: true, bool: true },
 				blackwolfmonster: { min: 0, max: 2, decimals: 0 },
-				bestialitydisable: { boolLetter: true },
-				swarmdisable: { boolLetter: true },
-				slimedisable: { boolLetter: true },
-				voredisable: { boolLetter: true },
-				tentacledisable: { boolLetter: true },
-				analdisable: { boolLetter: true },
-				transformdisable: { boolLetter: true },
-				hirsutedisable: { boolLetter: true },
-				breastfeedingdisable: { boolLetter: true },
-				analpregdisable: { boolLetter: true },
-				watersportsdisable: { boolLetter: true },
-				spiderdisable: { boolLetter: true },
-				bodywritingdisable: { boolLetter: true },
-				parasitedisable: { boolLetter: true},
-				slugdisable: { boolLetter: true},
-				waspdisable: {boolLetter: true},
+				bestialitydisable: { boolLetter: true, bool: true },
+				swarmdisable: { boolLetter: true, bool: true },
+				slimedisable: { boolLetter: true, bool: true },
+				voredisable: { boolLetter: true, bool: true },
+				tentacledisable: { boolLetter: true, bool: true },
+				analdisable: { boolLetter: true, bool: true },
+				transformdisable: { boolLetter: true, bool: true },
+				hirsutedisable: { boolLetter: true, bool: true },
+				breastfeedingdisable: { boolLetter: true, bool: true },
+				analpregdisable: { boolLetter: true, bool: true },
+				watersportsdisable: { boolLetter: true, bool: true },
+				spiderdisable: { boolLetter: true, bool: true },
+				bodywritingdisable: { boolLetter: true, bool: true },
+				parasitedisable: { boolLetter: true, bool: true},
+				slugdisable: { boolLetter: true, bool: true},
+				waspdisable: {boolLetter: true, bool: true},
 				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
@@ -519,15 +551,15 @@ window.settingsObjects = function (type) {
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
 				bodywritingImages: { bool: true },
-				silhouettedisable: { boolLetter: true },
-				blinkingdisable: { boolLetter: true },
-				halfcloseddisable: { boolLetter: true },
+				silhouettedisable: { boolLetter: true, bool: true },
+				blinkingdisable: { boolLetter: true, bool: true },
+				halfcloseddisable: { boolLetter: true, bool: true },
 				numberify_enabled: { min: 0, max: 1, decimals: 0 },
 				timestyle: { strings: ["military", "ampm"] },
 				checkstyle: { strings: ["percentage", "words", "skillname"] },
-				tipdisable: { boolLetter: true },
-				debugdisable: { boolLetter: true },
-				cheatdisable: { boolLetter: true },
+				tipdisable: { boolLetter: true, bool: true },
+				debugdisable: { boolLetter: true, bool: true },
+				cheatdisable: { boolLetter: true, bool: true },
 				showCaptionText: { bool: true },
 				confirmSave: { bool: true },
 				confirmLoad: { bool: true },
@@ -538,14 +570,14 @@ window.settingsObjects = function (type) {
 				sidebarTime: { strings: ["Disabled", "top", "bottom"] },
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
-				neverNudeMenus: { bool: false },
+				neverNudeMenus: { bool: true },
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
 					markers: { bool: true },
 				},
 				skinColor: {
-					tanImgEnabled: { boolLetter: true },
+					tanImgEnabled: { boolLetter: true, bool: true },
 					tanningEnabled: { bool: true },
 				}
 			};
@@ -562,6 +594,56 @@ window.settingsObjects = function (type) {
 	return result;
 }
 
+/*Converts specific settings to so they dont look so chaotic to players*/
+window.settingsConvert = function(exportType, type, settings){
+	var listObject = settingsObjects(type);
+	var result = settings;
+	var keys = Object.keys(listObject);
+	for (var i = 0; i < keys.length; i++){
+		if (result[keys[i]] === undefined) continue;
+		if(["map", "skinColor", "player"].includes(keys[i])){
+			var itemKey = Object.keys(listObject[keys[i]]);
+			for (var j = 0; j < itemKey.length; j++) {
+				if (result[keys[i]][itemKey[j]] === undefined) continue;
+				var keyArray = Object.keys(listObject[keys[i]][itemKey[j]]);
+				if(exportType){
+					if (result[keys[i]][itemKey[j]] === "t") {
+						result[keys[i]][itemKey[j]] = true;
+					}else if(result[keys[i]][itemKey[j]] === "f"){
+						result[keys[i]][itemKey[j]] = false;
+					}
+				}else{
+					if (result[keys[i]][itemKey[j]] === true) {
+						result[keys[i]][itemKey[j]] = "t";
+					}else if(result[keys[i]][itemKey[j]] === false){
+						result[keys[i]][itemKey[j]] = "f";
+					}
+				}	
+			}
+		}else{
+			var keyArray = Object.keys(listObject[keys[i]]);
+			if(exportType){
+				if (keyArray.includes("boolLetter")) {
+					if (result[keys[i]] === "t") {
+						result[keys[i]] = true;
+					}else if(result[keys[i]] === "f"){
+						result[keys[i]] = false;
+					}
+				}
+			}else{
+				if (keyArray.includes("boolLetter")) {
+					if (result[keys[i]] === true) {
+						result[keys[i]] = "t";
+					}else if(result[keys[i]] === false){
+						result[keys[i]] = "f";
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
+
 window.loadExternalExportFile = function () {
 	importScripts("DolSettingsExport.json")
 		.then(function () {
@@ -573,4 +655,24 @@ window.loadExternalExportFile = function () {
 			var button = document.getElementById("LoadExternalExportFile");
 			button.value = "Error Loading";
 		});
+}
+
+// !!Hack warning!! Don't use it maybe?
+window.updateMoment = function () {
+	// change last (and only) moment in local history
+	State.history[State.history.length - 1].variables = JSON.parse(JSON.stringify(State.variables));
+	// prepare the moment object with modified history
+	let moment = SugarCube.State.marshalForSave();
+	// replace moment.history with moment.delta, because that's what SugarCube expects to find
+	// this is a bad thing to do probably btw, because while history and delta appear to look very similar, 
+	// they're not always the same thing, SugarCube actually decodes delta into history (see: https://github.com/tmedwards/sugarcube-2/blob/36a8e1600160817c44866205bc4d2b7730b2e70c/src/state.js#L527)
+	// but for my purpose it works (i think?)
+	delete Object.assign(moment, {delta: moment.history}).history;
+	// replace saved moment in session with the new one
+	let gameName = SugarCube.Story.domId;
+	sessionStorage[gameName + ".state"] = JSON.stringify(moment);
+	// it appears that this line is not necessary for it to work
+	//SugarCube.session._engine[gameName + ".state"] = JSON.stringify(moment);
+
+	// Voilà! F5 will reload the current state now without going to another passage!
 }

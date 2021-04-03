@@ -1,6 +1,9 @@
 :: Moor [nobr]
 <<set $location to "moor">><<set $outside to 1>><<effects>>
-
+<<if $moor_hunt gte 1>>
+	<span class="red">You are being hunted.</span>
+	<br><br>
+<</if>>
 <<switch $moormove>>
 <<case "careful">>
 	You move through the moor, taking detours around hillocks and other higher areas.
@@ -8,12 +11,16 @@
 	You move through the moor by the most direct path.
 <<case "normal">>
 	You move through the moor, avoiding the more conspicuous areas.
+<<case "fly">>
+	You catch the wind with a running jump, and fly low across the moor. Your wings tire quickly, but you cover a lot of ground before needing to land.
 <<case "careful_search">>
 	You keep low, searching the nooks and crannies of the moor.
 <<case "quick_search">>
 	You climb the nearest hillock, and observe the surrounding area. You get a good view of the moor.
 <<case "normal_search">>
 	You search the moor for anything of value.
+<<case "fly_search">>
+	You soar high above the moor, your keen eyes scanning the ground below. Your wings tire quickly, and you land upon a hillock to catch your breath.
 <<default>>
 	You are on the moor.
 <</switch>>
@@ -56,6 +63,8 @@
 	You've pushed yourself too much.
 	<br><br>
 	<<passout_moor>>
+<<elseif $moor_hunt gte 10>>
+	<<moor_hunt>>
 <<elseif $eventskip is 0>>
 	<<if $moor gte 51>>
 		<<eventsmoorhigh>>
@@ -90,34 +99,46 @@
 		<<set $moor to 0>>
 	<</if>>
 	<<if $moor lt 100>>
-		Walk deeper into the moor
+		Go deeper into the moor
 		<br>
-		<<link [[Quickly (0:05)|Moor]]>><<pass 5>><<set $moor += 5>><<set $forestmod to 3>><<set $moormove to "quick">><</link>><<gharass>>
+		<<if $harpy gte 6 and $birdFly gte 1>>
+			<<link [[Fly (0:02)|Moor]]>><<bird_pass 2>><<set $moor += 5>><<set $forestmod to 1>><<set $moormove to "fly">><<tiredness 1>><</link>><<flight_text>><<gtiredness>>
+			<br>
+		<</if>>
+		<<link [[Quickly (0:05)|Moor]]>><<bird_pass 5>><<set $moor += 5>><<set $forestmod to 3>><<set $moormove to "quick">><<if $moor_hunt gte 1>><<set $moor_hunt += 0.5>><</if>><</link>><<gharass>>
 		<br>
-		<<link [[Normally (0:10)|Moor]]>><<pass 10>><<set $moor += 5>><<set $forestmod to 1>><<set $moormove to "normal">><</link>>
+		<<link [[Normally (0:10)|Moor]]>><<bird_pass 10>><<set $moor += 5>><<set $forestmod to 1>><<set $moormove to "normal">><<if $moor_hunt gte 1>><<set $moor_hunt += 1>><</if>><</link>>
 		<br>
-		<<link [[Carefully (0:30)|Moor]]>><<pass 30>><<set $moor += 5>><<set $moormove to "careful">><<set $forestmod to 0.5>><</link>><<lharass>>
+		<<link [[Carefully (0:30)|Moor]]>><<bird_pass 30>><<set $moor += 5>><<set $moormove to "careful">><<set $forestmod to 0.5>><<if $moor_hunt gte 1>><<set $moor_hunt += 2>><</if>><</link>><<lharass>>
 		<br><br>
 	<</if>>
 		Search nearby <<gtreasure>>
 		<br>
-		<<link [[Quickly (0:05)|Moor]]>><<pass 5>><<set $forestmod to 3>><<set $moormove to "quick_search">><</link>><<gharass>>
+		<<if $harpy gte 6 and $birdFly gte 1>>
+			<<link [[Fly (0:05)|Moor]]>><<bird_pass 5>><<set $forestmod to 0.5>><<set $moormove to "fly_search">><<tiredness 1>><</link>><<flight_text>><<gtiredness>><<lharass>>
+			<br>
+		<</if>>
+		<<link [[Quickly (0:05)|Moor]]>><<bird_pass 5>><<set $forestmod to 3>><<set $moormove to "quick_search">><<if $moor_hunt gte 1>><<set $moor_hunt += 0.5>><</if>><</link>><<gharass>>
 		<br>
-		<<link [[Normally (0:10)|Moor]]>><<pass 10>><<set $forestmod to 1>><<set $moormove to "normal_search">><</link>>
+		<<link [[Normally (0:10)|Moor]]>><<bird_pass 10>><<set $forestmod to 1>><<set $moormove to "normal_search">><<if $moor_hunt gte 1>><<set $moor_hunt += 1>><</if>><</link>>
 		<br>
-		<<link [[Carefully (0:30)|Moor]]>><<pass 30>><<set $forestmod to 0.5>><<set $moormove to "careful_search">><</link>><<lharass>>
+		<<link [[Carefully (0:30)|Moor]]>><<bird_pass 30>><<set $forestmod to 0.5>><<set $moormove to "careful_search">><<if $moor_hunt gte 1>><<set $moor_hunt += 2>><</if>><</link>><<lharass>>
 		<br><br>
 	<<if $moor gt 0>>
-		Walk towards the coast
+		Go towards the coast
 		<br>
-		<<link [[Quickly (0:05)|Moor]]>><<pass 5>><<set $moor -= 5>><<set $forestmod to 3>><<set $moormove to "quick">><</link>><<gharass>>
+		<<if $harpy gte 6 and $birdFly gte 1>>
+			<<link [[Fly (0:02)|Moor]]>><<bird_pass 2>><<set $moor -= 5>><<set $forestmod to 1>><<set $moormove to "fly">><<tiredness 1>><</link>><<flight_text>><<gtiredness>>
+			<br>
+		<</if>>
+		<<link [[Quickly (0:05)|Moor]]>><<bird_pass 5>><<set $moor -= 5>><<set $forestmod to 3>><<set $moormove to "quick">><<if $moor_hunt gte 1>><<set $moor_hunt += 0.5>><</if>><</link>><<gharass>>
 		<br>
-		<<link [[Normally (0:10)|Moor]]>><<pass 10>><<set $moor -= 5>><<set $forestmod to 1>><<set $moormove to "normal">><</link>>
+		<<link [[Normally (0:10)|Moor]]>><<bird_pass 10>><<set $moor -= 5>><<set $forestmod to 1>><<set $moormove to "normal">><<if $moor_hunt gte 1>><<set $moor_hunt += 1>><</if>><</link>>
 		<br>
-		<<link [[Carefully (0:30)|Moor]]>><<pass 30>><<set $moor -= 5>><<set $forestmod to 0.5>><<set $moormove to "careful">><</link>><<lharass>>
+		<<link [[Carefully (0:30)|Moor]]>><<bird_pass 30>><<set $moor -= 5>><<set $forestmod to 0.5>><<set $moormove to "careful">><<if $moor_hunt gte 1>><<set $moor_hunt += 2>><</if>><</link>><<lharass>>
 		<br><br>
 	<<else>>
-		<<link [[Enter the farmlands (0:05)|Farmland]]>><<pass 5>><<set $moor to 0>><<set $forestmod to 1>><</link>>
+		<<link [[Enter the farmlands (0:05)|Farmland]]>><<bird_pass 5>><<set $moor to 0>><<unset $moor_hunt>><<set $forestmod to 1>><</link>>
 		<br>
 	<</if>>
 <</if>>
@@ -126,7 +147,7 @@
 <<unset $moormove>>
 
 :: Castle [nobr]
-<<effects>>
+<<set $location to "moor">><<effects>>
 
 You are in the courtyard of a ruined castle. Even derelict and half-sunk, the ruin towers all around you.
 <br><br>
@@ -138,7 +159,97 @@ You are in the courtyard of a ruined castle. Even derelict and half-sunk, the ru
 	<<link [[Dig for treasure (2:00)|Castle Treasure]]>><<pass 120>><<unset $treasure_map>><<tiredness 6>><</link>><<gtiredness>>
 	<br>
 <</if>>
-<<link [[Leave|Moor]]>><</link>>
+<<if $harpy gte 6 and $syndromebird is 1 and $birdFly gte 1>>
+	<<link [[Fly to the tallest tower (0:02)|Castle Fly]]>><</link>><<flight_text>>
+	<br>
+<<elseif $syndromebird is 1>>
+	<<npc "Great Hawk">>
+	Your <<beasttype>> should be able to carry you home.
+	<<endevent>>
+	<br><br>
+	<<link [[Call|Castle Call]]>><</link>>
+	<br>
+<</if>>
+<<link [[Leave|Moor]]>><<set $moor to 100>><</link>>
+<br>
+
+:: Castle Fly [nobr]
+<<effects>>
+
+<<npc "Great Hawk">>
+You fly to the top of the tower, and land beside the nest.
+<<if $bird.state is "home">>
+	<<if $monster is 1>>
+		The <<beasttype>> stands, and wraps <<bhis>> arms and wings around you. "Welcome home, <<wife>>."
+	<<else>>
+		The <<beasttype>> flaps to <<bhis>> feet, and gives you an affectionate peck in greeting.
+	<</if>>
+<<else>>
+	The <<beasttype>> isn't home.
+<</if>>
+<br><br>
+
+
+
+<<link [[Next|Bird Tower]]>><<endevent>><</link>>
+<br>
+
+:: Castle Call [nobr]
+<<effects>>
+
+<<npc "Great Hawk">>
+You call up to the tower.
+
+<<if $bird.state isnot "home" and $bird.timer gte 0>>
+	There's no response. <<bHe>> must be out.
+	<br><br>
+	
+	<<link [[Wait|Castle Call Wait]]>><<bird_pass $bird.timer>><</link>>
+	<br>
+	<<link [[Stop|Castle]]>><<endevent>><</link>>
+	<br>
+<<else>>
+
+	At once, the <<beasttype>> swoops from your nest. <<bHe>> grasps your shoulders in <<bhis>> talons, and carries you home.
+	<br><br>
+	<<if ($leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound")>>
+		<<bHe>> looks at your bindings curiously, before sharply kicking <<bhis>> talons towards you. <span class="green">Your bindings fall to tatters at your feet.</span>
+		<<unbind>>
+		<br><br>
+	<</if>>
+	<<if $monster is 1>>
+		<<bHe>> wraps <<bhis>> arms and wings around you. "Welcome home, <<wife>>," <<bhe>> says before returning to the nest.
+	<<else>>
+		<<bHe>> gives you an affectionate peck, and returns to the nest.
+	<</if>>
+	<br><br>
+	<<set $bird.timer to 20>>
+	<<set $bird.state to "home">>
+	<<link [[Next|Bird Tower]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Castle Call Wait [nobr]
+<<effects>>
+
+You wait, watching the skies, until you see the <<beasttype>> soaring over the moor. You call out as <<bhe>> passes overhead. <<bHe>> swoops towards you, grasps your shoulders, and carries you home.
+<br><br>
+
+<<if ($leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound")>>
+	<<bHe>> looks at your bindings curiously, before sharply kicking <<bhis>> talons towards you. <span class="green">Your bindings fall to tatters at your feet.</span>
+	<<unbind>>
+	<br><br>
+<</if>>
+
+<<if $monster is 1>>
+	<<bHe>> wraps <<bhis>> arms and wings around you. "Welcome home, <<wife>>," <<bhe>> says before returning to the nest.
+<<else>>
+	<<bHe>> gives you an affectionate peck, and returns to the nest.
+<</if>>
+<br><br>
+<<set $bird.timer to 20>>
+<<set $bird.state to "home">>
+<<link [[Next|Bird Tower]]>><<endevent>><</link>>
 <br>
 
 :: Castle Treasure [nobr]
@@ -319,7 +430,7 @@ The journey back to shore proves safer.
 		Spied you running over the moor. Face me properly. I want to see your <<if $player.gender_appearance is "m">>cock<<else>>pussy<</if>>."
 		<br><br>
 	<<else>>
-		"Move your arms. I want to see your <<if $player.gender_appearance is "m">>cock<<else>>pussy<</if>>."
+		Move your arms. I want to see your <<if $player.gender_appearance is "m">>cock<<else>>pussy<</if>>."
 		<br><br>
 	<</if>>
 	
@@ -327,9 +438,11 @@ The journey back to shore proves safer.
 		<<link [[Comply|Moor Box Naked]]>><</link>><<exhibitionist4>>
 		<br>
 	<<else>>
-		<span class="blue">You're not exhibitionistic enough to do such a thing.</span> <i>Perhaps if you dressed properly <<his>> request would be more reasonable.</i>
+		<span class="blue">You're not exhibitionistic enough to do such a thing.</span> <i>Perhaps if you dressed <<his>> request would be more reasonable.</i>
 		<br><br>
 	<</if>>
+	<<link [[Leave|Moor]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
 	
 <<else>>
 	"I'm happy to part with it," the <<person>> says. "But I'd like something in return. Your underwear."
