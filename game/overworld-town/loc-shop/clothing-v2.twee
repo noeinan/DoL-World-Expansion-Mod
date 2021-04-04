@@ -304,7 +304,7 @@
 						</div>
 					<<else>>
 						<!-- Price tag -->
-						<span class="clothing-price">£<<print _item.cost * $clothesPrice * 0.01>></span>
+						<span class="clothing-price">£<<print getClothingCost(_item) / 100>></span>
 						<!-- Integrity, Reveal and Warmth indicators -->
 						<<if !$shopDefaults.compactMode>>
 							<div class="clothing-integrity">
@@ -408,7 +408,7 @@
 		<<elseif _temp_choice.gender is "f">>
 			<span class="pink">For girls.</span>
 		<</if>>
-		<<print _temp_choice.description>> Costs <span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>>.</span>
+		<<print _temp_choice.description>> Costs <span class="gold">£<<print getClothingCost(_temp_choice) / 100>>.</span>
 		<br>
 		<<set _truewarmth = getTrueWarmth(_temp_choice)>>
 		<<warmth _truewarmth>>
@@ -477,7 +477,7 @@
 						<<printcursed>>
 					<<else>>
 						<<link "Steal and wear">>
-							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `_temp_choice.cost * $clothesPrice / 100`>><<unset $clothes_choice>>
+							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>><<unset $clothes_choice>>
 							<<set $clothingShop.stolenClothes++>>
 							<<set $clothingShop.totalStolenClothes++>>
 							<<updateclotheslist>>
@@ -491,7 +491,7 @@
 						<br>
 					<</if>>
 					<<link "Steal and take home">>
-						<<shopbuyv2 $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup `_temp_choice.cost * $clothesPrice / 100`>>
+						<<shopbuyv2 $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>>
 						<<set $clothingShop.stolenClothes++>>
 						<<set $clothingShop.totalStolenClothes++>>
 						<<if $shopDefaults.disableReturn is false>>
@@ -506,7 +506,7 @@
 					<span class="red">You can't carry any more clothes with you.</span> You should take them to your wardrobe.
 					<br>
 				<</if>>
-			<<elseif $money >= _temp_choice.cost * $clothesPrice>>
+			<<elseif $money >= getClothingCost(_temp_choice)>>
 				<<if _cursedPrevent>>
 					<<printcursed>>
 				<</if>>
@@ -521,7 +521,7 @@
 								<<link "Buy and wear">>
 									<<clothingReset $clothingShopSlot>>
 									<<shopbuyv2 $clothingShopSlot "buy" "wear" $clothes_choice>>
-									<<set $money -= _temp_choice.cost * $clothesPrice>>
+									<<set $money -= getClothingCost(_temp_choice)>>
 									<<unset $clothes_choice>>
 									<<updateclotheslist>>
 									<<updatesidebarimg>>
@@ -532,7 +532,7 @@
 									<<if $shopDefaults.disableReturn>><<updatewarmthdescription>><</if>>
 									<<run updateMoment()>>
 								<</link>>
-								<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>></span>)</span>
+								<span>(<span class="gold">£<<print getClothingCost(_temp_choice) / 100>></span>)</span>
 							<</if>>
 						</div>
 					</div>
@@ -586,14 +586,14 @@
 <</nobr>><</widget>>
 
 <<widget "printbuysendhome">><<nobr>>
-	<<set _canAfford = ($money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
+	<<set _canAfford = ($money >= getClothingCost(_temp_choice) * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
 	<div class="buy-button">
 		<div @class="'buy-button-inner buy-multiple div-link ' + _canAfford">
 				<<link `'Buy and send home × ' + $buyMultiple`>>
-					<<if $money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple>>
+					<<if $money >= getClothingCost(_temp_choice) * $buyMultiple and _spaceLeft >= $buyMultiple>>
 						<<clothingReset $clothingShopSlot>>
 						<<shopbuyv2 $clothingShopSlot "buy" "send" $clothes_choice $buyMultiple>>
-						<<set $money -= _temp_choice.cost * $clothesPrice * $buyMultiple>>
+						<<set $money -= getClothingCost(_temp_choice) * $buyMultiple>>
 						<<if $shopDefaults.disableReturn is false>>
 							<<unset $clothes_choice>>
 						<</if>>
@@ -603,7 +603,7 @@
 						<<run updateMoment()>>
 					<</if>>
 				<</link>>
-				<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01>></span>)</span>
+				<span>(<span class="gold">£<<print getClothingCost(_temp_choice) * $buyMultiple / 100>></span>)</span>
 		</div>
 
 		<div id="buy-multiple-slider" class="buy-multiple-slider">
@@ -618,8 +618,8 @@
 				text.push($buyMultiple);
 				el.text(text.join(' '));
 
-				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01);
-				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < _temp_choice.cost * $clothesPrice * $buyMultiple or _spaceLeft < $buyMultiple);
+				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + getClothingCost(_temp_choice) * $buyMultiple / 100);
+				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < getClothingCost(_temp_choice) * $buyMultiple or _spaceLeft < $buyMultiple);
 			});
 		})>>
 	</div>
