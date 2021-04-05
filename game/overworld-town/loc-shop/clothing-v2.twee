@@ -304,7 +304,7 @@
 						</div>
 					<<else>>
 						<!-- Price tag -->
-						<span class="clothing-price">£<<print _item.cost * $clothesPrice * 0.01>></span>
+						<span class="clothing-price">£<<print getClothingCost(_item) / 100>></span>
 						<!-- Integrity, Reveal and Warmth indicators -->
 						<<if !$shopDefaults.compactMode>>
 							<div class="clothing-integrity">
@@ -408,7 +408,7 @@
 		<<elseif _temp_choice.gender is "f">>
 			<span class="pink">For girls.</span>
 		<</if>>
-		<<print _temp_choice.description>> Costs <span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>>.</span>
+		<<print _temp_choice.description>> Costs <span class="gold">£<<print getClothingCost(_temp_choice) / 100>>.</span>
 		<br>
 		<<set _truewarmth = getTrueWarmth(_temp_choice)>>
 		<<warmth _truewarmth>>
@@ -477,21 +477,23 @@
 						<<printcursed>>
 					<<else>>
 						<<link "Steal and wear">>
-							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `_temp_choice.cost * $clothesPrice / 100`>><<unset $clothes_choice>>
+							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>><<unset $clothes_choice>>
 							<<set $clothingShop.stolenClothes++>>
 							<<set $clothingShop.totalStolenClothes++>>
 							<<updateclotheslist>>
 							<<updatesidebarimg>>
 							<<updatesidebardescription>>
 							<<updateallure>>
-							<<updatewarmthscale>>
-							<<if $shopDefaults.disableReturn>><<updatewarmthdescription>><</if>>
+							<<if $shopDefaults.disableReturn>>
+								<<updatewarmthscale>>
+								<<updatewarmthdescription>>
+							<</if>>
 							<<run updateMoment()>>
 						<</link>><<crime>>
 						<br>
 					<</if>>
 					<<link "Steal and take home">>
-						<<shopbuyv2 $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup `_temp_choice.cost * $clothesPrice / 100`>>
+						<<shopbuyv2 $clothingShopSlot "steal" "send" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>>
 						<<set $clothingShop.stolenClothes++>>
 						<<set $clothingShop.totalStolenClothes++>>
 						<<if $shopDefaults.disableReturn is false>>
@@ -506,7 +508,7 @@
 					<span class="red">You can't carry any more clothes with you.</span> You should take them to your wardrobe.
 					<br>
 				<</if>>
-			<<elseif $money >= _temp_choice.cost * $clothesPrice>>
+			<<elseif $money >= getClothingCost(_temp_choice)>>
 				<<if _cursedPrevent>>
 					<<printcursed>>
 				<</if>>
@@ -521,18 +523,20 @@
 								<<link "Buy and wear">>
 									<<clothingReset $clothingShopSlot>>
 									<<shopbuyv2 $clothingShopSlot "buy" "wear" $clothes_choice>>
-									<<set $money -= _temp_choice.cost * $clothesPrice>>
+									<<set $money -= getClothingCost(_temp_choice)>>
 									<<unset $clothes_choice>>
 									<<updateclotheslist>>
 									<<updatesidebarimg>>
 									<<updatesidebarmoney>>
 									<<updatesidebardescription>>
 									<<updateallure>>
-									<<updatewarmthscale>>
-									<<if $shopDefaults.disableReturn>><<updatewarmthdescription>><</if>>
+									<<if $shopDefaults.disableReturn>>
+										<<updatewarmthscale>>
+										<<updatewarmthdescription>>
+									<</if>>
 									<<run updateMoment()>>
 								<</link>>
-								<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * 0.01>></span>)</span>
+								<span>(<span class="gold">£<<print getClothingCost(_temp_choice) / 100>></span>)</span>
 							<</if>>
 						</div>
 					</div>
@@ -586,14 +590,14 @@
 <</nobr>><</widget>>
 
 <<widget "printbuysendhome">><<nobr>>
-	<<set _canAfford = ($money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
+	<<set _canAfford = ($money >= getClothingCost(_temp_choice) * $buyMultiple and _spaceLeft >= $buyMultiple) ? "" : "disabled">>
 	<div class="buy-button">
 		<div @class="'buy-button-inner buy-multiple div-link ' + _canAfford">
 				<<link `'Buy and send home × ' + $buyMultiple`>>
-					<<if $money >= _temp_choice.cost * $clothesPrice * $buyMultiple and _spaceLeft >= $buyMultiple>>
+					<<if $money >= getClothingCost(_temp_choice) * $buyMultiple and _spaceLeft >= $buyMultiple>>
 						<<clothingReset $clothingShopSlot>>
 						<<shopbuyv2 $clothingShopSlot "buy" "send" $clothes_choice $buyMultiple>>
-						<<set $money -= _temp_choice.cost * $clothesPrice * $buyMultiple>>
+						<<set $money -= getClothingCost(_temp_choice) * $buyMultiple>>
 						<<if $shopDefaults.disableReturn is false>>
 							<<unset $clothes_choice>>
 						<</if>>
@@ -603,7 +607,7 @@
 						<<run updateMoment()>>
 					<</if>>
 				<</link>>
-				<span>(<span class="gold">£<<print _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01>></span>)</span>
+				<span>(<span class="gold">£<<print getClothingCost(_temp_choice) * $buyMultiple / 100>></span>)</span>
 		</div>
 
 		<div id="buy-multiple-slider" class="buy-multiple-slider">
@@ -618,8 +622,8 @@
 				text.push($buyMultiple);
 				el.text(text.join(' '));
 
-				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + _temp_choice.cost * $clothesPrice * $buyMultiple * 0.01);
-				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < _temp_choice.cost * $clothesPrice * $buyMultiple or _spaceLeft < $buyMultiple);
+				$('#buy-send-home > .buy-button > .buy-button-inner > span > span').text('£' + getClothingCost(_temp_choice) * $buyMultiple / 100);
+				$('#buy-send-home > .buy-button > .buy-button-inner').toggleClass('disabled', $money < getClothingCost(_temp_choice) * $buyMultiple or _spaceLeft < $buyMultiple);
 			});
 		})>>
 	</div>
@@ -893,59 +897,66 @@
 					</div>
 				</div>
 
-				<<unset _styleP>>
-				<<unset _styleS>>
-				<!-- Draw primary and all secondary items -->
-				<<set _items_list = [{slot: _slot, item: _item}]>>
-				<<if _item.outfitPrimary>>
-					<<set _items_list = _items_list.concat(Object.keys(_item.outfitPrimary).map(s => { return {slot: s, item: setup.clothes[s].find(x => x.name == _item.outfitPrimary[s])} }))>>
-				<</if>>
-				<<for _clothing range _items_list>>
-					<<set _item = _clothing.item>>
-					<<set _slot = _clothing.slot>>
-
-					<<if _col is "custom">>
-						<<set _styleP = getCustomColourStyle('primary')>>
+				<div class="mannequin-clothes">
+					<<unset _styleP>>
+					<<unset _styleS>>
+					<!-- Draw primary and all secondary items -->
+					<<set _items_list = [{slot: _slot, item: _item}]>>
+					<<if _item.outfitPrimary>>
+						<<set _items_list = _items_list.concat(Object.keys(_item.outfitPrimary).map(s => { return {slot: s, item: setup.clothes[s].find(x => x.name == _item.outfitPrimary[s])} }))>>
 					<</if>>
-					<div @class="'clothes-' + _col.replace(/ /g, '-')" @style="_styleP">
-						<<if _item.mainImage isnot 0>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/full.png'">
-						<</if>>
-					
-						<<if _item.sleeve_img or _item.leftImage>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/left.png'">
-						<</if>>
-						<<if _item.sleeve_img or _item.rightImage>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/right.png'">
-						<</if>>
-					
-						<<if _item.breast_img>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + _breastImg + '.png'">
-						<</if>>
+					<<for _clothing range _items_list>>
+						<<set _item = _clothing.item>>
+						<<set _slot = _clothing.slot>>
 
-						<<if _item.penis_img and $mannequinHasPenis>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/penis.png'">
+						<<if _col is "custom">>
+							<<set _styleP = getCustomColourStyle('primary')>>
 						<</if>>
-					</div>
+						<div @class="'clothes-' + _col.replace(/ /g, '-')" @style="_styleP">
+							<<if _item.mainImage isnot 0>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/full.png'">
+							<</if>>
+						
+							<<if _item.sleeve_img or _item.leftImage>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/left.png'">
+							<</if>>
+							<<if _item.sleeve_img or _item.rightImage>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/right.png'">
+							<</if>>
+						
+							<<if _item.breast_img>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + _breastImg + '.png'">
+							<</if>>
 
-					<<if _acc_col is "custom">>
-						<<set _styleS = getCustomColourStyle('secondary')>>
-					<</if>>
-					<div @class="'clothes-' + _acc_col.replace(/ /g, '-')" @style="_styleS">
-						<<if _item.accessory>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/acc.png'">
+							<<if _item.penis_img and $mannequinHasPenis>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/penis.png'">
+							<</if>>
+						</div>
+
+						<<if _acc_col is "custom">>
+							<<set _styleS = getCustomColourStyle('secondary')>>
 						<</if>>
-						<<if _item.breast_acc_img>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + _breastImg + '_acc.png'">
+						<div @class="'clothes-' + _acc_col.replace(/ /g, '-')" @style="_styleS">
+							<<if _item.accessory>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/acc.png'">
+							<</if>>
+							<<if _item.breast_acc_img>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + _breastImg + '_acc.png'">
+							<</if>>
+							<<if _item.leftImage and _item.accessory>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/left_acc.png'">
+							<</if>>
+							<<if _item.rightImage and _item.accessory>>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/right_acc.png'">
+							<</if>>
+						</div>
+						<<if _item.back_img is 1>>
+							<div @class="'clothes-' + _acc_col.replace(/ /g, '-')" @style="'z-index: -1; position: absolute; ' + _styleS">
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + 'back.png'">
+							</div>
 						<</if>>
-						<<if _item.leftImage and _item.accessory>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/left_acc.png'">
-						<</if>>
-						<<if _item.rightImage and _item.accessory>>
-							<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/right_acc.png'">
-						<</if>>
-					</div>
-				<</for>>
+					<</for>>
+				</div>
 			</div>
 			<div class="div-link mannequin-gender-textbutton no-numberify">
 				Toggle gender
