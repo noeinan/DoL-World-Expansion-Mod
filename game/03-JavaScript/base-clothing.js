@@ -58,3 +58,20 @@ function debugColourContainerClasses(color) {
 		' ' + 'feet_acc-' + (color.feet[1] || '').replace(/ /g, '-')
 }
 window.debugColourContainerClasses = debugColourContainerClasses; // export function
+
+window.getClothingCost = function (item) {
+	let v = State.variables;
+	let cost = item.cost * v.clothesPrice;
+
+	if (setup.clothes.under_lower.findIndex(x => x.name == item.name) >= 0 || setup.clothes.under_upper.findIndex(x => x.name == item.name) >= 0)
+		cost *= v.clothesPriceUnderwear;
+	else if (item.type.includes('school'))
+		cost *= v.clothesPriceSchool;
+	
+	// the lewder item is, the more affected by the multiplier it is
+	let lewdness = Math.clamp((item.reveal - 400) / 500, 0, 1);
+	let lewdCoef = 1 + (v.clothesPriceLewd - 1) * lewdness;
+	cost *= lewdCoef;
+
+	return Math.round(cost);
+}
