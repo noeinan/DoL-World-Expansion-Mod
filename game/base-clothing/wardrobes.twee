@@ -570,16 +570,26 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 			<<set _temp_choice to $worn[_wardrobe_list]>>
 			<<shoptraits>>
 		</div>
+		
+		<<if _wardrobe_list is "upper" and $worn.lower.name isnot "naked" and _wornItem.outfitPrimary is undefined and !_wornItem.notuck>>
+			<<if $upperTucked>>
+				<<link [[Untuck|$passage]]>><<set $upperTucked = 0>><</link>>
+			<<else>>
+				<<link [[Tuck in|$passage]]>><<set $upperTucked = 1>><</link>>
+			<</if>>
+			<br>
+		<</if>>
+		<<if (_wornItem.hood and _wornItem.outfitSecondary) or (_wornItem.outfitPrimary and Object.keys(_wornItem.outfitPrimary).some(x => $worn[x].hood))>>
+		<!-- If selected item is a hood or selected item has a secondary hood piece -->
+			<<if $hoodDown>>
+				<<link [[Pull hood up|$passage]]>><<set $hoodDown = 0>><</link>>
+			<<else>>
+				<<link [[Pull hood down|$passage]]>><<set $hoodDown = 1>><</link>>
+			<</if>>
+			<br>
+		<</if>>
 	<<else>>
 		nothing
-		<br>
-	<</if>>
-	<<if _wardrobe_list is "upper" and $worn.lower.name isnot "naked" and _wornItem.outfitPrimary is undefined and !_wornItem.notuck>>
-		<<if $upperTucked>>
-			<<link [[Untuck|$passage]]>><<set $upperTucked = 0>><</link>>
-		<<else>>
-			<<link [[Tuck in|$passage]]>><<set $upperTucked = 1>><</link>>
-		<</if>>
 		<br>
 	<</if>>
 	<br>
@@ -1185,7 +1195,7 @@ to the crate and send them to be sold? Might be best to go shopping shortly afte
 		<<if _items[_i].outfitPrimary is undefined and $crateContents is "outfits">>
 			<<continue>>
 		<</if>>
-		<<set _value += Math.floor(_items[_i].cost * $clothesPrice * (_items[_i].integrity / _items[_i].integrity_max) / 3)>>
+		<<set _value += Math.floor(getClothingCost(_items[_i]) * (_items[_i].integrity / _items[_i].integrity_max) / 3)>>
 	<</for>>
 <</for>>
 It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
@@ -1215,7 +1225,7 @@ It will earn you £<<print ((_value + 5000) / 100).toFixed(2)>>.
 		<<if $wardrobe[_equip[$_i]][$_j].outfitPrimary is undefined and $crateContents is "outfits">>
 			<<continue>>
 		<</if>>
-		<<set _value += Math.floor($wardrobe[_equip[$_i]][$_j].cost * $clothesPrice * ($wardrobe[_equip[$_i]][$_j].integrity / $wardrobe[_equip[$_i]][$_j].integrity_max) / 3)>>
+		<<set _value += Math.floor(getClothingCost($wardrobe[_equip[$_i]][$_j]) * ($wardrobe[_equip[$_i]][$_j].integrity / $wardrobe[_equip[$_i]][$_j].integrity_max) / 3)>>
 		<<run _toDelete.push(clone($_j))>>
 	<</for>>
 	<<for $_j to $wardrobe[_equip[$_i]].length; $_j gte 0; $_j-->>
@@ -1251,7 +1261,7 @@ to the crate and send them to be repaired? Might be best to go shopping shortly 
 		<<if _items[_i].outfitPrimary is undefined and $crateContents is "outfits">>
 			<<continue>>
 		<</if>>
-		<<set _value += Math.floor(_items[_i].cost * $clothesPrice * (1 - (_items[_i].integrity / _items[_i].integrity_max)) * 1.25)>>
+		<<set _value += Math.floor(getClothingCost(_items[_i]) * (1 - (_items[_i].integrity / _items[_i].integrity_max)) * 1.25)>>
 	<</for>>
 <</for>>
 It will cost you
@@ -1288,7 +1298,7 @@ It will cost you
 		<<if $wardrobe[_equip[$_i]][$_j].outfitPrimary is undefined and $crateContents is "outfits">>
 			<<continue>>
 		<</if>>
-		<<set _value += Math.floor($wardrobe[_equip[$_i]][$_j].cost * $clothesPrice * (1 - ($wardrobe[_equip[$_i]][$_j].integrity / $wardrobe[_equip[$_i]][$_j].integrity_max)) * 1.25)>>
+		<<set _value += Math.floor(getClothingCost($wardrobe[_equip[$_i]][$_j]) * (1 - ($wardrobe[_equip[$_i]][$_j].integrity / $wardrobe[_equip[$_i]][$_j].integrity_max)) * 1.25)>>
 
 		<<if $wardrobeRepair[_equip[$_i]] is undefined>>
 			<<set $wardrobeRepair[_equip[$_i]] to []>>
