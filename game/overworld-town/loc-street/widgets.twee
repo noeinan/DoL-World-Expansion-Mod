@@ -845,13 +845,102 @@ You take cover in a bus shelter, just as a bus rounds the corner. It slows down 
 <br>
 <</nobr>><</widget>>
 
-<<widget "streeteden">><<nobr>>
+<<widget "streetedenangry">><<nobr>>
 	You see Eden across the road.<<npc Eden>><<person1>> <<Hes>> stopping people on the street and showing them a crudely drawn picture of you. People seem afraid of <<him>>, but if <<he>> notices <<he>> doesn't care.
 	<br><br>
-	<<link [[Go to Eden|Street Eden]]>><</link>>
+	<<link [[Go to Eden|Street Eden Angry]]>><</link>>
 	<br>
-	<<link [[Hide (0:25)|Street Eden Hide]]>><<pass 25>><</link>>
+	<<link [[Hide (0:25)|Street Eden Angry Hide]]>><<pass 25>><</link>>
 	<br>
+<</nobr>><</widget>>
+
+<<widget "streetedenworried">><<nobr>>
+	<<npc Eden>><<person1>>
+
+	<<switch random(2)>>
+		<<case 0>>
+			Someone taps you on the shoulder. You turn around. It's Eden.
+		<<case 1>>
+			You turn a corner and find yourself face to face with Eden.
+		<<case 2>>
+			You lose concentration for a second, and almost blunder into someone. With a shock, you realise that it's Eden.
+	<</switch>>
+	<br><br>
+	<<if $edenvisitedtown isnot 1>>
+		<<set $edenvisitedtown to 1>>
+		It's rather jarring seeing <<him>> in an urban setting. You half expect <<him>> to have come with <<his>> rifle, which would probably have taken some explaining to the local police.
+		<br><br>
+		<<He>> seems slightly less sure of <<his>> surroundings in town, but otherwise looks relieved to see you.
+	<<else>>
+		<<He>> seems relieved to have found you.
+	<</if>>
+
+	<<He>> steps closer to you.
+	<<switch random(2)>>
+		<<case 0>>
+			"There you are! You had me worried."
+		<<case 1>>
+			"I've finally found you. Are you alright?"
+		<<case 2>>
+			"Are you alright? I've been looking all over for you."
+	<</switch>>
+	<br><br>
+
+	<<if $pain gte 20>>
+		You try to reassure <<him>> that you're okay, but <<he>> seems concerned.
+		"No, no, you're hurt! Let me take a look..."
+		<br><br>
+		<<He>> checks you over, noting the obvious places where you are hurt. You're not sure you can show <<him>> everything here on the street, though.
+		<br><br>
+		"I want you to be safe. I hate seeing you hurt." <<he>> says. There's not much <<he>> can do here, but you find <<his>> concern comforting.
+		<<lpain>><<ltrauma>><<lstress>><<trauma -1>><<pain -5>><<stress -10>>
+	<<else>>
+		You reassure <<him>> that you're fine, <<he>> seems relieved.
+	<</if>>
+	<br><br>
+	"You haven't come to see me. I was worried about you.". <<He>> frowns.
+	<<if $schoolterm is 1 and $weekday isnot 1 and $weekday isnot 7 and $hour gte 7 and $hour lte 14>>
+		"You're supposed to be <<if $hour lte 9>>going to<<else>>in<</if>> school, aren't you? I guess that means you can't come back with me now. But please come see me soon, okay?"
+		<br><br>
+		<<link [[Hug|Street Eden Worried Hug]]>><<npcincr Eden love 1>><</link>><<glove>>
+		<br>
+		<<link [[Nod|Street Eden Worried Leave]]>><</link>>
+	<<elseif $hour lte 4 or $hour gte 21>>
+		"It's late. Come back to the cabin with me. You can sleep and be safe for the night."
+		<br><br>
+		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<npcincr Eden dom 1>><</link>>
+		<br>
+		<<link [[Refuse|Street Eden Worried Refuse Cabin]]>><<npcincr Eden love -2>><<npcincr Eden dom -1>><</link>><<llove>>
+		<br>
+
+		<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 80>>
+			<<link [[Suggest a walk in the park (1:00)|Street Eden Worried Suggest Park]]>><<npcincr Eden love 1>><</link>><<glove>>
+			<br>
+			<<link [[Invite Eden back to the orphanage (0:30)|Street Eden Worried Suggest Orphanage]]>><<pass 30>><<npcincr Eden love 1>><</link>><<glove>>
+		<<else>>
+			<br>
+			<span class="pink">You don't think your relationship with Eden is strong enough to suggest <<he>> spends time with you in town.</span>
+		<</if>>
+	<<else>>
+		"Come back to the cabin with me. You'll be safe and warm there. Let me spend some time with you."
+		<br><br>
+		<<link [[Agree (1:00)|Street Eden Worried Go To Cabin]]>><<pass 60>><<npcincr Eden dom 1>><</link>>
+		<br>
+		<<link [[Refuse|Street Eden Worried Refuse Cabin]]>><<npcincr Eden love -2>><<npcincr Eden dom -1>><</link>><<llove>>
+		<br>
+
+		<<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 80>>
+			<<link [[Suggest a walk in the park (1:00)|Street Eden Worried Suggest Park]]>><<npcincr Eden love 1>><</link>><<glove>>
+
+			<<if $hour gte 6 and $hour lte 20 and $edenshopping is 0>>
+				<br>
+				<<link [[Suggest going shopping (1:00)|Street Eden Worried Suggest Shopping]]>><<npcincr Eden love 1>><</link>><<glove>>
+			<</if>>
+		<<else>>
+			<br>
+			<span class="pink">You don't think your relationship with Eden is strong enough to suggest <<he>> spends time with you in town.</span>
+		<</if>>
+	<</if>>
 <</nobr>><</widget>>
 
 <<widget "streetpolice">><<nobr>>
@@ -2294,7 +2383,11 @@ You find a quiet place and open the <<wallet>>.
 			<</if>>
 		<<elseif $dangerevent lte 90>>
 			<<if ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
-				<<streeteden>>
+				<<if $edenfreedom gte 2 and $NPCName[$NPCNameList.indexOf("Eden")].love gte 60>>
+					<<streetedenworried>>
+				<<else>>
+					<<streetedenangry>>
+				<</if>>
 			<<else>>
 				<<eventsstreetnight>>
 			<</if>>
@@ -2440,7 +2533,11 @@ You find a quiet place and open the <<wallet>>.
 			<</if>>
 		<<elseif $dangerevent lte 90>>
 			<<if ($edenfreedom is 1 and $edendays gte 2) or ($edenfreedom gte 2 and $edendays gte 8)>>
-				<<streeteden>>
+				<<if $edenfreedom gte 2 and $NPCName[$NPCNameList.indexOf("Eden")].love gte 60>>
+					<<streetedenworried>>
+				<<else>>
+					<<streetedenangry>>
+				<</if>>
 			<<else>>
 				<<eventsstreetday>>
 			<</if>>
