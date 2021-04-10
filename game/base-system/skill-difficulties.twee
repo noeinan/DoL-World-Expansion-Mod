@@ -879,3 +879,51 @@ args[4]: high the skill text.*/
 	<</if>>
 <</if>>
 <</nobr>><</widget>>
+
+<<widget "martialdifficulty">><<nobr>>
+<<if $args[0]>>
+	<<set _martialdifficultymin to $args[0]>>
+<<else>>
+	<<set _martialdifficultymin to 1>>
+<</if>>
+<<if $args[1]>>
+	<<set _martialdifficultymax to $args[1]>>
+<<else>>
+	<<set _martialdifficultymax to 1000>>
+<</if>>
+<<set _martial to clone($martialskill)>>
+<<if $moorLuck gt 0>>
+	<<set _martial to Math.floor(_martial * (1 + ($moorLuck / 100)))>>
+<</if>>
+<<if $args[2] is undefined>>
+	<<if $checkstyle is "skillname">>
+		| <span class="orange">Martial Arts</span>
+	<<else>>
+		| <span class="orange">Martial Arts</span>:
+		<<set _difficulty to Math.round(Math.clamp(_martial - _martialdifficultymin, 0, _martialdifficultymax) / (_martialdifficultymax - _martialdifficultymin) * 100)>>
+		<<if _difficulty gt 100>>
+			<<set _difficulty to 100>>
+		<</if>>
+		<<if _difficulty gte 100>>
+			<span class="green">Simple <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 80>>
+			<span class="teal">Easy <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 60>>
+			<span class="lblue">Reasonable <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 40>>
+			<span class="blue">Challenging <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 20>>
+			<span class="purple">Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 1>>
+			<span class="pink">Very Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<else>>
+			<span class="red">Impossible <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<</if>>
+	<</if>>
+<</if>>
+<<if _martial gte random(_martialdifficultymin, _martialdifficultymax)>>
+	<<set $martialSuccess to 1>>
+<<else>>
+	<<set $martialSuccess to 0>>
+<</if>>
+<</nobr>><</widget>>
