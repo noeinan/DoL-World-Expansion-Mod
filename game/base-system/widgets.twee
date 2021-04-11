@@ -448,12 +448,14 @@
 
 			/*noeinan mod START*/
 			/*added NPC martial and brawl skills to the calc and martialdifficulty*/
+			/*changed martialdifficulty to combatdifficulty*/
 
-			<<martialdifficulty ($martialskill - 100) ($martialskill + 200) 1>>
-			<<if $martialSuccess == 1>>
-				<<set $pain += ((_violence + (2 * ($enemymartialskill / 200) + ($enemybrawlskill / 250))) * _painMod *) (1 - ($masochism / 1200))>>
+			<<set _combat = $enemymartialskill + $enemybrawlskill>>
+			<<combatdifficulty (_combat - 200) (_combat + 100) 1>>
+			<<if $combatSuccess == 1>>
+				<<set $pain += ((_violence + (2 * ($enemymartialskill / 200) + ($enemybrawlskill / 250))) * _painMod) * (1 - ($masochism / 1200))>>
 			<<else>>
-				<<set $pain += ((_violence + (2 * ($enemybrawlskill / 250))) * _painMod *) (1 - ($masochism / 1200))>>
+				<<set $pain += (_violence * _painMod) * (1 - ($masochism / 1200)>>
 			<</if>>
 
 			/*noeinan mod END*/
@@ -516,6 +518,8 @@
 /*Added damage bonus to new Brawl and Martial Arts Skills.*/
 /*WIP, Martial Arts should be twice as effective as Brawl.*/
 /*rebalanced it and added martialdifficulty*/
+/*changed martialdifficulty to combatdifficulty*/
+
 <<widget "defiance">><<nobr>>
 	<<if $args[0]>>
 		<<set _negargs = -$args[0]>>
@@ -523,14 +527,15 @@
 		<<combattrauma _negargs>>
 		<<set $enemyanger += 5 * $args[0]>>
 		<<set _damage += (2 * $args[0] * ($physique / 4000))>>
-		<<set _damage += (2 * $args[0] * ($brawlskill / 250))>>
-		<<martialdifficulty ($enemymartialskill - 100) ($enemymartialskill + 200)>>
-		<<if $martialSuccess == 1>>
+		<<set _combat = $martialskill + $brawlskill>>
+		<<combatdifficulty (_combat - 200) (_combat + 100)>>
+		<<if $combatSuccess == 1>>
 			<<if $enemyno == 1>>
 				<<set _damage += (2 * $args[0] * ($martialskill / 200))>>
 			<<else>>
 				<<set _damage += (2 * $args[0] * ($martialskill / 160)) * Math.pow(0.8, $enemyno)>>
 			<</if>>
+			<<set _damage += (2 * $args[0] * ($brawlskill / 250))>>
 		<</if>>
 		<<set _influence = 1 + (($drunk + $hallucinogen + $drugged) / 1000)>>
 		<<set $enemyhealth -= _damage / _influence>>
