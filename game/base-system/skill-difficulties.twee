@@ -883,3 +883,61 @@ args[4]: high the skill text.*/
 	<</if>>
 <</if>>
 <</nobr>><</widget>>
+
+/*noeinan mod START*/
+/*created martialdifficulty widget*/
+/*modified to combatdifficulty to take into account both martial and brawl*/
+
+<<widget "combatdifficulty">><<nobr>>
+<<if $args[0]>>
+	<<set _combatdifficultymin to $args[0]>>
+<<else>>
+	<<set _combatdifficultymin to 1>>
+<</if>>
+<<if $args[1]>>
+	<<set _combatdifficultymax to $args[1]>>
+<<else>>
+	<<set _combatdifficultymax to 1000>>
+<</if>>
+<<if $args[2]>>
+	<<set _combat to (clone($enemymartialskill) + clone($enemybrawlskill))>>
+<<else>>
+	<<set _combat to (clone($martialskill) + clone($brawlskill))>>
+<</if>>
+<<if $moorLuck gt 0>>
+	<<set _combat to Math.floor(_combat * (1 + ($moorLuck / 100)))>>
+<</if>>
+<<if $args[2] is undefined>>
+	<<if $checkstyle is "skillname">>
+		| <span class="orange">Combat Skills</span>
+	<<else>>
+		| <span class="orange">Combat Skills</span>:
+		<<set _difficulty to Math.round(Math.clamp(_combat - _combatdifficultymin, 0, _combatdifficultymax) / (_combatdifficultymax - _combatdifficultymin) * 100)>>
+		<<if _difficulty gt 100>>
+			<<set _difficulty to 100>>
+		<</if>>
+		<<if _difficulty gte 100>>
+			<span class="green">Simple <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 80>>
+			<span class="teal">Easy <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 60>>
+			<span class="lblue">Reasonable <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 40>>
+			<span class="blue">Challenging <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 20>>
+			<span class="purple">Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 1>>
+			<span class="pink">Very Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<else>>
+			<span class="red">Impossible <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<</if>>
+	<</if>>
+<</if>>
+<<if _combat gte random(_combatdifficultymin, _combatdifficultymax)>>
+	<<set $combatSuccess to 1>>
+<<else>>
+	<<set $combatSuccess to 0>>
+<</if>>
+<</nobr>><</widget>>
+
+/*noeinan mod END*/
