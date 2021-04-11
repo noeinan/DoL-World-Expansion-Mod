@@ -451,11 +451,13 @@
 			/*changed martialdifficulty to combatdifficulty*/
 
 			<<set _combat = $enemymartialskill + $enemybrawlskill>>
-			<<combatdifficulty (_combat - 200) (_combat + 100) 1>>
+			<<set _combatmin = Math.clamp(_combat - 200, 1, 2000)>>
+			<<set _combatmax = Math.clamp(_combat + 100, 1, 2000)>>
+			<<combatdifficulty _combatmin _combatmax 1>>
 			<<if $combatSuccess == 1>>
 				<<set $pain += ((_violence + (2 * ($enemymartialskill / 200) + ($enemybrawlskill / 250))) * _painMod) * (1 - ($masochism / 1200))>>
 			<<else>>
-				<<set $pain += (_violence * _painMod) * (1 - ($masochism / 1200)>>
+				<<set $pain += (_violence * _painMod) * (1 - ($masochism / 1200))>>
 			<</if>>
 
 			/*noeinan mod END*/
@@ -522,13 +524,16 @@
 
 <<widget "defiance">><<nobr>>
 	<<if $args[0]>>
+		<<set _damage = 0>>
 		<<set _negargs = -$args[0]>>
 		<<set $stress -= 10 * $args[0]>>
 		<<combattrauma _negargs>>
 		<<set $enemyanger += 5 * $args[0]>>
 		<<set _damage += (2 * $args[0] * ($physique / 4000))>>
 		<<set _combat = $martialskill + $brawlskill>>
-		<<combatdifficulty (_combat - 200) (_combat + 100)>>
+		<<set _combatmin = Math.clamp(_combat - 200, 1, 2000)>>
+		<<set _combatmax = Math.clamp(_combat + 100, 1, 2000)>>
+		<<combatdifficulty _combatmin _combatmax 1>>
 		<<if $combatSuccess == 1>>
 			<<if $enemyno == 1>>
 				<<set _damage += (2 * $args[0] * ($martialskill / 200))>>
@@ -538,7 +543,7 @@
 			<<set _damage += (2 * $args[0] * ($brawlskill / 250))>>
 		<</if>>
 		<<set _influence = 1 + (($drunk + $hallucinogen + $drugged) / 1000)>>
-		<<set $enemyhealth -= _damage / _influence>>
+		<<set $enemyhealth -= (_damage / _influence)>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 4>>
 	<</if>>
@@ -709,32 +714,32 @@
 
 <<widget "brawlskilluse">><<nobr>>
 	<<if $enemyhealthmax gte 800 and $brawlskill gte 800>>
-		<<if arg[0]>>
-			<<set $brawlskill += arg[0]>>
+		<<if $args[0]>>
+			<<set $brawlskill += $args[0]>>
 		<<else>>
 			<<set $brawlskill += 1>>
 		<</if>>
 	<<elseif $enemyhealthmax gte 600 and $brawlskill gte 600>>
-		<<if arg[0]>>
-			<<set $brawlskill += arg[0]>>
+		<<if $args[0]>>
+			<<set $brawlskill += $args[0]>>
 		<<else>>
 			<<set $brawlskill += 1>>
 		<</if>>
 	<<elseif $enemyhealthmax gte 400 and $brawlskill gte 400>>
-		<<if arg[0]>>
-			<<set $brawlskill += arg[0]>>
+		<<if $args[0]>>
+			<<set $brawlskill += $args[0]>>
 		<<else>>
 			<<set $brawlskill += 1>>
 		<</if>>
 	<<elseif $enemyhealthmax gte 200 and $brawlskill gte 200>>
-		<<if arg[0]>>
-			<<set $brawlskill += arg[0]>>
+		<<if $args[0]>>
+			<<set $brawlskill += $args[0]>>
 		<<else>>
 			<<set $brawlskill += 1>>
 		<</if>>
 	<<elseif $enemyhealthmax lt 200 and $brawlskill lt 200>>
-		<<if arg[0]>>
-			<<set $brawlskill += arg[0]>>
+		<<if $args[0]>>
+			<<set $brawlskill += $args[0]>>
 		<<else>>
 			<<set $brawlskill += 1>>
 		<</if>>
