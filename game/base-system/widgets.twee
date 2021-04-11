@@ -451,8 +451,8 @@
 			/*changed martialdifficulty to combatdifficulty*/
 
 			<<set _combat = $enemymartialskill + $enemybrawlskill>>
-			<<set _combatmin = _combat - 200>>
-			<<set _combatmax = _combat + 100>>
+			<<set _combatmin = Math.clamp(_combat - 200, 1, 2000)>>
+			<<set _combatmax = Math.clamp(_combat + 100, 1, 2000)>>
 			<<combatdifficulty _combatmin _combatmax 1>>
 			<<if $combatSuccess == 1>>
 				<<set $pain += ((_violence + (2 * ($enemymartialskill / 200) + ($enemybrawlskill / 250))) * _painMod) * (1 - ($masochism / 1200))>>
@@ -528,21 +528,21 @@
 		<<set $stress -= 10 * $args[0]>>
 		<<combattrauma _negargs>>
 		<<set $enemyanger += 5 * $args[0]>>
-		<<set _damage += (2 * $args[0] * ($physique / 4000))>>
+		<<set $damage += (2 * $args[0] * ($physique / 4000))>>
 		<<set _combat = $martialskill + $brawlskill>>
-		<<set _combatmin = _combat - 200>>
-		<<set _combatmax = _combat + 100>>
+		<<set _combatmin = Math.clamp(_combat - 200, 1, 2000)>>
+		<<set _combatmax = Math.clamp(_combat + 100, 1, 2000)>>
 		<<combatdifficulty _combatmin _combatmax 1>>
 		<<if $combatSuccess == 1>>
 			<<if $enemyno == 1>>
-				<<set _damage += (2 * $args[0] * ($martialskill / 200))>>
+				<<set $damage += (2 * $args[0] * ($martialskill / 200))>>
 			<<else>>
-				<<set _damage += (2 * $args[0] * ($martialskill / 160)) * Math.pow(0.8, $enemyno)>>
+				<<set $damage += (2 * $args[0] * ($martialskill / 160)) * Math.pow(0.8, $enemyno)>>
 			<</if>>
-			<<set _damage += (2 * $args[0] * ($brawlskill / 250))>>
+			<<set $damage += (2 * $args[0] * ($brawlskill / 250))>>
 		<</if>>
 		<<set _influence = 1 + (($drunk + $hallucinogen + $drugged) / 1000)>>
-		<<set $enemyhealth -= _damage / _influence>>
+		<<set $enemyhealth -= $damage / _influence>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 4>>
 	<</if>>
