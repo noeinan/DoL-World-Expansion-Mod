@@ -106,6 +106,9 @@ window.attachCustomColourHooks = function (slot = "") {
 
         $('.custom-colour.primary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('primary'); new Wikifier(null, '<<updateclotheslist>>'); });
         $('.custom-colour.secondary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('secondary'); new Wikifier(null, '<<updateclotheslist>>'); });
+        
+        $('.custom-colour-sliders.primary > .colour-slider > div > input').on('input', (e) => { State.variables.customColors.sepia.primary = 0; });
+        $('.custom-colour-sliders.secondary > .colour-slider > div > input').on('input', (e) => { State.variables.customColors.sepia.secondary = 0; });
     });
 }
 
@@ -151,6 +154,7 @@ window.loadCustomColourPreset = function (slot = "primary") {
             State.variables.customColors.brightness[slot] = preset.brightness;
             State.variables.customColors.saturation[slot] = preset.saturation;
             State.variables.customColors.contrast[slot] = preset.contrast;
+            State.variables.customColors.sepia[slot] = 0;
         }
         // legacy preset (has both primary and secondary colours information)
         else {
