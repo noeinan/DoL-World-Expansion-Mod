@@ -445,7 +445,21 @@
 			<</if>>
 			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
 			<<combattrauma _violence * _traumaMod>>
-			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)))>>
+
+			/*noeinan mod START*/
+			/*added NPC martial and brawl skills to the calc and martialdifficulty*/
+			/*changed martialdifficulty to combatdifficulty*/
+
+			<<set _combat = $enemymartialskill + $enemybrawlskill>>
+			<<combatdifficulty (_combat - 200) (_combat + 100) 1>>
+			<<if $combatSuccess == 1>>
+				<<set $pain += ((_violence + (2 * ($enemymartialskill / 200) + ($enemybrawlskill / 250))) * _painMod) * (1 - ($masochism / 1200))>>
+			<<else>>
+				<<set $pain += (_violence * _painMod) * (1 - ($masochism / 1200)>>
+			<</if>>
+
+			/*noeinan mod END*/
+			
 			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
 			<<arousal _arousal>>
 			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
@@ -503,6 +517,8 @@
 /*noeinan mod START*/
 /*Added damage bonus to new Brawl and Martial Arts Skills.*/
 /*WIP, Martial Arts should be twice as effective as Brawl.*/
+/*rebalanced it and added martialdifficulty*/
+/*changed martialdifficulty to combatdifficulty*/
 
 <<widget "defiance">><<nobr>>
 	<<if $args[0]>>
@@ -510,9 +526,19 @@
 		<<set $stress -= 10 * $args[0]>>
 		<<combattrauma _negargs>>
 		<<set $enemyanger += 5 * $args[0]>>
-		<<set $enemyhealth -= (2 * $args[0] * ($physique / 4000))>>
-		<<set $enemyhealth -= (2 * $args[0] * ($brawlskill / 200))>>
-		<<set $enemyhealth -= (2 * $args[0] * ($martialskill / 200))>>
+		<<set _damage += (2 * $args[0] * ($physique / 4000))>>
+		<<set _combat = $martialskill + $brawlskill>>
+		<<combatdifficulty (_combat - 200) (_combat + 100)>>
+		<<if $combatSuccess == 1>>
+			<<if $enemyno == 1>>
+				<<set _damage += (2 * $args[0] * ($martialskill / 200))>>
+			<<else>>
+				<<set _damage += (2 * $args[0] * ($martialskill / 160)) * Math.pow(0.8, $enemyno)>>
+			<</if>>
+			<<set _damage += (2 * $args[0] * ($brawlskill / 250))>>
+		<</if>>
+		<<set _influence = 1 + (($drunk + $hallucinogen + $drugged) / 1000)>>
+		<<set $enemyhealth -= _damage / _influence>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 4>>
 	<</if>>
