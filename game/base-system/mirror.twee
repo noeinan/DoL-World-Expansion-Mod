@@ -118,27 +118,31 @@ You look into the mirror.
 <</if>>
 stares back.
 <br>
-<<link "Examine how you are seen by others">><<replace #mirror>><<mirrorAppearance>><</replace>><<set $mirrorMenu to "appearance">><</link>>
+<<link "Examine how you are seen by others">><<replace #mirror>><<mirrorAppearance>><</replace>><<numberify "#passages > .passage">><<set $mirrorMenu to "appearance">><</link>>
 <br><br>
-__Skin__
-<br>
-<<link "Examine your skin">><<replace #mirror>><<mirrorSkin>><</replace>><<set $mirrorMenu to "skin">><</link>>
-<br><br>
+<<if !$simpleMirror>>
+	__Skin__
+	<br>
+	<<link "Examine your skin">><<replace #mirror>><<mirrorSkin>><</replace>><<numberify "#passages > .passage">><<set $mirrorMenu to "skin">><</link>>
+	<br><br>
+<</if>>
 __Hair__
 <br>
-<<link "Change your hair style">><<replace #mirror>><<mirrorHair>><</replace>><<set $mirrorMenu to "hair">><</link>>
+<<link "Change your hair style">><<replace #mirror>><<mirrorHair>><</replace>><<numberify "#passages > .passage">><<set $mirrorMenu to "hair">><</link>>
 <br><br>
 __Makeup__
 <br>
-<<link "Apply makeup">><<replace #mirror>><<mirrorMakeup>><</replace>><<set $mirrorMenu to "makeup">><</link>>
+<<link "Apply makeup">><<replace #mirror>><<mirrorMakeup>><</replace>><<numberify "#passages > .passage">><<set $mirrorMenu to "makeup">><</link>>
 <br><br>
 
-<<if $specialTransform is 1 or $physicalTransform is 1>>
-	__Transformation__
-	<br>
-	<<link "Examine your inner self">><<replace #mirror>><<mirrorTransformation>><</replace>><<set $mirrorMenu to "transformation">><</link>>
-<<else>>
-	Obtain otherworldly powers to examine further.
+<<if !$simpleMirror>>
+	<<if $specialTransform is 1 or $physicalTransform is 1>>
+		__Transformation__
+		<br>
+		<<link "Examine your inner self">><<replace #mirror>><<mirrorTransformation>><</replace>><<numberify "#passages > .passage">><<set $mirrorMenu to "transformation">><</link>>
+	<<else>>
+		Obtain otherworldly powers to examine further.
+	<</if>>
 <</if>>
 <br><br>
 
@@ -148,7 +152,7 @@ __Makeup__
 <</nobr>><</widget>>
 
 <<widget "mirrorAppearance">><<nobr>>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 <<settextcolorfromgender $player.gender_appearance>>
 You look like a <span @class="_text_color"><<girl>>.</span>
@@ -676,7 +680,7 @@ __Behaviour__
 <<widget "mirrorSkin">><<nobr>>
 You are looking at your skin.
 <br>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 
 <<if $goocount + $semencount gt 0>>
@@ -796,7 +800,7 @@ __Body Writing__<br>
 <</nobr>><</widget>>
 
 <<widget "mirrorHair">><<nobr>>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 __Hair__
 <br>
@@ -878,7 +882,7 @@ Your fringe is in the "$fringetype" style.
 <</nobr>><</widget>>
 
 <<widget "mirrorMakeup">><<nobr>>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 __Makeup__
 <br>
@@ -897,59 +901,61 @@ __Makeup__
 <<mirrorMakeupPart "eyeshadow" "eyeshadow" "eyeshadows" "eyeshadow">><br>
 <<mirrorMakeupPart "mascara" "mascara" "mascaras" "mascara">><br>
 
-/* CONTACT LENSES */
-<<if $makeup.owned.eyelenses.length == 0>>
-	You don't own any contact lenses.<br>
-<<else>>
-	Wear contact lenses:<br>
-	<<if $makeup.eyelenses != 0>>
-		<span class="no-numberify">
-		<<link "None">>
-		<<set $makeup.eyelenses = 0>>
-		<<run Engine.show()>>
-		<</link>></span>
-		<<print " | ">>
-	<</if>>
-	<<for _i, _colour range $makeup.owned.eyelenses>>
-		<<capture _colour>>
-		<span class="capitalize no-numberify">
-		<<link _colour>>
-		<<set $makeup.eyelenses = _colour>>
-		<<run Engine.show()>>
-		<</link>></span>
-		<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes colour-eye"></span></span>
-		<<print " | ">>
-		<</capture>>
-	<</for>>
-	<br>
-<</if>>
-<br>
-
-/* DYEING EYEBROWS */
-<<browsDyeReset>>
-Dye your eyebrows:<br>
-<<set _dyes = $makeup.owned.hairdye.filter(x => x.count > 0)>>
-<<if _dyes.length == 0>>
-	You have no dyes.<br>
-<<else>>
-	<<set _browsDyeOptions to {"Don't dye":"noChange"}>>
-	<<for _i to 0; _i lt _dyes.length; _i++>>
-		<<if $makeup.browscolour is _dyes[_i].colour or $naturalhaircolour is _dyes[_i].colour>>
-			<<continue>>
+<<if !$simpleMirror>>
+	/* CONTACT LENSES */
+	<<if $makeup.owned.eyelenses.length == 0>>
+		You don't own any contact lenses.<br>
+	<<else>>
+		Wear contact lenses:<br>
+		<<if $makeup.eyelenses != 0>>
+			<span class="no-numberify">
+			<<link "None">>
+			<<set $makeup.eyelenses = 0>>
+			<<run Engine.show()>>
+			<</link>></span>
+			<<print " | ">>
 		<</if>>
-		<<set _displayName = _dyes[_i].colour.charAt(0).toUpperCase() + _dyes[_i].colour.slice(1) + " ×" + _dyes[_i].count + "">>
-		<<set _browsDyeOptions[_displayName] to _dyes[_i].colour>>
-	<</for>>
-	<<listbox "$browsDyeOption" autoselect>>
-		<<optionsfrom _browsDyeOptions>>
-	<</listbox>>
-	<<browsColourPreview>>
+		<<for _i, _colour range $makeup.owned.eyelenses>>
+			<<capture _colour>>
+			<span class="capitalize no-numberify">
+			<<link _colour>>
+			<<set $makeup.eyelenses = _colour>>
+			<<run Engine.show()>>
+			<</link>></span>
+			<span @class="'eye-'+_colour.replace(/ /g, '-')"><span class="colour-sample bgcolour-eyes colour-eye"></span></span>
+			<<print " | ">>
+			<</capture>>
+		<</for>>
+		<br>
+	<</if>>
+	<br>
+
+	/* DYEING EYEBROWS */
+	<<browsDyeReset>>
+	Dye your eyebrows:<br>
+	<<set _dyes = $makeup.owned.hairdye.filter(x => x.count > 0)>>
+	<<if _dyes.length == 0>>
+		You have no dyes.<br>
+	<<else>>
+		<<set _browsDyeOptions to {"Don't dye":"noChange"}>>
+		<<for _i to 0; _i lt _dyes.length; _i++>>
+			<<if $makeup.browscolour is _dyes[_i].colour or $naturalhaircolour is _dyes[_i].colour>>
+				<<continue>>
+			<</if>>
+			<<set _displayName = _dyes[_i].colour.charAt(0).toUpperCase() + _dyes[_i].colour.slice(1) + " ×" + _dyes[_i].count + "">>
+			<<set _browsDyeOptions[_displayName] to _dyes[_i].colour>>
+		<</for>>
+		<<listbox "$browsDyeOption" autoselect>>
+			<<optionsfrom _browsDyeOptions>>
+		<</listbox>>
+		<<browsColourPreview>>
+		<br>
+	<</if>>
+	<<if $makeup.browscolour != 0>>
+	You can visit a hairdresser to restore your natural brows colour.<br>
+	<</if>>
 	<br>
 <</if>>
-<<if $makeup.browscolour != 0>>
-You can visit a hairdresser to restore your natural brows colour.<br>
-<</if>>
-<br>
 
 /* CONCEALER */
 <<if $player.freckles == true>>
@@ -985,7 +991,7 @@ You can visit a hairdresser to restore your natural brows colour.<br>
 <</nobr>><</widget>>
 
 <<widget "mirrorTransformation">><<nobr>>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 Hiding parts of your Inner Self will slowly increase your Trauma over time (Excludes pubes and pits).
 If your Trauma gets too high, you will no longer be able to hide them.
@@ -1221,7 +1227,7 @@ If your Trauma gets too high, you will no longer be able to hide them.
 <</nobr>><</widget>>
 
 <<widget "mirrorDebug">><<nobr>>
-<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<unset $mirrorMenu>><</link>>
+<<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 <br>
 <<link "<<<">><<set $hairlength -= 1000>><<clamp>><<replace "#statshairlength">><<print Math.trunc($hairlength)>><</replace>><</link>> |

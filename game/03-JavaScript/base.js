@@ -352,3 +352,9 @@ window.AvsAn = (function () {
 		}
 	};
 })();
+
+function numberify(selector) {
+	$(() => Links.generateLinkNumbers($(selector)))
+	return "";
+}
+DefineMacroS("numberify", numberify);
