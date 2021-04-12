@@ -241,6 +241,9 @@
 		<<set $mannequinHasPenis = $player.penisexist ? 1 : 0>>
 		<<set $mannequinBreastsSize = $mannequinHasPenis ? 0 : 3>>
 	<</if>>
+	<<if $clothesPriceLewd lt Math.ceil(10 / $clothesPrice) * 0.1>>
+		<<set $clothesPriceLewd to parseFloat((Math.ceil(10 / $clothesPrice) * 0.1).toFixed(1))>>
+	<</if>>
 	<<set _settingsExitPassage to clone($settingsExitPassage)>>
 	<<unset $settingsExitPassage>>
 	<<run State.display(_settingsExitPassage)>>
@@ -735,18 +738,18 @@
 			<div class="numberslider-group">
 				<div class="numberslider-inline">
 					<span class="gold">Underwear</span>
-					<<numberslider "$clothesPriceUnderwear" $clothesPriceUnderwear 1 10 0.5>>
+					<<numberslider "$clothesPriceUnderwear" $clothesPriceUnderwear 1 2 0.1>>
 				</div>
 				<div class="numberslider-inline">
 					<span class="gold">School Clothes</span>
-					<<numberslider "$clothesPriceSchool" $clothesPriceSchool 1 10 0.5>>
+					<<numberslider "$clothesPriceSchool" $clothesPriceSchool 1 2 0.1>>
 				</div>
 				<div class="numberslider-inline">
 					<span class="gold">Lewd Clothes</span>
 					<<numberslider "$clothesPriceLewd" $clothesPriceLewd 0.1 2 0.1>>
 				</div>
 			</div>
-			
+
 			<!-- Make it show % instead of fractions and add some colour -->
 			<<run $(() => { $('.clothes-price-container input').on('input change', e => { 
 					let valSpan = $(e.currentTarget).siblings().first();
@@ -761,11 +764,17 @@
 					else
 						valSpan.css('color', 'unset');
 				}).trigger('change') })>>
+			<!-- Set the initial minimum -->
+			<<run $(() => {
+				let newmin = parseFloat((Math.ceil(10 / $('#numberslider-input-clothesprice').val()) * 0.1).toFixed(1));
+				let oldval = State.variables.clothesPriceLewd;
+				$('#numberslider-input-clothespricelewd').attr('min', newmin).val(oldval).trigger('change');
+			})>>
 			<!-- Limit lewd slider so that all coef * lewd coef >= 100% -->
 			<<run $(() => {
 				$('#numberslider-input-clothesprice').on('input change', e => {
-					let newmin = 1 / $(e.currentTarget).val();
-					let oldval = $('#numberslider-input-clothespricelewd').val();
+					let newmin = parseFloat((Math.ceil(10 / $(e.currentTarget).val()) * 0.1).toFixed(1));
+					let oldval = State.variables.clothesPriceLewd;
 					$('#numberslider-input-clothespricelewd').attr('min', newmin).val(oldval).trigger('change');
 				})
 			})>>
