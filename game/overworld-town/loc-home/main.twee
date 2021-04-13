@@ -867,11 +867,19 @@ You wash until you're squeaky clean.<<wash>>
 /*noeinan mod END*/
 
 :: Bath Finish [nobr]
-<<effects>><<set $location to "home">><<set $outside to 0>>
+<<effects>><<set $outside to 0>>
 
 Your skin is still damp.
 <br><br>
-<<link [[Dress as you were|Bathroom]]>><<clotheson>><</link>>
+
+/*noeinan mod START*/
+/*bugfix so that bathing in the farmhouse doesn't teleport you to the orphanage*/
+<<if $location is "farm">>
+	<<link [[Dress as you were|Farmhouse Shed]]>><<clotheson>><</link>>
+<<else>>
+	<<set $location to "home">>
+	<<link [[Dress as you were|Bathroom]]>><<clotheson>><</link>>
+<</if>>
 <br>
 <<link [[Wrap yourself in a towel|Bathroom]]>>
 	<<if $player.gender == "f" or $breastsize > 0>>
@@ -885,12 +893,18 @@ Your skin is still damp.
 
 <<if $wardrobe.upper.findIndex(x => x.name == "bathrobe") >= 0 or $carried.upper.name == "bathrobe">>
 	<br>
-	<<link [[Put on a bathrobe|Bathroom]]>>
+	<<if $location is "farm">>
+		<<link [[Put on a bathrobe|Farmhouse Shed]]>>
+	<<else>>
+		<<link [[Put on a bathrobe|Bathroom]]>>
+	<</if>>
 		<<returnCarried>>
 		<<set $wear_upper = $wardrobe.upper.findIndex(x => x.name == "bathrobe")>>
 		<<wardrobewear>>
 	<</link>>
 <</if>>
+
+/*noeinan mod END*/
 
 :: Passout home [nobr]
 <<set $dangerhome to 0>>
