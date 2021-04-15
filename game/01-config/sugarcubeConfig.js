@@ -218,16 +218,16 @@ Macro.add('widget', {
 	}
 });
 
-/* ToDo: imprement the dolls system, uncomment during and when its setup
+/* ToDo: implement the dolls system, uncomment during and when its setup
 importScripts([
-    "img/dolls/NameValueMaps.js",
-    "img/dolls/dollUpdater.js",
-    "img/dolls/dollLoader.js",
-    "img/dolls/DollHouse.js",
-    "img/dolls/FDoll.js",
+	"img/dolls/NameValueMaps.js",
+	"img/dolls/dollUpdater.js",
+	"img/dolls/dollLoader.js",
+	"img/dolls/DollHouse.js",
+	"img/dolls/FDoll.js",
 ]).then(function () {
-    console.log("Dolls scripts running");
+	console.log("Dolls scripts running");
 })
 .catch(function (err) {
-    console.log(err);
+	console.log(err);
 });*/
