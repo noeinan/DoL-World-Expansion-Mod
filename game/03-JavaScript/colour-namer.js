@@ -94,7 +94,7 @@ window.rgbToHsv = function (colour) {
 window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 	if (arguments.length == 1 && typeof(arguments[0]) == "string") {
 		// extract values from filter string
-		let match = arguments[0].match(/(?<=filter: hue-rotate\()(-?\d{0,3})(?:deg\) saturate\()([\d\.]+)(?:\) brightness\()([\d\.]+)(?:\) contrast\()([\d\.]+)/);
+		let match = arguments[0].match(/(?:filter: hue-rotate\()(-?\d{1,3})(?:deg\) saturate\()([\d\.]+)(?:\) brightness\()([\d\.]+)(?:\) contrast\()([\d\.]+)/);
 		if (!match)
 			return "custom";
 		
