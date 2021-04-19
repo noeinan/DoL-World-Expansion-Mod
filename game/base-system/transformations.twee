@@ -1,6 +1,6 @@
 :: Transformation Widgets [widget]
 
-<<widget "setupTransformationPiecesObject">><<nobr>>
+<<widget "setupTransformationPiecesObject">>
 	<<if $transformationParts is undefined>>
 		<<set $transformationParts to{
 			angel: {halo:"disabled", wings:"disabled"},
@@ -126,9 +126,9 @@
 			<<set $transformationParts.bird.pubes to "disabled">>
 		<</if>>
 	<</if>>
-<</nobr>><</widget>>
+<</widget>>
 
-<<widget "transformationStateUpdate">><<nobr>>
+<<widget "transformationStateUpdate">>
 
 /*noeinan mod START*/
 /*if the magic seal exists*/
@@ -153,11 +153,16 @@
 /*Set prayer beads to prevent transformation decay for fox*/
 /*added new sheep transformation*/
 /*set cloud hair clip to prevent transformation decay for sheep*/
+/*added new bee tf*/
 	<<if $foxbuild gte 1 and $worn.neck.name isnot "prayer beads">>
 		<<transform fox -1>>
 	<</if>>
 
 	<<if $sheepbuild gte 1 and $worn.head.name isnot "cloud hair clip">>
+		<<transform fox -1>>
+	<</if>>
+
+	<<if $beebuild gte 1>>
 		<<transform fox -1>>
 	<</if>>
 <</if>>
@@ -802,14 +807,64 @@
 		<</if>>
 <</switch>>
 
-<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0 or $harpy gt 0 or $foxgirl gt 0 or $sheep gt 0>>
+<<switch $bee>>
+	<<case 0>>
+		<<if $beebuild gte 15 and $transformdisable is "f">>
+			<<set $bee to 1>>
+			<span class="gold">Your ears tingle.</span>
+			<br><br>
+		<</if>>
+	<<case 1>>
+		<<if $beebuild gte 20 and $transformdisable is "f">>
+			<<set $bee to 2>>
+			<<set $transformationParts.bee.ears to "default">>
+			<span class="gold">Your ears itch. You reach up to scratch them, and find them much bigger than you expected. You've grown a pair of bee ears.</span>
+			<br><br>
+		<<elseif $beebuild lt 15>>
+			<<set $bee to 0>>
+			<span class="gold">Your ears no longer tingle.</span>
+			<br><br>
+		<</if>>
+	<<case 2>>
+		<<if $beebuild gte 25 and $transformdisable is "f">>
+			<<set $bee to 3>>
+			<span class="gold">Your lower back tingles.</span>
+			<br><br>
+		<<elseif $beebuild lte 20>>
+			<<set $bee to 1>>
+			<<set $transformationParts.bee.ears to "disabled">>
+			<span class="gold">Your bee ears have disappeared.</span>
+			<br><br>
+		<</if>>
+	<<case 3>>
+		<<if $beebuild gte 30 and $transformdisable is "f">>
+			<<set $bee to 4>>
+			<<set $transformationParts.bee.tail to "default">>
+			<<earnFeat "Bee">>
+			<span class="gold">Your bottom feels heavier than usual. You reach behind you and feel your new bee tail. You suppress the urge to buzz.</span>
+			<br><br>
+		<<elseif $beebuild lt 25>>
+			<<set $bee to 2>>
+			<span class="gold">Your lower back has stopped tingling.</span>
+			<br><br>
+		<</if>>
+	<<case 4>>
+		<<if $beebuild lt 30>>
+			<span class="gold">Your balance feels different. Your bee tail has disappeared.</span>
+			<<set $bee to 3>>
+			<<set $transformationParts.bee.tail to "disabled">>
+			<br><br>
+		<</if>>
+<</switch>>
+
+<<if $cat gt 0 or $wolfgirl gt 0 or $cow gt 0 or $harpy gt 0 or $foxgirl gt 0 or $sheep gt 0 or $bee gt 0>>
 	<<set $physicalTransform to 1>>
 <<else>>
 	<<set $physicalTransform to 0>>
 <</if>>
 /*noeinan mod END*/
 <<if $physicalTransform is 1 or $specialTransform is 1>>
-	<<if $harpy gte 6 and ($angel gte 6 or $fallenangel gte 2 or $demon gte 6)>>
+	<<if ($harpy gte 6 or $bee gte 6) and ($angel gte 6 or $fallenangel gte 2 or $demon gte 6)>>
 		<<if $transformationParts.bird.wings is "hidden" and ($transformationParts.demon.wings is "hidden" or $transformationParts.angel.wings is "hidden" or $transformationParts.fallenAngel.wings is "hidden")>>
 		<<else>>
 			<<set _excludeWings to true>>
@@ -844,9 +899,9 @@
 		<</if>>
 	<</if>>
 <</if>>
-<</nobr>><</widget>>
+<</widget>>
 
-<<widget "hirsuteHideCheck">><<nobr>>
+<<widget "hirsuteHideCheck">>
 <<if $pbdisable is "t" and !["hidden", "disabled"].includes($transformationParts.wolf.pubes)>>
 	<<set $transformationParts.wolf.pubes to "hidden">>
 <</if>>
@@ -856,10 +911,10 @@
 <<if $pbdisable is "t" and !["hidden", "disabled"].includes($transformationParts.bird.pubes)>>
 	<<set $transformationParts.bird.pubes to "hidden">>
 <</if>>
-<</nobr>><</widget>>
+<</widget>>
 
 /* Used to temporarily hide all transformation parts, such as when needing to turn the player into Janet. showTransformations will bring back all parts this widget hid. */
-<<widget "hideTransformations">><<nobr>>
+<<widget "hideTransformations">>
 	<<set $saveTransformtaions to clone($transformationParts)>>
 	<<for _transformation, _parts range $transformationParts>>
 		<<for _part, _value range _parts>>
@@ -868,11 +923,11 @@
 			<</if>>
 		<</for>>
 	<</for>>
-<</nobr>><</widget>>
+<</widget>>
 
-<<widget "showTransformations">><<nobr>>
+<<widget "showTransformations">>
 	<<if $saveTransformtaions isnot undefined>>
 		<<set $transformationParts to clone($saveTransformtaions)>>
 		<<unset $saveTransformtaions>>
 	<</if>>
-<</nobr>><</widget>>
+<</widget>>
