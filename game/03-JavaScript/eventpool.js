@@ -1,28 +1,36 @@
 /*
  * Usage:
  *
- * 1. Registering events - should be done in [widget]-tagged passage!
- * <<registerevent EVENT_NAME>>
+ * 1. Registering events as widgets
+ * <<widget EVENT_NAME>>
  *   (Event content)
- * <</registerevent>>
+ * <</widget>>
  * 
  * 2. Calling events
  * 
  * <<cleareventpool>>
- * <<addevent NAME [WEIGHT]>>
- * <<addevent[NAME [WEIGHT]>>
- * <<runeventpool>> 
- * - will pick a weighted random event and execute its content
+ * 
+ * <<addevent WIDGET_NAME [WEIGHT]>>
+ * <<addevent WIDGET_NAME [WEIGHT]>>
+ * <<addinlineevent [NAME_FOR_DEBUGGING [WEIGHT]]>>
+ *   Content for an event you don't want to define as a widget
+ * <</addinlineevent>>
+ * 
+ * <<runeventpool>> - will pick a weighted random event and execute its content.
+ * 
+ * Weight is a relative probability, so event with weight=2 would appear twice as often as event with weight=1. 
+ * Default weight is 1.
  */
 
 /**
  * Return a weighted random item, that is, probability of each item is proportional to their weight,
- * P(x_i) = weight_i / sum_of_weights
+ * probability P(event_i) = weight_i / sum_of_weights
  * 
- * items - array of objects with optional 'weight' key - a number or a no-arg function returning number. Default 1.
+ * items - array of objects with optional 'weight' key - a number or a no-arg function returning number. 
+ * Default 1.
  * Weight of Infinity means "return this item, ignore others"
  */
-function rollWeightedRandomFromArray(items) {
+ function rollWeightedRandomFromArray(items) {
     if (!Array.isArray(items)) throw new Error("Not an array: " + items);
     // convert items to array of {weight:number, item:original_item} and filter out bad elements
     items = items.map(function (el) {
@@ -69,20 +77,7 @@ function rollWeightedRandomFromArray(items) {
     console.warn('Weighted random math went wrong', roll0, sum, items);
     return items[0].item;
 }
-
-var EventLib = {};
-Macro.add("registerevent", {
-    tags: null,
-    handler: function () {
-        var name = this.args[0];
-        if (this.args.length !== 1 || typeof name !== 'string') {
-            throw new Error("Invalid registerevent argumens: "+JSON.stringify(this.args));
-        }
-        if (name in EventLib) console.warn("Duplicate event name '"+name,"' will be overwritten")
-        EventLib[name] = this.payload[0].contents;
-    }
-});
-
+window.rollWeightedRandomFromArray = rollWeightedRandomFromArray;
 
 Macro.add("cleareventpool", {
     skipArgs: true,
@@ -91,23 +86,29 @@ Macro.add("cleareventpool", {
     }
 });
 
-Macro.add("addevent", {
+Macro.add("addinlineevent", {
+    tags: null,
     handler: function () {
-        var name = this.args[0];
-        if (this.args.length < 1 || this.args.length > 2 || typeof name !== 'string') {
-            throw new Error("Invalid addevent arguments: "+JSON.stringify(this.args));
-        }
-        var event = EventLib[name];
-        if (!event) {
-            throw new Error("Unknown event '"+name+"'");
-        }
         State.temporary.eventpool.push({
-            name: name,
-            weight: this.args.length == 2 ? this.args[1] : 1.0,
-            content: event
+            name: this.args[0] || "",
+            weight: this.args.length == 2 ? +this.args[1] : 1.0,
+            content: this.payload[0].contents
         });
     }
 });
+
+Macro.add("addevent", {
+    handler: function () {
+        var widget = this.args[0];
+        if (typeof widget !== 'string' || !widget || this.args.length > 2) throw new Error("Bad addevent args "+JSON.stringify(this.args));
+        State.temporary.eventpool.push({
+            name: widget,
+            content: "<<"+widget+">>",
+            weight: this.args.length == 2 ? +this.args[1] : 1.0
+        });
+    }
+});
+
 
 Macro.add("runeventpool", {
     skipArgs: true,
@@ -117,4 +118,3 @@ Macro.add("runeventpool", {
         jQuery(this.output).wiki(pick.content);
     }
 });
-

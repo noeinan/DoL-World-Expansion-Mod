@@ -22,6 +22,7 @@
 <<set $forestmove to 0>>
 <</widget>>
 
+
 <<widget "forestdeeper">>
 Go deeper into the forest
 <br>
@@ -36,6 +37,7 @@ Go deeper into the forest
 <</if>>
 <</widget>>
 
+
 <<widget "forestsearch">>
 Search this area <<gtreasure>>
 <br>
@@ -45,6 +47,7 @@ Search this area <<gtreasure>>
 <br>
 <<link [[Carefully (0:30)|Forest]]>><<set $forest_search to true>><<set $forestmod to 1>><<pass 30>><<set $forestmove to "careful_search">><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>><<lharass>>
 <</widget>>
+
 
 <<widget "forestlessdeep">>
 Go towards town
@@ -60,187 +63,158 @@ Go towards town
 <</if>>
 <</widget>>
 
+
 <<widget "eventforestoutskirts">>
 
-<<set _scenes to [
-    "hikers",
-    "wolfspy",
-    "safeperson",
-    "clothingdamage"
-]>>
+<<cleareventpool>>
+<<addinlineevent "forestoutskirts_hikers">>
+	<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
+		You hear a pair up ahead, on the same trail as you.
+		<br><br>
 
-/*These events are a bit more rare*/
-<<if random(2)>>
-    <<set _scenes.push("wolf")>>
-	<<set _scenes.push("rock")>>
-<</if>>
+		<span class="lewd">You feel the slime in your head command you to give yourself to the pair.</span> It promises rewards if you comply, and threatens consequences if you do not.
+		<br><br>
 
-<<switch _scenes.pluck()>>
-    <<case "hikers">>
-		<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
+		<<if $promiscuity gte 55 and $submissive gte 1900>>
+			<<link [["Submit willingly"|Forest Slime Pair Submit willingly]]>><<corruption 3>><<pain -8>><<stress -12>><<trauma -24>><<set $submissive += 2>><</link>><<promiscuous4>><<ggcorruption>><<llpain>><<llltrauma>><<llstress>>
+			<br>
+		<</if>>
+		<<link [[Obey|Forest Slime Pair Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<set $submissive += 1>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
+		<br>
+		<<link [[Defy|Forest Slime Pair Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<set $submissive -= 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
+		<br>
+
+	<<else>>
+		<<if $exposed is 1>>
+
 			You hear a pair up ahead, on the same trail as you.
-			<br><br>
 
-			<span class="lewd">You feel the slime in your head command you to give yourself to the pair.</span> It promises rewards if you comply, and threatens consequences if you do not.
-			<br><br>
-
-			<<if $promiscuity gte 55 and $submissive gte 1900>>
-				<<link [["Submit willingly"|Forest Slime Pair Submit willingly]]>><<corruption 3>><<pain -8>><<stress -12>><<trauma -24>><<set $submissive += 2>><</link>><<promiscuous4>><<ggcorruption>><<llpain>><<llltrauma>><<llstress>>
-				<br>
-			<</if>>
-			<<link [[Obey|Forest Slime Pair Obey]]>><<corruption 1>><<pain -4>><<stress -6>><<trauma -12>><<set $submissive += 1>><</link>><<gcorruption>><<lpain>><<lltrauma>><<lstress>>
-			<br>
-			<<link [[Defy|Forest Slime Pair Defy]]>><<corruption -1>><<pain 8>><<stress 6>><<trauma 6>><<set $submissive -= 1>><</link>><<lcorruption>><<ggpain>><<ggtrauma>><<ggstress>>
-			<br>
-
-		<<else>>
-			<<if $exposed is 1>>
-
-				You hear a pair up ahead, on the same trail as you.
-
-				<<if $exhibitionism gte 35>>
-					You look down at your <<lewdness>> and feel a lewd thrill rush through you. Maybe it wouldn't be so bad if they saw you.
-					<br><br>
-					<<set $rng to random(1, 100)>>
-					<<if $rng gte 61>>
-						<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>><<exhibitionist3>>
-						<br>
-					<<else>>
-						<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 2>><</link>><<exhibitionist3>>
-						<br>
-					<</if>>
-					<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
-				<<else>>
-					You look down at your <<lewdness>> and feel anxious, you'll have to leave the trail or you'll be seen.
-					<br><br>
-					<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
-				<</if>>
-			<<elseif $exposed gte 2>>
-
-				You hear a pair up ahead, on the same trail as you.
+			<<if $exhibitionism gte 35>>
+				You look down at your <<lewdness>> and feel a lewd thrill rush through you. Maybe it wouldn't be so bad if they saw you.
+				<br><br>
 				<<set $rng to random(1, 100)>>
-				<<if $exhibitionism gte 75>>
-					You look down at your <<lewdness>> and feel a lewd thrill rush through you. Maybe it wouldn't be so bad if they saw you.
-					<br><br>
-
-					<<if $rng gte 41>>
-						<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>><<exhibitionist5>>
-						<br>
-					<<else>>
-						<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 3>><</link>><<exhibitionist5>>
-						<br>
-					<</if>>
-					<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
+				<<if $rng gte 61>>
+					<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>><<exhibitionist3>>
+					<br>
 				<<else>>
-					You look down at your <<lewdness>> and feel anxious, you'll have to leave the trail or you'll be seen.
-
-					<br><br>
-					<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
+					<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 2>><</link>><<exhibitionist3>>
+					<br>
 				<</if>>
+				<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
 			<<else>>
-				You hear a pair up ahead, on the same trail as you. Something about them makes you nervous.
+				You look down at your <<lewdness>> and feel anxious, you'll have to leave the trail or you'll be seen.
+				<br><br>
+				<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
+			<</if>>
+		<<elseif $exposed gte 2>>
+
+			You hear a pair up ahead, on the same trail as you.
+			<<set $rng to random(1, 100)>>
+			<<if $exhibitionism gte 75>>
+				You look down at your <<lewdness>> and feel a lewd thrill rush through you. Maybe it wouldn't be so bad if they saw you.
 				<br><br>
 
-				<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
-				<br>
-				<<set $rng to random(1,100)>>
-				<<if $rng gte 81>>
-					<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>>
+				<<if $rng gte 41>>
+					<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>><<exhibitionist5>>
 					<br>
 				<<else>>
-					<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 1>><</link>>
+					<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 3>><</link>><<exhibitionist5>>
 					<br>
 				<</if>>
-			<</if>>
-		<</if>>
-    <<case "wolfspy">>
-		<<forestwolfspy>>
-	<<case "wolf">>
-		<<beastNEWinit 1 wolf>>
-
-		<!-- Modified for monster people -->
-		A lone <<beasttype>> emerges from between the trees, teeth bared.
-		<<if $monster is 1>>
-			"Found you," <<bhe>> barks. "Mine."
-		<</if>>
-		<br><br>
-
-		<<link [[Next|Forest Wolf]]>><<set $molestationstart to 1>><</link>>
-			<!-- It chases you through the woods. You run until you can no longer hear it behind you. You're not sure if you outran it or it grew bored. -->
-			<!-- <<beastescape>><<gtiredness>><<tiredness 4>><<gathletics>><<athletics 2>><<physique 2>> -->
-			<!-- <br><br> -->
-
-			<!-- <<link [[Next (0:20)|Forest]]>><<pass 20>><<set $eventskip to 1>><</link>> -->
-	<<case "safeperson">>
-		<<if $daystate is "night">>
-			<<generate1>><<person1>>
-			You see a <<person>> through the trees, leaning against a tree and smoking a cigarette.
-
-			<<if $exposed gte 1>>
-				You follow a different path, not wanting your <<lewdness>> seen.
-				<<gstress>><<stress 6>>
+				<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
 			<<else>>
-				<<He>> glances at you as you pass, but doesn't say anything.
-			<</if>>
-			<br><br>
+				You look down at your <<lewdness>> and feel anxious, you'll have to leave the trail or you'll be seen.
 
-			<<endevent>>
-			<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+				<br><br>
+				<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<set $eventskip to 1>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
+			<</if>>
 		<<else>>
-			<<generate1>><<person1>>
-			You see a <<person>> through the trees, reaching into a bramble patch. <<He>> holds a basket full of berries in <<his>> other hand.
-
-			<<if $exposed gte 1>>
-				You follow a deeper path, not wanting your <<lewdness>> seen.
-				<<gstress>><<stress 6>>
-			<<else>>
-				<<He>> waves when <<he>> sees you, and you wave back.
-				<<ltrauma>><<trauma -6>>
-			<</if>>
+			You hear a pair up ahead, on the same trail as you. Something about them makes you nervous.
 			<br><br>
 
-			<<endevent>>
-			<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+			<<link [[Avoid them (0:20)|Forest Avoid]]>><<set $phase to 0>><<pass 20>><<if $foresthunt gte 1>><<set $foresthunt += 2>><</if>><</link>>
 			<br>
+			<<set $rng to random(1,100)>>
+			<<if $rng gte 81>>
+				<<link [[Stick to the trail|Forest Molestation]]>><<set $molestationstart to 1>><</link>>
+				<br>
+			<<else>>
+				<<link [[Stick to the trail|Forest Avoid]]>><<set $phase to 1>><</link>>
+				<br>
+			<</if>>
 		<</if>>
-	<<case "rock">>
-		<<forestrock>>
-	<<case "clothingdamage">>
-		You squeeze through a thicket.
-		<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
+	<</if>>
+<</addinlineevent>>
+<<addevent "forestwolfspy">>
+<<addinlineevent 0.3>>
+	<<beastNEWinit 1 wolf>>
+
+	<!-- Modified for monster people -->
+	A lone <<beasttype>> emerges from between the trees, teeth bared.
+	<<if $monster is 1>>
+		"Found you," <<bhe>> barks. "Mine."
+	<</if>>
+	<br><br>
+
+	<<link [[Next|Forest Wolf]]>><<set $molestationstart to 1>><</link>>
+		<!-- It chases you through the woods. You run until you can no longer hear it behind you. You're not sure if you outran it or it grew bored. -->
+		<!-- <<beastescape>><<gtiredness>><<tiredness 4>><<gathletics>><<athletics 2>><<physique 2>> -->
+		<!-- <br><br> -->
+
+		<!-- <<link [[Next (0:20)|Forest]]>><<pass 20>><<set $eventskip to 1>><</link>> -->
+<</addinlineevent>>
+<<addinlineevent "forestoutskirts_safeperson">>
+	<<if $daystate is "night">>
+		<<generate1>><<person1>>
+		You see a <<person>> through the trees, leaning against a tree and smoking a cigarette.
+
+		<<if $exposed gte 1>>
+			You follow a different path, not wanting your <<lewdness>> seen.
+			<<gstress>><<stress 6>>
+		<<else>>
+			<<He>> glances at you as you pass, but doesn't say anything.
+		<</if>>
 		<br><br>
 
+		<<endevent>>
 		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-<</switch>>
+	<<else>>
+		<<generate1>><<person1>>
+		You see a <<person>> through the trees, reaching into a bramble patch. <<He>> holds a basket full of berries in <<his>> other hand.
+
+		<<if $exposed gte 1>>
+			You follow a deeper path, not wanting your <<lewdness>> seen.
+			<<gstress>><<stress 6>>
+		<<else>>
+			<<He>> waves when <<he>> sees you, and you wave back.
+			<<ltrauma>><<trauma -6>>
+		<</if>>
+		<br><br>
+
+		<<endevent>>
+		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+		<br>
+	<</if>>
+<</addinlineevent>>
+<<addevent "forestrock" 0.3>>
+<<addinlineevent>>
+	You squeeze through a thicket.
+	<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
+	<br><br>
+
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+<</addinlineevent>>
+<<runeventpool>>
 
 <</widget>>
 
+
 <<widget "eventforest">>
 
-<<set _scenes to [
-    "clothingdamage"
-]>>
+<<cleareventpool>>
 
-<<if !random(1) and $foresthunt lte 0>>
-    <<set _scenes.push("hunted")>>
-<</if>>
-
-<<if !random(2)>>
-    <<set _scenes.push("wolf")>>
-<</if>>
-
-<<if !random(3)>>
-    <<set _scenes.push("wolfspy")>>
-    <<set _scenes.push("rock")>>
-<</if>>
-
-<<if !random(6)>>
-    <<set _scenes.push("bear")>>
-    <<set _scenes.push("woodcutter")>>
-<</if>>
-
-<<switch _scenes.pluck()>>
-    <<case "hunted">>
+<<if $foresthunt lte 0>>
+	<<addinlineevent "forest_hunted" 0.5>>
 		A chill runs up your spine, a warning from some primal instinct. <span class="red">Something is hunting you.</span>
 		<<set $rng2 to random(1, 2)>>
 		<<if $rng2 is 1>>
@@ -254,74 +228,45 @@ Go towards town
 		<br><br>
 
 		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-    <<case "wolfspy">>
-		<<forestwolfspy>>
-    <<case "wolf">>
-		<<beastNEWinit 1 wolf>>
-		<!-- Modified for monster people -->
-		A lone <<beasttype>> emerges from between the trees, teeth bared.
-		<<if $monster is 1>>
-			"Prey. No struggle."
-		<</if>>
-		<br><br>
-		<<link [[Next|Forest Wolf]]>><<set $molestationstart to 1>><</link>>
+	<</addinlineevent>>
+<</if>>
+<<addevent "forestwolfspy" 0.25>>
+<<addinlineevent "forest_wolf" 0.33>>
+	<<beastNEWinit 1 wolf>>
+	<!-- Modified for monster people -->
+	A lone <<beasttype>> emerges from between the trees, teeth bared.
+	<<if $monster is 1>>
+		"Prey. No struggle."
+	<</if>>
+	<br><br>
+	<<link [[Next|Forest Wolf]]>><<set $molestationstart to 1>><</link>>
 
-			<!-- It chases you through the woods. You run until you can no longer hear it behind you. You're not sure if you outran it or it grew bored. -->
-			<!-- <<beastescape>><<gtiredness>><<tiredness 4>><<gathletics>><<athletics 2>><<physique 2>> -->
-			<!-- <br><br> -->
+		<!-- It chases you through the woods. You run until you can no longer hear it behind you. You're not sure if you outran it or it grew bored. -->
+		<!-- <<beastescape>><<gtiredness>><<tiredness 4>><<gathletics>><<athletics 2>><<physique 2>> -->
+		<!-- <br><br> -->
 
-			<!-- <<link [[Next (0:20)|Forest]]>><<pass 20>><<set $eventskip to 1>><</link>> -->
-    <<case "bear">>
-		<<forestbear>>
-	<<case "rock">>
-		<<forestrock>>
-	<<case "clothingdamage">>
-		You squeeze through a thicket.
-		<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
-		<br><br>
+		<!-- <<link [[Next (0:20)|Forest]]>><<pass 20>><<set $eventskip to 1>><</link>> -->
+<</addinlineevent>>
+<<addevent "forestbear" 0.15>>
+<<addevent "forestrock" 0.25>>
+<<addinlineevent "forest_clothingdamage">>
+	You squeeze through a thicket.
+	<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
+	<br><br>
 
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-	<<case "woodcutter">>
-		<<forestcutter>>
-<</switch>>
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+<</addinlineevent>>
+<<addevent "forestcutter" 0.15>>
+<<runeventpool>>
 
 <</widget>>
 
 
 <<widget "eventforestdeep">>
 
-<<set _scenes to [
-    "wolfspy2",
-    "wolf2",
-	"bear",
-	"rock",
-	"clothingdamage"
-]>>
-
+<<cleareventpool>>
 <<if $foresthunt lte 0>>
-    <<set _scenes.push("hunted")>>
-<</if>>
-
-/*Snake vore event only gets added as a possibility about 1/3 of the time to keep it more rare*/
-/*Even if it is added there is only 10% chance it will be chosen at a given time*/
-<<if !random(2) and $voredisable is "f" and $bestialitydisable is "f">>
-    <<set _scenes.push("snake")>>
-<</if>>
-
-<<if $hallucinations gte 2 and $tentacledisable is "f" and $voredisable is "f">>
-    <<set _scenes.push("slimecontrol")>>
-<</if>>
-
-<<if $hallucinations gte 2 and $tentacledisable is "f">>
-    <<set _scenes.push("tentacles")>>
-<</if>>
-
-<<if $bestialitydisable is "f" and $waspdisable is "f">>
-    <<set _scenes.push("wasps")>>
-<</if>>
-
-<<switch _scenes.pluck()>>
-	<<case "hunted">>
+    <<addinlineevent "deepforest_hunted">>
 		A chill runs up your spine, a warning from some primal instinct. <span class="red">Something is hunting you.</span>
 		<<set $rng2 to random(1, 2)>>
 		<<if $rng2 is 1>>
@@ -335,34 +280,37 @@ Go towards town
 		<br><br>
 
 		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-	<<case "wolfspy2">>
-		<<forestwolfspy2>>
-	<<case "wolf2">>
-		<<beastNEWinit 2 wolf>>
-		A pair of
-		<<if ($monster isnot 1) or ($NPCList[0].pronoun is "m" and $NPCList[1].pronoun is "m") or ($NPCList[0].pronoun is "f" and $NPCList[1].pronoun is "f")>>
-			<<beastsplural>>
-		<<else>>
-			wolf people - one male, and one female -
-		<</if>>
-		emerge from between the trees, teeth bared.
-		<<if $monster is 1>>
-			"Found you," one barks. "Outnumbered. You're ours now."
-		<</if>>
-		<br><br>
-		<!-- Modified for monster people -->
-		<<link [[Next|Forest Wolf2]]>><<set $molestationstart to 1>><</link>>
-		
-			<!-- They chase you through the woods. You run until you can no longer hear them behind you. You're not sure if you outran them or they grew bored. -->
-			<!-- <<beastescape>><<gtiredness>><<tiredness 8>><<gathletics>><<athletics 4>><<physique 4>> -->
-			<!-- <br><br> -->
+	<</addinlineevent>>
+<</if>>
+<<addevent "forestwolfspy2">>
+<<addinlineevent "deepforest_wolf2">>
+	<<beastNEWinit 2 wolf>>
+	A pair of
+	<<if ($monster isnot 1) or ($NPCList[0].pronoun is "m" and $NPCList[1].pronoun is "m") or ($NPCList[0].pronoun is "f" and $NPCList[1].pronoun is "f")>>
+		<<beastsplural>>
+	<<else>>
+		wolf people - one male, and one female -
+	<</if>>
+	emerge from between the trees, teeth bared.
+	<<if $monster is 1>>
+		"Found you," one barks. "Outnumbered. You're ours now."
+	<</if>>
+	<br><br>
+	<!-- Modified for monster people -->
+	<<link [[Next|Forest Wolf2]]>><<set $molestationstart to 1>><</link>>
+	
+		<!-- They chase you through the woods. You run until you can no longer hear them behind you. You're not sure if you outran them or they grew bored. -->
+		<!-- <<beastescape>><<gtiredness>><<tiredness 8>><<gathletics>><<athletics 4>><<physique 4>> -->
+		<!-- <br><br> -->
 
-			<!-- <<link [[Next (0:40)|Forest]]>><<pass 40>><<set $eventskip to 1>><</link>> -->
-	<<case "snake">>
-		<<forestsnake>>
-	<<case "bear">>
-		<<forestbear>>
-	<<case "slimecontrol">>
+		<!-- <<link [[Next (0:40)|Forest]]>><<pass 40>><<set $eventskip to 1>><</link>> -->
+<</addinlineevent>>
+<<if $voredisable is "f" and $bestialitydisable is "f">>
+    <<addevent "forestsnake" 0.33>>
+<</if>>
+<<addevent "forestbear">>
+<<if $hallucinations gte 2 and $tentacledisable is "f" and $voredisable is "f">>
+    <<addinlineevent "deepforest_slimecontrol">>
 		You walk through a dense thicket. The air is thick with pollen, but you don't see any flowers. You begin to feel lightheaded, and steady yourself against a trunk. A white haze lingers in the air.
 		<br><br>
 		<<if $parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime">>
@@ -378,7 +326,10 @@ Go towards town
 			<<link [[Continue|Forest Pitcher Ignore]]>><</link>><<willpowerdifficulty 1 $willpowermax>>
 			<br>
 		<</if>>
-	<<case "tentacles">>
+	<</addinlineevent>>
+<</if>>
+<<if $hallucinations gte 2 and $tentacledisable is "f">>
+    <<addinlineevent>>
 		Something grabs your ankle, causing you to trip and fall. You look back, and see a tree root coiling round you. Several others snake through the undergrowth.
 		<br><br>
 		<<link [[Struggle|Forest Tentacles]]>><<set $molestationstart to 1>><</link>>
@@ -386,57 +337,50 @@ Go towards town
 		<<if $deviancy gte 75>>
 			<<link [[Allow them to Surround you|Forest Tentacles]]>><<set $molestationstart to 2>><</link>><<deviant5>>
 		<</if>>
-	<<case "rock">>
-		<<forestrock>>
-	<<case "wasps">>
-		<<forestwasps>>
-	<<case "clothingdamage">>
-		You squeeze through a thicket.
-		<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
-		<br><br>
+	<</addinlineevent>>
+<</if>>
+<<addevent "forestrock">>
+<<if $bestialitydisable is "f" and $waspdisable is "f">>
+    <<addevent "forestwasps">>
+<</if>>
+<<addinlineevent "deepforest_clothingdamage">>
+	You squeeze through a thicket.
+	<<set $stripintegrity to 10>><<set $stripobject to "tree branch">><<stripobject>>
+	<br><br>
 
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-<</switch>>
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+<</addinlineevent>>
+<<runeventpool>>
 
 <</widget>>
 
 
 <<widget "eventforestsafe">>
 
-<<set _scenes to [
-    "wolfhowl"
-]>>
-
-<<if random(3)>>
-    <<set _scenes.push("easytrail")>>
-	<<if $forest lte 50>>
-    	<<set _scenes.push("river")>>
+<<cleareventpool>>
+<<addinlineevent "safeforest_wolfhowl">>
+	You hear a wolf howl in the distance.
+	<<if $wolfgirl gte 3>>
+		<<garousal>><<arousal 600>>
 	<<else>>
-		<<set _scenes.push("deer")>>
+		<<gstress>><<stress 1>>
 	<</if>>
-<</if>>
+	<br><br>
 
-<<switch _scenes.pluck()>>
-    <<case "river">>
-		<<forestriver>>
-	<<case "easytrail">>
-		You find a trail which makes the going a little easier.
-		<<lstress>><<stress -2>>
-		<br><br>
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-		<br>
-	<<case "wolfhowl">>
-		You hear a wolf howl in the distance.
-		<<if $wolfgirl gte 3>>
-			<<garousal>><<arousal 600>>
-		<<else>>
-			<<gstress>><<stress 1>>
-		<</if>>
-		<br><br>
-
-		<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
-		<br>
-	<<case "deer">>
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</addinlineevent>>
+<<addinlineevent "safeforest_easytrail" 0.33>>
+	You find a trail which makes the going a little easier.
+	<<lstress>><<stress -2>>
+	<br><br>
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+	<br>
+<</addinlineevent>>
+<<if $forest lte 50>>
+	<<addevent "forestriver" 0.33>>
+<<else>>
+	<<addinlineevent "safeforest_deer" 0.33>>
 		A breeze caresses your face as you enter a clearing. Stood in the middle is a deer. It stops feeding when it notices you, but doesn't move.
 		<br><br>
 
@@ -444,57 +388,42 @@ Go towards town
 		<br>
 		<<link [[Ignore|Forest]]>><<set $eventskip to 1>><</link>>
 		<br>
-<</switch>>
+	<</addinlineevent>>
+<</if>>
+<<runeventpool>>
 
 <</widget>>
 
 
 <<widget "eventforestitem">>
 
-<<set _scenes to ["gather"]>>
- 
-<<if random(2)>>
-	<<set _scenes.push("mushroom")>>
-<</if>>
-
-<<if random(1)>>
-    <<if $forest lte 20>>
-        <<set _scenes.push("arrow")>>
-    <<elif $forest lte 50>>
-        <<set _scenes.push("dagger")>>
-		<<if $waspdisable is "f">>
-			<<set _scenes.push("honeycomb")>>
-		<</if>>
-    <<else>>
-        <<set _scenes.push("gem")>>
-    <</if>>
-<</if>>
-
-<<switch _scenes.pluck()>>
-    <<case "mushroom">>
-		<<mushroompick>>
-	<<case "arrow">>
-		<<forestarrow>>
-	<<case "gather">>
-		<<forestgather>>
-	<<case "dagger">>
-		<<forestdagger>>
-	<<case "gem">>
-		<<forestgem>>
-	<<case "honeycomb">>
-		You hear a gentle buzz up ahead. A large beehive hangs from a tree. Workers fly in and out in a quest for pollen. The honey would be valuable.
-		<br><br>
-		
-		<<if $tending gte 800>>
-			<<link [[Harvest honeycomb (0:20)|Forest Honey Pick]]>><<pass 20>><</link>><<tendingdifficulty 800 1100>>
+<<cleareventpool>>
+<<addevent "forestgather">>
+<<addevent "mushroompick" 0.33>>
+<<if $forest lte 20>>
+	<<addevent "forestarrow" 0.5>>
+<<elseif $forest lte 50>>
+	<<addevent "forestdagger" 0.5>>
+	<<if $waspdisable is "f">>
+		<<addinlineevent>>
+			You hear a gentle buzz up ahead. A large beehive hangs from a tree. Workers fly in and out in a quest for pollen. The honey would be valuable.
+			<br><br>
+			
+			<<if $tending gte 800>>
+				<<link [[Harvest honeycomb (0:20)|Forest Honey Pick]]>><<pass 20>><</link>><<tendingdifficulty 800 1100>>
+				<br>
+			<<else>>
+				<span class="blue">You need a higher tending skill to harvest wild honeycomb.</span>
+				<br>
+			<</if>>
+			<<link [[Leave|Forest]]>><<set $eventskip to 1>><</link>>
 			<br>
-		<<else>>
-			<span class="blue">You need a higher tending skill to harvest wild honeycomb.</span>
-			<br>
-		<</if>>
-		<<link [[Leave|Forest]]>><<set $eventskip to 1>><</link>>
-		<br>
-<</switch>>
+		<</addinlineevent>>
+	<</if>>
+<<else>>
+	<<addevent "forestgem" 0.5>>
+<</if>>
+<<runeventpool>>
 
 <</widget>>
 
