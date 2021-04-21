@@ -1185,6 +1185,136 @@
 <</switch>>
 <</widget>>
 
+/*noeinan mod START*/
+/*added tail actions*/
+
+<<widget "tailactionInit">>
+	<<switch $tailstate>>
+		<<case 0>>
+			<<set _tailOptions to "free">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')">Your <<tail>> is free.</span>
+		<<case "entrance">>
+			<<set _tailOptions to "pussyEntrance">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> pussy hovers near your <<tail>>.</span>
+		<<case "imminent">>
+			<<set _tailOptions to "pussyImminent">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> pussy presses against your <<tail>>.</span>
+		<<case "penetrated">>
+			<<set _tailOptions to "pussyPenetration">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> vagina envelops your <<tail>>.</span>
+		<<case "otheranusentrance">>
+			<<set _tailOptions to "anusEntrance">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> ass hovers near your <<tail>>.</span>
+		<<case "otheranusimminent">>
+			<<set _tailOptions to "anusImminent">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> ass presses against your <<tail>>.</span>
+		<<case "otheranus">>
+			<<set _tailOptions to "anusPenetration">>
+			<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')"><<His>> ass envelops your <<tail>>.</span>
+		<<default>>
+			<<switch $tailuse>>
+				<<case "clit">>
+					<<set _tailOptions to "tailAgainstClit">>
+					<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')">You press your <<tail>> against <<his>> <<if $enemytype is "beast">><<beasttype>> pussy<<else>>clit<</if>>.</span>
+				<<case "otheranusrub">>
+					<<set _tailOptions to "tailAgainstAss">>
+					<span @class="($lastOptions.tail isnot _tailOptions or _tailGold is true ?'gold':'')">You hold your <<tail>> between <<his>> ass cheeks.</span>
+			<</switch>>
+	<</switch>>
+	<<if $lastOptions.tail isnot _tailOptions>>
+		<<set _tailGold to true>>
+	<</if>>
+
+	<<tailActions>>
+	<<if Object.keys(_tailaction).length gt 0>>
+		<<if Object.values(_tailaction).includes($tailactiondefault) is false or $args[0] is true or $tailactiondefault is "rest">>
+			<<set _defaultsCombatAction to "tailaction">>
+			<<set _actionsSet to $actionDefaults[$defaultsType][$defaultsCombatType][_defaultsCombatAction]>>
+			<<set _pass to false>>
+			<<for _set to 0; _set lt $maxDefaultActionSets; _set++>>
+				<<if Object.values(_tailaction).includes(_actionsSet[_set])>>
+					<<set $tailactiondefault to clone(_actionsSet[_set])>>
+					<<set _pass to true>>
+					<<break>>
+				<</if>>
+			<</for>>
+			<<if _pass is false>>
+				<<set $tailactiondefault to Object.values(_tailaction)[0]>>
+			<</if>>
+		<</if>>
+
+		<<set $tailaction to $tailactiondefault>>
+		<<set _textColor to combatListColor('tailaction', (Object.values(_tailaction).includes($tailaction) ? $tailaction : Object.values(_tailaction)[0]), "")>>
+		<<generateCombatAction _tailaction "tailaction" _textColor $tailaction>>
+
+		/*Checks/Difficulty*/
+		<<if $combatControls.includes("ists")>>
+			<div id="tailactionDifficulty">
+				<<tailactionDifficulty>>
+			</div>
+		<</if>>
+	<</if>>
+	<<set $lastOptions.tail to clone(_tailOptions)>>
+<</widget>>
+
+<<widget "tailactionDifficulty">>
+<<if $args[0] is undefined>>
+	<<set _diffAction to $tailaction>>
+<<else>>
+	<<set _diffAction to $args[0]>>
+<</if>>
+<<switch _diffAction>>
+	<<case "tailtovagina" "tailtoanus">><<taildifficulty>> <<combatpromiscuous5>>
+	<<case "tailvaginafuck" "tailanusfuck">><<combatpromiscuous5>> <<tailvirginitywarning>>
+	<<case "thighbay">><<thighdifficulty>> <<combatpromiscuous1>>
+	<<case "bay">><<taildifficulty>> <<combatpromiscuous4>>
+	<<case "otheranusbay">><<taildifficulty>> <<combatpromiscuous4>>
+	<<case "clitrub" "otheranusrub">><<taildifficulty>>
+	<<case "vaginaEdging" "otheranusEdging">><<combatpromiscuous4>>
+<</switch>>
+<</widget>>
+
+<<widget "tailActions">>
+/*Generate Actions*/
+<<set _tailaction to {}>>
+<<switch _tailOptions>>
+	<<case "free">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailtovaginanew>>
+		<<actionstailtoanusnew>>
+	<<case "mouthEntrance">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailMouthEntrance>>
+	<<case "mouthImminent">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailMouthImminent>>
+	<<case "mouthPenetration">>
+		<<actionstailMouthPenetration>>
+	<<case "pussyEntrance">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailPussyEntrance>>
+	<<case "pussyImminent">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailPussyImminent>>
+	<<case "pussyPenetration">>
+		<<actionstailPussyPenetration>>
+	<<case "anusEntrance">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailAnusEntrance>>
+	<<case "anusImminent">>
+		<<set _tailaction["Rest"] to "rest">>
+		<<actionstailAnusImminent>>
+	<<case "anusPenetration">>
+		<<actionstailAnusPenetration>>
+	<<case "tailAgainstClit">>
+		<<actionstailAgainstClit>>
+	<<case "tailAgainstAss">>
+		<<actionstailAgainstAss>>
+<</switch>>
+<</widget>>
+
+/*noeinan mod END*/
+
 <<widget "resetLastOptions">>
 <<set $lastOptions to {
 	"left":"",
