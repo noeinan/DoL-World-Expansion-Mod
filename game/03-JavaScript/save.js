@@ -525,6 +525,7 @@ window.settingsObjects = function (type) {
 				clothesPriceUnderwear: { min: 1, max: 2, decimals: 1 },
 				clothesPriceSchool: { min: 1, max: 2, decimals: 1 },
 				clothesPriceLewd: { min: 0.1, max: 2, decimals: 1 },
+				rentmod: { min: 0.1, max: 3, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
 				monsterhallucinations: { boolLetter: true, bool: true },
