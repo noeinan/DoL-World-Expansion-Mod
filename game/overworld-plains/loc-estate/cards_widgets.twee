@@ -1,0 +1,852 @@
+::Widgets Blackjack [widget]
+
+<!--Needs to be run in a previous passage to prevent cheating-->
+<<widget "blackjackStart">>
+<<if $args[0]>>
+	<<set $blackjack to {
+		cards:shuffle(shuffle(shuffle(deck()))),
+		dealerCards: [],
+		dealerSecondCardHidden: true,
+		dealerState: null,
+		dealerScore: null,
+		playersCards: [],
+		playersState: null,
+		playersScore: null,
+		turn: null,
+		winner: null,
+		endPassage: $args[0]
+	}>>
+<</if>>
+<</widget>>
+
+<<widget "blackjackEnd">>
+<<unset $blackjack>>
+<<set $blackjack_played += 1>>
+<<if $blackjack_streak gt $blackjack_streak_high>>
+	<<set $blackjack_streak_high to $blackjack_streak>>
+<</if>>
+<<if $blackjack_streak gte 5>>
+	<<earnFeat "Five in a Row">>
+<</if>>
+<</widget>>
+
+<<widget "blackjackScore">>
+<<if $args[0]>>
+	<<set _score to 0>>
+	<<for $_i to 0; $_i lt $args[0].length; $_i++>>
+		<<set _card to $args[0][$_i]>>
+		<<switch _card.name>>
+			<<case "A">><<set _value to 11>>
+			<<case "K" "Q" "J">><<set _value to 10>>
+			<<default>><<set _value to _card.value>>
+		<</switch>>
+		<<set _score += clone(_value)>>
+	<</for>>
+	<<if _score gt 21>>
+		<<set _score to 0>>
+		<<for $_i to 0; $_i lt $args[0].length; $_i++>>
+			<<set _card to $args[0][$_i]>>
+			<<switch _card.name>>
+				<<case "A">><<set _value to 1>>
+				<<case "K" "Q" "J">><<set _value to 10>>
+				<<default>><<set _value to _card.value>>
+			<</switch>>
+			<<set _score += clone(_value)>>
+		<</for>>
+	<</if>>
+	<<if $args[1]>>
+		<<if $args[0].length is 2>>
+			<<if ["A","K","Q","J"].includes($args[0][0].name) and ["A","K","Q","J"].includes($args[0][1].name) and _score is 21>>
+				<<set $_blackjack to true>>
+			<</if>>
+		<</if>>
+		<<switch $args[1]>>
+			<<case "dealer">><<set $blackjack.dealerScore to _score>><<if $_blackjack>><<set $blackjack.dealerState to "blackjack">><</if>>
+			<<case "players">><<set $blackjack.playersScore to _score>><<if $_blackjack>><<set $blackjack.playersState to "blackjack">><</if>>
+		<</switch>>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "blackjackCalculate">>
+<<if $blackjack.turn is null>>
+	<<set $blackjack.turn to "players">>
+	<<set $blackjack.playersCards.push($blackjack.cards[0])>>
+	<<set $blackjack.dealerCards.push($blackjack.cards[1])>>
+	<<set $blackjack.playersCards.push($blackjack.cards[2])>>
+	<<set $blackjack.dealerCards.push($blackjack.cards[3])>>
+	<<set $blackjack.cards.deleteAt(0,4)>>
+<</if>>
+<<if $blackjack.playersState is "hit">>
+	<<set $blackjack.playersState to null>>
+	<<set $blackjack.playersCards.push($blackjack.cards[0])>>
+	<<set $blackjack.cards.deleteAt(0)>>
+	<<blackjackScore $blackjack.playersCards "players">>
+<</if>>
+<<blackjackScore $blackjack.playersCards "players">>
+<<if $blackjack.playersScore is 21>>
+	<<set $blackjack.turn to "dealer">>
+<</if>>
+<<if $blackjack.turn is "dealer">>
+	<<set $blackjack.dealerSecondCardHidden to false>>
+	<<for _i to 0; _i lt 20; _i++>>
+		<<blackjackScore $blackjack.dealerCards "dealer">>
+		<<if $blackjack.dealerScore gte 17 or $blackjack.dealerScore gt $blackjack.playersScore>>
+			<<break>>
+		<</if>>
+		<<set $blackjack.dealerCards.push($blackjack.cards[0])>>
+		<<set $blackjack.cards.deleteAt(0)>>
+	<</for>>
+<</if>>
+<</widget>>
+
+<<widget "blackjackControls">>
+Wren's cards:
+<br>
+<<for _i to 0; _i lt $blackjack.dealerCards.length; _i++>>
+	<div class="left">
+		<<if _i is 0>>
+			<<cardImage $blackjack.dealerCards[0]>>
+		<<else>>
+			<<cardImage $blackjack.dealerCards[_i] $blackjack.dealerSecondCardHidden>>
+		<</if>>
+	</div>
+<</for>>
+<div style="clear:both;"></div>
+<<if $blackjack.dealerSecondCardHidden>>
+	<<blackjackScore `[$blackjack.dealerCards[0]]` "dealer">>
+	Known Total: <<print $blackjack.dealerScore>>
+<<else>>
+	<<blackjackScore $blackjack.dealerCards "dealer">>
+	Total: <<print $blackjack.dealerScore>>
+<</if>>
+<br><br>
+Your cards:
+<br>
+<<for _i to 0; _i lt $blackjack.playersCards.length; _i++>>
+	<div class="left"><<cardImage $blackjack.playersCards[_i]>></div>
+<</for>>
+<div style="clear:both;"></div>
+
+Total: <<print $blackjack.playersScore>>
+<br><br>
+<<if $blackjack.turn is "players" and $blackjack.playersScore lte 20>>
+	<<link [[Hit|$passage]]>><<set $blackjack.playersState to "hit">><</link>> |
+	<<link [[Stand|$passage]]>><<set $blackjack.turn to "dealer">><<set $blackjack.playersState to "stand">><</link>> |
+<<elseif $blackjack.turn is "players" and $blackjack.playersScore gt 21>>
+	Bust
+	<br>
+	
+	<<link [[End Game|Estate Blackjack Lose]]>><</link>>
+	<br>
+<<elseif $blackjack.turn is "dealer">>
+	<<if $blackjack.playersState is "blackjack" and $blackjack.dealerState is "blackjack">>
+		<<set $blackjack.winner to "tie">>
+		Tie
+	<<elseif $blackjack.playersState is "blackjack">>
+		<<set $blackjack.winner to "player">>
+		You Win
+		<<set $blackjack_streak += 1>>
+	<<elseif $blackjack.dealerState is "blackjack">>
+		<<set $blackjack.winner to "dealer">>
+		You Lose
+		<<set <<set $blackjack_streak to 0>>
+	<<elseif $blackjack.playersScore gt $blackjack.dealerScore or $blackjack.dealerScore gt 21>>
+		<<set $blackjack.winner to "player">>
+		You Win
+		<<set $blackjack_streak += 1>>
+	<<elseif $blackjack.playersScore is $blackjack.dealerScore>>
+		<<set $blackjack.winner to "tie">>
+		Tie
+	<<else>>
+		<<set $blackjack.winner to "dealer">>
+		You Lose
+		<<set $blackjack_streak to 0>>
+	<</if>>
+	<br><br>
+	<<if $blackjack.winner is "tie">>
+		<<blackjackEnd>>
+		<<blackjackStart "Blackjack Finish">>
+		<<link [[Next|Estate Blackjack]]>><<pass 1>><</link>>
+		<br>
+	<<elseif $blackjack.winner is "dealer">>
+		<<link [[Next|Estate Blackjack Lose]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Estate Blackjack Win]]>><</link>>
+		<br>
+	<</if>>
+<</if>>
+<</widget>>
+
+:: Widgets High Low [widget]
+
+<!--Needs to be run in a previous passage to prevent cheating-->
+<<widget "highLowStart">>
+<<if $args[0]>>
+	<<set $highlow to {
+		cards:shuffle(shuffle(shuffle(deck()))),
+		correct: 0,
+		dealerCard: null,
+		playersCard: null,
+		playersCardHidden: null,
+		gamestart: false,
+		turn: null,
+		choice: null,
+		endPassage: $args[0]
+	}>>
+<</if>>
+<</widget>>
+
+<<widget "highLowEnd">>
+<<unset $highlow>>
+<</widget>>
+
+<<widget "cardText">>
+<<if $args[0]>>
+	<<if $args[1]>>
+		Turned over.
+	<<else>>
+		<<switch $args[0].name>>
+			<<case "A">>Ace
+			<<case "K">>King
+			<<case "Q">>Queen
+			<<case "J">>Jack
+			<<default>>$args[0].name
+		<</switch>>
+		of <<print $args[0].suits>>.
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "highLowCalculate">>
+<<if $highlow.gamestart is false>>
+	<<set $highlow.gamestart to true>>
+	<<set $highlow.turn to "players">>
+<</if>>
+
+<<if $highlow.turn is "players">>
+	Players Turn
+	<br>
+	<<set $highlow.dealerCard to $highlow.cards[0]>>
+	<<set $highlow.playersCard to $highlow.cards[1]>>
+	<<set $highlow.cards.deleteAt(0,1)>>
+	<<set $highlow.playersCardHidden to true>>
+<<elseif $highlow.turn is "dealer">>
+	Dealer Turn
+	<br>
+	<<set $highlow.playersCardHidden to false>>
+	<<if ($highlow.choice is "lower" and $highlow.playersCard.value lt $highlow.dealerCard.value) or ($highlow.choice is "higher" and $highlow.playersCard.value gt $highlow.dealerCard.value)>>
+		<<if $highlow.correct is 0>>
+			<<set $highlow.correct++>>
+		<<else>>
+			<<set $highlow.correct*=2>>
+		<</if>>
+	<</if>>
+	<<if $highlow.cards.length lt 30>>
+		<<set $highlow.cards to shuffle(shuffle(shuffle(deck())))>>
+		They reshuffle the deck.
+		<br>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "highLowControls">>
+<div class="highlow">
+	<div><span class="title">Dealers card:</span> <<cardImage $highlow.dealerCard>></div>
+	<div><span class="title">Your card:</span> <<cardImage $highlow.playersCard $highlow.playersCardHidden>></div>
+</div>
+<div style="clear:both;"></div>
+Your current score: <<print $highlow.correct>>
+<br>
+
+
+<<if $highlow.turn is "players">>
+	<<link [[Lower|$passage]]>><<set $highlow.choice to "lower">><<set $highlow.turn to "dealer">><</link>> |
+	<<link [[Higher|$passage]]>><<set $highlow.choice to "higher">><<set $highlow.turn to "dealer">><</link>> |
+	<<if $highlow.correct gt 4>>
+		<br>
+		<<link [[End Game|$highlow.endPassage]]>><<set $highlow.correct/=2>><</link>> <span class="red">Lose half your score</span> |
+	<</if>>
+<<elseif $highlow.turn is "dealer">>
+
+	<<if ($highlow.choice is "lower" and $highlow.playersCard.value lt $highlow.dealerCard.value) or ($highlow.choice is "higher" and $highlow.playersCard.value gt $highlow.dealerCard.value)>>
+		Your correct
+		<br>
+		<<link [[Continue|$passage]]>><<set $highlow.turn to "players">><</link>> |
+		<br>
+		<<link [[End Game|$highlow.endPassage]]>><</link>> |
+	<<elseif $highlow.playersCard.value is $highlow.dealerCard.value>>
+		Draw
+		<br>
+		<<link [[Continue|$passage]]>><<set $highlow.turn to "players">><</link>> |
+		<br>
+		<<link [[End Game|$highlow.endPassage]]>><</link>> |
+	<<else>>
+		You Lose
+		<br>
+		<<link [[End Game|$highlow.endPassage]]>><<set $highlow.correct to 0>><</link>>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "cardImage">>
+<<if $args[0]>>
+	<div class="card">
+		<<if $args[1]>>
+			<span class="number">?</span>
+			<span class="suit">?</span>
+		<<else>>
+			<<if $args[0].suits is "Diamonds">>
+				<<set _suits to "diams">>
+			<<else>>
+				<<set _suits to $args[0].suits.toLowerCase()>>
+			<</if>>
+			<span class="number"><<print $args[0].name>></span>
+			<span class="suit"><<print "&" + _suits + ";">></span>&nbsp;&nbsp;
+		<</if>>
+	</div>
+<</if>>
+<</widget>>
+
+<<widget "estate_cards_bet">>
+
+
+<<if $worn.over_upper.name isnot "naked">>
+	<<set $estate.cards.desire to "over_upper">>
+	"If I win," <<he>> points at your $worn.over_upper.name. <span class="blue">"You lose <<overupperthat>>."</span>
+<<elseif $worn.over_lower.name isnot "naked">>
+	<<set $estate.cards.desire to "over_lower">>
+	"If I win," <<he>> points at your $worn.over_upper.name. <span class="blue">"You lose <<overlowerthat>>."</span>
+	
+<<elseif $worn.feet.name isnot "naked">>
+	<<set $estate.cards.desire to "feet">>
+	"If I win," <<he>> points at your $worn.feet.name. <span class="blue">"You lose your shoes."</span>
+	
+<<elseif $worn.legs.name isnot "naked">>
+	<<set $estate.cards.desire to "legs">>
+	"If I win," <<he>> points at your $worn.legs.name. <span class="blue">"You lose <<legsthat>>."</span>
+	
+<<elseif $worn.upper.name isnot "naked">>
+	<<set $estate.cards.desire to "upper">>
+	"If I win," <<he>> points at your $worn.upper.name. <span class="purple">"You lose your <<dress>>."</span>
+	
+<<elseif $worn.lower.name isnot "naked">>
+	<<set $estate.cards.desire to "lower">>
+	"If I win," <<he>> points at your $worn.lower.name. <span class="purple">"You lose your <<skirt>>."</span>
+	
+<<elseif $worn.hands.name isnot "naked">>
+	<<set $estate.cards.desire to "hands">>
+	"If I win," <<he>> points at your $worn.hands.name. <span class="blue">"You lose those gloves."</span>
+	
+<<elseif $worn.under_upper.name isnot "naked">>
+	<<set $estate.cards.desire to "under_upper">>
+	"If I win," <<he>> points at your $worn.under_upper.name. <span class="pink">"You lose your <<bra>>."</span>
+	
+<<elseif $worn.under_lower.name isnot "naked">>
+	<<set $estate.cards.desire to "under_lower">>
+	"If I win," <<he>> points at your $worn.under_lower.name. <span class="pink">"I take your <<panties>>."</span>
+	
+<<else>>
+	
+	<<if $estate.cards.state is "ride">>
+	"If I win," 
+		<<set $rng to random(1, 4)>>
+		<<if $rng is 4>>
+			<<set $estate.cards.desire to "kiss">>
+			<<he>> hovers <<his>> mouth close, until you feel <<his>> breath on your lips. "We kiss."
+		<<elseif $rng is 3>>
+			<<he>> grins. "I get to fondle your
+			<<if $penis_exist is 1 and $vagina_exist is 1>>
+				<<if random(1, 2) is 2>>
+					<<set $estate.cards.desire to "penis_grope">>
+					cock."
+				<<else>>
+					<<set $estate.cards.desire to "pussy_grope">>
+					pussy."
+				<</if>>
+			<<elseif $penis_exist is 1>>
+				<<set $estate.cards.desire to "penis_grope">>
+				penis."
+			<<else>>
+				<<set $estate.cards.desire to "pussy_grope">>
+				pussy."
+			<</if>>
+		<<elseif $rng is 2>>
+			<<set $estate.cards.desire to "bottom_grope">>
+			<<he>> grins. "I get to fondle your bum."
+		<<elseif $rng is 1>>
+			<<set $estate.cards.desire to "chest_grope">>
+			<<he>> grins. "I get to play with your chest."
+		<</if>>
+	<<else>>
+		<<if $estate.cards.lust gte 2>>
+			<<if $NPCList[0].penis isnot "none">>
+				"If I win," <<he>> grins.
+				<<if $vaginaexist is 1 and !$worn.genitals.type.includes("chastity")>>
+					"I'll sit on your lap. Don't worry. I won't touch your pussy. Yet."
+					<<set $estate.cards.desire to "vaginal">>
+				<<elseif $analdisable is "f" and $worn.genitals.anal_shield isnot 1>>
+					"I'll sit on your lap. Don't worry. I won't take advantage. Yet."
+					<<set $estate.cards.desire to "anal">>
+				<<elseif !$worn.genitals.type.includes("chastity")>>
+					"I'll sit on your lap. Don't worry. I won't take advantage. Yet."
+					<<set $estate.cards.desire to "wren_lap">>
+				<<else>>
+					<<He>> looks at your $worn.genitals.name. "That's an interesting device you have there," <<he>> says, reclining in <<his>> chair. "<span class="blue">I'd love to see beneath it.</span> For now though, I have everything I want from you. Have a safe trip home." <<His>> friends laugh.
+					<<set $estate.cards.desire to "chastity">>
+				<</if>>
+			<<else>>
+				"If I win," <<he>> grins.
+				<<if $penisexist is 1 and !$worn.genitals.type.includes("chastity")>>
+					"You sit on my lap. Don't worry. I won't touch your cock. Yet."
+					<<set $estate.cards.desire to "penile">>
+				<<elseif !$worn.genitals.type.includes("chastity")>>
+					"You sit on my lap. Don't worry. I won't take advantage. Yet."
+					<<set $estate.cards.desire to "pc_lap">>
+				<<else>>
+					<<He>> looks at your $worn.genitals.name. "That's an interesting device you have there," <<he>> says, reclining in <<his>> chair. "<span class="blue">I'd love to see beneath it.</span> For now though, I have everything I want from you. Have a safe trip home." <<His>> friends laugh.
+					<<set $estate.cards.desire to "chastity">>
+				<</if>>
+			<</if>>
+		<<elseif $estate.cards.lust gte 1>>
+			<<set $estate.cards.desire to "bend">>
+			"If I win," <<he>> grins. "You climb atop your chair and bend over. Let us see you more closely."
+		<<else>>
+			<<set $estate.cards.desire to "twirl">>
+			"If I win," <<he>> grins. "You twirl on the spot. Give us a show. And no covering with your hands." The others murmur their enthusiasm.
+		<</if>>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "cards_strip_text">>
+"Don't keep us waiting. 
+<<if $rng gte 91>>
+	Give it here."
+<<elseif $rng gte 81>>
+	Let's have it off."
+<<elseif $rng gte 71>>
+	Strip."
+<<elseif $rng gte 61>>
+	Off it comes."
+<<elseif $rng gte 51>>
+	Let's see what's beneath."
+<<elseif $rng gte 41>>
+	That's my property now."
+<<elseif $rng gte 31>>
+	Have it off."
+<<elseif $rng gte 21>>
+	Let's see you strip."
+<<elseif $rng gte 11>>
+	Strip, or be stripped."
+<<else>>
+	I'm not a patient <<if $pronoun is "f">>woman<<else>>man<</if>>"
+<</if>>
+<</widget>>
+
+<<widget "cards_exposure_text">>
+
+<<if random(1, 10) is 10>>
+	<<if $worn.over_upper.exposed gte 2 and $worn.upper.exposed gte 2 and $worn.under_upper.exposed gte 1 and ($player.gender is "f" or $player.gender_appearance is "f")>>
+		<<if $uncomfortable.nude is true>>
+			<span class="lewd">You keep one arm over your <<breasts>>, protecting them from the prying eyes of Wren and <<his>> friends.</span>
+			<br>
+		<<else>>
+			<span class="lewd">You can feel Wren and <<his>> friends' eyes on your <<breasts>>, but you don't care. You're focused on the game.</span>
+			<br>
+		<</if>>
+	<<elseif $worn.over_upper.exposed gte 1 and $worn.upper.exposed gte 1 and ($player.gender is "f" or $player.gender_appearance is "f")>>
+		<<if $uncomfortable.underwear is true>>
+			<span class="lewd">You feel self-conscious about the lack of clothing on your chest, and keep one arm over it.</span>
+			<br>
+		<<else>>
+			<span class="lewd">You're unbothered by haivng so little clothing on your chest.</span>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<if $worn.over_lower.exposed gte 2 and $worn.lower.exposed gte 2 and $worn.under_lower.exposed gte 1>>
+		<<if $uncomfortable.nude is true>>
+			<span class="lewd">Even sat with your legs under the table, your bare <<bottom>> and <<genitals>> make you feel so exposed.</span>
+			<br>
+		<<else>>
+			<span class="lewd">You're unbothered by your bare <<bottom>> and <<genitals>>. They're under the table anyway.</span>
+			<br>
+		<</if>>
+	<<elseif $worn.over_lower.exposed gte 1 and $worn.lower.exposed gte 1>>
+		<<if $uncomfortable.underwear is true>>
+			<span class="lewd">Wearing so little beneath your waist makes you feel uncomfortable.</span>
+			<br>
+		<<else>>
+			<span class="lewd">You're unbothered by having so little clothing beneath your waist.</span>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<if $estate.cards.wren_top is 0 and $estate.cards.wren_under_top is 0>>
+		<<if $pronoun is "f">>
+			<<if $NPCList[0].breastsize gte 5>>
+				<span class="lewd">Wren struggles to keep <<his>> <<print $NPCList[0].breastsdesc>> covered with one arm.</span>
+			<br>
+			<<else>>
+				<span class="lewd">Wren keeps <<his>> <<print $NPCList[0].breastsdesc>> covered with one arm.</span>
+			<br>
+			<</if>>
+		<<else>>
+			<span class="lewd">Wren shuffles uncomfortably as you glance at <<his>> bare chest.</span>
+			<br>
+		<</if>>
+	<<elseif $estate.cards.wren_top is 0>>
+		<<if $pronoun is "f">>
+			<span class="lewd">Wren shuffles uncomfortably as you glance at <<his>> bra.</span>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<if $estate.cards.wren_bottoms is 0 and $estate.cards.wren_under_bottoms is 0>>
+		<<if $pronoun is "f">>
+			<span class="lewd">Wren folds one leg over the other, covering <<his>> bare groin.</span>
+			<br>
+		<<else>>
+			<span class="lewd">Wren keeps <<his>> legs held tight together.</span>
+			<br>
+		<</if>>
+	<<elseif $estate.cards.wren_bottoms is 0>>
+		<<if $pronoun is "f">>
+			<span class="lewd">Wren shifts uncomfortably as a colleague glances at <<his>> panties.</span>
+			<br>
+		<<else>>
+			<span class="lewd">Wren shifts uncomfortably as a colleague glances at <<his>> briefs.</span>
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+<<if random(1, 10) is 10>>
+	<<if $estate.cards.state is "ride">>
+		<<switch $estate.cards.position>>
+		<<case "wren_lap">>
+			
+		<<case "pc_lap">>
+			
+		<<case "penile">>
+			<span class="lewd">Wren kiss your <<penis>> with <<his>> pussy.</span>
+			<br>
+		<<case "vaginal">>
+			<span class="lewd">Wren pokes your <<pussy>> with <<his>> <<print $NPCList[0].penisdesc>>.</span>
+			<br>
+		<<case "anal">>
+			<span class="lewd">Wren rubs <<his>> <<print $NPCList[0].penisdesc>> against your <<bottom>>.</span>
+			<br>
+		<</switch>>
+	<</if>>
+<</if>>
+<br>
+<</widget>>
+
+<<widget "cards_naked_cover">>
+<<if $uncomfortable.nude is true>>
+	<span class="lewd">You cover your <<breasts>> with an arm, and keep your thighs squeezed tight together.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_bottom_cover">>
+<<if $uncomfortable.nude is true>>
+	<span class="lewd">You keep your thighs squeezed tight together.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_top_cover">>
+<<if $uncomfortable.nude is true>>
+	<span class="lewd">You cover your <<breasts>> with an arm.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_underwear_cover">>
+<<if $uncomfortable.underwear is true>>
+	<span class="lewd">You cover your $worn.under_upper.name with one arm, and make sure your $worn.under_lower.name <<underlowerplural>> on right.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_panties_cover">>
+<<if $uncomfortable.underwear is true>>
+	<span class="lewd">You anxiously make sure your $worn.under_lower.name <<underlowerplural>> on right.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_bra_cover">>
+<<if $uncomfortable.underwear is true>>
+	<span class="lewd">You cover your $worn.under_upper.name with an arm.</span>
+	<br><br>
+<</if>>
+<</widget>>
+
+<<widget "cards_virginity_warning">>
+<<if $estate.cards.position is "vaginal">>
+	<<if $player.virginity.vaginal is true>>
+		<span class="red">If you orgasm, Wren will take your virginity.</span>
+	<</if>>
+<<elseif $estate.cards.position is "penile">>
+	<<if $player.virginity.penile is true>>
+		<span class="red">If you orgasm, Wren will take your virginity.</span>
+	<</if>>
+<<elseif $estate.cards.position is "anal">>
+	<<if $player.virginity.anal is true>>
+		<span class="red">If you orgasm, Wren will take your anal virginity.</span>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "cards_arousal_check">>
+<<if $arousal gte 10000>>
+	It's too much. <<orgasmpassage>>
+	<br><br>
+	<<set _cards_orgasm to true>><<set $consensual to 1>>
+	
+<<elseif $arousal gte 8000>>
+	
+<<elseif $arousal gte 6000>>
+	
+<<elseif $arousal gte 4000>>
+	
+<<else>>
+	
+<</if>>
+<</widget>>
+
+<<widget "cards_naked_end">>
+<<covered>>
+<<if $submissive gte 1150>>
+	"I-I have no clothes," you say. "C-could you give me something to cover with?"
+<<elseif $submissive lte 850>>
+	"You're really gonna leave me with no clothes?" you ask. "Give me a towel or something at least."
+<<else>>
+	"Could you give me a towel, at least?" you ask. "I'll be in danger like this."
+<</if>>
+<br><br>
+
+Wren leans behind <<him>>, and opens a drawer. <<He>> feels inside, and produces a small towel. "You can have this," <<he>> says. "But you'll have to earn it. I think my friends here deserve some fun."
+<br><br>
+
+"Satisfy them with your mouth," <<he>> continues. "And I'll let you wear a towel."
+<br><br>
+
+<<if $promiscuity gte 55>>
+	<<link [[Accept|Estate Cards Oral]]>><</link>><<promiscuous4>><<goralskill>>
+	<br>
+<<else>>
+	<span class="blue">You're not promiscuous enough to take up such an offer.</span> But leaving with nothing will be dangerous.
+	<br><br>
+	
+	<<link [[Accept|Estate Cards Oral]]>><<trauma 6>><<stress 6>><</link>><<gtrauma>><<gstress>>
+	<br>
+<</if>>
+<<link [[Refuse|Estate Cards Oral Refuse]]>><</link>>
+<br>
+<</widget>>
+
+<<widget "cards_play_options">>
+<<if $estate.cards.desire is "chastity">>
+	<<link [[Leave|Estate Cards Leave]]>><</link>>
+	<br>
+<<else>>
+	<<link [[Play (0:01)|Estate Blackjack]]>><<pass 1>><</link>> 
+	<<if $estate.cards.state is "ride">>
+		<span class="purple">Losing may increase arousal.</span> <<cards_virginity_warning>>
+	<</if>>
+	<<if _cards_desire is "kiss" and $player.virginity.kiss is true>>
+		<span class="red">If you lose, Wren will take your first kiss.</span>
+	<</if>>
+	<br>
+	<<link [[Leave|Estate Cards Leave]]>><<npcincr Wren love 1>><</link>><<llove>>
+	<br>
+<</if>>
+<</widget>>
+
+<<widget "cards_lap_return">>
+<<if $estate.cards.state is "ride">>
+	<<if $estate.cards.position is "pc_lap">>
+		You sit down. Wren swings <<his>> leg over you, resuming the position.
+	<<elseif $estate.cards.position is "wren_lap">>
+		Wren sits down, and points at <<his>> lap. You swing a leg over, resuming the position.
+	<<elseif $estate.cards.position is "penile">>
+		You sit down. Wren swings <<his>> leg over you, resuming the position.
+		<<cards_lap_clothes>>
+		<<His>> pussy threatens your <<penis>> once more.
+	<<elseif $estate.cards.position is "vaginal">>
+		Wren sits down, and points at <<his>> lap. You swing a leg over, resuming the position.
+		<<cards_lap_clothes>>
+		<<His>> <<print $NPCList[0].penisdesc>> threatens your <<pussy>> once more.
+	<<elseif $estate.cards.position is "anal">>
+		Wren sits down, and points at <<his>> lap. You swing a leg over, resuming the position.
+		<<cards_lap_clothes>>
+		<<His>> <<print $NPCList[0].penisdesc>> threatens your <<bottom>> once more.
+	<</if>>
+	"Where were we?" <<he>> teases.
+<<else>>
+	
+<</if>>
+<</widget>>
+
+<<widget "cards_lap_clothes">>
+<<if $estate.cards.wren_bottoms is 1>>
+	<<if $estate.cards.wren_under_bottoms is 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<He>> hitches up <<his>> skirt and pulls aside <<his>> panties.
+		<<else>>
+			<<He>> unzips <<his>> fly and pulls aside <<his>> briefs.
+		<</if>>
+	<<else>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<He>> hitches up <<his>> skirt.
+		<<else>>
+			<<He>> unzips <<his>> fly.
+		<</if>>
+	<</if>>
+<<else>>
+	<<if $estate.cards.wren_under_bottoms is 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			<<He>> pulls aside <<his>> panties.
+		<<else>>
+			<<He>> pulls aside <<his>> briefs.
+		<</if>>
+	<<else>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			Wren grinds against you for good measure.
+		<<else>>
+			Wren grinds against you for good measure.
+		<</if>>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "cards_lap_clothes_intro">>
+<<if $estate.cards.wren_bottoms is 1>>
+	<<if $estate.cards.wren_under_bottoms is 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			Wren hitches up <<his>> skirt and pulls aside <<his>> panties,
+		<<else>>
+			Wren unzips <<his>> fly and pulls aside <<his>> briefs,
+		<</if>>
+		<<if $estate.cards.position is "penile">>
+			<span class="lewd">revealing <<his>> pussy.</span>
+		<<else>>
+			<span class="lewd">revealing <<his>> <<print $NPCList[0].penisdesc>>.</span> 
+		<</if>>
+	<<else>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			Wren hitches up <<his>> skirt,
+		<<else>>
+			Wren unzips <<his>> fly,
+		<</if>>
+		<<if $estate.cards.position is "penile">>
+			<span class="lewd">revealing <<his>> pussy.</span>
+		<<else>>
+			<span class="lewd">revealing <<his>> <<print $NPCList[0].penisdesc>>.</span> 
+		<</if>>
+	<</if>>
+<<else>>
+	<<if $estate.cards.wren_under_bottoms is 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			Wren pulls aside <<his>> panties,
+		<<else>>
+			Wren pulls aside <<his>> briefs,
+		<</if>>
+		<<if $estate.cards.position is "penile">>
+			<span class="lewd">revealing <<his>> pussy.</span>
+		<<else>>
+			<span class="lewd">revealing <<his>> <<print $NPCList[0].penisdesc>>.</span> 
+		<</if>>
+	<<else>>
+		<<if $NPCName[$NPCNameList.indexOf("Wren")].pronoun is "f">>
+			
+		<<else>>
+			
+		<</if>>
+	<</if>>
+<</if>>
+
+<</widget>>
+
+<<widget "wren_sabotage_nude">>
+<<if $estate.cards.wren_under_bottoms is 0 and $estate.cards.wren_exposed_text lt 2>>
+	Wren walks to the door, keeping a hand over <<his>>
+	<<if $NPCList[0].penis isnot "none">>
+		<<print $NPCList[0].penisdesc>>.
+	<<else>>
+		pussy.
+	<</if>>
+	"C-Come on then," <<he>> says.
+	<<set $estate.cards.wren_exposed_text to 2>>
+<<elseif $estate.cards.wren_under_top is 0 and $NPCList[0].pronoun is "f" and $estate.cards.wren_exposed_ lt 1>>
+	Wren walks to the door, keeping an arm over <<his>> <<print $NPCList[0].breastsdesc>>. "This is nothing," <<he>> lies. "I go topless on the beach all the time."
+	<<set $estate.cards.wren_exposed_text to 1>>
+<<elseif $estate.cards.wren_top is 0 or $estate.cards.wren_bottoms is 0 or $estate.cards.wren_under_top is 0 and !$estate.cards.wren_exposed_text>>
+	Wren walks to the door without dressing. "Think I won't do it?" <<he>> asks.
+
+	<<set $estate.cards.wren_exposed_text to 1>>
+<<else>>
+	Wren strides to the door.
+<</if>>
+
+<<if $exposed gte 2 and $uncomfortable.nude is true and $estate.cards.pc_exposed_text lt 2>>
+	You're nervous about your nudity. <<He>> leans against the door frame. "You're coming too. You want to make sure I follow through, right?"
+	<br><br>
+	
+	You follow, keeping your body covered as best you can.
+	<br><br>
+	<<set $estate.cards.pc_exposed_text to 2>>
+<<elseif $exposed is 1 and $uncomfortable.underwear is true and $estate.cards.pc_exposed_text lt 1>>
+	You're nervous about your state of dress. <<He>> leans against the door frame. "You're coming too. You want to make sure I follow through, right?"
+	<br><br>
+	
+	You follow, keeping your body covered as best you can.
+	<br><br>
+	<<set $estate.cards.pc_exposed_text to 1>>
+<<else>>
+	<br><br>
+<</if>>
+
+<<if $estate.cards.wren_top is 0 or $estate.cards.wren_bottoms is 0 or $estate.cards.wren_under_top is 0 or $estate.cards.wren_under_bottoms is 0>>
+	<<if $exposed gte 2 and $uncomfortable.nude is true and $estate.cards.pc_exposed_walk lt 3>>
+		You walk across the estate beside Wren, <<his>> colleagues following behind. You can feel their ogling, but you suspect they're looking at Wren as well.
+		<br><br>
+		You pass a pair of Remy's other goons. They don't stop you, and look bemused by Wren's appearance. <<His>> pace quickens.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 3>>
+	<<elseif $exposed is 1 and $uncomfortable.underwear is true and $estate.cards.pc_exposed_walk lt 2>>
+		You walk across the estate beside Wren, <<his>> colleagues following behind. You can feel their ogling, but you suspect they're looking at Wren as well.
+		<br><br>
+		You pass a pair of Remy's other goons. They don't stop you, and look bemused by Wren's appearance. <<His>> pace quickens.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 2>>
+	<<elseif !$estate.cards.pc_exposed_walk>>
+		You walk across the estate behind Wren, alongside <<his>> colleagues. You pass a pair of Remy's other goons. They're distracted by Wren's appearance, and don't stop you.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 1>>
+	<</if>>
+<<else>>
+	<<if $exposed gte 2 and $uncomfortable.nude is true and $estate.cards.pc_exposed_walk lt 3>>
+		You walk across the estate. Wren insists you lead the way. You can feel <<him>> ogling your <<bottom>>. You pass a pair of Remy's other goons. They don't stop you, seeming content to leer.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 3>>
+	<<elseif $exposed is 1 and $uncomfortable.underwear is true and $estate.cards.pc_exposed_walk lt 2>>
+		You walk across the estate. Wren insists you lead the way. You can feel <<him>> ogling your <<bottom>>. You pass a pair of Remy's other goons. They don't stop you, seeming content to leer.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 2>>
+	<<elseif !$estate.cards.pc_exposed_walk>>
+		You walk across the estate beside Wren and <<his>> colleagues. You pass a pair of Remy's other goons. One frowns, but they don't stop you. They must trust Wren.
+		<br><br>
+		<<set $estate.cards.pc_exposed_walk to 1>>
+	<</if>>
+<</if>>
+
+<</widget>>
