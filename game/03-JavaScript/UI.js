@@ -295,18 +295,18 @@ window.isImageOk = function (id) {
 }
 
 window.beastTogglesCheck = function () {
-	let vars = SugarCube.State.variables; 
+	let vars = SugarCube.State.variables;
 	let temp = SugarCube.State.temporary;
-	temp.beastVars = [ 
-		"bestialitydisable", 
-		"swarmdisable", 
-		"parasitedisable", 
-		"analpregdisable", 
-		"tentacledisable", 
-		"slimedisable", 
-		"voredisable", 
-		"spiderdisable", 
-		"slugdisable", 
+	temp.beastVars = [
+		"bestialitydisable",
+		"swarmdisable",
+		"parasitedisable",
+		"analpregdisable",
+		"tentacledisable",
+		"slimedisable",
+		"voredisable",
+		"spiderdisable",
+		"slugdisable",
 		"waspdisable"
 	];
 	temp.anyBeastOn = temp.beastVars.some(x => vars[x] == 'f');
@@ -343,14 +343,14 @@ window.settingsAsphyxiation = function () {
 	});
 }
 
-window.settingsNamedNpcBreastSize = function () {	
+window.settingsNamedNpcBreastSize = function () {
 	const breastSizes = ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"];
-	
+
 	let updateText = () => {
 		const npcId = SugarCube.State.temporary.npcId;
 		const npc = SugarCube.State.variables.NPCName[npcId];
 		const val = npc.breastsize;
-		
+
 		const text = breastSizes[val];
 
 		if (val > 0) {

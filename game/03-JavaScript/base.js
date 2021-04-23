@@ -92,7 +92,7 @@ window.ensureIsArray = function (x) {
 
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
-		isWidget: true, 
+		isWidget: true,
 		tags: tags,
 		skipArgs: skipArgs,
 		handler: function (args) {
@@ -246,7 +246,7 @@ function processedSvg(width, height) {
 		let supportedChildElements = ['img', 'image', 'a', 'rect'];
 		let commonAttributes = ['class', 'x', 'y', 'width', 'height', 'style', 'onclick'];
 
-		//Some browsers really don't like working with svg elements unless you specify their namespace upon creation, raw insertion won't render. 
+		//Some browsers really don't like working with svg elements unless you specify their namespace upon creation, raw insertion won't render.
 		let fixSVGNameSpace = function(type, elem, newParent = null) {
 			if(type == 'img')
 				type = 'image';
@@ -288,7 +288,7 @@ function processedSvg(width, height) {
 				});
 			}
 		}
-		
+
 		//Because the payload got processed as HTML, fix the namespacing and rendering issues to make it a proper SVG again
 		jQuery(document).one(':passagerender', function (ev) {
 			for(let htmlElem of supportedChildElements) {
