@@ -1,11 +1,23 @@
 :: Clothing Shop v2 Widgets [widget]
 
+<<widget "exitclothingshop">>
+	<div class="button-back-to-shop div-link">
+		<<if $clothes_choice and $shopDefaults.alwaysBackToShopButton is false>>
+			<<link "Back">>
+				<<unset $clothes_choice>><<updateclotheslist>><</link>>
+		<<else>>
+			<<link "Back to shop">><<unset $clothes_choice>><<updateclothingshop>><</link>>
+		<</if>>
+	</div>
+<</widget>>
+
 /*
 	args[0] should be "clothing" or "forest"
 	args[1] is a slot: "upper", "lower", "under_upper", etc.
 	args[2] should be "outfits" or missing. Combination of "over_upper", "upper" or "under_upper" in args[1] with "outfits" provides respective outfits category
 */
 <<widget "clothingShopv2">>
+	<<exitclothingshop>>
 	<<if $args[0]>>
 		<<set _shopLocation to $args[0]>>
 	<</if>>
@@ -478,11 +490,15 @@
 						<<printcursed>>
 					<<else>>
 						<<link "Steal and wear">>
-							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>><<unset $clothes_choice>>
+							<<shopbuyv2 $clothingShopSlot "steal" "wear" $clothes_choice>><<crimeup `getClothingCost(_temp_choice) / 100`>>
 							<<set $clothingShop.stolenClothes++>>
 							<<set $clothingShop.totalStolenClothes++>>
+							<<if $shopDefaults.disableReturn is false>>
+								<<unset $clothes_choice>>
+							<</if>>
 							<<updateclotheslist>>
 							<<updatesidebarimg>>
+							<<updatesidebarmoney>>
 							<<updatesidebardescription>>
 							<<updateallure>>
 							<<if $shopDefaults.disableReturn>>
@@ -525,7 +541,9 @@
 									<<clothingReset $clothingShopSlot>>
 									<<shopbuyv2 $clothingShopSlot "buy" "wear" $clothes_choice>>
 									<<set $money -= getClothingCost(_temp_choice)>>
-									<<unset $clothes_choice>>
+									<<if $shopDefaults.disableReturn is "false">>
+										<<unset $clothes_choice>>
+									<</if>>
 									<<updateclotheslist>>
 									<<updatesidebarimg>>
 									<<updatesidebarmoney>>
@@ -1117,6 +1135,12 @@
 			<label>
 				<<print '<<checkbox "$shopDefaults.disableReturn" false true ' + ($shopDefaults.disableReturn is true? "checked" : "")+'>>'>>
 				Don't return to catalogue after buying an item.
+			</label>
+			<br><hr>
+
+			<label>
+				<<print '<<checkbox "$shopDefaults.alwaysBackToShopButton" false true ' + ($shopDefaults.alwaysBackToShopButton is true? "checked" : "")+'>>'>>
+				Always show "Back to shop" button.
 			</label>
 			<br><hr>
 
