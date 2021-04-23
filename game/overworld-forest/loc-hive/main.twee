@@ -42,7 +42,11 @@
 	Standing before you is an enormous wax hive, guarded by two strong-looking wasps. 
 	<br><br>
 
-	<<link [[Approach|Hive Approach]]>><</link>>
+	<<if $daystate isnot "night" and !random(3)>>
+		<<link [[Observe|Hive Observe]]>><</link>>
+		<br>
+	<</if>>
+	<<link [[Approach (0:02)|Hive Approach]]>><<pass 2>><</link>>
 	<br>
 	<<link [[Forest (0:20)|Forest]]>><<pass 20>><</link>>
 	<br>
@@ -51,16 +55,646 @@
 
 
 :: Hive Approach 
-
 <<set $outside to 1>><<set $location to "hive">><<effects>>
 
-<<if ($monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($bestialitydisable is "t")>>
-	<<beastNEWinit 2 wasp>>
-	“Stand back human, not welcome inside” <<bhe>> buzzes menacingly. 
+<<if $hivemember is 1>>
+	The guards recognize you and don't block your way. 
+	<br><br>
+
+	<<link [[Enter Hive|Hive Corridor]]>><</link>><<endevent>>
+	<br>
+	<<link [[Leave|Hive Entrance]]>><</link>><<endevent>>
+	<br>
 <<else>>
-	The wasps buzz angrily at you, chasing you away from the hive. 
+	<<if ($monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($bestialitydisable is "t")>>
+		<<beastNEWinit 2 wasp>>
+		“Stand back human, not welcome inside” <<bhe>> buzzes menacingly. 
+	<<else>>
+		The wasps buzz angrily at you, chasing you away from the hive. 
+	<</if>>
+	<br><br>
+
+	<<link [[Next|Hive Entrance]]>><</link>><<endevent>>
+	<br>
+<</if>>
+
+
+:: Hive Corridor 
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<if $daystate is "dawn">>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	The corridors are busy with commotion as the <<beastsplural>> hurry to their jobs.
+<<elseif $daystate is "day">>
+	The corridors are silent with almost all hive members at their jobs.
+<<elseif $daystate is "dusk">>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	The corridors are a bit more active since most <<beastsplural>> have finished their work and are winding down for the night.
+<<elseif $daystate is "night">>
+	The corridors are dead silent. All other hive members are either asleep or staying respectfully quiet.
+<<else>>
+	You are in the corridor of the hive. 
 <</if>>
 <br><br>
 
-<<link [[Next|Hive Entrance]]>><</link>><<endevent>>
+<<link [[Leave Hive|Hive Approach]]>><<endevent>><</link>>
 <br>
+<<link [[Barracks|Hive Barracks]]>><<endevent>><</link>>
+<br>
+<<link [[Cells|Hive Cell Outside]]>><<endevent>><</link>>
+<br>
+<<link [[Throne Room|Hive Throne Room]]>><<endevent>><</link>>
+<br>
+
+
+:: Hive Barracks 
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<roomoptions>>
+
+You’re in a large open room. The walls are lined with small hexagonal holes made for sleeping. 
+<<if $daystate is "dusk">>
+	The room is bustling with bees getting ready to sleep for whatever tomorrow brings.
+<</if>>
+<br><br>
+
+<<if $unbind is 1>>
+	<<set $unbind to 0>>
+	You rub your bindings against your desk. It takes some effort, but eventually the material yields, freeing your limbs.
+	<br><br>
+<</if>>
+<<if $stress gte 10000>>
+	<<passouthive>>
+<<else>>
+	<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
+		<<link [[Undo your bindings (0:10)|Hive Barracks]]>><<set $unbind to 1>><<pass 10>><<unbind>><</link>>
+		<br><br>
+	<</if>>
+    <<link [[Enter Your Pod|Hive Pod]]>><</link>>
+	<br>
+   <<if $arousal gte 2000 and !$worn.genitals.type.includes("chastity") and $homemasturbationtest is 1>>
+		<br>
+	    <<link [[Masturbate (0:05)|Hive Masturbation]]>><<pass 5>><<set $masturbationstart to 1>><</link>>
+		<br><br>
+    <</if>>
+    <<link [[Relax (0:30)|Hive Barracks Relax]]>><<pass 30>><<endevent>><</link>>
+    <br><br>
+    <<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
+    <br><br>
+    <<link [[Settings|Hive Settings]]>><<endevent>><</link>>
+    <br>
+    <<attitudesControlCheck>>
+    <<if $attitudesControl.showGoldLink is true>>
+	    <span class="goldLink"><<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>  </span><span class="red">!!</span>
+    <<else>>
+	    <<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>
+    <</if>>
+<</if>>
+
+
+:: Hive Settings 
+<<set $settingsExitPassage to "Hive Barracks">>
+<<settings>>
+
+
+:: Hive Barracks Relax 
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<cleareventpool>>
+
+<<addinlineevent>>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	You relax with the <<beastsplural>> settling down for the day. You have a great time chatting and feel a bit less stressed. <<stress -5>>
+<</addinlineevent>>
+<<addinlineevent>>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	You sit with some <<beastsplural>> and have a chat. They offer you some honey and you happily partake. <<pain -5>> <<tiredness -5>>
+<</addinlineevent>>
+<<addinlineevent>>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	You attempt a conversation with the <<beastsplural>> but can’t begin to wrap your head around whatever they’re talking about. You leave a bit confused.
+<</addinlineevent>>
+<<addinlineevent>>
+	<<if random(1)>>
+		<<beastNEWinit 5 bee>>
+	<<else>>
+		<<beastNEWinit 5 wasp>>
+	<</if>>
+	You try to talk to a group of <<beastsplural>> but they seem dead tired and are too exhausted to want to speak to you.
+<</addinlineevent>>
+
+<<runeventpool>>
+<br><br>
+
+<<link [[Next|Hive Barracks]]>><<endevent>><</link>>
+
+
+:: Hive Pod 
+<<effects>>
+
+You squeeze into the pod, feeling the waxy walls against your skin. 
+<br><br>
+
+<<if $sleeptrouble is 1 and $controlled is 0>>
+	<<link [[Sleep for 10 hours|Hive Barracks Sleep]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+	<br>
+	<<link [[Sleep for 9 hours|Hive Barracks Sleep]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+	<br>
+<</if>>
+
+<<link [[Sleep for 8 hours|Hive Barracks Sleep]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 7 hours|Hive Barracks Sleep]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 6 hours|Hive Barracks Sleep]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 5 hours|Hive Barracks Sleep]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 4 hours|Hive Barracks Sleep]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 3 hours|Hive Barracks Sleep]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 2 hours|Hive Barracks Sleep]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 1 hours|Hive Barracks Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br><br>
+
+<<link [[Climb out of pod|Hive Barracks]]>><<endevent>><</link>>
+<br><br>
+
+
+:: Hive Barracks Sleep 
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte 9000>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasmpassage>><<set _orgasm to true>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep soundly.
+	<</if>>
+<</if>>
+
+<<sleepeffects>>
+<br><br>
+
+<<link [[Get out of pod|Hive Barracks]]>><</link>>
+
+
+:: Hive Throne Room 
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+You try the door but seem to recall it being locked.
+<br><br>
+
+<<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
+
+
+:: Hive Cell Outside
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+A row of cells line the back wall of the hive. At the moment all of the cells are empty although there are still guards stationed here nonetheless. 
+<br><br>
+
+<<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
+
+
+:: Hive Cell
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+You see yourself in a damp wax honeycomb shaped cell. The bars are sturdier than you thought but something feels off about the back wall.
+<br><br>
+
+<<link [[Wait|Hive Cell Wait]]>><</link>>
+<br>
+<<link [[Sleep|Hive Cell Sleep 1]]>><</link>>
+<br>
+<<if $hivecelltear gte 13>>
+	<<link [[Escape through the hole|Hive Cell Hole]]>><</link>>
+	<br>
+<<elseif $hivecelltear gte 12 and $physiquesize lte 12000>>
+	<<link [[Escape through the hole|Hive Cell Hole]]>><</link>><<small_text>>
+	<br>
+<<elseif $hivecelltear gte 11 and $physiquesize lte 10000>>
+	<<link [[Escape through the hole|Hive Cell Hole]]>><</link>><<small_text>>
+	<br>
+<<elseif $hivecelltear gte 10 and $physiquesize lte 6000>>
+	<<link [[Escape through the hole|Hive Cell Hole]]>><</link>><<small_text>>
+	<br>
+<<elseif $hivecelltear gte 1>>
+	<<link [[Tear at the cell wall (1:00)|Hive Cell Wall Tear]]>><<pass 1 hour>><<set $hivecelltear += 1>><</link>>
+	<br>
+<<else>>
+	<<link [[Examine the cell wall|Hive Cell Wall Examine]]>><<set $hivecelltear to 1>><</link>>
+	<br>
+<</if>>
+
+
+:: Hive Cell Wall Examine
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+You investigate the back wall and notice that the wax is starting to flake apart. Given enough effort you could probably rip it open.
+<br><br>
+
+<<link [[Tear at the cell wall (1:00)|Hive Cell Wall Tear]]>><<pass 1 hour>><<set $hivecelltear += 1>><</link>>
+<br>
+<<link [[Next|Hive Cell]]>><</link>>
+
+
+:: Hive Cell Wall Tear
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+You feel a small breeze coming through as you 
+<<if $hivewalltear lte 9 and $hivewalltear gte 6>>
+
+<<else>>
+You 
+<</if>>
+
+start tearing at the wall
+
+<<if $hivewalltear gte 13>>
+	, until the hole is big enough to squeese through. 
+<<elseif $hivewalltear gte 12 and $physiquesize lte 12000>>
+	, until the hole is big enough to squeese through. 
+<<elseif $hivewalltear gte 11 and $physiquesize lte 10000>>
+	, until the hole is big enough to squeese through. 
+<<elseif $hivewalltear gte 10 and $physiquesize lte 6000>>
+	, until the hole is big enough to squeese through. 
+<<elseif $hivewalltear gte 9>>
+	. The hole is getting big, almost enough to fit through. 
+<<elseif $hivewalltear gte 6>>
+	. A small hole has been punched through. 
+<<elseif $hivewalltear gte 4>>
+	. You've pulled a small chunk out. 
+<<else>>
+	. It looks a bit flakey. 
+<</if>>
+<br><br>
+
+<<if $hivewalltear gte 13>>
+	<<link [[Squeeze through|Hive Cell Hole]]>><</link>>
+	<br>
+	<<link [[Leave it for now|Hive Cell]]>><</link>>
+	<br>
+<<elseif $hivewalltear gte 12 and $physiquesize lte 12000>>
+	<<link [[Squeeze through|Hive Cell Hole]]>><</link>>
+	<br>
+	<<link [[Leave it for now|Hive Cell]]>><</link>>
+	<br>
+<<elseif $hivewalltear gte 11 and $physiquesize lte 10000>>
+	<<link [[Squeeze through|Hive Cell Hole]]>><</link>>
+	<br>
+	<<link [[Leave it for now|Hive Cell]]>><</link>>
+	<br>
+<<elseif $hivewalltear gte 10 and $physiquesize lte 6000>>
+	<<link [[Squeeze through|Hive Cell Hole]]>><</link>>
+	<br>
+	<<link [[Leave it for now|Hive Cell]]>><</link>>
+	<br>
+<<else>>
+<<link [[Next|Hive Cell]]>><</link>>
+<br>
+<</if>>
+
+
+:: Hive Cell Hole
+<<set $outside to 1>><<set $location to "forest">><<effects>>
+
+You squeeze through the hole and manage to make it into the forest outside of the hive. 
+<br><br>
+
+<<set $beeprisoner to 0>>
+
+<<link [[Next|Forest]]>><<endevent>><</link>>
+
+
+:: Hive Cell Sleep 1
+<<effects>>
+
+You curl up on the ground of your cell, trying to find some semblance of comfort. 
+<br><br>
+
+<<if $sleeptrouble is 1 and $controlled is 0>>
+	<<link [[Sleep for 10 hours|Hive Cell Sleep 2]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+	<br>
+	<<link [[Sleep for 9 hours|Hive Cell Sleep 2]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+	<br>
+<</if>>
+
+<<link [[Sleep for 8 hours|Hive Cell Sleep 2]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 7 hours|Hive Cell Sleep 2]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 6 hours|Hive Cell Sleep 2]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 5 hours|Hive Cell Sleep 2]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 4 hours|Hive Cell Sleep 2]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 3 hours|Hive Cell Sleep 2]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 2 hours|Hive Cell Sleep 2]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br>
+<<link [[Sleep for 1 hours|Hive Cell Sleep 2]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+<br><br>
+
+<<link [[Get up|Hive Cell]]>><<endevent>><</link>>
+
+
+:: Hive Cell Sleep 2 
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte 9000>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasmpassage>><<set _orgasm to true>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep soundly.
+	<</if>>
+<</if>>
+
+<<sleepeffects>>
+<br><br>
+
+<<link [[Get up|Hive Cell]]>><</link>>
+
+
+:: Hive Cell Wait
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<cleareventpool>>
+
+<<addinlineevent "hivecell_nothing">>
+	<<if $bee gte 6>>
+		“So you finally finished.” A group of guards approach your cell. The queens wish to have an audience with you.
+		<br><br>
+
+		<<link [[Next|Throne Job Assignment]]>><</link>>
+	<<else>>
+		You wait in your cell as time passes. 
+		<br><br>
+
+		<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+	<</if>>
+<</addinlineevent>>
+
+<<addinlineevent "hivecell_offerhoney" 0.33>>
+	<<beastNEWinit 1 bee>>
+	A <<beasttype>> walking by stops and turns to you. “It’s really awful the hunters treat you like this. Would you like some honey to make you feel better?”
+	<br><br>
+
+	<<link [[Accept|Cell Honey Accept]]>><</link>>
+	<br>
+	<<link [[Refuse|Cell Honey Refuse]]>><</link>>
+<</addinlineevent>>
+
+<<addinlineevent "hivecell_offersex"0.33>>
+	<<beastNEWinit 1 bee>>
+	A <<beasttype>> saunters towards you. “I’m sorry for what the hunters did to you. If you’d like I can try to make you feel better with my body.”
+	<br><br>
+
+	<<link [[Accept|Cell Sex Accept]]>><</link>>
+	<br>
+	<<link [[Refuse|Cell Sex Refuse]]>><</link>>
+<</addinlineevent>>
+
+<<runeventpool>>
+
+
+:: Cell Honey Accept
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+“Here just don’t tell anybody okay.” <<bhe>> hurriedly leaves. You look at the small semi liquid yellow ball in your hand. You put it to your mouth and it tastes sweet and you perk up. <<pain -5>><<tiredness -5>>
+<br><br>
+
+<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+
+
+:: Cell Honey Refuse
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+“I guess if you say so." <<bHe>> shrugs and wanders off.
+<br><br>
+
+<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+
+
+:: Cell Sex Accept
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+“Really? Great. Let me just.” <<bHe>> struggles with the door for a moment before getting it open. “I’ll enjoy this.”
+<br><br>
+
+<<link [[Next|Cell Bee Sex]]>><<set $sexstart to 1>><</link>>
+
+
+:: Cell Sex Refuse
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+“I guess if you say so." <<bHe>> shrugs and wanders off.
+<br><br>
+
+<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+
+
+:: Cell Bee Sex
+<<effects>>
+
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<beastCombatInit>>
+	<<set $enemytrust += 100>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Cell Bee Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Cell Bee Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Cell Bee Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Cell Bee Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+
+:: Cell Bee Sex Finish 
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+
+	“Thanks for the good time.” <<bHe>> says closing you back in the cell. “Maybe we can do this again.”
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	<<bHe>> lies unconscious on the floor. You hurriedly make your way out of the cell and run down a long corridor before bursting out the front door. 
+	<br><br>
+
+	The guards are caught off guard and you manage to run back into the forest.
+	<br><br>
+
+	<<set $beeprisoner to 0>>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Forest]]>><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	“What the hell? You crazy? No wonder you’re in this cell.” <<bHe>> spits on the floor and walks away.
+	<br><br>
+
+	<<tearful>> you get back up.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Hive Cell]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+
+:: Throne Job Assignment
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+You walk down a long hexagonal corridor followed by two guards. Eventually you stop at a large gate, the guard fiddles with his keys before slotting one in the door and turning it. 
+<br><br>
+
+You hear a click as the guard puts their weight on the gate slowly pushing it open. The room is huge, lined with luxuries, and at the center are two large thrones. 
+<br><br>
+
+One the left is a large woman, her tail is much longer than most other wasps and bees you’ve seen. She appears gentle having an elegance about her that you find yourself enthralled in. 
+<br><br>
+
+On the other hand the other woman looks tough and rugged. She has large muscles and could probably beat most people you know in unarmed combat. 
+<br><br>
+
+You approach the two and you feel a very heavy sensation, their presence feels like the force of gravity is weighing harsher upon you.
+<br><br>
+
+<<if $beeprisoner is 1>>
+	“Well this is curious.” The wasp queen says sitting forward. “In all my years of ruling I’ve never seen a human transform into a bee. In any case, that doesn’t excuse you for interfering with my hunters. Since you were human it’s clear you’re unaffiliated with another hive so you will work off your crimes.” 
+	<br><br>
+
+	She thinks for a moment. “We could always use more hunters although you could choose to be a pollen collector if you so desired.”
+	<br><br>
+
+<<else>>
+	“Oh welcome.” The bee queen says cheerfully. You’re a bit taken aback. Her overwhelming presence conflicts with her kind and cheerful personality. 
+	<br><br>
+
+	“I hope the guards didn’t give you too bad of a time getting in. It’s all worth it for security you know. Anyway enough rambling, welcome to our hive. Since you’re new let's set you up with a job, for now we could always use more pollen gatherers but I suppose you could be a hunter if you like.”
+	<br><br>
+
+<</if>>
+
+<<link [[Choose to be a hunter|Throne Hunter Job]]>><</link>>
+<br>
+<<link [[Choose to be a pollinator|Throne Worker Job]]>><</link>>
+
+
+:: Throne Hunter Job
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<if $beeprisoner is 1>>
+	“Great when or if you ever pay off your crimes we might have something else for you. The hunters meet at the front of the hive every morning. Now guards.” 
+	<br><br>
+
+	She claps her hands. “Escort <<pher>> out of the throne room.” The two guards grab you and pull you out of the room. 
+	<br><br>
+
+<<else>>
+	“Ah I see” she says “Hunters meet at the front entrance every morning. That’s all you may leave.”
+	<br><br>
+
+<</if>>
+
+<<set $hivemember to 1>>
+
+You’re left outside the throne room.
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><<endevent>><</link>>
+
+:: Throne Worker Job
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+
+<<if $beeprisoner is 1>>
+	“Great when or if you ever pay off your crimes we might have something else for you. The pollen collectors meet at the front of the hive every morning. Now guards.” 
+	<br><br>
+
+	She claps her hands. “Escort <<phim>> out of the throne room.” The two guards grab you and pull you out of the room. 
+	<br><br>
+
+<<else>>
+	“Wonderful” she says delightedly “Pollen gatherers meet at the front entrance every morning. Glad to have you. That’s all you may leave.”
+	<br><br>
+
+<</if>>
+
+<<set $hivemember to 1>>
+
+You’re left outside the throne room.
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><<endevent>><</link>>
+
+

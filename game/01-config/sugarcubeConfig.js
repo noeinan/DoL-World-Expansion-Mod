@@ -21,7 +21,7 @@ window.StartConfig = {
 	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.2.23.2",
+	"version": "0.2.24.0",
 }
 
 config.saves.autosave = "autosave";
@@ -144,7 +144,7 @@ function widgetHandler(widgetName, contents) {
 			}
 			else {
 				console.error(`Error rendering widget ${widgetName}`, errList);
-				return this.error(`error${errList.length > 1 ? 's' : ''} within widget contents (${errList.join('; ')})`);
+				return this.error(`when called from passage "${State.passage}" with arguments "${State.variables.args.full}": (${errList.join('; ')})`);
 			}
 		}
 		catch (ex) {

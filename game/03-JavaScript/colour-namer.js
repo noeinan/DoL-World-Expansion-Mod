@@ -37,8 +37,8 @@ function applyBrightnessFilter(colour, amount) {
 function contrast(n, amount) { return clamp255((n - 128) * amount + 128); }
 function applyContrastFilter(colour, amount) {
 	return {
-		r: contrast(colour.r, amount), 
-		g: contrast(colour.g, amount), 
+		r: contrast(colour.r, amount),
+		g: contrast(colour.g, amount),
 		b: contrast(colour.b, amount)
 	};
 }
@@ -97,13 +97,13 @@ window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 		let match = arguments[0].match(/(?:filter: hue-rotate\()(-?\d{1,3})(?:deg\) saturate\()([\d\.]+)(?:\) brightness\()([\d\.]+)(?:\) contrast\()([\d\.]+)/);
 		if (!match)
 			return "custom";
-		
+
 		hue = match[1];
 		saturation = match[2];
 		brightness = match[3];
 		contrast = match[4];
 	}
-	
+
 	let rgb = getCustomColourRGB(hue, saturation, brightness, contrast);
 	State.temporary.customRGB = `rgb(${Math.round(rgb.r)},${Math.round(rgb.g)},${Math.round(rgb.b)});`;
 	let hsv = rgbToHsv(rgb);
@@ -159,12 +159,12 @@ window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 			main = "magenta";
 		else
 			main = "rose";
-		
+
 		if (hsv.s < 60 && hsv.v > 80)
 			aux = "light";
 		else if (hsv.v <= 50)
 			aux = "dark";
-		else if (hsv.v > 50 && (hsv.h <= 100 && hsv.h >= 330 && hsv.s < 40 
+		else if (hsv.v > 50 && (hsv.h <= 100 && hsv.h >= 330 && hsv.s < 40
 				|| hsv.h > 100 && hsv.h < 110 && hsv.s < 30
 				|| hsv.h >= 100 && hsv.h < 150 && hsv.s < 20
 				|| hsv.h >= 150 && hsv.h < 200 && hsv.s < 25
@@ -188,7 +188,7 @@ window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 			colour = "navy";
 		else if (colour == "dark cyan")
 			colour = "teal";
-			
+
 		return colour;
 	}
 }
