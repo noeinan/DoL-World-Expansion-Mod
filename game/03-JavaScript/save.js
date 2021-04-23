@@ -309,7 +309,7 @@ var importSettingsData = function (data) {
 		if (S.general != undefined) {
 			var listObject = settingsObjects("general");
 			var listKey = Object.keys(listObject);
-			var namedObjects = ["map", "skinColor"];
+			var namedObjects = ["map", "skinColor", "shopDefaults"];
 
 			for (var i = 0; i < listKey.length; i++) {
 				if (namedObjects.contains(listKey[i]) && S.general[listKey[i]] != undefined) {
@@ -392,6 +392,7 @@ window.exportSettings = function (data, type) {
 		general: {
 			map: {},
 			skinColor: {},
+			shopDefaults: {},
 		},
 		npc: {}
 	};
@@ -426,7 +427,7 @@ window.exportSettings = function (data, type) {
 
 	var listObject = settingsObjects("general");
 	var listKey = Object.keys(listObject);
-	var namedObjects = ["map", "skinColor"];
+	var namedObjects = ["map", "skinColor", "shopDefaults"];
 
 	for (var i = 0; i < listKey.length; i++) {
 		if (namedObjects.contains(listKey[i]) && V[listKey[i]] != undefined) {
@@ -583,7 +584,20 @@ window.settingsObjects = function (type) {
 				skinColor: {
 					tanImgEnabled: { boolLetter: true, bool: true },
 					tanningEnabled: { bool: true },
-				}
+				},
+				shopDefaults: {
+					alwaysBackToShopButton: { bool: true },
+					color: { strings: ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow", "custom", "random"] },
+					colourItems: { strings: ["disable","random","default"] },
+					compactMode: { bool: true },
+					disableReturn: { bool: true },
+					highContrast: { bool: true },
+					mannequinGender: { strings: ["same","opposite","male","female"] },
+					mannequinGenderFromClothes:  { bool: true },
+					noHelp: { bool: true },
+					noTraits: { bool: true },
+					secColor: { strings: ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow", "custom", "random"] },
+				},
 			};
 			break;
 		case "npc":
@@ -605,7 +619,7 @@ window.settingsConvert = function(exportType, type, settings){
 	var keys = Object.keys(listObject);
 	for (var i = 0; i < keys.length; i++){
 		if (result[keys[i]] === undefined) continue;
-		if(["map", "skinColor", "player"].includes(keys[i])){
+		if(["map", "skinColor", "player", "shopDefaults"].includes(keys[i])){
 			var itemKey = Object.keys(listObject[keys[i]]);
 			for (var j = 0; j < itemKey.length; j++) {
 				if (result[keys[i]][itemKey[j]] === undefined) continue;
