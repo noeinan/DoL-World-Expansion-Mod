@@ -15,6 +15,7 @@
 			feet:0,
 		}>>
 		<<set $debugBodyState to {
+			charactersToShow: 1,
 			hairStage: "none",
 			hairType: "default",
 			fringeType: "default",
@@ -22,6 +23,9 @@
 			breastSize: 0,
 			penisSize: -2,
 			penisVirgin: true,
+			vaginaCum:"none",
+			anusCum:"none",
+			mouthCum:"none",
 			angelHalo:"hidden",
 			angelWings:"hidden",
 			angelWingsLeftType:"leftwing",
@@ -138,7 +142,7 @@
 <<set _colors to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal", "white", "yellow"]>>
 <<set _eyeColors to ["purple", "dark blue", "light blue", "amber", "hazel", "green", "red", "pink", "grey", "purple", "purple"]>>
 <<set _test to []>>
-<<for _i to 0; _i lt _colors.length; _i++>>
+<<for _i to 0; _i lt $debugBodyState.charactersToShow; _i++>>
 <<capture _i>>
 	<<set $debugSelectedColorsAdjusted to clone($debugSelectedColors)>>
 	<<if $debugSelectedColors.eyes is "range">>
@@ -252,6 +256,17 @@
 			<</if>>
 		<</if>>
 	<</if>>
+
+	<<if $debugBodyState.vaginaCum isnot "none">>
+		<img class="layer-tears" @src="'img/body/cum/'+$debugBodyState.vaginaCum+'.gif'">
+	<</if>>
+	<<if $debugBodyState.anusCum isnot "none">>
+		<img class="layer-tears" @src="'img/body/cum/'+$debugBodyState.anusCum+'.gif'">
+	<</if>>
+	<<if $debugBodyState.mouthCum isnot "none">>
+		<img @class="'layer-tears '+_shift" @src="'img/body/cum/'+$debugBodyState.mouthCum+'.gif'">
+	<</if>>
+
 	<<if $debugBodyState.fallenAngelWings isnot "hidden">>
 		<img @class="'layer-'+($debugBodyState.fallenAngelWingsLeftType is 'leftwing'? 'backhair' : 'tailPenisCover')+' anim-idle-2f'" @src="'img/transformations/fallen/'+$debugBodyState.fallenAngelWingsLeftType+'/'+$debugBodyState.fallenAngelWings+'.png'">
 		<img @class="'layer-'+($debugBodyState.fallenAngelWingsRightType is 'leftwing'? 'backhair' : 'tailPenisCover')+' anim-idle-2f'" @src="'img/transformations/fallen/'+$debugBodyState.fallenAngelWingsRightType+'/'+$debugBodyState.fallenAngelWings+'.png'">
@@ -411,6 +426,13 @@
 
 <<widget "clothesTestingBodyControls">>
 <h4>Body</h4>
+<span class="gold">Character Setup</span>
+<<listbox "$debugBodyState.charactersToShow" autoselect>>
+	<<option "Single" 1>>
+	<<option "Wiki" 11>>
+<</listbox>>
+<br><br>
+
 <span class="gold">Skin Colour</span>
 <label>Enable <<print '<<radiobutton "$skinColor.tanImgEnabled" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>></label> |
 <label>Disable <<print '<<radiobutton "$skinColor.tanImgEnabled" "f" ' + ($skinColor.tanImgEnabled is "f" ? "checked" : "") + '>>'>></label> |
@@ -502,7 +524,7 @@ Yellowish:
 <br>
 <<set _hairTypeByName to {"Default": "default", "Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail",
 "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left",
-"Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails"}>>
+"Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl"}>>
 <<set _keys to Object.keys(_hairTypeByName)>>
 <<for _i to 0; _i lt _keys.length; _i++>>
 	<label>
@@ -515,7 +537,7 @@ Yellowish:
 <span class="gold">Fringe Type</span>
 <br>
 <<set _fringeTypeByName to {"Default": "default", "Flaps": "flaps", "Hime": "hime", "Loose": "loose", "Messy": "messy", "Overgrown": "overgrown",
-"Ringlets": "ringlets", "Split": "split", "Straight": "straight", "Swept left": "swept left"}>>
+"Ringlets": "ringlets", "Split": "split", "Straight": "straight", "Swept left": "swept left", "Back": "back", "Parted": "parted", "Flat": "flat", "Quiff": "quiff", "Straight curl": "straight curl", "Ringlet curl": "ringlet curl"}>>
 <<set _keys to Object.keys(_fringeTypeByName)>>
 <<for _i to 0; _i lt _keys.length; _i++>>
 	<label>
@@ -535,6 +557,44 @@ Yellowish:
 		<<print '<<radiobutton "$debugBodyState.fringeStage" "'+_fringeLengthByName[_keys[_i]]+'" ' + ($debugBodyState.fringeStage is _fringeLengthByName[_keys[_i]] ? "checked" : "") + '>>'>>
 	</label> |
 <</for>>
+<br><br>
+
+<span class="gold">Vagina Cum</span>
+<br>
+<<listbox "$debugBodyState.vaginaCum" autoselect>>
+	<<option "None" "none">>
+	<<option "Start" "VaginalCumDripStart">>
+	<<option "Very Slow" "VaginalCumDripVerySlow">>
+	<<option "Slow" "VaginalCumDripSlow">>
+	<<option "Fast" "VaginalCumDripFast">>
+	<<option "Very Fast" "VaginalCumDripVeryFast">>
+<</listbox>>
+<br><br>
+
+<span class="gold">Anus Cum</span>
+<br>
+<<listbox "$debugBodyState.anusCum" autoselect>>
+	<<option "None" "none">>
+	<<option "Start" "AnalCumDripStart">>
+	<<option "Very Slow" "AnalCumDripVerySlow">>
+	<<option "Slow" "AnalCumDripSlow">>
+	<<option "Fast" "AnalCumDripFast">>
+	<<option "Very Fast" "AnalCumDripVeryFast">>
+<</listbox>>
+<br><br>
+
+<span class="gold">Mouth Cum</span>
+<br>
+<<listbox "$debugBodyState.mouthCum" autoselect>>
+	<<option "None" "none">>
+	<<option "Start" "MouthCumDripStart">>
+	<<option "Very Slow" "MouthCumDripVerySlow">>
+	<<option "Slow" "MouthCumDripSlow">>
+	<<option "Fast" "MouthCumDripFast">>
+	<<option "Very Fast" "MouthCumDripVeryFast">>
+<</listbox>>
+<br><br>
+
 <</widget>>
 
 <<widget "clothesTestingTransformationsControls">>
