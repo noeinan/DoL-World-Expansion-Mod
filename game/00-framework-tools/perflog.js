@@ -1,5 +1,5 @@
 // Time in milliseconds, float with microsecond precision if available.
-const millitime = (typeof performance === 'object' && typeof performance.now === 'function') ? 
+const millitime = (typeof performance === 'object' && typeof performance.now === 'function') ?
 	function() { return performance.now() } : function() { return new Date().getTime() };
 DOL.Perflog.millitime = millitime;
 
@@ -33,7 +33,7 @@ $(document).on(':passageend', function() {
         } else {
             grec.n += rec.n;
             grec.total += rec.total;
-            grec.own == rec.own;
+            grec.own += rec.own;
         }
     }
     DOL.Perflog.lastRec = wpRec;
@@ -42,13 +42,13 @@ $(document).on(':passageend', function() {
 DOL.Perflog.logWidgetStart = function(widgetName) {
     wpStack.push({
         name: widgetName,
-        t0: millitime(), 
+        t0: millitime(),
         i: 0
     });
 }
 DOL.Perflog.logWidgetEnd = function(widgetName) {
     const perflog = wpStack[wpStack.length - 1];
-    if (!perflog || perflog.name != widgetName) {
+    if (!perflog || perflog.name !== widgetName) {
         Errors.report("Inconsistent widget performance stack", wpStack);
         return;
     }
@@ -59,20 +59,33 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
         prevPerflog.i += dt;
     }
     var perfrec = wpRec[widgetName];
-    if (!perfrec) perfrec = wpRec[widgetName] = { 
-        name:widgetName, 
-        n:0, 
-        total:0, 
-        own:0 
+    if (!perfrec) perfrec = wpRec[widgetName] = {
+        name:widgetName,
+        n:0,
+        total:0,
+        own:0
     };
     perfrec.n++;
     perfrec.total += dt;
     perfrec.own += dt - perflog.i;
     wpStack.pop();
 }
+
+/**
+ * Returns a "nice" string representation of a number without too much decimal digits.
+ * @param {number} x
+ */
+function niceround(x) {
+    if (Math.floor(x) === x) return x; // Integers
+    if (-1 < x && x < 1) {
+        // Small number, round to 0.001 instead
+        return Math.round(x*1000)/1000;
+    }
+    return Math.round(x*10)/10;
+}
 /**
  * Return performance report. Can be viewed by DevTools table() function.
- * 
+ *
  * Returns array of objects:
  *  `name`: Widget name
  *  `n`: Times widget called
@@ -83,34 +96,45 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
  *  `npp`: Average time widget called per passage
  *  `totalpp`: Average total time per passage
  *  `ownpp`: Average own time per passage
- * 
- * @param {object} options 
- * @param {string} [options.sort='own'] Property to sort entries by
+ *
+ * @param {object} options
+ * @param {string} [options.sort='total'] Property to sort entries by
  * @param {number} [options.limit=20] Max number of entries to report, 0 to no limit
  * @param {boolean} [options.global=true] Report widgets from all recorded history or from last passage only.
+ * @param {boolean} [options.round=true] Round to 0.1 precision
  */
 DOL.Perflog.report = function (options) {
     options = Object.assign({
         sort: 'own',
         limit: 20,
-        global: true
+        global: true,
+        round: true
     }, options);
+    const numfn = options.round ? niceround : (x)=>x;
     var entries;
     if (options.global) {
         const np = DOL.Perflog.nPassages;
         // Add 'per passage' metrics
-        entries = Object.values(DOL.Perflog.globalRec).map(e=>Object.assign({
-            npp: e.n/np,
-            totalpp: e.total/np,
-            ownpp: e.own/np,
-            totalp1: e.total/e.n,
-            ownp1: e.own/e.n
-        }, e));
+        entries = Object.values(DOL.Perflog.globalRec).map(e=>({
+            name: e.name,
+            n: e.n,
+            total: numfn(e.total),
+            own: numfn(e.own),
+            npp: numfn(e.n/np),
+            totalpp: numfn(e.total/np),
+            ownpp: numfn(e.own/np),
+            totalp1: numfn(e.total/e.n),
+            ownp1: numfn(e.own/e.n)
+        }));
     } else {
-        entries = Object.values(DOL.Perflog.lastRec).map(e=>Object.assign({
-            totalp1: e.total/e.n,
-            ownp1: e.own/e.n
-        }, e));
+        entries = Object.values(DOL.Perflog.lastRec).map(e=>({
+            name: e.name,
+            n: e.n,
+            total: numfn(e.total),
+            own: numfn(e.own),
+            totalp1: numfn(e.total/e.n),
+            ownp1: numfn(e.own/e.n),
+        }));
     }
     var comparator;
     const sort = options.sort;
