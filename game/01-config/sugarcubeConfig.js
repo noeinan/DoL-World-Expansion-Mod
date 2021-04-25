@@ -45,6 +45,7 @@ console.log("Game Version:", StartConfig.version);
 
 l10nStrings.errorTitle = StartConfig.version + " Error";
 
+
 /**
  * Not a configuration, but we are overriding a basic part of sugarcube
  *
@@ -93,6 +94,7 @@ function widgetHandler(widgetName, contents) {
 		trace('invoking', context);
 		vContext.push(context);
 		// Custom code
+		DOL.Perflog.logWidgetStart(widgetName);
 		const newFrame = {};
 		State.variables[VIRTUAL_CURRENT] = newFrame;
 		vStack.push(newFrame);
@@ -168,6 +170,7 @@ function widgetHandler(widgetName, contents) {
 				// restore prior frame
 				Object.assign(State.variables, priorFrame)
 			}
+			DOL.Perflog.logWidgetEnd(widgetName);
 			// End custom code
 			if (typeof argsCache !== 'undefined') {
 				State.variables.args = argsCache;
