@@ -21,10 +21,12 @@ You are in your cell in the barn. There's a bucket of what looks like clean wate
 
 <<if $stress gte 10000>>
 	<<passoutremy>>
-	<<if $hour gte 6 and $hour lt 18>>
+	<<if $hour gte 5 and $hour lt 18>>
 		<<hunger 1000>>
+		<<set $livestock_noise to false>>
 	<</if>>
 <<elseif $hour gte 6 and $hour lt 18>>
+	<<set $livestock_noise to false>>
 	Remy and the farmhands circle the barn, opening cells and releasing their occupants. One of them opens yours.
 	<br><br>
 
@@ -60,9 +62,13 @@ You are in your cell in the barn. There's a bucket of what looks like clean wate
 		<br>
 	<</if>>
 <<else>>
-	<<link [[Work out (1:00)|Livestock Workout]]>><<pass 60>><<tiredness 6>><</link>><<gtiredness>><<lstress>>
+	<<link [[Work out (1:00)|Livestock Workout]]>><</link>><<gtiredness>><<lstress>>
 	<br>
-	<<link [[Sleep until dawn|Livestock Sleep]]>><<set $saveDetails.auto.count++>><</link>><<ltiredness>>
+	<<if $livestock_noise is false>>
+		<<link [[Make noise (0:10)|Livestock Noise]]>><<pass 10>><<stress -12>><<trauma -6>><<set $livestock_noise to true>><</link>><<llstress>><<ltrauma>><<lobey>>
+		<br>
+	<</if>>
+	<<link [[Sleep until dawn|Livestock Sleep]]>><<set $saveDetails.auto.count++>><<set $phase to 0>><</link>><<ltiredness>>
 	<br><br>
 	<<link [[Settings|Livestock Settings]]>><</link>>
 	<br>
@@ -127,17 +133,79 @@ Remy lands in the dirt. Eden helps you find your footing, and together you escap
 
 :: Livestock Workout
 <<effects>>
+<<if $livestock_noise is true>>
+	<<pass 1>><<tiredness 1>>
+	You try to get up off the floor but collapse into a heap. Your punishment left you unable to move very much. Getting any exercise right now would be impossible.
+	<br><br>
+	<<link [[Next|Livestock Cell]]>><</link>>
+	<br>
+<<else>>
+	<<pass 60>><<tiredness 6>>
+	There's enough room in your cell for basic exercise. You work up a sweat, and keep pushing yourself, taking your mind off your imprisonment.
+	<<physique 6>>
+	<br><br>
 
-There's enough room in your cell for basic exercise. You work up a sweat, and keep pushing yourself, taking your mind off your imprisonment.
-<<physique 6>>
-<br><br>
-
-<<if $hour lte 5>>
-	<<link [[Keep working out (1:00)|Livestock Workout]]>><<pass 60>><<tiredness 6>><</link>><<gtiredness>>
+	<<if $hour lte 5>>
+		<<link [[Keep working out (1:00)|Livestock Workout]]>><</link>><<gtiredness>>
+		<br>
+	<</if>>
+	<<link [[Stop|Livestock Cell]]>><</link>>
 	<br>
 <</if>>
-<<link [[Stop|Livestock Cell]]>><</link>>
-<br>
+
+:: Livestock Noise
+<<effects>>
+
+Like a caged animal, you lash out inside of your cell. You <<if $cow gte 6>>moo<<else>>yell<</if>> as loudly as possible<<if $worn.face.type.includes("gag")>> despite your $worn.face.name<</if>>, quickly waking up the other bovine from their slumber. You turn up your hay and smack against the metal lining your cell, causing a lot of noise.
+<br><br>
+Soon, the whole barn begins to join in your rebellious antics—some out of annoyance, others out of their apparent mistreatment.
+<br><br>
+It isn't long before the door to the barn opens, and the lights flicker on. Remy and two farmhands inspect the bovine, who quickly all return to their 'beds.' The only one left standing in place is you, marking you as responsible.
+<br><br>
+<<if $livestock_obey gte 80>>
+	<<link [[Next|Livestock Noise 2]]>><<set $phase to 1>><</link>>
+	<br>
+<<else>>
+	<<link [[Next|Livestock Noise 2]]>><<set $phase to 0>><</link>>
+	<br>
+<</if>>
+
+:: Livestock Noise 2
+<<livestock_obey -5>>
+<<npc Remy>><<person1>>
+
+<<if $phase is 1>>
+	Your cell door opens, and the farmhands rush in to restrain your arms. Remy walks in, handkerchief in hand with a flask upended into it. Terrified, you <<if $cow gte 6>>moo<<else>>beg<</if>> for mercy<<if $worn.face.type.includes("gag")>> through your $worn.face.name<</if>>, but your cries are silenced as the cloth is pressed against your mouth.
+	<br><br>
+	Remy watches as you silently struggle, "What's gotten into you?" <<His>> green eyes pierce yours as you feel yourself become hazy. "You're usually so well-behaved."
+	<br><br>
+	Unable to take any more of the drug, you fall to your knees. Remy withdraws, satisfied.
+	<br><br>
+	"Lay it down to rest. We'll see if this behavior becomes a habit," Remy instructs. Your feet drag against the floor as you're gently laid back onto the pile of hay.
+	<br><br>
+	<<if $loveInterest.primary isnot "None">>
+		As darkness overwhelms your vision, your last thoughts turn to $loveInterest.primary. You wonder if you'll ever see <<if $loveInterest.primary is "Black Wolf">>your pack<<else>><<nnpc_him $loveInterest.primary>><</if>> again.
+	<<else>>
+		Darkness overwhelms your vision until your consciousness fades.
+	<</if>>
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Livestock Sleep]]>><<set $phase to 1>><</link>>
+	<br>
+<<else>>
+	Your cell door opens, and the farmhands rush in to restrain your arms. Remy walks in, unfolding their whip. Terrified, you <<if $cow gte 6>>moo<<else>>beg<</if>> for mercy<<if $worn.face.type.includes("gag")>> through your $worn.face.name<</if>>, but your cries become interrupted as the whip meets your belly. You <<if $cow gte 6>>moo<<else>>gasp<</if>> in pain as Remy punishes you with all their fury. Tears stream down your eyes as you <<if $cow gte 6>>gasp<<else>>writhe<</if>> at every strike.<<gggpain>>
+	<<pain 50>>
+	<br><br>
+	Unable to take anymore, you fall to the floor. The farmhands force you onto your feet, allowing for one last strike.<<gpain>>
+	<br><br>
+	Remy folds their whip and approaches you. Taking your chin in <<his>> hand, you're forced to look into <<his>> shining, green eyes. "I warned you," Remy scolds. "I don't think you'll be making any more noise, right?" You nod.
+	<br><br>
+	"Good. Put it to bed," Remy instructs the farmhands. Grunting in pain, you're soon dragged towards a pile of hay and tossed onto it. You curl up and rub your stinging tummy.
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Livestock Cell]]>><</link>>
+	<br>
+<</if>>
 
 :: Livestock Milking Obey
 <<effects>>
@@ -342,7 +410,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 
 <<if $breastfeedingdisable is "f">>
 	<<if $penisexist is 1 and !$worn.genitals.type.includes("chastity")>>
-		Remy retrieves a few glass pumps from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees <<girl>>."
+		Remy retrieves a few glass pumps from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
 		<<if $cow gte 6>>
@@ -354,7 +422,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 		<<link [[Refuse|Livestock Lactate Refuse]]>><<npcincr Remy dom -1>><<livestock_obey -1>><<def 1>><</link>><<lobey>>
 		<br>
 	<<else>>
-		Remy retrieves a couple of glass pumps from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees <<girl>>."
+		Remy retrieves a couple of glass pumps from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
 		<<if $cow gte 6>>
@@ -368,7 +436,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 	<</if>>
 <<else>>
 	<<if $penisexist is 1 and !$worn.genitals.type.includes("chastity")>>
-		Remy retrieves a glass pump from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees <<girl>>."
+		Remy retrieves a glass pump from just outside your cage. It's attached to a tube leading to a much larger machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
 		<<if $cow gte 6>>
@@ -380,7 +448,7 @@ Remy kneels, <<his>> eyes level with your <<penis>>.
 		<<link [[Refuse|Livestock Lactate Refuse]]>><<npcincr Remy dom -1>><<livestock_obey -1>><<def 1>><</link>><<lobey>>
 		<br>
 	<<else>>
-		"You're not much use for now," Remy says. "But that doesn't mean you shouldn't be treated." <<He>> retrieves a small pink pill-shaped object attached to a wire that leads to the milking machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees <<girl>>."
+		"You're not much use for now," Remy says. "But that doesn't mean you shouldn't be treated." <<He>> retrieves a small pink pill-shaped object attached to a wire that leads to the milking machine. The same machine the other cattle are being connected to. <<He>> grasps your collar and pulls you towards the gate. "On your knees, <<girl>>."
 		<br><br>
 
 		<<if $cow gte 6>>
@@ -407,7 +475,7 @@ You drop to your knees and moo. "That's a good <<girl>>," Remy whispers, strokin
 :: Livestock Lactate Obey
 <<effects>>
 
-You drop to your knees as instructed. "That's a good <<girl>>," Remy whispers. <<He>> knees beside you, and ties your arms to an iron bar several feet above the ground. <<He>> also ties your collar to a short chain attached to the floor. Your legs remain free, but that's little help with your arms and head in such a position.<<bind>><<headbind>>
+You drop to your knees as instructed. "That's a good <<girl>>," Remy whispers. <<He>> kneels beside you, and ties your arms to an iron bar several feet above the ground. <<He>> also ties your collar to a short chain attached to the floor. Your legs remain free, but that's little help with your arms and head in such a position.<<bind>><<headbind>>
 <br><br>
 
 <<link [[Next|Livestock Lactate Tubes]]>><</link>>
