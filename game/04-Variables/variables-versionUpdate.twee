@@ -473,6 +473,14 @@
 	<<set $baileydefeatedchain to 0>>
 <</if>>
 
+<<if $soldCount is undefined>>
+	<<if $rentsale isnot undefined>>
+		<<set $soldCount to $rentsale>>
+	<<else>>
+		<<set $soldCount to 0>>
+	<</if>>
+<</if>>
+
 <<if $robinmoney is undefined>>
 	<<set $robinmoney to 300>>
 <</if>>
@@ -997,6 +1005,9 @@
 		"disableReturn": false
 	}>>
 <</if>>
+<<if $shopDefaults.alwaysBackToShopButton is undefined>>
+	<<set $shopDefaults.alwaysBackToShopButton to false>>
+<</if>>
 
 <<if $tentacles is undefined>>
 	<<set $tentacles to {
@@ -1459,9 +1470,9 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 23 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 24 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 23>>
+	<<set $objectVersion.updateClothes to 24>>
 	<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 	Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 <</if>>
@@ -1588,10 +1599,10 @@
 	<<set $closinghour to 21>>
 <</if>>
 
-<<if $objectVersion.specialClothes lt 3 or $objectVersion.specialClothes is undefined>>
+<<if $objectVersion.specialClothes lt 4 or $objectVersion.specialClothes is undefined>>
 	<<specialClothesSetup>>
 	<<specialClothesUpdate>>
-	<<set $objectVersion.specialClothes to 3>>
+	<<set $objectVersion.specialClothes to 4>>
 <</if>>
 
 <<if $objectVersion.uncomfortable lt 2 or $objectVersion.uncomfortable is undefined>>
@@ -1828,9 +1839,14 @@
 	<<set $homochance to 4>>
 <</if>>
 
-<<if $livestock_intro is 0 and $remy_seen is undefined>>
-	<<set $remy_seen to "livestock">>
-	<<set $livestock_robin to 1>>
+<<if $livestock_intro is 0>>
+	<<if $remy_seen is undefined>>
+		<<set $remy_seen to "livestock">>
+		<<set $livestock_robin to 1>>
+	<</if>>
+	<<if $livestock_noise is undefined>>
+		<<set $livestock_noise to false>>
+	<</if>>
 <</if>>
 
 <<if $birdbuild is undefined>>
@@ -2253,6 +2269,8 @@
 <</if>>
 <<if $rentmod is undefined>>
 	<<set $rentmod to 1>>
+<<elseif $rentmod gt 3>>
+	<<set $rentmod to 3>>
 <</if>>
 <<if $blackjack_played is undefined>>
 	<<set $blackjack_played to 0>>
@@ -2260,4 +2278,12 @@
 	<<set $blackjack_streak to 0>>
 	<<set $blackjack_streak_high to 0>>
 <</if>>
+
+/*To prevent the wardrobe from being inaccessable due to nulls*/
+<<for $_label, $_value range $wardrobe>>
+	<<if $_label is "space">>
+		<<continue>>
+	<</if>>
+	<<run $wardrobe[$_label].delete(null)>>
+<</for>>
 <</widget>>
