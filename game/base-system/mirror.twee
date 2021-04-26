@@ -708,17 +708,16 @@ __Body Writing__<br>
 
 <<if $bodyWritingSelected isnot undefined>>
 	You write
-	<<if $skin[$bodyPartSelectedKey].special isnot "none">>
+	<<if $skin[$bodyPartSelected].special isnot "none">>
 		"<span class="red"><<print $bodyWritingSelected>></span>"
-	<<elseif $skin[$bodyPartSelectedKey].lewd is 1>>
+	<<elseif $skin[$bodyPartSelected].lewd is 1>>
 		"<span class="pink"><<print $bodyWritingSelected>></span>"
 	<<else>>
 		"<span class="purple"><<print $bodyWritingSelected>></span>"
 	<</if>>
-	on your $bodyPartSelected.
-	<<unset $bodyPartSelected>>
+	on your <<bodypart $bodyPartSelected>>.
 	<<unset $bodyWritingSelected>>
-	<<unset $bodyPartSelectedKey>>
+	<<unset $bodyPartSelected>>
 	<br><br>
 <</if>>
 <<bodywriting>>
@@ -770,8 +769,8 @@ __Body Writing__<br>
 		<<if _bodyPartOptionsSkip.includes(_label)>>
 			<<continue>>
 		<<elseif Object.keys(_value).length is 0>>
-			<<set _temp to _label.replace("_", " ")>>
-			<<set _bodyPartOptions[_temp[0].toUpperCase() + _temp.substring(1)] to _label>>
+			<<silently>><<bodypart _label>><</silently>>
+			<<set _bodyPartOptions[_text_output.toUpperFirst()] to _label>>
 		<</if>>
 	<</for>>
 	<<if Object.keys(_bodyPartOptions).length gt 0>>
@@ -787,8 +786,7 @@ __Body Writing__<br>
 		<<link [[Confirm|$passage]]>>
 			<<set $mirrorMenu to "skin">>
 			<<set $bodyWritingSelected to Object.keys(_bodyWritingOptions)[Object.values(_bodyWritingOptions).indexOf(_bodyWritingSelected)]>>
-			<<set $bodyPartSelected to Object.keys(_bodyPartOptions)[Object.values(_bodyPartOptions).indexOf(_bodyPartSelected)]>>
-			<<set $bodyPartSelectedKey to _bodyPartSelected>>
+			<<set $bodyPartSelected to _bodyPartSelected>>
 			<<add_bodywriting _bodyPartSelected _bodyWritingSelected pen>>
 		<</link>>
 	<<else>>
