@@ -694,3 +694,12 @@ window.updateMoment = function () {
 
 	// Voilà! F5 will reload the current state now without going to another passage!
 }
+
+window.isJsonString = function(s) {
+    try {
+        JSON.parse(s);
+    } catch (e) {
+        return false;
+    }
+	return true;
+}
