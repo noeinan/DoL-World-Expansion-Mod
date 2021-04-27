@@ -23,6 +23,7 @@ window.DOL = {
 	 * {@link ./02-version/.init.js
 	 */
 	Versions: {},
+	Perflog: {},
 
 	/** Patch to make javascript execution more consistent (see comment below) */
 	State: State,
