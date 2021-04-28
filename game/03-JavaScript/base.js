@@ -358,3 +358,10 @@ function numberify(selector) {
 	return "";
 }
 DefineMacroS("numberify", numberify);
+
+// blink entire page to fix a bug in Chrome where animation on images doesn't start
+window.fixStuckAnimations = function() {
+	let imgs = $('#story').add($('#ui-bar')); 
+	imgs.toggleClass('hidden'); 
+	window.setTimeout(() => imgs.toggleClass('hidden'), 50);
+}
