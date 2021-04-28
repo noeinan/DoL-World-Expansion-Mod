@@ -75,3 +75,118 @@ window.getClothingCost = function (item) {
 
 	return Math.round(cost);
 }
+
+// makes all existing specified upper/lower clothes to be over_upper/over_lower
+// it assumes that over_xxx equipment slots are empty, otherwise it will overwrite anything in those slots
+// use this function in version update widget when over clothes will be ready
+window.convertNormalToOver = function () {
+	let clothesToConvert = ['bathrobe', 'bathrobe bottom', 'peacoat', 'shadbelly coat', 'puffer jacket', 'brown leather jacket', 'black leather jacket', 'vampire jacket'];
+	let v = State.variables;
+
+	// function that converts a clothing item
+	let convertItem = (item) => {
+		console.log('converting ' + item.name);
+
+		if (item.outfitPrimary) {
+			Object.keys(item.outfitPrimary).forEach(slot => {
+				if (slot == 'upper' || slot == 'lower') {
+					item.outfitPrimary['over_' + slot] = item.outfitPrimary[slot];
+					delete item.outfitPrimary[slot];
+				}
+			});
+		}
+		else if (item.outfitSecondary) {
+			for (let i = 0; i < item.outfitSecondary.length; i += 2) {
+				if (item.outfitSecondary[i] == 'upper' || item.outfitSecondary[i] == 'lower') {
+					item.outfitSecondary[i] = 'over_' + item.outfitSecondary[i];
+				}
+			}
+		}
+		if (item.set == 'upper' || item.set == 'lower')
+			item.set = 'over_' + item.set;
+
+		return item;
+	};
+
+	for (let index in clothesToConvert) {
+		let itemName = clothesToConvert[index];
+
+		// convert clothing sets
+		v.outfit.forEach(outf => {
+			if (outf.upper == itemName) {
+				outf.upper = "naked";
+				outf.over_upper = itemName;
+				if (outf.colors) {
+					outf.colors.over_upper = outf.colors.upper;
+					outf.colors.upper = [0, 0];
+				}
+			}
+			if (outf.lower == itemName) {
+				outf.lower = "naked";
+				outf.over_lower = itemName;
+				if (outf.colors) {
+					outf.colors.over_lower = outf.colors.lower;
+					outf.colors.lower = [0, 0];
+				}
+			}
+		}); 
+		
+		// convert clothes in wardrobe
+		for (let i = v.wardrobe.upper.length - 1; i >= 0; i--) {
+			if (v.wardrobe.upper[i].name == itemName) {
+				v.wardrobe.over_upper.push(convertItem(v.wardrobe.upper[i]));
+				v.wardrobe.upper.splice(i, 1);
+			}
+		}
+		for (let i = v.wardrobe.lower.length - 1; i >= 0; i--) {
+			if (v.wardrobe.lower[i].name == itemName) {
+				v.wardrobe.over_lower.push(convertItem(v.wardrobe.lower[i]));
+				v.wardrobe.lower.splice(i, 1);
+			}
+		}
+
+		// convert worn clothes
+		if (v.worn.upper.name == itemName) {
+			v.worn.over_upper = convertItem(v.worn.upper);
+			v.worn.upper = clone(setup.clothes.upper[0]);
+		}
+		if (v.worn.lower.name == itemName) {
+			v.worn.over_lower = convertItem(v.worn.lower);
+			v.worn.lower = clone(setup.clothes.lower[0]);
+		}
+		
+		// convert stripped stored clothes
+		for (let i = v.store.upper.length - 1; i>= 0; i--) {
+			if (v.store.upper[i].name == itemName) {
+				v.store.over_upper.push(convertItem(v.store.upper[i]));
+				v.store.upper.splice(i, 1);
+			}
+		}
+		for (let i = v.store.lower.length - 1; i>= 0; i--) {
+			if (v.store.lower[i].name == itemName) {
+				v.store.over_lower.push(convertItem(v.store.lower[i]));
+				v.store.lower.splice(i, 1);
+			}
+		}
+
+		// convert try on stored
+		if (v.tryOn.ownedStored.upper.name == itemName) {
+			v.tryOn.ownedStored.over_upper = convertItem(v.tryOn.ownedStored.upper);
+			v.tryOn.ownedStored.upper = clone(setup.clothes.upper[0]);
+		}
+		if (v.tryOn.ownedStored.lower.name == itemName) {
+			v.tryOn.ownedStored.over_lower = convertItem(v.tryOn.ownedStored.lower);
+			v.tryOn.ownedStored.lower = clone(setup.clothes.lower[0]);
+		}
+
+		// convert try on equipped
+		if (v.tryOn.tryingOn.upper && v.tryOn.tryingOn.upper.name == itemName) {
+			v.tryOn.tryingOn.over_upper = convertItem(v.tryOn.tryingOn.upper);
+			v.tryOn.tryingOn.upper = null;
+		}
+		if (v.tryOn.tryingOn.lower && v.tryOn.tryingOn.lower.name == itemName) {
+			v.tryOn.tryingOn.over_lower = convertItem(v.tryOn.tryingOn.lower);
+			v.tryOn.tryingOn.lower = null;
+		}
+	}
+}
