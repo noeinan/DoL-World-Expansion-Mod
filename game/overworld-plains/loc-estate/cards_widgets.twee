@@ -32,31 +32,27 @@
 
 <<widget "blackjackScore">>
 <<if $args[0]>>
-	<<set _score to 0>>
+	<<set _cards to []>>
 	<<for $_i to 0; $_i lt $args[0].length; $_i++>>
 		<<set _card to $args[0][$_i]>>
 		<<switch _card.name>>
-			<<case "A">><<set _value to 11>>
-			<<case "K" "Q" "J">><<set _value to 10>>
-			<<default>><<set _value to _card.value>>
+			<<case "A">><<run _cards.push(11)>>
+			<<case "K" "Q" "J">><<run _cards.push(10)>>
+			<<default>><<run _cards.push(_card.value)>>
 		<</switch>>
-		<<set _score += clone(_value)>>
 	<</for>>
-	<<if _score gt 21>>
-		<<set _score to 0>>
-		<<for $_i to 0; $_i lt $args[0].length; $_i++>>
-			<<set _card to $args[0][$_i]>>
-			<<switch _card.name>>
-				<<case "A">><<set _value to 1>>
-				<<case "K" "Q" "J">><<set _value to 10>>
-				<<default>><<set _value to _card.value>>
-			<</switch>>
-			<<set _score += clone(_value)>>
-		<</for>>
-	<</if>>
+	<<set _cards to _cards.sort(function compareNumbers(a, b) {return a - b;})>>
+	<<set _score to 0>>
+	<<for $_i to 0; $_i lt _cards.length; $_i++>>
+		<<if _cards[$_i] is 11 and _score + 11 gt 21>>
+			<<set _score++>>
+		<<else>>
+			<<set _score += _cards[$_i]>>
+		<</if>>
+	<</for>>
 	<<if $args[1]>>
 		<<if $args[0].length is 2>>
-			<<if ["A","K","Q","J"].includes($args[0][0].name) and ["A","K","Q","J"].includes($args[0][1].name) and _score is 21>>
+			<<if ["A","K","Q","J","10"].includes($args[0][0].name) and ["A","K","Q","J","10"].includes($args[0][1].name) and _score is 21>>
 				<<set $_blackjack to true>>
 			<</if>>
 		<</if>>
@@ -75,7 +71,7 @@
 	<<set $blackjack.dealerCards.push($blackjack.cards[1])>>
 	<<set $blackjack.playersCards.push($blackjack.cards[2])>>
 	<<set $blackjack.dealerCards.push($blackjack.cards[3])>>
-	<<set $blackjack.cards.deleteAt(0,4)>>
+	<<set $blackjack.cards.deleteAt(0,1,2,3)>>
 <</if>>
 <<if $blackjack.playersState is "hit">>
 	<<set $blackjack.playersState to null>>
@@ -133,6 +129,7 @@ Total: <<print $blackjack.playersScore>>
 <<if $blackjack.turn is "players" and $blackjack.playersScore lte 20>>
 	<<link [[Hit|$passage]]>><<set $blackjack.playersState to "hit">><</link>> |
 	<<link [[Stand|$passage]]>><<set $blackjack.turn to "dealer">><<set $blackjack.playersState to "stand">><</link>> |
+	<<link "Help">><<overlayReplace "blackjackHelp">><</link>>
 <<elseif $blackjack.turn is "players" and $blackjack.playersScore gt 21>>
 	Bust
 	<br>
@@ -142,25 +139,27 @@ Total: <<print $blackjack.playersScore>>
 <<elseif $blackjack.turn is "dealer">>
 	<<if $blackjack.playersState is "blackjack" and $blackjack.dealerState is "blackjack">>
 		<<set $blackjack.winner to "tie">>
-		Tie
+		You tie with both having Natural Blackjacks
 	<<elseif $blackjack.playersState is "blackjack">>
 		<<set $blackjack.winner to "player">>
-		You Win
+		You win with a Natural Blackjack
+		<<set $blackjack_won += 1>>
 		<<set $blackjack_streak += 1>>
 	<<elseif $blackjack.dealerState is "blackjack">>
 		<<set $blackjack.winner to "dealer">>
-		You Lose
+		You lose to the Natural Blackjack
 		<<set $blackjack_streak to 0>>
 	<<elseif $blackjack.playersScore gt $blackjack.dealerScore or $blackjack.dealerScore gt 21>>
 		<<set $blackjack.winner to "player">>
-		You Win
+		You win
+		<<set $blackjack_won += 1>>
 		<<set $blackjack_streak += 1>>
 	<<elseif $blackjack.playersScore is $blackjack.dealerScore>>
 		<<set $blackjack.winner to "tie">>
-		Tie
+		You tie
 	<<else>>
 		<<set $blackjack.winner to "dealer">>
-		You Lose
+		You lose
 		<<set $blackjack_streak to 0>>
 	<</if>>
 	<br><br>
@@ -177,6 +176,18 @@ Total: <<print $blackjack.playersScore>>
 		<br>
 	<</if>>
 <</if>>
+<</widget>>
+
+<<widget "blackjackHelp">>
+<h3>Blackjack Guide</h3>
+<ul>
+	<li>Your goal is to beat the dealer in having a higher score that never goes above 21.</li>
+	<li>Cards are valued from 2 to 11. Jack, Queen and King are worth 10 each, Ace is worth either 1 or 11, whichever is more favourable.</li>
+	<li>Scoring a total of 21 with 2 cards is known as a "Natural Blackjack", you or the dealer will win over any other combination unless you tie.</li>
+	<li>If either you or the dealer go over 21, the one who bust loses.</li>
+	<li>Stand to end your turn, hit to gain another card.</li>
+	<li>The dealer always plays by specific rules, use that to your advantage. The dealer must hit when their score is below 17.</li>
+</ul>
 <</widget>>
 
 :: Widgets High Low [widget]
@@ -441,7 +452,7 @@ Your current score: <<print $highlow.correct>>
 <<elseif $rng gte 11>>
 	Strip, or be stripped."
 <<else>>
-	I'm not a patient <<if $pronoun is "f">>woman<<else>>man<</if>>"
+	I'm not a patient <<if $pronoun is "f">>woman<<else>>man<</if>>."
 <</if>>
 <</widget>>
 
@@ -461,7 +472,7 @@ Your current score: <<print $highlow.correct>>
 			<span class="lewd">You feel self-conscious about the lack of clothing on your chest, and keep one arm over it.</span>
 			<br>
 		<<else>>
-			<span class="lewd">You're unbothered by haivng so little clothing on your chest.</span>
+			<span class="lewd">You're unbothered by having so little clothing on your chest.</span>
 			<br>
 		<</if>>
 	<</if>>

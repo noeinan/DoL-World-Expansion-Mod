@@ -79,7 +79,7 @@
 			<<link [[Swim naked|Swimming Lesson]]>><<undress "school pool">><<endevent>><</link>>
 		<</if>>
 	<<elseif ($worn.under_lower.type.includes("swim") or $worn.lower.type.includes("swim"))
-	and ($worn.under_upper.type.includes("swim") or $worn.upper.type.includes("swim") or ($worn.under_upper.type.includes("naked") and $worn.upper.type.includes("naked") and $player.gender_appearance is "m"))
+	and ($worn.under_upper.type.includes("swim") or $worn.upper.type.includes("swim") or ($worn.under_upper.type.includes("naked") and $worn.upper.type.includes("naked") and ($player.gender_appearance is "m" or $swimCrossdressPermission is true)))
 	and (($worn.upper.type.includes("naked") or $worn.upper.type.includes("swim")) and ($worn.lower.type.includes("naked") or $worn.lower.type.includes("swim")))>>
 		<<npc Mason>><<person1>>
 		<<if $swimmingattended is 1>>
@@ -133,14 +133,18 @@
 			<<link [[Ask to swim naked|School Pool Ask Naked]]>><<fameexhibitionism 15>><<endevent>><<set $swimnudecounter += 1>><</link>><<exhibitionist5>>
 			<br>
 		<</if>>
-		<<if $player.gender is "f" or ($player.gender is "h" and $breastsize gte 3)>>
-			<<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><</link>>
-			<br>
+		<<if $player.gender is "f" or ($player.gender is "h" and $player.gender_appearance is "f")>>
+			<<if $swimCrossdressPermission is undefined>>
+				<<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><</link>>
+				<br>
+			<</if>>
 			<<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
 			<br>
 		<<else>>
-			<<link [[Say you only have a girl's swimming costume|School Pool Wrong]]>><</link>>
-			<br>
+			<<if $swimCrossdressPermission is undefined>>
+				<<link [[Say you only have a girl's swimming costume|School Pool Wrong]]>><</link>>
+				<br>
+			<</if>>
 			<<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
 			<br>
 		<</if>>
@@ -224,7 +228,7 @@
 	<</if>>
 	<br><br>
 
-	<<person1>><<His>> blush deepens as the class breaks into excitement. "A-again?" <<he>> squeaks. Before he can turn around,
+	<<person1>><<His>> blush deepens as the class breaks into excitement. "A-again?" <<he>> squeaks. Before <<he>> can turn around,
 	a <<person2>><<person>> also leaves the changing rooms naked.
 	<br><br>
 
@@ -365,21 +369,33 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 <</if>>
 
 :: School Pool Wrong
-<<set $outside to 0>><<set $location to "pool">><<schooleffects>><<effects>>
+<<set $outside to 0>><<set $location to "pool">><<set $swimCrossdressPermission to true>><<set _alreadyWearing to false>><<schooleffects>><<effects>>
 
 You speak in a low voice, so only the teacher will hear you.
 
-<<if $player.gender is "f" or ($player.gender is "h" and $breastsize gte 3)>>
+<<if $player.gender is "f" or ($player.gender is "h" and $player.gender_appearance is "f")>>
 	<<if $player.gender_appearance is "f" or $genderknown.includes("Mason")>>
 		"I only have a pair of boy's shorts, <<sir>>."
 		<br><br>
-		<<He>> blushes. "Oh. That's better than nothing. Go get changed." <<He>> turns back to <<his>> class.
+		<<He>> blushes. "Oh. That's better than nothing. 
+		<<if ($worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")) and 
+			($worn.lower.type.includes("swim") or ($worn.lower.type.includes("naked") and $worn.under_lower.type.includes("swim")))>>
+			Go ahead." You join the rest of the class.<<set _alreadyWearing to true>>
+		<<else>>
+			Go get changed." <<He>> turns back to <<his>> class.
+		<</if>>
 		<br><br>
 	<<else>>
 		"I only have a pair of boy's shorts, <<sir>>."
 		<br><br>
 		<<He>> looks at you blankly. "I don't see the..." <<He>> blushes as realisation dawns on <<his>> youthful face.
-		"Oh. That's better than nothing, and it's not like you have a problem dressing as a boy. Go get changed." <<He>> turns back to <<his>> class.
+		"Oh. That's better than nothing, and it's not like you have a problem dressing as a boy.
+		<<if ($worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")) and 
+			($worn.lower.type.includes("swim") or ($worn.lower.type.includes("naked") and $worn.under_lower.type.includes("swim")))>>
+			Go ahead." You join the rest of the class.<<set _alreadyWearing to true>>
+		<<else>>
+			Go get changed." <<He>> turns back to <<his>> class.
+		<</if>>
 		<<set $genderknown.pushUnique("Mason")>>
 		<br><br>
 	<</if>>
@@ -399,10 +415,14 @@ You speak in a low voice, so only the teacher will hear you.
 	<</if>>
 <</if>>
 
-<<maleicon>><<link [[Boy's changing room|School Boy Changing Room]]>><<endevent>><</link>>
-<br>
-<<femaleicon>><<link [[Girl's changing room|School Girl Changing Room]]>><<endevent>><</link>>
-<br>
+<<if _alreadyWearing>>
+	<<link [[Next|Swimming Lesson]]>><<endevent>><</link>>
+<<else>>
+	<<maleicon>><<link [[Boy's changing room|School Boy Changing Room]]>><<endevent>><</link>>
+	<br>
+	<<femaleicon>><<link [[Girl's changing room|School Girl Changing Room]]>><<endevent>><</link>>
+	<br>
+<</if>>
 
 :: School Pool Spare
 <<set $outside to 0>><<set $location to "pool">><<schooleffects>><<effects>>
