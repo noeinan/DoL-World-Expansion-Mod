@@ -1,3 +1,6 @@
+/*noeinan mod START */
+/*Added Bus Station Bench for homeless sleeping */
+
 :: Bus Station
 
 <<set $outside to 0>><<set $location to "town">><<effects>>
@@ -30,6 +33,8 @@ You are in the bus station.
 					<<smugglerdifficultyactions>>
 				<</if>>
 				<br>
+				<<link [[Sleep on a bench->Bus Station Bench]]>><</link>>
+				<br>
 				<<link [[Harvest Street (0:02)->Bus Station Front Door]]>><<pass 2>><</link>>
 				<br>
 				<<link [[Leave via back door (0:02)|Industrial alleyways]]>><<pass 2>><</link>>
@@ -57,12 +62,15 @@ You are in the bus station.
 				<<smugglerdifficultyactions>>
 			<</if>>
 			<br>
-
+			<<link [[Sleep on a bench->Bus Station Bench]]>><</link>>
+			<br>
 			<<link [[Harvest Street (0:02)->Bus Station Front Door]]>><<pass 2>><</link>>
 			<br>
 			<<link [[Leave via back door (0:02)|Bus Station Back Door]]>><<pass 2>><</link>>
 			<br><br>
 		<<else>>
+			<<link [[Sleep on a bench->Bus Station Bench]]>><</link>>
+			<br>
 			<<link [[Harvest Street (0:02)->Harvest Street]]>><<pass 2>><</link>>
 			<br>
 			<<link [[Leave via back door (0:02)|Bus Station Back Door]]>><<pass 2>><</link>>
@@ -71,6 +79,76 @@ You are in the bus station.
 	<</if>>
 <</if>>
 <<set $eventskip to 0>>
+
+:: Bus Station Bench
+<<set $outside to 0>><<set $location to "town">><<effects>>
+
+<<if $daystate is "day">>
+	<<if random(2) is 0>>
+		You wait for someone to get up and take their place.
+	<<elseif random(2) is 1>>
+		You manage to find an empty spot.
+	<<else>>
+		You squeeze in between two people.
+	<</if>>
+	<br><br>
+
+	<<link [[Sleep until dusk|Farm Barn Sleep]]>><</link>><<ltiredness>>
+	<br>
+<<elseif $daystate is "night">>
+	You lay down on an empty bench, trying to make yourself comfortable. 
+	<br><br>
+
+	<<link [[Sleep until dawn|Farm Barn Sleep]]>><</link>><<ltiredness>>
+	<br>
+<<else>>
+	You sit on an empty bench, away from the other people. 
+	<br><br>
+
+<</if>>
+
+<<link [[Sleep for 4 hours|Station Sleep]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 3 hours|Station Sleep]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 2 hours|Station Sleep]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 1 hours|Station Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 1>>)<<ltiredness>>
+<br><br>
+<<link [[Get up|Bus Station]]>><</link>>
+<br><br>
+
+
+:: Station Sleep 
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte 9000>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasmpassage>><<set _orgasm to true>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep soundly.
+	<</if>>
+<</if>>
+
+<<sleepeffects>>
+
+<<link [[Next|Bus Station Bench]]>><</link>>
+<br><br>
+
 
 :: Bus Station Livestock
 <<effects>>
