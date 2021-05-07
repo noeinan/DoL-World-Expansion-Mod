@@ -129,7 +129,7 @@ Total: <<print $blackjack.playersScore>>
 <<if $blackjack.turn is "players" and $blackjack.playersScore lte 20>>
 	<<link [[Hit|$passage]]>><<set $blackjack.playersState to "hit">><</link>> |
 	<<link [[Stand|$passage]]>><<set $blackjack.turn to "dealer">><<set $blackjack.playersState to "stand">><</link>> |
-	<<link "Help">><<overlayReplace "blackjackHelp">><</link>>
+	<<link "Help and Options">><<overlayReplace "blackjackHelp">><</link>>
 <<elseif $blackjack.turn is "players" and $blackjack.playersScore gt 21>>
 	Bust
 	<br>
@@ -188,6 +188,68 @@ Total: <<print $blackjack.playersScore>>
 	<li>Stand to end your turn, hit to gain another card.</li>
 	<li>The dealer always plays by specific rules, use that to your advantage. The dealer must hit when their score is below 17.</li>
 </ul>
+
+<h3>Options</h3>
+<<link [[Save and close|$passage]]>><</link>>
+<br><br>
+Back cover:
+<br>
+
+<div id="card-cover-options" @class="'clothes-' + $cardcover.colour">
+	<<for _i = 0; _i <= 7; _i++>>
+		<div @class="'div-link card cardcover' + _i + ($cardcover.style == _i ? ' active' : '')">
+			<<if _i == 0>>
+				<span class="number">?</span>
+				<span class="suit">?</span>
+			<</if>>
+			<<capture _i>>
+				<<link "">>
+					<<set $cardcover.style = _i>>
+					<<run $('#card-cover-options .card').removeClass('active')>>
+					<<run $('#card-cover-options .card:nth-child(' + (_i+1) + ')').addClass('active')>>
+				<</link>>
+			<</capture>>
+		</div>
+	<</for>>
+</div>
+<label>
+	Colour:
+	<<listbox "$cardcover.colour" autoselect>>
+		<<option "Black" "black">>
+		<<option "Navy" "navy">>
+		<<option "Blue Steel" "blue-steel">>
+		<<option "Light Grey" "grey">>
+		<<option "White" "pale-white">>
+		<<option "Silver" "silver">>
+		<<option "Black & White" "white">>
+		<<option "Gold" "gold">>
+		<<option "Black & Orange" "yellow">>
+		<<option "Yellow" "pale-yellow">>
+		<<option "Bronze" "bronze">>
+		<<option "Brown" "brown">>
+		<<option "Sand" "sand">>
+		<<option "Olive" "olive">>
+		<<option "Orange" "tangerine">>
+		<<option "Red Orange" "pale-tangerine">>
+		<<option "Red" "red">>
+		<<option "Green" "green">>
+		<<option "Light Green" "light-green">>
+		<<option "Blue" "blue">>
+		<<option "Light Blue" "light-blue">>
+		<<option "Pink" "pink">>
+		<<option "Light Pink" "light-pink">>
+		<<option "Purple" "purple">>
+		<<option "Teal" "teal">>
+	<</listbox>>
+</label>
+
+<<run $(() => {
+	linkifyDivs('#card-cover-options');
+	$('#listbox-cardcovercolour').on('change', () => { 
+		$('#card-cover-options').removeClass().addClass('clothes-' + $cardcover.colour) 
+	});
+})>>
+
 <</widget>>
 
 :: Widgets High Low [widget]
@@ -303,10 +365,12 @@ Your current score: <<print $highlow.correct>>
 
 <<widget "cardImage">>
 <<if $args[0]>>
-	<div class="card">
+	<div @class="'card ' + ($args[1] ? 'cardcover' + $cardcover.style : '') + ' clothes-' + $cardcover.colour">
 		<<if $args[1]>>
-			<span class="number">?</span>
-			<span class="suit">?</span>
+			<<if $cardcover.style == 0>>
+				<span class="number">?</span>
+				<span class="suit">?</span>
+			<</if>>
 		<<else>>
 			<<if $args[0].suits is "Diamonds">>
 				<<set _suits to "diams">>
