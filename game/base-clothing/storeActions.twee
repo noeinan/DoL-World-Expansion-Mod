@@ -255,136 +255,99 @@
 
 <<set _stripOptions to {}>>
 
-<<if $worn.over_upper.cursed isnot 1 and $worn.over_lower.cursed isnot 1>>
-	<<if $worn.under_lower.exposed lte 0 or $worn.lower.exposed lte 0>>
-		<<if _overOutfit is true>>
-			<<set _stripOptions[$worn.over_upper.name] to "stripOverOutfit">>
-		<</if>>
-	<<else>>
-		<<if _overOutfit is true and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.over_upper.name] to "stripOverOutfit">>
-		<</if>>
+<!-- set up the checks -->
+<<set _over_upper_protected to $worn.over_upper.exposed lt 2 or $player.gender_appearance_without_overwear isnot "f";
+	_over_lower_protected to $worn.over_lower.exposed lt 2 and !$worn.over_lower.skirt;
+	_upper_protected to $worn.upper.exposed lt 2 or $player.gender_appearance_without_overwear isnot "f";
+	_lower_protected to $worn.lower.exposed lt 2 and !$worn.lower.skirt;
+	_under_upper_protected to !$worn.under_upper.exposed or $player.gender_appearance_without_overwear isnot "f";
+	_under_lower_protected to !$worn.under_lower.exposed;
+>>
+
+<<if !$worn.over_upper.cursed and !$worn.over_lower.cursed and _overOutfit>>
+<!-- over outfit can be stripped -->
+	<<if $exhibitionism gte 15 or ((_lower_protected or _under_lower_protected) and (_upper_protected or _under_upper_protected))>>
+	<!-- pc will still be protected after stripping (or won't care) -->
+		<<set _stripOptions[$worn.over_upper.name] to "stripOverOutfit">>
 	<</if>>
 <</if>>
 
-<<if $worn.over_upper.name isnot "naked" and $worn.over_upper.cursed isnot 1>>
-	<<if _overOutfit is false and !$worn.over_upper.type.includes("naked")>>
-		<<if $worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked") and $player.gender_appearance_without_overwear is "f" and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.upper.name] to "stripOverUpper">>
-		<<else>>
-			<<set _stripOptions[$worn.upper.name] to "stripOverUpper">>
-		<</if>>
+<<if !$worn.over_upper.cursed and $worn.over_upper.name isnot "naked" and !_overOutfit>>
+	<!-- over_upper can be stripped -->
+	<<if $exhibitionism gte 15 or _upper_protected or _under_upper_protected>>
+		<<set _stripOptions[$worn.upper.name] to "stripOverUpper">>
 	<</if>>
 <</if>>
 
-<<if $worn.over_lower.name isnot "naked" and $worn.over_lower.cursed isnot 1>>
-	<<if !$worn.under_lower.type.includes("naked") or !$worn.lower.type.includes("naked")>>
-		<<if _overOutfit is false and !$worn.lower.type.includes("naked")>>
-			<<set _stripOptions[$worn.over_lower.name] to "stripOverLower">>
-		<</if>>
-	<<else>>
-		<<if _overOutfit is false and !$worn.lower.type.includes("naked") and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.over_lower.name] to "stripOverLower">>
-		<</if>>
+<<if !$worn.over_lower.cursed and $worn.over_lower.name isnot "naked" and !_overOutfit>>
+	<!-- over_lower can be stripped -->
+	<<if $exhibitionism gte 15 or _lower_protected or _under_lower_protected>>
+		<<set _stripOptions[$worn.over_lower.name] to "stripOverLower">>
 	<</if>>
 <</if>>
 
-<<if $worn.upper.cursed isnot 1 and $worn.lower.cursed isnot 1>>
-	<<if $worn.under_lower.exposed lte 0>>
-		<<if _middleOutfit is true>>
-			<<set _stripOptions[$worn.upper.name] to "stripOutfit">>
-		<</if>>
-	<<else>>
-		<<if _middleOutfit is true and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.upper.name] to "stripOutfit">>
-		<</if>>
+<<if !$worn.upper.cursed and !$worn.lower.cursed and _middleOutfit>>
+	<<if $exhibitionism gte 15 or ((_over_lower_protected or _under_lower_protected) and (_over_upper_protected or _under_upper_protected))>>
+		<<set _stripOptions[$worn.upper.name] to "stripOutfit">>
 	<</if>>
 <</if>>
 
-<<if $worn.upper.cursed isnot 1>>
-	<<if _middleOutfit is false and !$worn.upper.type.includes("naked")>>
-		<<if $worn.under_upper.type.includes("naked") and $player.gender_appearance_without_overwear is "f" and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.upper.name] to "stripUpper">>
-		<<else>>
-			<<set _stripOptions[$worn.upper.name] to "stripUpper">>
-		<</if>>
+<<if $worn.upper.cursed isnot 1 and $worn.upper.name isnot "naked" and !_middleOutfit>>
+	<<if $exhibitionism gte 15 or _over_upper_protected or _under_upper_protected>>
+		<<set _stripOptions[$worn.upper.name] to "stripUpper">>
 	<</if>>
 <</if>>
 
-<<if $worn.lower.cursed isnot 1>>
-	<<if !$worn.under_lower.type.includes("naked")>>
-		<<if _middleOutfit is false and $worn.lower.name isnot "naked">>
-			<<set _stripOptions[$worn.lower.name] to "stripLower">>
-		<</if>>
-	<<else>>
-		<<if _middleOutfit is false and $worn.lower.name isnot "naked" and $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.lower.name] to "stripLower">>
-		<</if>>
+<<if !$worn.lower.cursed and $worn.lower.name isnot "naked"	and !_middleOutfit>>
+	<<if $exhibitionism gte 15 or _over_lower_protected or _under_lower_protected>>
+		<<set _stripOptions[$worn.lower.name] to "stripLower">>
 	<</if>>
 <</if>>
 
-<<if $worn.under_upper.cursed isnot 1 and $worn.under_lower.cursed isnot 1>>
-	<<if _underOutfit is true and $exhibitionism gte 15 and $worn.upper.exposed gte 2 and $worn.lower.exposed gte 2>>
+<<if !$worn.under_upper.cursed and !$worn.under_lower.cursed and _underOutfit>>
+	<<if $exhibitionism gte 15 or ((_over_lower_protected or _lower_protected) and (_over_upper_protected or _upper_protected))>>
 		<<set _stripOptions[$worn.under_upper.name] to "stripUnderOutfit">>
 	<</if>>
 <</if>>
 
-<<if $worn.under_upper.cursed isnot 1>>
-	<<if _underOutfit is false and $worn.under_upper.name isnot "naked" and $worn.upper.exposed gte 2>>
-		<<if $player.gender_appearance_without_overwear isnot "f">>
-			<<set _stripOptions[$worn.under_upper.name] to "stripUnderUpper">>
-		<<elseif $exhibitionism gte 15>>
-			<<set _stripOptions[$worn.under_upper.name] to "stripUnderUpper">>
-		<</if>>
+<<if !$worn.under_upper.cursed and $worn.under_upper.name isnot "naked" and !_underOutfit>>
+	<<if $exhibitionism gte 15 or _over_upper_protected or _upper_protected>>
+		<<set _stripOptions[$worn.under_upper.name] to "stripUnderUpper">>
 	<</if>>
 <</if>>
 
-<<if $worn.under_lower.cursed isnot 1>>
-	<<if $worn.under_lower.name isnot "naked" and _underOutfit is false and $exhibitionism gte 15 and (($worn.over_lower.skirt is 1 or $worn.over_lower.exposed gte 2) and ($worn.lower.skirt is 1 or $worn.lower.exposed gte 2))>>
+<<if !$worn.under_lower.cursed and $worn.under_lower.name isnot "naked" and !_underOutfit>>
+	<<if $exhibitionism gte 15 or _over_lower_protected or _lower_protected>>
 		<<set _stripOptions[$worn.under_lower.name] to "stripUnderLower">>
 	<</if>>
 <</if>>
 
-<<if $worn.legs.cursed isnot 1 and _otherOutfits.legs is false>>
-	<<if !$worn.legs.type.includes("naked")>>
-		<<set _stripOptions[$worn.legs.name] to "stripLegs">>
-	<</if>>
+<<if !$worn.legs.cursed and !_otherOutfits.legs and $worn.legs.name isnot "naked">>
+	<<set _stripOptions[$worn.legs.name] to "stripLegs">>
 <</if>>
 
-<<if $worn.feet.cursed isnot 1 and _otherOutfits.feet is false>>
-	<<if !$worn.feet.type.includes("naked")>>
-		<<set _stripOptions[$worn.feet.name] to "stripFeet">>
-	<</if>>
+<<if !$worn.feet.cursed and !_otherOutfits.feet and $worn.feet.name isnot "naked">>
+	<<set _stripOptions[$worn.feet.name] to "stripFeet">>
 <</if>>
 
-<<if $worn.neck.cursed isnot 1 and _otherOutfits.neck is false>>
-	<<if !$worn.neck.type.includes("naked")>>
-		<<set _stripOptions[$worn.neck.name] to "stripNeck">>
-	<</if>>
+<<if !$worn.neck.cursed and !_otherOutfits.neck and $worn.neck.name isnot "naked">>
+	<<set _stripOptions[$worn.neck.name] to "stripNeck">>
 <</if>>
 
-<<if $worn.over_head.cursed isnot 1 and _otherOutfits.over_head is false>>
-	<<if !$worn.over_head.type.includes("naked")>>
-		<<set _stripOptions[$worn.over_head.name] to "stripOverHead">>
-	<</if>>
+<<if !$worn.over_head.cursed and !_otherOutfits.over_head and $worn.over_head.name isnot "naked">>
+	<<set _stripOptions[$worn.over_head.name] to "stripOverHead">>
 <</if>>
 
-<<if $worn.head.cursed isnot 1 and _otherOutfits.head is false>>
-	<<if !$worn.head.type.includes("naked")>>
-		<<set _stripOptions[$worn.head.name] to "stripHead">>
-	<</if>>
+<<if !$worn.head.cursed and !_otherOutfits.head and $worn.head.name isnot "naked">>
+	<<set _stripOptions[$worn.head.name] to "stripHead">>
 <</if>>
 
-<<if $worn.face.cursed isnot 1 and _otherOutfits.face is false>>
-	<<if !$worn.face.type.includes("naked")>>
-		<<set _stripOptions[$worn.face.name] to "stripFace">>
-	<</if>>
+<<if !$worn.face.cursed and !_otherOutfits.face and $worn.face.name isnot "naked">>
+	<<set _stripOptions[$worn.face.name] to "stripFace">>
 <</if>>
 
-<<if $worn.hands.cursed isnot 1 and _otherOutfits.hands is false>>
-	<<if !$worn.hands.type.includes("naked")>>
-		<<set _stripOptions[$worn.hands.name] to "stripHands">>
-	<</if>>
+<<if !$worn.hands.cursed and !_otherOutfits.hands and $worn.hands.name isnot "naked">>
+	<<set _stripOptions[$worn.hands.name] to "stripHands">>
 <</if>>
 
 <<if Object.keys(_stripOptions).length gt 0>>

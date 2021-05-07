@@ -2226,33 +2226,28 @@ or $args[0] is "force">>
 	<</if>>
 <</widget>>
 
-<<widget "addfemininityfromfactor">>
-	<<set _femininity_mod to $args[0]>>
-	<<set _factor_description to $args[1]>>
-
-	<<set _apparent_femininity += _femininity_mod>>
-	<<run _gender_appearance_factors.push({
-		femininity: _femininity_mod,
-		factor: _factor_description
-	})>>
+<<widget "addfemininityfromfactor">>/* (femininity boost, factor description, no_overwear_check) */
+	<<if $args[2]>>
+		<<run _gender_appearance_factors_noow.push({femininity: $args[0], factor: $args[1]})>>
+		<<set _apparent_femininity_noow += $args[0]>>
+	<<else>>
+		<<run _gender_appearance_factors.push({femininity: $args[0], factor: $args[1]})>>
+		<<set _apparent_femininity += $args[0]>>
+	<</if>>
 <</widget>>
 
-<<widget "addfemininityofclothingarticle">>
-	<<set _clothing_article to $args[0]>>
-
-	<<if _clothing_article.femininity>>
-		<<addfemininityfromfactor `_clothing_article.femininity` `_clothing_article.name_cap`>>
+<<widget "addfemininityofclothingarticle">>/* (clothing_article, no_overwear_check) */
+	<<if $args[0].femininity>>
+		<<addfemininityfromfactor `$args[0].femininity` `$args[0].name_cap` $args[1]>>
 	<</if>>
 <</widget>>
 
 <!-- Calculate the player's gender appearance -->
 <<widget "genderappearancecheck">>
-	<<set _ignore_overwear to $args[0] and $args[0] is "ignoreoverwear">>
-
 	<!-- Calculate bulge size -->
 	<<set _penis_compressed to $penisexist and $worn.genitals.type.includes("hidden")>>
 	<<if $worn.genitals.type.includes("cage")>>
-		<<set _bulge_size to $penissize + 1>>
+		<<set _bulge_size to Math.clamp($penissize, 0, Infinity)>>
 	<<else>>
 		<<if !$penisexist>>
 			<<set _erection_state to 0>>
@@ -2265,7 +2260,7 @@ or $args[0] is "force">>
 		<<else>>
 			<<set _erection_state to 2>>
 		<</if>>
-		<<set _bulge_size to ($penissize + 1) * _erection_state>>
+		<<set _bulge_size to Math.clamp($penissize * _erection_state, 0, Infinity)>>
 	<</if>>
 
 	<!-- Determine how visible the player's bottom is -->
@@ -2276,77 +2271,11 @@ or $args[0] is "force">>
 		<<set _bottom_visibility to 1>>
 	<</if>>
 
-	<!-- Special handling to allow simulating removal of top clothing layer -->
-	<<set _lower_visible to _ignore_overwear or $worn.over_lower.exposed gte 2>>
-	<<set _upper_visible to _ignore_overwear or $worn.over_upper.exposed gte 2>>
-	<<set _under_lower_visible to _ignore_overwear or $worn.lower.exposed gte 2>>
-	<<set _under_upper_visible to _ignore_overwear or $worn.upper.exposed gte 2>>
 
 	<!-- Gender appearance factors -->
 	<<set _gender_appearance_factors to []>>
 	<<set _apparent_femininity to 0>>
 	<<set _breast_indicator to 0>>
-
-	<!-- Lower clothing, bulge, and genitals -->
-	<<addfemininityofclothingarticle $worn.over_lower>>
-	<<if _lower_visible>>
-		<<addfemininityofclothingarticle $worn.lower>>
-	<</if>>
-	<<if _under_lower_visible and _lower_visible>>
-		<!-- Lower underwear is visible -->
-		<<addfemininityofclothingarticle $worn.under_lower>>
-		<<if $worn.under_lower.exposed gte 1>>
-			<!-- Genitals slot is visible -->
-			<<addfemininityofclothingarticle $worn.genitals>>
-			<<if $worn.genitals.exposed gte 1>>
-				<!-- Bare genitals are visible -->
-				<<if $penisexist is 1>>
-					<<addfemininityfromfactor -100000 "Penis visible">>
-				<</if>>
-				<<if $vaginaexist is 1>>
-					<<addfemininityfromfactor 100000 "Vagina visible">>
-				<</if>>
-			<</if>>
-		<<else>>
-			<!-- Bottom visible through underwear -->
-			<<set _bottom_visibility *= 0.75>>
-			<!-- Bulge visible through underwear -->
-			<<addfemininityfromfactor `-Math.clamp(
-				(_bulge_size - 1) * 100, 0, Infinity
-			)` "Bulge visible through underwear">>
-		<</if>>
-	<<else>>
-		<!-- Bottom covered by lower clothes -->
-		<<set _bottom_visibility *= 0.75>>
-		<!-- Bulge covered by lower clothes -->
-		<<addfemininityfromfactor `-Math.clamp(
-			(_bulge_size - 4) * 100, 0, Infinity
-		)` "Bulge visible through clothing">>
-	<</if>>
-	<!-- Upper clothing and breasts -->
-	<<addfemininityofclothingarticle $worn.over_upper>>
-	<<if _upper_visible>>
-		<<addfemininityofclothingarticle $worn.upper>>
-	<</if>>
-	<<if _under_upper_visible and _upper_visible>>
-		<!-- Upper underwear is visible -->
-		<<addfemininityofclothingarticle $worn.under_upper>>
-		<<if $worn.under_upper.exposed gte 1>>
-			<!-- Exposed breasts -->
-			<<set _breast_indicator to 1>>
-			<<addfemininityfromfactor `($breastsize - 0.5) * 100` "Exposed breasts">>
-		<<elseif !$worn.under_upper.type.includes("chest_bind")>>
-			<!-- Breasts covered by only underwear -->
-			<<addfemininityfromfactor `Math.clamp(
-				($breastsize - 2) * 100, 0, Infinity
-			)` "Breast size visible through underwear">>
-		<</if>>
-	<<elseif !$worn.under_upper.type.includes("chest_bind")>>
-		<!-- Breast fully covered -->
-		<<addfemininityfromfactor `Math.clamp(
-			($breastsize - 4) * 100, 0, Infinity
-		)` "Breast size visible through clothing">>
-	<</if>>
 
 	<!-- Head clothing -->
 	<<addfemininityofclothingarticle $worn.over_head>>
@@ -2383,18 +2312,104 @@ or $args[0] is "force">>
 		`"Posture (x" + _acting_multiplier + " effectiveness due to English skill)"`
 	>>
 
+	<!-- Special handling for calculating topless gender -->
+	<<set _over_lower_protected to $worn.over_lower.exposed lt 2;
+		_lower_protected to $worn.lower.exposed lt 2;
+		_under_lower_protected to !$worn.under_lower.exposed;
+		_apparent_femininity_noow to _apparent_femininity;
+		_gender_appearance_factors_noow to clone(_gender_appearance_factors);
+		_over_lower_femininity to ($worn.over_lower.femininity ? $worn.over_lower.femininity : 0);
+		_lower_femininity to ($worn.lower.femininity ? $worn.lower.femininity : 0);
+		_under_lower_femininity to ($worn.under_lower.femininity ? $worn.under_lower.femininity : 0);
+	>>
+	<!-- find maximum possible femininity of the last lower piece you can strip down to, and add it to the counter -->
+	<<addfemininityfromfactor `Math.max(_over_lower_femininity, _lower_femininity, _under_lower_femininity)` "Lower clothes" noow>>
+	<!-- bulge and genitals checks for topless gender -->
+	<<if _under_lower_protected>>
+		<<addfemininityfromfactor `-_bulge_size * 100` "Bulge visible through underwear" noow>>
+	<<elseif _over_lower_protected or _lower_protected>>
+		<<addfemininityfromfactor `-Math.clamp((_bulge_size - 3) * 100, 0, Infinity)` "Bulge visible through clothing" noow>>
+	<<elseif $worn.genitals.exposed>>
+		<<addfemininityfromfactor  `$vaginaexist * 100000 - $penisexist * 100000` "Genitals exposed" noow>>
+	<</if>>
+	<!-- plain breasts factor -->
+	<<addfemininityfromfactor `($breastsize - 0.5) * 100` "Exposed breasts" noow>>
+
+	<!-- Lower clothing, bulge, and genitals -->
+	<<addfemininityofclothingarticle $worn.over_lower>>
+	<<if !_over_lower_protected>>
+		<<addfemininityofclothingarticle $worn.lower>>
+	<</if>>
+	<<if !_over_lower_protected and !_lower_protected>>
+		<!-- Lower underwear is visible -->
+		<<addfemininityofclothingarticle $worn.under_lower>>
+		<<if !_under_lower_protected>>
+			<!-- Genitals slot is visible -->
+			<<addfemininityofclothingarticle $worn.genitals>>
+			<<if $worn.genitals.exposed>>
+				<!-- Bare genitals are visible -->
+				<<if $penisexist>><<addfemininityfromfactor -100000 "Penis visible">><</if>>
+				<<if $vaginaexist>><<addfemininityfromfactor 100000 "Vagina visible">><</if>>
+			<</if>>
+		<<else>>
+			<!-- Bottom visible through underwear -->
+			<<set _bottom_visibility *= 0.75>>
+			<!-- Bulge visible through underwear -->
+			<<addfemininityfromfactor `-_bulge_size * 100` "Bulge visible through underwear">>
+		<</if>>
+	<<else>>
+		<!-- Bottom covered by lower clothes -->
+		<<set _bottom_visibility *= 0.75>>
+		<!-- Bulge covered by lower clothes -->
+		<<addfemininityfromfactor `-Math.clamp((_bulge_size - 3) * 100, 0, Infinity)` "Bulge visible through clothing">>
+	<</if>>
+
+	<!-- Upper clothing and breasts -->
+	<<addfemininityofclothingarticle $worn.over_upper>>
+	<<if $worn.over_upper.exposed gte 2>>
+		<<addfemininityofclothingarticle $worn.upper>>
+	<</if>>
+	<<if $worn.over_upper.exposed gte 2 and $worn.upper.exposed gte 2>>
+		<!-- Upper underwear is visible -->
+		<<addfemininityofclothingarticle $worn.under_upper>>
+		<<if $worn.under_upper.exposed gte 1>>
+			<!-- Exposed breasts -->
+			<<set _breast_indicator to 1>>
+			<<addfemininityfromfactor `($breastsize - 0.5) * 100` "Exposed breasts">>
+		<<elseif !$worn.under_upper.type.includes("chest_bind")>>
+			<!-- Breasts covered by only underwear -->
+			<<addfemininityfromfactor `Math.clamp(
+				($breastsize - 2) * 100, 0, Infinity
+			)` "Breast size visible through underwear">>
+		<</if>>
+	<<elseif !$worn.under_upper.type.includes("chest_bind")>>
+		<!-- Breast fully covered -->
+		<<addfemininityfromfactor `Math.clamp(
+			($breastsize - 4) * 100, 0, Infinity
+		)` "Breast size visible through clothing">>
+	<</if>>
+
+	<!-- Body writing -->
 	<<bodywriting_exposure_check>>
 	<<set _skinValue to 0>>
+	<<set _skinValue_noow to 0>>
 	<<for _label, _value range $skin>>
-		<<if _skin_array.includes(_label) or _ignore_overwear>>
+		<<if _skin_array.includes(_label)>>
 			<<if _value.gender is "m">>
 				<<set _skinValue -= 50 * (_value.pen isnot "pen"?2:1)>>
 			<<elseif _value.gender is "f">>
 				<<set _skinValue += 50 * (_value.pen isnot "pen"?2:1)>>
 			<</if>>
+		<<else>>
+			<<if _value.gender is "m">>
+				<<set _skinValue_noow -= 50 * (_value.pen isnot "pen"?2:1)>>
+			<<elseif $skin.breasts.gender is "f">>
+				<<set _skinValue_noow += 50 * (_value.pen isnot "pen"?2:1)>>
+			<</if>>
 		<</if>>
 	<</for>>
 	<<addfemininityfromfactor _skinValue `"Visible skin markings"`>>
+	<<addfemininityfromfactor `_skinValue + _skinValue_noow` `"Visible skin markings"` noow>>
 
 	<<if _apparent_femininity gt 0>>
 		<<set _gender_appearance to "f">>
@@ -2403,27 +2418,32 @@ or $args[0] is "force">>
 	<<else>>
 		<<set _gender_appearance to $player.gender>>
 	<</if>>
+
+	<<if _apparent_femininity_noow gt 0>>
+		<<set _gender_appearance_noow to "f">>
+	<<elseif _apparent_femininity_noow lt 0>>
+		<<set _gender_appearance_noow to "m">>
+	<<else>>
+		<<set _gender_appearance_noow to $player.gender>>
+	<</if>>
 <</widget>>
 
 <<widget "exposedcheck">>
+	<<genderappearancecheck>>
+	<<set $player.gender_appearance to _gender_appearance>>
+	<<run _gender_appearance_factors.sort((a, b) => a.femininity > b.femininity)>>
+	<<set $player.gender_appearance_factors to _gender_appearance_factors>>
+	<<set $player.femininity to _apparent_femininity>>
 
-<<set $breastindicator to 0>>
+	<<set $player.gender_appearance_without_overwear to _gender_appearance_noow>>
+	<<run _gender_appearance_factors_noow.sort((a, b) => a.femininity > b.femininity)>>
+	<<set $player.gender_appearance_without_overwear_factors to _gender_appearance_factors_noow>>
+	<<set $player.femininity_without_overwear to _apparent_femininity_noow>>
 
-<<genderappearancecheck "ignoreoverwear">>
-<<set $player.gender_appearance_without_overwear to _gender_appearance>>
-<<run _gender_appearance_factors.sort((a, b) => a.femininity > b.femininity)>>
-<<set $player.gender_appearance_without_overwear_factors to _gender_appearance_factors>>
-<<set $player.femininity_without_overwear to _apparent_femininity>>
+	<<set $breastindicator to _breast_indicator>>
 
-<<genderappearancecheck>>
-<<set $player.gender_appearance to _gender_appearance>>
-<<run _gender_appearance_factors.sort((a, b) => a.femininity > b.femininity)>>
-<<set $player.gender_appearance_factors to _gender_appearance_factors>>
-<<set $player.femininity to _apparent_femininity>>
-<<set $breastindicator to _breast_indicator>>
-
-<<apparentbreastsizecheck>>
-<<apparentbottomsizecheck>>
+	<<apparentbreastsizecheck>>
+	<<apparentbottomsizecheck>>
 
 <</widget>>
 
