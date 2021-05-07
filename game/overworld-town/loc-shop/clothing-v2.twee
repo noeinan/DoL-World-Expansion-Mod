@@ -53,7 +53,10 @@
 
 	<!-- List of clothes -->
 	<<set _items = setup.clothes[$clothingShopSlot].filter(x => x.shop.includes(_shopLocation) and x.outfitSecondary is undefined
-		and ((_outfits and x.outfitPrimary isnot undefined) or (!_outfits and x.outfitPrimary is undefined)))>>
+		and ((_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.contains("lower"))) 
+			or 
+			(!_outfits and (x.outfitPrimary is undefined or Object.keys(x.outfitPrimary).every(secSlot => !secSlot.contains("lower")))))
+	)>>
 	<<set _items = applyClothingShopFilters(_items)>>
 	<<set _maxPage = Math.ceil(_items.length / $shopItemsPerPage)>>
 
@@ -969,7 +972,7 @@
 							<<set _styleS = getCustomColourStyle('secondary')>>
 						<</if>>
 						<div @class="'clothes-' + _acc_col.replace(/ /g, '-')" @style="_styleS">
-							<<if _item.accessory>>
+							<<if _item.accessory and _slot != "hands">>
 								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/acc.png'">
 							<</if>>
 							<<if _item.breast_acc_img>>
@@ -1018,7 +1021,11 @@
 <</widget>>
 
 <<widget "updatesidebarmoney">>
-	<<replace #stats>><<statsCaption>><</replace>>
+	<<if $images>>
+		<<replace #stats>><<statsCaption>><</replace>>
+	<<else>>
+		<<replace #money-noimg>><<statsMoneyNoImg>><</replace>>
+	<</if>>
 <</widget>>
 
 <<widget "loadFiltersMenu">>

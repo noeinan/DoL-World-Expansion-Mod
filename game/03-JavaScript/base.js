@@ -60,6 +60,10 @@ Mousetrap.bind(["z", "n", "enter"], function () {
 	$("#passages #next a.macro-link").trigger("click");
 });
 
+Mousetrap.bind(["f"], function () {
+	fixStuckAnimations();
+});
+
 Macro.add('time', {
 	handler: function () {
 		var time = State.variables.time;
@@ -363,5 +367,36 @@ DefineMacroS("numberify", numberify);
 window.fixStuckAnimations = function() {
 	let imgs = $('#story').add($('#ui-bar')); 
 	imgs.toggleClass('hidden'); 
-	window.setTimeout(() => imgs.toggleClass('hidden'), 50);
+	window.setTimeout(() => imgs.toggleClass('hidden'), 5);
 }
+
+// attaches event listeners to combat images
+// unstuck all images under the cursor when clicked
+// source: https://stackoverflow.com/a/14416567
+window.initTouchToFixAnimations = function() {
+	$(document).on('click.passThrough', "#divsex img", function (e, ee) {
+		var $el = $(this).hide();
+		try {
+			$el.toggleClass('hidden'); 
+			window.setTimeout(() => $el.toggleClass('hidden'), 5);
+
+			ee = ee || {
+			pageX: e.pageX,
+			pageY: e.pageY
+			};
+			var next = document.elementFromPoint(ee.pageX, ee.pageY);
+			next = (next.nodeType == 3) ? next.parentNode : next //Opera
+			$(next).trigger('click.passThrough', ee);
+		} catch (err) {
+			console.log("click.passThrough failed: " + err.message);
+		} finally {
+			$el.show();
+		}
+	});
+}
+
+$(document).on(':passagedisplay', function (ev) {
+	if (State.variables.combat) {
+		initTouchToFixAnimations();
+	}
+});

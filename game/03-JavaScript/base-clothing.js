@@ -154,6 +154,16 @@ window.convertNormalToOver = function () {
 			v.worn.over_lower = convertItem(v.worn.lower);
 			v.worn.lower = clone(setup.clothes.lower[0]);
 		}
+
+		// convert carried clothes
+		if (v.carried.upper.name == itemName) {
+			v.carried.over_upper = convertItem(v.carried.upper);
+			v.carried.upper = clone(setup.clothes.upper[0]);
+		}
+		if (v.carried.lower.name == itemName) {
+			v.carried.over_lower = convertItem(v.carried.lower);
+			v.carried.lower = clone(setup.clothes.lower[0]);
+		}
 		
 		// convert stripped stored clothes
 		for (let i = v.store.upper.length - 1; i>= 0; i--) {
