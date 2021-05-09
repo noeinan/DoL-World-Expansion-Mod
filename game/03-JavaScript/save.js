@@ -537,6 +537,8 @@ window.settingsObjects = function (type) {
 				voredisable: { boolLetter: true, bool: true },
 				tentacledisable: { boolLetter: true, bool: true },
 				analdisable: { boolLetter: true, bool: true },
+				analingusdisablegiving: { boolLetter: true, bool: true },
+				analingusdisablereceiving: { boolLetter: true, bool: true },
 				transformdisable: { boolLetter: true, bool: true },
 				hirsutedisable: { boolLetter: true, bool: true },
 				breastfeedingdisable: { boolLetter: true, bool: true },
