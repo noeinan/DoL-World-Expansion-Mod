@@ -94,19 +94,73 @@ window.ensureIsArray = function (x) {
 	return [x];
 }
 
+/**
+ * JS version of SugarCube's <<for _index, _value range _array>>.
+ * Can iterate over
+ *
+ * Copied from SugarCube sources.
+ * @param range
+ * @param {function(key,value):void} handler
+ */
+function rangeIterate(range, handler) {
+	let list;
+	switch (typeof range) {
+		case 'string':
+			list = [];
+			for (let i = 0; i < range.length; /* empty */) {
+				const obj = Util.charAndPosAt(range, i);
+				list.push([i, obj.char]);
+				i = 1 + obj.end;
+			}
+			break;
+		case 'object':
+			if (Array.isArray(range)) {
+				list = range.map((val, i) => [i, val]);
+			}
+			else if (range instanceof Set) {
+				list = Array.from(range).map((val, i) => [i, val]);
+			}
+			else if (range instanceof Map) {
+				list = Array.from(range);
+			}
+			else if (Util.toStringTag(range) === 'Object') {
+				list = Object.keys(range).map(key => [key, range[key]]);
+			}
+			else {
+				throw new Error(`unsupported range expression type: ${Util.toStringTag(range)}`);
+			}
+			break;
+		default:
+			throw new Error(`unsupported range expression type: ${typeof range}`);
+	}
+	for (let i = 0; i < list.length; i++) {
+		let entry = list[i];
+		handler(entry[0], entry[1]);
+	}
+}
+window.rangeIterate = rangeIterate;
+
+/**
+ * Define macro, passing arguments to function and store them in $args, preserving & restoring previous $args
+ */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
 		isWidget: true,
 		tags: tags,
 		skipArgs: skipArgs,
-		handler: function (args) {
-			var oldArgs = State.variables.args;
-			State.variables.args = this.args.slice();
-			macroFunction.apply(this, this.args);
-			if (typeof oldArgs === 'undefined') {
-				delete State.variables.args;
-			} else {
-				State.variables.args = oldArgs;
+		handler: function () {
+			DOL.Perflog.logWidgetStart(macroName);
+			try {
+				var oldArgs = State.variables.args;
+				State.variables.args = this.args.slice();
+				macroFunction.apply(this, this.args);
+				if (typeof oldArgs === 'undefined') {
+					delete State.variables.args;
+				} else {
+					State.variables.args = oldArgs;
+				}
+			} finally {
+				DOL.Perflog.logWidgetEnd(macroName);
 			}
 		}
 	});
@@ -365,8 +419,8 @@ DefineMacroS("numberify", numberify);
 
 // blink entire page to fix a bug in Chrome where animation on images doesn't start
 window.fixStuckAnimations = function() {
-	let imgs = $('#story').add($('#ui-bar')); 
-	imgs.toggleClass('hidden'); 
+	let imgs = $('#story').add($('#ui-bar'));
+	imgs.toggleClass('hidden');
 	window.setTimeout(() => imgs.toggleClass('hidden'), 5);
 }
 
@@ -377,7 +431,7 @@ window.initTouchToFixAnimations = function() {
 	$(document).on('click.passThrough', "#divsex img", function (e, ee) {
 		var $el = $(this).hide();
 		try {
-			$el.toggleClass('hidden'); 
+			$el.toggleClass('hidden');
 			window.setTimeout(() => $el.toggleClass('hidden'), 5);
 
 			ee = ee || {
