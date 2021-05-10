@@ -3115,7 +3115,7 @@ or $args[0] is "force">>
 <</widget>>
 
 <<widget "tipreceive">>
-	<span class="gold"><<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> &pound;<<print Math.trunc($tip / 100)>>.<<if $tip % 100 lte 9>>0<</if>><<print $tip % 100>>.</span>
+	<span class="gold"><<if random(1, 10000) is 10000>>You gain Brouzouf<<else>>You make<</if>> <<printmoney $tip >>.</span>
 	<<set $money += $tip>>
 	<<if $tip gte 50000>>
 		<<earnFeat "Negotiator">>
@@ -3124,7 +3124,7 @@ or $args[0] is "force">>
 <</widget>>
 
 <<widget "tip_neg">>
-You negotiate a price of £<<print Math.trunc($tip / 100)>>,
+You negotiate a price of <<printmoney $tip>>,
 <<if $tipreaction is "low">>
 	less than you hoped for.
 <<else>>
@@ -3133,7 +3133,7 @@ You negotiate a price of £<<print Math.trunc($tip / 100)>>,
 <</widget>>
 
 <<widget "tip_up">>
-<<He>> raises <<his>> offer to £<<print Math.trunc($tip / 100)>>.
+<<He>> raises <<his>> offer to <<printmoney $tip>>.
 <</widget>>
 
 <<widget "passout">>
@@ -4907,7 +4907,7 @@ __Map__<br>
 	<<crimeup `_money_gain / 100`>>
 <</if>>
 <<set $money += _money_gain>>
-<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</widget>>
+<</silently>><<printmoney _money_gain>><</widget>>
 
 /*
 	Used like above, but only shows the money amount, doesn't add money or crime.
@@ -4940,4 +4940,16 @@ __Map__<br>
 	<<set _skulduggeryMulti to 1>>
 <</if>>
 <<set _money_gain to Math.floor((_base_amount + _variation) * _skulduggeryMulti)>>
-<</silently>><span class="gold">£<<print (_money_gain / 100).toFixed(2)>></span><</widget>>
+<</silently>><<printmoney _money_gain>><</widget>>
+
+<<widget "printmoney">><<silently>><!-- (amount in pennies, highlight toggle) -->
+<<if $args[0]>>
+	<<set _printargs to $args[0].toFixed(); _printmoney to (_printargs gte 0 ? "" : "-") + "£" + (_printargs % 100 ? Math.abs(_printargs/100).toFixed(2) : Math.abs(_printargs)/100)>>
+<<else>>
+	<<set _printmoney to "£0">>
+<</if>>
+<<if !$args[1]>>
+	<<set _printmoney to '<span class="gold">' + _printmoney + '</span>'>>>
+<</if>>
+<</silently>><<print _printmoney>>
+<</widget>>
