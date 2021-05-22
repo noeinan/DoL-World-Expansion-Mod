@@ -627,23 +627,27 @@ window.settingsConvert = function(exportType, type, settings){
 				if (result[keys[i]][itemKey[j]] === undefined) continue;
 				var keyArray = Object.keys(listObject[keys[i]][itemKey[j]]);
 				if(exportType){
-					if (result[keys[i]][itemKey[j]] === "t") {
-						result[keys[i]][itemKey[j]] = true;
-					}else if(result[keys[i]][itemKey[j]] === "f"){
-						result[keys[i]][itemKey[j]] = false;
+					if (keyArray.includes("boolLetter") && keyArray.includes("bool")) {
+						if (result[keys[i]][itemKey[j]] === "t") {
+							result[keys[i]][itemKey[j]] = true;
+						}else if(result[keys[i]][itemKey[j]] === "f"){
+							result[keys[i]][itemKey[j]] = false;
+						}
 					}
 				}else{
-					if (result[keys[i]][itemKey[j]] === true) {
-						result[keys[i]][itemKey[j]] = "t";
-					}else if(result[keys[i]][itemKey[j]] === false){
-						result[keys[i]][itemKey[j]] = "f";
+					if (keyArray.includes("boolLetter") && keyArray.includes("bool")) {
+						if (result[keys[i]][itemKey[j]] === true) {
+							result[keys[i]][itemKey[j]] = "t";
+						}else if(result[keys[i]][itemKey[j]] === false){
+							result[keys[i]][itemKey[j]] = "f";
+						}
 					}
 				}
 			}
 		}else{
 			var keyArray = Object.keys(listObject[keys[i]]);
 			if(exportType){
-				if (keyArray.includes("boolLetter")) {
+				if (keyArray.includes("boolLetter") && keyArray.includes("bool")) {
 					if (result[keys[i]] === "t") {
 						result[keys[i]] = true;
 					}else if(result[keys[i]] === "f"){
@@ -651,7 +655,7 @@ window.settingsConvert = function(exportType, type, settings){
 					}
 				}
 			}else{
-				if (keyArray.includes("boolLetter")) {
+				if (keyArray.includes("boolLetter") && keyArray.includes("bool")) {
 					if (result[keys[i]] === true) {
 						result[keys[i]] = "t";
 					}else if(result[keys[i]] === false){
