@@ -1352,9 +1352,9 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 24 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 26 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 24>>
+	<<set $objectVersion.updateClothes to 26>>
 	<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 	Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 <</if>>
@@ -2164,4 +2164,28 @@
 <<if $cardcover is undefined>>
 	<<set $cardcover = { style: 0, colour: 'red' }>>
 <</if>>
+
+<<if $sidebarRenderer is undefined>>
+	<!-- TODO @aimozg - Default both to encourage debugging, make default 'canvas' in production (after sneaky update?) -->
+	<<set $sidebarRenderer to 'both'>>
+<</if>>
+
+<<if $makeup.pbcolour isnot 0 and !($makeup.pbcolour in setup.colours.hair_map)>>
+	<<set _record to setup.guessColourInMap(setup.colours.hair_map, $makeup.pbcolour)>>
+	<<if _record>>
+		<<set $makeup.pbcolour to _record.variable>>
+	<<else>>
+		<<run Errors.report("Failed to update makeup.pbcolour from " + $makeup.pbcolour)>>
+	<</if>>
+<</if>>
+<<for _item range $makeup.owned.hairdye>>
+	<<if !(_item.colour in setup.colours.hair_map)>>
+		<<set _record to setup.guessColourInMap(setup.colours.hair_map, _item.colour)>>
+		<<if _record>>
+			<<set _item.colour to _record.variable>>
+		<<else>>
+			<<run Errors.report("Failed to update dye from " + _item.colour)>>
+		<</if>>
+	<</if>>
+<</for>>
 <</widget>>

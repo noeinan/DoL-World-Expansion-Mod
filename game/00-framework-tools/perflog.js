@@ -13,33 +13,44 @@ DOL.Perflog.millitime = millitime;
  * }.
  */
 var wpRec = {}; // Widget performance records
+const wpSelf = { name: "__perflog_logWidgetEnd", n: 0, total: 0, own: 0 };
+wpRec[wpSelf.name] = wpSelf;
 /**
  * Global widget performance records
  */
 DOL.Perflog.globalRec = {};
 DOL.Perflog.lastRec = {};
+DOL.Perflog.enabled = true;
+DOL.Perflog.self = true; // Record own performance
 /**
  * Performance stack entry = { t0: widget start time, i: internal widget duration }
  */
 const wpStack = []; // Widget performance stack
 DOL.Perflog.nPassages = 0;
 $(document).on(':passageend', function() {
-    DOL.Perflog.nPassages++;
-    for (var name in wpRec) {
-        var rec = wpRec[name];
-        var grec = DOL.Perflog.globalRec[name];
-        if (!grec) {
-            DOL.Perflog.globalRec[name] = rec;
-        } else {
-            grec.n += rec.n;
-            grec.total += rec.total;
-            grec.own += rec.own;
+    if (!DOL.Perflog.enabled) return;
+    try {
+        if (DOL.Perflog.self) DOL.Perflog.logWidgetStart("__perflog_passageEnd")
+        DOL.Perflog.nPassages++;
+        for (var name in wpRec) {
+            var rec = wpRec[name];
+            var grec = DOL.Perflog.globalRec[name];
+            if (!grec) {
+                DOL.Perflog.globalRec[name] = rec;
+            } else {
+                grec.n += rec.n;
+                grec.total += rec.total;
+                grec.own += rec.own;
+            }
         }
+        DOL.Perflog.lastRec = wpRec;
+        wpRec = {};
+    } finally {
+        if (DOL.Perflog.self) DOL.Perflog.logWidgetEnd("__perflog_passageEnd")
     }
-    DOL.Perflog.lastRec = wpRec;
-    wpRec = {};
 });
 DOL.Perflog.logWidgetStart = function(widgetName) {
+    if (!DOL.Perflog.enabled) return;
     wpStack.push({
         name: widgetName,
         t0: millitime(),
@@ -47,13 +58,15 @@ DOL.Perflog.logWidgetStart = function(widgetName) {
     });
 }
 DOL.Perflog.logWidgetEnd = function(widgetName) {
+    if (!DOL.Perflog.enabled) return;
+    const time = millitime();
     const perflog = wpStack[wpStack.length - 1];
     if (!perflog || perflog.name !== widgetName) {
         Errors.report("Inconsistent widget performance stack", wpStack);
         return;
     }
     const prevPerflog = wpStack[wpStack.length - 2];
-    perflog.t1 = millitime();
+    perflog.t1 = time;
     const dt = perflog.t1-perflog.t0;
     if (prevPerflog) {
         prevPerflog.i += dt;
@@ -69,6 +82,12 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
     perfrec.total += dt;
     perfrec.own += dt - perflog.i;
     wpStack.pop();
+    if (DOL.Perflog.self) {
+        const selfDt = millitime() - time
+        wpSelf.n++;
+        wpSelf.own += selfDt;
+        wpSelf.total += selfDt;
+    }
 }
 
 /**

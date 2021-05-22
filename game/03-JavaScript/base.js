@@ -95,6 +95,55 @@ window.ensureIsArray = function (x) {
 }
 
 /**
+ * Copies to targets keys from source that are not present there.
+ * Shallow.
+ * @param {object} target Object to extend
+ * @param {object} source Default properties
+ * @return {object} target
+ */
+function assignDefaults(target, source) {
+	for (let k in source) {
+		if (!source.hasOwnProperty(k)) continue;
+		if (!(k in target)) target[k] = source[k];
+	}
+	return target;
+}
+
+/*
+ * Similar to <<script>>, but preprocesses the contents, so $variables are accessible.
+ * The variable "output" is also exposed (unlike <<run>>, <<set>>)
+ *
+ * Example:
+ * <<twinescript>>
+ *     output.textContent = $text
+ * <</twinescript>>
+ */
+Macro.add('twinescript', {
+	skipArgs : true,
+	tags     : null,
+
+	handler() {
+		const output = document.createDocumentFragment();
+
+		try {
+			Scripting.evalTwineScript(this.payload[0].contents, output);
+		}
+		catch (ex) {
+			return this.error(`bad evaluation: ${typeof ex === 'object' ? ex.message : ex}`);
+		}
+
+		// Custom debug view setup.
+		if (Config.debug) {
+			this.createDebugView();
+		}
+
+		if (output.hasChildNodes()) {
+			this.output.appendChild(output);
+		}
+	}
+});
+
+/**
  * JS version of SugarCube's <<for _index, _value range _array>>.
  * Can iterate over
  *
@@ -175,122 +224,72 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
 	}, tags, skipArgs);
 }
 
-function underlowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.under_lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
+/**
+ * @param worn clothing article, State.variables.worn.XXXX
+ * @return {string} condition key word ("tattered"|"torn|"frayed"|"full")
+ */
+window.integrityKeyword = function(worn) {
+	const i = worn.integrity/worn.integrity_max;
+	if (i <= 0.2) {
+		return "tattered"
+	} else if (i <= 0.5) {
+		return "torn"
+	} else if (i <= 0.9) {
+		return "frayed"
+	} else {
+		return "full"
 	}
-	return output;
+}
+
+/**
+ * @param worn clothing argicle, State.variables.worn.XXXX
+ * @return {string} printable integrity prefix
+ */
+function integrityWord(worn) {
+	const kw = integrityKeyword(worn);
+	switch (kw) {
+		case "tattered":
+		case "torn":
+		case "frayed":
+			return kw+" ";
+		case "full":
+		default:
+			return "";
+	}
+}
+
+function underlowerintegrity() {
+	return integrityWord(State.variables.worn.under_lower);
 }
 DefineMacroS("underlowerintegrity", underlowerintegrity);
 
 function underupperintegrity() {
-	var output = '';
-	var V = State.variables.worn.under_upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.under_upper);
 }
 DefineMacroS("underupperintegrity", underupperintegrity);
 
 function overlowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.over_lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.over_lower);
 }
 DefineMacroS("overlowerintegrity", overlowerintegrity);
 
 function lowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.lower);
 }
 DefineMacroS("lowerintegrity", lowerintegrity);
 
 function overupperintegrity() {
-	var output = '';
-	var V = State.variables.worn.over_upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.over_upper);
 }
 DefineMacroS("overupperintegrity", overupperintegrity);
 
 function upperintegrity() {
-	var output = '';
-	var V = State.variables.worn.upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.upper);
 }
 DefineMacroS("upperintegrity", upperintegrity);
 
 function genitalsintegrity() {
-	var output = '';
-	var V = State.variables.worn.genitals;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.genitals);
 }
 DefineMacroS("genitalsintegrity", genitalsintegrity);
 

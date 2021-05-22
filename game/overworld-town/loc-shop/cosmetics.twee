@@ -29,16 +29,16 @@ You are in the cosmetics store. Several shelvings stand before you, filled with 
 <<link [[Leave|Shopping Centre Top]]>><</link>>
 
 :: Cosmetics Lipstick
-<<CosmeticsGenericDepartment "lipstick" "lipstick" "lipsticks" "lipstick" "" "#FF0000" 1000 "Cosmetics Lipstick" "A bunch of colourful lipsticks stand on a shelf." true true 20 "red" "blue" "green" "purple" "orange" "lime" "pink" "light pink" "dark red" "black">>
+<<CosmeticsGenericDepartment "lipstick" "lipstick" "lipsticks" "lipstick" "" "#FF0000" 1000 "Cosmetics Lipstick" "A bunch of colourful lipsticks stand on a shelf." true true 20 `setup.colours.lipstick.map(c=>c.variable)`>>
 
 :: Cosmetics Eyeshadow
-<<CosmeticsGenericDepartment "eyeshadow" "eyeshadow" "eyeshadows" "eyeshadow" "" "#FF0000" 1500 "Cosmetics Eyeshadow" "Small boxes with sparkly eye shadows lay before you." true true 20 "red" "pink" "light pink" "green" "light green" "blue" "light blue" "purple" "orange" "yellow" "brown" "light brown" "dark brown" "black" "white" "silver">>
+<<CosmeticsGenericDepartment "eyeshadow" "eyeshadow" "eyeshadows" "eyeshadow" "" "#FF0000" 1500 "Cosmetics Eyeshadow" "Small boxes with sparkly eye shadows lay before you." true true 20 `setup.colours.eyeshadow.map(c=>c.variable)`>>
 
 :: Cosmetics Mascara
-<<CosmeticsGenericDepartment "mascara" "mascara" "mascaras" "mascara" "" "#FF0000" 1500 "Cosmetics Mascara" "There's a dozen mascaras laying before you. They're all black though." true true 20 "black">>
+<<CosmeticsGenericDepartment "mascara" "mascara" "mascaras" "mascara" "" "#FF0000" 1500 "Cosmetics Mascara" "There's a dozen mascaras laying before you. They're all black though." true true 20 `setup.colours.mascara.map(c=>c.variable)`>>
 
 :: Cosmetics Dyes
-<<CosmeticsGenericDepartment "hairdye" "hair dye" "hair dyes" "hair" "colour-hair" "#FD6064" 4000 "Cosmetics Dyes" "You come to the shelf with hair dyes." false true 1 "black" "blond" "platinum blond" "ashy blond" "strawberry blond" "dark brown" "brown" "light brown" "red" "ginger" "blood orange" "deep blue" "blue" "neon blue" "green" "toxic green" "teal" "pink" "hot pink" "soft pink" "crimson" "purple" "bright purple" "white" "snow white">>
+<<CosmeticsGenericDepartment "hairdye" "hair dye" "hair dyes" "hair" "colour-hair" "#FD6064" 4000 "Cosmetics Dyes" "You come to the shelf with hair dyes." false true 1 `setup.colours.hair.filter(c=>c.dye).map(c=>c.variable)`>>
 
 :: Cosmetics Store Widgets [widget]
 <<widget "CosmeticsGenericDepartment">>
@@ -59,6 +59,9 @@ You are in the cosmetics store. Several shelvings stand before you, filled with 
 <<set _isConsumable = $args[10]>>
 <<set _usesPerBuy = $args[11]>>
 <<set _availableColours = $args.slice(12)>>
+<<if _availableColours.length === 1 && Array.isArray(_availableColours)>>
+	<<set _availableColours = _availableColours[0]>>
+<</if>>
 
 _textIntro
 <<if _isConsumable isnot true>>
@@ -66,7 +69,7 @@ _textIntro
 		<br>
 		You already own _itemPlural of the following colours:
 		<<for _i, _colour range $makeup.owned[_itemType]>>
-			<span class="grey-shadow"><span @class="_cssClassOuter + '-' + _colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'">_colour</span></span></span></span>
+			<span class="grey-shadow"><span @class="_cssClassOuter + '-' + _colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'"><<print setup.colourName(_colour)>></span></span></span></span>
 			<<if _i < $makeup.owned[_itemType].length - 1>>, <</if>>
 		<</for>>.
 	<</if>>
@@ -77,7 +80,7 @@ _textIntro
 		You already own _itemPlural of the following colours:
 		<<for _i, _item range _owned>>
 			<<if _item.count > 0>>
-				<span class="grey-shadow"><span @class="_cssClassOuter + '-' + _item.colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'">_item.colour</span></span></span></span>
+				<span class="grey-shadow"><span @class="_cssClassOuter + '-' + _item.colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'"><<print setup.colourName(_item.colour)>></span></span></span></span>
 				&nbsp;×&nbsp;_item.count
 				<<if _i < _owned.length - 1>>, <</if>>
 			<</if>>
@@ -100,7 +103,7 @@ _textIntro
 		<<set $cosmeticsChoice = _availableColours[0]>>
 	<</if>>
 	<<for _i, _colour range _availableColours>>
-		<label><span class="grey-shadow"><span @class="_cssClassOuter + '-' + _colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'">_colour</span></span></span></span>&nbsp;<<print '<<radiobutton "$cosmeticsChoice" "'+_colour+'" ' + ($cosmeticsChoice is _colour ? "checked" : "") + '>>'>></label> |
+		<label><span class="grey-shadow"><span @class="_cssClassOuter + '-' + _colour.replace(/ /g, '-')"><span @class="_cssClassInner"><span @style="'color:' + _baseColour + ';'"><<print setup.colourName(_colour)>></span></span></span></span>&nbsp;<<print '<<radiobutton "$cosmeticsChoice" "'+_colour+'" ' + ($cosmeticsChoice is _colour ? "checked" : "") + '>>'>></label> |
 	<</for>>
 
 	<br><br>

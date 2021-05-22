@@ -49,6 +49,7 @@ Errors.report = (message, copyData) => {
 					<div class="messages"></div>
 					<div class="actions">
 						<div class="button close" onclick="Errors.Reporter.hidePane()">Close</div>
+						<div class="button close" onclick="Errors.Reporter.hidePane(true)">Clear</div>
 						<textarea class="copy-area hidden"></textarea>
 					</div>
 				</div>
@@ -76,16 +77,25 @@ Errors.report = (message, copyData) => {
 		Reporter.paneContainer().classList.remove('hidden');
 		Reporter.paneTab().classList.add('hidden');
 	}
-	Reporter.hidePane = () => {
+	Reporter.hidePane = (andClear) => {
 		Reporter.paneContainer().classList.add('hidden');
 		Reporter.paneTab().classList.remove('hidden');
 		Reporter.copyArea().classList.add('hidden')
 		Errors.config.userHidden = true;
+		if (andClear) {
+			Errors.log.splice(0);
+			Reporter.updateTab();
+		}
 	}
 	Reporter.updateTab = () => {
 		Reporter.paneTab().textContent = `Error Log: (${Errors.log.length})`
 		if (!Errors.config.userHidden) {
 			Reporter.paneContainer().classList.remove('hidden')
+		}
+		if (Errors.log.length === 0) {
+			Reporter.reporterContainer().classList.add('hidden');
+		} else {
+			Reporter.reporterContainer().classList.remove('hidden');
 		}
 	}
 	Reporter.createEntry = (id, message) => {
