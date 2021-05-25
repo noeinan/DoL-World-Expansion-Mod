@@ -2,23 +2,23 @@ function eleprop(e, k, v) {
 	if (k === '$oncreate') {
 		v.call(e, e);
 	} else if (k.indexOf('on') === 0) {
-        e.addEventListener(k.slice(2), v.bind(e));
-    } else if (v !== undefined) {
-        if (k in e) {
-            e[k] = v;
-        } else {
-            e.setAttribute(k, v);
-        }
-    }
-    return e;
+		e.addEventListener(k.slice(2), v.bind(e));
+	} else if (v !== undefined) {
+		if (k in e) {
+			e[k] = v;
+		} else {
+			e.setAttribute(k, v);
+		}
+	}
+	return e;
 }
 
 function eleprops(e, props) {
-    if (!props) return e;
-    for (let kv of Object.entries(props)) {
-        eleprop(e, kv[0], kv[1]);
-    }
-    return e;
+	if (!props) return e;
+	for (let kv of Object.entries(props)) {
+		eleprop(e, kv[0], kv[1]);
+	}
+	return e;
 }
 
 function elechild(e, c) {
@@ -35,16 +35,16 @@ function elechild(e, c) {
 }
 
 function elechildren(e, children) {
-    if (arguments.length > 2) {
-        elechildren(e, Array.from(arguments).slice(1));
-    } else if (typeof children === 'string' || children instanceof Node) {
-        elechild(e, children);
-    } else if (children) {
-        for (let c of children) {
-            elechild(e, c);
-        }
-    }
-    return e;
+	if (arguments.length > 2) {
+		elechildren(e, Array.from(arguments).slice(1));
+	} else if (typeof children === 'string' || children instanceof Node) {
+		elechild(e, children);
+	} else if (children) {
+		for (let c of children) {
+			elechild(e, c);
+		}
+	}
+	return e;
 }
 
 /**
@@ -65,31 +65,31 @@ function elechildren(e, children) {
  * ])
  */
 function element(tag, props, children) {
-    if (children === undefined && (typeof props === 'string' || Array.isArray(props) || props instanceof Node)) {
-        children = props;
-        props = null;
-    }
-    let e = document.createElement(tag);
-    elechildren(e, children);
-    eleprops(e, props);
-    return e;
+	if (children === undefined && (typeof props === 'string' || Array.isArray(props) || props instanceof Node)) {
+		children = props;
+		props = null;
+	}
+	let e = document.createElement(tag);
+	elechildren(e, children);
+	eleprops(e, props);
+	return e;
 }
 
 function elecustomprops(e, props, customProps) {
-    for (let kv of Object.entries(props)) {
-        let k = kv[0], v = kv[1];
-        if (k in customProps) {
-            customProps[k](e, v)
-        } else {
-            eleprop(e, k, v)
-        }
-    }
+	for (let kv of Object.entries(props)) {
+		let k = kv[0], v = kv[1];
+		if (k in customProps) {
+			customProps[k](e, v)
+		} else {
+			eleprop(e, k, v)
+		}
+	}
 }
 
 function customElement(tag, baseProps, props, children, customProps) {
-    let e = element(tag, baseProps, children);
-    elecustomprops(e, props, customProps);
-    return e;
+	let e = element(tag, baseProps, children);
+	elecustomprops(e, props, customProps);
+	return e;
 }
 
 /**
@@ -97,19 +97,19 @@ function customElement(tag, baseProps, props, children, customProps) {
  * - set(newValue:(string|number)) - input listener
  */
 function eInput(props) {
-    return customElement("input", {type: "text"}, props, null, {
-        set(e, set) {
-            set = set.bind(e);
-            e.addEventListener('input', () => {
-                let value = e.value;
-                if (e.type === 'number' || e.type === 'range') {
-                    value = parseFloat(value);
-                    if (!isFinite(value)) return;
-                }
-                set(value);
-            })
-        }
-    })
+	return customElement("input", {type: "text"}, props, null, {
+		set(e, set) {
+			set = set.bind(e);
+			e.addEventListener('input', () => {
+				let value = e.value;
+				if (e.type === 'number' || e.type === 'range') {
+					value = parseFloat(value);
+					if (!isFinite(value)) return;
+				}
+				set(value);
+			})
+		}
+	})
 }
 
 /**
@@ -147,412 +147,444 @@ function eCheckbox(props) {
  * - set(newValue:string) - change listener
  */
 function eSelect(props) {
-    return customElement("select", null, props, null,
-        {
-            items(e, items) {
-                for (let item of items) {
-                    if (typeof item === 'string') item = {value: item, text: item};
-                    e.appendChild(element("option", {
-                        value: item.value,
-                        selected: item.value == e.value
-                    }, item.text));
-                }
-            },
-            set(e, set) {
-                set = set.bind(e);
-                e.addEventListener("change", () => set(e.value));
-            }
-        })
+	return customElement("select", null, props, null,
+		{
+			items(e, items) {
+				for (let item of items) {
+					if (typeof item === 'string') item = {value: item, text: item};
+					e.appendChild(element("option", {
+						value: item.value,
+						selected: item.value == e.value
+					}, item.text));
+				}
+			},
+			set(e, set) {
+				set = set.bind(e);
+				e.addEventListener("change", () => set(e.value));
+			}
+		})
 }
 
 function copyToClipboard(textarea, data) {
 	textarea.value = data;
-	textarea.setAttribute("style","");
+	textarea.setAttribute("style", "");
 	textarea.select();
 	document.execCommand("copy");
 	alert("Copied to clipboard!");
-	textarea.setAttribute("style","display:none");
+	textarea.setAttribute("style", "display:none");
 }
 
 Macro.add('canvasColoursEditor', {
-    handler: function () {
-        if (!Renderer.lastCall) return;
-        function redrawImg() {
-            if (redrawImg.id) clearTimeout(redrawImg.id);
-            // throttle a little to avoid immediate redraw
-            redrawImg.id = setTimeout(()=>{
-                Wikifier.wikifyEval(' <<updatesidebarimg>>');
-            }, 50);
-        }
-        let V = State.variables;
+	handler: function () {
+		if (!Renderer.lastCall) return;
+		let cheat = !!this.args[0];
 
-        let groups = [
-            {
-                name: 'Hair',
-                colours: setup.colours.hair,
-                default: setup.colours.hair_default,
-                setVars(variable) {
-                    V.haircolour = variable;
-                    redrawImg();
-                },
-                exportPrefix: 'setup.colours.hair = ',
-                exportSuffix: ';'
-            }, {
-                name: 'Eyes',
-                colours: setup.colours.eyes,
-                default: setup.colours.eyes_default,
-                setVars(variable) {
-                    V.eyecolour = variable;
-                    redrawImg();
-                },
-                exportPrefix: 'setup.colours.eyes = ',
-                exportSuffix: ';'
-            }, {
-                name: 'Clothes',
-                colours: setup.colours.clothes,
-                default: setup.colours.clothes_default,
-                setVars(variable) {
-                    for (let item of Object.values(V.worn)) {
-                        if (item.colour !== 0) item.colour = variable;
-                        if (item.accessory_colour !== 0) item.accessory_colour = variable;
-                    }
-                    redrawImg();
-                },
-                exportPrefix: 'setup.colours.clothes = ',
-                exportSuffix: ';'
-            }, {
-		        name: 'Lipstick',
-		        colours: setup.colours.lipstick,
-		        default: setup.colours.lipstick_default,
-		        setVars(variable) {
-			        V.makeup.lipstick = variable;
-			        redrawImg();
-		        },
-		        exportPrefix: 'setup.colours.lipstick = ',
-		        exportSuffix: ';'
-	        }, {
-		        name: 'Eyeshadow',
-		        colours: setup.colours.eyeshadow,
-		        default: setup.colours.eyeshadow_default,
-		        setVars(variable) {
-			        V.makeup.eyeshadow = variable;
-			        redrawImg();
-		        },
-		        exportPrefix: 'setup.colours.eyeshadow = ',
-		        exportSuffix: ';'
-	        }, {
-		        name: 'Mascara',
-		        colours: setup.colours.mascara,
-		        default: setup.colours.mascara_default,
-		        setVars(variable) {
-			        V.makeup.mascara = variable;
-			        redrawImg();
-		        },
-		        exportPrefix: 'setup.colours.mascara = ',
-		        exportSuffix: ';'
-	        }
-        ]
-        elechildren(this.output,
-            "Links will re-colour your character. Won't check for clothes' list of valid colours, use for debugging purposes only! ",
-            element('div',
-                {class: 'editorcolours'},
-                groups.map(group =>
-                    element('div',
-                        [
-                            element('h4',
-                                [
-                                    group.name,
-                                    element('br'),
-                                    element('small', 'default brightness = '+(group.default.brightness||0.0))
-                                ]
-                            ),
-                            element('div',
-                                [
-                                    element('a', {
-                                        onclick() {
-                                            let textarea = this.parentElement.querySelector('textarea');
-                                            let colours = group.colours.map(c=>{
-                                                // Make deep copy and delete defaults
-                                                let c2 = clone(c);
-                                                for (let k in group.default) {
-                                                	if (c2.canvasfilter[k] === group.default[k]) {
-                                                        delete c2.canvasfilter[k];
-                                                    } else if (k === "contrast") {
-		                                                if ('contrast' in c2.canvasfilter) {
-			                                                c2.canvasfilter.contrast /= group.default.contrast;
-		                                                }
-	                                                } else if (k === 'brightness') {
-		                                                if ('brightness' in c2.canvasfilter) {
-			                                                c2.canvasfilter.brightness -= group.default.brightness;
-		                                                }
-	                                                }
-                                                }
-                                                return c2;
-                                            });
-                                            copyToClipboard(textarea, group.exportPrefix +
-	                                            JSON.stringify(colours) +
-	                                            group.exportSuffix);
-                                        }
-                                    }, 'Export'),
-                                    element('textarea',{style:'display:none'})
-                                ]
-                            ),
-                            group.colours.map(colour =>
-                                element('div', {},
-                                    [
-                                        eInput({
-                                            type: 'color',
-                                            value: colour.canvasfilter.blend,
-                                            set(value) {
-                                                colour.canvasfilter.blend = value;
-                                                redrawImg();
-                                            }
-                                        }),
-                                        eInput({
-                                            type: 'number',
-                                            class: 'editlayer-brightness',
-                                            value: colour.canvasfilter.brightness,
-                                            set(value) {
-                                                colour.canvasfilter.brightness = value;
-                                                redrawImg();
-                                            },
-                                            min: -1,
-                                            max: +1,
-                                            step: 0.01
-                                        }),
-                                        eInput({
-                                            type: 'number',
-                                            class: 'editlayer-contrast',
-                                            value: colour.canvasfilter.contrast,
-                                            set(value) {
-                                                colour.canvasfilter.contrast = value;
-                                                redrawImg();
-                                            },
-                                            min: 0,
-                                            max: +4,
-                                            step: 0.01
-                                        }),
-                                        element('a', {
-                                                onclick() {
-                                                    group.setVars(colour.variable);
-                                                    redrawImg();
-                                                }
-                                            },
-                                            ' ' + colour.name_cap)
-                                    ]
-                                ) // colour div
-                            ) // colours
-                        ]
-                    ) // group div
-                ) // groups
-            ) // div flex
-        ) // this.output
-    }
+		function redrawImg() {
+			if (redrawImg.id) clearTimeout(redrawImg.id);
+			// throttle a little to avoid immediate redraw
+			redrawImg.id = setTimeout(() => {
+				Wikifier.wikifyEval(' <<updatesidebarimg>>');
+			}, 50);
+		}
+
+		let V = State.variables;
+
+		let groups = [
+			{
+				name: 'Hair',
+				colours: setup.colours.hair,
+				default: setup.colours.hair_default,
+				setVars(variable) {
+					V.haircolour = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.hair = ',
+				exportSuffix: ';'
+			}, {
+				name: 'Eyes',
+				colours: setup.colours.eyes,
+				default: setup.colours.eyes_default,
+				setVars(variable) {
+					V.eyecolour = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.eyes = ',
+				exportSuffix: ';'
+			}, {
+				name: 'Clothes',
+				colours: setup.colours.clothes,
+				default: setup.colours.clothes_default,
+				setVars(variable) {
+					for (let item of Object.values(V.worn)) {
+						if (item.colour !== 0) item.colour = variable;
+						if (item.accessory_colour !== 0) item.accessory_colour = variable;
+					}
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.clothes = ',
+				exportSuffix: ';'
+			}, {
+				name: 'Lipstick',
+				colours: setup.colours.lipstick,
+				default: setup.colours.lipstick_default,
+				setVars(variable) {
+					V.makeup.lipstick = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.lipstick = ',
+				exportSuffix: ';'
+			}, {
+				name: 'Eyeshadow',
+				colours: setup.colours.eyeshadow,
+				default: setup.colours.eyeshadow_default,
+				setVars(variable) {
+					V.makeup.eyeshadow = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.eyeshadow = ',
+				exportSuffix: ';'
+			}, {
+				name: 'Mascara',
+				colours: setup.colours.mascara,
+				default: setup.colours.mascara_default,
+				setVars(variable) {
+					V.makeup.mascara = variable;
+					redrawImg();
+				},
+				exportPrefix: 'setup.colours.mascara = ',
+				exportSuffix: ';'
+			}
+		]
+		elechildren(this.output,
+			cheat ? "Links will re-colour your character. Won't check for clothes' list of valid colours, use for debugging purposes only! " : "",
+			element('div',
+				{class: 'editorcolours'},
+				groups.map(group =>
+					element('div',
+						[
+							element('div',
+								{ class: 'export-block' },
+								[
+									element('a', {
+										onclick() {
+											let textarea = this.parentElement.querySelector('textarea');
+											let colours = group.colours.map(c => {
+												// Make deep copy and delete defaults
+												let c2 = clone(c);
+												for (let k in group.default) {
+													if (c2.canvasfilter[k] === group.default[k]) {
+														delete c2.canvasfilter[k];
+													} else if (k === "contrast") {
+														if ('contrast' in c2.canvasfilter) {
+															c2.canvasfilter.contrast /= group.default.contrast;
+														}
+													} else if (k === 'brightness') {
+														if ('brightness' in c2.canvasfilter) {
+															c2.canvasfilter.brightness -= group.default.brightness;
+														}
+													}
+												}
+												return c2;
+											});
+											copyToClipboard(textarea, group.exportPrefix +
+												JSON.stringify(colours) +
+												group.exportSuffix);
+										}
+									}, 'Export'),
+									element('textarea', {style: 'display:none'})
+								]
+							), // div.export-block
+							element('h4',
+								[
+									group.name,
+									element('br')
+								]
+							),
+							element('table',
+								[
+									element('thead', [
+										element('th',''),
+										element('th','Brightness'),
+										element('th','Contrast'),
+										element('th',''),
+									]),
+									element('tbody',
+										group.colours.map(colour =>
+											element('tr', {},
+												[
+													element('td', [
+														eInput({
+															type: 'color',
+															value: colour.canvasfilter.blend,
+															set(value) {
+																colour.canvasfilter.blend = value;
+																redrawImg();
+															}
+														})
+													]),
+													element('td', [
+														eInput({
+															type: 'number',
+															class: 'editlayer-brightness',
+															value: colour.canvasfilter.brightness,
+															set(value) {
+																colour.canvasfilter.brightness = value;
+																redrawImg();
+															},
+															min: -1,
+															max: +1,
+															step: 0.01
+														}),
+													]),
+													element('td', [
+														eInput({
+															type: 'number',
+															class: 'editlayer-contrast',
+															value: colour.canvasfilter.contrast,
+															set(value) {
+																colour.canvasfilter.contrast = value;
+																redrawImg();
+															},
+															min: 0,
+															max: +4,
+															step: 0.01
+														}),
+													]),
+													element('td', [
+														cheat ? element('a', {
+																onclick() {
+																	group.setVars(colour.variable);
+																	redrawImg();
+																}
+															},
+															' ' + colour.name_cap)
+															: (' ' + colour.name_cap)
+													])
+												]
+											) // colour div
+										) // colours (tbody children)
+									) // tbody
+								] // table children
+							), // table
+						] // group div children
+					) // group div
+				) // groups
+			) // div flex
+		) // this.output
+	}
 });
 Macro.add('canvasLayersEditor', {
-    handler: function () {
-        if (!Renderer.lastCall) return;
-        let layers = Renderer.lastCall[1];
+	handler: function () {
+		if (!Renderer.lastCall) return;
+		let layers = Renderer.lastCall[1];
 
-        function redraw() {
-        	// TODO @aimozg make it work in static render mode too
-            Renderer.lastAnimation.invalidateCaches();
-            Renderer.lastAnimation.redraw(); // it will queue redraw on next animation frame, so shouldn't lag much
-        }
+		function redraw() {
+			// TODO @aimozg make it work in static render mode too
+			Renderer.lastAnimation.invalidateCaches();
+			Renderer.lastAnimation.redraw(); // it will queue redraw on next animation frame, so shouldn't lag much
+		}
 
-        function redrawFull() {
-	        // TODO @aimozg make it work in static render mode too
-            Renderer.lastAnimation.stop();
-            Renderer.animateLayersAgain();
-        }
+		function redrawFull() {
+			// TODO @aimozg make it work in static render mode too
+			Renderer.lastAnimation.stop();
+			Renderer.animateLayersAgain();
+		}
 
-	    elechild(this.output, element('div', [
-		    element('button', {
-			    type: 'button',
-			    onclick() {
-				    let layerProps = ["name", "show", "src", "z", "alpha", "desaturate", "brightness", "blendMode", "blend", "animation", "frames", "dx", "dy", "width", "height"];
-				    copyToClipboard(this.parentElement.querySelector("textarea"), JSON.stringify(layers.map(layer => {
-					    let copy = {};
-					    for (let key of layerProps) {
-						    if (key in layer && layer.show !== false) copy[key] = layer[key];
-					    }
-					    return copy
-				    })))
-			    }
-		    }, 'Export'),
-		    element('textarea', {style: 'display:none'})
-	    ]));
-        elechild(this.output, element('table', {class: 'editorlayers'}, [
-            element('thead', [
-                element('tr',
-                    [
-                        element('th', 'name'),
-                        element('th', 'show'),
-                        element('th', 'src'),
-                        element('th', 'z'),
-                        element('th', 'alpha'),
-                        element('th', 'desaturate'),
-                        element('th', 'brightness'),
-                        element('th', 'contrast'),
-                        element('th', 'blendMode'),
-                        element('th', 'blend'),
-                        element('th', 'animation')
-                    ])]),
-            element('tbody',
-                layers.map(layer => element('tr', [
-                    element('th', layer.name||''),
-                    element('td', eCheckbox({
-                        class: 'editlayer-show',
-                        value: !!layer.show,
-                        set(value) {
-                            layer.show = value;
-                            redraw();
-                        }
-                    })),
-	                element('td', [
-			                element('a', {
-				                onclick() {
-				                	delete Renderer.ImageCaches[layer.src];
-					                layer.src = layer.src.split('#')[0] + '#' + new Date().getTime()
-					                redraw();
-				                }
-			                }, '↺'),
-			                eInput({
-				                class: 'editlayer-src',
-				                value: layer.src.split('#')[0],
-				                set(value) {
-					                layer.src = value;
-					                redraw();
-				                }
-			                })
-		                ]
-	                ),
-                    element('td', eInput({
-                        class: 'editlayer-z',
-                        type: 'number',
-                        value: layer.z,
-                        set(value) {
-                            layer.z = value;
-                            redraw();
-                        }
-                    })),
-                    element('td', eInput({
-                        class: 'editlayer-alpha',
-                        type: 'number',
-                        value: layer.alpha,
-                        set(value) {
-                            layer.alpha = value;
-                            redraw();
-                        },
-                        min: 0,
-                        max: 1,
-                        step: 0.1
-                    })),
-                    element('td', eCheckbox({
-                        value: layer.desaturate,
-                        set(value) {
-                            layer.desaturate = value;
-                            redraw();
-                        },
-                        class: 'editlayer-desaturate'
-                    })),
-                    element('td', eInput({
-                        class: 'editlayer-brightness',
-                        type: 'number',
-                        value: layer.brightness,
-                        set(value) {
-                            layer.brightness = value;
-                            redraw();
-                        },
-                        min: -1,
-                        max: +1,
-                        step: 0.01
-                    })),
-                    element('td', eInput({
-                        class: 'editlayer-contrast',
-                        type: 'number',
-                        value: layer.contrast,
-                        set(value) {
-                            layer.contrast = value;
-                            redraw();
-                        },
-                        min: 0,
-                        max: +4,
-                        step: 0.01
-                    })),
-                    element('td', eSelect({
-                        class: 'editlayer-blendmode',
-                        items: [{value: '', text: 'none'}, 'hard-light', 'multiply', 'screen', 'soft-light', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn'],
-                        value: layer.blendMode,
-                        set(value) {
-                            layer.blendMode = value;
-                            redraw();
-                        }
-                    })),
-                    element('td', eInput({
-                        type: 'color',
-                        value: layer.blend,
-                        set(value) {
-                            layer.blend = value;
-                            redraw();
-                        },
-                        class: 'editlayer-blend'
-                    })),
-                    element('td', eInput({
-                        class: 'editlayer-animation',
-                        value: layer.animation,
-                        onchange: function () {
-                            layer.animation = this.value;
-                            redrawFull();
-                        }
-                    }))
-                ]))
-            )
-        ]));
-    }
+		elechild(this.output, element('div', [
+			element('button', {
+				type: 'button',
+				onclick() {
+					let layerProps = ["name", "show", "src", "z", "alpha", "desaturate", "brightness", "blendMode", "blend", "animation", "frames", "dx", "dy", "width", "height"];
+					copyToClipboard(this.parentElement.querySelector("textarea"), JSON.stringify(layers.map(layer => {
+						let copy = {};
+						for (let key of layerProps) {
+							if (key in layer && layer.show !== false) copy[key] = layer[key];
+						}
+						return copy
+					})))
+				}
+			}, 'Export'),
+			element('textarea', {style: 'display:none'})
+		]));
+		elechild(this.output, element('table', {class: 'editorlayers'}, [
+			element('thead', [
+				element('tr',
+					[
+						element('th', 'name'),
+						element('th', 'show'),
+						element('th', 'src'),
+						element('th', 'z'),
+						element('th', 'alpha'),
+						element('th', 'desaturate'),
+						element('th', 'brightness'),
+						element('th', 'contrast'),
+						element('th', 'blendMode'),
+						element('th', 'blend'),
+						element('th', 'animation')
+					])]),
+			element('tbody',
+				layers.map(layer => element('tr', [
+					element('th', layer.name || ''),
+					element('td', eCheckbox({
+						class: 'editlayer-show',
+						value: !!layer.show,
+						set(value) {
+							layer.show = value;
+							redraw();
+						}
+					})),
+					element('td', [
+							element('a', {
+								onclick() {
+									delete Renderer.ImageCaches[layer.src];
+									layer.src = layer.src.split('#')[0] + '#' + new Date().getTime()
+									redraw();
+								}
+							}, '↺'),
+							eInput({
+								class: 'editlayer-src',
+								value: layer.src.split('#')[0],
+								set(value) {
+									layer.src = value;
+									redraw();
+								}
+							})
+						]
+					),
+					element('td', eInput({
+						class: 'editlayer-z',
+						type: 'number',
+						value: layer.z,
+						set(value) {
+							layer.z = value;
+							redraw();
+						}
+					})),
+					element('td', eInput({
+						class: 'editlayer-alpha',
+						type: 'number',
+						value: layer.alpha,
+						set(value) {
+							layer.alpha = value;
+							redraw();
+						},
+						min: 0,
+						max: 1,
+						step: 0.1
+					})),
+					element('td', eCheckbox({
+						value: layer.desaturate,
+						set(value) {
+							layer.desaturate = value;
+							redraw();
+						},
+						class: 'editlayer-desaturate'
+					})),
+					element('td', eInput({
+						class: 'editlayer-brightness',
+						type: 'number',
+						value: layer.brightness,
+						set(value) {
+							layer.brightness = value;
+							redraw();
+						},
+						min: -1,
+						max: +1,
+						step: 0.01
+					})),
+					element('td', eInput({
+						class: 'editlayer-contrast',
+						type: 'number',
+						value: layer.contrast,
+						set(value) {
+							layer.contrast = value;
+							redraw();
+						},
+						min: 0,
+						max: +4,
+						step: 0.01
+					})),
+					element('td', eSelect({
+						class: 'editlayer-blendmode',
+						items: [{
+							value: '',
+							text: 'none'
+						}, 'hard-light', 'multiply', 'screen', 'soft-light', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn'],
+						value: layer.blendMode,
+						set(value) {
+							layer.blendMode = value;
+							redraw();
+						}
+					})),
+					element('td', eInput({
+						type: 'color',
+						value: layer.blend,
+						set(value) {
+							layer.blend = value;
+							redraw();
+						},
+						class: 'editlayer-blend'
+					})),
+					element('td', eInput({
+						class: 'editlayer-animation',
+						value: layer.animation,
+						onchange: function () {
+							layer.animation = this.value;
+							redrawFull();
+						}
+					}))
+				]))
+			)
+		]));
+	}
 })
 Macro.add('canvasModelEditor', {
 	handler: function () {
 		let model = Renderer.lastModel;
 		if (!model) return;
 		let options = model.options;
+
 		function redraw() {
 			model.redraw();
 		}
+
 		let optionListeners = []; // list of functions to call when model is imported
 		function updateControls() {
 			for (let control of optionListeners) control();
 		}
 
 		function optionCategory(name) {
-			return element('div', {class:'optioncategory'}, name);
+			return element('div', {class: 'optioncategory'}, name);
 		}
+
 		function optionContainer(name, editor) {
 			return [
-				element('label', { class:'optionlabel', 'for': 'modeloption-'+name}, name),
-				element('div', { class:'optioneditor' }, editor)
+				element('label', {class: 'optionlabel', 'for': 'modeloption-' + name}, name),
+				element('div', {class: 'optioneditor'}, editor)
 			]
 		}
+
 		function booleanOption(name) {
 			return optionContainer(name,
 				eCheckbox({
-					id: 'modeloption-'+name,
+					id: 'modeloption-' + name,
 					value: options[name],
 					set(value) {
 						options[name] = value;
 						redraw();
 					},
 					$oncreate(e) {
-						optionListeners.push(()=>{
+						optionListeners.push(() => {
 							e.value = options[name]
 						})
 					}
 				})
 			);
 		}
+
 		function stringOption(name) {
 			return optionContainer(name, eInput({
-				id: 'modeloption-'+name,
+				id: 'modeloption-' + name,
 				value: options[name],
 				type: 'text',
 				set(value) {
@@ -560,18 +592,19 @@ Macro.add('canvasModelEditor', {
 					redraw()
 				},
 				$oncreate(e) {
-					optionListeners.push(()=>{
+					optionListeners.push(() => {
 						e.value = options[name]
 					})
 				}
 			}))
 		}
+
 		function numberOption(name, min, max, step, range) {
 			let rangeLabel;
 			if (range) {
 				rangeLabel = element('label',
-					{'for':'modeloption-'+name},
-					''+options[name]
+					{'for': 'modeloption-' + name},
+					'' + options[name]
 				)
 			} else {
 				rangeLabel = '';
@@ -590,7 +623,7 @@ Macro.add('canvasModelEditor', {
 							redraw();
 						},
 						$oncreate(e) {
-							optionListeners.push(()=>{
+							optionListeners.push(() => {
 								e.value = options[name]
 							})
 						}
@@ -599,10 +632,11 @@ Macro.add('canvasModelEditor', {
 				]
 			);
 		}
+
 		function selectOption(name, values, number) {
 			return optionContainer(name,
 				eSelect({
-					id: 'modeloption-'+name,
+					id: 'modeloption-' + name,
 					items: values,
 					value: options[name],
 					set(value) {
@@ -611,13 +645,14 @@ Macro.add('canvasModelEditor', {
 						redraw();
 					},
 					$oncreate(e) {
-						optionListeners.push(()=>{
+						optionListeners.push(() => {
 							e.value = options[name]
 						})
 					}
 				})
 			);
 		}
+
 		let generatedOptions = model.generatedOptions();
 		if (model.name !== "main") {
 			elechild(this.output, element('div', [
@@ -625,8 +660,8 @@ Macro.add('canvasModelEditor', {
 					element('div', {class: 'editormodelgroups'}, [
 							element('div', {class: 'editormodelgroup'},
 								Object.keys(model.options)
-									.filter(opt=>!generatedOptions.includes(options) && opt !== 'filters')
-									.map(opt=>{
+									.filter(opt => !generatedOptions.includes(options) && opt !== 'filters')
+									.map(opt => {
 										let value = model.options[opt];
 										switch (typeof value) {
 											case 'number':
@@ -645,7 +680,7 @@ Macro.add('canvasModelEditor', {
 			)
 			return;
 		}
-		let bodyWritings = ["",...Object.keys(setup.bodywriting)];
+		let bodyWritings = ["", ...Object.keys(setup.bodywriting)];
 
 		let hairColourOptions = [...Object.keys(setup.colours.hair_map), "custom"];
 		let xhairColourOptions = ["", ...Object.keys(setup.colours.hair_map), "custom"];
@@ -658,7 +693,7 @@ Macro.add('canvasModelEditor', {
 			element('button', {
 				type: 'button',
 				onclick() {
-					let ocopy ={};
+					let ocopy = {};
 					let defaults = model.defaultOptions();
 					for (let key of Object.keys(options)) {
 						if (generatedOptions.includes(key)) continue;
@@ -673,8 +708,8 @@ Macro.add('canvasModelEditor', {
 				type: 'button',
 				onclick() {
 					let textarea = this.parentElement.querySelector("textarea");
-					if(textarea.getAttribute('style')) {
-						textarea.setAttribute('style','');
+					if (textarea.getAttribute('style')) {
+						textarea.setAttribute('style', '');
 						textarea.value = '';
 						this.textContent = "Paste and click again to import";
 					} else {
@@ -682,12 +717,12 @@ Macro.add('canvasModelEditor', {
 						Object.assign(options, ioptions);
 						model.redraw();
 						updateControls();
-						textarea.setAttribute('style','display:none');
+						textarea.setAttribute('style', 'display:none');
 						this.textContent = "Import";
 					}
 				}
 			}, 'Import'),
-			element('textarea', {rows:1, style: 'display:none'})
+			element('textarea', {rows: 1, style: 'display:none'})
 		]));
 		elechild(this.output, element('div', [
 			element('h3', 'Model options'),
@@ -808,14 +843,14 @@ Macro.add('canvasModelEditor', {
 						selectOption("writing_right_thigh", bodyWritings),
 
 						optionCategory("Dripping fluids"),
-						selectOption("drip_vaginal", ["","Start","VerySlow","Slow","Fast","VeryFast"]),
-						selectOption("drip_anal", ["","Start","VerySlow","Slow","Fast","VeryFast"]),
-						selectOption("drip_mouth", ["","Start","VerySlow","Slow","Fast","VeryFast"]),
+						selectOption("drip_vaginal", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
+						selectOption("drip_anal", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
+						selectOption("drip_mouth", ["", "Start", "VerySlow", "Slow", "Fast", "VeryFast"]),
 					]),
 				element('div', {class: 'editormodelgroup'},
 					[
-						setup.clothes_all_slots.map(slot=>[
-							optionCategory("Clothes: "+slot),
+						setup.clothes_all_slots.map(slot => [
+							optionCategory("Clothes: " + slot),
 							selectOption("worn_" + slot,
 								Object.values(setup.clothes[slot]).map(item => ({
 									value: item.index,
@@ -823,10 +858,10 @@ Macro.add('canvasModelEditor', {
 								})),
 								true
 							),
-							numberOption("worn_"+slot+"_alpha", 0, 1, 0.1, true),
-							selectOption("worn_"+slot+"_integrity", ["tattered", "torn", "frayed", "full"]),
-							selectOption("worn_"+slot+"_colour", clothesColourOptions),
-							selectOption("worn_"+slot+"_acc_colour", clothesColourOptions)
+							numberOption("worn_" + slot + "_alpha", 0, 1, 0.1, true),
+							selectOption("worn_" + slot + "_integrity", ["tattered", "torn", "frayed", "full"]),
+							selectOption("worn_" + slot + "_colour", clothesColourOptions),
+							selectOption("worn_" + slot + "_acc_colour", clothesColourOptions)
 						])
 					]
 				)])

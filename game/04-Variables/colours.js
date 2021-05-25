@@ -114,7 +114,6 @@ setup.colours = {
         return Renderer.lintRgbStaged(tan, gradient).toHexString();
     }
 };
-// TODO @aimozg Need some mechanism to apply different filters for "red" and "gray" sprites
 
 /**
  * Hair colour record:
