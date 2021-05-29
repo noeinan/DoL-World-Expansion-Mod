@@ -582,7 +582,7 @@ Renderer.CanvasModels["main"] = {
 						(options.breast_size - 1) +
 						(options.breasts === "cleavage" && options.breast_size >= 4 ? "_clothed" : "") + ".png"
 				} else {
-					let fn = "breasts" + options.breast_size + (options.breasts === "cleavage" && options.breast_size >= 2 ? "_clothed" : "") + ".png";
+					let fn = "breasts" + options.breast_size + (options.breasts === "cleavage" && options.breast_size >= 3 ? "_clothed" : "") + ".png";
 					if (fn === "breasts5_clothed.png") fn = "breasts6_clothed.png";
 					return "img/body/breasts/" + fn;
 				}
@@ -1037,7 +1037,7 @@ Renderer.CanvasModels["main"] = {
 				}
 			},
 			showfn(options) {
-				return options.crotch_visible && !!options.penis && options.penis_parasite && !options.genitals_chastity;
+				return options.crotch_visible && !!options.penis && !!options.penis_parasite && !options.genitals_chastity;
 			},
 			zfn(options){
 				if (options.crotch_exposed) {
@@ -1060,7 +1060,7 @@ Renderer.CanvasModels["main"] = {
 				}
 			},
 			showfn(options) {
-				return options.crotch_visible && !options.clit_parasite && !options.chastity;
+				return options.crotch_visible && !!options.clit_parasite && !options.chastity;
 			},
 			zfn(options){
 				if (options.crotch_exposed) {
