@@ -507,7 +507,8 @@ setup.colours.eyes = [{
     natural: true,
     lens: true,
     canvasfilter: {
-        blend: "#80ebff"
+        blend: "#00D9F7",
+        brightness: +0.2
     }
 }, {
     variable: "amber",
@@ -537,7 +538,17 @@ setup.colours.eyes = [{
     natural: true,
     lens: true,
     canvasfilter: {
-        blend: "#a0b456"
+        blend: "#95b521"
+    }
+}, {
+    variable: "light green",
+    name: "light green",
+    name_cap: "Light Green",
+    csstext: "green",
+    natural: true,
+    lens: true,
+    canvasfilter: {
+        blend: "#D5F075"
     }
 }, {
     variable: "red",
@@ -557,7 +568,8 @@ setup.colours.eyes = [{
     natural: true,
     lens: true,
     canvasfilter: {
-        blend: "#ff9aff"
+        blend: "#F76EF7",
+        brightness: +0.2
     }
 }, {
     variable: "grey",
