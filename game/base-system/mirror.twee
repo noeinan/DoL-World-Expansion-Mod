@@ -727,46 +727,84 @@ __Body Writing__<br>
 <<bodywriting>>
 <br>
 <<set _bodyWritingOptions to {
+	general:{},
+}>>
+<<set _bodyWritingOptions to {
+	General: {
 	"Cute boy":"cute_boy",
 	"Cute girl":"cute_girl",
 	"Orphan":"orphan"
+	}
 }>>
 <<if $promiscuity gte 35>>
-	<<set _bodyWritingOptions["Daddy issues"] to "daddy_issues">>
-	<<set _bodyWritingOptions["Mommy issues"] to "mommy_issues">>
-	<<set _bodyWritingOptions["Trashy"] to "trashy">>
-	<<set _bodyWritingOptions["£5 whore"] to "five_pound_whore">>
-	<<set _bodyWritingOptions["£10 a pop"] to "ten_pound_a_pop">>
-	<<set _bodyWritingOptions["£25 per fuck"] to "twenty_five_pound_per_fuck">>
-	<<set _bodyWritingOptions["£100"] to "one_hundred_pound">>
-	<<set _bodyWritingOptions["It's not rape if you pay me"] to "its_not_rape_if_you_pay_me">>
-	<<set _bodyWritingOptions["Whore"] to "whore">>
-	<<set _bodyWritingOptions["Slut for hire"] to "slut_for_hire">>
-	<<set _bodyWritingOptions["Body for sale"] to "body_for_sale">>
-	<<set _bodyWritingOptions["Prostitute"] to "prostitute">>
+	<<set _bodyWritingOptions.Promiscuity = {}>>
+	<<set _bodyWritingOptions.Promiscuity["Daddy issues"] to "daddy_issues">>
+	<<set _bodyWritingOptions.Promiscuity["Mommy issues"] to "mommy_issues">>
+	<<set _bodyWritingOptions.Promiscuity["Trashy"] to "trashy">>
+	<<set _bodyWritingOptions.Promiscuity["£5 whore"] to "five_pound_whore">>
+	<<set _bodyWritingOptions.Promiscuity["£10 a pop"] to "ten_pound_a_pop">>
+	<<set _bodyWritingOptions.Promiscuity["£25 per fuck"] to "twenty_five_pound_per_fuck">>
+	<<set _bodyWritingOptions.Promiscuity["£100"] to "one_hundred_pound">>
+	<<set _bodyWritingOptions.Promiscuity["It's not rape if you pay me"] to "its_not_rape_if_you_pay_me">>
+	<<set _bodyWritingOptions.Promiscuity["Whore"] to "whore">>
+	<<set _bodyWritingOptions.Promiscuity["Slut for hire"] to "slut_for_hire">>
+	<<set _bodyWritingOptions.Promiscuity["Body for sale"] to "body_for_sale">>
+	<<set _bodyWritingOptions.Promiscuity["Prostitute"] to "prostitute">>
 <</if>>
 <<if $exhibitionism gte 35>>
-	<<set _bodyWritingOptions["Pervert"] to "pervert">>
-	<<set _bodyWritingOptions["Attention whore"] to "attention_whore">>
-	<<set _bodyWritingOptions["Flaunter"] to "flaunter">>
-	<<set _bodyWritingOptions["Object"] to "object">>
-	<<set _bodyWritingOptions["Strip me"] to "strip_me">>
-	<<set _bodyWritingOptions["Ask to see me naked"] to "ask_to_see_me_naked">>
+	<<set _bodyWritingOptions.Exhibitionism to {}>>
+	<<set _bodyWritingOptions.Exhibitionism["Pervert"] to "pervert">>
+	<<set _bodyWritingOptions.Exhibitionism["Attention whore"] to "attention_whore">>
+	<<set _bodyWritingOptions.Exhibitionism["Flaunter"] to "flaunter">>
+	<<set _bodyWritingOptions.Exhibitionism["Object"] to "object">>
+	<<set _bodyWritingOptions.Exhibitionism["Strip me"] to "strip_me">>
+	<<set _bodyWritingOptions.Exhibitionism["Ask to see me naked"] to "ask_to_see_me_naked">>
 <</if>>
 <<if $deviancy gte 55>>
-	<<set _bodyWritingOptions["Doggy slut"] to "doggy_slut">>
-	<<set _bodyWritingOptions["Animal"] to "animal">>
-	<<set _bodyWritingOptions["Beast fucker"] to "beast_fucker">>
-	<<set _bodyWritingOptions["Breedable"] to "breedable">>
-	<<set _bodyWritingOptions["Deviant"] to "deviant">>
+	<<set _bodyWritingOptions.Deviancy to {}>>
+	<<set _bodyWritingOptions.Deviancy["Doggy slut"] to "doggy_slut">>
+	<<set _bodyWritingOptions.Deviancy["Animal"] to "animal">>
+	<<set _bodyWritingOptions.Deviancy["Beast fucker"] to "beast_fucker">>
+	<<set _bodyWritingOptions.Deviancy["Breedable"] to "breedable">>
+	<<set _bodyWritingOptions.Deviancy["Deviant"] to "deviant">>
 <</if>>
 <<if $masochism_level gte 1>>
-	<<set _bodyWritingOptions["Hit me"] to "hit_me">>
-	<<set _bodyWritingOptions["Hurt me"] to "hurt_me">>
-	<<set _bodyWritingOptions["Treat me bad"] to "treat_me_bad">>
-	<<set _bodyWritingOptions["Make me squeal"] to "make_me_squeal">>
+	<<set _bodyWritingOptions.Masochism to {}>>
+	<<set _bodyWritingOptions.Masochism["Hit me"] to "hit_me">>
+	<<set _bodyWritingOptions.Masochism["Hurt me"] to "hurt_me">>
+	<<set _bodyWritingOptions.Masochism["Treat me bad"] to "treat_me_bad">>
+	<<set _bodyWritingOptions.Masochism["Make me squeal"] to "make_me_squeal">>
 <</if>>
-<<if Object.keys(_bodyWritingOptions).length gt 0>>
+
+
+/*Needs to be last*/
+<div id="bodywritingMenuLinks">
+<<set _keys to Object.keys(_bodyWritingOptions)>>
+<<if $bodywritingSet is undefined>>
+	<<set $bodywritingSet to "General">>
+<</if>>
+<<for _i to 0; _i lt _keys.length; _i++>>
+	<<capture _i>>
+		<span @id="'link-'+_keys[_i].replace(/ /g,'-')" @class="(_keys[_i] is $bodywritingSet ? 'selected' : '')">
+		<<link _keys[_i]>>
+			<<removeclass `'#link-'+$bodywritingSet.replace(/ /g,'-')` "selected">>
+			<<set $bodywritingSet to clone(_keys[_i])>>
+			<<addclass `'#link-'+$bodywritingSet.replace(/ /g,'-')` "selected">>
+			<<replace "#bodywritingMenu">><<bodywritingMenu>><</replace>>
+		<</link>> |
+		</span>
+	<</capture>>
+<</for>>
+</div>
+<br>
+<div id="bodywritingMenu" class="no-numberify">
+	<<bodywritingMenu>>
+</div>
+<br><br>
+<</widget>>
+
+<<widget "bodywritingMenu">>
+<<if Object.keys(_bodyWritingOptions[$bodywritingSet]).length gt 0>>
 	<<set _bodyPartOptions to {}>>
 	<<set _bodyPartOptionsSkip to ["back", "left_bottom", "right_bottom"]>>
 	<<for _label, _value range $skin>>
@@ -780,7 +818,7 @@ __Body Writing__<br>
 	<<if Object.keys(_bodyPartOptions).length gt 0>>
 		Write
 		<<listbox "_bodyWritingSelected">>
-			<<optionsfrom _bodyWritingOptions>>
+			<<optionsfrom _bodyWritingOptions[$bodywritingSet]>>
 		<</listbox>>
 		on your
 		<<listbox "_bodyPartSelected">>
@@ -789,7 +827,7 @@ __Body Writing__<br>
 
 		<<link [[Confirm|$passage]]>>
 			<<set $mirrorMenu to "skin">>
-			<<set $bodyWritingSelected to Object.keys(_bodyWritingOptions)[Object.values(_bodyWritingOptions).indexOf(_bodyWritingSelected)]>>
+			<<set $bodyWritingSelected to Object.keys(_bodyWritingOptions[$bodywritingSet])[Object.values(_bodyWritingOptions[$bodywritingSet]).indexOf(_bodyWritingSelected)]>>
 			<<set $bodyPartSelected to _bodyPartSelected>>
 			<<add_bodywriting _bodyPartSelected _bodyWritingSelected pen>>
 		<</link>>
@@ -797,8 +835,6 @@ __Body Writing__<br>
 		You're not sure where else you can write an advertisement.
 	<</if>>
 <</if>>
-<br><br>
-
 <</widget>>
 
 <<widget "mirrorHair">>
