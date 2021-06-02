@@ -249,8 +249,9 @@
 <</widget>>
 
 <<widget "wardrobe">>
+<div id="action-popup">Don't look here.</div>
 <<unset $tempDisable>>
-<<clotheson>> /*Fixes perma pulled aside clothes introduced by 0.2.3.0 bug.*/
+<div id="clotheson"><<clotheson>></div> /*Fixes perma pulled aside clothes introduced by 0.2.3.0 bug.*/
 <<temperature>>
 
 <span>Warmth:</span>
@@ -258,14 +259,23 @@
 <div id="warmth-description">
 	<<warmth_description>>
 </div>
-<br><br>
+<br>
 <<if $upperwet gte 1 or $lowerwet gte 1 or $underlowerwet or $underupperwet gte 1>>
-	<<link [[Dry your clothes|$passage]]>><<set $wear to "dry">><<script>>state.display(state.active.title, null)<</script>><</link>>
+	<<link "Dry your clothes">>
+		<<set $wear to "dry">>
+		<<updatewardrobe>>
+	<</link>>
 	<br>
 <</if>>
 
-<<link [[Strip all|$passage]]>><<set $wear to "strip">><</link>> |
-<<link [[Wear Random Clothes|$passage]]>><<set $randomWear to true>><</link>> |
+<<link "Strip all">>
+	<<set $wear to "strip">>
+	<<updatewardrobe>>
+<</link>> |
+<<link "Wear Random Clothes">>
+	<<set $randomWear to true>>
+	<<updatewardrobe>>
+<</link>> |
 <<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>> |
 <div id="randomClothingConfigure" class="hidden">
 	<<if $randomEquipConfigure is undefined>>
@@ -322,7 +332,7 @@
 
 __Clothing sets__
 <br>
-<<listoutfits>>
+<div id="listoutfits"><<listoutfits>></div>
 
 <hr>
 __Clothing__
@@ -412,7 +422,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<print '<<checkbox "$saveColor" false true '+($saveColor is true ? "checked" : "")+'>>'>>
 </label>
 <br>
-<<link [[Add current clothes as new set|$passage]]>>
+<<link "Add current clothes as new set">>
 	<<script>>
 		SugarCube.State.variables.outfit_name = document.getElementById("outfitName").value.replace(/[^a-zA-Z 0-9.!()]+/g,"");
 	<</script>>
@@ -455,6 +465,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<else>>
 		<<set $outfit.last().colors to false>>
 	<</if>>
+
+	<<updatewardrobe "outfits">>
 <</link>>
 <</widget>>
 
@@ -573,18 +585,30 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 
 		<<if _wardrobe_list is "upper" and $worn.lower.name isnot "naked" and _wornItem.outfitPrimary is undefined and !_wornItem.notuck>>
 			<<if $upperTucked>>
-				<<link [[Untuck|$passage]]>><<set $upperTucked = 0>><</link>>
+				<<link "Untuck">>
+					<<set $upperTucked = 0>>
+					<<updatewardrobe>>
+				<</link>>
 			<<else>>
-				<<link [[Tuck in|$passage]]>><<set $upperTucked = 1>><</link>>
+				<<link "Tuck in">>
+					<<set $upperTucked = 1>>
+					<<updatewardrobe>>
+				<</link>>
 			<</if>>
 			<br>
 		<</if>>
 		<<if (_wornItem.hood and _wornItem.outfitSecondary) or (_wornItem.outfitPrimary and Object.keys(_wornItem.outfitPrimary).some(x => $worn[x].hood))>>
 		<!-- If selected item is a hood or selected item has a secondary hood piece -->
 			<<if $hoodDown>>
-				<<link [[Pull hood up|$passage]]>><<set $hoodDown = 0>><</link>>
+				<<link "Pull hood up">>
+					<<set $hoodDown = 0>>
+					<<updatewardrobe>>
+				<</link>>
 			<<else>>
-				<<link [[Pull hood down|$passage]]>><<set $hoodDown = 1>><</link>>
+				<<link "Pull hood down">>
+					<<set $hoodDown = 1>>
+					<<updatewardrobe>>
+				<</link>>
 			<</if>>
 			<br>
 		<</if>>
@@ -594,13 +618,13 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 	<br>
 	<<if $worn[_wardrobe_list].name isnot "naked">>
-		<div class="wardrobeItem"><a @onclick="`SugarCube.State.variables.`+_wear+` = 'strip';SugarCube.State.display(SugarCube.State.variables.passage)`">Strip</a></div>
+		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Strip" 'strip'>></div>
 	<</if>>
 	<<if _wardrobe_list is "upper">>
-		<div class="wardrobeItem"><a onclick="SugarCube.State.variables.wear_upper='large_towel';SugarCube.State.display(SugarCube.State.variables.passage)">Large Towel</a></div>
+		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Large towel" 'large_towel'>></div>
 	<</if>>
 	<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
-		<div class="wardrobeItem"><a @onclick="`SugarCube.State.variables.`+_wear+` = 'towel';SugarCube.State.display(SugarCube.State.variables.passage)`">Towel</a></div>
+		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Towel" 'towel'>></div>
 	<</if>>
 
 	<<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
@@ -610,8 +634,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 				<<continue>>
 			<</if>>
 		<</if>>
-		<div class="wardrobeItem">
-		<<clothingicon _item>><a @onclick="`SugarCube.State.variables.`+_wear+` = `+ _i +`;SugarCube.State.display(SugarCube.State.variables.passage)`">_item.name_cap</a>
+		<div class="wardrobeItem no-numberify">
+		<<clothingicon _item>><<wearlink_norefresh _item.name_cap _i>>
 		<<if _item.gender is "m">>
 			| <span class="blue">♂</span> |
 		<<elseif _item.gender is "f">>
@@ -651,6 +675,36 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <</if>>
 
 <<temperature>>
+<</widget>>
+
+<<widget "wearlink_norefresh">>
+	<<capture $args[1]>>
+		<<link $args[0]>>
+			<<set State.variables[_wear] = $args[1]>>
+			<<updatewardrobe>>
+		<</link>>
+	<</capture>>
+<</widget>>
+
+<<widget "updatewardrobe">>
+	<<if window.scrollY > 130>>
+		<<run $('#action-popup, #wardrobewear').html(new Wikifier(null, "<<wardrobewear>>").output)>>
+		<<run $('#action-popup').css('transform', 'translateY(0)'); setTimeout(() => { $('#action-popup').css('transform', 'translateY(-100%)') }, 3200);>>
+	<<else>>
+		<<run $('#wardrobewear').html(new Wikifier(null, "<<wardrobewear>>").output)>>
+	<</if>>
+	<<updatesidebarimg>>
+	<<updatesidebardescription>>
+	<<updateallure>>
+	<<updatewarmthscale>>
+	<<updatewarmthdescription>>
+	<<if $args[0] == "outfits">>
+		<<replace "#listoutfits">><<listoutfits>><</replace>>
+	<</if>>
+	<<replace '#clotheson'>><<clotheson>><</replace>>
+	<<replace '#wardrobeList'>><<wardrobeContents>><</replace>>
+	<<numberify ".passage">>
+	<<run updateMoment()>>
 <</widget>>
 
 <<widget "oldWardrobeListDisplay">>
@@ -1027,7 +1081,7 @@ Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 
 <<set $wardrobe_location to "wardrobe">>
 You look in your wardrobe.
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<link [[Close wardrobe|Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 <br><br>
 <<wardrobe>>
@@ -1037,7 +1091,7 @@ You look in your wardrobe.
 <<set $wardrobe_location to "wardrobe">>
 You are in a small wooden changing room.
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exposed lte 1>>
 <<link[[Leave|Beach]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 <br><br>
@@ -1052,7 +1106,7 @@ You can't go out like this!
 You look through the cupboard containing your clothes. There's an old dressing screen for privacy.
 <br><br>
 <<set $wardrobe_location to "wardrobe">>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exhibitionism gte 75>>
 	<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 <<elseif $exhibitionism gte 55>>
@@ -1080,7 +1134,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 You look through the cupboard containing your clothes.
 <br><br>
 <<set $wardrobe_location to "wardrobe">>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exhibitionism lte 54>>
 	<<if $exposed lte 0>>
 		<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
@@ -1109,7 +1163,7 @@ You look through the cupboard containing your clothes.
 <<set $wardrobe_location to "wardrobe">>
 You are in the strip club's dressing room. <<if $daystate isnot "day" and $daystate isnot "dawn">>There are a few mirrors, currently occupied by staff fixing their hair and makeup.<</if>>
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exhibitionism lte 14>>
 	<<if $exposed lte 0>>
 		<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
@@ -1138,7 +1192,7 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 <<set $wardrobe_location to "wardrobe">>
 You are in the brothel's dressing room. There are a few mirrors, currently occupied by staff fixing their hair and makeup.
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exhibitionism lte 14>>
 	<<if $exposed lte 0>>
 		<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
@@ -1167,7 +1221,7 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 <<set $wardrobe_location to "wardrobe">>
 You stand in front of your open locker.
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exposed gte 2 and $exhibitionism lt 75>>
 	You can't go out like this!
 	<br><br>
@@ -1183,7 +1237,7 @@ You stand in front of your open locker.
 <<set $wardrobe_location to "wardrobe">>
 You stand in front of your open locker.
 <br><br>
-<<wardrobewear>>
+<div id="wardrobewear"><<wardrobewear>></div>
 <<if $exposed gte 2 and $exhibitionism lt 75>>
 	You can't go out like this!
 	<br><br>
