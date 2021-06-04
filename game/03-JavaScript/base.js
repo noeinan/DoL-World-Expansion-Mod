@@ -61,6 +61,10 @@ Mousetrap.bind(["z", "n", "enter"], function () {
 });
 
 Mousetrap.bind(["f"], function () {
+	if (document.activeElement.tagName === "INPUT" && document.activeElement.type !== "radio"
+		&& document.activeElement.type !== "checkbox")
+		return;
+
 	fixStuckAnimations();
 });
 
@@ -418,34 +422,19 @@ DefineMacroS("numberify", numberify);
 
 // blink entire page to fix a bug in Chrome where animation on images doesn't start
 window.fixStuckAnimations = function() {
+	let scrollX = window.scrollX;
+	let scrollY = window.scrollY;
 	let imgs = $('#story').add($('#ui-bar'));
 	imgs.toggleClass('hidden');
-	window.setTimeout(() => imgs.toggleClass('hidden'), 5);
+	window.setTimeout(() => {
+		imgs.toggleClass('hidden');
+		window.scroll(scrollX, scrollY);
+	}, 5);
 }
 
 // attaches event listeners to combat images
-// unstuck all images under the cursor when clicked
-// source: https://stackoverflow.com/a/14416567
 window.initTouchToFixAnimations = function() {
-	$(document).on('click.passThrough', "#divsex img", function (e, ee) {
-		var $el = $(this).hide();
-		try {
-			$el.toggleClass('hidden');
-			window.setTimeout(() => $el.toggleClass('hidden'), 5);
-
-			ee = ee || {
-			pageX: e.pageX,
-			pageY: e.pageY
-			};
-			var next = document.elementFromPoint(ee.pageX, ee.pageY);
-			next = (next.nodeType == 3) ? next.parentNode : next //Opera
-			$(next).trigger('click.passThrough', ee);
-		} catch (err) {
-			console.log("click.passThrough failed: " + err.message);
-		} finally {
-			$el.show();
-		}
-	});
+	$(document).on('click', "#divsex img", fixStuckAnimations);
 }
 
 $(document).on(':passagedisplay', function (ev) {
