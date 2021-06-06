@@ -554,22 +554,24 @@
 <</widget>>
 
 <<widget "crimeup">>
-<<set _crime_up to 1>>
-<<for _e to 0; _e lt $clothing_number; _e++>>
-<<activeclothes>>
-	<<if $worn[_active_clothes].type.includes("stealthy")>>
-		<<set _crime_up -= 0.05>>
+<<if $statFreeze isnot true>>
+	<<set _crime_up to 1>>
+	<<for _e to 0; _e lt $clothing_number; _e++>>
+		<<activeclothes>>
+		<<if $worn[_active_clothes].type.includes("stealthy")>>
+			<<set _crime_up -= 0.05>>
+		<</if>>
+	<</for>>
+		<<if $args[0]>>
+			<<set $crime += Math.trunc($args[0] * _crime_up)>>
+			<<set $crimehistory += Math.trunc($args[0] * _crime_up)>>
+		<</if>>
+		<<if $slimeEvent is "steal something">>
+			<<unset $slimeEvent>>
+		<</if>>
+	<<if $averyCrimeTracker isnot undefined>>
+	<<set $averyCrimeTracker+= ($args[0] * _crime_up)>>
 	<</if>>
-<</for>>
-	<<if $args[0]>>
-		<<set $crime += Math.trunc($args[0] * _crime_up)>>
-		<<set $crimehistory += Math.trunc($args[0] * _crime_up)>>
-	<</if>>
-	<<if $slimeEvent is "steal something">>
-		<<unset $slimeEvent>>
-	<</if>>
-<<if $averyCrimeTracker isnot undefined>>
-  <<set $averyCrimeTracker+= ($args[0] * _crime_up)>>
 <</if>>
 <</widget>>
 
@@ -618,153 +620,169 @@
 <</widget>>
 
 <<widget "skulduggeryskilluse">>
+<<if $statFreeze isnot true>>
 	<<set $skulduggery += 3>>
 	<<if $skulduggery lt 1000>>
 		<span class="gold"> You learned a thing or two about skulduggery.</span>
 		<br><br>
 	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "combatskulduggeryskilluse">>
+<<if $statFreeze isnot true>>
 	<<set $skulduggery += 3>>
 	<<if $skulduggery lt 1000>>
 		<span class="gold"> You learned a thing or two about skulduggery.</span>
 	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "swimmingskilluse">>
+<<if $statFreeze isnot true>>
 	<<set $swimmingskill += 9>>
 	<<if $swimmingskill lt 1000>>
 		<span class="gold"> You've become more confident at swimming.</span>
 		<br><br>
 	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "danceskilluse">>
+<<if $statFreeze isnot true>>
 	<<danceskill 1>>
 	<<if $danceskill lt 1000>>
 		<span class="gold"> You feel more confident in your dancing abilities.</span>
 	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "scienceskill">>
-<<switch $sciencetrait>>
-<<case 4>>
-	<<set _skill_mod to 0.3>>
-<<case 3>>
-	<<set _skill_mod to 0.3>>
-<<case 2>>
-	<<set _skill_mod to 0.6>>
-<<case 1>>
-	<<set _skill_mod to 1.2>>
-<<default>>
-	<<set _skill_mod to 2.4>>
-<</switch>>
-<<if $science_star lt 3>>
-	<<set $science_star += 1>>
+<<if $statFreeze isnot true>>
+	<<switch $sciencetrait>>
+		<<case 4>>
+			<<set _skill_mod to 0.3>>
+		<<case 3>>
+			<<set _skill_mod to 0.3>>
+		<<case 2>>
+			<<set _skill_mod to 0.6>>
+		<<case 1>>
+			<<set _skill_mod to 1.2>>
+		<<default>>
+			<<set _skill_mod to 2.4>>
+	<</switch>>
+	<<if $science_star lt 3>>
+		<<set $science_star += 1>>
+	<</if>>
+	<<if $worn.face.type.includes("glasses")>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $exposed gte 1>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $args[0]>>
+		<<set $science_exam += ($args[0] * _skill_mod)>>
+	<<else>>
+		<<set $science_exam += (1 * _skill_mod)>>
+	<</if>>
+	<<exam_clamp science>>
 <</if>>
-<<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $exposed gte 1>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $args[0]>>
-	<<set $science_exam += ($args[0] * _skill_mod)>>
-<<else>>
-	<<set $science_exam += (1 * _skill_mod)>>
-<</if>>
-<<exam_clamp science>>
 <</widget>>
 
 <<widget "mathsskill">>
-<<switch $mathstrait>>
-<<case 4>>
-	<<set _skill_mod to 0.3>>
-<<case 3>>
-	<<set _skill_mod to 0.3>>
-<<case 2>>
-	<<set _skill_mod to 0.6>>
-<<case 1>>
-	<<set _skill_mod to 1.2>>
-<<default>>
-	<<set _skill_mod to 2.4>>
-<</switch>>
-<<if $maths_star lt 3>>
-	<<set $maths_star += 1>>
+<<if $statFreeze isnot true>>
+	<<switch $mathstrait>>
+		<<case 4>>
+			<<set _skill_mod to 0.3>>
+		<<case 3>>
+			<<set _skill_mod to 0.3>>
+		<<case 2>>
+			<<set _skill_mod to 0.6>>
+		<<case 1>>
+			<<set _skill_mod to 1.2>>
+		<<default>>
+			<<set _skill_mod to 2.4>>
+	<</switch>>
+	<<if $maths_star lt 3>>
+		<<set $maths_star += 1>>
+	<</if>>
+	<<if $worn.face.type.includes("glasses")>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $exposed gte 1>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $args[0]>>
+		<<set $maths_exam += ($args[0] * _skill_mod)>>
+	<<else>>
+		<<set $maths_exam += (1 * _skill_mod)>>
+	<</if>>
+	<<exam_clamp maths>>
 <</if>>
-<<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $exposed gte 1>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $args[0]>>
-	<<set $maths_exam += ($args[0] * _skill_mod)>>
-<<else>>
-	<<set $maths_exam += (1 * _skill_mod)>>
-<</if>>
-<<exam_clamp maths>>
 <</widget>>
 
 <<widget "englishskill">>
-<<switch $englishtrait>>
-<<case 4>>
-	<<set _skill_mod to 0.3>>
-<<case 3>>
-	<<set _skill_mod to 0.3>>
-<<case 2>>
-	<<set _skill_mod to 0.6>>
-<<case 1>>
-	<<set _skill_mod to 1.2>>
-<<default>>
-	<<set _skill_mod to 2.4>>
-<</switch>>
-<<if $english_star lt 3>>
-	<<set $english_star += 1>>
+<<if $statFreeze isnot true>>
+	<<switch $englishtrait>>
+		<<case 4>>
+			<<set _skill_mod to 0.3>>
+		<<case 3>>
+			<<set _skill_mod to 0.3>>
+		<<case 2>>
+			<<set _skill_mod to 0.6>>
+		<<case 1>>
+			<<set _skill_mod to 1.2>>
+		<<default>>
+			<<set _skill_mod to 2.4>>
+	<</switch>>
+	<<if $english_star lt 3>>
+		<<set $english_star += 1>>
+	<</if>>
+	<<if $worn.face.type.includes("glasses")>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $exposed gte 1>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $args[0]>>
+		<<set $english_exam += ($args[0] * _skill_mod)>>
+	<<else>>
+		<<set $english_exam += (1 * _skill_mod)>>
+	<</if>>
+	<<exam_clamp english>>
 <</if>>
-<<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $exposed gte 1>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $args[0]>>
-	<<set $english_exam += ($args[0] * _skill_mod)>>
-<<else>>
-	<<set $english_exam += (1 * _skill_mod)>>
-<</if>>
-<<exam_clamp english>>
 <</widget>>
 
 <<widget "historyskill">>
-<<switch $historytrait>>
-<<case 4>>
-	<<set _skill_mod to 0.3>>
-<<case 3>>
-	<<set _skill_mod to 0.3>>
-<<case 2>>
-	<<set _skill_mod to 0.6>>
-<<case 1>>
-	<<set _skill_mod to 1.2>>
-<<default>>
-	<<set _skill_mod to 2.4>>
-<</switch>>
-<<if $history_star lt 3>>
-	<<set $history_star += 1>>
+<<if $statFreeze isnot true>>
+	<<switch $historytrait>>
+		<<case 4>>
+			<<set _skill_mod to 0.3>>
+		<<case 3>>
+			<<set _skill_mod to 0.3>>
+		<<case 2>>
+			<<set _skill_mod to 0.6>>
+		<<case 1>>
+			<<set _skill_mod to 1.2>>
+		<<default>>
+			<<set _skill_mod to 2.4>>
+	<</switch>>
+	<<if $history_star lt 3>>
+		<<set $history_star += 1>>
+	<</if>>
+	<<if $worn.face.type.includes("glasses")>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $exposed gte 1>>
+		<<set _skill_mod *= 1.2>>
+	<</if>>
+	<<if $args[0]>>
+		<<set $history_exam += ($args[0] * _skill_mod)>>
+	<<else>>
+		<<set $history_exam += (1 * _skill_mod)>>
+	<</if>>
+	<<exam_clamp history>>
 <</if>>
-<<if $worn.face.type.includes("glasses")>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $exposed gte 1>>
-	<<set _skill_mod *= 1.2>>
-<</if>>
-<<if $args[0]>>
-	<<set $history_exam += ($args[0] * _skill_mod)>>
-<<else>>
-	<<set $history_exam += (1 * _skill_mod)>>
-<</if>>
-<<exam_clamp history>>
 <</widget>>
 
 <<widget "schoolskill">>
@@ -782,7 +800,7 @@
 <</widget>>
 
 <<widget "athletics">>
-<<if $args[0]>>
+<<if $args[0] and $statFreeze isnot true>>
 	<<set _temp to $args[0]>>
 	<<if $exposed gte 2>>
 		<<set $athletics += 2>>
@@ -795,20 +813,21 @@
 <</widget>>
 
 <<widget "tending">>
-<<if $args[0]>>
+<<if $args[0] and $statFreeze isnot true>>
 	<<set $tending += ($args[0] * 2)>>
 	<<set $tending to Math.clamp($tending, 0, 1000)>>
 <</if>>
 <</widget>>
 
 <<widget "danceskill">>
-<<if $args[0]>>
+<<if $args[0] and $statFreeze isnot true>>
 	<<set $danceskill += $args[0]>>
 	<<set $danceskill to Math.clamp($danceskill, 0, 1000)>>
 <</if>>
 <</widget>>
 
 <<widget "physique">>
+<<if $statFreeze isnot true>>
 	<<if $args[0]>><<set _temp to $args[0]>><<set $workouts += $args[0]>><<else>><<set _temp to 1>><<set $workouts += 1>><</if>>
 	<<if $exposed gte 2>>
 		<<set _temp *= 1.2>>
@@ -821,16 +840,17 @@
 	<<else>>
 		<span class="gold"> It invigorates you.</span>
 	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "physique_loss">>
-<<if $args[0]>>
+<<if $args[0] and $statFreeze isnot true>>
 	<<set $physique -= 10 * $args[0]>>
 <</if>>
 <</widget>>
 
 <<widget "bruise">>
-	<<if $args[0]>>
+	<<if $args[0] and $statFreeze isnot true>>
 		<<switch $args[0]>>
 		<<case "face">>
 			<<set $facebruise += 1>>
@@ -932,25 +952,29 @@
 <<widget "dancestat">><<if $statFreeze isnot true>><<set $dancestat += 1>><</if>><</widget>>
 
 <<widget "distinction_stat">>
-<<set $distinction_stat += 1>>
-<<if $distinction_stat gte 15>>
-	<<earnFeat "Distinguished">>
-<<elseif $distinction_stat gte 5>>
-	<<earnFeat "Distinctive">>
-<<else>>
-	<<earnFeat "Distinction">>
+<<if $statFreeze isnot true>>
+	<<set $distinction_stat += 1>>
+	<<if $distinction_stat gte 15>>
+		<<earnFeat "Distinguished">>
+	<<elseif $distinction_stat gte 5>>
+		<<earnFeat "Distinctive">>
+	<<else>>
+		<<earnFeat "Distinction">>
+	<</if>>
 <</if>>
 <</widget>>
 
 <<widget "knot_stat">>
-<<if $knot_stat is undefined>>
-	<<set $knot_stat to 0>>
+<<if $statFreeze isnot true>>
+	<<if $knot_stat is undefined>>
+		<<set $knot_stat to 0>>
+	<</if>>
+	<<set $knot_stat += 1>>
 <</if>>
-<<set $knot_stat += 1>>
 <</widget>>
 
 <<widget "hunger">>
-<<if $args[0]>>
+<<if $args[0] and $statFreeze isnot true>>
 	<<set $hunger += $args[0]>>
 	<<set $hunger = Math.clamp($hunger, 0, 2000)>>
 <</if>>
