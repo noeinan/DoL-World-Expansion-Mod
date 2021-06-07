@@ -268,15 +268,21 @@
 	<br>
 <</if>>
 
-<<link "Strip all">>
-	<<set $wear to "strip">>
-	<<updatewardrobe>>
-<</link>> |
-<<link "Wear Random Clothes">>
-	<<set $randomWear to true>>
-	<<updatewardrobe>>
-<</link>> |
-<<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>> |
+<div class="wardrobe-action">
+	<<link "Strip all">>
+		<<set $wear to "strip">>
+		<<updatewardrobe>>
+	<</link>>
+</div> |
+<div class="wardrobe-action">
+	<<link "Wear Random Clothes">>
+		<<set $randomWear to true>>
+		<<updatewardrobe>>
+	<</link>>
+</div> |
+<div class="wardrobe-action">
+	<<link Configure>><<toggleclass "#randomClothingConfigure" "hidden">><</link>>
+</div> |
 <div id="randomClothingConfigure" class="hidden">
 	<<if $randomEquipConfigure is undefined>>
 		<<set $randomEquipConfigure to {face: true, feet: true, head: true, hands: true, legs: true, lower: true, neck: true, under_lower: true, under_upper: true, upper: true}>>
@@ -351,6 +357,12 @@ __Clothing__
 <<set $underupperoff to 0>>
 <<exposure>>
 
+<!-- Code responsible for brief highlighting of links in wardrobe when you click them -->
+<<run $(document).on('mousedown', '.wardrobe-action a', (e) => {
+	let target = $(e.currentTarget).parent();
+	target.addClass('notransition action-flash');
+	setTimeout(() => { target.removeClass('notransition action-flash') }, 100);
+})>>
 <</widget>>
 
 <<widget "wardrobeContents">>
@@ -422,52 +434,54 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<print '<<checkbox "$saveColor" false true '+($saveColor is true ? "checked" : "")+'>>'>>
 </label>
 <br>
-<<link "Add current clothes as new set">>
-	<<script>>
-		SugarCube.State.variables.outfit_name = document.getElementById("outfitName").value.replace(/[^a-zA-Z 0-9.!()]+/g,"");
-	<</script>>
-	<<set $outfit.push(
-		{index: $outfit.length,
-		name: $outfit_name,
-		over_upper: clone($worn.over_upper.name),
-		over_lower: clone($worn.over_lower.name),
-		upper: clone($worn.upper.name),
-		lower: clone($worn.lower.name),
-		under_upper: clone($worn.under_upper.name),
-		under_lower: clone($worn.under_lower.name),
-		over_head: clone($worn.over_head.name),
-		head: clone($worn.head.name),
-		face: clone($worn.face.name),
-		neck: clone($worn.neck.name),
-		hands: clone($worn.hands.name),
-		legs: clone($worn.legs.name),
-		feet: clone($worn.feet.name),
-		type: ["normal"]
-		},
-	)>>
+<div class="wardrobe-action">
+	<<link "Add current clothes as new set">>
+		<<script>>
+			SugarCube.State.variables.outfit_name = document.getElementById("outfitName").value.replace(/[^a-zA-Z 0-9.!()]+/g,"");
+		<</script>>
+		<<set $outfit.push(
+			{index: $outfit.length,
+			name: $outfit_name,
+			over_upper: clone($worn.over_upper.name),
+			over_lower: clone($worn.over_lower.name),
+			upper: clone($worn.upper.name),
+			lower: clone($worn.lower.name),
+			under_upper: clone($worn.under_upper.name),
+			under_lower: clone($worn.under_lower.name),
+			over_head: clone($worn.over_head.name),
+			head: clone($worn.head.name),
+			face: clone($worn.face.name),
+			neck: clone($worn.neck.name),
+			hands: clone($worn.hands.name),
+			legs: clone($worn.legs.name),
+			feet: clone($worn.feet.name),
+			type: ["normal"]
+			},
+		)>>
 
-	<<if $outfit_name is "" or $outfit_name is "Custom">><<print '<<set $outfit_name to "Custom ' + $outfit.length + '">>'>><</if>>
-	<<set $outfit.last().name to $outfit_name>>
-	<<if $outfit_type>>
-		<<set $outfit.last().type.push($outfit_type)>>
-	<</if>>
+		<<if $outfit_name is "" or $outfit_name is "Custom">><<print '<<set $outfit_name to "Custom ' + $outfit.length + '">>'>><</if>>
+		<<set $outfit.last().name to $outfit_name>>
+		<<if $outfit_type>>
+			<<set $outfit.last().type.push($outfit_type)>>
+		<</if>>
 
-	<<if $saveColor is true>>
-		<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "hands", "legs", "feet"]>>
-		<<set _colors to {}>>
-		<<for _ie to 0; _ie lt _equip.length; _ie++>>
-			<<set _colors[_equip[_ie]] to [clone($worn[_equip[_ie]].colour),clone($worn[_equip[_ie]].accessory_colour)]>>
-			<<if $worn[_equip[_ie]].colour is "custom" or $worn[_equip[_ie]].accessory_colour is "custom">>
-				<<run _colors[_equip[_ie]+"custom"] to [clone($worn[_equip[_ie]].colourCustom),clone($worn[_equip[_ie]].accessory_colourCustom)]>>
-			<</if>>
-		<</for>>
-		<<set $outfit.last().colors to clone(_colors)>>
-	<<else>>
-		<<set $outfit.last().colors to false>>
-	<</if>>
+		<<if $saveColor is true>>
+			<<set _equip to ["over_upper", "over_lower", "upper", "lower", "under_upper", "under_lower", "over_head", "head", "face", "neck", "hands", "legs", "feet"]>>
+			<<set _colors to {}>>
+			<<for _ie to 0; _ie lt _equip.length; _ie++>>
+				<<set _colors[_equip[_ie]] to [clone($worn[_equip[_ie]].colour),clone($worn[_equip[_ie]].accessory_colour)]>>
+				<<if $worn[_equip[_ie]].colour is "custom" or $worn[_equip[_ie]].accessory_colour is "custom">>
+					<<run _colors[_equip[_ie]+"custom"] to [clone($worn[_equip[_ie]].colourCustom),clone($worn[_equip[_ie]].accessory_colourCustom)]>>
+				<</if>>
+			<</for>>
+			<<set $outfit.last().colors to clone(_colors)>>
+		<<else>>
+			<<set $outfit.last().colors to false>>
+		<</if>>
 
-	<<updatewardrobe "outfits">>
-<</link>>
+		<<updatewardrobe "outfits">>
+	<</link>>
+</div>
 <</widget>>
 
 <<widget "wardrobeintegrity">>
@@ -512,21 +526,21 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	Order by:
 	/*Undefined error for unknown reason*/
 	/*<a @onclick="`wikifier('wardrobeListReorder', '`+ $lastWardrobeSlot + `', 'name');`">Name</a> |*/
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name');">Name</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color');">Colour</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd');">Lewd</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity');">Integrity</a> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name');">Name</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color');">Colour</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd');">Lewd</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity');">Integrity</a></div> |
 	<<if _outfitTypes.includes(_wardrobe_list)>>
-		<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit');">Outfit Status</a> |
+		<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit');">Outfit Status</a></div> |
 	<</if>>
 	<br>
 	Inverse Order by:
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name', true);">Name</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color', true);">Colour</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd', true);">Lewd</a> |
-	<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity', true);">Integrity</a> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'name', true);">Name</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'color', true);">Colour</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'lewd', true);">Lewd</a></div> |
+	<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'integrity', true);">Integrity</a></div> |
 	<<if _outfitTypes.includes(_wardrobe_list)>>
-		<a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit', true);">Outfit Status</a> |
+		<div class="wardrobe-action"><a onclick="wikifier('wardrobeListReorder', SugarCube.State.variables.lastWardrobeSlot, 'outfit', true);">Outfit Status</a></div> |
 	<</if>>
 	<br><br>
 	Currently equipped:
@@ -618,13 +632,13 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 	<br>
 	<<if $worn[_wardrobe_list].name isnot "naked">>
-		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Strip" 'strip'>></div>
+		<div class="wardrobeItem wardrobe-action no-numberify"><<wearlink_norefresh "Strip" 'strip'>></div>
 	<</if>>
 	<<if _wardrobe_list is "upper">>
-		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Large towel" 'large_towel'>></div>
+		<div class="wardrobeItem wardrobe-action no-numberify"><<wearlink_norefresh "Large towel" 'large_towel'>></div>
 	<</if>>
 	<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
-		<div class="wardrobeItem no-numberify"><<wearlink_norefresh "Towel" 'towel'>></div>
+		<div class="wardrobeItem wardrobe-action no-numberify"><<wearlink_norefresh "Towel" 'towel'>></div>
 	<</if>>
 
 	<<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
@@ -634,7 +648,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 				<<continue>>
 			<</if>>
 		<</if>>
-		<div class="wardrobeItem no-numberify">
+		<div class="wardrobeItem wardrobe-action no-numberify">
 		<<clothingicon _item>><<wearlink_norefresh _item.name_cap _i>>
 		<<if _item.gender is "m">>
 			| <span class="blue">♂</span> |
@@ -693,6 +707,7 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<else>>
 		<<run $('#wardrobewear').html(new Wikifier(null, "<<wardrobewear>>").output)>>
 	<</if>>
+	<<run $('#wardrobewear').addClass('notransition flash'); setTimeout(() => { $('#wardrobewear').removeClass('notransition flash') }, 100);>>
 	<<updatesidebarimg>>
 	<<updatesidebardescription>>
 	<<updateallure>>
