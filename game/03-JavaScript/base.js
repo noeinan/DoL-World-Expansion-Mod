@@ -442,3 +442,16 @@ $(document).on(':passagedisplay', function (ev) {
 		initTouchToFixAnimations();
 	}
 });
+
+window.saveDataCompare = function(save1, save2){
+	var result = {};
+	var keys = Object.keys(save1)
+	keys.forEach(key =>{
+		let save1Json = JSON.stringify(save1[key])
+		let save2Json = JSON.stringify(save2[key])
+		if(save1Json !== save2Json){
+			result[key] = [save1[key],save2[key]];
+		}
+	})
+	return result;
+}

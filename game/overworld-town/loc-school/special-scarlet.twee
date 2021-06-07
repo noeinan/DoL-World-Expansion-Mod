@@ -509,15 +509,56 @@ The words you have just read echo in your head. You can no longer ignore what yo
 :: Scarlet Widgets [widget]
 <<widget "calljanet">>
 /*store players stats*/
-<<freezePlayerStats>>
+<<set $statFreeze to true>>
+<<set $real_playersex to $player.sex>>
+<<set $real_playergender to $player.gender>>
+<<set $real_penisexist to $penisexist>>
+<<set $real_vaginaexist to $vaginaexist>>
+<<set $real_eyecolour to $eyecolour>>
+<<set $real_haircolour to $haircolour>>
+<<set $real_hairlength to $hairlength>>
+<<set $real_breastsize to $breastsize>>
 
-/*Destroy all current clothes*/
-<<ruined>>
+<<set $real_goooutsidecount to $goooutsidecount>>
+<<set $real_semenoutsidecount to $semenoutsidecount>>
+<<set $real_vaginagoo to $vaginagoo>>
+<<set $real_vaginasemen to $vaginasemen>>
+<<set $real_anusgoo to $anusgoo>>
+<<set $real_anussemen to $anussemen>>
+<<set $real_mouthgoo to $mouthgoo>>
+<<set $real_mouthsemen to $mouthsemen>>
+<<set $real_virginity to clone($player.virginity)>>
+<<set $real_pain to $pain>>
+<<set $real_arousal to $arousal>>
+<<set $real_tiredness to $tiredness>>
+<<set $real_stress to $stress>>
+<<set $real_trauma to $trauma>>
+<<set $real_control to $control>>
+<<set $real_angel to $angel>>
+<<set $real_angelbuild to $angelbuild>>
+<<set $real_demon to $demon>>
+<<set $real_wolfgirl to $wolfgirl>>
+<<set $real_cat to $cat>>
+<<set $real_cow to $cow>>
+<<set $real_famesex to $famesex>>
+<<set $real_famerape to $famerape>>
+<<set $real_fameexhibitionism to $fameexhibitionism>>
+<<set $real_famescrap to $famescrap>>
+<<set $real_fame to $fame>>
+<<set $real_sexStats to clone($sexStats)>>
+<<set $real_skulduggery to $skulduggery>>
+<<set $real_purity to $purity>>
+<<set $real_spray to $spray>>
+<<set $real_skin to clone($skin)>>
+/*store player clothing*/
+
+<<undress "janet">>
 <<if $worn.genitals.name isnot "naked">>
 	<<set $real_wornGenitals to clone($worn.genitals)>>
 	<<set $worn.genitals to clone(setup.clothes.genitals[0])>>
 <</if>>
-
+/*store time*/
+<<set $real_time to $time>>
 /*morph player into Janet*/
 <<set $player.gender to "f">>
 <<set $player.sex to "f">>
@@ -556,141 +597,27 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<legswear 5>>
 <<upperwear 7>>
 <<underlowerwear 3>>
-
-<<unset $sexStats>>
-<<physicalAdjustmentsInit>>
+<<freezePlayerStats>>
 <</widget>>
 
 <<widget "sleepjanet">>
 <<unfreezePlayerStats>>
+/*restore clothes integrity and undress*/
+<<set _rebuy to $clothingrebuy>>
+<<set $clothingrebuy to 0>>
+<<clotheson>>
+<<ruined>>
+<<set $clothingrebuy to _rebuy>>
 
-/*restore real clothes if the some clothes are stored, shouldnt be the case for new saves*/
-<<storeon "janet" "check">>
-<<if _store_check is 1>>
-	<<ruined>>
-	<<storeon "janet">>
+/*restore real clothes*/
+<<storeon "janet">>
+<<if $real_wornGenitals isnot undefined>>
+	<<set $worn.genitals to clone($real_wornGenitals)>>
+	<<unset $real_wornGenitals>>
 <</if>>
-/*restore location due to it not being tracked as $real_location*/
-<<set $location to "school">>
-<</widget>>
-
-<<widget "freezePlayerStats">>
-<<if Array.isArray($args[0])>>
-	<<set $tempFreezeStore to {}>>
-	<<for $_i to 0; $_i lt $args[0].length; $_i++>>
-		<<set $tempFreezeStore[$args[0][$_i]] to clone(State.variables[$args[0][$_i]])>>
-	<</for>>
-<</if>>
-<<set $statFreeze to true>>
-<<set $real_player to clone($player)>>
-<<set $real_penisexist to $penisexist>>
-<<set $real_vaginaexist to $vaginaexist>>
-<<set $real_eyecolour to $eyecolour>>
-<<set $real_haircolour to $haircolour>>
-<<set $real_hairlength to $hairlength>>
-<<set $real_fringelength to $fringelength>>
-<<set $real_breastsize to $breastsize>>
-
-<<set $real_goooutsidecount to $goooutsidecount>>
-<<set $real_semenoutsidecount to $semenoutsidecount>>
-<<set $real_vaginagoo to $vaginagoo>>
-<<set $real_vaginasemen to $vaginasemen>>
-<<set $real_anusgoo to $anusgoo>>
-<<set $real_anussemen to $anussemen>>
-<<set $real_mouthgoo to $mouthgoo>>
-<<set $real_mouthsemen to $mouthsemen>>
-<<set $real_pain to $pain>>
-<<set $real_arousal to $arousal>>
-<<set $real_tiredness to $tiredness>>
-<<set $real_stress to $stress>>
-<<set $real_trauma to $trauma>>
-<<set $real_control to $control>>
-<<set $real_angel to $angel>>
-<<set $real_angelbuild to $angelbuild>>
-<<set $real_demon to $demon>>
-<<set $real_wolfgirl to $wolfgirl>>
-<<set $real_cat to $cat>>
-<<set $real_cow to $cow>>
-<<set $real_famesex to $famesex>>
-<<set $real_famerape to $famerape>>
-<<set $real_fameexhibitionism to $fameexhibitionism>>
-<<set $real_famescrap to $famescrap>>
-<<set $real_fame to $fame>>
-<<set $real_sexStats to clone($sexStats)>>
-<<set $real_skulduggery to $skulduggery>>
-<<set $real_purity to $purity>>
-<<set $real_spray to $spray>>
-<<set $real_skin to clone($skin)>>
-<<set $real_worn to clone($worn)>>
-<<set $real_carried to clone($carried)>>
-<<set $real_wardrobe to clone($wardrobe)>>
-<<set $real_NPCName to clone($NPCName)>>
-<<set $real_dateCount to clone($dateCount)>>
-<<set $real_time to $time>>
-<<set $real_days to $days>>
-<<set $real_weekday to $weekday>>
-<<set $real_month to $month>>
-<<set $real_year to $real_year>>
-<<set $real_location to $location>>
-
-<<set $real_upperwet to $upperwet>>
-<<set $real_upperwetstage to $upperwetstage>>
-<<set $real_lowerwet to $lowerwet>>
-<<set $real_lowerwetstage to $lowerwetstage>>
-<<set $real_underlowerwet to $underlowerwet>>
-<<set $real_underlowerwetstage to $underlowerwetstage>>
-<<set $real_underupperwet to $underupperwet>>
-<<set $real_underupperwetstage to $underupperwetstage>>
-
-<<set $real_neckgoo to $neckgoo>>
-<<set $real_rightarmgoo to $rightarmgoo>>
-<<set $real_leftarmgoo to $leftarmgoo>>
-<<set $real_thighgoo to $thighgoo>>
-<<set $real_bottomgoo to $bottomgoo>>
-<<set $real_tummygoo to $tummygoo>>
-<<set $real_chestgoo to $chestgoo>>
-<<set $real_facegoo to $facegoo>>
-<<set $real_hairgoo to $hairgoo>>
-<<set $real_feetgoo to $feetgoo>>
-<<set $real_vaginaoutsidegoo to $vaginaoutsidegoo>>
-
-<<set $real_necksemen to $necksemen>>
-<<set $real_rightarmsemen to $rightarmsemen>>
-<<set $real_leftarmsemen to $leftarmsemen>>
-<<set $real_thighsemen to $thighsemen>>
-<<set $real_bottomsemen to $bottomsemen>>
-<<set $real_tummysemen to $tummysemen>>
-<<set $real_chestsemen to $chestsemen>>
-<<set $real_facesemen to $facesemen>>
-<<set $real_hairsemen to $hairsemen>>
-<<set $real_feetsemen to $feetsemen>>
-<<set $real_vaginaoutsidesemen to $vaginaoutsidesemen>>
-<<set $real_penissemen to $penissemen>>
-<<set $real_drugged to $drugged>>
-<<set $real_hallucinogen to $hallucinogen>>
-<<set $real_drunk to $drunk>>
-<<set $real_submissive to $submissive>>
-<<set $real_money to $money>>
-<<set $real_hunger to $hunger>>
-<<set $real_thirst to $thirst>>
-<<set $real_hygiene to $hygiene>>
-<<set $real_genderknown to $genderknown>>
-
-<</widget>>
-
-<<widget "unfreezePlayerStats">>
-<<if $real_playersex>>
-	/*Old variables that should no longer apply*/
-	<<if $real_player is undefined>>
-		<<set $player.sex to $real_playersex>>
-		<<set $player.gender to $real_playergender>>
-		<<set $player.virginity to clone($real_virginity)>>
-	<</if>>
-	<<unset $real_playersex>>
-	<<unset $real_playergender>>
-	<<unset $real_virginity>>
-<</if>>
-
+/*restore players stats*/
+<<set $player.sex to $real_playersex>>
+<<set $player.gender to $real_playergender>>
 <<set $penisexist to $real_penisexist>>
 <<set $vaginaexist to $real_vaginaexist>>
 <<if $vaginaexist is 0>>
@@ -710,6 +637,7 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<set $anussemen to $real_anussemen>>
 <<set $mouthgoo to $real_mouthgoo>>
 <<set $mouthsemen to $real_mouthsemen>>
+<<set $player.virginity to clone($real_virginity)>>
 <<set $pain to $real_pain>>
 <<set $arousal to $real_arousal>>
 <<set $tiredness to $real_tiredness>>
@@ -733,74 +661,8 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<set $purity to $real_purity>>
 <<set $spray to $real_spray>>
 <<set $skin to clone($real_skin)>>
-
 /*restore location and time*/
+<<set $location to "school">>
 <<set $time to $real_time>>
-<<set $days to $real_days>>
-<<set $weekday to $real_weekday>>
 <<time>>
-
-<<if $real_player>>
-	<<set $player to clone($real_player)>>
-	<<set $worn to clone($real_worn)>>
-	<<set $carried to clone($real_carried)>>
-	<<set $wardrobe to clone($real_wardrobe)>>
-	<<set $NPCName to clone($real_NPCName)>>
-	<<set $dateCount to clone($real_dateCount)>>
-	<<set $location to $real_location>>
-	<<set $fringelength to $real_fringelength>>
-	<<set $month to $real_month>>
-	<<set $year to $real_year>>
-
-	<<set $upperwet to $real_upperwet>>
-	<<set $upperwetstage to $real_upperwetstage>>
-	<<set $lowerwet to $real_lowerwet>>
-	<<set $lowerwetstage to $real_lowerwetstage>>
-	<<set $underlowerwet to $real_underlowerwet>>
-	<<set $underlowerwetstage to $real_underlowerwetstage>>
-	<<set $underupperwet to $real_underupperwet>>
-	<<set $underupperwetstage to $real_underupperwetstage>>
-
-	<<set $neckgoo to $real_neckgoo>>
-	<<set $rightarmgoo to $real_rightarmgoo>>
-	<<set $leftarmgoo to $real_leftarmgoo>>
-	<<set $thighgoo to $real_thighgoo>>
-	<<set $bottomgoo to $real_bottomgoo>>
-	<<set $tummygoo to $real_tummygoo>>
-	<<set $chestgoo to $real_chestgoo>>
-	<<set $facegoo to $real_facegoo>>
-	<<set $hairgoo to $real_hairgoo>>
-	<<set $feetgoo to $real_feetgoo>>
-	<<set $vaginaoutsidegoo to $real_vaginaoutsidegoo>>
-
-	<<set $necksemen to $real_necksemen>>
-	<<set $rightarmsemen to $real_rightarmsemen>>
-	<<set $leftarmsemen to $real_leftarmsemen>>
-	<<set $thighsemen to $real_thighsemen>>
-	<<set $bottomsemen to $real_bottomsemen>>
-	<<set $tummysemen to $real_tummysemen>>
-	<<set $chestsemen to $real_chestsemen>>
-	<<set $facesemen to $real_facesemen>>
-	<<set $hairsemen to $real_hairsemen>>
-	<<set $feetsemen to $real_feetsemen>>
-	<<set $vaginaoutsidesemen to $real_vaginaoutsidesemen>>
-	<<set $penissemen to $real_penissemen>>
-	<<set $drugged to $real_drugged>>
-	<<set $hallucinogen to $real_hallucinogen>>
-	<<set $drunk to $real_drunk>>
-	<<set $submissive to $real_submissive>>
-	<<set $money to $real_money>>
-	<<set $hunger to $real_hunger>>
-	<<set $thirst to $real_thirst>>
-	<<set $hygiene to $real_hygiene>>
-	<<set $sciencelichenpark to $real_sciencelichenpark>>
-	<<set $genderknown to $real_genderknown>>
-<</if>>
-<<if $tempFreezeStore>>
-	<<set _keys to Object.keys($tempFreezeStore)>>
-	<<for $_i to 0; $_i lt _keys.length; $_i++>>
-		<<set State.variables[_keys[$_i]] to clone($tempFreezeStore[_keys[$_i]])>>
-	<</for>>
-	<<unset $tempFreezeStore>>
-<</if>>
 <</widget>>
