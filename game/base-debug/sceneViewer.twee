@@ -1,5 +1,4 @@
 :: Scene Viewer
-
 <h3>Scene Viewer</h3>
 <<scenes>>
 <<scenesSearch>>
@@ -11,6 +10,8 @@
 	<<scenesViewerControls>>
 </div>
 <<if $debug is 1>>
+	<!--<br>
+	<<saveCompareTool>>-->
 	<br>
 	<<link [[Reset|$passage]]>><<unset $scenes>><<unset _scenes>><</link>>
 <</if>>
@@ -19,6 +20,17 @@
 	<br>
 	<<link [[Exit|$lastPassage]]>><<unset $scenes>><<unset $lastPassage>><</link>>
 <</if>>
+
+:: Scene Viewer End
+
+End of '<<print $replayScene.name>>' scene.
+
+<br><br>
+<<link [[Exit Scene|Scene Viewer]]>>
+	<<unfreezePlayerStats>>
+	<<unset $replayScene>>
+	<<endevent>>
+<</link>>
 
 :: Scene Viewer passages
 <<switch $sceneViewSwitch>>
@@ -172,6 +184,8 @@ Be aware that many objects will be restored for you, including player, worn, car
 <</widget>>
 
 <<widget "scenesSearch">>
+	<span class="red">Avoid updating your games while your replaying a scene.<<if $debug isnot 0>> "Teleporting" during a replay will break saves, avoid it if you don't know how to fix saves.<</if>></span>
+	<br>
 	Scenes per page (Click search to update): <<numberslider "_itemsPerPage" "10" 5 40 5>>
 	<br><br>
 	Search: <<textbox "_sceneSearch" "">>
@@ -264,4 +278,69 @@ Be aware that many objects will be restored for you, including player, worn, car
 	<<scenesViewerCalc>>
 	<<replace "#scenesViewer">><<scenesViewer>><</replace>>
 	<<replace "#scenesViewerControls">><<scenesViewerControls>><</replace>>
+<</widget>>
+
+<<widget "saveCompareTool">>
+Stored Variables are lost on page refresh.
+<div id="saveCompareUI">
+	<<saveCompareUI>>
+</div>
+<</widget>>
+
+<<widget "saveCompareUI">>
+<<link "Store Save1">><<set window.variableData1 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<print (window.variableData1 isnot undefined ? "(Stored)" : "")>>
+<br>
+<<link "Store Save2">><<set window.variableData2 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<print (window.variableData2 isnot undefined ? "(Stored)" : "")>>
+<br><br>
+<<if window.variableData1 and window.variableData2>>
+	<<link "Compare Saves">><<set _comparedResult to saveDataCompare(window.variableData1,window.variableData2)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<</if>>
+<<if _comparedResult>>
+	<<set _skip to ["map","NPCName","NPCList","saveDetails","lastgenerated","description","npcadult","lastOptions","danger","lock","femaleclimax","anusactiondefault","anusactioncarry","enemyhealthmax","enemyhealth","enemyarousal","mouthactiondefault","enemyanger","npcspeechcycle","mouthactioncarry","rng","pass","speechcycle"]>>
+	<<if Object.keys(_comparedResult).length gt 0>>
+		<div id="comparedResult">
+			<<for _label, _value range _comparedResult>>
+				<<if _skip.includes(_label)>>
+					<<continue>>
+				<</if>>
+				<div class="item">
+					<<if typeof _value[0] === 'object'>>
+						<<print _label>>
+						<br><br>
+						<<print JSON.stringify(_value[0])>>
+						<br><br>
+						<<print JSON.stringify(_value[1])>>
+					<<else>>
+						<<print _label>> - <<print _value[0]>> - <<print _value[1]>>
+					<</if>>
+				</div>
+			<</for>>
+		</div>
+	<<else>>
+		Saves Identical
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "freezePlayerStats">>
+<<set $statFreeze to true>>
+<<set $frozenValues to {}>>
+<<set _skipKeys to ["replayScene","frozenValues","statFreeze","passage","debug"]>>
+<<run Object.keys(SugarCube.State.variables).forEach(function(key){
+	if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
+		SugarCube.State.variables.frozenValues[key] = clone(SugarCube.State.variables[key]);
+	}
+})>>
+<</widget>>
+
+<<widget "unfreezePlayerStats">>
+<<unset $statFreeze>>
+<<if $frozenValues>>
+	<<run Object.keys(SugarCube.State.variables.frozenValues).forEach(function(key){
+		SugarCube.State.variables[key] = clone(SugarCube.State.variables.frozenValues[key]);
+	})>>
+<</if>>
+<<unset $frozenValues>>
 <</widget>>
