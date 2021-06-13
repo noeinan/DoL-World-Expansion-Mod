@@ -86,6 +86,8 @@ $GREP '<<\s*\$' -- 'game/*'  | myprint "VarSignAtMacroStart"
 # check for missing ; before statement
 $GREP 'if $ ' -- 'game/*'  | myprint "missing ; before statement"
 $GREP 'elseif $ ' -- 'game/*'  | myprint "missing ; before statement"
+$GREP -P '[(]0:0(.)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
+$GREP -P '[(]0:([^0].)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
 # Check that we do not have any variables that we use only once.   e.g.	 $onlyUsedOnce
 # Ignore  *Nationalities
 (
