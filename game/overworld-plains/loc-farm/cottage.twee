@@ -1,0 +1,1725 @@
+:: Farm Cottage
+<<set $location to "alex_farm">><<set $outside to 0>><<effects>>
+<<farm_work_update>>
+You are downstairs in Alex's cottage. It's tight, and cozy. There's a kitchen with modern appliances, and a small table, as well as a living room with a sofa and armchair.
+<br><br>
+
+<<if $hour is 21 and $alex_to_bed is undefined>>
+	<<set $alex_to_bed to 1>>
+	<<npc Alex>><<person1>>
+	The staircase creaks as Alex climbs to <<his>> room.
+	<<endevent>>
+	<br><br>
+<<elseif $hour gte 21 or $hour lte 4>>
+	You hear Alex snore upstairs.
+	<br><br>
+<<elseif $hour is 5 and ($alex_bed is "player" or $alex_bed is undefined)>>
+	<<set $alex_bed to "none">><<npc Alex>><<person1>>
+	The stairs creak as Alex climbs down. <<covered>> "I'll start breakfast," <<he>> says, walking to the kitchen.
+	<<if $exposed gte 1>>
+		<<He>> pretends not to ogle as <<he>> passes.<<glust>><<npcincr Alex lust 1>>
+	<</if>>
+	<<endevent>>
+	<br><br>
+<<elseif $farm_work.alex is "admin">>
+	You hear Alex talking on the phone upstairs.
+	<br><br>
+<</if>>
+
+<<if ($farm_countdown lte 0 or $farm_countdown is undefined) and $renttime lte 0>>
+	<<unset $farm_countdown>>
+	<span class="red">You hear a knock at the door.</span>
+	<br><br>
+	<<if $hour gte 21 or $hour lte 4>>
+		Alex stirs above.
+		<br><br>
+		<<link [[Answer the door|Farm Cottage Bailey]]>><<set $phase to 0>><</link>>
+		<br>
+		<<link [[Let Alex answer|Farm Cottage Bailey]]>><<set $phase to 1>><</link>>
+		<br>
+
+	<<elseif $hour is 5>>
+		Alex gives you a worried look.
+		<br><br>
+		<<link [[Answer the door|Farm Cottage Bailey]]>><<set $phase to 0>><</link>>
+		<br>
+		<<link [[Let Alex answer|Farm Cottage Bailey]]>><<set $phase to 1>><</link>>
+		<br>
+	<<else>>
+		<<link [[Answer the door|Farm Cottage Bailey]]>><<set $phase to 2>><</link>>
+		<br>
+		<<link [[Let Alex answer|Farm Cottage Bailey]]>><<set $phase to 3>><</link>>
+		<br>
+	<</if>>
+<<elseif $stress gte 10000>>
+	<<passoutfarmroad>>
+<<elseif $farm_attack_timer is 0 and $hour gte 21>>
+	<<npc Alex>><<person1>>
+	Alex thunders down the stairs. <span class="red">"<<nnpc_Hes Remy>> here,"</span> <<he>> says. "Remy. We can do this. Go get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 3>><</link>>
+	<br>
+<<elseif $hour is 5 and $alex_breakfast is undefined>>
+	<<link [[Help Alex make breakfast (0:20)|Farm Breakfast Make]]>><<set $alex_breakfast to 1>><<pass 20>><<npcincr Alex love 1>><<stress -6>><</link>><<glove>><<lstress>>
+	<br>
+	<<link [[Eat breakfast (0:20)|Farm Breakfast Eat]]>><<set $alex_breakfast to 1>><<pass 20>><<stress -12>><</link>><<llstress>>
+	<br>
+	<<farm_cottage_options>>
+<<elseif $hour is 5>>
+	Alex sits in the living room, watching TV.
+	<br><br>
+	<<if $alex_tea is undefined>>
+		<<set $alex_tea to 1>>
+		<<if $days % 2 is 0>>
+			<<npc Alex>><<person1>>
+			<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte 1>>
+				"I fancy a cuppa," <<he>> says. "Would you mind putting the kettle on?"
+				<br><br>
+				
+				<<link [[Make a cup of tea (0:05)|Farm Breakfast Tea]]>><<npcincr Alex love 1>><<pass 5>><</link>><<glove>>
+				<br>
+				<<link [[Make two cups of tea (0:05)|Farm Breakfast Tea 2]]>><<npcincr Alex love 1>><<pass 5>><<stress -6>><</link>><<glove>><<lstress>>
+				<br>
+				<<link [[Refuse|Farm Breakfast Tea Refuse]]>><<npcincr Alex dom -1>><<npcincr Alex love 1>><</link>><<llove>><<ldom>>
+				<br>
+			<<else>>
+				"I fancy a cuppa," <<he>> says as <<he>> rises to <<his>> feet. "Would you like one?"
+				<br><br>
+				
+				<<link [[Accept (0:05)|Farm Breakfast Tea Receive]]>><<pass 5>><<stress -6>><</link>><<lstress>>
+				<br>
+				<<link [[Decline|Farm Cottage]]>><<endevent>><</link>>
+				<br>
+			<</if>>
+		<<else>>
+			<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<npc Alex>><<stress -2>><<pass 20>><</link>><<lstress>>
+			<br>
+			<<farm_cottage_options>>
+		<</if>>
+	<<else>>
+		<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<npc Alex>><<stress -2>><<pass 20>><</link>><<lstress>>
+		<br>
+		<<farm_cottage_options>>
+	<</if>>
+<<else>>
+	<<farm_cottage_options>>
+<</if>>
+
+
+
+:: Farm Bedroom
+<<effects>>
+<<farm_work_update>>
+You are in your room at Alex's cottage. It's cramped, but larger than your room at the orphanage. A wardrobe stands opposite your bed. There's a desk beside a window overlooking the farm.
+<br><br>
+
+<<if $alex_bed is "player">>
+	Alex snores in your bed.
+	<<if $hour is 5>>
+		<<set $alex_bed to "none">><<npc Alex>><<person1>>
+		<<He>> yawns, and casts aside the sheets. <<covered>> "Time for breakfast," <<he>> says.
+		<<if $exposed gte 1>>
+			<<He>> pretends not to ogle you as <<he>> leaves the room.<<glust>><<npcincr Alex lust 1>>
+		<<else>>
+			<<He>> leaves the room, and you hear the staircase creak.
+		<</if>>
+		<<endevent>>
+	<</if>>
+<</if>>
+<br><br>
+
+<<if $stress gte 10000>>
+	<<passoutfarmroad>>
+<<elseif $farm_attack_timer is 0 and $hour gte 21>>
+	<<npc Alex>><<person1>>
+	Alex thunders down the stairs. <span class="red">"<<nnpc_Hes Remy>> here,"</span> <<he>> says. "Remy. We can do this. Go get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 3>><</link>>
+	<br>
+<<else>>
+	<<roomoptions>>
+
+	<<link [[Bed|Farm Bed]]>><</link>>
+	<br>
+
+	<<link [[Wardrobe|Farm Wardrobe]]>><</link>>
+	<br>
+	<<link [[Mirror|Farm Mirror]]>><</link>>
+	<br>
+	<br>
+	<<link [[Go downstairs (0:01)|Farm Cottage]]>><<pass 1>><</link>>
+	<br>
+	<<link [[Alex's room|Farm Alex Bedroom]]>><</link>>
+	<br>
+	<br>
+	<<link [[Settings|Farm Settings]]>><</link>>
+	<br>
+
+	<<attitudesControlCheck>>
+	<<if $attitudesControl.showGoldLink is true>>
+		<span class="goldLink"><<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>> </span><span class="red">!!</span>
+	<<else>>
+		<<link [[Attitudes]]>><<set $attitudesExitPassage to $passage>><</link>>
+	<</if>>
+	<br>
+<</if>>
+
+:: Farm Mirror
+<<effects>>
+
+<<link [[Step away|Farm Bedroom]]>><<unset $mirrorMenu>><</link>>
+<br>
+
+<<mirror>>
+<br><br>
+
+:: Farm Bed
+
+<<set $bus to "farm_bedroom">><<effects>>
+You snuggle under the covers.
+<<if $alex_bed is "player">>
+	Alex snores beside you.
+<</if>>
+<br><br>
+<<farm_sleep_options>>
+
+:: Farm Sleep
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte 9000>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasmpassage>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep soundly.
+	<</if>>
+<</if>>
+<<sleepeffects>>
+<<if $remywake is 1>>
+	<<set $schoolwake to 0>>
+	<<npc Alex>><<person1>>
+	"Wake up!" Someone shakes your shoulders. It's Alex. <span class="red">"<<nnpc_Hes Remy>> here,"</span> <<he>> says. "Remy. We can do this. Get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 1>><<unset $remywake>><</link>>
+	<br>
+<<elseif $schoolwake is 1>>
+	<<set $schoolwake to 0>>
+	<<npc Alex>><<person1>>
+	<<if $bus is "farm_alex_room">>
+			You awake to feel a hand groping at your <<genitals>>,
+			<<if $NPCList[0].penis isnot "none">>
+				and a firm length pressed against your <<bottom>>.
+			<<else>>
+				and someone's chest pressed against your back
+			<</if>>
+			Another hand rests against your thigh.
+			<br><br>
+			
+			"It's very forward of you," Alex says, <<his>> breath on your neck. "Sleeping in a <<if $pronoun is "m">>boy's<<else>>girl's<</if>> bed."
+			<br><br>
+			
+			<<link [[Push away|Farm Alex Climb]]>><<def 1>><<npcincr Alex dom -1>><</link>><<ldom>>
+			<br>
+			<<link [[Go along with it|Farm Alex Allow]]>><<sub 1>><<npcincr Alex dom 1>><</link>><<promiscuous1>><<gdom>>
+			<br>
+	<<else>>
+		<<if $exposed gte 2 and random(1, 2) is 2>>
+			You feel a little cold. The sheets are missing. You hear footsteps leave your room. <<covered>>
+			<br><br>
+			
+			Your sheets lie on the ground at the foot of your bed. You suspect Alex is to blame. <<He>> was leering at your <<lewdness>> as you slept.
+			<br><br>
+			
+			<<link [[Go back to sleep|Farm Bed]]>><<endevent>><</link>>
+			<br>
+			<<link [[Get up|Farm Bedroom]]>><<endevent>><</link>>
+			<br>
+			<<link [[Get angry (0:05)|Farm Bedroom Confront]]>><<pass 5>><<npcincr Alex love -1>><<npcincr Alex dom -1>><</link>><<llove>><<ldom>>
+			<br>
+			<<if $promiscuity gte 35>>
+				<<link [[Get revenge (0:20)|Farm Bedroom Revenge]]>><<pass 1>><<npcincr Alex dom -1>><<npcincr Alex lust 5>><</link>><<promiscuous3>><<ldom>><<gglust>>
+				<br>
+			<</if>>
+		<<else>>
+			You awake to feel a hand groping at your <<genitals>>,
+			<<if $NPCList[0].penis isnot "none">>
+				and a firm length pressed against your <<bottom>>.
+			<<else>>
+				and someone's chest pressed against your back
+			<</if>>
+			Another hand rests against your thigh.
+			<br><br>
+			
+			"I thought you might be lonely," Alex says, <<his>> breath on your neck.
+			<br><br>
+			
+			<<link [[Push away|Farm Alex Push]]>><<def 1>><<npcincr Alex dom -1>><</link>><<ldom>>
+			<br>
+			<<link [[Go along with it|Farm Alex Go]]>><<sub 1>><<npcincr Alex dom 1>><</link>><<promiscuous1>><<gdom>>
+			<br>
+		<</if>>
+	<</if>>
+<<else>>
+	<br><br>
+	<<if $bus is "farm_alex_room">>
+		<<link [[Get up|Farm Alex Bedroom]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Get up|Farm Bedroom]]>><</link>>
+	<</if>>
+	<br>
+<</if>>
+<<set $phase to 0>>
+
+:: Farm Alex Climb
+<<effects>>
+
+You shuffle away from Alex.
+<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte random(1, 50)>>
+	<<He>> grasps your waist with an arm, holding you in place, and pushes <<his>> body against yours. "Want me to be rougher?" <<he>> whispers. "I can do that."<<gstress>><<glust>><<stress 6>><<npcincr Alex lust 1>>
+	<br><br>
+	
+	<<link [[Struggle Free|Farm Alex Climb 2]]>><<def 1>><<npcincr Alex dom -1>><</link>><<ldom>>
+	<br>
+	<<link [[Relent|Farm Alex Allow]]>><<sub 1>><<npcincr Alex dom 3>><</link>><<promiscuous1>><<ggdom>>
+	<br>
+<<else>>
+	<<He>> doesn't stop you climbing from the bed. "Suit yourself," <<he>> says. <<He>> rolls over>
+	<br><br>
+	<<link [[Next|Farm Alex Bedroom]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Alex Climb 2
+<<effects>>
+
+You whack Alex's hand, and struggle from the bed. "Suit yourself," <<he>> says. <<He>> rolls over. 
+<br><br>
+<<set $alex_bed_spurned to 1>>
+
+<<link [[Next|Farm Alex Bedroom]]>><<endevent>><</link>>
+<br>
+
+
+
+:: Farm Alex Allow
+<<effects>>
+
+You rub your <<bottom>> against Alex. <<He>> becomes more bold.
+<<promiscuity1>>
+
+<<link [[Next|Farm Alex Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Farm Alex Push
+<<effects>>
+
+
+You turn onto your other side, and push Alex away from you.
+<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte random(1, 50)>>
+	<<He>> wraps <<his>> arms around your waist and shoulder, and pulls your body against <<his>>. "You want me to be rough?" <<he>> asks, squeezing your <<bottom>>. "That's okay by me."<<gstress>><<stress 6>><<glust>><<npcincr Alex lust 1>>
+	<br><br>
+	
+	<<link [[Push away again|Farm Alex Push 2]]>><<def 1>><<npcincr Alex dom -1>><</link>><<ldom>>
+	<br>
+	<<link [[Relent|Farm Alex Go]]>><<sub 1>><<npcincr Alex dom 3>><</link>><<promiscuous1>><<ggdom>>
+	<br>
+<<else>>
+	<<He>> climbs from the bed. "You'll change your mind," <<he>> says. It's too dark to see <<his>> expression. <<He>> returns to <<his>> room. 
+	<br><br>
+
+	<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+
+:: Farm Alex Push 2
+<<effects>>
+
+You shove Alex away, harder this time. <<He>> falls from the bed. "Suit yourself," <<he>> says. "You know where to find me when you change your mind." <<He>> returns to <<his>> room.
+<br><br>
+
+<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+<br>
+
+:: Farm Alex Go
+<<effects>>
+
+You wrap your arms around Alex. Encouraged, <<he>> becomes more bold.
+<<promiscuity1>>
+
+<<link [[Next|Farm Alex Sex]]>><<set $sexstart to 1>><</link>>
+<br>
+
+
+:: Farm Alex Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $enemytrust += 100>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Farm Alex Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Alex Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Alex Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Farm Alex Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Alex Sex Finish
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	Alex rolls onto <<his>> back.<<llllust>><<npcincr Alex lust -5>><<glove>><<npcincr Alex love 1>><<glove>>
+	<<set $alex_bed to "player">>
+	<br><br>
+	<<tearful>> you listen to <<his>> snores.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<if $bus is "farm_alex_room">>
+		<<link [[Next|Farm Alex Bed]]>><</link>>
+	<<else>>
+		<<link [[Next|Farm Bed]]>><</link>>
+	<</if>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	<<if $bus is "farm_alex_room">>
+		You shove Alex off the bed, and climb from it the other side. "Didn't know you wanted it that rough," <<he>> says. <<He>> shuffles beneath the sheets.<<llove>><<npcincr Alex love -1>>
+		<br><br>
+		
+		<<tearful>> you return to your room.
+		<br><br>
+		<<clotheson>>
+		<<endcombat>>
+		
+		<<link [[Next|Farm Bedroom]]>><</link>>
+		<br>
+	<<else>>
+		You shove Alex off the bed. "Didn't know you wanted it that rough," <<he>> says. It's too dark to see <<his>> expression. <<He>> returns to <<his>> room.<<llove>><<npcincr Alex love -1>>
+		<br><br>
+		<<tearful>> you roll over.
+		<br><br>
+		
+		<<link [[Next|Farm Bed]]>><</link>>
+	<</if>>
+<<else>>
+	<<if $bus is "farm_alex_room">>
+		You climb from the bed. "Suit yourself," <<he>> says. <<tearful>> you return to your room.
+		<br><br>
+		
+		<<clotheson>>
+		<<endcombat>>
+		<<link [[Next|Farm Bedroom]]>><</link>>
+	<<else>>
+		Alex climbs from the bed. "Suit yourself," <<he>> says. "You know where I am when you want me to finish you."
+		<br><br>
+		<<tearful>> you roll over.
+		<br><br>
+		<<clotheson>>
+		<<endcombat>>
+		<<link [[Next|Farm Bed]]>><</link>>
+	<</if>>
+<</if>>
+
+
+
+:: Farm Bedroom Confront
+<<effects>>
+
+You wrap your sheet around you, and storm to Alex's room. You flip the light on, and find <<him>> pretending to sleep.
+<br><br>
+
+<<if $submissive gte 1150>>
+	"Y-you shouldn't perve on me like that," you say. "It's rude."
+<<elseif $submissive lte 850>>
+	"Fucking pervert," you say. "How'd you like it if I did the same to you?"
+<<else>>
+	"Don't be a pervert," you say.
+<</if>>
+<br><br>
+
+"I don't know what you mean," Alex lies.
+<br><br>
+
+You chew <<him>> out a bit longer, but <<he>> persists in denial. <<He>> does seem guilty by the end though.
+<br><br>
+
+You return to your bed.
+<br><br>
+
+<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+
+:: Farm Bedroom Revenge
+<<effects>>
+
+You wait, allowing enough time for Alex to fall back to sleep, then creep to <<his>> room. You find <<him>> lying on <<his>> back, <<his>> sheets rising and falling with <<his>> breathing.
+<br><br>
+
+<<if $pronoun is "f">>
+	You cast aside the sheets. <<Hes>> wearing a black T-shirt and boyshorts.
+	<br><br>
+	
+	Careful not make a sound, you peel the boyshorts down <<his>> thighs, <span class="lewd">revealing <<his>>
+	<<if $NPCList[0].penis isnot "none">>
+		<<print $NPCList[0].penisdesc>>.
+	<<else>>
+		pussy.
+	<</if>>
+	</span>
+<<else>>
+	You cast aside the sheets. <<Hes>> wearing a black T-shirt and boxers.
+	<br><br>
+	
+	Careful not to make a sound, you peel the boxers down <<his>> thighs, <span class="lewd">revealing <<his>>
+	<<if $NPCList[0].penis isnot "none">>
+		<<print $NPCList[0].penisdesc>>.
+	<<else>>
+		pussy.
+	<</if>>
+	</span>
+<</if>>
+
+You keep going, pulling the fabric passed <<his>> knees. <<He>> stirs as you reach <<his>> ankles, so you snatch the underwear the rest of the way, removing them from <<his>> body.
+<<promiscuity3>>
+
+Alex's hand shoots between <<his>> legs as <<he>> realises what you've done. "F-Fuck," <<he>> says as <<he>> cheeks flush. "Don't look." <<He>> reaches for <<his>> underwear, but you step away from the bed.
+<br><br>
+
+<<He>> comes after you, tugging <<his>> shirt over <<his>>
+<<if $NPCList[0].penis isnot "none">>
+	<<print $NPCList[0].penisdesc>>.
+<<else>>
+	pussy.
+<</if>>
+It's not long or baggy enough for this, and the fabric pulls taut over <<his>>
+<<if $pronoun is "f">>
+	<<print $NPCList[0].breastsdesc>>,
+<<else>>
+	muscular chest,
+<</if>>
+showing off the skin beneath.
+<br><br>
+
+<<link [[Give them back|Farm Alex Give]]>><<npcincr Alex love 1>><</link>><<glove>>
+<br>
+<<link [[Keep teasing|Farm Alex Tease]]>><<npcincr Alex lust 5>><</link>><<athleticsdifficulty 1 1000>><<gglust>>
+<br>
+
+
+:: Farm Alex Give
+<<effects>>
+
+You hold out <<his>>
+<<if $pronoun is "f">>
+	boyshorts.
+<<else>>
+	boxers.
+<</if>>
+<<He>> hesitates, as if expecting a trick, then snatches them. 
+<br><br>
+
+<<if $submissive gte 1150>>
+	"I-I just wanted to show you what it's like," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<<elseif $submissive lte 850>>
+	"I thought you liked this sort of perviness," you say, turning to allow <<him>> to dress. "You seem keen enough to inflict it on me."
+<<else>>
+	"You started it," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<</if>>
+<br><br>
+
+"I-I don't know what you mean," Alex lies. You think <<he>> got your point regardless.
+<br><br>
+
+You return to your bed.
+<br><br>
+
+<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+
+:: Farm Alex Tease
+<<effects>>
+
+You stand on Alex's sheets, between <<him>> and the wardrobe. <<He>> lunges for <<his>>
+	<<if $pronoun is "f">>
+		boyshorts,
+	<<else>>
+		boxers,
+	<</if>>
+<<if $athleticsSuccess>>
+
+	<span class="green">but you hold them away.</span> <<He>> has to keep one hand tugging <<his>> shirt between <<his>> thighs, putting <<him>> at a disadvantage.<<ldom>><<npcincr Alex dom -1>>
+	<br><br>
+	
+	<<if $submissive gte 1150>>
+		"Are you going to punish me for this?" you tease.
+	<<elseif $submissive lte 850>>
+		"Not so fun," you say. "Is it?"
+	<<else>>
+		"You want them back?" you ask. "What will you give me for them?"
+	<</if>>
+	<br><br>
+	
+	Alex relents. "You've made your point," <<he>> says, <<his>> face bright red. "Just give them back."
+	<br><br>
+	
+	<<link [[Give them back|Farm Alex Tease Give]]>><<npcincr Alex love 1>><</link>><<glove>>
+	<br>
+	<<link [[Demand a show|Farm Alex Tease Demand]]>><<npcincr Alex love -1>><<npcincr Alex dom 3>><<npcincr Alex lust 5>><</link>><<llove>><<ggdom>><<gglust>>
+	<br>
+<<else>>
+	<span class="red">and snatches them from your grasp.</span> <<gdom>><<npcincr Alex dom 1>>
+	<br><br>
+	
+	<<if $submissive gte 1150>>
+		"I-I just wanted to show you what it's like," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+	<<elseif $submissive lte 850>>
+		"I thought you liked this sort of perviness," you say, turning to allow <<him>> to dress. "You seem keen enough to inflict it on me."
+	<<else>>
+		"You started it," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+	<</if>>
+	<br><br>
+
+	"I-I don't know what you mean," Alex lies. You think <<he>> got your point regardless.
+	<br><br>
+
+	You return to your bed.
+	<br><br>
+
+	<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+<</if>>
+
+:: Farm Alex Tease Give
+<<effects>>
+
+You chuck the
+<<if $pronoun is "f">>
+	boyshorts
+<<else>>
+	boxers
+<</if>>
+at Alex.
+
+<<if $submissive gte 1150>>
+	"I-I just wanted to show you what it's like," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<<elseif $submissive lte 850>>
+	"I thought you liked this sort of perviness," you say, turning to allow <<him>> to dress. "You seem keen enough to inflict it on me."
+<<else>>
+	"You started it," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<</if>>
+<br><br>
+
+"I-I don't know what you mean," Alex lies. You think <<he>> got your point regardless.
+<br><br>
+
+You return to your bed.
+<br><br>
+
+<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+
+
+:: Farm Alex Tease Demand
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I will," you say. "But I want you to take off your shirt first."
+<<elseif $submissive lte 850>>
+	"I'll give them back," you say. "If you take off your shirt."
+<<else>>
+	"I will," you say. "If you take off your shirt."
+<</if>>
+<br><br>
+
+Alex's blush deepens. <<He>> holds <<his>> shirt tighter against <<his>> body and looks away. <<He>> pauses, then in one shift motion, pulls <<his>> shirt up and body and over <<his>> head. <<His>> arms clamp back down, but not before you get another look at <<his>>
+<<if $NPCList[0].penis isnot "none">>
+	<<print $NPCList[0].penisdesc>>.
+<<else>>
+	pussy.
+<</if>>
+You get a peek at <<his>>
+<<if $pronoun is "f">>
+	<<print $NPCList[0].breastsdesc>>
+<<else>>
+	toned chest as well.
+<</if>>
+<br><br>
+
+"Happy?" <<he>> asks.
+<br><br>
+
+You chuck the
+
+<<if $pronoun is "f">>
+	boyshorts
+<<else>>
+	boxers
+<</if>>
+at <<him>>.
+
+<<if $submissive gte 1150>>
+	"I-I just wanted to show you what it's like," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<<elseif $submissive lte 850>>
+	"I thought you liked this sort of perviness," you say, turning to allow <<him>> to dress. "You seem keen enough to inflict it on me."
+<<else>>
+	"You started it," you say, turning to allow <<him>> to dress. "I know you were watching me sleep."
+<</if>>
+<br><br>
+
+"I-I don't know what you mean," Alex lies. You think <<he>> got your point regardless.
+<br><br>
+
+You return to your bed.
+<br><br>
+
+<<link [[Next|Farm Bed]]>><<endevent>><</link>>
+
+
+
+:: Farm Settings
+<<set $settingsExitPassage to "Farm Bedroom">>
+<<settings>>
+
+
+:: Farm Alex Bedroom
+<<effects>>
+<<farm_work_update>>
+You are in Alex's bedroom. It's similar to yours. Clothes tumble from the wardrobe, and the desk is cluttered. The window overlooks the road in, and the moor beyond.
+<br><br>
+
+<<if $stress gte 10000>>
+	<<passoutfarmroad>>
+<<elseif $farm_attack_timer is 0 and $hour gte 21>>
+	<<npc Alex>><<person1>>
+	You hear shouting. Alex bolts up. <span class="red">"<<nnpc_Hes Remy>> here,"</span> <<he>> says. "Remy. We can do this. Go get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 3>><</link>>
+	<br>
+<<elseif $hour is 21 and $alex_to_bed is undefined>>
+	<<set $alex_to_bed to 1>>
+	Tired from a day's work, Alex yawns and climbs into bed.
+	<br><br>
+<<elseif $daystate is "night" and $alex_bed is undefined>>
+	<<npc Alex>><<person1>>
+	Alex snores in <<his>> bed.
+	<<if $hour is 5>>
+		<<set $alex_bed to "none">>
+		<<He>> throws the sheets to the floor. <<covered>> "Breakfast," <<He>> yawns.
+		<<if $exposed gte 1>>
+			<<He>> pretends not to ogle as <<he>> leaves the room.<<glust>><<npcincr Alex lust 1>>
+		<<else>>
+			<<He>> leaves the room, and you hear the staircase creak.
+		<</if>>
+	<</if>>
+	<<endevent>>
+	<br><br>
+<<elseif $farm_work.alex is "admin">>
+	<<npc Alex>><<person1>>
+	Alex sits at <<his>> desk, in front of an open laptop and sprawl of paper, talking on the phone.
+	<br><br>
+	<<endevent>>
+	<<link [[Offer help (1:00)|Farm Alex Admin]]>><<pass 60>><<npc Alex>><<person1>><<npcincr Alex love 1>><<stress 6>><</link>><<skill_difficulty maths "Maths" 1 1000>><<glove>><<gstress>>
+	<br>
+	<<if $promiscuity gte 55 and $alex_admin_oral isnot 1>>
+		<<link [[Crawl beneath the desk|Farm Alex Admin Crawl]]>><<npc Alex>><<person1>><<set $alex_admin_oral to 1>><</link>><<promiscuous4>>
+		<br>
+	<</if>>
+<</if>>
+<<if $farm_stage gte 7>>
+	<<link [[Sit at the desk|Farm Upgrades]]>><</link>> | <span class="gold">Farm projects</span>
+	<br>
+<</if>>
+<<if $alex_bed_spurned isnot 1>>
+	<<link [[Climb in Alex's bed|Farm Alex Bed]]>><</link>>
+	<br>
+<</if>>
+<br>
+<<link [[Go downstairs (0:01)|Farm Cottage]]>><<pass 1>><</link>>
+<br>
+<<link [[Your room (0:01)|Farm Bedroom]]>><<pass 1>><</link>>
+<br>
+
+:: Farm Alex Bed
+<<set $bus to "farm_alex_room">><<effects>>
+
+<<if $daystate is "night" and $alex_bed is undefined>>
+You snuggle beside Alex.
+<<else>>
+	You snuggle under the covers.
+<</if>>
+<br><br>
+
+<<farm_sleep_options>>
+
+
+:: Farm Breakfast Make
+<<effects>>
+
+<<npc Alex>><<person1>>
+You join Alex in the kitchen, and offer to assist. <<Hes>> is grateful for the help.
+
+
+
+<<if $rng gte 81>>
+	<<He>> asks you to wash and peel potatoes while <<he>> scrambles eggs.
+	<br><br>
+	The meal is soon prepared. Scrambled eggs and hashbrowns, made from ingredients gathered on the farm.
+<<elseif $rng gte 61>>
+	<<He>> asks you to cut up greens while <<he>> fries bacon.
+	<br><br>
+	The mean is soon prepared. Bacon, with a side of vegetables.
+<<elseif $rng gte 41>>
+	<<He>> asks you to knead dough while <<he>> prepares the cream.
+	<br><br>
+	The mean is soon prepared. Fresh pastries with a fruity interior, topped with cream.
+<<elseif $rng gte 21>>
+	<<He>> asks you to wash vegetables while <<he>> blends sauce from a special recipe.
+	<br><br>
+	The mean is soon prepared. Savoury crêpes with sauteed vegetables, served with a creamy sauce.
+<<else>>
+	<<He>> asks you to wash fruit.
+	<br><br>
+	The mean is soon prepared. Yogurt and mixed fruit.
+<</if>>
+It smells good.
+<br><br>
+
+
+<<link [[Thank Alex|Farm Breakfast]]>><<npcincr Alex love 1>><<set $phase to 1>><</link>><<glove>>
+<br>
+<<link [[Chat|Farm Breakfast]]>><<trauma -6>><<set $phase to 2>><</link>><<ltrauma>>
+<br>
+<<link [[Eat quietly|Farm Breakfast]]>><<$phase 3>><<stress -6>><</link>><<lstress>>
+<br>
+
+
+
+:: Farm Breakfast Eat
+<<effects>>
+
+<<npc Alex>><<person1>>
+
+You sit at the kitchen table as Alex bustles around the kitchen. <<He>> turns from the counter with two plates, and places one in front of you.
+
+<<if $rng gte 81>>
+	Scrambled eggs and hashbrowns, made from ingredients gathered on the farm.
+<<elseif $rng gte 61>>
+	Bacon, with a side of vegetables.
+<<elseif $rng gte 41>>
+	Fresh pastries with a fruity interior, topped with cream.
+<<elseif $rng gte 21>>
+	Savoury crêpes with sauteed vegetables, served with a creamy sauce.
+<<else>>
+	Yogurt and mixed fruit.
+<</if>>
+<br><br>
+
+Alex digs in as soon as <<he>> sits.
+<br><br>
+
+<<link [[Thank Alex|Farm Breakfast]]>><<npcincr Alex love 1>><<set $phase to 1>><</link>><<glove>>
+<br>
+<<link [[Chat|Farm Breakfast]]>><<trauma -6>><<set $phase to 2>><</link>><<ltrauma>>
+<br>
+<<link [[Eat quietly|Farm Breakfast]]>><<$phase 3>><<stress -6>><</link>><<lstress>>
+<br>
+
+
+:: Farm Breakfast
+<<effects>>
+
+<<if $phase is 1>>
+	You compliment the food, "It's really good," you say. "Better than the restaurants in town."
+	<br><br>
+	Alex beams. "Thanks," <<he>> says, shoveling another mouthful. "I've had a lot of practise."
+	<br><br>
+<<elseif $phase is 2>>
+	You chat with Alex about the farm and <<his>> plans for the day while you eat. <<He>> talks with <<his>> mouth full.
+	<br><br>
+<<else>>
+	You eat breakfast. You're not feeling talkative, and Alex seems content to focus on the food.
+	<br><br>
+<</if>>
+
+<<He>> carries the empty plates to the sink.
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Breakfast Tea
+<<effects>>
+
+You make Alex a cup of tea. No sugar, a little milk, as <<he>> likes it.
+<br><br>
+"Cheers," <<he>> says as you hand him the cup.
+
+<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 20>>
+	<<He>> smacks your <<bottom>> as you turn away.
+	<br><br>
+	
+	<<link [[Get angry|Farm Breakfast Tea Angry]]>><<npcincr Alex love -1>><<npcincr Alex dom -1>><<stress -6>><</link>><<llove>><<ldom>><<lstress>>
+	<br>
+	<<link [[Ignore|Farm Cottage]]>><<npcincr Alex dom 1>><<endevent>><</link>><<gdom>>
+	<br>
+	<<if $promiscuity gte 15>>
+		<<link [[Goad|Farm Breakfast Tea Goad]]>><<sub 1>><<npcincr Alex dom 3>><</link>><<promiscuous2>><<ggdom>>
+		<br>
+	<</if>>
+<<else>>
+	<br><br>
+
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Breakfast Tea Angry
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"Th-that's not a very nice way to thank me," you say.
+<<elseif $submissive lte 850>>
+	"Make your own damn tea next time," you say.
+<<else>>
+	"Don't be rude," you say.
+<</if>>
+<br><br>
+
+Alex ogles your <<bottom>> while you speak. "Sorry," <<he>> says. "Couldn't resist."
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+
+:: Farm Breakfast Tea Goad
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"If my tea displeases," you say. "You should punish me proper."
+<<elseif $submissive lte 850>>
+	"You call that a smack?" you say, turning the other cheek. "Wuss. Try again."
+<<else>>
+	"I barely felt that," you say. "Try again."
+<</if>>
+<<promiscuity2>>
+
+Alex rests <<his>> tea on the table, then reaches for your waist. "Not enough for you?" <<he>> asks as <<he>> bends you over <<his>> lap. "How about this?"
+<br><br>
+
+<<He>> spanks your <<bottom>> with <<his>> hand, but not very hard.
+<br><br>
+
+<<link [[Harder|Farm Breakfast Spank]]>><<sub 1>><<pain 4>><<trauma -6>><</link>><<gpain>><<ltrauma>>
+<br>
+<<link [[That's enough|Farm Breakfast Spank End]]>><</link>>
+<br>
+
+
+
+:: Farm Breakfast Tea 2
+<<effects>>
+
+You make two cups of tea. No sugar and just a splash of milk for Alex, as <<he>> likes it. 
+<br><br>
+"Cheers," <<he>> says as you hand him the cup.
+
+<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 30>>
+	<<He>> smacks your <<bottom>> as you turn away.
+	<br><br>
+	
+	<<link [[Get angry|Farm Breakfast Tea Angry]]>><<npcincr Alex love -1>><<npcincr Alex dom -1>><<stress -6>><</link>><<llove>><<ldom>><<lstress>>
+	<br>
+	<<link [[Ignore|Farm Cottage]]>><<npcincr Alex dom 1>><<endevent>><</link>><<gdom>>
+	<br>
+	<<if $promiscuity gte 15>>
+		<<link [[Goad|Farm Breakfast Tea 2 Goad]]>><<sub 1>><<npcincr Alex dom 3>><</link>><<promiscuous2>><<ggdom>>
+		<br>
+	<</if>>
+<<else>>
+	<br><br>
+	
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+
+:: Farm Breakfast Tea 2 Goad
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"O-oopsey," you say as you tip your own tea on <<his>> thigh. "I'm so clumsy. I hope you don't have to punish me."
+<<elseif $submissive lte 850>>
+	"You call that a smack?" you say, turning the other cheek. "Wuss. Try again."
+<<else>>
+	"I barely felt that," you say. "Try again."
+<</if>>
+<<promiscuity2>>
+
+Alex rests <<his>> tea on the table, then reaches for your waist. "Not enough for you?" <<he>> asks as <<he>> bends you over <<his>> lap. "How about this?"
+<br><br>
+
+<<He>> spanks your <<bottom>> with <<his>> hand, but not very hard.
+<br><br>
+
+<<link [[Harder|Farm Breakfast Spank]]>><<sub 1>><<npcincr Alex lust 5>><</link>><<gpain>><<glust>><<ltrauma>>
+<br>
+<<link [[That's enough|Farm Breakfast Spank End]]>><</link>>
+<br>
+
+:: Farm Breakfast Spank
+<<effects>>
+
+"Harder," you say.
+
+<<if ($NPCName[$NPCNameList.indexOf("Alex")].dom + $NPCName[$NPCNameList.indexOf("Alex")].lust) gte 40>>
+	<<pain 4>><<trauma -6>>
+	Alex pulls back <<his>> hand, then strikes your <<bottom>> with another blow. This one stings.
+	<br><br>
+	
+	"This is what happens to bad <<girls>> like you," <<he>> says.
+	<br><br>
+	
+	<<link [[Harder|Farm Breakfast Spank 2]]>><<sub 1>><<npcincr Alex lust 5>><</link>><<ggpain>><<glust>><<lltrauma>>
+	<br>
+	<<link [[That's enough|Farm Breakfast Spank End]]>><</link>>
+	<br>
+<<else>>
+	Alex pulls back <<his>> hand for another blow, then hesitates.
+	<br><br>
+	"That's enough," <<he>> says. "I think you've learned your lesson." <i>Higher dominance and lust would encourage <<him>> to take it further.</i>
+	<br><br>
+	
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Breakfast Spank 2
+<<effects>>
+
+"H-harder," you say.
+
+<<if ($NPCName[$NPCNameList.indexOf("Alex")].dom + $NPCName[$NPCNameList.indexOf("Alex")].lust) gte 50>>
+	<<pain 8>><<trauma -12>>
+	Alex bullies your <<bottom>> with a volley of stinging blows.
+	
+	"You'll be a good <<girl>> from now on," <<he>> says. "Won't you?" <<He>> leaves you tingling.
+	<br><br>
+	
+	<<link [[Harder|Farm Breakfast Spank 3]]>><<npcincr Alex lust 5>><</link>><<gggpain>><<glust>><<llltrauma>>
+	<br>
+	<<link [[That's enough|Farm Breakfast Spank End]]>><</link>>
+	<br>
+<<else>>
+	Alex pulls back <<his>> hand for another blow, then hesitates.
+	<br><br>
+	"That's enough," <<he>> says. "I think you've learned your lesson." <i>Higher dominance and lust would encourage <<him>> to take it further.</i>
+	<br><br>
+	
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Breakfast Spank 3
+<<effects>>
+
+"Harder!" you scream.
+
+<<if ($NPCName[$NPCNameList.indexOf("Alex")].dom + $NPCName[$NPCNameList.indexOf("Alex")].lust) gte 60>>
+	<<pain 12>><<trauma -18>>
+	Alex pulls back <<his>> hand, and delivers a mighty blow to your sensitive <<bottom>>. Tears launch from your face as the force lurches you forward.
+	<br><br>
+	
+	<<if ($NPCName[$NPCNameList.indexOf("Alex")].dom + $NPCName[$NPCNameList.indexOf("Alex")].lust) gte 70>>
+		"Now to make it up to me," <<he>> says. <<He>> pushes your legs off <<his>> lap, and grabs your hair. "Put that mouth of yours to its proper use."
+		<<if $pronoun is "f">>
+			<<He>> lifts <<his>> skirt, and pulls aside <<his>> boyshorts, revealing
+		<<else>>
+			<<He>> unzips <<his>> fly and unbuttons <<his>> boxers, revealing
+		<</if>>
+		<<if $NPCList[0].penis isnot "none">>
+			<<his>> erect <<print $NPCList[0].penisdesc>>.
+		<<else>>
+			<<his>> pussy.
+		<</if>>
+		<br><br>
+		<<if $promiscuity gte 55>>
+			<<link [[Lick|Farm Breakfast Oral]]>><<set $sexstart to 1>><</link>><<promiscuous4>>
+			<br>
+		<</if>>
+		<<link [[Pull away|Farm Breakfast Oral Refuse]]>><<npcincr Alex dom -1>><</link>>
+		<br>
+	<<else>>
+		"I think you've learned your lesson," <<he>> says as <<he>> pushes you off <<his>> lap. <<He>> hesitates when <<he>> sees your tears. "I hope I didn't hit too hard." <i>Higher dominance and lust would encourage <<him>> to take it further.</i>
+		<br><br>
+		
+		<<link [[Reassure|Farm Breakfast Spank Reassure]]>><<npcincr Alex dom 1>><</link>><<gdom>>
+		<br>
+		<<link [[Complain|Farm Breakfast Spank Complain]]>><<npcincr Alex dom -1>><</link>><<ldom>>
+		<br>
+	<</if>>
+<<else>>
+	Alex pulls back <<his>> hand for another blow, then hesitates.
+	<br><br>
+	"That's enough," <<he>> says. "I think you've learned your lesson." <i>Higher dominance and lust would encourage <<him>> to take it further.</i>
+	<br><br>
+	
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Breakfast Oral
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<npcoral>>
+	<<set $enemytrust += 100>><<promiscuity4>>
+<</if>>
+<<effects>>
+Alex sips <<his>> tea.
+<br><br>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Farm Breakfast Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Breakfast Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Breakfast Oral Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Farm Breakfast Oral]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Breakfast Oral Finish
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	Alex reclines in <<his>> chair and finishes <<his>> tea.<<glove>><<lllust>><<npcincr Alex love 1>><<npcincr Alex lust -10>>
+	<br><br>
+	<<tearful>> you return the empty mug to the kitchen.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Farm Cottage]]>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	Alex shields <<his>> genitals. "You could've said something," <<he>> says. "Ow."<<llove>><<ldom>><<npcincr Alex dom -1>><<npcincr Alex love -1>>
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Farm Cottage]]>><</link>>
+	<br>
+<<else>>
+	"Fine," Alex says. "You can make it up to me later."
+	<br><br>
+	<<tearful>> you return to the kitchen.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Farm Cottage]]>><</link>>
+	<br>
+<</if>>
+
+
+
+:: Farm Breakfast Oral Refuse
+<<effects>>
+
+You pull away from Alex's grasp. "Fine," <<he>> says. "You'll make it up to me later."
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Breakfast Spank Reassure
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"D-don't worry about that," you say. "This is what I wanted."
+<<elseif $submissive lte 850>>
+	"Don't insult me," you say. "I'd have said something if you were too rough."
+<<else>>
+	"You were good," you say. "I'd have said something if you were too rough."
+<</if>>
+<br><br>
+
+Alex nods. "It was intense," <<he>> says. "That's all."
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+:: Farm Breakfast Spank Complain
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"Y-you were a bit rough," you say. "I won't be able to sit."
+<<elseif $submissive lte 850>>
+	"You're a brute," you say. "I won't be able to sit."
+<<else>>
+	"You were too rough," you say. "I won't be able to sit."
+<</if>>
+<br><br>
+
+Alex nods. "Sorry," <<he>> says. <<He>> looks away.
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Breakfast Spank End
+<<effects>>
+
+You squirm free of Alex's grip. "You've learned your lesson," <<he>> says. <<He>> sips <<his>> tea.
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Breakfast Tea Refuse
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I have other things to do," you say. "And I can't make it as well as you."
+<<elseif $submissive lte 850>>
+	"I'm not your servant," you say. "Get your own tea."
+<<else>>
+	"I'm busy," you say. "Sorry."
+<</if>>
+<br><br>
+
+"Fine," Alex says, stretching. "I'll remain parched."
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+:: Farm Breakfast Tea Receive
+<<effects>>
+
+You sit in front of the TV as Alex enters the kitchen. You hear the water boil. Alex returns a minute later, carrying two steaming mugs.
+<br><br>
+
+<<if $NPCName[$NPCNameList.indexOf("Alex")].lust gte 20>>
+	"Anything else I can do?" <<he>> says, bending over to place the mug on the small table beside you.
+	<br><br>
+	
+	<<link [[Kiss|Farm Breakfast Kiss]]>><<npcincr Alex love 1>><<npcincr Alex lust 5>><</link>><<kissvirginitywarning>><<glove>><<glust>>
+	<br>
+	<<if $promiscuity gte 55 and !$worn.genitals.type.includes("chastity")>>
+		<<link [[Press Alex's head into your groin|Farm Breakfast Receive Oral]]>><<set $sexstart to 1>><</link>>
+		<br>
+	<</if>>
+	<<link [[Just drink your tea|Farm Breakfast Just]]>><</link>>
+	<br>
+<<else>>
+	The tea is relaxing.
+	<br><br>
+	
+	<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<pass 20>><<stress -6>><</link>><<lstress>>
+	<br>
+	<<link [[Stand up|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Breakfast Kiss
+<<effects>>
+
+You hold the back of Alex's head, and pull <<him>> into a kiss.<<set $consensual to 1>><<takeKissVirginityNamed "Alex">>
+<<promiscuity1>>
+
+<<He>> straddles you, pinning you to the chair as <<his>> lips work down your jaw, then assault your neck. <<He>> gives you a playful bite before rolling onto the sofa beside you.
+<br><br>
+
+<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<pass 20>><<stress -6>><</link>><<lstress>>
+<br>
+<<link [[Stand up|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+:: Farm Breakfast Receive Oral
+
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	Alex looks you in the eye as <<he>> drops to <<his>> knees in front of you. <<He>> rests <<his>> hands on <<his>> thighs.
+	<<maninit>>
+	<<if $penisexist is 1 and $vaginaexist is 1>>
+		<<if random(1, 2) is 2>>
+			<<set $NPCList[0].mouth to "penisentrance">><<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">>
+		<<else>>
+			<<set $NPCList[0].mouth to "vaginaentrance">><<set $vaginause to "othermouth">><<set $vaginastate to "othermouthentrance">>
+		<</if>>
+	<<elseif $penisexist is 1>>
+		<<set $NPCList[0].mouth to "penisentrance">><<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">>
+	<<else>>
+		<<set $NPCList[0].mouth to "vaginaentrance">><<set $vaginause to "othermouth">><<set $vaginastate to "othermouthentrance">>
+	<</if>>
+	<<set $enemytrust += 100>><<promiscuity4>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Farm Breakfast Receive Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Breakfast Receive Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Breakfast Receive Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $orgasmdown gte 1>>
+	<span id="next"><<link [[Next|Farm Breakfast Receive Oral Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Farm Breakfast Receive Oral]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Breakfast Receive Oral Finish
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	Alex leans against the chair, panting. "Shit," <<he>> says. "I wanted to get you off."
+	<br><br>
+	<<tearful>> you make room for <<him>> on the sofa.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<<elseif $enemyhealth lte 0>>
+	<<He>> drops backward, into a sitting position. "Am I that out of practise?" <<he>> says.
+	<br><br>
+	<<tearful>> you make room for <<him>> on the sofa.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<<elseif $orgasmdown gte 1>>
+	You shuts your eyes as the orgasn wracks your body. You open them, and find Alex grinning at you. "I think you liked that," <<he>> says. "I treat my <<girl>> right."
+	<br><br>
+	<<tearful>> you make room for <<him>> on the sofa.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<<else>>
+	<<tearful>> you make room on the sofa beside you.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+<</if>>
+
+<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<npc Alex>><<stress -6>><<pass 20>><</link>><<lstress>>
+<br>
+<<link [[Stand up|Farm Cottage]]>><</link>>
+<br>
+
+
+:: Farm Breakfast Just
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I'm fine," you say. "Thanks for the tea."
+<<elseif $submissive lte 850>>
+	"That'll be all," you say. You take a sip of tea.
+<<else>>
+	"I'm fine," you say. "Thanks for the tea."
+<</if>>
+<br><br>
+
+Alex slumps onto the chair beside you.
+<br><br>
+
+<<link [[Watch TV with Alex (0:20)|Farm Breakfast TV]]>><<pass 20>><<stress -6>><</link>><<lstress>>
+<br>
+<<link [[Stand up|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Breakfast TV
+<<effects>>
+
+<<if $rng gte 81>>
+	You watch a nature documentary. It observes <<animals>> in their natural habitat. Alex seems interested.
+<<elseif $rng gte 61>>
+	You watch the news. Alex complains about nothing in particular.
+<<elseif $rng gte 41>>
+	You watch a foreign sitcom. Alex complains about reruns.
+<<elseif $rng gte 21>>
+	You watch a drama. Alex walks to the window, and watches the farm.
+<<else>>
+	Alex flips through the channels, but you're unable to find anything you like.
+<</if>>
+<br><br>
+
+<<if $hour gte 6>>
+	<<He>> glances at the clock on the wall. "Time for work," <<he>> says, rising to <<his>> feet and heading for the door.
+	<br><br>
+	<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<<else>>
+	<<link [[Keep watching|Farm Breakfast TV]]>><<pass 20>><<stress -6>><</link>><<lstress>>
+	<br>
+	<<link [[Stop|Farm Cottage]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+
+
+:: Farm Alex Admin
+<<effects>>
+
+You pull up a chair, and help Alex manage the business.
+<<set $rng to random(1, 3)>>
+<<if $rng gte 3>>
+	<<He>> talks to one of your customers in town. They sound pleased by the quality of the farm's milk.
+<<elseif $rng gte 2>>
+	<<He>> talks to one of your suppliers, and tries to negotiate a better deal.
+<<else>>
+	<<He>> gives you a rundown of the farm's expenses.
+<</if>>
+<br><br>
+<<if $maths gte random(1, 1000)>>
+	<<if $rng gte 3>>
+		<span class="green">You convince Alex to charge more per pint.</span>
+	<<elseif $rng gte 2>>
+		You find an email from another business buried in Alex's spam folder, offering a better deal. You show it to Alex, <span class="green">and <<he>> uses it as leverage.</span>
+	<<else>>
+		<span class="green">You spot some pennies that could be saved.</span>
+	<</if>>
+	<<farm_yield 3>><<ggfarm>>
+	<br><br>
+<<else>>
+	The desk is a chaotic mess, and the contents of <<his>> laptop are no better. <span class="red">You organise things.</span>
+	<<mathsskill 2>><<ggmaths>>
+	<br><br>
+<</if>>
+
+<<link [[Next|Farm Alex Bedroom]]>><<endevent>><</link>>
+<br>
+
+:: Farm Alex Admin Crawl
+<<effects>>
+
+You crawl beneath Alex's desk. You peek between <<his>> knees. <<Hes>> on the phone to a
+<<if random(1, 2) is 2>>
+	customer.
+<<else>>
+	supplier.
+<</if>>
+You're not letting that stop you.
+<br><br>
+
+<<if $pronoun is "f">>
+	You flip up <<his>> skirt, baring <<his>> boyshorts.
+<<else>>
+	You unzip <<his>> trousers, baring <<his>> boxers.
+<</if>>
+You look <<him>> in the eye as you run a finger over <<his>>
+<<if $NPCList[0].penis isnot "none">>
+	<<print $NPCList[0].penisdesc>>
+<<else>>
+	pussy
+<</if>>
+through the fabric. <<He>> tries to focus on <<his>> conversation, but <<his>> voice quivers at your touch.
+<<promiscuity4>>
+
+You pull aside <<his>> underwear.
+<br><br>
+
+<<link [[Next|Farm Alex Admin Oral]]>><<set $sexstart to 1>><</link>>
+<br>
+
+:: Farm Alex Admin Oral
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>><<npcoral>><<set $NPCList[0].mouth to "none">>
+	<<set $enemytrust += 100>>
+<</if>>
+<<effects>>
+Alex talks on the phone, trying to keep <<his>> voice steady.
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Farm Alex Admin Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Alex Admin Oral Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Alex Admin Oral Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Farm Alex Admin Oral]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Alex Admin Oral Finish
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	"Your passion is convincing," says a voice on the phone. <<He>> sits up with a start, as if remembering <<he>> was in the middle of a conversation. <<He>> continues the conversion while blushing.<<glove>><<lllust>><<npcincr Alex love 1>><<npcincr Alex lust -10>><<gfarm>><<farm_yield 1>>
+	<br><br>
+	<<tearful>> you slip out from beneath the desk. Your work here is done. 
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	
+<<elseif $enemyhealth lte 0>>
+	"Ow," Alex says, holding you at arms-reach.
+	<br><br>
+	"Is everything okay?" asks a voice on the phone.
+	<br><br>
+	"Y-yes," Alex says. "It's fine."<<llove>><<lfarm>><<npcincr Alex love -1>><<farm_yield -1>>
+	<br><br>
+	<<tearful>> you crawl out from beneath the desk.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	
+<<else>>
+	Alex continues the conversation, the person on the other end none the wiser.
+	<br><br>
+	<<tearful>> you crawl out from beneath the desk.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	
+<</if>>
+
+<<link [[Next|Farm Alex Bedroom]]>><</link>>
+<br>
+
+:: Farm Cottage Bailey
+<<effects>>
+
+<<npc Alex>><<person1>>
+<<if $phase is 3>>
+	You hide in the kitchen. There's another knock, harder this time.
+	<br><br>
+	"What the fuck are you doing here?" Alex says. You see <<him>> approach through the window. Another figure walks to meet <<him>>. <span class="red">It's Bailey.</span>
+	<br><br>
+	"My ward is here," Bailey says.
+	<<if $player.gender is "m">>
+		"He owes me. I'm here to collect."
+	<<else>>
+		"She owes me. I'm here to collect."
+	<</if>>
+	<br><br>
+	
+	<<link [[Confront Bailey|Farm Cottage Bailey Confront]]>><</link>>
+	<br>
+	<<link [[Let Alex deal with Bailey|Farm Cottage Bailey Deal]]>><</link>>
+	<br>
+<<elseif $phase is 2>>
+	You open the door. <span class="red">It's Bailey.</span> "Time to pay up," <<nnpc_he Bailey>> says.
+	<br><br>
+	You hear footsteps approach. Alex barges into the cottage, and stands beside you. "I'll support whatever you decide," <<he>> whispers.
+	<br><br>
+	
+	<<cottage_bailey_options>>
+<<elseif $phase is 1>>
+	Alex opens the door. <span class="red">It's Bailey.</span> <<nnpc_He Bailey>> looks past Alex, right at you.
+	<br><br>
+	
+	"Time to pay up," <<nnpc_he Bailey>> says.
+	<br><br>
+	
+	Alex glares at Bailey as <<he>> stands beside you. "I'll support you, whatever you decide," <<he>> whispers.
+	<br><br>
+	<<cottage_bailey_options>>
+<<else>>
+	
+	You open the door. <span class="red">It's Bailey.</span>
+	<br><br>
+	"Time to pay up," <<nnpc_he Bailey>> says.
+	<br><br>
+	Alex arrives at your side, and glares at Bailey. "I'll support you, whatever you decide," <<he>> whispers.
+	<br><br>
+	<<cottage_bailey_options>>
+<</if>>
+
+
+
+<<set $renttime to 7>><<set $rentday to $weekday>>
+
+
+:: Farm Cottage Bailey Confront
+<<effects>>
+
+You throw open the front door. Alex Barges past Bailey, and stands beside you."I'll support you, whatever you decide," <<he>> whispers.
+<br><br>
+<<cottage_bailey_options>>
+
+:: Farm Cottage Bailey Deal
+<<effects>>
+
+"We're not giving you a penny," Alex says. "Now get the fuck off
+<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte 20>>
+	my
+<<else>>
+	our
+<</if>>
+property."
+<br><br>
+
+"Fine," Bailey says. "My friends will be glad of it." <<nnpc_He Bailey>> turns and walks away.
+<br><br>
+		
+<<if $bailey_encroach gte 1>>
+	<span class="pink"><i>Bailey will throw more support behind Remy, making encroachment rise faster still. <<nnpc_He Bailey>> will also send reinforcements during Remy's assaults.</i></span>
+<<else>>
+	<span class="pink"><i>Bailey will support Remy's attacks on the farm, making encroachment rise faster. <<nnpc_He Bailey>> will also send reinforcements during Remy's assaults.</i></span>
+<</if>>
+<br><br>
+
+<<link [[Next|Farm Cottage Bailey Refuse 2]]>><</link>>
+<br>
+
+
+:: Farm Cottage Bailey Pay
+<<effects>>
+
+<<rentpay>>
+
+Alex glares at Bailey, then slams the door.
+<<if $bailey_encroach is undefined>>
+	"This sucks," Alex says. "But I know we have our hands full already."
+<<else>>
+	<<unset $bailey_encroach>>
+	"I hate giving in to that thug," <<he>> says. "But it'll be nice to have some breathing space."
+<</if>>
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+
+
+
+:: Farm Cottage Bailey Refuse
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I'm not paying," you say. You can't quite meet Bailey's gaze. "Go away."
+<<elseif $submissive lte 850>>
+	"You're not getting a penny," you say. You glare at Bailey. "You have no power here."
+<<else>>
+	"I won't let you bully me," you say, looking Bailey in the eye. "It's not your money."
+<</if>>
+<br>
+
+Alex rests a hand on your shoulder. "We won't be blackmailed," <<he>> says. "Get the fuck off
+<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte 20>>
+	my
+<<else>>
+	our
+<</if>>
+property."
+<br><br>
+		
+"Fine," Bailey says. "My friends will be glad of it." <<nnpc_He Bailey>> turns and walks away.
+<br><br>
+		
+<<if $bailey_encroach gte 1>>
+	<span class="pink"><i>Bailey will throw more support behind Remy, making encroachment rise faster still. <<nnpc_He Bailey>> will also send reinforcements during Remy's assaults.</i></span>
+<<else>>
+	<span class="pink"><i>Bailey will support Remy's attacks on the farm, making encroachment rise faster. <<nnpc_He Bailey>> will also send reinforcements during Remy's assaults.</i></span>
+<</if>>
+<br><br>
+		
+		
+<<link [[Next|Farm Cottage Bailey Refuse 2]]>><</link>>
+<br>
+
+
+:: Farm Cottage Bailey Refuse 2
+<<effects>>
+
+Alex slams the door.
+<<if $bailey_encroach is undefined>>
+	<<set $bailey_encroach to 1>>
+	"We're in this together," <<he>> says. "I'm not afraid of that thug."
+<<else>>
+	<<set $bailey_encroach += 1>>
+	"Let <<nnpc_him Bailey>> do <<nnpc_his Bailey>> worst," <<he>> says."
+<</if>>
+<br><br>
+
+<<link [[Next|Farm Cottage]]>><<endevent>><</link>>
+<br>
+
+

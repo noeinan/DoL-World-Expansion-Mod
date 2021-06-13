@@ -3,10 +3,20 @@
 <<widget "trauma">>
 	<<if $args[0] or $args[1]>>
 		<<if $args[0] gte 0>>
-			<<set $trauma += ($args[0] * 3) - (($args[0] * 1.5) * ($control / $controlmax))>>
+			<<set _trauma_mod to 1>>
+			<<if $rapetrait gte 1>>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<if $bestialitytrait gte 1 and $enemytype is "beast">>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<if $tentacletrait gte 1 and $enemytype is "tentacles">>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<set $trauma += Math.trunc((($args[0] * 3) - (($args[0] * 1.5) * ($control / $controlmax))) * _trauma_mod)>>
 			<<if $dev is 1>><<set $control -= $args[0]>><</if>>
 		<<else>>
-			<<set $trauma += ($args[0] * 3) + (($args[0] * 1.5) * ($control / $controlmax))>>
+			<<set $trauma += Math.trunc(($args[0] * 3) + (($args[0] * 1.5) * ($control / $controlmax)))>>
 		<</if>>
 	<</if>>
 	<<if $trauma gte 1>>
@@ -57,10 +67,20 @@
 <<widget "combattrauma">>
 	<<if $args[0]>>
 		<<if $args[0] gte 0>>
-			<<set $trauma += ($args[0] * 1) - (($args[0] * 0.5) * ($control / $controlmax))>>
+			<<set _trauma_mod to 1>>
+			<<if $rapetrait gte 1>>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<if $bestialitytrait gte 1 and $enemytype is "beast">>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<if $tentacletrait gte 1 and $enemytype is "tentacles">>
+				<<set _trauma_mod *= 0.7>>
+			<</if>>
+			<<set $trauma += Math.trunc((($args[0] * 1) - (($args[0] * 0.5) * ($control / $controlmax))) * _trauma_mod)>>
 			<<if $dev is 1>><<set $control -= $args[0]>><</if>>
 		<<else>>
-			<<set $trauma += ($args[0] * 1) + (($args[0] * 0.5) * ($control / $controlmax))>>
+			<<set $trauma += Math.trunc(($args[0] * 1) + (($args[0] * 0.5) * ($control / $controlmax)))>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -318,8 +338,14 @@
 		<<else>>
 			<<if $infinitespray is 1>>
 			<<else>>
-				<<set $spray += $args[0]>>
-				<<set $spray to Math.clamp($spray, 0, $spraymax)>>
+				<<if $prof.spray gte random(1, 5000)>>
+					<<set $effectsmessage to 1>>
+					<<set $prof_spray_message to 1>>
+				<<else>>
+					<<set $spray += $args[0]>>
+					<<set $spray to Math.clamp($spray, 0, $spraymax)>>
+					<<prof spray `(($args[0] * -1) * 5)`>>
+				<</if>>
 			<</if>>
 		<</if>>
 	<</if>>
@@ -714,4 +740,10 @@
 <<if $args[0]>>
 	<<set $skulduggery += $args[0]>>
 <</if>>
+<</widget>>
+
+<<widget "prof">>
+<<if $args[0] and $args[1]>>
+	<<set $prof[$args[0]] += ($args[1] * 5)>>
+	<<set $prof[$args[0]] to Math.clamp($prof[$args[0]], 0, 1000)>>
 <</widget>>

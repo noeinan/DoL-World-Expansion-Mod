@@ -549,6 +549,8 @@ window.settingsObjects = function (type) {
 				parasitedisable: { boolLetter: true, bool: true},
 				slugdisable: { boolLetter: true, bool: true},
 				waspdisable: {boolLetter: true, bool: true},
+				beedisable: { boolLetter: true, bool: true},
+				lurkerdisable: {boolLetter: true, bool: true},
 				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },

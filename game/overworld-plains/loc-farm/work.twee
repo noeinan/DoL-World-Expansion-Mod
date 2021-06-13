@@ -1,14 +1,65 @@
 :: Farm Work
-<<set $outside to 1>><<set $location to "farm">><<effects>>
+<<set $outside to 1>><<set $location to "farm">><<set $bus to "farm">><<effects>>
 <<farm_work_update>>
 You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Other buildings nestle between trees and hedgerows.
 <<if $exhibitionism lt 75 and $exposed gte 2 and $farm_naked is 1>>With so many places to hide your <<lewdness>>, you do your best to avoid exposing yourself and avoid Alex where you can.<</if>>
 <br><br>
 
-You'll earn <<printmoney $farm.wage>> for every hour worked.
+<<if $farm.build isnot undefined and $farm.build isnot 0>>
+	<<switch $farm.build>>
+	<<case "wall 1">>
+		<span class="lblue">The wall is being repaired.</span>
+	<<case "wall 2">>
+		<span class="lblue">The wall is being reinforced.</span>
+	<<case "wall 3">>
+		<span class="lblue">A modern fence is being built around the farm.</span>
+	<<case "wall 4">>
+		<span class="lblue">Barbed wire is being affixed atop the fence.</span>
+	<<case "tower 1">>
+		<span class="lblue">A tower is being built by the fields.</span>
+	<<case "tower 2">>
+		<span class="lblue">Searchlights are being affixed atop the watchtower.</span>
+	<<case "woodland 1">>
+		<span class="lblue">The fence is being extended around an area of woodland.</span>
+	<<case "woodland 2">>
+		<span class="lblue">The fence is being extended around a fecund area of woodland.</span>
+	<<case "woodland 3">>
+		<span class="lblue">The fence is being extended around a prodigious area of woodland.</span>
+	<<case "kennel 1">>
+		<span class="lblue">Vicious apparatus is being installed in the kennel.</span>
+	<<case "barn 1">>
+		<span class="lblue">New milking equipment is being installed in the barn.</span>
+	<<case "barn 2">>
+		<span class="lblue">An extension is being built on the barn.</span>
+	<<case "stable">>
+		<span class="lblue">The stable is being expanded.</span>
+	<<case "coop 1">>
+		<span class="lblue">The coop is being expanded.</span>
+	<<case "coop 2">>
+		<span class="lblue">The coop is being expanded.</span>
+	<</switch>>
+	<<if $hour gte 6>>
+		<span class="blue">Workers traipse across the farm.</span>
+	<</if>>
+	<br><br>
+<</if>>
+
+<<if $farm_stage lte 6>>
+	You'll earn <<printmoney $farm.wage>> for every hour worked.
+<</if>>
 <br><br>
 
-<<if $farm_stage lt 6>>
+<<if $exposed gte 2 and $uncomfortable.nude is true or $exposed is 1 and $uncomfortable.underwear is true>>
+	<<if $farm.build_timer gte 1 and $hour gte 6>>
+		You sneak across the farm, keeping your <<lewdness>> covered as best you can. You hope you aren't spotted by the workers.
+	<<else>>
+		You sneak across the farm, keeping your <<lewdness>> covered as best you can.
+	<</if>>
+	<br><br>
+<</if>>
+
+
+<<if $farm_stage lt 12>>
 	<<set _clearing to (100 - $farm.clearing)>>
 	<<set $percent=Math.floor((_clearing/100)*100)>>
 	One of the fields is being cleared,
@@ -56,13 +107,35 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	<<set $farm_count to 0>>
 <<elseif $farm_count gte 60>>
 	<<set $farm_count -= 60>>
-	<<set $money += $farm.wage>>
-	You've earned <<printmoney $farm.wage>>.
-	<br><br>
+	<<if $farm_stage lte 6>>
+		<<set $money += $farm.wage>>
+		You've earned <<printmoney $farm.wage>>
+		<br><br>
+	<</if>>
 <</if>>
 
-<<if $stress gte $stressmax>>
+<<if $fields_damaged gte 0>>
+	<<farm_damage_report>>
+
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $stress gte 10000>>
 	<<passoutfarmroad>>
+<<elseif $farm_attack_timer is 0 and $hour gte 21>>
+	<<npc Alex>><<person1>>
+	Alex rushes over. <span class="red">"Remy's here,"</span> <<he>> says. "We can do this. Go get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 2>><</link>>
+	<br>
 <<elseif ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined and $rng lte ($corruption_slime / 2) and $slimeFarmNakedStored is undefined and $exposed lt 2>>
 	<span class="lewd">You feel the slime in your head command you to expose yourself and hide your clothes while you work today.</span> It promises rewards if you comply, and threatens consequences if you do not.
 	<br><br>
@@ -81,12 +154,12 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	Following the slime's command, you leave the towel for Alex to find.
 	<br><br>
 	<<link [[Next|Farm Work]]>><</link>>
-<<elseif $hour lte 5 or $hour gte 22 or ($hour is 21 and $farm_end is 1)>>
+<<elseif ($hour lte 5 or $hour gte 22 or ($hour is 21 and $farm_end is 1)) and $farm_stage lt 7>>
 	<<link [[Sneak into the barn (0:05)|Farm Barn]]>><<pass 5>><</link>>
 	<br><br>
 	<<link [[Leave|Farmland]]>><</link>>
 	<br>
-<<elseif $exposed gte 2 and $farm_naked isnot 1>>
+<<elseif $exposed gte 2 and $farm_naked isnot 1 and $farm_stage lt 7>>
 	You hide behind a fence, concealing your <<lewdness>>.
 	<br><br>
 	<<if $exhibitionism gte 75>>
@@ -121,7 +194,7 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	<<link [[Leave|Farmland]]>><</link>>
 	<br>
 <<elseif $farm_shift gte 360 and $farm_stage is 2>>
-	<<set $farm_stage to 3>>
+	
 	<<npc Alex>><<generate2>><<person2>>
 	"What do we have here?" says a voice. You turn to face it, and see a <<person>> leaning against the fence at the edge of the farm. "Alex got <<person1>><<himself>> a helper. A cute one too. Why don't you bring that ass over here?"
 	<br><br>
@@ -135,11 +208,9 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	"You think this town <<girl>> is enough? This'll be funny." <<He>> turns and walks down the lane.
 	<br><br>
 
-	<<link [[Next|Farm Visitor]]>><</link>>
+	<<link [[Next|Farm Visitor]]>><<set $farm_stage to 3>><</link>>
 	<br>
 <<elseif $farm_stage is 3 and $farm.clearing lte 0>>
-	<<set $farm_stage to 4>>
-	<<set $farm.clearing to 100>>
 	<<earnFeat "Farmhand">>
 	<<npc Alex>><<person1>>
 	"We've done it," says Alex. <<He>> sounds tired, <<his>> clothes are torn, and <<his>> hair is matted with sweat, but a smile spreads across <<his>> face. "We cleared a second field."
@@ -148,15 +219,13 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	<<He>> leads you to the field in question, stopping at the fence. <<He>> gestures for you to follow as <<he>> sits. "I couldn't have done it without you," <<he>> says, taking a swig from a glass bottle. <<He>> pulls another from <<his>> pocket, and offers it to you.
 	<br><br>
 
-	<<link [[Drink|Farm Stage 4]]>><<set $phase to 0>><<stress -6>><</link>><<lstress>>
+	<<link [[Drink|Farm Stage 4]]>><<set $phase to 0>><<stress -6>><<set $farm_stage to 4>><<set $farm.clearing to 100>><</link>><<lstress>>
 	<br>
-	<<link [[Refuse|Farm Stage 4]]>><<set $phase to 1>><</link>>
+	<<link [[Refuse|Farm Stage 4]]>><<set $phase to 1>><<set $farm_stage to 4>><<set $farm.clearing to 100>><</link>>
 	<br>
 
 
 <<elseif $farm_stage is 4 and $farm.clearing lte 0>>
-	<<set $farm_stage to 5>>
-	<<set $farm.clearing to 100>>
 	<<set $farm.aggro to 0>>
 	<<npc Alex>><<person1>>
 	"It's done," Alex says, leaning against the wall of the farmhouse. "Another field ready to go." <<He>> reaches into <<his>> pocket, but stops when <<he>> hears the clop of hooves approaching from the lane.
@@ -191,16 +260,14 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	Alex looks conflicted, but politeness gets the better of <<him>>. "Tea or coffee?"
 	<br><br>
 
-	<<link [[Tea|Farm Stage 5]]>><<set $phase to 0>><<stress -6>><</link>><<lstress>>
+	<<link [[Tea|Farm Stage 5]]>><<set $phase to 0>><<stress -6>><<set $farm_stage to 5>><<set $farm.clearing to 100>><</link>><<lstress>>
 	<br>
-	<<link [[Coffee|Farm Stage 5]]>><<set $phase to 1>><<tiredness -6>><</link>><<ltiredness>>
+	<<link [[Coffee|Farm Stage 5]]>><<set $phase to 1>><<tiredness -6>><<set $farm_stage to 5>><<set $farm.clearing to 100>><</link>><<ltiredness>>
 	<br>
 	<<set $remy_seen to "farm">>
 <<elseif $farm_stage is 5 and $farm.clearing lte 0>>
-	<<set $farm_stage to 6>>
-	<<set $farm.clearing to 100>>
 	<<earnFeat "Farmer">>
-	<<set $farm_countdown to random(7, 14)>>
+	<<set $farm_countdown to 3>>
 	<<npc Alex>><<person1>>You hear rapid footsteps approach. You turn, and see Alex rushing towards you.
 	<<if $weather is "rain" or $weather is "snow">>
 		<<Hes>> smiling, despite being covered in mud.
@@ -218,11 +285,113 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	<<He>> climbs to <<his>> feet. "I need to tell them. Right now." <<He>> disappears into the farmhouse.
 	<br><br>
 
-	<<link [[Next|Farm Stage 6]]>><</link>>
+	<<link [[Next|Farm Stage 6]]>><<set $farm_stage to 6>><<set $farm.clearing to 100>><</link>>
 	<br>
 
+<<elseif $farm_stage is 6 and $farm_countdown lte 0>>
+	<<npc Alex>><<person1>>
+	Alex emerges from <<his>> shed. <<He>> looks worried. "Can you smell that?" <<he>> asks. It's faint, but something is burning.
+	<br><br>
+	"Neighbour might have let a bonfire get out of control," <<he>> says, scanning the horizon for smoke. "Best be safe. Could you check the sheds? I'll skirt the farm."
+	<br><br>
+	
+	<<link [[Next|Farm Stage 7]]>><<set $farm_countdown to 7>><<set $farm_stage to 7>><<set $alex_countdown to 3>><</link>>
+<<elseif $farm_stage gte 7 and $NPCName[$NPCNameList.indexOf("Alex")].love gte 50 and $alex_countdown lte 0>>
+	<<npc Alex>><<person1>>
+	You return to the courtyard in front of the farmhouse. You hear footsteps fast approaching. You turn just in time to see Alex. With a laugh, <<he>> grapples and drags you off your feet.
+	<br><br>
+	
+	You're left on your back. Alex straddles you, and pins your wrists to the earth. "What's wrong?" <<he>> teases. "Can't you break free?"<<gglust>><<npcincr Alex lust 5>><<gdom>><<npcincr Alex dom 1>>
+	<br><br>
+	
+	<<link [[Get on top|Farm Love Get]]>><<unset $alex_countdown>><</link>><<physiquedifficulty 1 16000>>
+	<br>
+	<<link [[Get annoyed|Farm Love Annoyed]]>><<unset $alex_countdown>><</link>>
+	<br>
+	<<link [[Flirt|Farm Love Flirt]]>><<npcincr Alex love 1>><<npcincr Alex lust 5>><<unset $alex_countdown>><</link>><<promiscuous1>><<glove>><<gglust>>
+	<br>
+<<elseif $farm_stage is 7 and $farm.clearing lte 0>>
+	You observe the fifth field. It was a tangled mess not long ago.
+	<br><br>
+	<<npc Alex>><<person1>><<generate2>>
+	You hear an unfamiliar <<person2>><<personsimple>>.
+	<<if $panicattacks gte 1 and $controlled is 0>>
+		You feel a surge of panic. Then you hear Alex respond, and <<his>> relaxed voice calms you.
+	<<else>>
+		<<Hes>> speaking with Alex.
+	<</if>>
+	You walk over.
+	<br><br>
+	
+	"It is expensive," the <<person>> nods. "But if it's security you want, you get what you pay for."
+	<br>
+	"Thanks," Alex replies. "I'll be in touch."
+	<br><br>
+	
+	<<if $exposed gte 1>>
+		The <<person>> turns to leave, but stops when <<he>> sees you. <<covered>>. <<He>> regains <<his>> composure, and pretends not to look at you as <<he>> leaves the farm.
+	<<else>>
+		The <<person>> nods at you on the way out.
+	<</if>>
+	<br><br>
+	
+	<<link [[Next|Farm Stage 8]]>><<set $farm.clearing to 100>><<set $farm_stage to 8>><<add_plot farm earth 3 large>><</link>>
+	<br>
+<<elseif $farm_stage is 8 and $farm.clearing lte 0>>
+	You observe the sixth field. It was a tangled mess not long ago. 
+	<br><br>
+	<<npc Alex>><<person1>>
+	You hear a bang from Alex's shed. The door flies open, and a strange, multi-limbed creature leaps out, surrounded by smoke. Alex runs out after it, holding a cage.
+	<br><br>
+	
+	<<link [[Catch it|Farm Stage 9 Catch]]>><<set $farm_stage to 9>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><</link>><<dancedifficulty 1 1000>>
+	<br>
+	<<link [[Leave it to Alex|Farm Stage 9 Leave]]>><<set $farm_stage to 9>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><</link>>
+	<br>
+<<elseif $farm_stage is 9 and $farm.clearing lte 0>>
+	You observe the seventh field. It was a tangled mess not long ago. 
+	<br><br>
+	
+	<<npc Alex>><<person1>>
+	You hear a rustle. A strange leathery creature darts from beneath.
+	<br><br>
+	<span class="green">A net hurls from behind you,</span> landing on the creature. It tightens as the creature flails. There's a rope attached. You turn to see Alex. <<He>> pulls the creature closer.
+	<br><br>
+	"It works!" <<he>> exclaims as <<he>> holds up the squirming net. "These blighters are hard to catch."
+	<br><br>
+	<<link [[Be impressed|Farm Stage 10 Impressed]]>><<set $farm_stage to 10>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><<npcincr Alex love 1>><</link>><<glove>>
+	<br>
+	<<link [[Be dismissive|Farm Stage 10 Dismiss]]>><<set $farm_stage to 10>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><<npcincr Alex love -1>><<npcincr Alex love -3>><</link>><<llove>><<lldom>>
+	<br>
+<<elseif $farm_stage is 10 and $farm.clearing lte 0>>
+	You observe the eighth  field. It was a tangled mess not long ago. 
+	<br><br>
 
-<<elseif $hour is 21 and $farm_end is undefined>>
+	<<npc Alex>><<person1>>
+	You see Alex kneeling at the base of the <<farm_fence>>. <<He>> gazes at a strange purple flower. Seeds scatter into <<his>> palm when <<he>> prods it.
+	<br><br>
+
+	"Seen weeds like this before," <<he>> says. "Can't find them in any book, and never found one seeding." <<He>> rises. "Do you think we could get them to take? Remy grows them. They must have value."
+	<br><br>
+
+	<<link [[Be confident|Farm Stage 11 Confident]]>><<set $farm_stage to 11>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><</link>>
+	<br>
+	<<link [[Advise caution|Farm Stage 11 Caution]]>><<set $farm_stage to 11>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><</link>>
+	<br>
+<<elseif $farm_stage is 11 and $farm.clearing lte 0>>
+	<<earnFeat "Cultivator">>
+	
+	You observe the eighth field. It was a tangled mess not long ago. 
+	<br><br>
+	<<npc Alex>><<person1>>
+	Alex stands at your side.
+	<br><br>
+
+	<<link [[Hold hands|Farm Stage 12 Hands]]>><<set $farm_stage to 12>><<set $farm.clearing to 100>><<npcincr Alex love 1>><<add_plot farm earth 3 large>><</link>><<handholdingvirginitywarning>><<glove>>
+	<br>
+	<<link [[Pat back|Farm Stage 12 Pat]]>><<set $farm_stage to 12>><<set $farm.clearing to 100>><<add_plot farm earth 3 large>><</link>>
+	<br>
+<<elseif $hour is 21 and $farm_end is undefined and $farm_stage lt 7>>
 	<<set $farm_end to 1>>
 	<<npc Alex>><<person1>>
 	<<if $exposed gt 0 and $season is "winter">>
@@ -232,7 +401,7 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	<<else>>
 		Alex wipes the sweat off <<his>> forehead as <<he>> approaches you. "Done for another day," <<he>> says, smiling.
 	<</if>>
-	<<if $farm_count gte 1>>
+	<<if $farm_count gte 1 and $farm_stage lte 6>>
 		<<set $money += $farm.wage>>
 		"Here's a little extra." <<He>> hands you <<printmoney $farm.wage>>.
 	<</if>>
@@ -240,31 +409,244 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 	You walk down the road leading away from the farm.
 	<br><br>
 	<<link [[Next|Farmland]]>><<endevent>><</link>>
+<<elseif $farm.build_finished is "wall 1">>
+	<<set $farm.build_finished to 0>>
+	You examine the perimeter wall. <span class="gold">The stonework is repaired,</span> and now envelopes the entire farm. Aside from the entrance, the river, and the great hedge. You feel more secure.<<lltrauma>><<llstress>><<trauma -12>><<stress -12>>
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "wall 2">>
+	<<set $farm.build_finished to 0>>
+	You examine the perimeter wall. <span class="gold">The stone has been reinforced with cement.</span> Remy's goons will have a harder time damaging it.
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "wall 3">>
+	<<set $farm.build_finished to 0>>
+	The project is complete. <span class="gold">A tall metal fence now surrounds the farm.</span> Intruders will have a harder time getting in. You feel more secure.
+	<<lltrauma>><<llstress>><<trauma -12>><<stress -12>>
+	<br><br>
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "wall 4">>
+	<<set $farm.build_finished to 0>>
+	<span class="gold">The fence now menaces with barbed wire.</span> No one's getting over.
+	<br><br>
+	
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "tower 1">>
+	<<set $farm.build_finished to 0>>
+	<<npc Alex>><<person1>>
+	<span class="gold">A watchtower now stands guard over the fields.</span> You stand at it's base. It looms above you. A head appears, leaning out the top. It's Alex.
+	<br><br>
+	"Come up," <<he>> says. "The view is fantastic."
+	<br><br>
+	You climb the wooden stairs, and emerge at the top. There's a roof overhead, but it's otherwise open. You can see the entire farm, the moor in one direction, and even the sea in the other.
+	<br><br>
+	<span class="purple">"We'll need to hire someone,"</span> Alex says, looking out. "They can stand guard here overnight. Catch Remy in the act if <<nnpc_he Remy>> tries anything while we sleep." <<He>> tries to shake the railing. It seems solid. <span class="gold">"There's a pub in town, near the entrance.</span> My <<if $pronoun is "m">>dad's<<else>>mum's<</if>> hired staff there before. That's where I'd look."
+	<br><br>
+	
+	<<He>> turns and walks down the stairs.
+	<br><br>
+	
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "tower 2">>
+	<<set $farm.build_finished to 0>>
+	<span class="gold">A searchlight now gazes from the watchtower.</span> No more hiding in the dark.
+	<br><br>
+	
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "woodland 1">>
+	<<set $farm.build_finished to 0>>
+	<<set $location to "forest">>
+	<span class="gold">You enter the farm's new woodland.</span>
+	<<if $daystate is "night">>
+		A bat flies overhead, barely visible in the dim light.
+	<<else>>
+		Birds chirp overhead.
+	<</if>>
+	You feel serene.<<ltrauma>><<llstress>><<trauma -6>><<stress -12>>
+	<br><br>
+	
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "woodland 2">>
+	<<set $farm.build_finished to 0>>
+	<<set $location to "forest">>
+	<span class="gold">You enter the new woodland. Fruit hangs overhead, and fat mushrooms grow all around.</span> You glimpse the fence between the trees, separating you from outside threats, and feel at ease.<<ltrauma>><<llstress>><<trauma -6>><<stress -12>>
+	<br><br>
+	
+	<<link [[Next|Farm Work]]>><</link>>
+	<br>
+<<elseif $farm.build_finished is "woodland 3">>
+	<<set $farm.build_finished to 0>>
+	<<set $location to "forest">>
+	<span class="gold">You explore the farm's new woodland, now large enough to get lost in.</span> You find Alex already lazing beneath a tree atop a hillock.
+	<br><br>
+	
+	<<npc Alex>><<person1>>
+	"Relaxing here," <<he>> says, rising to <<his>> feet. "Something about the branches above makes me feel safe."
+	<br><br>
+
+	<<link [[Say it makes you feel safe as well|Farm Woodland Safe]]>><<npcincr Alex love 1>><</link>><<glove>>
+	<br>
+	<<link [[Say Alex makes you feel safer|Farm Woodland Safe Alex]]>><<npcincr Alex dom 1>><<npcincr Alex love 1>><<sub 1>><</link>><<ggdom>><<gglove>>
+	<br>
+	<<link [[Say nothing|Farm Woodland Safe Nothing]]>><</link>>
+	<br>
+	<<if $daystate is "night">>
+		<<link [[Say Alex should come indoors (0:05)|Farm Woodland Safe Indoors]]>><<npcincr Alex dom 1>><<pass 5>><</link>><<gdom>>
+		<br>
+	<</if>>
+<<elseif $farm.build_finished is "kennel 1">>
+	<<set $farm.build_finished to 0>>
+	You hear the baying of hounds. You follow the sound to the kennel. <span class="gold">A yard has been enclosed outside, a safe training area for the <<farm_text_many dog>>.</span> You watch as one rips the head off a human-shaped dummy.
+	<br><br>
+
+	"They're pretty scary," Alex says, watching with rapt attention. "They know who's in charge though." Another <<farm_text dog>> joins the first. Dummy remains fly into the air. "I think."
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "barn 1">>
+	<<set $farm.build_finished to 0>>
+	"Hey," it's Alex. "Come check this out."
+	<br><br>
+	<<npc Alex>><<person1>>
+	You enter the barn. Alex stands beside a large appartus in the centre. <span class="gold">The new milking machine.</span> A red light, like an eye, blinks into life.
+	<br><br>
+
+	"We'll get more milk now." <<He>> scratches a <<farm_text cattle>> behind the ear. "I think our
+	<<if $farm_work.cattle.gender is "m">>
+		boys
+	<<else>>
+		girls
+	<</if>>
+	are up to it."
+	<br><br>
+
+	<<He>> powers down the machine, and walks away.
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "barn 2">>
+	<<set $farm.build_finished to 0>>
+	<<npc Alex>><<person1>>
+	<span class="gold">You enter the expanded barn.</span> Alex is already there, calming one of the newcomers, an ill-tempered <<farm_text cattle>>. <<He>> waves at you. "We've got a lively herd," <<he>> says. "Almost as big as <<if $pronoun is "m">>dad's<<else>>mum's<</if>>. The one <<he>> manages directly, anyway."
+	<br><br>
+
+	<<He>> closes the gate, and rests a hand on your shoulder as <<he>> walks by.
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "stable 1">>
+	<<set $farm.build_finished to 0>>
+		<span class="gold">You approach the expanded stable.</span> Soft classical music plays within.
+		<br><br>
+	<<if $farm_work.horse.monster_roll is true and (($hallucinations gte 1 or $monsterhallucinations is "f") or $bestialitydisable is "t")>>
+		"This is more suitable," a <<farm_text steed>> says as you pass. "Thank you."
+		<br><br>
+	<<else>>
+		One <<farm_text horse>> nuzzles your neck in appreciation as you pass.
+		<br><br>
+	<</if>>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "coop 1">>
+	<<set $farm.build_finished to 0>>
+	<span class="gold">You approach the expanded coop.</span> 
+	<<if $farm_work.chickens_out is 1>>
+		The yard is busier than it's ever been. 
+	<<else>>
+		It's much longer, with roosting perches extending along the entire length.
+	<</if>>
+	There'll be plenty of eggs to sell.
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<elseif $farm.build_finished is "coop 2">>
+	<<set $farm.build_finished to 0>>
+	<span class="gold">You approach the expanded coop.</span>
+	<<if $farm_work.chickens_out is 1>>
+		You're greeted by a sea of chickens. They swarm across the yard, looking for food.
+	<<else>>
+		It now has multiple rooms, each sheltering many chickens.
+	<</if>>
+	<br><br>
+	<<npc Alex>><<person1>>
+	Alex can have all the eggs <<he>> wants for breakfast.
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+
+<<elseif $farm.tower_guard and $farm.tower_guard_unpaid gte 2 and $farm.tower_guard_patience isnot 1>>
+	<<loadNPC 0 "farm_tower_guard">><<person1>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		"Hey, farmer <<girl>>," says <<print $NPCList[0].name>>, your guard. <<He>> approaches you. "Here to get my pay."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		"How you doing?" says <<print $NPCList[0].name>>, your guard. <<He>> approaches you. "Here about my pay."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<<print $NPCList[0].name>>, your guard, approaches you. "Here for my pay," <<he>> says. "You good for it?"
+	<<else>>
+		"There <<pShe>> is," <<print $NPCList[0].name>>, your guard, says as <<he>> swaggers towards you. "You know you're my favourite <<girl>>? Especially when you pay me." <<He>> holds out <<his>> hand.
+	<</if>>
+	<br><br>
+	
+	<<farm_guard_pay>>
+	<<link [[Say you can't afford it right now|Farm Guard Pay Refuse]]>><</link>><<lltrust>>
+	<br>
+	<<if $promiscuity gte 35>>
+		<<link [[Seduce|Farm Guard Pay Seduce]]>><</link>><<promiscuous3>>
+		<br>
+	<</if>>
 <<else>>
 	<<if $farm_yield_alex gte 1>>
 		<<npc Alex>><<person1>>
 		<<if $NPCName[$NPCNameList.indexOf("Alex")].dom gte 30>>
-			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. <span class="pink">"Keep at it. You'll make a fine farmer someday."</span>
+			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. 
+			
+			<<if $farm_stage gte 7>>
+				<span class="pink">"You deserve a little for your help, partner."</span>
+			<<else>>
+				<span class="pink">"Keep at it. You'll make a fine farmer someday."</span>
+			<</if>>
 			<br><br>
 
 			<<He>> marches away. <span class="gold">You've earned £<<print ($farm_yield_alex * 9)>>.</span><<set $money += ($farm_yield_alex * 900)>>
 			<br><br>
 		<<elseif $NPCName[$NPCNameList.indexOf("Alex")].dom lte -30>>
-			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. <span class="teal">"Dunno what I'd do without you, so this is fair."</span>
+			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. 
+			
+			<<if $farm_stage gte 7>>
+				<span class="teal">"Hope you don't mind handling the profits, partner."</span>
+			<<else>>
+				<span class="teal">"Dunno what I'd do without you, so this is fair."</span>
+			<</if>>
 			<br><br>
 
 			<<He>> marches away. <span class="gold">You've earned £<<print ($farm_yield_alex * 24)>>.</span><<set $money += ($farm_yield_alex * 2400)>>
 			<br><br>
 		<<else>>
-			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. <span class="blue">"Your doing, so this is fair. You've a way with the animals."</span>
+			"Hey," shouts Alex, striding towards you. "We've had a better yield than expected lately," <<he>> says, grasping your hand in <<his>> own and pressing something into your palm. 
+			
+			<<if $farm_stage gte 7>>
+				<span class="blue">"Here's your share of the profits, partner."</span>
+			<<else>>
+				<span class="blue">"Your doing, so this is fair. You've a way with the animals."</span>
+			<</if>>
 			<br><br>
 
 			<<He>> marches away. <span class="gold">You've earned £<<print ($farm_yield_alex * 18)>>.</span><<set $money += ($farm_yield_alex * 1800)>>
 			<br><br>
 		<</if>>
-
-
-
 
 		<<link [[Next|Farm Work]]>><<endevent>><</link>>
 		<br>
@@ -273,11 +655,42 @@ You'll earn <<printmoney $farm.wage>> for every hour worked.
 		<<set $farm_event to 1>>
 		<<eventsfarm>>
 	<<else>>
-
-
+		<<if $farm_stage gte 7>>
+			<<link [[Cottage (0:01)|Farm Cottage]]>><<pass 1>><</link>>
+			<br>
+			<<link [[Fields (0:05)|Farm Fields]]>><<pass 5>><<set $eventskip to 1>><</link>>
+			<br>
+			
+			<<if $farm_work.alex isnot "shower">>
+				<<link [[Take shower (0:10)|Farm Shower]]>><<pass 10>><</link>>
+				<br>
+			<</if>>
+			<<if $hour lte 5 or $hour gte 22 or ($hour is 21 and $farm_end is 1)>>
+				<<link [[Sneak into the barn (0:05)|Farm Barn]]>><<pass 5>><</link>>
+				<br>
+			<</if>>
+		<</if>>
+		<<if $farm_stage gte 9>>
+			<<link [[Lab (0:01)|Farm Still]]>><<pass 1>><</link>>
+			<br>
+		<</if>>
+		<<if $farm.woodland gte 1>>
+			<<link [[Woodland (0:05)|Farm Woodland]]>><</link>>
+			<br>
+		<</if>>
+		<br>
 
 		<<farm_work>>
 
+		<<if $farm_stage gte 7>>
+			<<if $farm.steed>>
+				<<link [[Saddle a steed|Farm Saddle]]>><</link>>
+				<br>
+			<<else>>
+				<<link [[Saddle a steed (0:10)|Farm Steed]]>><<pass 10>><</link>>
+				<br>
+			<</if>>
+		<</if>>
 		<<link [[Leave|Farmland]]>><</link>>
 		<br>
 		<<if ($parasite.left_ear.name is "slime" or $parasite.right_ear.name is "slime") and $slimeFarmNaked is undefined>>
@@ -502,7 +915,18 @@ You get dressed in the kitchen. You hear Alex come down the stairs. <<He>> asks 
 :: Farm Border
 <<effects>>
 
-You walk around the edge of the farm. Most of it is bordered by a wooden fence, which gives way to an ancient stone wall in places. You find traces of the stone elsewhere, as if it once surrounded the whole farm.
+You walk around the edge of the farm. 
+<<if $farm.wall gte 4>>
+	It is surrounded by a stone wall that serves as a foundation for a tall metal fence. The top menaces with barbed wire.
+<<elseif $farm.wall is 3>>
+	It is surrounded by a stone wall that serves as a foundation for a tall metal fence.
+<<elseif $farm.wall is 2>>
+	It is surrounded by a stone and cement wall, which looks much older in places.
+<<elseif $farm.wall is 1>>
+	It is surrounded by a stone wall, which looks much older in places.
+<<else>>
+	Most of it is bordered by a wooden fence, which gives way to an ancient stone wall in places. You find traces of the stone elsewhere, as if it once surrounded the whole farm.
+<</if>>
 <br><br>
 
 A great hedge shields most of the fields from the forest beyond, though some are bordered instead by a river. The lands around the farm are wild. You're not sure if they've ever been cultivated.
@@ -535,7 +959,7 @@ A great hedge shields most of the fields from the forest beyond, though some are
 
 <<set $danger to random(1, 10000)>>
 <<if $danger gte (9900 - $allure)>>
-	<<if $bestialitydisable is "f">>
+	<<if $bestialitydisable is "f" and $lurkerdisable is "f">>
 		You're just finishing up, when something leaps from the pile of <<if $weather is "snow">>snow<<else>>leaves<</if>>!<<gstress>><<stress 6>>
 		<br><br>
 		<<if $deviancy gte 55>>
@@ -1296,7 +1720,13 @@ You open the barn doors, and release the <<farm_text_many cattle>> from their pe
 <<effects>>
 
 
-You enter the cattle barn. A large milking machine sits in the middle. The <<farm_text_many cattle>> prefer to be milked by hand, but the machine can milk six at once.
+You enter the cattle barn. 
+<<if $farm.barn gte 1>>
+	A large, glowing milking machine sits in the middle.
+<<else>>
+	A large milking machine sits in the middle.
+<</if>>
+ The <<farm_text_many cattle>> prefer to be milked by hand, but the machine can milk six at once.
 <br><br>
 
 
@@ -1861,11 +2291,11 @@ You relax on the hammock next to the stables.
 <<if $weather is "rain" or $weather is "snow">>You're glad to have some cover from the <<print ($weather is "rain"?'rain':'snow')>>.<</if>>
 
 <<if $daystate is "night">>
-	With the horses sleeping, you're able to enjoy the peace and quiet.<<tiredness -1>><<ltiredness>>
+	With the horses sleeping, you're able to enjoy the peace and quiet.
 <<elseif $farm_work.horses_out is 1>>
-	With the horses out running in the fields, you're able to enjoy the peace and quiet.<<tiredness -1>><<ltiredness>>
+	With the horses out running in the fields, you're able to enjoy the peace and quiet.
 <<else>>
-	The horses are inside. You hear them move around.<<stress -1>><<lstress>>
+	The horses are inside. You hear them move around.
 <</if>>
 <br><br>
 <<link [[Next|Farm Work]]>><</link>>
@@ -1873,7 +2303,7 @@ You relax on the hammock next to the stables.
 :: Farm Perimeter
 <<effects>>
 
-<<if $rng gte 51>>
+<<if $rng gte 51 or $farm.wall is 1>>
 	You follow the farm perimeter, picking up stones from the ground and returning them to the old wall.
 	<br><br>
 <<else>>
@@ -1894,7 +2324,7 @@ You relax on the hammock next to the stables.
 
 <<npc Alex>><<person1>>
 
-<<if $rng gte 51>>
+<<if $rng gte 51 or $farm.wall is 1>>
 	You help Alex follow the farm perimeter, picking up stones from the ground and returning them to the old wall. <<He>> suggests you split up to cover more ground.
 	<br><br>
 <<else>>
@@ -1965,7 +2395,12 @@ You carry the feed to the field. Some of the younger <<farm_text_many dog>> beg 
 :: Farm Barn
 <<set $outside to 0>><<effects>>
 <<farm_work_update>>
-You are in the barn. The <<farm_text_many cattle>> sleep sound. A large milking machine stands in the centre.
+You are in the barn. The <<farm_text_many cattle>> sleep sound. 
+<<if $farm.barn gte 1>>
+	A large, glowing milking machine stands in the centre.
+<<else>>
+	A large milking machine stands in the centre.
+<</if>>
 <br><br>
 
 <<if $hour gte 6 and $hour lte 20>>
@@ -2041,28 +2476,43 @@ The machine continues its devilish work, sucking with more intensity. You feel a
 
 	You remain on your hands and knees, two suction tubes attached to your <<breasts>>, until the machine finishes drinking.
 
-	<<set $farm_breast_milk to ($milk_amount / 2)>>
+	<<if $farm.barn gte 1>>
+		<<set $farm_breast_milk to ($milk_amount / 1.5)>>
+	<<else>>
+		<<set $farm_breast_milk to ($milk_amount / 2)>>
+	<</if>>
 	<<set $milk_amount -= $farm_breast_milk>>
 	<<set $milk_produced_stat += Math.trunc($farm_breast_milk)>>
 
-	<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 300)>>
+	<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 1000)>>
 	<<if $farm_breast_milk lte 0>>
 		<<set $farm_breast_milk to 1>>
 	<</if>>
-	<<if $farm_breast_milk gte 10>>
-		<span class="green">The tank almost overflows with milk.</span><<gggfarm>><<farmCatchChance 0.4>>
-	<<elseif $farm_breast_milk gte 6>>
-		<span class="teal">The tanks are over half full of your milk.</span><<ggfarm>><<farmCatchChance 0.2>>
+	<<if $farm_breast_milk gte 4>>
+		<span class="green">The tank almost overflows with milk.</span><<farmCatchChance 0.4>>
 	<<elseif $farm_breast_milk gte 3>>
-		<span class="lblue">There's a large volume of milk in the tank.</span><<ggfarm>><<farmCatchChance 0.1>>
+		<span class="teal">The tanks are over half full with your milk.</span><<farmCatchChance 0.2>>
+	<<elseif $farm_breast_milk gte 2>>
+		<span class="lblue">There's a large volume of milk in the tank.</span><<farmCatchChance 0.1>>
 	<<elseif $farm_breast_milk gte 1>>
-		<span class="blue">There's a decent volume of milk in the tank.</span><<gfarm>><<farmCatchChance 0.05>>
+		<span class="blue">There's a decent volume of milk in the tank.</span><<farmCatchChance 0.05>>
 	<<else>>
-		<span class="purple">There's only a dribble of milk in the tank.</span><<gfarm>><<farmCatchChance 0.01>>
+		<span class="purple">There's only a dribble of milk in the tank.</span><<farmCatchChance 0.01>>
 	<</if>>
 	<br><br>
-
-	<<farm_yield $farm_breast_milk>>
+	<<if $farm_breast_milk gte 2>>
+		<span class="gold">You've filled $farm_breast_milk bottles of milk.</span>
+		<<tending_give bottle_of_breast_milk $farm_breast_milk>>
+	<<elseif $farm_breast_milk is 1>>
+		<span class="gold">You've filled a bottle with milk.</span>
+		<<tending_give bottle_of_breast_milk $farm_breast_milk>>
+	<<else>>
+		You don't have enough to fill a bottle. You mix it with the cattle milk.<<gfarm>>
+		<<set _farm_yield to ($farm_breast_milk * 3)>>
+		<<farm_yield _farm_yield>>
+	<</if>>
+	<br><br>
+	
 	<<unset $farm_breast_milk>>
 	<<barn_img breasts>>
 <<else>>
@@ -2131,7 +2581,11 @@ You take one of the suction tubes, and attach it to your <<penis>>.
 :: Farm Barn Penis 2
 <<effects>>
 
-<<set $farm_penis_milk to ($semen_amount / 2)>>
+<<if $farm.barn gte 1>>
+	<<set $farm_penis_milk to ($semen_amount / 1.5)>>
+<<else>>
+	<<set $farm_penis_milk to ($semen_amount / 2)>>
+<</if>>
 The machine continues its devilish work, sucking with more intensity. You feel a warmth build.<<gggarousal>><<arousal 10000>>
 <<orgasmpassage>>
 <br>
@@ -2147,15 +2601,15 @@ You remain on your hands and knees as the machine milks you again and again, suc
 <<set $semen_amount -= $farm_penis_milk>>
 <<set $semen_produced_stat += $farm_penis_milk>>
 
-<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 300)>>
+<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 1000)>>
 <<if $farm_penis_milk lte 0>>
 	<<set $farm_penis_milk to 1>>
 <</if>>
-<<if $farm_penis_milk gte 10>>
+<<if $farm_penis_milk gte 4>>
 	<span class="green">The tank almost overflows with semen.</span><<gggfarm>><<farmCatchChance 0.4>>
-<<elseif $farm_penis_milk gte 6>>
-	<span class="teal">The tanks are over half full of your semen.</span><<ggfarm>><<farmCatchChance 0.2>>
 <<elseif $farm_penis_milk gte 3>>
+	<span class="teal">The tanks are over half full with your semen.</span><<ggfarm>><<farmCatchChance 0.2>>
+<<elseif $farm_penis_milk gte 2>>
 	<span class="lblue">There's a large volume of semen in the tank.</span><<ggfarm>><<farmCatchChance 0.1>>
 <<elseif $farm_penis_milk gte 1>>
 	<span class="blue">There's a decent volume of semen in the tank.</span><<gfarm>><<farmCatchChance 0.05>>
@@ -2164,7 +2618,19 @@ You remain on your hands and knees as the machine milks you again and again, suc
 <</if>>
 <br><br>
 
-<<farm_yield $farm_penis_milk>>
+<<if $farm_penis_milk gte 2>>
+	<span class="gold">You've filled $farm_penis_milk bottles of semen.</span>
+	<<tending_give bottle_of_semen $farm_penis_milk>>
+<<elseif $farm_penis_milk is 1>>
+	<span class="gold">You've filled a bottle with semen.</span>
+	<<tending_give bottle_of_semen $farm_penis_milk>>
+<<else>>
+	You don't have enough to fill a bottle. You mix it with the cattle milk.<<gfarm>>
+	<<set _farm_yield to ($farm_penis_milk * 3)>>
+	<<farm_yield _farm_yield>>
+<</if>>
+<br><br>
+
 <<unset $farm_penis_milk>>
 <<barn_img penis>>
 

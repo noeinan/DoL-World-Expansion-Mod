@@ -502,13 +502,19 @@
 
 <<widget "defiance">>
 	<<if $args[0]>>
-		<<set _negargs = -$args[0]>>
-		<<set $stress -= 10 * $args[0]>>
+		<<set _defiance to ($args[0] * (1 + ($sadism / 1000)))>>
+		<<set _negargs = -_def_mod>>
+		<<set $stress -= 10 * _defiance>>
 		<<combattrauma _negargs>>
-		<<set $enemyanger += 5 * $args[0]>>
-		<<set $enemyhealth -= (2 * $args[0] * ($physique / 4000))>>
+		<<set $enemyanger += 5 * _defiance>>
+		<<set $enemyhealth -= (2 * _defiance * ($physique / 4000))>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 4>>
+		<<set _defiance_arousal to (_defiance * ($sadism / 40))>>
+		<<arousal _defiance_arousal>>
+		<<if $arousal gte ($arousalmax * 0.8)>>
+			<<sadism $args[0]>>
+		<</if>>
 	<</if>>
 <</widget>>
 
@@ -1670,7 +1676,13 @@
 		<<case arcade>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_day.png'">
 		<<case farm>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/farm_day.png'">
+			<<if $bus is "woodland">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestday.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/farm_day.png'">
+			<</if>>
+		<<case alex_farm>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/alex_farm_day.png'">
 		<<case riding_school>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_day.gif'">
 		<<case estate>>
@@ -1799,7 +1811,13 @@
 		<<case arcade>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_night.png'">
 		<<case farm>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/farm_night.png'">
+			<<if $bus is "woodland">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestnight.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/farm_night.png'">
+			<</if>>
+		<<case alex_farm>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/alex_farm_night.png'">
 		<<case riding_school>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_night.gif'">
 		<<case estate>>
@@ -1934,7 +1952,13 @@
 		<<case arcade>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dawn.png'">
 		<<case farm>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/farm_dawn.png'">
+			<<if $bus is "woodland">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestdawn.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/farm_dawn.png'">
+			<</if>>
+		<<case alex_farm>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/alex_farm_dawn.png'">
 		<<case riding_school>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_dawn.gif'">
 		<<case estate>>
@@ -2053,8 +2077,14 @@
 		<<case arcade>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/arcade_dusk.png'">
 		<<case farm>>
-		<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
-		<<case farm>>
+			<<if $bus is "woodland">>
+				<img id="location" @src="'img/misc/' + _weather_display + '/forestdusk.png'">
+			<<else>>
+				<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
+			<</if>>
+		<<case alex_farm>>
+		<img id="location" @src="'img/misc/' + _weather_display + '/alex_farm_dusk.png'">
+		<<case estate>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/farm_dusk.png'">
 		<<case riding_school>>
 		<img id="location" @src="'img/misc/' + _weather_display + '/riding_school_dusk.gif'">
@@ -2140,7 +2170,11 @@
 		It's a snowy evening.
 	<</if>>
 <</if>>
+
 <</if>>
+
+
+
 <</widget>>
 
 <<widget "wearandtear">>
@@ -3878,6 +3912,10 @@ __Map__<br>
 	<<set _i to $NPCNameList.indexOf("Great Hawk")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
+	<<set _i to $NPCNameList.indexOf("Alex")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
+	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].lust, 0, 100)>>
 <</widget>>
 
 <<widget "fringecheck">>
@@ -4983,4 +5021,10 @@ __Map__<br>
 	<<set _printmoney to '<span class="gold">' + _printmoney + '</span>'>>
 <</if>>
 <</silently>><<print _printmoney>>
+<</widget>>
+
+<<widget "sadism">>
+<<if $args[0]>>
+	<<set $sadism += $args[0]>>
+<</if>>
 <</widget>>

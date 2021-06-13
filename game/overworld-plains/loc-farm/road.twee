@@ -12,6 +12,11 @@
 <</if>>
 <br><br>
 
+<<if $farm>>
+	Your $farm.steed steed grazes in an empty field.
+	<br><br>
+<</if>>
+
 <<set $danger to random(1, 10000)>>
 <<if $stress gte $stressmax>>
 	<<passoutfarmroad>>
@@ -36,6 +41,17 @@
 	<</if>>
 	<<roadicon>><<link [[Walk into the countryside (0:30)|Farm Road 2]]>><<pass 30>><<set $phase to 1>><<tiredness 3>><</link>><<gtiredness>>
 	<br>
+	<<if $farm>>
+		<<if $farm.steed>>
+			<<if $farm.stable gte 1>>
+				<<ind>><<link [[Ride to the farm (0:15)|Farm Ride Farm]]>><<loadNPC 0 "saddled_steed">><<pass 15>><</link>>
+				<br>
+			<<else>>
+				<<ind>><<link [[Ride to the farm (0:30)|Farm Ride Farm]]>><<loadNPC 0 "saddled_steed">><<pass 30>><</link>>
+				<br>
+			<</if>>
+		<</if>>
+	<</if>>
 	<<ind>><<link [[Enter Town (0:05)|Harvest Street]]>><<pass 5>><</link>>
 	<br>
 <</if>>
@@ -141,7 +157,7 @@
 	<<if $rng gte 51>>
 		A strong wind rushes over the crest, almost blowing you over.
 
-		<<if $worn.head.name isnot "naked">>
+		<<if $worn.head.name isnot "naked" and !$worn.head.outfitSecondary.includes("upper")>>
 			It snatches the $worn.head.name from your head!<<headstrip>>
 			<br><br>
 
@@ -461,7 +477,7 @@ You continue the assault, playing with the pair until they shudder into orgasm. 
 <</if>>
 They seem satisfied. The <<person2>><<person>> spends the rest of the journey in a quiet daze.
 <br><br>
-
+<<pass 15>>
 <<if $phase is 1>>
 	You are driven into town. You give the pair a sly wink as you bid them farewell.
 	<br><br>
@@ -1069,7 +1085,7 @@ You kneel in front of the <<person>>. <<He>> grasps your hair with one hand whil
 	<<link [[Step away|Farm Hitchhike Step]]>><</link>>
 	<br>
 	<<if $submissive gte 1500>>
-		<<link [[Beg (0:15)|Farm Hitchhike Beg]]>><</link>><<submissivetext>>
+		<<link [[Beg (0:15)|Farm Hitchhike Beg]]>><<sub 1>><</link>><<submissivetext>>
 		<br>
 	<</if>>
 <</if>>
@@ -1224,3 +1240,787 @@ You decide not to run off the road in pursuit, and continue without your headwea
 <br><br>
 <<unset $road_pet>>
 <<destinationfarmroad>>
+
+
+:: Farm Saddle
+<<effects>>
+
+<<loadNPC 0 "saddled_steed">>
+
+You saddle your $farm.steed <<beasttype>>, and climb atop.
+<br><br>
+
+<<if $farm.stable gte 1>>
+	<<link [[Ride to Town (0:15)|Farm Ride Town]]>><<tiredness 2>><<pass 15>><</link>><<gtiredness>>
+	<br>
+<<else>>
+	<<link [[Ride to Town (0:30)|Farm Ride Town]]>><<tiredness 3>><<pass 30>><</link>><<gtiredness>>
+	<br>
+<</if>>
+<<link [[Saddle a different horse (0:10)|Farm Steed]]>><<pass 10>><<endevent>><</link>>
+<br>
+<<link [[Dismount|Farm Work]]>><<endevent>><</link>>
+<br>
+
+:: Farm Saddle New
+<<effects>>
+
+<<if $farm.steed>>
+	<<clearNPC "saddled_steed">>
+	<<set $farm.steed to 0>>
+<</if>>
+
+You saddle the <<beasttype>>.
+<<if $farm.beasts.horses gte 20>>
+	<<if $monster is 1>>
+		"I'm grateful for your trust," <<bhe>> says, bowing <<his>> head. "It'll be nice to stretch my legs."
+	<<else>>
+		<<bHe>> licks your shoulder.
+	<</if>>
+<<elseif $farm.beasts.horses gte 5>>
+	<<if $monster is 1>>
+		"As you wish," <<bhe>> says. "Don't expect me to enter that hive the humans live in. The smell is unbearable."
+	<<else>>
+		<<bHe>> remains passive as you work.
+	<</if>>
+<<else>>
+	<<if $monster is 1>>
+		"Careful <<girl>>," <<bhe>> says. "Or I'll be riding you.""
+	<<else>>
+		<<bHe>> bites at you, but allows you to finish.
+	<</if>>
+<</if>>
+
+<br><br>
+
+<<if $thighskill gte 200>>
+	<<saveNPC 0 "saddled_steed">>
+	<<set $farm.steed to clone($NPCList[0].hair)>>
+	You climb upon <<bhis>> back, and spurt <<bhim>> to a trot. The force surprises you, <span class="green">but you manage to hold on.</span> The wind blows your hair as you circle the yard.
+	<br><br>
+
+	<<link [[Ride to town (0:20)|Farm Ride Town]]>><<pass 20>><</link>>
+	<br>
+	<<link [[Dismount|Farm Work]]>><<endevent>><</link>>
+	<br>
+<<else>>
+	You climb upon <<bhis>> back, and spur <<bhim>> to a trot. <span class="red">The force jolts you from your seat.</span>
+
+	<<if $monster gte 1>>
+		The centaur laughs.
+	<<else>>
+		The horse whinnies.
+	<</if>>
+	<<gpain>><<pain 4>>
+	<br><br>
+	<i><span class="purple">D</span> Thigh Skill or higher required. There's a riding school nearby.</i>
+	<br><br>
+
+	<<link [[Next|Farm Work]]>><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: Farm Steed
+<<effects>>
+
+<<if $farm_work.horses_out is 1>>
+	You enter the field to observe the <<farm_text_many horse>>.
+	<br><br>
+<<else>>
+	You approach the stable to observe the <<farm_text_many horse>>.
+<</if>>
+
+ Perhaps you could ride one to town.
+ <br><br>
+
+<<beastNEWinit 1 horse>>
+ Your eyes fall on one <<beasttype>> in particular. <<bHe>> looks back, and shakes <<bhis>> <<print $NPCList[0].hair>> mane.
+<br><br>
+
+<<link [[Choose another (0:10)|Farm Steed Choose]]>><<endevent>><<pass 10>><</link>>
+<br>
+<<link [[Saddle (0:10)|Farm Saddle New]]>><<pass 10>><</link>>
+<br>
+<<link [[Leave|Farm Work]]>><<endevent>><</link>>
+<br>
+
+:: Farm Steed Choose
+<<effects>>
+
+<<beastNEWinit 1 horse>>
+You examine another steed, a <<beasttype>> with a <<print $NPCList[0].hair>> mane.
+<br><br>
+
+<<link [[Choose another (0:10)|Farm Steed Choose]]>><<endevent>><<pass 10>><</link>>
+<br>
+<<link [[Saddle (0:10)|Farm Saddle New]]>><<pass 10>><</link>>
+<br>
+<<link [[Leave|Farm Work]]>><<endevent>><</link>>
+<br>
+
+
+:: Farm Ride Town
+<<set $location to "moor">><<set $bus to "town">><<effects>>
+
+You spur your steed to a trot, and ride for town with the wind in your hair.<<physique 2>>
+<br><br>
+
+<<farm_ride_events>>
+
+
+:: Farm Ride Farm
+<<set $location to "moor">><<set $bus to "farm">><<effects>>
+
+You spur your steed to a trot, and ride into the countryside.
+<br><br>
+
+<<farm_ride_events>>
+
+
+:: Farm Ride Soothe
+<<effects>>
+
+
+
+<<if $tendingSuccess>>
+	You pat the <<beasttype>>'s head. "It's okay," you say. "It's just a car."
+	
+	<<if $monster is 1>>
+		<br><br>
+		<span class="green">"Sorry,"</span> <<bhe>> replies. "I'm acting like a foal. Thank you."
+	<<else>>
+		<span class="green"><<bHe>> seems less agitated.</span>
+	<</if>>
+	<br><br>
+
+<<else>>
+	You pat the <<beasttype>>'s head, hoping to calm it, <span class="red">but your touch startles it further.</span><<llrespect>><<farm_horses -3>>
+	
+	<<if $monster is 1>>
+		"J-just leave me alone," <<bhe>> says.
+	<</if>>
+	<br><br>
+
+<</if>>
+
+<<destination_farm_ride>>
+
+:: Farm Ride Charge
+<<effects>>
+
+<<if $thighskill gte random(1, 1200)>>
+	You direct the horse away from the ditch with your knees, <span class="green">and your surety calms <<bhim>>.</span>
+	<<if $monster is 1>>
+		"Sorry," <<bhe>> says. "I'm acting like a foal. Thank you."<<llrespect>><<farm_horses -3>>
+	<</if>>
+	<br><br>
+<<else>>
+	You pull on the bridle, trying to direct it away from the ditch. <span class="red"><<bHe>> doesn't appreciate your interference.</span>
+	<<if $monster is 1>>
+		"Don't test my patience," <<bhe>> says. "Don't think I won't throw you off."
+		<br><br>
+	<<else>>
+		<<bHe>> rears on <<his>> hind legs, threatening to throw you off, before continuing the journey.<<llrespect>><<farm_horses -3>>
+		<br><br>
+	<</if>>
+<</if>>
+
+<<destination_farm_ride>>
+
+
+:: Farm Ride Ignore
+<<effects>>
+
+You ignore your <<beasttype>>'s agitation. <<bHe>> calms down, but remains on edge.
+<br><br>
+<<destination_farm_ride>>
+
+
+:: Farm Ride Break
+<<effects>>
+
+You let the <<beasttype>> munch on some grass at the side of the road until <<bhe>> is ready to continue.
+<br><br>
+
+<<destination_farm_ride>>
+
+:: Farm Ride Push
+<<effects>>
+
+
+<<if $thighskill gte random(1, 1000)>>
+	You spur your <<beasttype>> into keeping up the pace. <<bHe>> manages it, <span class="green">finding a second wind.</span>
+	<br><br>
+<<else>>
+	You spur your <<beasttype>> into keeping up the pace. <<bHe>> manages it, 
+	<<if $monster is 1>>
+		<span class="green">but voices a complaint.</span>
+	<<else>>
+		<span class="red">but neighs a complaint.</span>
+	<</if>><<llrespect>><<farm_horses -3>>
+	<br><br>
+<</if>>
+
+<<destination_farm_ride>>
+
+:: Farm Ride Hand
+<<effects>>
+
+You dismount the <<beasttype>>, and kneel beneath <<bhim>>.
+
+<<if $NPCList[0].penis isnot "none">>
+	<<bHis>> <<print $NPCList[0].penisdesc>> is already erect and waiting. You cup one of <<bhis>> testes, then run your fingers along the shaft before grasping it.
+	<<deviancy3>>
+	<<if $monster is 1>>
+		"That's it," the <<beasttype>> sighs. "It won't take long. I've been pent up all day."
+	<<else>>
+		The <<beasttype>> neighs <<bhis>> approval.
+	<</if>>
+<<else>>
+	<<bHis>> pussy glistens in anticipation. You push a finger between the folds, then another.
+	<<if $monster is 1>>
+		"That's it," the <<beasttype>> sighs. "It won't take long. I've been pent up all day."
+	<<else>>
+		The <<beasttype>> neighs <<bhis>> approval.
+	<</if>>
+<</if>>
+<br><br>
+
+<<if random(1, 3) is 3>>
+	The <<beasttype>>'s body spasms. Not long now. <span class="pink">You hear an engine.</span> A car approaches, and will arrive any moment.
+	<br><br>
+	<<if $monster is 1>>
+		"D-don't stop," the <<beasttype>> says. "I'm almost there.""
+		<br><br>
+	<</if>>
+	<<link [[Keep going|Farm Ride Hand 2]]>><<farm_horses 1>><</link>><<skill_difficulty handskill "Hand Skill" 1 1000>><<grespect>>
+	<br>
+	<<link [[Stop|Farm Ride Hand Stop]]>><<farm_horses -3>><</link>><<llrespect>>
+	<br>
+<<else>>
+	The <<beasttype>>'s body spasms, and it reaches <<bhis>> peak.
+	<<if $NPCList[0].penis isnot "none">>
+		Voluminous ejaculate shoots from <<bhis>> tip, splattering over the floor, then pooling beneath it. Job done, you climb back in the saddle.
+		<br><br>
+	<<else>>
+		Your fingers slick, you climb back in the saddle, and spur <<bhim>> to a trot.
+		<br><br>
+	<</if>>
+
+	<<destination_farm_ride>>
+<</if>>
+
+
+
+:: Farm Ride Hand 2
+<<effects>>
+
+Your fingers work as fast as they can,
+<<if $handskill gte random(1, 1000)>>
+	<<if $NPCList[0].penis isnot "none">>
+		<span class="green">and you manage to milk the <<print $NPCList[0].penisdesc>> of its cum</span> before the car arrives.
+	<<else>>
+		<span class="green">and you manage to have the <<beasttype>> shuddering in orgasm</span> before the car arrives.
+	<</if>>
+	You climb back in the saddle, and spur <<bhim>> to a trot.
+	<br><br>
+<<else>>
+	<<if $NPCList[0].penis isnot "none">>
+		<span class="red">and only manage to milk the <<print $NPCList[0].penisdesc>> of its cum just as the car arrives.</span>
+	<<else>>
+		<span class="red">and only manage to have the <<beasttype>> shuddering in orgasm</span> just as the car arrives.</span>
+	<</if>>
+	You hope they didn't see, but the mocking honk suggests they did.<<ggtrauma>><<gstress>><<famebestiality 3>><<trauma 12>><<stress 6>>
+	<br><br>
+<</if>>
+
+<<destination_farm_ride>>
+
+:: Farm Ride Hand Stop
+<<effects>>
+
+You stand up.
+
+<<if $monster is 1>>
+	"Damn you," the <<beasttype>> says as it humps the air.
+<<else>>
+	The <<beasttype>> neighs <<bhis>> frustration.
+<</if>>
+<<if $NPCList[0].penis isnot "none">>
+	A little semen spurts from <<bhis>> <<print $NPCList[0].penisdesc>>, but not much.
+<<else>>
+	<<bHis>> body shakes in what you think is an orgasm, but not a strong one.
+<</if>>
+<br><br>
+
+<<if $submissive gte 1150>>
+	"I-I'm sorry," you say. "But I don't want people to see you so undignified."
+<<elseif $submissive lte 850>>
+	"Don't be so undignified," you say.
+<<else>>
+	"Do you want people to see you like this?"
+<</if>>
+<br><br>
+
+<<bHe>> calms down before the car appears, but shakes <<bhis>> mane. You climb back into the saddle, and spur <<bhim>> to a trot.
+<br><br>
+
+<<destination_farm_ride>>
+
+
+
+:: Farm Ride Force
+<<effects>>
+
+<<if $thighskill gte random(1, 1400)>>
+	You spur and berate the <<beasttype>>.
+	<<if $monster is 1>>
+		<span class="green">"Fine,"</span> <<bhe>> says. "Can't blame me for trying."
+	<<else>>
+		With a neigh, <span class="green"><<bhe>> trots forward once more.</span>
+	<</if>>
+<<else>>
+	You spurt and berate the <<beasttype>>
+	<<if $monster is 1>>
+		<span class="red"><<bHe>> throws an angry glance over your shoulder.</span> "I'm moving," <<bhe>> says. "But you'll pay for this later."
+	<<else>>
+		<span class="red"><<bHe>> rears on <<bhis>> hind legs,</span> almost throwing you off, then breaks into a trot.
+	<</if>>
+	<<llrespect>><<farm_horses -3>>
+<</if>>
+<br><br>
+
+<<destination_farm_ride>>
+
+
+:: Farm Ride Foot
+<<effects>>
+
+You dismount. If the <<beasttype>> is so stubborn, then so be it. <<bHe>> huffs as you walk away.
+<br><br>
+
+
+<<if $bus is "east">>
+	<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+<<else>>
+	<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+<</if>>
+
+
+:: Farm Ride Rape
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<controlloss>>
+	<<violence 1>>
+	<<neutral 1>>
+	<<molested>>
+		
+	<<beastCombatInit>>
+	<<set $NPCList[0].stance to "top">>
+	<<if $farm_work.horse.genitals is "penis">>
+		<<set $position to "doggy">>
+	<<else>>
+		<<set $position to "missionary">>
+	<</if>>
+	<<farm_trust horses>>
+	<<prop haybale>>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<br><br>
+<<beast $enemyno>>
+<br><br>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Ride Rape Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Ride Rape Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link "Next">><<script>>state.display(state.active.title, null)<</script>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Ride Rape Finish
+<<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+
+	<<beastejaculation>>
+
+	<<if $monster is 1>>
+		"Good fucktoy," the <<bhe>> says.
+	<</if>>
+
+	<<tearful>> you climb back into the saddle.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<destination_farm_ride>>
+
+<<else>>
+
+	You smack the <<beasttype>> on the nose, and <<bhe>> turns and flees.
+	<br><br>
+
+	<<tearful>> you return to the road.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<if $bus is "east">>
+		<<<link [[Next|Farm Road 4]]>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><</link>>
+		<br>
+	<</if>>
+
+
+<</if>>
+.
+
+:: Farm Ride Faster
+<<effects>>
+
+You spur your <<beasttype>> to a gallop. Hooves thunder behind as Remy's goons try to keep up.
+<<if $thighskill gte random(1, 1000)>>
+	<span class="green">They are unable to.</span> You leave them far behind.<<lstress>><<stress -6>>
+	<br><br>
+
+	<<destination_farm_ride>>
+<<else>>
+	<span class="red">Your steed's strength waves,</span> and the riders catch up with you. One rides ahead, and they box you against the hedge forcing you to stop. They wheel around to face you.<<gstress>><<stress 6>>
+	<br><br>
+
+	"Remy sent us," the <<person2>><<person>> on the left says. "To make sure you were okay. Dangerous for a <<girl>> to be riding alone."<<gstress>><<stress 6>>
+	<br><br>
+
+	"We'll escort you the rest of the way," the <<person3>><<person>> on the right adds. "For a fee. <span class="gold">£50</span> should do."
+	<br><br>
+
+	<<if $money gte 5000>>
+		<<link [[Pay (£50)|Farm Ride Pay]]>><<set $money -= 5000>><</link>>
+		<br>
+	<</if>>
+	<<link [[Refuse politely|Farm Ride Polite]]>><<farm_aggro 1>><</link>><<gaggro>>
+	<br>
+	<<link [[Refuse angrily|Farm Ride Angry]]>><<farm_aggro 1>><</link>><<gaggro>>
+	<br>
+<</if>>
+
+
+:: Farm Ride Confront
+<<effects>>
+
+You rein in the <<beasttype>>, and turn to face the approaching riders. They pull up some distance away.
+<br><br>
+
+"Remy sent us," the <<person2>><<person>> on the left says. "To make sure you were okay. Dangerous for a <<girl>> to be riding alone."<<gstress>><<stress 6>>
+<br><br>
+
+"We'll escort you the rest of the way," the <<person3>><<person>> on the right adds. "For a fee. <span class="gold">£50</span> should do."
+<br><br>
+
+<<if $money gte 5000>>
+	<<link [[Pay (£50)|Farm Ride Pay]]>><<set $money -= 5000>><</link>>
+	<br>
+<</if>>
+<<link [[Refuse politely|Farm Ride Polite]]>><<farm_aggro 1>><</link>><<gaggro>>
+<br>
+<<link [[Refuse angrily|Farm Ride Angry]]>><<farm_aggro 1>><</link>><<gaggro>>
+<br>
+
+
+
+:: Farm Ride Pay
+<<effects>>
+
+You pay the pair. "Wise," the <<person2>><<person>> says. "Go on then. Lead the way."
+<br><br>
+
+They follow behind for the rest of the journey.
+<<person1>>
+
+<<destination_farm_ride>>
+
+:: Farm Ride Polite
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"S-sorry," you say. "But I'll be okay on my own."
+<<elseif $submissive lte 850>>
+	"Thanks for the offer," you say. "But I can handle myself."
+<<else>>
+	"Thanks," you say. "But I'll be alright alone.
+<</if>>
+<br><br>
+
+"Suit yourself," the <<person2>><<person>> scoffs. "We'll be near." They spur to a trot, and ride past you.
+<br><br>
+
+<<person1>>
+<<destination_farm_ride>>
+
+:: Farm Ride Angry
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I'm not paying you," you say. "Go away."
+<<elseif $submissive lte 850>>
+	"Fuck you," you say. "And fuck Remy."
+<<else>>
+	"Tell Remy I won't be exorted," you say. "Go."
+<</if>>
+<br><br>
+
+The <<person2>><<person>> laughs. "Suit yourself <<girl>>. We'll be near." They spur to a trot, and ride past you.
+<br><br>
+
+<<person1>>
+<<destination_farm_ride>>
+
+
+:: Farm Ride Aggro Faster
+<<effects>>
+
+You spur your <<beasttype>> to a gallop. Hooves thunder behind as Remy's goons try to keep up.
+<<if $thighskill gte random(400, 1400)>>
+	<span class="green">They are unable to.</span> You leave them far behind.<<lstress>><<stress -6>>
+	<br><br>
+
+	<<destination_farm_ride>>
+<<else>>
+	<span class="red">Your steed's strength waves,</span> and the riders catch up with you. One of them, a <<person2>><<person>>, <span class="red">hurls a lasso</span> at your <<beasttype>>'s neck. <<He>> misses, but reels the rope back in.<<gstress>><<stress 6>>
+	<br><br>
+
+	<<His>> colleague, a <<person3>><<person>>, rides alongside you, <span class="red">and tries to shove you from the saddle.</span>
+	<br><br>
+
+	<span class="red">Your steed is on the verge of panic.</span> It veers back and forth across the road. It's hard to stay in the saddle.
+	<br><br>
+
+	<<link [[Punch the closest rider|Farm Ride Punch]]>><</link>><<physiquedifficulty 1 16000>>
+	<br>
+	<<link [[Grab the lasso|Farm Ride Grab]]>><</link>><<skill_difficulty handskill "Hand Skill" 1 1000>>
+	<br>
+	<<link [[Reassure your steed|Farm Ride Reassure]]>><</link>><<tendingdifficulty 1 1000>>
+	<br>
+<</if>>
+
+:: Farm Ride Aggro Confront
+<<effects>>
+
+You rein in the <<beasttype>>, and turn to face the approaching riders. They don't slow. One of them, a <<person2>><<person>>, <span class="red">hurls a lasso</span> at your <<beasttype>>'s neck. <<He>> misses, but reels the rope back in.<<gstress>><<stress 6>>
+<br><br>
+
+<<His>> colleague, a <<person3>><<person>>, rides alongside you, <span class="red">and tries to shove you from the saddle.</span>
+<br><br>
+
+<span class="red">Your steed is on the verge of panic.</span> It wheels around and gallops of its own accord, veering back and forth across the road. It's hard to stay in the saddle.
+<br><br>
+
+<<link [[Punch the closest rider|Farm Ride Punch]]>><</link>><<physiquedifficulty 1 16000>>
+<br>
+<<link [[Grab the lasso|Farm Ride Grab]]>><</link>><<skill_difficulty handskill "Hand Skill" 1 1000>>
+<br>
+<<link [[Reassure your steed|Farm Ride Reassure]]>><</link>><<tendingdifficulty 1 1000>>
+<br>
+
+:: Farm Ride Punch
+<<effects>>
+
+<<if $physiqueSuccess>>
+	You fist connects with the <<person3>><<person>>'s face, <span class="green">knocking <<him>> from the saddle.</span> <<His>> colleague laughs, and readies the lasso for another attempt.
+	<br><br>
+
+	<<link [[Grab the lasso|Farm Ride Grab 2]]>><</link>><<skill_difficulty handskill "Hand Skill" 1 1000>>
+	<br>
+	<<link [[Reassure your steed|Farm Ride Reassure 2]]>><</link>><<tendingdifficulty 1 1000>>
+	<br>
+<<else>>
+	<span class="red">The <<person>> catches your fist,</span> and pulls you from the saddle. You tumble to the ground.<<ggpain>><<pain 8>>
+	<br><br>
+
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+
+:: Farm Ride Grab
+<<effects>>
+
+<<if $handskill gte random(1, 1000)>>
+	The <<person2>><<person>> hurls the lasso at your <<beasttype>> once more, <span class="green">but you catch it,</span> and pull the <<person2>><<person>> from <<his>> seat. <<He>> tumbles to the dirt.
+	<br><br>
+
+	<<His>> colleague laughs, and shoves you again.
+	<br><br>
+
+	<<link [[Punch|Farm Ride Punch 2]]>><</link>><<physiquedifficulty 1 16000>>
+	<br>
+	<<link [[Reassure your steed|Farm Ride Reassure 2]]>><</link>><<tendingdifficulty 1 1000>>
+	<br>
+<<else>>
+	The <<person2>><<person>> hurls the lasso at your <<beasttype>> once more. You try to catch it, but it loops around your wrists. <span class="red">The rider pulls you from your saddle.</span><<ggpain>><<gstress>><<pain 8>><<stress 6>>
+	<br><br>
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+:: Farm Ride Reassure
+<<effects>>
+
+<<if $tendingSuccess>>
+	<<person1>>
+	You whisper a couple of words into your <<beasttype>>'s ear. <span class="green"><<bHe>> stops veering back and forth across the road,</span> and gallops with more surety.
+	<br><br>
+
+	The <<person2>><<person>> readies the lasso for another throw, while the <<person3>><<person>> tries to shove you from the saddle once more.
+	<br><br>
+
+	<<link [[Punch the closest rider|Farm Ride Punch 2]]>><</link>><<physiquedifficulty 1 16000>>
+	<br>
+	<<link [[Grab the lasso|Farm Ride Grab 2]]>><</link>><<skill_difficulty handskill "Hand Skill" 1 1000>>
+	<br>
+<<else>>
+	<<person1>>
+	You whisper a couple of words into your <<beasttype>>'s ear, <span class="red">but your voice trembles.</span> <<bHe>> rears on <<bhis>> hind legs, throwing you from the saddle.<<ggpain>><<gstress>><<pain 8>><<stress 6>>
+	<br><br>
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+
+
+
+:: Farm Ride Punch 2
+<<effects>>
+
+<<if $physiqueSuccess>>
+	<<earnFeat "Into the Sunset">>
+	You fist connects with the <<person3>><<person>>'s face, <span class="green">knocking <<him>> from the saddle.</span>
+	<br><br>
+
+	<span class="green">You've seized control of the situation.</span> You spur your horse onward, leaving Remy's goons far behind.<<lstress>><<stress -6>>
+	<br><br>
+	<<person1>>
+	<<destination_farm_ride>>
+<<else>>
+	<span class="red">The <<person>> catches your fist,</span> and pulls you from the saddle. You tumble to the ground.<<ggpain>><<pain 8>>
+	<br><br>
+
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+:: Farm Ride Grab 2
+<<effects>>
+
+<<if $handskill gte random(1, 1000)>>
+	<<earnFeat "Into the Sunset">>
+	The <<person2>><<person>> hurls the lasso at your <<beasttype>> once more, <span class="green">but you catch it,</span> and pull the <<person2>><<person>> from <<his>> seat. <<He>> tumbles to the dirt.
+	<br><br>
+	<span class="green">You've seized control of the situation.</span> You spur your horse onward, leaving Remy's goons far behind.<<lstress>><<stress -6>>
+	<br><br>
+	<<person1>>
+	<<destination_farm_ride>>
+<<else>>
+	The <<person2>><<person>> hurls the lasso at your <<beasttype>> once more. You try to catch it, but it loops around your wrists. <span class="red">The rider pulls you from your saddle.</span><<ggpain>><<gstress>><<pain 8>><<stress 6>>
+	<br><br>
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
+
+
+:: Farm Ride Reassure 2
+<<effects>>
+
+<<if $tendingSuccess>>
+	<<earnFeat "Into the Sunset">>
+	
+	You whisper a couple of words into your <<beasttype>>'s ear. <span class="green"><<bHe>> stops veering back and forth across the road,</span> and gallops with more surety.
+	<br><br>
+
+	<span class="green">You've seized control of the situation.</span> You spur your horse onward, leaving Remy's goons far behind.<<lstress>><<stress -6>>
+	<br><br>
+	<<person1>>
+	<<destination_farm_ride>>
+<<else>>
+	<<person1>>
+	You whisper a couple of words into your <<beasttype>>'s ear, <span class="red">but your voice trembles.</span> <<bHe>> rears on <<bhis>> hind legs, throwing you from the saddle.<<ggpain>><<gstress>><<pain 8>><<stress 6>>
+	<br><br>
+	Your steed gallops away alone. The pair chase after it, leaving you lying in the dirt.<<llrespect>><<farm_horses -3>>
+	<br><br>
+
+	<<tearful>> you rise to your feet.
+	<br><br>
+
+
+	<<if $bus is "east">>
+		<<link [[Next|Farm Road 4]]>><<endevent>><</link>>
+		<br>
+	<<else>>
+		<<link [[Next|Farm Road 3]]>><<endevent>><</link>>
+	<</if>>
+<</if>>
