@@ -124,7 +124,7 @@ window.CanvasModel = class CanvasModel {
 		this.layerList = Object.values(this.layers);
 
 		// Last used options
-		this.options = {};
+		this.options = { filters: {} };
 		this.animated = false;
 		this.canvas = null;
 		this.rendererListener = null;
