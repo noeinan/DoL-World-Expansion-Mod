@@ -1,6 +1,11 @@
 /// <reference path="model.d.ts" />
 /// <reference types="tinycolor2" />
 declare namespace Renderer {
+    interface LayerImageLoader {
+        loadImage(src: string, layer: CompositeLayer, successCallback: (src: string, layer: CompositeLayer, image: HTMLImageElement) => any, errorCallback: (src: string, layer: CompositeLayer, error: any) => any): any;
+    }
+    const DefaultImageLoader: LayerImageLoader;
+    let ImageLoader: LayerImageLoader;
     interface RendererListener {
         error?: (layer: string, prop: string, error: Error) => any;
         composeLayers?: (layers: CompositeLayer[]) => any;

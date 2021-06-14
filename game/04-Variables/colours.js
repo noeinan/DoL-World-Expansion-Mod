@@ -27,12 +27,7 @@ setup.colours = {
 			contrast: 1.0
 		},
 		clothes: {
-			desaturate: true,
-			brightness: 0.4,
-			contrast: 1.0
-		},
-		clothes_bright: { // For clothes that use hair-like palette instead of #FF0000..#000000
-			desaturate: true,
+			desaturate: false,
 			brightness: 0.0,
 			contrast: 1.0
 		},
