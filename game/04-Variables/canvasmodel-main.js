@@ -871,6 +871,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_face && options.blush > 0
 			},
+			filters: ["body"],
 			z: ZIndices.blush
 		},
 		"tears": {
@@ -986,7 +987,7 @@ Renderer.CanvasModels["main"] = {
 			},
 			showfn(options) {
 				return options.crotch_visible &&
-					options.pbhair_balls > 0 &&
+					options.pbhair_balls > 1 &&
 					options.balls &&
 					!options.genitals_chasity
 			},
@@ -2105,7 +2106,7 @@ Renderer.CanvasModels["main"] = {
 			srcfn(options) {
 				return 'img/clothes/neck/' +
 					options.worn_neck_setup.variable + '/' +
-					options.worn_neck_integrity + (options.worn_upper_setup.has_collar === 1 ? '_nocollar' : '') + '.png'
+					options.worn_neck_integrity + (options.worn.neck.name == "necktie" && options.worn_upper_setup.has_collar === 1 ? '_nocollar' : '') + '.png'
 			}
 		}),
 		"neck_acc": genlayer_clothing_accessory('neck'),
