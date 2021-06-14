@@ -421,13 +421,13 @@ Renderer.CanvasModels["main"] = {
 	preprocess(options) {
 		options.blink_animation = options.blink ? options.trauma ? "blink-trauma" : "blink" : "";
 
-		// Show arm just below outermost clothes layer
+		// Show arm and hand just below outermost clothes layer
 		if (options.worn_over_upper) {
-			options.zarms = ZIndices.armsoverclothesidle;
+			options.zarms = ZIndices.armsoverclothesidle-0.2;
 		} else if (options.worn_upper) {
-			options.zarms = ZIndices.armsclothesidle;
+			options.zarms = ZIndices.armsclothesidle-0.2;
 		} else if (options.worn_under_upper) {
-			options.zarms = ZIndices.armsunderclothesidle;
+			options.zarms = ZIndices.armsunderclothesidle-0.2;
 		} else {
 			options.zarms = ZIndices.armsidle
 		}
@@ -2106,7 +2106,7 @@ Renderer.CanvasModels["main"] = {
 			srcfn(options) {
 				return 'img/clothes/neck/' +
 					options.worn_neck_setup.variable + '/' +
-					options.worn_neck_integrity + (options.worn.neck.name == "necktie" && options.worn_upper_setup.has_collar === 1 ? '_nocollar' : '') + '.png'
+					options.worn_neck_integrity + (options.worn_neck_setup.name === "necktie" && options.worn_upper_setup.has_collar === 1 ? '_nocollar' : '') + '.png'
 			}
 		}),
 		"neck_acc": genlayer_clothing_accessory('neck'),
@@ -2326,7 +2326,7 @@ function genlayer_clothing_leftarm(slot, overrideOptions) {
 			return 'img/clothes/'+
 				slot+'/' +
 				options["worn_"+slot+"_setup"].variable + '/' +
-				(options.arm_right === "cover" ? 'left_cover.png' : "left.png")
+				(options.arm_left === "cover" ? 'left_cover.png' : "left.png")
 		},
 		showfn(options) {
 			return options.show_clothes &&
