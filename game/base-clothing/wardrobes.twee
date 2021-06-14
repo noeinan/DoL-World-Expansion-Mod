@@ -228,6 +228,7 @@
 <<if $wear is "dry">><<set $wear to 0>>
 	<<set $upperwet to 0>><<set $lowerwet to 0>><<set $underlowerwet to 0>><<set $underupperwet to 0>>
 	You squeeze the water from your clothes.
+	<<effectswater>>
 	<br><br>
 <</if>>
 <<set $wear to 0>>
@@ -718,6 +719,8 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 	<<replace '#clotheson'>><<clotheson>><</replace>>
 	<<replace '#wardrobeList'>><<wardrobeContents>><</replace>>
+	<<exposure>>
+	<<run $('#wardrobeExits').html(new Wikifier(null, "<<wardrobeExits>>").output)>>
 	<<numberify ".passage">>
 	<<run updateMoment()>>
 <</widget>>
@@ -1091,13 +1094,169 @@ $warmth warmth versus $chill chill
 Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 1.3) + 69)>>
 <</widget>>
 
+<<widget "wardrobeExits">>
+	<<switch $passage>>
+		<<case "Wardrobe">>
+			<<link [[Close wardrobe|Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+		<<case "Changing Room">>
+			<<if $exposed lte 1>>
+				<<link[[Leave|Beach]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				You can't go out like this!
+				<br><br>
+			<</if>>
+		<<case "Eden Wardrobe">>
+			<<if $exhibitionism gte 75>>
+				<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+			<<elseif $exhibitionism gte 55>>
+				<<if $exposed lte 1>>
+				<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+				<<else>>
+				You can't remain undressed like this!
+				<br><br>
+				<</if>>
+			<<else>>
+				<<if $exposed lte 0>>
+				<<link [[Done|Eden Cabin]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+				<<else>>
+				You can't remain undressed like this!
+				<br><br>
+				<</if>>
+			<</if>>
+		<<case "Asylum Wardrobe">>
+			<<if $exhibitionism lte 54>>
+				<<if $exposed lte 0>>
+					<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<<elseif $exhibitionism gte 75>>
+				<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				<<if $exposed lte 1>>
+					<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<</if>>
+		<<case "Farm Wardrobe">>
+			<<if $exhibitionism lte 54>>
+				<<if $exposed lte 0>>
+					<<link [[Done|Farm Bedroom]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<<elseif $exhibitionism gte 75>>
+				<<link [[Done|Farm Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				<<if $exposed lte 1>>
+					<<link [[Done|Farm Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<</if>>
+		<<case "Strip Club Dressing Room">>
+			<<if $exhibitionism lte 14>>
+				<<if $exposed lte 0>>
+					<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't go out like this!
+					<br><br>
+				<</if>>
+			<<elseif $exhibitionism gte 55>>
+				<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				<<if $exposed lte 1>>
+					<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't go out like this!
+					<br><br>
+				<</if>>
+			<</if>>
+		<<case "Brothel Dressing Room">>
+			<<if $exhibitionism lte 14>>
+				<<if $exposed lte 0>>
+					<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't go out like this!
+					<br><br>
+				<</if>>
+			<<elseif $exhibitionism gte 55>>
+				<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				<<if $exposed lte 1>>
+					<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't go out like this!
+					<br><br>
+				<</if>>
+			<</if>>
+		<<case "School Boy Wardrobe">>
+			<<if $exposed gte 2 and $exhibitionism lt 75>>
+				You can't go out like this!
+				<br><br>
+			<<else>>
+				<<link [[Leave|School Boy Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<</if>>
+		<<case "School Girl Wardrobe">>
+			<<if $exposed gte 2 and $exhibitionism lt 75>>
+				You can't go out like this!
+				<br><br>
+			<<else>>
+				<<link [[Leave|School Girl Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<</if>>
+		<<case "Farm Assault Wardrobe">>
+			<<if $exhibitionism lte 54>>
+				<<if $exposed lte 0>>
+					<<link [[Done|Farm Assault Intro]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<<elseif $exhibitionism gte 75>>
+				<<link [[Done|Farm Assault Intro]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				<<if $exposed lte 1>>
+					<<link [[Done|Farm Assault Intro]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<br><br>
+				<<else>>
+					You can't remain undressed like this!
+					<br><br>
+				<</if>>
+			<</if>>
+	<</switch>>
+<</widget>>
+
 :: Wardrobe
 <<effects>>
 <<set $wardrobe_location to "wardrobe">>
 You look in your wardrobe.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<link [[Close wardrobe|Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
 <br><br>
 <<wardrobe>>
 
@@ -1107,13 +1266,7 @@ You look in your wardrobe.
 You are in a small wooden changing room.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exposed lte 1>>
-<<link[[Leave|Beach]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-<br><br>
-<<else>>
-You can't go out like this!
-<br><br>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
 <<wardrobe>>
 
 :: Eden Wardrobe
@@ -1122,25 +1275,7 @@ You look through the cupboard containing your clothes. There's an old dressing s
 <br><br>
 <<set $wardrobe_location to "wardrobe">>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exhibitionism gte 75>>
-	<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-<<elseif $exhibitionism gte 55>>
-	<<if $exposed lte 1>>
-	<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-	<<else>>
-	You can't remain undressed like this!
-	<br><br>
-	<</if>>
-<<else>>
-	<<if $exposed lte 0>>
-	<<link [[Done|Eden Cabin]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-	<<else>>
-	You can't remain undressed like this!
-	<br><br>
-	<</if>>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
 <<wardrobe>>
 
 :: Asylum Wardrobe
@@ -1150,26 +1285,8 @@ You look through the cupboard containing your clothes.
 <br><br>
 <<set $wardrobe_location to "wardrobe">>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exhibitionism lte 54>>
-	<<if $exposed lte 0>>
-		<<link [[Done|Asylum Cell]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't remain undressed like this!
-		<br><br>
-	<</if>>
-<<elseif $exhibitionism gte 75>>
-	<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<<else>>
-	<<if $exposed lte 1>>
-		<<link [[Done|Asylum Cell]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't remain undressed like this!
-		<br><br>
-	<</if>>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: Farm Wardrobe
@@ -1177,27 +1294,9 @@ You look through the cupboard containing your clothes.
 You look through the rustic wardrobe.
 <br><br>
 <<set $wardrobe_location to "wardrobe">>
-<<wardrobewear>>
-<<if $exhibitionism lte 54>>
-	<<if $exposed lte 0>>
-		<<link [[Done|Farm Bedroom]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't remain undressed like this!
-		<br><br>
-	<</if>>
-<<elseif $exhibitionism gte 75>>
-	<<link [[Done|Farm Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<<else>>
-	<<if $exposed lte 1>>
-		<<link [[Done|Farm Bedroom]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't remain undressed like this!
-		<br><br>
-	<</if>>
-<</if>>
+<div id="wardrobewear"><<wardrobewear>></div>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 
@@ -1208,26 +1307,8 @@ You look through the rustic wardrobe.
 You are in the strip club's dressing room. <<if $daystate isnot "day" and $daystate isnot "dawn">>There are a few mirrors, currently occupied by staff fixing their hair and makeup.<</if>>
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exhibitionism lte 14>>
-	<<if $exposed lte 0>>
-		<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't go out like this!
-		<br><br>
-	<</if>>
-<<elseif $exhibitionism gte 55>>
-	<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<<else>>
-	<<if $exposed lte 1>>
-		<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't go out like this!
-		<br><br>
-	<</if>>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: Brothel Dressing Room
@@ -1237,26 +1318,8 @@ You are in the strip club's dressing room. <<if $daystate isnot "day" and $dayst
 You are in the brothel's dressing room. There are a few mirrors, currently occupied by staff fixing their hair and makeup.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exhibitionism lte 14>>
-	<<if $exposed lte 0>>
-		<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't go out like this!
-		<br><br>
-	<</if>>
-<<elseif $exhibitionism gte 55>>
-	<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<<else>>
-	<<if $exposed lte 1>>
-		<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-		<br><br>
-	<<else>>
-		You can't go out like this!
-		<br><br>
-	<</if>>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: School Boy Wardrobe
@@ -1266,13 +1329,8 @@ You are in the brothel's dressing room. There are a few mirrors, currently occup
 You stand in front of your open locker.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exposed gte 2 and $exhibitionism lt 75>>
-	You can't go out like this!
-	<br><br>
-<<else>>
-	<<link [[Leave|School Boy Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: School Girl Wardrobe
@@ -1282,13 +1340,8 @@ You stand in front of your open locker.
 You stand in front of your open locker.
 <br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
-<<if $exposed gte 2 and $exhibitionism lt 75>>
-	You can't go out like this!
-	<br><br>
-<<else>>
-	<<link [[Leave|School Girl Changing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
-	<br><br>
-<</if>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+
 <<wardrobe>>
 
 :: Wardrobe Sale Crate
