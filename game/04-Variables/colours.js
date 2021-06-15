@@ -26,12 +26,12 @@ setup.colours = {
 			brightness: 0.0,
 			contrast: 1.0
 		},
-		clothes: {
+		clothes: { // For red-base clothes
 			desaturate: true,
 			brightness: 0.4,
 			contrast: 1.0
 		},
-		clothes_bright: { // For clothes that use hair-like palette instead of #FF0000..#000000
+		clothes_bright: { // For red-base clothes with brighter, hair-like palette
 			desaturate: true,
 			brightness: 0.0,
 			contrast: 1.0
@@ -133,7 +133,7 @@ setup.colours.hair = [{
 	"natural": true,
 	"dye": true,
 	"canvasfilter": {
-		"blend": "#fb6064"
+		"blend": "#f53d43"
 	}
 }, {
 	"variable": "jetblack",

@@ -11,6 +11,30 @@ namespace Renderer {
 			return new Date().getTime()
 		};
 
+	export interface LayerImageLoader {
+		loadImage(src: string,
+		          layer: CompositeLayer,
+		          successCallback: (src: string, layer: CompositeLayer, image: HTMLImageElement) => any,
+		          errorCallback: (src: string, layer: CompositeLayer, error: any) => any
+		);
+	}
+	export const DefaultImageLoader: LayerImageLoader = {
+		loadImage(src: string,
+		          layer: CompositeLayer,
+		          successCallback: (src: string, layer: CompositeLayer, image: HTMLImageElement) => any,
+		          errorCallback: (src: string, layer: CompositeLayer, error: any) => any) {
+			const image = new Image();
+			image.onload = () => {
+				successCallback(src, layer, image);
+			}
+			image.onerror = (event) => {
+				errorCallback(src, layer, event);
+			}
+			image.src = src;
+		}
+	}
+	export let ImageLoader: LayerImageLoader = DefaultImageLoader;
+
 	export interface RendererListener {
 		error?: (layer: string, prop: string, error: Error) => any;
 
@@ -506,30 +530,31 @@ namespace Renderer {
 		}
 
 		function enqueueLayer(layer: CompositeLayer) {
-			const image = new Image();
-			const src = layer.src;
-			image.onload = () => {
-				layersLoaded++;
-				if (listener && listener.loaded) {
-					listener.loaded(layer.name || 'unnamed', src);
+			ImageLoader.loadImage(
+				layer.src,
+				layer,
+				(src,layer,image)=>{
+					layersLoaded++;
+					if (listener && listener.loaded) {
+						listener.loaded(layer.name || 'unnamed', src);
+					}
+					layer.image = image;
+					layer.imageSrc = src;
+					ImageCaches[src] = image;
+					maybeRenderResult();
+				},
+				(src,layer,error)=>{
+					// Mark this src as erroneous to avoid blinking due to reload attempts
+					ImageErrors[src] = true;
+					if (listener && listener.loadError) {
+						listener.loadError(layer.name || 'unnamed', src);
+					} else {
+						console.error('Failed to load image ' + src + (layer.name ? ' for layer ' + layer.name : ''));
+					}
+					layer.show = false;
+					maybeRenderResult();
 				}
-				layer.image = image;
-				layer.imageSrc = src;
-				ImageCaches[src] = image;
-				maybeRenderResult();
-			}
-			image.onerror = () => {
-				// Mark this src as erroneous to avoid blinking due to reload attempts
-				ImageErrors[src] = true;
-				if (listener && listener.loadError) {
-					listener.loadError(layer.name || 'unnamed', src);
-				} else {
-					console.error('Failed to load image ' + src + (layer.name ? ' for layer ' + layer.name : ''));
-				}
-				layer.show = false;
-				maybeRenderResult();
-			}
-			image.src = src;
+			)
 		}
 
 		for (const layer of layers) {
