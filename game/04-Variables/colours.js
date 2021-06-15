@@ -133,7 +133,7 @@ setup.colours.hair = [{
 	"natural": true,
 	"dye": true,
 	"canvasfilter": {
-		"blend": "#fb6064"
+		"blend": "#f53d43"
 	}
 }, {
 	"variable": "jetblack",
