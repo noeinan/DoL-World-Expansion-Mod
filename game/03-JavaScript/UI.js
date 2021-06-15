@@ -310,7 +310,8 @@ window.beastTogglesCheck = function () {
 		"slugdisable",
 		"waspdisable",
 		"beedisable",
-		"lurkerdisable"
+		"lurkerdisable",
+		"horsedisable"
 	];
 	temp.anyBeastOn = temp.beastVars.some(x => vars[x] == 'f');
 }

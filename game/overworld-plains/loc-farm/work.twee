@@ -197,7 +197,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<br>
 	<<link [[Leave|Farmland]]>><</link>>
 	<br>
-<<elseif $farm_shift gte 360 and $farm_stage is 2>>
+<<elseif ($farm_shift gte 360 or $farm.clearing lte 50) and $farm_stage is 2>>
 	<<farmVisitor>>
 <<elseif $farm_stage is 3 and $farm.clearing lte 0>>
 	<<earnFeat "Farmhand">>
@@ -210,7 +210,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<<earnFeat "Farmer">>
 	<<set $farm_countdown to 3>>
 	<<farmStage6>>
-<<elseif $farm_stage is 6 and $farm_countdown lte 0>>
+<<elseif $farm_stage is 6 and ($farm_countdown lte 0 or $farm.clearing lte 50)>>
 	<<npc Alex>><<person1>>
 	Alex emerges from <<his>> shed. <<He>> looks worried. "Can you smell that?" <<he>> asks. It's faint, but something is burning.
 	<br><br>
@@ -613,10 +613,10 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 			<br>
 		<</if>>
 		<<if $farm.woodland gte 1>>
-			<<link [[Woodland (0:05)|Farm Woodland]]>><</link>>
+			<<link [[Woodland (0:05)|Farm Woodland]]>><<pass 5>><</link>>
 			<br>
 		<</if>>
-		<<if $farm.parasitebarn gte 1 or true>>
+		<<if $farm.parasitebarn gte 1>>
 			<<set $container.lastLocation to $location>>
 			<<print '<<link [[Check ' + $container[$location].name + ' (0:05)|Containers]]>><<pass 5>><</link>>'>>
 			<br>
@@ -1253,7 +1253,7 @@ You open each stall, releasing the <<farm_text_many horse>> within. They know wh
 <br><br>
 
 <<set $danger to random(1, 10000)>>
-<<if $danger gte (9900 - $allure)>>
+<<if $danger gte (9900 - $allure) and $horsedisable is "f">>
 <!-- Modified for Monster People -->
 		Most run by, eager to stretch their legs, but a couple hang back.
 		<<if $farm_work.horse.monster is true>>
@@ -1321,7 +1321,7 @@ You open each stall, releasing the <<farm_text_many horse>> within. They know wh
 	<<link [[Chase|Farm Horses Chase]]>><<tiredness 2>><</link>><<athleticsdifficulty 1 1000>><<gtiredness>>
 	<br>
 	<!-- Modified for Monster People -->
-	<<if $deviancy gte 15>>
+	<<if $deviancy gte 15 and $horsedisable is "f">>
 		<<link [[Seduce|Farm Horses Seduce]]>><</link>><<deviant2>>
 		<br>
 	<</if>>
@@ -1599,7 +1599,7 @@ You call the <<farm_text_many horse>>, and lead them from the field. They seem h
 	<<link [[Call Alex|Farm Horses In Alex]]>><<npcincr Alex dom 1>><<farm_horses -1>><</link>><<lrespect>><<gdom>>
 	<br>
 	<!-- Modified for Monster People -->
-	<<if $deviancy gte 15>>
+	<<if $deviancy gte 15 and $horsedisable is "f">>
 		<<link [[Seduce|Farm Horses In Seduce]]>><</link>><<deviant2>>
 	<</if>>
 	<br>
@@ -2196,7 +2196,11 @@ You sit and lean against the tree.
 <<elseif $rng gte 51>>
 	Alex chats with you, and talks about the farm's dogs. "They aren't pets," <<he>> says at one point. "Don't be afraid to keep them in line."
 <<elseif $rng gte 41>>
-	Alex chats with you, and talks about the fields. "There are nine in total," <<he>> says at one point. "Or were. The forest has reclaimed most of them. It's almost like trees have sprung up over night." <<He>> laughs.
+	<<if $farm_stage gte 12>>
+		Alex chats with you, and talks about the fields. "No one thought we'd clear all nine," <<he>> says at one point. "The forest grows fast, so we'll need to keep on top of it."
+	<<else>>
+		Alex chats with you, and talks about the fields. "There are nine in total," <<he>> says at one point. "Or were. The forest has reclaimed most of them. It's almost like trees have sprung up over night." <<He>> laughs.
+	<</if>>
 <<elseif $rng gte 31>>
 	Alex chats with you, and asks about life in the town. "I don't think I'd like the noise," <<he>> says at one point. "I guess you get used to it."
 <<elseif $rng gte 21>>

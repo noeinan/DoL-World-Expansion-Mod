@@ -280,66 +280,7 @@
 			<<set $effectsmessage to 1>><<set $masochism_message to "down 3">>
 		<</if>>
 	<</if>>
-	<<if $alex_greenhouse is 1>>
-		<<if $weather isnot "rain" and $weather isnot "snow">>
-			<<set $alex_greenhouse_timer -= 1>>
-		<</if>>
-		<<if $alex_greenhouse_timer lte 0>>
-			<<unset $alex_greenhouse_timer>>
-			<<set $alex_greenhouse to 2>>
-		<</if>>
-	<</if>>
-	<<unset $spa_event>>
-	<<if $lake_ice_broken gte 1>>
-		<<set $lake_ice_broken -= 1>>
-	<</if>>
-	<<if $lake_ice_broken lte 0>>
-		<<unset $lake_ice_broken>>
-	<</if>>
-	<<unset $estate_done>>
 
-	<<unset $pharmTriedSeduction>>
-	<<unset $pharmSexFinished>>
-	<<unset $pharmClosed>>
-	<<set $pharmNurseGender = (random(100) gt $malechance ? "f" : "m")>>
-	<<set $pharmNurseLvl = random(0, 18)>>
-
-	<<set $masochism *= 0.985>>
-	<<if $masochism_level is 0>>
-		<<if $masochism gte 100>>
-			<<set $masochism_level to 1>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "up 1">>
-		<</if>>
-	<<elseif $masochism_level is 1>>
-		<<if $masochism gte 300>>
-			<<set $masochism_level to 2>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "up 2">>
-		<<elseif $masochism lte 50>>
-			<<set $masochism_level to 0>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "down 0">>
-		<</if>>
-	<<elseif $masochism_level is 2>>
-		<<if $masochism gte 500>>
-			<<set $masochism_level to 3>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "up 3">>
-		<<elseif $masochism lte 200>>
-			<<set $masochism_level to 1>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "down 1">>
-		<</if>>
-	<<elseif $masochism_level is 3>>
-		<<if $masochism gte 800>>
-			<<set $masochism_level to 4>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "up 4">>
-		<<elseif $masochism lte 400>>
-			<<set $masochism_level to 2>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "down 2">>
-		<</if>>
-	<<elseif $masochism_level is 4>>
-		<<if $masochism lte 700>>
-			<<set $masochism_level to 3>>
-			<<set $effectsmessage to 1>><<set $masochism_message to "down 3">>
-		<</if>>
-	<</if>>
 
 	<<set $sadism *= 0.985>>
 	<<if $sadism_level is 0>>
@@ -377,6 +318,17 @@
 			<<set $effectsmessage to 1>><<set $sadism_message to "down 3">>
 		<</if>>
 	<</if>>
+
+	<<if $alex_greenhouse is 1>>
+		<<if $weather isnot "rain" and $weather isnot "snow">>
+			<<set $alex_greenhouse_timer -= 1>>
+		<</if>>
+		<<if $alex_greenhouse_timer lte 0>>
+			<<unset $alex_greenhouse_timer>>
+			<<set $alex_greenhouse to 2>>
+		<</if>>
+	<</if>>
+	
 
 	<<if $school_crossdress_message gte 1 or $school_herm_message gte 1>>
 		<<set $effectsmessage to 1>>
@@ -416,12 +368,6 @@
 		<<farm_aggro 5>>
 	<</if>>
 	<<if $farm_stage gte 7>>
-		<<if $farm_attack_timer gt 0>>
-			<<set $farm_attack_timer -= 1>>
-		<<elseif $farm_attack_timer lt 0>>
-			<<set $farm_attack_timer to 0>>
-		<</if>>
-		<<farm_build_day>>
 		<<if $farm.stock>>
 			<<set $farm.stock.truffles *= 0.8>>
 			<<set $farm.stock.truffles to Math.trunc($farm.stock.truffles)>>
@@ -463,7 +409,12 @@
 			<</if>>
 		<</if>>
 	<</if>>
-
+	<<if $farm_stage gte 7>>
+		<<set $farm_attack_timer -= 1>>
+		<<if $farm_attack_timer lt 0>>
+			<<farm_attack_auto>>
+		<</if>>
+	<</if>>
 	<<if $farm_countdown gte 1>>
 		<<set $farm_countdown -= 1>>
 	<</if>>
@@ -479,7 +430,14 @@
 		<<set $farm_yield_alex += $farm_yield>>
 		<<unset $farm_yield>>
 	<</if>>
-
+	<<unset $alex_breakfast>>
+	<<unset $alex_tea>>
+	<<unset $alex_admin_oral>>
+	<<unset $alex_to_bed>>
+	<<if $alex_countdown gte 1>>
+		<<set $alex_countdown -= 1>>
+	<</if>>
+	<<farm_build_day>>
 
 	<<if $schooltrait gte 4>>
 		<<trauma -50>>

@@ -878,7 +878,7 @@ You've pushed yourself too much. You pass out.
 	<</if>>
 	<br>
 <!-- Modified for Beast People -->
-<<elseif $deviancy gte 35 and $farm_work.horses_satisfied lt 6 and $farm_work.horses_out lt 2>>
+<<elseif $deviancy gte 35 and $farm_work.horses_satisfied lt 6 and $farm_work.horses_out lt 2 and $horsedisable is "f">>
 	<<if $farm_work.horse.monster is true>>
 		<<link [[Approach a centaur|Farm Horses Lewd]]>><</link>>
 	<<else>>
@@ -981,11 +981,11 @@ You've pushed yourself too much. You pass out.
 
 <<if $daystate isnot "night">>
 	<<farm_alex>>
+	<<farm_status>>
+	<<farm_actions>>
 <</if>>
-<<farm_status>>
-<<farm_actions>>
 <br>
-/*<<display_plot farm>>*/
+
 <</widget>>
 
 <<widget "fields_init">>
@@ -1142,25 +1142,28 @@ You've pushed yourself too much. You pass out.
 <<set $danger to random(1, 10000)>>
 <<if $danger gte (9900 - $allure)>>
 <!-- Modified for monster people -->
-	You finish up, and walk toward the gate while cleaning the brush of hair. You hear hooves approach behind you. The <<farm_text horse>> gives chase.
-	<br><br>
+	<<if $horsedisable is "f">>
+		You finish up, and walk toward the gate while cleaning the brush of hair. You hear hooves approach behind you. The <<farm_text horse>> gives chase.
+		<br><br>
 
-	<<if $farm_work.horse.monster is true>>
-		"I'm not finished," <<farm_he horse>> says. "Get back here."
+		<<if $farm_work.horse.monster is true>>
+			"I'm not finished," <<farm_he horse>> says. "Get back here."
+		<<else>>
+			It neighs at you, as if angry.
+		<</if>>
+		<br><br>
+
+		<<link [[Run|Farm Horses Brush Run]]>><</link>><<athleticsdifficulty 1 1100>>
+		<br>
+		<<link [[Wait|Farm Horses Brush Wait]]>><<farm_horses -1>><<stress 6>><</link>><<gstress>><<lrespect>>
+		<br>
 	<<else>>
-		It neighs at you, as if angry.
+		The <<farm_text horse>> nips your shoulder when you stop, seeming to want more.<<gpain>><<gstress>><<pain 4>><<stress 6>>
+		<br><br>
+
+		<<link [[Next|Farm Work]]>><</link>>
+		<br>
 	<</if>>
-	<br><br>
-
-	<<link [[Run|Farm Horses Brush Run]]>><</link>><<athleticsdifficulty 1 1100>>
-	<br>
-	<<link [[Wait|Farm Horses Brush Wait]]>><<farm_horses -1>><<stress 6>><</link>><<gstress>><<lrespect>>
-	<br>
-	<!-- The <<farm_text horse>> nips your shoulder when you stop, seeming to want more.<<gpain>><<gstress>><<pain 4>><<stress 6>> -->
-	<!-- <br><br> -->
-
-	<!-- <<link [[Next|Farm Work]]>><</link>> -->
-	<!-- <br> -->
 <<else>>
 	You finish up, and clean the brush of hair.
 	<br><br>
@@ -2578,7 +2581,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 		<<destination_farm_ride>>
 	<</if>>
 <<elseif $rng is 3>>
-	<<if $farm.beasts.horses lt -20>>
+	<<if $farm.beasts.horses lt -20 and $horsedisable is "f">><!-- Modified for Beast People -->
 		The <<beasttype>> jerks in another direction, and breaks into a sprint, running across an open field. It stops beside a haybale, and leans forward, dropping you from the saddle.
 		<br><br>
 		You land on the hay, but the <<beasttype>> forces you down with <<bhis>> weight before you can escape.
@@ -2592,7 +2595,7 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 
 		<<link [[Next|Farm Ride Rape]]>><<set $molestationstart to 1>><</link>>
 		<br>
-	<<elseif $farm.beasts.horses lt 0>>
+	<<elseif $farm.beasts.horses lt and $horsedisable is "f">><!-- Modified for Beast People -->
 		The <<beasttype>> pulls to a stop, and refuses to take a step further.
 		<<if $monster is 1>>
 			"I'm frustrated," <<bhe>> says. "It's your job to fix it.""
@@ -2760,13 +2763,13 @@ Weekly wage: <<printmoney $farm.tower_guard_wage>>
 <br>
 <<if $farm.tower gte 2>>
 	<<if $farm.tower_guard>>
-		<span class="green">The watchtower and searchlight are operated by $farm.tower_guard,</span> with an <<guard_skill_text>> in security.
+		<span class="green">The watchtower and searchlight are operated by $farm.tower_guard,</span> with <<guard_skill_text>> security skill.
 	<<else>>
 		<span class="red">The watchtower is empty,</span> but you could use it to get a better view.
 	<</if>>
 <<elseif $farm.tower gte 1>>
 	<<if $farm.tower_guard>>
-		<span class="teal">The watchtower is operated by $farm.tower_guard,</span> with an <<guard_skill_text>> in security.
+		<span class="teal">The watchtower is operated by $farm.tower_guard,</span> with <<guard_skill_text>> security skill.
 	<<else>>
 		<span class="red">The watchtower is empty,</span> but you could use it to get a better view.
 	<</if>>
