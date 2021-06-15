@@ -26,8 +26,13 @@ setup.colours = {
 			brightness: 0.0,
 			contrast: 1.0
 		},
-		clothes: {
-			desaturate: false,
+		clothes: { // For red-base clothes
+			desaturate: true,
+			brightness: 0.4,
+			contrast: 1.0
+		},
+		clothes_bright: { // For red-base clothes with brighter, hair-like palette
+			desaturate: true,
 			brightness: 0.0,
 			contrast: 1.0
 		},

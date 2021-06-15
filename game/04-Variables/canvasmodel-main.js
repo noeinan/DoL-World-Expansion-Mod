@@ -523,7 +523,7 @@ Renderer.CanvasModels["main"] = {
 						options["worn_" + slot + "_colour"],
 						slot + " clothing",
 						"worn_" + slot + "_custom",
-						setupobj.prefilter || "clothes"
+						setupobj.prefilter
 					);
 				} else {
 					options.filters["worn_" + slot] = Renderer.emptyLayerFilter();
@@ -535,7 +535,7 @@ Renderer.CanvasModels["main"] = {
 						options["worn_" + slot + "_acc_colour"],
 						slot + " accessory",
 						"worn_" + slot + "_acc_custom",
-						setupobj.prefilter || "clothes"
+						setupobj.prefilter
 					);
 				} else {
 					options.filters["worn_" + slot + "_acc"] = Renderer.emptyLayerFilter();
