@@ -51,7 +51,7 @@ $GREP "<<[^<>\"]*[<>]\?[^<>\"]*>>>" -- "game/*" | myprint "TooManyAngleBrackets"
 # Check for too many <<<.  e.g.: <<</if>>
 $GREP "<<<[^<>\"]*[<>]\?[^<>\"]*>>" -- "game/*" | myprint "TooManyAngleBrackets2"
 # Check for wrong capitalisation on 'activeslave' and other common typos
-$GREP  "\(csae\|[a-z] She \|attepmts\|youreslf\|advnaces\|canAcheive\|setBellySize\|SetbellySize\|setbellySize\|bellypreg\|pregBelly\|bellyimplant\|bellyfluid\|pronounCaps\|carress\)" -- 'game/*' | myprint "SpellCheck"
+$GREP  "\(csae\|[a-z] She \|attepmts\|youreslf\|advnaces\|canAcheive\|setBellySize\|SetbellySize\|gendre\|apperance\|setbellySize\|bellypreg\|pregBelly\|bellyimplant\|bellyfluid\|pronounCaps\|carress\)" -- 'game/*' | myprint "SpellCheck"
 $GREP  "\(recieve\|recieves\)" -- 'game/*' | myprint "PregmodderCannotSpellReceive"
 $GREP "\$slave\[" -- 'game/*' | myprint "ShouldBeSlaves"
 # Check for strange spaces e.g.  $slaves[$i]. lips
@@ -86,10 +86,15 @@ $GREP '<<\s*\$' -- 'game/*'  | myprint "VarSignAtMacroStart"
 # check for missing ; before statement
 $GREP 'if $ ' -- 'game/*'  | myprint "missing ; before statement"
 $GREP 'elseif $ ' -- 'game/*'  | myprint "missing ; before statement"
-$GREP '^::[^ ]' -- 'game/*' ~ myprint "MissingSpaceInMacro"
-$GREP '^: ' -- 'game/*' ~ myprint "MissingColonInMacro"
+$GREP '^::[^ ]' -- 'game/*' | myprint "MissingSpaceInMacro"
+$GREP '^: ' -- 'game/*' | myprint "MissingColonInMacro"
 $GREP -P '[(]0:0(.)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
 $GREP -P '[(]0:([^0].)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
+# Look for variables like $foo.bar  where it occurs only once.
+# There's a lot of false-positives, but it also catches a lot of
+# mistakes, so use grep to filter out the false-positives.
+# Feel free to add to the list to filter out false-positives as they occur
+git grep -h -o "[$][a-zA-Z0-9_-]\+[.][a-zA-Z0-9_]\+[^a-zA-Z0-9_(]"  -- game | sed -e 's/.$//' | grep -v '[.]\(replace\|deleteAt\|push\|delete\|length\|indexOf\)' | grep -v "[$]\(attitudesControl\|debug\|carried\|dateCount\|newVersionData\|skul_dock\|store\|wardrobe\|shopClothingFilter\|replayScene\|per_npc\|featsBoosts\|_item\|map\|swarm\|NPCList\)" | sort | uniq -u | xargs -I '{}' $GREP '{}' -- 'game/*' | myprint "VariableUsedOnlyOnce"
 # Check that we do not have any variables that we use only once.   e.g.	 $onlyUsedOnce
 # Ignore  *Nationalities
 (
