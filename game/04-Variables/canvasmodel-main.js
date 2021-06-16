@@ -1813,7 +1813,7 @@ Renderer.CanvasModels["main"] = {
 		"upper_breasts": genlayer_clothing_breasts("upper"),
 		"upper_acc": genlayer_clothing_accessory("upper", {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper+0.1 // above breasts
 			}
 		}),
 		"upper_breasts_acc": genlayer_clothing_breasts_acc("upper"),
@@ -1922,7 +1922,8 @@ Renderer.CanvasModels["main"] = {
 		"under_lower_acc": genlayer_clothing_accessory('under_lower'),
 		"under_lower_penis": {
 			srcfn(options) {
-				return 'img/clothes/under_lower/' + options.worn_under_lower_setup.variable + '/' + 'penis.png'
+				let path = 'img/clothes/under_lower/' + options.worn_under_lower_setup.variable + '/' + 'penis.png';
+				return gray_suffix(path, options.filters['worn_under_lower'])
 			},
 			showfn(options) {
 				return options.show_clothes &&
@@ -1936,7 +1937,8 @@ Renderer.CanvasModels["main"] = {
 		},
 		"under_lower_penis_acc": {
 			srcfn(options) {
-				return 'img/clothes/under_lower/' + options.worn_under_lower_setup.variable + '/' + 'acc_penis.png'
+				let path = 'img/clothes/under_lower/' + options.worn_under_lower_setup.variable + '/' + 'acc_penis.png';
+				return gray_suffix(path, options.filters['worn_under_lower_acc'])
 			},
 			showfn(options) {
 				return options.show_clothes &&
