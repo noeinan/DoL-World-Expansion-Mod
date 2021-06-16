@@ -117,6 +117,7 @@ function processSlot(setupfile,imgdir,varname,hasIntegrity) {
 				"back_img_colour",
 				"sleeve_img",
 				"sleeve_colour",
+				"penis_img",
 				"hood"
 			]);
 			let v = json.variable;
@@ -151,6 +152,9 @@ function processSlot(setupfile,imgdir,varname,hasIntegrity) {
 							files.push("" + i);
 						}
 					}
+					if (json.penis_img === 1) {
+						files.push("penis");
+					}
 				}
 				if (json.sleeve_img) {
 					if (colorByOption(json.sleeve_colour, json.colour_sidebar)) {
@@ -174,6 +178,9 @@ function processSlot(setupfile,imgdir,varname,hasIntegrity) {
 						for (let i = 0; i <= 5; i++) {
 							files.push("" + i + "_acc");
 						}
+					}
+					if (json.penis_img === 1) {
+						files.push("acc_penis");
 					}
 				}
 			}
