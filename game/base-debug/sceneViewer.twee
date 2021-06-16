@@ -40,6 +40,7 @@ End of '<<print $replayScene.name>>' scene.
 	<<case "AlexFarmWorkStage4">><<farmStage4>>
 	<<case "AlexFarmWorkStage5">><<farmStage5>>
 	<<case "AlexFarmWorkStage6">><<farmStage6>>
+	<<case "schoolBully">><<schoolbully>>
 	<<default>>
 		Error occured in scene viewer. <<print $replayScene.name>>. Please report.
 		<br><br>
@@ -85,6 +86,9 @@ End of '<<print $replayScene.name>>' scene.
 <<if $NPCName[$NPCNameList.indexOf('Avery')].init is 1>>
 	<<run $scenePassages.pushUnique("Park Lichen")>>
 <</if>>
+<<if $NPCName[$NPCNameList.indexOf('Robin')].init is 1>>
+	<<run $scenePassages.pushUnique("Robin Intro")>>
+<</if>>
 <<if $bun_value gte 15000>>
 	<<run $scenePassages.pushUnique("Photography Chef")>>
 	<<run $scenePassages.pushUnique("Chef Opening")>>
@@ -119,6 +123,24 @@ End of '<<print $replayScene.name>>' scene.
 <<if $farm_stage gte 6>>
 	<<run $scenePassages.pushUnique("AlexFarmWorkStage6")>>
 <</if>>
+<<if $farm is undefined>>
+<<elseif $farm.milking is undefined>>
+<<elseif $farm.milking.alexNightEvent is true>>
+	<<run $scenePassages.pushUnique("AlexFarmSelfMilkingCaught")>>
+<</if>>
+<<if $bullyevent gt 0>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully1")>>
+<</if>>
+<<if $bullyevent gt 1>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully2")>>
+<</if>>
+<<if $bullyevent gt 2>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully3")>>
+<</if>>
+<<if $bullyevent gt 3>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully4")>>
+<</if>>
+
 <</widget>>
 
 <<widget "scenes">>
@@ -146,6 +168,27 @@ Be aware that many objects will be restored for you, including player, worn, car
 			passages: ["Park Lichen","Park Lichen Climb","Park Lichen Help","Park Lichen Explain","Park Lichen Run","Park Lichen Honest","Park Lichen Evasive","Park Lichen Accept","Park Lichen Refuse","Park Lichen Smooch","Park Lichen Still","Park Lichen Move"],
 			manualVariableChanges: "<<set $NPCName[$NPCNameList.indexOf('Avery')].init to 0>>",
 			unlocked: $scenePassages.includes("Park Lichen")
+		},
+		"RobinIntro1":{
+			name:"Robin Intro 1",
+			startPassage:"Orphanage",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $hour to 7>><<set $time to 7 * 60>><<set $stress to 0>><<set $home_gone to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
+		},
+		"RobinIntro2":{
+			name:"Robin Intro 2",
+			startPassage:"Shopping Centre",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $days to 0>><<set $hour to 18>><<set $time to 1080>><<set $stress to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
+		},
+		"RobinIntro3":{
+			name:"Robin Intro 3",
+			startPassage:"Canteen",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $schoolday to 1>><<set $schoolstate to 'lunch'>><<set $hour to 12>><<set $time to 720>><<set $stress to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
 		},
 		"ChefOpeningPhotograph":{
 			name:"Chef Opening Photograph",
@@ -207,21 +250,21 @@ Be aware that many objects will be restored for you, including player, worn, car
 			name:"Alex Farm Work Stage 3",
 			startPassage:"Scene Viewer passages",
 			passages:["Farm Visitor"],
-			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage3'>>",
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage3'>><<farm_work_update>>",
 			unlocked: $scenePassages.includes("AlexFarmWorkStage3")
 		},
 		"AlexFarmWorkStage4":{
 			name:"Alex Farm Work Stage 4",
 			startPassage:"Scene Viewer passages",
 			passages:["Farm Stage 4"],
-			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage4'>>",
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage4'>><<farm_work_update>>",
 			unlocked: $scenePassages.includes("AlexFarmWorkStage4")
 		},
 		"AlexFarmWorkStage5":{
 			name:"Alex Farm Work Stage 5",
 			startPassage:"Scene Viewer passages",
 			passages:["Farm Stage 5","Farm Stage 5 2","Farm Stage 5 3"],
-			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage5'>>",
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage5'>><<farm_work_update>>",
 			unlocked: $scenePassages.includes("AlexFarmWorkStage5")
 		},
 		"AlexFarmWorkStage6":{
@@ -230,6 +273,41 @@ Be aware that many objects will be restored for you, including player, worn, car
 			passages:["Farm Stage 6","Farm Stage 6 2","Farm Stage 6 Look","Farm Stage 6 No Look","Farm Stage 6 Pull","Farm Stage 6 3","Farm Stage 6 Pull 2","Farm Stage 6 Pull Return","Farm Stage 6 Pull Refuse","Farm Stage 6 4","Farm Stage 6 5","Farm Stage 6 6","Farm Stage 6 7","Farm Stage 6 8"],
 			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage6'>>",
 			unlocked: $scenePassages.includes("AlexFarmWorkStage6")
+		},
+		"AlexFarmSelfMilkingCaught":{
+			name:"Alex Farm Self Milking Caught",
+			startPassage:"Farm Barn Caught",
+			passages:[],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("AlexFarmSelfMilkingCaught")
+		},
+		"WhitneySchoolBully1":{
+			name:"Whitney School Bully 1",
+			startPassage:"Scene Viewer passages",
+			passages:[],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 0>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully1")
+		},
+		"WhitneySchoolBully2":{
+			name:"Whitney School Bully 2",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Locker","Bully Fight","Bully Fight Finish"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 1>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully2")
+		},
+		"WhitneySchoolBully3":{
+			name:"Whitney School Bully 3",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Fight","Bully Fight Finish","Bully Top","Bully Top Flaunt"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 2>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully3")
+		},
+		"WhitneySchoolBully4":{
+			name:"Whitney School Bully 4",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Fight","Bully Fight Finish","Bully Strip","Bully Strip Flaunt","Bully Walk","Bully Walk Flaunt","Bully Refuse"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 3>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully4")
 		},
 	}>>
 <</if>>
@@ -379,8 +457,9 @@ Stored Variables are lost on page refresh.
 <<widget "freezePlayerStats">>
 <<set $statFreeze to true>>
 <<set $frozenValues to {}>>
-<<set _skipKeys to ["replayScene","frozenValues","statFreeze","passage","debug"]>>
-<<run Object.keys(SugarCube.State.variables).forEach(function(key){
+<<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
+<<set $frozenKeys to Object.keys(SugarCube.State.variables)>>
+<<run $frozenKeys.forEach(function(key){
 	if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
 		SugarCube.State.variables.frozenValues[key] = clone(SugarCube.State.variables[key]);
 	}
@@ -394,5 +473,16 @@ Stored Variables are lost on page refresh.
 		SugarCube.State.variables[key] = clone(SugarCube.State.variables.frozenValues[key]);
 	})>>
 <</if>>
+<<if $frozenKeys>>
+	<<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
+	<<run Object.keys(SugarCube.State.variables).forEach(function(key){
+		if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
+			if(!SugarCube.State.variables.frozenKeys.includes(key)){
+				delete SugarCube.State.variables[key];
+			}
+		}
+	})>>
+<</if>>
 <<unset $frozenValues>>
+<<unset $frozenKeys>>
 <</widget>>
