@@ -423,11 +423,15 @@ Renderer.CanvasModels["main"] = {
 
 		// Show arm and hand just below outermost clothes layer
 		if (options.worn_over_upper) {
-			options.zarms = ZIndices.armsoverclothesidle-0.2;
+			options.zarms = ZIndices.over_upper_arms - 0.2;
 		} else if (options.worn_upper) {
-			options.zarms = ZIndices.armsclothesidle-0.2;
+			if (options.upper_tucked) {
+				options.zarms = ZIndices.upper_arms_tucked - 0.2;
+			} else {
+				options.zarms = ZIndices.upper_arms - 0.2;
+			}
 		} else if (options.worn_under_upper) {
-			options.zarms = ZIndices.armsunderclothesidle-0.2;
+			options.zarms = ZIndices.under_upper_arms - 0.2;
 		} else {
 			options.zarms = ZIndices.armsidle
 		}
@@ -626,7 +630,7 @@ Renderer.CanvasModels["main"] = {
 			},
 			filters: ["body"],
 			zfn(options) {
-				if (options.arm_left === "cover") return ZIndices.leftarm;
+				if (options.arm_left === "cover") return ZIndices.arms_cover;
 				return options.zarms;
 			},
 			animation: "idle"
@@ -646,7 +650,7 @@ Renderer.CanvasModels["main"] = {
 			},
 			filters: ["body"],
 			zfn(options) {
-				if (options.arm_right === "cover") return ZIndices.rightarm;
+				if (options.arm_right === "cover") return ZIndices.arms_cover;
 				return options.zarms;
 			}
 		},
@@ -1684,9 +1688,9 @@ Renderer.CanvasModels["main"] = {
 			},
 			zfn(options) {
 				if (options.arm_right === "cover") {
-					return ZIndices.armSkin
+					return ZIndices.arms_cover + 0.1
 				} else {
-					return ZIndices.armsidleskin
+					return ZIndices.armsidle + 0.1
 				}
 			},
 			animation: "idle"
@@ -1810,21 +1814,31 @@ Renderer.CanvasModels["main"] = {
 				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
 			}
 		}),
-		"upper_breasts": genlayer_clothing_breasts("upper"),
-		"upper_acc": genlayer_clothing_accessory("upper", {
+		"upper_breasts": genlayer_clothing_breasts("upper", {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper+0.1 // above breasts
+				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
 			}
 		}),
-		"upper_breasts_acc": genlayer_clothing_breasts_acc("upper"),
+		"upper_acc": genlayer_clothing_accessory("upper", {
+			zfn(options) {
+				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+			}
+		}),
+		"upper_breasts_acc": genlayer_clothing_breasts_acc("upper", {
+			zfn(options) {
+				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+			}
+		}),
 		"upper_rightarm": genlayer_clothing_rightarm("upper", {
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.rightarmclothes : ZIndices.armsclothesidle;
+				return options.arm_right === "cover" ? ZIndices.upper_arms_cover :
+					options.upper_tucked ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
 			}
 		}),
 		"upper_leftarm": genlayer_clothing_leftarm("upper", {
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.leftarmclothes : ZIndices.armsclothesidle;
+				return options.arm_left === "cover" ? ZIndices.upper_arms_cover :
+					options.upper_tucked ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
 			}
 		}),
 		/***
@@ -1841,12 +1855,12 @@ Renderer.CanvasModels["main"] = {
 		"over_upper_acc": genlayer_clothing_accessory('over_upper'),
 		"over_upper_rightarm": genlayer_clothing_rightarm("over_upper", {
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.rightarmoverclothes : ZIndices.armsoverclothesidle;
+				return options.arm_right === "cover" ? ZIndices.over_upper_arms_cover : ZIndices.over_upper_arms;
 			}
 		}),
 		"over_upper_leftarm": genlayer_clothing_leftarm("over_upper", {
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.leftarmclothes : ZIndices.armsoverclothesidle;
+				return options.arm_left === "cover" ? ZIndices.over_upper_arms_cover : ZIndices.over_upper_arms;
 			}
 		}),
 		/***
@@ -1967,12 +1981,12 @@ Renderer.CanvasModels["main"] = {
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
 		"under_upper_rightarm": genlayer_clothing_rightarm("under_upper", {
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.rightarmunderclothes : ZIndices.armsunderclothesidle;
+				return options.arm_right === "cover" ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arms;
 			}
 		}),
 		"under_upper_leftarm": genlayer_clothing_leftarm("under_upper", {
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.leftarmunderclothes : ZIndices.armsunderclothesidle;
+				return options.arm_left === "cover" ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arms;
 			}
 		}),
 		/***

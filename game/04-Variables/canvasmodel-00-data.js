@@ -18,7 +18,6 @@ window.ZIndices = {
     lashes: 35,
     mouth: 40,
     armsidle: 30,
-    armsidleskin: 30.5,
     handsidle: 31.5,
     breasts: 35,
     tanbreasts: 30,
@@ -36,7 +35,7 @@ window.ZIndices = {
     penis: 160, // when exposed
     pbhairballs: 161, // when exposed
     underParasite: 66,
-    armsunderclothesidle: 66,
+    under_upper_arms: 66,
     under_lower: 67,
     under_lower_top: 68,
     under_upper: 70,
@@ -48,22 +47,18 @@ window.ZIndices = {
     lower: 90,
     lower_top: 92,
     upper: 95,
-    armsclothesidle: 94,
+    upper_arms: 94,
     upper_tucked: 89,
+    upper_arms_tucked: 88.5,
     upper_top: 97,
 
     collar: 103,
     neck: 103,
 
-    rightarm: 105,
-    leftarm: 105,
-    armSkin: 106,
-    armTan: 107,
-    leftarmunderclothes: 109,
-    rightarmunderclothes: 109,
+    arms_cover: 105,
+    under_upper_arms_cover: 109,
     hands: 110,
-    rightarmclothes: 112,
-    leftarmclothes: 112,
+    upper_arms_cover: 112,
     lower_high: 115,
     lower_top_high: 117,
 
@@ -81,10 +76,8 @@ window.ZIndices = {
 
     over_lower: 170,
     over_upper: 171,
-    armsoverclothesidle: 170,
-    leftarmoverclothes: 174,
-    rightarmoverclothes: 174,
-    breastsoverclothes: 175
+    over_upper_arms: 170,
+    over_upper_arms_cover: 174
 };
 
 Renderer.Animations = {};
