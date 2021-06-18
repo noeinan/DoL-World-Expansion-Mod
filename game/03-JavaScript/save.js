@@ -581,6 +581,7 @@ window.settingsObjects = function (type) {
 				combatControls: { strings: ["radio", "lists", "limitedLists"] },
 				reducedLineHeight: { bool: true },
 				neverNudeMenus: { bool: true },
+				skipStatisticsConfirmation: { bool: true},
 				map: {
 					movement: { bool: true },
 					top: { bool: true },
