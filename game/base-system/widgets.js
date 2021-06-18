@@ -208,3 +208,38 @@ function genderappearancecheck() {
 	}
 }
 DefineMacro("genderappearancecheck", genderappearancecheck);
+
+function updatehistorycontrols(){
+	if (State.variables.maxStates === undefined || State.variables.maxStates > 20) {
+		/* initiate new variable based on engine config and limit it to 20 */
+		State.variables.maxStates = Math.clamp(1, 20, Config.history.maxStates);
+	}
+	if (State.variables.maxStates == 1) {
+		/* when disabled, irreversibly delete history controls the way sugarcube intended */
+		Config.history.maxStates = 1;
+		jQuery('#ui-bar-history').remove();
+	} else {
+		/* set actual maxStates in accordance with our new variable */
+		Config.history.maxStates = State.variables.maxStates;
+		/* ensure that controls are enabled so sugarcube won't destroy them on reload */
+		Config.history.controls = true;
+		/* if irreversibly deleted, restore #ui-bar-history from oblivion and pop it after #ui-bar-toggle */
+		if (jQuery("#ui-bar-history").length == 0){
+			jQuery("#ui-bar-toggle").after(`
+				<div id="ui-bar-history">
+					<button id="history-backward" tabindex="0" title="'+t+'" aria-label="'+t+'">\uE821</button>
+					<button id="history-jumpto" tabindex="0" title="'+r+'" aria-label="'+r+'">\uE839</button>
+					<button id="history-forward" tabindex="0" title="'+n+'" aria-label="'+n+'">\uE822</button>
+				</div>`);
+			/* make buttons active/inactive based on the available history states */
+			jQuery(document).on(':historyupdate.ui-bar', (($backward, $forward) => () => {
+					$backward.ariaDisabled(State.length < 2);
+					$forward.ariaDisabled(State.length === State.size);
+				})(jQuery('#history-backward'), jQuery('#history-forward')));
+			/* update uibar to accept it's new masters */
+			UIBar.start();
+		}
+		jQuery("#ui-bar-history").show();
+	}
+}
+DefineMacro("updatehistorycontrols", updatehistorycontrols);
