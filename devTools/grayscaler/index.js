@@ -41,13 +41,16 @@ function desaturate(image, params=[2,1,1,1,1]) {
  * Convert one file, and save result with "_gray" suffix
  * @param path Relative path to PNG file
  * @param params Processing params: [r_factor, g_factor, b_factor, scale, gamma]
+ * @param skipexisting Do nothing if "_gray" file exists (does not check contents)
  */
-function desaturateFile(path, params=[2,1,1,1,1]) {
+function desaturateFile(path, params=[2,1,1,1,1],skipexisting=true) {
+	let newname = path.replace(".png","_gray.png");
+	if (skipexisting && fs.existsSync(path)) return;
 	let data = fs.readFileSync(path);
 	let png = PNG.sync.read(data);
 	desaturate(png,params);
 	data = PNG.sync.write(png, {colorType:4});
-	fs.writeFileSync(path.replace(".png","_gray.png"), data)
+	fs.writeFileSync(newname, data)
 }
 
 /**
@@ -145,6 +148,11 @@ function processSlot(setupfile,imgdir,varname,hasIntegrity) {
 					if (json.hood) {
 						for (let file of ifiles) {
 							files.push(file + "_down");
+						}
+					}
+					if (varname === "setup.clothes.neck") {
+						for (let file of ifiles) {
+							files.push(file + "_nocollar");
 						}
 					}
 					if (json.breast_img === 1) {
