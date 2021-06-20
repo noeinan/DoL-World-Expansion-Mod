@@ -7,7 +7,7 @@ declare namespace Renderer {
     const DefaultImageLoader: LayerImageLoader;
     let ImageLoader: LayerImageLoader;
     interface RendererListener {
-        error?: (layer: string, prop: string, error: Error) => any;
+        error?: (error: Error, context: any) => any;
         composeLayers?: (layers: CompositeLayer[]) => any;
         loaded?: (layer: string, src: string) => any;
         loadError?: (layer: string, src: string) => any;

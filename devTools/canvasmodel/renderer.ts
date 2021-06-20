@@ -36,7 +36,7 @@ namespace Renderer {
 	export let ImageLoader: LayerImageLoader = DefaultImageLoader;
 
 	export interface RendererListener {
-		error?: (layer: string, prop: string, error: Error) => any;
+		error?: (error: Error, context:any) => any;
 
 		composeLayers?: (layers: CompositeLayer[]) => any;
 		loaded?: (layer: string, src: string) => any;
@@ -53,6 +53,13 @@ namespace Renderer {
 		keyframe?: (animation: string, keyframeIndex: number, keyframe: KeyframeSpec) => any;
 		keyframeRender?: (spec: string, cacheHit: boolean, cacheRenderTime: number) => any;
 		animationStop?: () => any;
+	}
+	function rendererError(listener:RendererListener, error:Error, context?:any) {
+		if (listener && listener.error) {
+			listener.error(error, context);
+		} else {
+			console.error(error);
+		}
 	}
 
 	/**
@@ -526,7 +533,11 @@ namespace Renderer {
 				if (layer.show !== false && !layer.image) return;
 			}
 			if (listener && listener.loadingDone) listener.loadingDone(millitime() - t0, layersLoaded);
-			renderResult();
+			try {
+				renderResult();
+			} catch (e) {
+				rendererError(listener, e);
+			}
 		}
 
 		function enqueueLayer(layer: CompositeLayer) {
@@ -623,6 +634,8 @@ namespace Renderer {
 
 	export function invalidateLayerCaches(layers: CompositeLayer[]) {
 		for (let layer of layers) {
+			delete layer.image;
+			delete layer.imageSrc;
 			delete layer.cachedImage;
 			delete layer.cachedProcessing;
 		}
@@ -741,10 +754,14 @@ namespace Renderer {
 			if (!tasks) {
 				schedule[t1] = tasks = [];
 				animation.timeoutId = window.setTimeout(() => {
-					delete schedule[t1];
-					animatingCanvas.time = Math.max(t1, animatingCanvas.time);
-					for (let task of tasks) task();
-					compose();
+					try {
+						delete schedule[t1];
+						animatingCanvas.time = Math.max(t1, animatingCanvas.time);
+						for (let task of tasks) task();
+						compose();
+					} catch (e) {
+						rendererError(listener, e);
+					}
 				}, animation.keyframe.duration);
 			} else {
 				animation.timeoutId = 0;
@@ -772,7 +789,14 @@ namespace Renderer {
 				animatingCanvas.stop();
 				return;
 			}
-			requestAnimationFrame(() => {
+			requestAnimationFrame(()=>{
+				try {
+					doCompose();
+				} catch (e) {
+					rendererError(listener, e);
+				}
+			});
+			function doCompose() {
 				let spec = genAnimationSpec();
 				let cachedCanvas = keyframeCaches[spec];
 				if (cachedCanvas) {
@@ -798,11 +822,11 @@ namespace Renderer {
 					try {
 						composeLayers(targetCanvas, layerSpecs, 1, myListener);
 					} catch (e) {
-						console.error(e);
 						animatingCanvas.stop();
+						throw e;
 					}
 				}
-			});
+			}
 		}
 
 		animatingCanvas.start();
