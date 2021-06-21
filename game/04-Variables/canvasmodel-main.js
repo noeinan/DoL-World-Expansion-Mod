@@ -141,9 +141,9 @@ replace (?<!["'\w])_(?=\w) with T.
  * - "worn_SLOT_alpha":0..1 - opacity, default 1
  * - "worn_SLOT_integrity":"tattered"|"torn|"frayed"|"full" - integrity suffix attached to file name
  * - "worn_SLOT_colour":string - colour name, key from setup.colours.clothes_map
- *                               or "custom" (need to configure "worn_SLOT" filter manually)
+ *                               or "custom" (need to configure "worn_SLOT_custom" filter manually)
  * - "worn_SLOT_acc_colour":string - accessory colour name, key from setup.colours.clothes_map
- *                                   or "custom" (need to configure "worn_SLOT_acc" filter manually)
+ *                                   or "custom" (need to configure "worn_SLOT_acc_custom" filter manually)
  *
  * MISC OPTIONS:
  * -------------

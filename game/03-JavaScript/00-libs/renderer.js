@@ -23,6 +23,14 @@ var Renderer;
         }
     };
     Renderer.ImageLoader = Renderer.DefaultImageLoader;
+    function rendererError(listener, error, context) {
+        if (listener && listener.error) {
+            listener.error(error, context);
+        }
+        else {
+            console.error(error);
+        }
+    }
     /**
      * Last arguments to composeLayers
      */
@@ -439,7 +447,12 @@ var Renderer;
             }
             if (listener && listener.loadingDone)
                 listener.loadingDone(millitime() - t0, layersLoaded);
-            renderResult();
+            try {
+                renderResult();
+            }
+            catch (e) {
+                rendererError(listener, e);
+            }
         }
         function enqueueLayer(layer) {
             Renderer.ImageLoader.loadImage(layer.src, layer, (src, layer, image) => {
@@ -491,6 +504,8 @@ var Renderer;
     Renderer.composeLayers = composeLayers;
     function invalidateLayerCaches(layers) {
         for (let layer of layers) {
+            delete layer.image;
+            delete layer.imageSrc;
             delete layer.cachedImage;
             delete layer.cachedProcessing;
         }
@@ -607,11 +622,16 @@ var Renderer;
             if (!tasks) {
                 schedule[t1] = tasks = [];
                 animation.timeoutId = window.setTimeout(() => {
-                    delete schedule[t1];
-                    animatingCanvas.time = Math.max(t1, animatingCanvas.time);
-                    for (let task of tasks)
-                        task();
-                    compose();
+                    try {
+                        delete schedule[t1];
+                        animatingCanvas.time = Math.max(t1, animatingCanvas.time);
+                        for (let task of tasks)
+                            task();
+                        compose();
+                    }
+                    catch (e) {
+                        rendererError(listener, e);
+                    }
                 }, animation.keyframe.duration);
             }
             else {
@@ -640,6 +660,14 @@ var Renderer;
                 return;
             }
             requestAnimationFrame(() => {
+                try {
+                    doCompose();
+                }
+                catch (e) {
+                    rendererError(listener, e);
+                }
+            });
+            function doCompose() {
                 let spec = genAnimationSpec();
                 let cachedCanvas = keyframeCaches[spec];
                 if (cachedCanvas) {
@@ -668,11 +696,11 @@ var Renderer;
                         composeLayers(targetCanvas, layerSpecs, 1, myListener);
                     }
                     catch (e) {
-                        console.error(e);
                         animatingCanvas.stop();
+                        throw e;
                     }
                 }
-            });
+            }
         }
         animatingCanvas.start();
         return (Renderer.lastAnimation = animatingCanvas);

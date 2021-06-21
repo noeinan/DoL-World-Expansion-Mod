@@ -116,4 +116,16 @@ class ObservableValue {
 		this._nextValues = null;
 	}
 }
+
+/**
+ * Modify obj, wrapping every property into an ObservableValue. Not deep!
+ * @param {object} obj
+ * @return {object} obj
+ */
+ObservableValue.fromObject = function(obj) {
+	for (let key of Object.keys(obj)) {
+		obj[key] = new ObservableValue(obj[key]);
+	}
+	return obj;
+}
 window.ObservableValue = ObservableValue;
