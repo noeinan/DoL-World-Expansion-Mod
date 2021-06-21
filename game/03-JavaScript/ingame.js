@@ -292,3 +292,11 @@ function updateAskColour() {
 }
 
 DefineMacroS("updateAskColour", updateAskColour);
+
+window.bulkProduceValue = function(plant, quantity = 250) {
+	if(plant !== undefined){
+		let baseCost = plant.plant_cost * quantity / 2;
+		let seasonBoost = !plant.season.includes(State.variables.season) ? 1.1 : 1;
+		return Math.floor(baseCost * seasonBoost);
+	}
+}
