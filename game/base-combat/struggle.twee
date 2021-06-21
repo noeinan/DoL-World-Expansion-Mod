@@ -1669,13 +1669,13 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<set $rightaction to 0>><<set $rightactiondefault to "capture">>
 	<<for _i to 0; _i lt $struggle.number; _i++>>
 		<<if $struggle.enemy[_i].location is "fleeing">>
-			You cast your net at the <span class="green">recoiling</span> lurker with both hands.
+			You cast your net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with both hands.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 100>>
 			<<break>>
 		<</if>>
 		<<if $struggle.enemy[_i].location is "lurking">>
-			You cast your net at the lurker with both hands.
+			You cast your net at the <<print $struggle.enemy[_i].name>> with both hands.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 60>>
 			<<break>>
@@ -1684,20 +1684,20 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<if _capture_chance>>
 		<<set _capture_chance += $prof.net>>
 	<<else>>
-		You prepare to cast your net at a lurker, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
 	<</if>>
 
 <<elseif $leftaction is "capture">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "capture">>
 	<<for _i to 0; _i lt $struggle.number; _i++>>
 		<<if $struggle.enemy[_i].location is "fleeing">>
-			You cast a net at the <span class="green">recoiling</span> lurker with your left hand.
+			You cast a net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with your left hand.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 60>>
 			<<break>>
 		<</if>>
 		<<if $struggle.enemy[_i].location is "lurking">>
-			You cast a net at the lurker with your left hand.
+			You cast a net at the <<print $struggle.enemy[_i].name>> with your left hand.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 30>>
 			<<break>>
@@ -1706,20 +1706,20 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<if _capture_chance>>
 		<<set _capture_chance += $prof.net>>
 	<<else>>
-		You prepare to cast your net at a lurker, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
 	<</if>>
 
 <<elseif $rightaction is "capture">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "capture">>
 	<<for _i to 0; _i lt $struggle.number; _i++>>
 		<<if $struggle.enemy[_i].location is "fleeing">>
-			You cast a net at the <span class="green">recoiling</span> lurker with your right hand.
+			You cast a net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with your right hand.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 60>>
 			<<break>>
 		<</if>>
 		<<if $struggle.enemy[_i].location is "lurking">>
-			You cast a net at the lurker with your right hand.
+			You cast a net at the <<print $struggle.enemy[_i].name>> with your right hand.
 			<<set _capture_creature to _i>>
 			<<set _capture_chance to 30>>
 			<<break>>
@@ -1728,17 +1728,20 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<if _capture_chance>>
 		<<set _capture_chance += ($prof.net / 10)>>
 	<<else>>
-		You prepare to cast your net at a lurker, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
 	<</if>>
 
 <</if>>
 <<if _capture_chance>>
 	<<if _capture_chance gte random(1, 100)>>
 		<span class="green">The net lands true.</span> You pull the creature into your possession.
-		<<set $lurkers_held += 1>>
+		<<if $struggle.enemy[_capture_creature].name is "lurker">>
+			<<set $lurkers_held += 1>>
+			<<set $stat_lurkers_captured += 1>>
+		<</if>>
 		<<set $struggle.done += 1>>
 		<<set $struggle.enemy[_capture_creature].location to "fled">>
-		<<set $stat_lurkers_captured += 1>>
+
 	<<else>>
 		<span class="red">The creature squirms aside.</span><<gnet>><<prof net 1>>
 	<</if>>
