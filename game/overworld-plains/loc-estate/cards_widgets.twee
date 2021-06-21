@@ -32,29 +32,23 @@
 
 <<widget "blackjackScore">>
 <<if $args[0]>>
-	<<set _cards to []>>
+	<<set _aces to 0>>
+	<<set _score to 0>>
 	<<for $_i to 0; $_i lt $args[0].length; $_i++>>
-		<<set _card to $args[0][$_i]>>
-		<<switch _card.name>>
-			<<case "A">><<run _cards.push(11)>>
-			<<case "K" "Q" "J">><<run _cards.push(10)>>
-			<<default>><<run _cards.push(_card.value)>>
+		<<switch $args[0][$_i].name>>
+			<<case "A">><<set _score += 11>><<set _aces++>>
+			<<case "K" "Q" "J">><<set _score += 10>>
+			<<default>><<set _score += $args[0][$_i].value>>
 		<</switch>>
 	<</for>>
-	<<set _cards to _cards.sort(function compareNumbers(a, b) {return a - b;})>>
-	<<set _score to 0>>
-	<<for $_i to 0; $_i lt _cards.length; $_i++>>
-		<<if _cards[$_i] is 11 and _score + 11 gt 21>>
-			<<set _score++>>
-		<<else>>
-			<<set _score += _cards[$_i]>>
+	<<for $_i to 0; $_i lt _aces; $_i++>>
+		<<if _score gt 21>>
+			<<set _score -= 10>>
 		<</if>>
 	<</for>>
 	<<if $args[1]>>
-		<<if $args[0].length is 2>>
-			<<if ["A","K","Q","J","10"].includes($args[0][0].name) and ["A","K","Q","J","10"].includes($args[0][1].name) and _score is 21>>
+		<<if $args[0].length is 2 and _score is 21>>
 				<<set $_blackjack to true>>
-			<</if>>
 		<</if>>
 		<<switch $args[1]>>
 			<<case "dealer">><<set $blackjack.dealerScore to _score>><<if $_blackjack>><<set $blackjack.dealerState to "blackjack">><</if>>
