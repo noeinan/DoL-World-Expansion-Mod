@@ -13,11 +13,7 @@ function echoMessage() {
 }
 
 function compile() {
-<<<<<<< HEAD
-	export tweego_PATH=devTools/tweeGo/storyFormats
-=======
 	export TWEEGO_PATH=devTools/tweego/storyFormats
->>>>>>> vrel/master
 	if [ -z ${FORCE_VERSION+true} ]; then
 		VERSION="$(git describe --tags --always --dirty)"
 	else
