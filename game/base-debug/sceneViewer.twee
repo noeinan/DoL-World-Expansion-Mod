@@ -1,0 +1,488 @@
+:: Scene Viewer
+<h3>Scene Viewer</h3>
+<<scenes>>
+<<scenesSearch>>
+<<scenesViewerCalc>>
+<div id="scenesViewer">
+	<<scenesViewer>>
+</div>
+<div id="scenesViewerControls">
+	<<scenesViewerControls>>
+</div>
+<<if $debug is 1>>
+	<!--<br>
+	<<saveCompareTool>>-->
+	<br>
+	<<link [[Reset|$passage]]>><<unset $scenes>><<unset _scenes>><</link>>
+<</if>>
+
+<<if $lastPassage>>
+	<br>
+	<<link [[Exit|$lastPassage]]>><<unset $scenes>><<unset $lastPassage>><</link>>
+<</if>>
+
+:: Scene Viewer End
+
+End of '<<print $replayScene.name>>' scene.
+
+<br><br>
+<<link [[Exit Scene|Scene Viewer]]>>
+	<<unfreezePlayerStats>>
+	<<unset $replayScene>>
+	<<endevent>>
+<</link>>
+
+:: Scene Viewer passages
+<<switch $sceneViewSwitch>>
+	<<case "halloweenwhitney">><<halloweenwhitney>>
+	<<case "halloweenkylar">><<halloweenkylar>>
+	<<case "AlexFarmWorkStage3">><<farmVisitor>>
+	<<case "AlexFarmWorkStage4">><<farmStage4>>
+	<<case "AlexFarmWorkStage5">><<farmStage5>>
+	<<case "AlexFarmWorkStage6">><<farmStage6>>
+	<<case "schoolBully">><<schoolbully>>
+	<<default>>
+		Error occured in scene viewer. <<print $replayScene.name>>. Please report.
+		<br><br>
+		<<set _exitpassage to clone($replayScene.exitpassage)>>
+		<<unset $replayScene>>
+		<<unfreezePlayerStats>>
+		<<link [[Back|_exitpassage]]>>
+		<</link>>
+<</switch>>
+<<unset $sceneViewSwitch>>
+
+:: Scene Viewer Widgets [widget]
+
+<<widget "setupReplayScene">>
+/*In case the object isnt setup correctly*/
+<<set _passages to ["Scene Viewer End"]>>
+<<if Array.isArray($args[2])>>
+	<<set _passages to $args[2]>>
+<</if>>
+<<set _variablesToRestore to []>>
+<<freezePlayerStats>>
+<<set $replayScene to {
+	name: $args[0],
+	startPassage: ($args[1] ? $args[1] : _passages[0]),
+	passages: _passages,
+	exitpassage: $passage
+}>>
+<</widget>>
+
+/*Scenes when player viewing cant be tracked*/
+<<widget "seenPassage">>
+<<if $scenePassages is undefined>>
+	<<set $scenePassages to []>>
+<</if>>
+<<run $scenePassages.pushUnique($passage)>>
+<</widget>>
+
+/*Scenes when player viewing can be tracked*/
+<<widget "seenPassageChecks">>
+<<if $scenePassages is undefined>>
+	<<set $scenePassages to []>>
+<</if>>
+<<if $NPCName[$NPCNameList.indexOf('Avery')].init is 1>>
+	<<run $scenePassages.pushUnique("Park Lichen")>>
+<</if>>
+<<if $NPCName[$NPCNameList.indexOf('Robin')].init is 1>>
+	<<run $scenePassages.pushUnique("Robin Intro")>>
+<</if>>
+<<if $bun_value gte 15000>>
+	<<run $scenePassages.pushUnique("Photography Chef")>>
+	<<run $scenePassages.pushUnique("Chef Opening")>>
+<</if>>
+<<if $schoolevent gte 1>>
+	<<run $scenePassages.pushUnique("Penis School Inspection")>>
+<</if>>
+<<if $schoolevent gte 2>>
+	<<run $scenePassages.pushUnique("Pussy School Inspection")>>
+<</if>>
+<<if $schoolevent gte 3>>
+	<<run $scenePassages.pushUnique("Breast School Inspection")>>
+<</if>>
+<<if $halloween_whitney_proposed>>
+	<<run $scenePassages.pushUnique("halloweenwhitney")>>
+<</if>>
+<<if $halloween_kylar_proposed>>
+	<<run $scenePassages.pushUnique("halloweenkylar")>>
+<</if>>
+<<if $farm_stage gt 1>>
+	<<run $scenePassages.pushUnique("AlexFarmIntro")>>
+<</if>>
+<<if $farm_stage gte 3>>
+	<<run $scenePassages.pushUnique("AlexFarmWorkStage3")>>
+<</if>>
+<<if $farm_stage gte 4>>
+	<<run $scenePassages.pushUnique("AlexFarmWorkStage4")>>
+<</if>>
+<<if $farm_stage gte 5>>
+	<<run $scenePassages.pushUnique("AlexFarmWorkStage5")>>
+<</if>>
+<<if $farm_stage gte 6>>
+	<<run $scenePassages.pushUnique("AlexFarmWorkStage6")>>
+<</if>>
+<<if $farm is undefined>>
+<<elseif $farm.milking is undefined>>
+<<elseif $farm.milking.alexNightEvent is true>>
+	<<run $scenePassages.pushUnique("AlexFarmSelfMilkingCaught")>>
+<</if>>
+<<if $bullyevent gt 0>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully1")>>
+<</if>>
+<<if $bullyevent gt 1>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully2")>>
+<</if>>
+<<if $bullyevent gt 2>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully3")>>
+<</if>>
+<<if $bullyevent gt 3>>
+	<<run $scenePassages.pushUnique("WhitneySchoolBully4")>>
+<</if>>
+
+<</widget>>
+
+<<widget "scenes">>
+/*Be extra careful when adding new scenes, make sure that any variables that shouldn't be changed this way, are restored right after
+The widgets `<<freezePlayerStats>>` and `<<unfreezePlayerStats>>` can help here alongside `variablesToRestore` for more scene specific variables
+The variable $statFreeze to prevent other widgets from running
+Be aware that many objects will be restored for you, including player, worn, carried, wardrobe, sexStats, dateCount and named npc's
+*/
+<<if $scenePassages is undefined>>
+	<<set $scenePassages to []>>
+<</if>>
+<<if $scenes is undefined>>
+	<<seenPassageChecks>>
+	<<set $scenes to {
+		/*"placeHolder":{
+			name:"",
+			startPassage:"",
+			passages:["",""],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("startPassage")
+		},*/
+		"AveryParkIntroduction":{
+			name:"Avery Park Introduction",
+			startPassage:"Park Lichen",
+			passages: ["Park Lichen","Park Lichen Climb","Park Lichen Help","Park Lichen Explain","Park Lichen Run","Park Lichen Honest","Park Lichen Evasive","Park Lichen Accept","Park Lichen Refuse","Park Lichen Smooch","Park Lichen Still","Park Lichen Move"],
+			manualVariableChanges: "<<set $NPCName[$NPCNameList.indexOf('Avery')].init to 0>>",
+			unlocked: $scenePassages.includes("Park Lichen")
+		},
+		"RobinIntro1":{
+			name:"Robin Intro 1",
+			startPassage:"Orphanage",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $hour to 7>><<set $time to 7 * 60>><<set $stress to 0>><<set $home_gone to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
+		},
+		"RobinIntro2":{
+			name:"Robin Intro 2",
+			startPassage:"Shopping Centre",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $days to 0>><<set $hour to 18>><<set $time to 1080>><<set $stress to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
+		},
+		"RobinIntro3":{
+			name:"Robin Intro 3",
+			startPassage:"Canteen",
+			passages:[],
+			manualVariableChanges:"<<set $NPCName[$NPCNameList.indexOf('Robin')].init to 0>><<set $schoolday to 1>><<set $schoolstate to 'lunch'>><<set $hour to 12>><<set $time to 720>><<set $stress to 0>><<if $exposed gt 0>><<givestartclothing>><</if>>",
+			unlocked: $scenePassages.includes("Robin Intro")
+		},
+		"ChefOpeningPhotograph":{
+			name:"Chef Opening Photograph",
+			startPassage:"Photography Chef",
+			passages:["Photography Chef","Photography Chef 2","Photography Chef 3","Photography Chef 4","Photography Chef 5","Photography Chef Tease","Photography Chef Wait","Photography Chef Cream","Photography Chef Leave","Photography Chef Milk","Photography Chef 6","Photography Chef Wait","Photography Chef Lewd Cream","Photography Chef Normal Cream","Photography Chef 7"],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("Photography Chef")
+		},
+		"ChefOpeningCeremony":{
+			name:"Chef Opening Ceremony",
+			startPassage:"Chef Opening",
+			passages:["Chef Opening","Chef Opening 2","Chef Opening 3","Chef Opening Current","Chef Opening Gown","Chef Opening Tuxedo","Chef Opening 4","Chef Opening 5","Chef Opening Avery Accept","Chef Opening Avery Refuse","Chef Opening 6","Chef Opening Bailey Slap","Chef Opening Bailey Thank","Chef Opening Bailey Silent","Chef Opening 7","Chef Opening Smile","Chef Opening Funny","Chef Opening Refuse Photograph","Chef Opening 8","Chef Opening 9","Chef Opening 10","Chef Opening 11","Chef Opening Truth","Chef Opening Bailey","Chef Opening Sam","Chef Opening Self","Chef Opening Refuse","Chef Opening Local","Chef Opening Foreign","Chef Opening Staff","Chef Opening Enjoy","Chef Opening End","Chef Opening End 2"],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("Chef Opening")
+		},
+		"PenisSchoolInspection":{
+			name:"Penis School Inspection",
+			startPassage:"Science Lesson",
+			passages:["Penis Inspection","Penis Inspection 2","Penis Inspection Expose","Penis Inspection Flaunt","Penis Inspection Run Away","Penis Inspection End","Penis Inspection Flaunt Crossdress"],
+			manualVariableChanges:"<<set $minute to 1>><<set $schoolevent to 0>><<set $schooleventtimer to 0>><<set $weekday to 2>>",
+			unlocked: $scenePassages.includes("Penis School Inspection")
+		},
+		"PussySchoolInspection":{
+			name:"Pussy School Inspection",
+			startPassage:"Science Lesson",
+			passages:["Pussy Inspection","Pussy Inspection End","Pussy Inspection2","Pussy Inspection Run","Pussy Inspection Penis","Pussy Inspection Comply","Pussy Inspection Flaunt"],
+			manualVariableChanges:"<<set $minute to 1>><<set $schoolevent to 1>><<set $schooleventtimer to 0>><<set $weekday to 2>>",
+			unlocked: $scenePassages.includes("Pussy School Inspection")
+		},
+		"BreastSchoolInspection":{
+			name:"Breast School Inspection",
+			startPassage:"Science Lesson",
+			passages:["Breast Inspection","Breast Inspection Comply","Breast Inspection Flaunt","Breast Inspection Flat Flaunt","Breast Inspection Protest","Breast Inspection End"],
+			manualVariableChanges:"<<set $minute to 1>><<set $schoolevent to 2>><<set $schooleventtimer to 0>><<set $weekday to 2>>",
+			unlocked: $scenePassages.includes("Breast School Inspection")
+		},
+		"HalloweenWhitney":{
+			name:"Halloween Whitney",
+			startPassage:"Scene Viewer passages",
+			passages:["Whitney Trick 1","Whitney Trick 2","Whitney Trick Refuse","Whitney Trick 2","Whitney Trick Refuse 2","Whitney Trick 3","Whitney Trick 4","Whitney Trick Stop","Whitney Trick Watch","Whitney Trick 5","Whitney Trick 6","Whitney Trick Exhibitionism","Whitney Trick Drink","Whitney Trick Drink","Whitney Trick Sex","Whitney Trick Sex Refuse","Whitney Trick 7","Whitney Trick Sex Finish"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'halloweenwhitney'>>",
+			unlocked: $scenePassages.includes("halloweenwhitney")
+		},
+		"HalloweenKylar":{
+			name:"Halloween Kylar",
+			startPassage:"Scene Viewer passages",
+			passages:["Kylar Halloween Look","Kylar Halloween Watch","Kylar Halloween","Kylar Halloween Refuse","Kylar Halloween Walk","Kylar Halloween Hesitate","Kylar Halloween Forest Refuse","Kylar Halloween Continue","Kylar Halloween Angry","Kylar Halloween Continue Walk","Kylar Halloween Leave","Kylar Halloween March","Kylar Halloween Kiss","Kylar Halloween Yes","Kylar Halloween No","Kylar Halloween Town","Kylar Halloween Sex","Kylar Halloween Sex Finish","Kylar Halloween Mansion","Kylar Halloween Mansion 2","Kylar Halloween Known Drink","Kylar Halloween Unknown Refuse","Kylar Halloween Known Angry","Kylar Halloween Unknown Drink","Kylar Halloween Known Pretend","Kylar Halloween Known Hand","Kylar Halloween Known Go","Kylar Halloween Known Scare","Kylar Halloween Mansion Sex","Kylar Halloween Mansion Sex Finish","Kylar Halloween Exit","Kylar Halloween Known Chase","Kylar Halloween Known Curtain","Kylar Halloween Known Sheet","Kylar Halloween Known Front","Kylar Halloween Known Dumb","Kylar Halloween Known Clean","Kylar Halloween Known Kiss","Kylar Halloween Known Stand","Kylar Halloween Known Sex","Kylar Halloween Known Sex Finish","Kylar Halloween Rough Exit","Kylar Halloween Unknown Refuse 2","Kylar Halloween Exit 2","Kylar Halloween Skulduggery 2","Kylar Halloween Pick","Kylar Halloween Upstairs","Kylar Halloween Skulduggery","Kylar Halloween Skulduggery Kiss","Kylar Halloween Skulduggery Pull","Kylar Halloween Upstairs Dodge","Kylar Halloween Caught","Kylar Halloween Upstairs Applaud","Kylar Halloween Upstairs Angry","Kylar Halloween Kneel","Kylar Halloween Kneel Refuse","Kylar Halloween Kneel Refuse 2","Kylar Halloween Kneel Run","Kylar Halloween Kneel Help","Kylar Halloween Kneel Spray","Kylar Halloween Forced Kneel","Kylar Halloween Oral","Kylar Halloween Lick","Kylar Halloween Lick Refuse","Kylar Halloween Lick Refuse 2","Kylar Halloween End","Kylar Halloween Oral Finish","Kylar Halloween Bed","Kylar Halloween Bed 2","Kylar Halloween Bed 3","Kylar Halloween Bed 4","Kylar Halloween Bed 5","Kylar Halloween Wait","Kylar Halloween Warn","Kylar Halloween Escape","Kylar Halloween Tricks","Kylar Halloween Whitney","Kylar Halloween Accompany","Kylar Halloween Alone","Kylar Halloween Thank","Kylar Halloween Ask","Kylar Halloween Whitney Kiss","Kylar Halloween Whitney Apologise","Kylar Halloween Whitney Silent"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'halloweenkylar'>>",
+			unlocked: $scenePassages.includes("halloweenkylar")
+		},
+		"AlexFarmIntro":{
+			name:"Alex Farm Intro",
+			startPassage:"Farm Intro",
+			passages:["Farm Intro","Farm Intro 2","Farm Intro 3","Farm Intro 4","Farm Intro 5","Farm Intro 6","Farm Intro 7","Farm Intro 8","Farm Intro 9","Farm Intro 10","Farm Intro Accept","Farm Intro Refuse"],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("AlexFarmIntro")
+		},
+		"AlexFarmWorkStage3":{
+			name:"Alex Farm Work Stage 3",
+			startPassage:"Scene Viewer passages",
+			passages:["Farm Visitor"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage3'>><<farm_work_update>>",
+			unlocked: $scenePassages.includes("AlexFarmWorkStage3")
+		},
+		"AlexFarmWorkStage4":{
+			name:"Alex Farm Work Stage 4",
+			startPassage:"Scene Viewer passages",
+			passages:["Farm Stage 4"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage4'>><<farm_work_update>>",
+			unlocked: $scenePassages.includes("AlexFarmWorkStage4")
+		},
+		"AlexFarmWorkStage5":{
+			name:"Alex Farm Work Stage 5",
+			startPassage:"Scene Viewer passages",
+			passages:["Farm Stage 5","Farm Stage 5 2","Farm Stage 5 3"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage5'>><<farm_work_update>>",
+			unlocked: $scenePassages.includes("AlexFarmWorkStage5")
+		},
+		"AlexFarmWorkStage6":{
+			name:"Alex Farm Work Stage 6",
+			startPassage:"Scene Viewer passages",
+			passages:["Farm Stage 6","Farm Stage 6 2","Farm Stage 6 Look","Farm Stage 6 No Look","Farm Stage 6 Pull","Farm Stage 6 3","Farm Stage 6 Pull 2","Farm Stage 6 Pull Return","Farm Stage 6 Pull Refuse","Farm Stage 6 4","Farm Stage 6 5","Farm Stage 6 6","Farm Stage 6 7","Farm Stage 6 8"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'AlexFarmWorkStage6'>>",
+			unlocked: $scenePassages.includes("AlexFarmWorkStage6")
+		},
+		"AlexFarmSelfMilkingCaught":{
+			name:"Alex Farm Self Milking Caught",
+			startPassage:"Farm Barn Caught",
+			passages:[],
+			manualVariableChanges:"",
+			unlocked: $scenePassages.includes("AlexFarmSelfMilkingCaught")
+		},
+		"WhitneySchoolBully1":{
+			name:"Whitney School Bully 1",
+			startPassage:"Scene Viewer passages",
+			passages:[],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 0>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully1")
+		},
+		"WhitneySchoolBully2":{
+			name:"Whitney School Bully 2",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Locker","Bully Fight","Bully Fight Finish"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 1>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully2")
+		},
+		"WhitneySchoolBully3":{
+			name:"Whitney School Bully 3",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Fight","Bully Fight Finish","Bully Top","Bully Top Flaunt"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 2>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully3")
+		},
+		"WhitneySchoolBully4":{
+			name:"Whitney School Bully 4",
+			startPassage:"Scene Viewer passages",
+			passages:["Bully Fight","Bully Fight Finish","Bully Strip","Bully Strip Flaunt","Bully Walk","Bully Walk Flaunt","Bully Refuse"],
+			manualVariableChanges:"<<set $sceneViewSwitch to 'schoolBully'>><<set $bullyevent to 3>>",
+			unlocked: $scenePassages.includes("WhitneySchoolBully4")
+		},
+	}>>
+<</if>>
+<</widget>>
+
+<<widget "scenesSearch">>
+	<span class="red">Avoid updating your games while your replaying a scene.<<if $debug isnot 0>> "Teleporting" during a replay will break saves, avoid it if you don't know how to fix saves.<</if>></span>
+	<br>
+	Scenes per page (Click search to update): <<numberslider "_itemsPerPage" "10" 5 40 5>>
+	<br><br>
+	Search: <<textbox "_sceneSearch" "">>
+	<<link Search>>
+		<<set _sceneSearch to _sceneSearch.replace(/[^a-zA-Z 0-9]+/g,"")>>
+		<<set _listPage to 1>>
+		<<updateSceneViewer>>
+	<</link>>
+	<br><br>
+<</widget>>
+
+<<widget "scenesViewerCalc">>
+<<if _sceneSearch.length is 0>>
+	<<set _scenes to clone($scenes)>>
+<<else>>
+	<<set _scenes to {}>>
+	<<for _label, _value range $scenes>>
+		<<set _lowerName to clone(_value.name).toLowerCase()>>
+		<<set _lowerPassages to "".concat(_value.startPassage).toLowerCase()>>
+		<<if _value.name.toLowerCase().includes(_sceneSearch.toLowerCase()) or "".concat(_value.startPassage).toLowerCase().includes(_sceneSearch.toLowerCase())>>
+			<<run _scenes[_label] to clone(_value)>>
+		<</if>>
+	<</for>>
+<</if>>
+<<set _keys to Object.keys(_scenes)>>
+<<set _keys to _keys.sort()>>
+<<set _scenesAvaliable to _keys.length gt 0>>
+<<if _listPage is undefined>>
+	<<set _listPage to 1>>
+<</if>>
+<<set _listMaxItems to _itemsPerPage>>
+<<set _listPageMax to Math.ceil(_keys.length / _listMaxItems)>>
+<<set _indexStart to ((_listPage - 1) * _listMaxItems)>>
+<<set _indexEnd to (_indexStart + _listMaxItems gt _keys.length ? _keys.length : _indexStart + _listMaxItems)>>
+<</widget>>
+
+<<widget "scenesViewer">>
+<<if _scenesAvaliable>>
+	<<for _i to _indexStart; _i lt _indexEnd; _i++>>
+		<<set _item to _scenes[_keys[_i]]>>
+		<<if _item.unlocked is false and $debug is 0>>
+			<span class="no-numberify red">
+				Locked
+			</span>
+		<<elseif _item.name is undefined or _item.startPassage is undefined or _item.passages is undefined>>
+			<span class="no-numberify red">
+				Error in key '<<print _keys[_i]>>'.
+			</span>
+		<<else>>
+			<<capture _item>>
+				<span class="no-numberify">
+					<<link [[_item.name + " | " + _item.startPassage|_item.startPassage]]>><<setupReplayScene _item.name _item.startPassage _item.passages>><<print _item.manualVariableChanges>><</link>>
+				</span>
+			<</capture>>
+		<</if>>
+	<</for>>
+<<else>>
+	No Scenes Found.
+<</if>>
+<</widget>>
+
+<<widget "scenesViewerControls">>
+<<set _disabled = _listPage > 1 ? "" : "disabled">>
+<div @class="'div-link btn-pagination prev ' + _disabled">
+	<<link "Previous">>
+		<<if _listPage > 1>>
+			<<set _listPage -= 1>>
+			<<updateSceneViewer>>
+		<</if>>
+	<</link>>
+	<div class="btn-pagination-arrow">&lt;</div>
+</div>
+<div>
+	<<print (_listPage) + " out of " + _listPageMax>>
+</div>
+<<set _disabled = _listPage < _listPageMax ? "" : "disabled">>
+<div @class="'div-link btn-pagination next ' + _disabled">
+	<<link "Next">>
+		<<if _listPage < _listPageMax>>
+			<<set _listPage += 1>>
+			<<updateSceneViewer>>
+		<</if>>
+	<</link>>
+	<div class="btn-pagination-arrow">&gt;</div>
+</div>
+<<run linkifyDivs('#scenesViewerControls')>>
+<</widget>>
+
+<<widget "updateSceneViewer">>
+	<<scenesViewerCalc>>
+	<<replace "#scenesViewer">><<scenesViewer>><</replace>>
+	<<replace "#scenesViewerControls">><<scenesViewerControls>><</replace>>
+<</widget>>
+
+<<widget "saveCompareTool">>
+Stored Variables are lost on page refresh.
+<div id="saveCompareUI">
+	<<saveCompareUI>>
+</div>
+<</widget>>
+
+<<widget "saveCompareUI">>
+<<link "Store Save1">><<set window.variableData1 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<print (window.variableData1 isnot undefined ? "(Stored)" : "")>>
+<br>
+<<link "Store Save2">><<set window.variableData2 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<print (window.variableData2 isnot undefined ? "(Stored)" : "")>>
+<br><br>
+<<if window.variableData1 and window.variableData2>>
+	<<link "Compare Saves">><<set _comparedResult to saveDataCompare(window.variableData1,window.variableData2)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<</if>>
+<<if _comparedResult>>
+	<<set _skip to ["map","NPCName","NPCList","saveDetails","lastgenerated","description","npcadult","lastOptions","danger","lock","femaleclimax","anusactiondefault","anusactioncarry","enemyhealthmax","enemyhealth","enemyarousal","mouthactiondefault","enemyanger","npcspeechcycle","mouthactioncarry","rng","pass","speechcycle"]>>
+	<<if Object.keys(_comparedResult).length gt 0>>
+		<div id="comparedResult">
+			<<for _label, _value range _comparedResult>>
+				<<if _skip.includes(_label)>>
+					<<continue>>
+				<</if>>
+				<div class="item">
+					<<if typeof _value[0] === 'object'>>
+						<<print _label>>
+						<br><br>
+						<<print JSON.stringify(_value[0])>>
+						<br><br>
+						<<print JSON.stringify(_value[1])>>
+					<<else>>
+						<<print _label>> - <<print _value[0]>> - <<print _value[1]>>
+					<</if>>
+				</div>
+			<</for>>
+		</div>
+	<<else>>
+		Saves Identical
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "freezePlayerStats">>
+<<set $statFreeze to true>>
+<<set $frozenValues to {}>>
+<<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
+<<set $frozenKeys to Object.keys(SugarCube.State.variables)>>
+<<run $frozenKeys.forEach(function(key){
+	if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
+		SugarCube.State.variables.frozenValues[key] = clone(SugarCube.State.variables[key]);
+	}
+})>>
+<</widget>>
+
+<<widget "unfreezePlayerStats">>
+<<unset $statFreeze>>
+<<if $frozenValues>>
+	<<run Object.keys(SugarCube.State.variables.frozenValues).forEach(function(key){
+		SugarCube.State.variables[key] = clone(SugarCube.State.variables.frozenValues[key]);
+	})>>
+<</if>>
+<<if $frozenKeys>>
+	<<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
+	<<run Object.keys(SugarCube.State.variables).forEach(function(key){
+		if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
+			if(!SugarCube.State.variables.frozenKeys.includes(key)){
+				delete SugarCube.State.variables[key];
+			}
+		}
+	})>>
+<</if>>
+<<unset $frozenValues>>
+<<unset $frozenKeys>>
+<</widget>>

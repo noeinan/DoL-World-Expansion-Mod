@@ -35,16 +35,31 @@
 <<set $whitechance to 90>>
 <<set $blackchance to 10>>
 <<set $bestialitydisable to "f">>
+<<<<<<< HEAD
 <<set $swarmdisable to "t">>
 <<set $spiderdisable to "t">>
 <<set $slugdisable to "t">>
 <<set $waspdisable to "t">>
 <<set $bodywritingdisable to "t">>
 <<set $parasitedisable to "t">>
+=======
+<<set $swarmdisable to "f">>
+<<set $spiderdisable to "f">>
+<<set $slugdisable to "f">>
+<<set $waspdisable to "f">>
+<<set $beedisable to "f">>
+<<set $lurkerdisable to "f">>
+<<set $horsedisable to "f">>
+<<set $bodywritingdisable to "f">>
+<<set $parasitedisable to "f">>
+<<set $bestialitydisable to "f">>
+>>>>>>> vrel/master
 <<set $slimedisable to "f">>
 <<set $voredisable to "t">>
 <<set $tentacledisable to "f">>
 <<set $analdisable to "f">>
+<<set $analingusdisablegiving to "f">>
+<<set $analingusdisablereceiving to "f">>
 <<set $transformdisable to "f">>
 <<set $hirsutedisable to "t">>
 <<set $breastfeedingdisable to "t">>
@@ -84,6 +99,8 @@
 <<set $clothesPriceSchool to 1>>
 <<set $clothesPriceLewd to 1>>
 <<set $rentmod to 1>>
+
+<<set $notifyUpdate = true>>
 
 <<startingPlayerImageReset>>
 <</widget>>
@@ -128,6 +145,7 @@
 <</widget>>
 
 <<widget "settings">>
+<<updatehistorycontrols>><!-- hides controls on going back in history after enabling that option -->
 <<if $passage is "Start">>
 <div id="settingsExit">
 	<<settingsExit>>
@@ -243,6 +261,7 @@
 	<<if $gamemode is "soft" or $alluremod lt 1>>
 		<<set $feats.soft to true>>
 	<</if>>
+	<<updatehistorycontrols>>
 	<<initnpcgender>>
 	<<hirsuteHideCheck>>
 	<<tanned 0 "ignoreCoverage">>
@@ -770,6 +789,15 @@
 			<label><div class="settingsToggle">
 			<<print '<<checkbox "$waspdisable" "t" "f" ' + ($waspdisable is "f" ? "checked" : "") + '>>'>> Enable wasps
 			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$beedisable" "t" "f" ' + ($beedisable is "f" ? "checked" : "") + '>>'>> Enable bees
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$lurkerdisable" "t" "f" ' + ($lurkerdisable is "f" ? "checked" : "") + '>>'>> Enable lurkers
+			</div></label>
+			<label><div class="settingsToggle">
+			<<print '<<checkbox "$horsedisable" "t" "f" ' + ($horsedisable is "f" ? "checked" : "") + '>>'>> Enable horses and centaur
+			</div></label>
 			<div style="clear:both;">/*Keep at end of toggles*/</div>
 		</div>
 	<</widget>>
@@ -842,6 +870,15 @@
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$analdisable" "t" "f" ' + ($analdisable is "f" ? "checked" : "") + '>>'>> Enable anal
 	</div></label>
+	<div class="settingsToggle" role="group" aria-labelledby="settingsAnalingusHead">
+	<span id="settingsAnalingusHead">Analingus:</span>
+	<label>
+		<<print '<<checkbox "$analingusdisablegiving" "t" "f" ' + ($analingusdisablegiving is "f" ? "checked" : "") + '>>'>> Giving
+	</label>
+	<label>
+		<<print '<<checkbox "$analingusdisablereceiving" "t" "f" ' + ($analingusdisablereceiving is "f" ? "checked" : "") + '>>'>> Receiving
+	</label>
+	</div>
 	<label><div class="settingsToggle">
 	<<print '<<checkbox "$pbdisable" "t" "f" ' + ($pbdisable is "f" ? "checked" : "") + '>>'>> Enable pubic hair growth
 	</div></label>
@@ -905,7 +942,6 @@
 
 <<widget "generalSettings">>
 	<span class="gold">Images</span>
-	<br>
 	<<if StartConfig.enableImages is true>>
 		<label><div class="settingsToggleBig">
 		<<print '<<checkbox "$images" 0 1 ' + ($images is 1 ? "checked" : "") + '>>'>> Enable images
@@ -996,19 +1032,18 @@
 			<<script>>jQuery(document).ready(() => { jQuery('#textbox-facestyle').css('width', '100%').css('min-width', 'unset').css('height', '0.75em'); });<</script>>
 			</div></label>
 		<</if>>
-		<br>
 	<<else>>
+		<br>
 		Not Available
 	<</if>>
-	<div id="spacer" class="">&nbsp;</div>
 	<span class="gold">Numbered link navigation</span>
-	<br>
 	<<if StartConfig.enableLinkNumberify is true>>
 		<label><div class="settingsToggleBig">
 		<<print '<<checkbox "$numberify_enabled" 0 1 ' + ($numberify_enabled is 1 ? "checked" : "") + '>>'>> Enable numbered link navigation
 		<div class="description">Allows navigation with keyboard.</div>
 		</div></label>
 	<<else>>
+		<br>
 		Not Available
 	<</if>>
 	<br><br>
@@ -1017,6 +1052,8 @@
 	<br>
 	<label>24-hour <<print '<<radiobutton "$timestyle" "military" ' + ($timestyle is "military" ? "checked" : "") + '>>'>></label> |
 	<label>12-hour <<print '<<radiobutton "$timestyle" "ampm" ' + ($timestyle is "ampm" ? "checked" : "") + '>>'>></label>
+	<br>
+	<<print '<<checkbox "$oldclock" false true ' + ($oldclock is true ? "checked" : "") + '>>'>> Use old clock style in the sidebar
 	<br><br>
 
 	<span class="gold">Skill check display</span>
@@ -1027,7 +1064,6 @@
 	<br><br>
 
 	<span class="gold">In game hints and tips</span>
-	<br>
 	<label><div class="settingsToggleBig">
 	<<print '<<checkbox "$tipdisable" "t" "f" ' + ($tipdisable is "f" ? "checked" : "") + '>>'>> Enable hints and tips
 	<div class="description">Shows in the sidebar.</div>
@@ -1048,7 +1084,7 @@
 	<<textbox "$saveName" $saveName>>
 	<div class="description">Shows in the save menu in place of the save id.</div>
 	<div class="description"><span class="red">Only 10 characters at most will show in the save menu, leave empty to show the save ID.</span></div>
-	<br><br>
+	<br>
 	<span class="gold">Game Zoom</span> -Will allow you to adjust the size of game elements and text. 100 is the default value.
 	A value of 50 will zoom the page out to half of its original size, while a value of 200 will zoom the page in to double its size.
 	The test button will not save the zoom value into the current save.
@@ -1064,20 +1100,53 @@
 	<input type="button" value="Reset Zoom" onclick="zoom(100, true)"/>
 	<input type="button" value="Set Zoom" onclick="zoom(undefined, true)"/>
 	<br><br>
+
+	<span class="gold">History depth</span><br>
+	<div class="description">Enables going back in history up to N-1 passages. Changes take effect on settings exit.<br>
+	<span class="red"><b>WARNING:</b> May cause slowdowns. Additionally, values above 5 can exceed your localStorage quota and cause <br>
+	<b>troubles with saves</b>. Use at your own risk.</span>
+	</div>
+	<<numberslider "$maxStates" $maxStates 1 20 1>>
+	<br><br>
+
 	<span class="gold">Cheats menu</span>
-	<br>
 	<label><div class="settingsToggleBig">
 	<<print '<<checkbox "$cheatdisable" "t" "f" ' + ($cheatdisable is "f" ? "checked" : "") + '>>'>> Enable cheats
 	<div class="description">Button shows in sidebar. <span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span></div>
 	</div></label>
 	<br><br>
+	<span class="gold">Gallery</span> - these will not affect your save in any way.
+	<br>
 	<<if version.major gt 2 or version.minor gt 29>>
 		<<link [["Character Viewer"|Clothes Testing]]>>
 			<<set $lastPassage to $passage>>
 			<<set $gameTanImgSetting to clone($skinColor.tanImgEnabled)>>
+			<<if $cheatdisable is "f" and $feats.locked is false>>
+				<<set $cheatdisable to "t">>
+			<</if>>
 		<</link>>
-		- This will allow you to have a play with the character sprites, this will not affect your save in any way.
+		- This will allow you to have a play with the character sprites.
+		<br>
 	<</if>>
+	<<if $passage isnot "Start">>
+		<<link [["Scene Viewer"|Scene Viewer]]>>
+			<<set $lastPassage to $passage>>
+			<<seenPassageChecks>>
+			<<if $cheatdisable is "f" and $feats.locked is false>>
+				<<set $cheatdisable to "t">>
+			<</if>>
+		<</link>>
+		- This will allow you to replay scenes that you have unlocked.
+		<br>
+	<<else>>
+		The Scene Viewer is not avaliable on the start page.
+		<br>
+	<</if>>
+	<<link [["Test Renderer"|Renderer Test Page]]>>
+		<<set $lastPassage to $passage>>
+	<</link>>
+	- This will check your browser's capabilities required for new renderer.
+	<br>
 
 <</widget>>
 

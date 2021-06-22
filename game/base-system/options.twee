@@ -3,54 +3,49 @@
 <<widget "options">>
 
 <h3>Options</h3>
-
-<div class="div-link button">
-	Fix stuck animations
-	<<link "">><<run fixStuckAnimations()>><</link>>
-</div>
-<div class="small-description">Use this button if some animations aren't playing.</div>
-<br>
-<<run linkifyDivs('#customOverlayContent')>>
-
-<label><<print '<<checkbox "$confirmSave" false true '+($confirmSave is true ? "checked" : "")+'>>'>>
-	Require Confirmation on Save
-</label>
-<br>
-<label><<print '<<checkbox "$confirmLoad" false true '+($confirmLoad is true ? "checked" : "")+'>>'>>
-	Require Confirmation on Load
-</label>
-<br>
-<label><<print '<<checkbox "$confirmDelete" false true '+($confirmDelete is true ? "checked" : "")+'>>'>>
-	Require Confirmation on Delete
-</label>
-<br>
-<<if $saveDetails isnot undefined>>
-	How many days after exporting will the export warning show:
-	<br>
-	
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 5 ' + ($saveDetails.exported.frequency is 5 ? "checked" : "") + '>>'>>5</label> |
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 10 ' + ($saveDetails.exported.frequency is 10 ? "checked" : "") + '>>'>>10</label> |
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 15 ' + ($saveDetails.exported.frequency is 15 ? "checked" : "") + '>>'>>15</label> |
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 20 ' + ($saveDetails.exported.frequency is 20 ? "checked" : "") + '>>'>>20</label> |
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 25 ' + ($saveDetails.exported.frequency is 25 ? "checked" : "") + '>>'>>25</label> |
-	<label><<print '<<radiobutton "$saveDetails.exported.frequency" 1000000 ' + ($saveDetails.exported.frequency is 1000000 ? "checked" : "") + '>>'>>Never</label>
-<</if>>
-<<if $debug is 1>>
-	<br>
-	<label><<print '<<checkbox "$prepareSaveDetails" false true '+($prepareSaveDetails is true ? "checked" : "")+'>>'>>
-		Run `prepareSaveDetails`. Disabling will cause saving/deleting on older version to not update the save list on newer versions but may speed up refresh loading times.
-	</label>
-<</if>>
+Some of these will only have an effect after changing passage. Changing location, advancing combat/sex or similar actions will be enough.
 <br><br>
-These require a passage change (move location, enter/exit a wardrobe, etc) to apply.
+<span class="gold">General Options</span>
 <br>
+/*<label><<checkbox "$notifyUpdate" false true autocheck>> Notify when there's a new game update available</label>
+<br>*/
+<<link "Check for updates">>
+	<<run checkNewVersion()>>
+<</link>>
+<br><br>
+Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#passages" "reducedLineHeight">><</link>> | <<link "1.5">><<set $reducedLineHeight to true>><<addclass "#passages" "reducedLineHeight">><</link>>
+<br><br>
+<label>
+	<<checkbox "$newWardrobeStyle" false true autocheck>>
+	Show the new wardrobe style
+</label>
+<br>
+<label>
+	<<checkbox "$neverNudeMenus" false true autocheck>>
+	Hide player nudity in menus
+</label>
+<br>
+<label>
+	<<checkbox "$showCaptionText" false true autocheck>>
+	Show Caption Text in Sidebar
+</label>
+<br>
+<label>
+	<<checkbox "$skipStatisticsConfirmation" false true autocheck>>
+	Skip asking for confirmation when viewing Extra Stats
+</label>
+
 <<if $map isnot undefined>>
+	<br><br>
+	<span class="gold">Map Options</span>
 	<br>
-	<label><<print '<<checkbox "$map.movement" false true '+($map.movement is true ? "checked" : "")+'>>'>>
+	<label>
+		<<checkbox "$map.movement" false true autocheck>>
 		Enable map movement by clicking/touching the map icons
 	</label>
 	<br>
-	<label><<print '<<checkbox "$map.markers" false true '+($map.markers is true ? "checked" : "")+'>>'>>
+	<label>
+		<<checkbox "$map.markers" false true autocheck>>
 		Show clickable area on map
 	</label>
 	<br>
@@ -60,59 +55,50 @@ These require a passage change (move location, enter/exit a wardrobe, etc) to ap
 	<label><<print '<<checkbox "$map.top" false true '+($map.top is true ? "checked" : "")+'>>'>>
 		Move the map above the map links
 	</label>
-	<br>
-	/*<label><<print '<<checkbox "$map.hideLinks" false true '+($map.hideLinks is true ? "checked" : "")+'>>'>>
-		Hide links that can be accessed via the map movement (Requires map movement to be enabled).
-	</label>*/
-	<br>
 <</if>>
-
-<label><<print '<<checkbox "$newWardrobeStyle" false true '+($newWardrobeStyle is true ? "checked" : "")+'>>'>>
-	Show the new wardrobe style
-</label>
-<br>
-<label><<print '<<checkbox "$neverNudeMenus" false true '+($neverNudeMenus is true ? "checked" : "")+'>>'>>
-	Hide player nudity in menus
-</label>
-
 <br><br>
-<label><<print '<<checkbox "$showCaptionText" false true '+($showCaptionText is true ? "checked" : "")+'>>'>>
-	Show Caption Text in Sidebar
-</label>
+<span class="gold">Image Options</span>
 <br>
+Sidebar character renderer:
+<<radiovar "$sidebarRenderer" "img" "Old">><<updatesidebarimg>><</radiovar>>
+| <<radiovar "$sidebarRenderer" "canvas" "New">><<updatesidebarimg>><</radiovar>>
+| <<radiovar "$sidebarRenderer" "both" "Both">><<updatesidebarimg>><</radiovar>>
+<br>
+
 Lighten the background of the character:
-<label><<print '<<radiobutton "$imgLighten" "" ' + ($imgLighten is "" ? "checked" : "") + '>>'>>Disabled</label> |
-<label><<print '<<radiobutton "$imgLighten" "imgLighten" ' + ($imgLighten is "imgLighten" ? "checked" : "") + '>>'>>Lighten</label> |
-<label><<print '<<radiobutton "$imgLighten" "imgLighten2" ' + ($imgLighten is "imgLighten2" ? "checked" : "") + '>>'>>Lighten further</label>
+<label><<radiobutton "$imgLighten" "" autocheck>> Disabled</label> |
+<label><<radiobutton "$imgLighten" "imgLighten" autocheck>> Lighten</label> |
+<label><<radiobutton "$imgLighten" "imgLighten2" autocheck>> Lighten further</label>
 <br>
 Closed sidebar stats:
-<br>
-<label><<print '<<radiobutton "$sidebarStats" "Disabled" ' + ($sidebarStats is "Disabled" ? "checked" : "") + '>>'>>Disabled</label> |
-<label><<print '<<radiobutton "$sidebarStats" "Limited" ' + ($sidebarStats is "Limited" ? "checked" : "") + '>>'>>Limited to important only</label> |
-<label><<print '<<radiobutton "$sidebarStats" "All" ' + ($sidebarStats is "All" ? "checked" : "") + '>>'>>Show all</label>
+<label><<radiobutton "$sidebarStats" "Disabled" autocheck>> Disabled</label> |
+<label><<radiobutton "$sidebarStats" "Limited" autocheck>> Limited to important only</label> |
+<label><<radiobutton "$sidebarStats" "All" autocheck>> Show all</label>
 <br>
 Closed sidebar time:
+<label><<radiobutton "$sidebarTime" "Disabled" autocheck>> Disabled</label> |
+<label><<radiobutton "$sidebarTime" "top" autocheck>> Above sidebar stats</label> |
+<label><<radiobutton "$sidebarTime" "bottom" autocheck>> Below sidebar stats</label>
 <br>
-<label><<print '<<radiobutton "$sidebarTime" "Disabled" ' + ($sidebarTime is "Disabled" ? "checked" : "") + '>>'>>Disabled</label> |
-<label><<print '<<radiobutton "$sidebarTime" "top" ' + ($sidebarTime is "top" ? "checked" : "") + '>>'>>Above sidebar stats</label> |
-<label><<print '<<radiobutton "$sidebarTime" "bottom" ' + ($sidebarTime is "bottom" ? "checked" : "") + '>>'>>Below sidebar stats</label>
-<br>
-/*<label><<print '<<checkbox "$sidebarImage" false true '+($sidebarImage is true ? "checked" : "")+'>>'>>
+/*<label>
+	<<checkbox "$sidebarImage" false true autocheck>>
 	Use sidebar icons rather than text
-</label>*/
+</label>
+<br>*/
+<label><<checkbox "$showDebugRenderer" false true autocheck>> Enable renderer debugger</label>
+
+<br><br>
+<span class="gold">Combat Options</span>
 <br>
 Combat Controls:
-<br>
-<label><<print '<<radiobutton "$combatControls" "radio" ' + ($combatControls is "radio" ? "checked" : "") + '>>'>>Radio Buttons</label> |
-<label><<print '<<radiobutton "$combatControls" "lists" ' + ($combatControls is "lists" ? "checked" : "") + '>>'>>Lists (No width limit)</label> |
-<label><<print '<<radiobutton "$combatControls" "limitedLists" ' + ($combatControls is "limitedLists" ? "checked" : "") + '>>'>>Lists (Width Limit)</label>
-<<if $debug is 1>>
-| <label><<print '<<radiobutton "$combatControls" "disabled" ' + ($combatControls is "disabled" ? "checked" : "") + '>>'>>Disable</label>
-<</if>>
-<br><br>
-Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#passages" "reducedLineHeight">><</link>> | <<link "1.5">><<set $reducedLineHeight to true>><<addclass "#passages" "reducedLineHeight">><</link>>
+<label><<radiobutton "$combatControls" "radio" autocheck>> Radio Buttons</label> |
+<label><<radiobutton "$combatControls" "lists" autocheck>> Lists (No width limit)</label> |
+<label><<radiobutton "$combatControls" "limitedLists" autocheck>> Lists (Width Limit)</label>
 <br><br>
 
+
+<div class="small-description">To fix animations that aren't playing correctly you can click on them, or press <code>[F]</code> key, or use the button below.</div>
+<br>
 <<if $passage isnot "Start">>
 	<<button "Restart Game">>
 		<<script>>
@@ -120,6 +106,10 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		<</script>>
 	<</button>>
 <</if>>
+
+<<button "Fix stuck animations">>
+	<<run fixStuckAnimations()>>
+<</button>>
 
 <</widget>>
 
@@ -136,7 +126,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 	<br><br>
 	<<if $passage is "Start" or $passage is "Start2">>
 		Please load a save before trying to export a save file.
-	<<elseif ($dancing is 0 and $combat is 0) or $debug is 1>>
+	<<elseif ($dancing is 0 and $combat is 0 and $replayScene is undefined) or $debug is 1>>
 		<<set _exportName to "'degrees-of-lewdity"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
 		<input type="button" value="Save to file" @onclick="'updateExportDay();SugarCube.Save.export('+_exportName+')'">
 	<<else>>
@@ -145,7 +135,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 <</if>>
 
 <h4>Text Import/Export</h4>
-<<if $dancing is 0 and $combat is 0>>
+<<if ($dancing is 0 and $combat is 0 and $replayScene is undefined) or $debug is 1>>
 	This feature lets you transfer saves between devices when one or more does not allow access to save files, such as on Android.
 	<br>
 	To save, click on "Get Save Data", then copy and paste the save data where required.
@@ -177,8 +167,11 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 
 <<widget "saveList">>
 <<run prepareSaveDetails()>>
-<<if $passage isnot "Start" and $passage isnot "Start2">>
-	<<set $saveUnlock to true>>
+<<if $passage isnot "Start" and $passage isnot "Start2" and $replayScene is undefined>>
+	<<set _saveUnlock to true>>
+<</if>>
+<<if $replayScene isnot undefined>>
+	The scene viewer is currently in use, preventing the use of the save system.
 <</if>>
 <<set _saveDetails = getSaveDetails()>>
 <!--Extra checks incase the above fails for some reason-->
@@ -246,7 +239,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
-							<<if $saveUnlock>>
+							<<if _saveUnlock>>
 								<<set _onclick to "save("+_slot+", false, "+_saveDetails.slots[_slot].metadata.saveId+", '"+$saveName+"')">>
 								<input type="button" class="saveMenuButton" value="Save" @onclick="clone(_onclick)"/>
 							<<else>>
@@ -271,7 +264,7 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
-							<<if $saveUnlock>>
+							<<if _saveUnlock>>
 								<input type="button" class="saveMenuButton" value="Save" @onclick="'save('+ _slot +',true,'+$saveId+', `'+$saveName+'`)'"/>
 							<<else>>
 								<input type="button" value="Save" disabled/>
@@ -297,6 +290,38 @@ Passage Line Height: <<link "1.75">><<unset $reducedLineHeight>><<removeclass "#
 		</div>
 	<</for>>
 </div>
+<label>
+	<<checkbox "$confirmSave" false true autocheck>>
+	Require Confirmation on Save
+</label>
+<br>
+<label>
+	<<checkbox "$confirmLoad" false true autocheck>>
+	Require Confirmation on Load
+</label>
+<br>
+<label>
+	<<checkbox "$confirmDelete" false true autocheck>>
+	Require Confirmation on Delete
+</label>
+<br><br>
+<<if $saveDetails isnot undefined>>
+	How many days after exporting will the export warning show:
+	<br>
+	<label><<radiobutton "$saveDetails.exported.frequency" 5 autocheck>>5</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 10 autocheck>>10</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 15 autocheck>>15</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 20 autocheck>>20</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 30 autocheck>>30</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 60 autocheck>>60</label> |
+	<label><<radiobutton "$saveDetails.exported.frequency" 365 autocheck>>365</label>
+<</if>>
+<<if $debug is 1>>
+	<br>
+	<label><<print '<<checkbox "$prepareSaveDetails" false true '+($prepareSaveDetails is true ? "checked" : "")+'>>'>>
+		Run `prepareSaveDetails`. Disabling will cause saving/deleting on older version to not update the save list on newer versions but may speed up refresh loading times.
+	</label>
+<</if>>
 <</widget>>
 
 <<widget "clearAllWarning">>

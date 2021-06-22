@@ -135,11 +135,15 @@
 <</widget>>
 
 <<widget "struggle_name">>
-<<for _i to 0; _i lt $struggle.number; _i++>>
-	<<if $struggle.enemy[_i].location is $args[0]>>
-		<<print $struggle.enemy[_i].name>> <<print $struggle.enemy[_i].description>>
-	<</if>>
-<</for>>
+<<if $args[0] isnot undefined>>
+	<<print $struggle.enemy[$args[0]].description>> <<print $struggle.enemy[$args[0]].name>>
+<<else>>
+	<<for _i to 0; _i lt $struggle.number; _i++>>
+		<<if $struggle.enemy[_i].location is $args[0]>>
+			<<print $struggle.enemy[_i].name>> <<print $struggle.enemy[_i].description>>
+		<</if>>
+	<</for>>
+<</if>>
 <</widget>>
 
 
@@ -250,8 +254,8 @@
 <</if>>
 <br>
 
-<<if $arousal gte 10000>>
-	<<orgasmpassage>>
+<<if $arousal gte $arousalmax>>
+	<<orgasm>>
 <</if>>
 <<set $seconds += 10>>
 <<if $seconds gte 60>>
@@ -309,6 +313,56 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 		<br>
 	<</if>>
 	<br>
+	<<if $feetuse is 0>>
+		Your feet are free.
+		<br>
+		<<if $feetactiondefault is "rest">>
+			| <label><span class="meek">Keep still</span> <<radiobutton "$feetaction" "rest" checked>></label>
+		<<else>>
+			| <label><span class="meek">Keep still</span> <<radiobutton "$feetaction" "rest">></label>
+		<</if>>
+		<br>
+		<<if $feetactiondefault is "evade">>
+			| <label><span class="meek">Dodge</span> <<radiobutton "$feetaction" "evade" checked>></label>
+		<<else>>
+			| <label><span class="meek">Dodge</span> <<radiobutton "$feetaction" "evade">></label>
+		<</if>>
+		<br>
+		<<if $feetactiondefault is "plant">>
+			| <label><span class="meek">Plant</span> <<radiobutton "$feetaction" "plant" checked>></label>
+		<<else>>
+			| <label><span class="meek">Plant</span> <<radiobutton "$feetaction" "plant">></label>
+		<</if>>
+		<br>
+	<</if>>
+	<br>
+	<<for _i to 0; _i lt $struggle.number; _i++>>
+		<<if $struggle.enemy[_i].location is "fleeing" or $struggle.enemy[_i].location is "lurking">>
+			The <<struggle_name _i>> keeps at a distance.
+			<br>
+			<<if $farm_stage gte 10 and $lurkers_held lt 1>>
+				<<if $leftarm isnot "grappled" and $leftarm isnot "bound">>
+					Left arm:
+					<<if $leftactiondefault is "capture">>
+						| <label><span class="def">Hurl net</span> <<radiobutton "$leftaction" "capture" checked>></label>
+					<<else>>
+						| <label><span class="def">Hurl net</span> <<radiobutton "$leftaction" "capture">></label>
+					<</if>>
+					<br>
+				<</if>>
+				<<if $rightarm isnot "grappled" and $rightarm isnot "bound">>
+					Right arm:
+					<<if $rightactiondefault is "capture">>
+						| <label><span class="def">Hurl net</span> <<radiobutton "$rightaction" "capture" checked>></label>
+					<<else>>
+						| <label><span class="def">Hurl net</span> <<radiobutton "$rightaction" "capture">></label>
+					<</if>>
+					<br>
+				<</if>>
+			<</if>>
+			<hr>
+		<</if>>
+	<</for>>
 	<<if $mouthuse is "struggle" and $struggle.mouth.creature>>
 		A <<print $struggle.mouth.creature>> clings to your face.
 		<br>
@@ -810,23 +864,51 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<</if>>
 <</if>>
 
+
+<<if $feetaction is "rest">>
+	<<set $feetaction to 0>><<set $feetactiondefault to "rest">>
+	<<unset $dodging>>
+	<<unset $feet_planted>>
+	You rest your legs.
+<</if>>
+
+<<if $feetaction is "evade">>
+	<<set $feetaction to 0>><<set $feetactiondefault to "evade">>
+	<<set $dodging to 1>>
+	<<unset $feet_planted>>
+	You remain light on your feet, ready to dodge incoming attacks.
+<</if>>
+
+<<if $feetaction is "plant">>
+	<<set $feetaction to 0>><<set $feetactiondefault to "plant">>
+	<<unset $dodging>>
+	<<set $feet_planted to 1>>
+	You plant your feet, helping you get a firm grip.
+	<<feetskilluse>>
+<</if>>
+
 <<if $leftaction is "rest">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
 <</if>>
 <<if $rightaction is "rest">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
 <</if>>
-
 <<if $leftaction is "mouth_stroke" or $rightaction is "mouth_stroke">>
 	<<if $leftaction is "mouth_stroke">><<set $leftaction to 0>><<set $leftactiondefault to "mouth_stroke">><<submission 2>><</if>>
 	<<if $rightaction is "mouth_stroke">><<set $rightaction to 0>><<set $rightactiondefault to "mouth_stroke">><<submission 2>><</if>>
 	You stroke the <<print $struggle.mouth.creature>>, hoping to put it at ease.<<neutral 5>>
 <</if>>
 
+
+<<if $feet_planted gte 1>>
+	<<set _grip_strength to ($handskill + $feetskill + ($physique / 20))>>
+<<else>>
+	<<set _grip_strength to ($handskill + ($physique / 20))>>
+<</if>>
 <<if $leftaction is "mouth_strengthen" and $rightaction is "mouth_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "mouth_strengthen">><<set $rightaction to 0>><<set $rightactiondefault to "mouth_strengthen">>
 	You tighten your grip on the <<print $struggle.mouth.creature>> clinging to your face with both hands.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.mouth.grip += 4>>
 	<<else>>
@@ -838,7 +920,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $leftaction is "mouth_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "mouth_strengthen">>
 	You tighten your grip on the <<print $struggle.mouth.creature>> clinging to your face.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.mouth.grip += 2>>
 	<<else>>
@@ -850,7 +932,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $rightaction is "mouth_strengthen">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "mouth_strengthen">>
 	You tighten your grip on the <<print $struggle.mouth.creature>> clinging to your face.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.mouth.grip += 2>>
 	<<else>>
@@ -970,7 +1052,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<if $leftaction is "vagina_strengthen" and $rightaction is "vagina_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "vagina_strengthen">><<set $rightaction to 0>><<set $rightactiondefault to "vagina_strengthen">>
 	You tighten your grip on the <<print $struggle.vagina.creature>> clinging to your pelvis with both hands.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.vagina.grip += 4>>
 	<<else>>
@@ -982,7 +1064,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $leftaction is "vagina_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "vagina_strengthen">>
 	You tighten your grip on the <<print $struggle.vagina.creature>> clinging to your pelvis.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.vagina.grip += 2>>
 	<<else>>
@@ -994,7 +1076,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $rightaction is "vagina_strengthen">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "vagina_strengthen">>
 	You tighten your grip on the <<print $struggle.vagina.creature>> clinging to your pelvis.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.vagina.grip += 2>>
 	<<else>>
@@ -1126,7 +1208,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<if $leftaction is "penis_strengthen" and $rightaction is "penis_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "penis_strengthen">><<set $rightaction to 0>><<set $rightactiondefault to "penis_strengthen">>
 	You tighten your grip on the <<print $struggle.penis.creature>> clinging to your tummy with both hands.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.penis.grip += 4>>
 	<<else>>
@@ -1138,7 +1220,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $leftaction is "penis_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "penis_strengthen">>
 	You tighten your grip on the <<print $struggle.penis.creature>> clinging to your tummy.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.penis.grip += 2>>
 	<<else>>
@@ -1150,7 +1232,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $rightaction is "penis_strengthen">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "penis_strengthen">>
 	You tighten your grip on the <<print $struggle.penis.creature>> clinging to your tummy.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.penis.grip += 2>>
 	<<else>>
@@ -1282,7 +1364,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<if $leftaction is "anus_strengthen" and $rightaction is "anus_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "anus_strengthen">><<set $rightaction to 0>><<set $rightactiondefault to "anus_strengthen">>
 	You tighten your grip on the <<print $struggle.anus.creature>> clinging to your tummy with both hands.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.anus.grip += 4>>
 	<<else>>
@@ -1294,7 +1376,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $leftaction is "anus_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "anus_strengthen">>
 	You tighten your grip on the <<print $struggle.anus.creature>> clinging to your tummy.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.anus.grip += 2>>
 	<<else>>
@@ -1306,7 +1388,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $rightaction is "anus_strengthen">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "anus_strengthen">>
 	You tighten your grip on the <<print $struggle.anus.creature>> clinging to your tummy.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.anus.grip += 2>>
 	<<else>>
@@ -1438,7 +1520,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<if $leftaction is "chest_strengthen" and $rightaction is "chest_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "chest_strengthen">><<set $rightaction to 0>><<set $rightactiondefault to "chest_strengthen">>
 	You tighten your grip on the <<print $struggle.chest.creature>> clinging to your chest with both hands.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.chest.grip += 4>>
 	<<else>>
@@ -1450,7 +1532,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $leftaction is "chest_strengthen">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "chest_strengthen">>
 	You tighten your grip on the <<print $struggle.chest.creature>> clinging to your chest.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.chest.grip += 2>>
 	<<else>>
@@ -1462,7 +1544,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 <<elseif $rightaction is "chest_strengthen">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "chest_strengthen">>
 	You tighten your grip on the <<print $struggle.chest.creature>> clinging to your chest.
-	<<if ($handskill + ($physique / 20)) gte random(1, 2000)>>
+	<<if _grip_strength gte random(1, 2000)>>
 		Your grasp is <span class="teal">much better.</span>
 		<<set $struggle.chest.grip += 2>>
 	<<else>>
@@ -1580,7 +1662,93 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<</if>>
 	<br>
 <</if>>
+
+/*Capture should go last, so it can work on lurkers removed the same turn.*/
+<<if $leftaction is "capture" and $rightaction is "capture">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "capture">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "capture">>
+	<<for _i to 0; _i lt $struggle.number; _i++>>
+		<<if $struggle.enemy[_i].location is "fleeing">>
+			You cast your net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with both hands.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 100>>
+			<<break>>
+		<</if>>
+		<<if $struggle.enemy[_i].location is "lurking">>
+			You cast your net at the <<print $struggle.enemy[_i].name>> with both hands.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 60>>
+			<<break>>
+		<</if>>
+	<</for>>
+	<<if _capture_chance>>
+		<<set _capture_chance += $prof.net>>
+	<<else>>
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+	<</if>>
+
+<<elseif $leftaction is "capture">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "capture">>
+	<<for _i to 0; _i lt $struggle.number; _i++>>
+		<<if $struggle.enemy[_i].location is "fleeing">>
+			You cast a net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with your left hand.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 60>>
+			<<break>>
+		<</if>>
+		<<if $struggle.enemy[_i].location is "lurking">>
+			You cast a net at the <<print $struggle.enemy[_i].name>> with your left hand.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 30>>
+			<<break>>
+		<</if>>
+	<</for>>
+	<<if _capture_chance>>
+		<<set _capture_chance += $prof.net>>
+	<<else>>
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+	<</if>>
+
+<<elseif $rightaction is "capture">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "capture">>
+	<<for _i to 0; _i lt $struggle.number; _i++>>
+		<<if $struggle.enemy[_i].location is "fleeing">>
+			You cast a net at the <span class="green">recoiling</span> <<print $struggle.enemy[_i].name>> with your right hand.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 60>>
+			<<break>>
+		<</if>>
+		<<if $struggle.enemy[_i].location is "lurking">>
+			You cast a net at the <<print $struggle.enemy[_i].name>> with your right hand.
+			<<set _capture_creature to _i>>
+			<<set _capture_chance to 30>>
+			<<break>>
+		<</if>>
+	<</for>>
+	<<if _capture_chance>>
+		<<set _capture_chance += ($prof.net / 10)>>
+	<<else>>
+		You prepare to cast your net at a <<print $struggle.creature>>, <span class="pink">but they're too close.</span> You'll have to drive one back first.
+	<</if>>
+
+<</if>>
+<<if _capture_chance>>
+	<<if _capture_chance gte random(1, 100)>>
+		<span class="green">The net lands true.</span> You pull the creature into your possession.
+		<<if $struggle.enemy[_capture_creature].name is "lurker">>
+			<<set $lurkers_held += 1>>
+			<<set $stat_lurkers_captured += 1>>
+		<</if>>
+		<<set $struggle.done += 1>>
+		<<set $struggle.enemy[_capture_creature].location to "fled">>
+
+	<<else>>
+		<span class="red">The creature squirms aside.</span><<gnet>><<prof net 1>>
+	<</if>>
+<</if>>
+
 <br>
+
 
 
 <</widget>>
@@ -1721,7 +1889,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<<case 3>>
 		The <<print $struggle.penis.creature>> pushes against your <<penis>>. <span class="pink">It's about to envelop you fully.</span><<neutral 5>>
 	<<case 4>>
-		<<set _pain to $penilePain>>
+		<<set _pain to $penisPain>>
 		<<if $player.virginity.penile isnot true>>
 			The <<print $struggle.penis.creature>> <span class="pink">forces your <<penis>> inside its body.</span> It becomes tighter as more enters.
 			<<set $penisstate to "struggle_pen">><<penilestat>><<penisraped>>
@@ -2025,7 +2193,57 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 		<br>
 	<<elseif $struggle.enemy[_i].location is "lurking">>
 		<<set $rng to random(1, 100)>>
-		<<if $rng gte 81 and $mouthuse is 0>>
+		<<if $dodging gte 1>>
+			<<set _dodge_chance to (($feetskill / 2) - $drunk)>>
+			<<feetskilluse>>
+		<</if>>
+		<<set _hit_chance to random(1, 1000)>>
+		<<if _dodge_chance gte _hit_chance>>
+			<<set $dodging -= 1>>
+			<<if $underwater is 1>>
+				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> swims towards you,
+			<<elseif $struggle.enemy[_i].motion is "flying">>
+				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> flies towards you,
+			<<else>>
+				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> leaps towards you,
+			<</if>>
+			<<if $drunk gte 60>>
+				but you drunkenly stagger out of the way,
+			<<elseif $feetskill gte 800>>
+				but you dance aside,
+			<<elseif $feetskill gte 200>>
+				but you step aside,
+			<<else>>
+				but you stumble aside,
+			<</if>>
+			<<if _dodge_chance - _hit_chance gte 200>>
+				<span class="green">dodging it.</span>
+			<<else>>
+				<span class="teal">narrowly dodging it.</span>
+				<<if $worn.over_upper.name isnot "naked">>
+					<<set $worn.over_upper.integrity -= 15>>
+					It tears your $worn.over_upper.name as it passes.
+				<<elseif $worn.over_lower.name isnot "naked">>
+					<<set $worn.over_lower.integrity -= 15>>
+					It tears your $worn.over_lower.name as it passes.
+				<<elseif $worn.upper.name isnot "naked">>
+					<<set $worn.upper.integrity -= 15>>
+					It tears your $worn.upper.name as it passes.
+				<<elseif $worn.lower.name isnot "naked">>
+					<<set $worn.lower.integrity -= 15>>
+					It tears your $worn.lower.name as it passes.
+				<<elseif $worn.under_upper.name isnot "naked">>
+					<<set $worn.under_upper.integrity -= 15>>
+					It tears your $worn.under_upper.name as it passes.
+				<<elseif $worn.under_lower.name isnot "naked">>
+					<<set $worn.under_lower.integrity -= 15>>
+					It tears your $worn.under_lower.name as it passes.
+				<<else>>
+					It whips you as it passes.
+				<</if>>
+				<<neutral 2>>
+			<</if>>
+		<<elseif $rng gte 81 and $mouthuse is 0>>
 			<<if $underwater is 1>>
 				<<struggle_bide_the>> <<print $struggle.enemy[_i].description>> <<print $struggle.enemy[_i].name>> swims towards you, <span class="blue">landing on your face.</span>
 			<<elseif $struggle.enemy[_i].motion is "flying">>
@@ -2084,6 +2302,7 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 	<br>Air: <<oxygencaption>>
 <</if>>
 <br>
+<<turnend>>
 <</widget>>
 
 
