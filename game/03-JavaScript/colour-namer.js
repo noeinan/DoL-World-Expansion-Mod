@@ -6,9 +6,9 @@ function clamp255 (val) { return val > 255 ? 255 : val < 0 ? 0 : val }
 function applySepiaFilter(colour, amount) {
 	amount = 1.0 - amount;
 	return {
-		r: clamp255((0.393 + 0.607 * amount) * color.r + (0.769 - 0.769 * amount) * color.g + (0.189 - 0.189 * amount) * color.b),
-		g: clamp255((0.349 - 0.349 * amount) * color.r + (0.686 + 0.314 * amount) * color.g + (0.168 - 0.168 * amount) * color.b),
-		b: clamp255((0.272 - 0.272 * amount) * color.r + (0.534 - 0.534 * amount) * color.g + (0.131 + 0.869 * amount) * color.b),
+		r: clamp255((0.393 + 0.607 * amount) * colour.r + (0.769 - 0.769 * amount) * colour.g + (0.189 - 0.189 * amount) * colour.b),
+		g: clamp255((0.349 - 0.349 * amount) * colour.r + (0.686 + 0.314 * amount) * colour.g + (0.168 - 0.168 * amount) * colour.b),
+		b: clamp255((0.272 - 0.272 * amount) * colour.r + (0.534 - 0.534 * amount) * colour.g + (0.131 + 0.869 * amount) * colour.b),
 	};
 }
 
@@ -43,13 +43,37 @@ function applyContrastFilter(colour, amount) {
 	};
 }
 
-window.getCustomColourRGB = function (hue, saturation, brightness, contrast) {
+window.getCustomColourRGB = function (hue, saturation, brightness, contrast, sepia = 0) {
 	let col = { r: 255, g: 0, b: 0 };
 	col = applyHueRotateFilter(col, hue);
 	col = applySaturateFilter(col, saturation);
 	col = applyBrightnessFilter(col, brightness);
 	col = applyContrastFilter(col, contrast);
+	col = applySepiaFilter(col, sepia);
 	return {r: clamp255(col.r), g: clamp255(col.g), b: clamp255(col.b)};
+}
+window.getCustomClothesColourCanvasFilter = function(hue, saturation, brightness, contrast, sepia = 0) {
+	if (arguments.length === 1 && typeof arguments[0] === 'string') {
+		let match = parseCSSFilter(arguments[0]);
+		if (!match) return clone(setup.colours.clothes_default);
+		hue = +match[1];
+		saturation = +match[2];
+		brightness = +match[3];
+		contrast = +match[4];
+		sepia = +match[5];
+	}
+	let filterBrightness = 0.0;
+	if (brightness >= 1.0) {
+		// Slider brightness is 0..4, we consider 0..1 for colour spec
+		// and everything above as extra brightness adjustment
+		// In new renderer it's a shift, not multiplier, so we scale it from x1..x4 to +0..+0.21
+		filterBrightness += (brightness-1)*0.07;
+	}
+	return Renderer.mergeLayerData({
+		blend: tinycolor(getCustomColourRGB(hue, saturation, brightness, contrast, sepia)).toHexString(),
+		contrast: contrast,
+		brightness: filterBrightness
+	}, setup.colours.clothes_default);
 }
 
 // It's a copy of this function from dolls/battleTestControls/controls.js
@@ -90,11 +114,20 @@ window.rgbToHsv = function (colour) {
 	};
 }
 
-
+// return [ match, hue, saturation, brightness, contrast, sepia ]
+window.parseCSSFilter = function(filter) {
+	// extract values from filter string
+	let result = filter.match(/(?:filter: hue-rotate\((-?\d{1,3})(?:deg\))? *(?:saturate\()([\d\.]+)\))? *(?:brightness\(([\d\.]+)\))? *(?:contrast\(([\d\.]+)\))? *(?:sepia\(([\d\.]+)\))?/);
+	if (result[1] === undefined) result[1] = 0;
+	if (result[2] === undefined) result[2] = 1;
+	if (result[3] === undefined) result[3] = 1;
+	if (result[4] === undefined) result[4] = 1;
+	if (result[5] === undefined) result[5] = 0;
+	return result;
+}
 window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 	if (arguments.length == 1 && typeof(arguments[0]) == "string") {
-		// extract values from filter string
-		let match = arguments[0].match(/(?:filter: hue-rotate\()(-?\d{1,3})(?:deg\) saturate\()([\d\.]+)(?:\) brightness\()([\d\.]+)(?:\) contrast\()([\d\.]+)/);
+		let match = parseCSSFilter(arguments[0]);
 		if (!match)
 			return "custom";
 

@@ -45,6 +45,10 @@ Smugglers intercepted: $smuggler_stolen_stat
 <br>
 Produce sold: $produce_sold
 <br>
+<<if $farmersProduce>>
+	Produce sold in bulk: $farmersProduce.totalSold
+	<br>
+<</if>>
 Fertiliser Used: $fertiliser.used
 <br>
 Hours worked on a farm: <<print Math.trunc($farm_shift / 60)>>
@@ -55,12 +59,18 @@ Clients serviced as a masseur: $masseur_stat
 <br>
 Wild plants picked: $wild_plant_stat
 <br>
+Aphrodisiacs sold: $stat_aphrodisiacs_sold
+<br>
 <br>
 
 __Sex__
 <br>
 Number of orgasms you've experienced: $orgasmstat
 <br>
+<<if $asphyxiaLvl gte 2>>
+	Orgasms while being choked: $chokeorgasm
+	<br>
+<</if>>
 Penetrated others: $penilestat
 <br>
 Ejaculated in others: $penileejacstat
@@ -168,6 +178,8 @@ Knotted: $knot_stat
 	Shots fired: $stat_shoot
 	<br>
 	Machines disabled: $machine_stat
+	<br>
+	Lurkers captured: $stat_lurkers_captured
 	<br><br>
 <</if>>
 
@@ -259,17 +271,27 @@ __Save Game Details__
 <</if>>
 <</widget>>
 
-<<widget "extraStatistics">>
+<<widget "extraStatisticsWarning">>
+
+<<if $skipStatisticsConfirmation is undefined>><<set $skipStatisticsConfirmation to false>><</if>>
+
 <h3>Extra Statistics</h3>
+
 <div id="spoilerWarning">
 	Are you sure you want to see these? They may contain spoilers!
 	<br>
 	<<link Yes>>
-		<<addclass #spoilerWarning "hidden">>
-		<<removeclass #spoilerWarningConfirmed "hidden">>
+		<<overlayReplace "extraStatistics">>
 	<</link>>
+	&nbsp;&nbsp;&nbsp;<<checkbox "$skipStatisticsConfirmation" false true autocheck>> Don't Show Again
+	<!-- ignore the nbsp's, they're just for formatting -->
 </div>
-<div id="spoilerWarningConfirmed" class="hidden">
+<</widget>>
+
+<<widget "extraStatistics">>
+
+<h3>Extra Statistics</h3>
+<div id="spoilerWarningConfirmed">
 	__State__
 	<br>
 	Pain: <<print Math.trunc($pain)>>
@@ -320,6 +342,8 @@ __Save Game Details__
 	Submissiveness: <<print Math.trunc($submissive)>>
 	<br>
 	Masochism: <<print Math.trunc($masochism)>>
+	<br>
+	Sadism: <<print Math.trunc($sadism)>>
 	<br>
 	Crossdresser progression:
 	<<if $crossdressingTrait isnot undefined>>
@@ -462,6 +486,5 @@ __Save Game Details__
 		<<print Math.trunc($fallenangel)>>
 	<</if>>
 	<br>
-
 </div>
 <</widget>>

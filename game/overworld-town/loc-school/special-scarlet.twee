@@ -78,7 +78,7 @@ It turns out eventually that the baron's fears were real. When Janet's father or
 <br><br>
 With each act, the book becomes darker and scarier. Every time you read it you have a view of innocent pure girl in white dress and a dangerous and lustful lad in front of your eyes. You feel a mix of jealousy, lust and anger. And you like it.
 <br><br>
-<<if $english gte 600 and $arousal gte 4000>>
+<<if $english gte 600 and $arousal gte ($arousalmax / 5) * 2>>
 	You're not just reading a book any more. All scenes and feelings are described so perfectly that you clearly feel like you are there. Like you are one of them.
 	<br><br>
 <<else>>
@@ -105,7 +105,7 @@ With each act, the book becomes darker and scarier. Every time you read it you h
 	<<link [[Masturbate|Library Masturbation]]>><<set $masturbationstart to 1>><</link>><<exhibitionist2>>
 	<br>
 <</if>>
-<<if $english gte 600 and $arousal gte 4000>>
+<<if $english gte 600 and $arousal gte ($arousalmax / 5) * 2>>
 	<<link [[Imagine yourself as Janet|ScarletBook5]]>><<pass 30>><<arousal 600>><</link>><<garousal>>
 	<br>
 <</if>>
@@ -509,6 +509,7 @@ The words you have just read echo in your head. You can no longer ignore what yo
 :: Scarlet Widgets [widget]
 <<widget "calljanet">>
 /*store players stats*/
+<<set $statFreeze to true>>
 <<set $real_playersex to $player.sex>>
 <<set $real_playergender to $player.gender>>
 <<set $real_penisexist to $penisexist>>
@@ -548,9 +549,14 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<set $real_skulduggery to $skulduggery>>
 <<set $real_purity to $purity>>
 <<set $real_spray to $spray>>
+<<set $real_skin to clone($skin)>>
 /*store player clothing*/
 
 <<undress "janet">>
+<<if $worn.genitals.name isnot "naked">>
+	<<set $real_wornGenitals to clone($worn.genitals)>>
+	<<set $worn.genitals to clone(setup.clothes.genitals[0])>>
+<</if>>
 /*store time*/
 <<set $real_time to $time>>
 /*morph player into Janet*/
@@ -564,6 +570,7 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<set $haircolour to "platinumblond">>
 <<set $hairlength to 400>>
 <<set $breastsize to 5>>
+<<bodywriting_init>>
 
 <<set $pain to 0>>
 <<set $arousal to 0>>
@@ -590,10 +597,11 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<legswear 5>>
 <<upperwear 7>>
 <<underlowerwear 3>>
-
+<<freezePlayerStats>>
 <</widget>>
 
 <<widget "sleepjanet">>
+<<unfreezePlayerStats>>
 /*restore clothes integrity and undress*/
 <<set _rebuy to $clothingrebuy>>
 <<set $clothingrebuy to 0>>
@@ -603,18 +611,20 @@ The words you have just read echo in your head. You can no longer ignore what yo
 
 /*restore real clothes*/
 <<storeon "janet">>
+<<if $real_wornGenitals isnot undefined>>
+	<<set $worn.genitals to clone($real_wornGenitals)>>
+	<<unset $real_wornGenitals>>
+<</if>>
 /*restore players stats*/
 <<set $player.sex to $real_playersex>>
 <<set $player.gender to $real_playergender>>
 <<set $penisexist to $real_penisexist>>
 <<set $vaginaexist to $real_vaginaexist>>
 <<if $vaginaexist is 0>>
-	<<set $vaginalejacstat to 0>>
-	<<set $vaginalentranceejacstat to 0>>
 	<<set $vaginaoutsidesemen to 0>>
 	<<set $vaginaoutsidegoo to 0>>
-	<<set $vaginalstat to 0>>
 <</if>>
+<<unset $statFreeze>>
 <<set $eyecolour to $real_eyecolour>>
 <<set $haircolour to $real_haircolour>>
 <<set $hairlength to $real_hairlength>>
@@ -650,6 +660,7 @@ The words you have just read echo in your head. You can no longer ignore what yo
 <<set $skulduggery to $real_skulduggery>>
 <<set $purity to $real_purity>>
 <<set $spray to $real_spray>>
+<<set $skin to clone($real_skin)>>
 /*restore location and time*/
 <<set $location to "school">>
 <<set $time to $real_time>>

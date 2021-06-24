@@ -60,6 +60,14 @@ Mousetrap.bind(["z", "n", "enter"], function () {
 	$("#passages #next a.macro-link").trigger("click");
 });
 
+Mousetrap.bind(["f"], function () {
+	if (document.activeElement.tagName === "INPUT" && document.activeElement.type !== "radio"
+		&& document.activeElement.type !== "checkbox")
+		return;
+
+	fixStuckAnimations();
+});
+
 Macro.add('time', {
 	handler: function () {
 		var time = State.variables.time;
@@ -90,19 +98,122 @@ window.ensureIsArray = function (x) {
 	return [x];
 }
 
+/**
+ * Copies to targets keys from source that are not present there.
+ * Shallow.
+ * @param {object} target Object to extend
+ * @param {object} source Default properties
+ * @return {object} target
+ */
+function assignDefaults(target, source) {
+	for (let k in source) {
+		if (!source.hasOwnProperty(k)) continue;
+		if (!(k in target)) target[k] = source[k];
+	}
+	return target;
+}
+
+/*
+ * Similar to <<script>>, but preprocesses the contents, so $variables are accessible.
+ * The variable "output" is also exposed (unlike <<run>>, <<set>>)
+ *
+ * Example:
+ * <<twinescript>>
+ *     output.textContent = $text
+ * <</twinescript>>
+ */
+Macro.add('twinescript', {
+	skipArgs : true,
+	tags     : null,
+
+	handler() {
+		const output = document.createDocumentFragment();
+
+		try {
+			Scripting.evalTwineScript(this.payload[0].contents, output);
+		}
+		catch (ex) {
+			return this.error(`bad evaluation: ${typeof ex === 'object' ? ex.message : ex}`);
+		}
+
+		// Custom debug view setup.
+		if (Config.debug) {
+			this.createDebugView();
+		}
+
+		if (output.hasChildNodes()) {
+			this.output.appendChild(output);
+		}
+	}
+});
+
+/**
+ * JS version of SugarCube's <<for _index, _value range _array>>.
+ * Can iterate over
+ *
+ * Copied from SugarCube sources.
+ * @param range
+ * @param {function(key,value):void} handler
+ */
+function rangeIterate(range, handler) {
+	let list;
+	switch (typeof range) {
+		case 'string':
+			list = [];
+			for (let i = 0; i < range.length; /* empty */) {
+				const obj = Util.charAndPosAt(range, i);
+				list.push([i, obj.char]);
+				i = 1 + obj.end;
+			}
+			break;
+		case 'object':
+			if (Array.isArray(range)) {
+				list = range.map((val, i) => [i, val]);
+			}
+			else if (range instanceof Set) {
+				list = Array.from(range).map((val, i) => [i, val]);
+			}
+			else if (range instanceof Map) {
+				list = Array.from(range);
+			}
+			else if (Util.toStringTag(range) === 'Object') {
+				list = Object.keys(range).map(key => [key, range[key]]);
+			}
+			else {
+				throw new Error(`unsupported range expression type: ${Util.toStringTag(range)}`);
+			}
+			break;
+		default:
+			throw new Error(`unsupported range expression type: ${typeof range}`);
+	}
+	for (let i = 0; i < list.length; i++) {
+		let entry = list[i];
+		handler(entry[0], entry[1]);
+	}
+}
+window.rangeIterate = rangeIterate;
+
+/**
+ * Define macro, passing arguments to function and store them in $args, preserving & restoring previous $args
+ */
 function DefineMacro(macroName, macroFunction, tags, skipArgs) {
 	Macro.add(macroName, {
 		isWidget: true,
 		tags: tags,
 		skipArgs: skipArgs,
-		handler: function (args) {
-			var oldArgs = State.variables.args;
-			State.variables.args = this.args.slice();
-			macroFunction.apply(this, this.args);
-			if (typeof oldArgs === 'undefined') {
-				delete State.variables.args;
-			} else {
-				State.variables.args = oldArgs;
+		handler: function () {
+			DOL.Perflog.logWidgetStart(macroName);
+			try {
+				var oldArgs = State.variables.args;
+				State.variables.args = this.args.slice();
+				macroFunction.apply(this, this.args);
+				if (typeof oldArgs === 'undefined') {
+					delete State.variables.args;
+				} else {
+					State.variables.args = oldArgs;
+				}
+			} finally {
+				DOL.Perflog.logWidgetEnd(macroName);
 			}
 		}
 	});
@@ -117,122 +228,72 @@ function DefineMacroS(macroName, macroFunction, tags, skipArgs, maintainContext)
 	}, tags, skipArgs);
 }
 
-function underlowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.under_lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
+/**
+ * @param worn clothing article, State.variables.worn.XXXX
+ * @return {string} condition key word ("tattered"|"torn|"frayed"|"full")
+ */
+window.integrityKeyword = function(worn) {
+	const i = worn.integrity/worn.integrity_max;
+	if (i <= 0.2) {
+		return "tattered"
+	} else if (i <= 0.5) {
+		return "torn"
+	} else if (i <= 0.9) {
+		return "frayed"
+	} else {
+		return "full"
 	}
-	return output;
+}
+
+/**
+ * @param worn clothing argicle, State.variables.worn.XXXX
+ * @return {string} printable integrity prefix
+ */
+function integrityWord(worn) {
+	const kw = integrityKeyword(worn);
+	switch (kw) {
+		case "tattered":
+		case "torn":
+		case "frayed":
+			return kw+" ";
+		case "full":
+		default:
+			return "";
+	}
+}
+
+function underlowerintegrity() {
+	return integrityWord(State.variables.worn.under_lower);
 }
 DefineMacroS("underlowerintegrity", underlowerintegrity);
 
 function underupperintegrity() {
-	var output = '';
-	var V = State.variables.worn.under_upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.under_upper);
 }
 DefineMacroS("underupperintegrity", underupperintegrity);
 
 function overlowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.over_lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.over_lower);
 }
 DefineMacroS("overlowerintegrity", overlowerintegrity);
 
 function lowerintegrity() {
-	var output = '';
-	var V = State.variables.worn.lower;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.lower);
 }
 DefineMacroS("lowerintegrity", lowerintegrity);
 
 function overupperintegrity() {
-	var output = '';
-	var V = State.variables.worn.over_upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.over_upper);
 }
 DefineMacroS("overupperintegrity", overupperintegrity);
 
 function upperintegrity() {
-	var output = '';
-	var V = State.variables.worn.upper;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.upper);
 }
 DefineMacroS("upperintegrity", upperintegrity);
 
 function genitalsintegrity() {
-	var output = '';
-	var V = State.variables.worn.genitals;
-	if (V.integrity_max !== 0) {
-		if (V.integrity <= (V.integrity_max / 10) * 2) {
-			output += "tattered \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 5) {
-			output += "torn \t";
-		} else if (V.integrity <= (V.integrity_max / 10) * 9) {
-			output += "frayed \t";
-		} else {
-		}
-	}
-	return output;
+	return integrityWord(State.variables.worn.genitals);
 }
 DefineMacroS("genitalsintegrity", genitalsintegrity);
 
@@ -361,7 +422,36 @@ DefineMacroS("numberify", numberify);
 
 // blink entire page to fix a bug in Chrome where animation on images doesn't start
 window.fixStuckAnimations = function() {
-	let imgs = $('#story').add($('#ui-bar')); 
-	imgs.toggleClass('hidden'); 
-	window.setTimeout(() => imgs.toggleClass('hidden'), 50);
+	let scrollX = window.scrollX;
+	let scrollY = window.scrollY;
+	let imgs = $('#story').add($('#ui-bar'));
+	imgs.toggleClass('hidden');
+	window.setTimeout(() => {
+		imgs.toggleClass('hidden');
+		window.scroll(scrollX, scrollY);
+	}, 5);
+}
+
+// attaches event listeners to combat images
+window.initTouchToFixAnimations = function() {
+	$(document).on('click', "#divsex img", fixStuckAnimations);
+}
+
+$(document).on(':passagedisplay', function (ev) {
+	if (State.variables.combat) {
+		initTouchToFixAnimations();
+	}
+});
+
+window.saveDataCompare = function(save1, save2){
+	var result = {};
+	var keys = Object.keys(save1)
+	keys.forEach(key =>{
+		let save1Json = JSON.stringify(save1[key])
+		let save2Json = JSON.stringify(save2[key])
+		if(save1Json !== save2Json){
+			result[key] = [save1[key],save2[key]];
+		}
+	})
+	return result;
 }

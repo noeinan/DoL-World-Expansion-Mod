@@ -52,7 +52,7 @@
 <<if $args[2] and $worn[$args[0]].colour_options.length gt 0>>
 	<<set $worn[$args[0]].colour to $args[2]>>
 	<<if $worn[$args[0]].colour is "custom">>
-		<<set $worn[$args[0]].colourCustom to 'filter: hue-rotate('+$customColors.color.primary+'deg) saturate('+$customColors.saturation.primary+') brightness('+$customColors.brightness.primary+') sepia(' + $customColors.sepia.primary + ')'>>
+		<<set $worn[$args[0]].colourCustom to customColour($customColors.color.primary, $customColors.saturation.primary, $customColors.brightness.primary, $customColors.contrast.primary, $customColors.sepia.primary)>>
 	<</if>>
 <<elseif $worn[$args[0]].colour_options.length gt 0>>
 	<<set _colorOption to clone($worn[$args[0]].colour_options)>>
@@ -62,7 +62,7 @@
 <<if $args[3] and $worn[$args[0]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
 	<<set $worn[$args[0]].accessory_colour to $args[3]>>
 	<<if $worn[$args[0]].accessory_colour is "custom">>
-		<<set $worn[$args[0]].accessory_colourCustom to 'filter: hue-rotate('+$customColors.color.secondary+'deg) saturate('+$customColors.saturation.secondary+') brightness('+$customColors.brightness.secondary+') sepia(' + $customColors.sepia.secondary + ')'>>
+		<<set $worn[$args[0]].accessory_colourCustom to customColour($customColors.color.secondary, $customColors.saturation.secondary, $customColors.brightness.secondary, $customColors.contrast.secondary, $customColors.sepia.secondary)>>
 	<</if>>
 <<elseif setup.clothes[$args[0]][$args[1]].accessory_colour_options.length gt 0 and $worn[$args[0]].accessory is 1>>
 	<<set _accessoryColorOption to clone($worn[$args[0]].accessory_colour_options)>>
@@ -442,6 +442,8 @@
 <<underlowerruined>>
 <</widget>>
 
+<!-- $args[0] = slot name -->
+<!-- $args[1] = true for ruin all pieces of an outfit -->
 <<widget "generalRuined">>
 <<if $args[0]>>
 	<<set $eventskipoverrule to 1>>
@@ -501,9 +503,17 @@
 			<<for _labelRuined, _valueRuined range _outfitPrimaryRuined>>
 				<<if $carried[_labelRuined].outfitSecondary isnot undefined>>
 					<<if $carried[_labelRuined].outfitSecondary[1] is $carried[$args[0]].name>>
-						<<set $carried[_labelRuined].outfitSecondary[1] to "broken">>
-						<<set $carried[_labelRuined].one_piece to "broken">>
-						<<set $carried[_labelRuined].set to _labelRuined>>
+						<<if $args[1]>>
+							<<generalRuined _labelRuined>>
+						<<elseif _labelRuined is "head" and $carried.head.hood>>
+							<<headruined>>
+						<<elseif _labelRuined is "over_head" and $carried.over_head.hood>>
+							<<overheadruined>>
+						<<else>>
+							<<set $carried[_labelRuined].outfitSecondary[1] to "broken">>
+							<<set $carried[_labelRuined].one_piece to "broken">>
+							<<set $carried[_labelRuined].set to _labelRuined>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<</for>>
@@ -514,9 +524,17 @@
 			<<for _labelRuined, _valueRuined range _outfitPrimaryRuined>>
 				<<if $worn[_labelRuined].outfitSecondary isnot undefined>>
 					<<if $worn[_labelRuined].outfitSecondary[1] is $worn[$args[0]].name>>
-						<<set $worn[_labelRuined].outfitSecondary[1] to "broken">>
-						<<set $worn[_labelRuined].one_piece to "broken">>
-						<<set $worn[_labelRuined].set to _labelRuined>>
+						<<if $args[1]>>
+							<<generalRuined _labelRuined>>
+						<<elseif _labelRuined is "head" and $worn.head.hood>>
+							<<headruined>>
+						<<elseif _labelRuined is "over_head" and $worn.over_head.hood>>
+							<<overheadruined>>
+						<<else>>
+							<<set $worn[_labelRuined].outfitSecondary[1] to "broken">>
+							<<set $worn[_labelRuined].one_piece to "broken">>
+							<<set $worn[_labelRuined].set to _labelRuined>>
+						<</if>>
 					<</if>>
 				<</if>>
 			<</for>>
@@ -528,7 +546,11 @@
 		<<if _outfitSecondaryRuined isnot undefined>>
 			<<if $carried[_outfitSecondaryRuined[0]].name is _outfitSecondaryRuined[1] and $carried[_outfitSecondaryRuined[0]].outfitPrimary isnot undefined>>
 				<<if $carried[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] is $carried[$args[0]].name>>
-					<<set $carried[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
+					<<if $args[1]>>
+						<<generalRuined _outfitSecondaryRuined[0] $args[1]>>
+					<<else>>
+						<<set $carried[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
+					<</if>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -537,8 +559,12 @@
 		<<if _outfitSecondaryRuined isnot undefined>>
 			<<if $worn[_outfitSecondaryRuined[0]].name is _outfitSecondaryRuined[1] and $worn[_outfitSecondaryRuined[0]].outfitPrimary isnot undefined>>
 				<<if $worn[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] is $worn[$args[0]].name>>
-					<<set $worn[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
-					<<set $worn[_outfitSecondaryRuined[0]].one_piece to "broken">>
+					<<if $args[1]>>
+						<<generalRuined _outfitSecondaryRuined[0] $args[1]>>
+					<<else>>
+						<<set $worn[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
+						<<set $worn[_outfitSecondaryRuined[0]].one_piece to "broken">>
+					<</if>>
 				<</if>>
 			<</if>>
 		<</if>>
@@ -1029,9 +1055,9 @@
 				<<for _labelUndress, _valueUndress range _outfitPrimaryUndress>>
 					<<if !_skip.includes($worn[_labelUndress].name) and $worn[_labelUndress].name is _valueUndress>>
 						<<set $wardrobe[_labelUndress].push(clone($worn[_labelUndress]))>>
-						<<set $worn[_labelUndress] to clone(setup.clothes[_labelUndress][0])>>
 						<<run _slots.push(_labelUndress)>>
 					<</if>>
+					<<set $worn[_labelUndress] to clone(setup.clothes[_labelUndress][0])>>
 				<</for>>
 			<</if>>
 			<<if !_skip.includes($worn[_undressSlot].name)>>
