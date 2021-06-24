@@ -1,0 +1,375 @@
+:: Farm Fields
+<<set $outside to 1>><<set $bus to "farm_fields">><<effects>>
+<<farm_work_update>>
+<<plot_effects>>
+<<if $farm_fields_intro is 1>>
+	<<unset $farm_fields_intro>>
+	The charred smell greets you before you see them. The fields are still black from Remy's sabotage. A sack of potato seeds lies half-spilled at the gate.
+	<br><br>
+	<<set $plants_known.push("potato")>>
+	<span class="gold">You can now grow potatoes.</span>
+	<br>
+	<<set $plants_known.push("turnip")>>
+	<span class="gold">You can now grow turnips.</span>
+	<br><br>
+<<else>>
+	You are in your fields.
+<</if>>
+<br><br>
+
+<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+<<if $stress gte $stressmax>>
+	<<passoutfarmroad>>
+<<elseif $farm_attack_timer is 0 and $hour gte 21>>
+	<<npc Alex>><<person1>>
+	Alex rushes over. <span class="red">"Remy's here,"</span> <<he>> says. "We can do this. Go get ready, I'll
+	<<if $farm.tower_guard>>
+		check on $farm.tower_guard."
+	<<else>>
+		see if I can spot them."
+	<</if>>	
+	<br><br>
+
+	<<farm_assault_intro>>
+	<br><br>
+
+	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 2>><</link>>
+	<br>
+<<elseif $danger gte (9900 - $allure) and $eventskip isnot 1>>
+	<<farm_tending_events>>
+<<else>>
+
+	<<if $farm.tower gte 1>>
+		<<if $farm.tower_guard>>
+			The watchtower stands guard.
+			<<loadNPC 0 "farm_tower_guard">><<person1>>
+			<<if $NPCList[0].traits.includes("relaxed")>>
+				<<print $NPCList[0].name>> leans against the railing. A trail of smoke rises from <<him>>.
+			<<elseif $NPCList[0].traits.includes("sociable")>>
+				<<print $NPCList[0].name>> waves at you from the top.
+			<<elseif $NPCList[0].traits.includes("brooding")>>
+				You can see <<print $NPCList[0].name>>'s silhouette at the top.
+			<<else>>
+				<<print $NPCList[0].name>> leans against the railing, watching you.
+			<</if>>
+			<<endevent>>
+		<<else>>
+			The watchtower stands guard, though it's currently unoccupied.
+		<</if>>
+		<br>
+		<<link [[Climb|Farm Tower]]>><</link>>
+		<br><br>
+	<</if>>
+	<<display_plot farm>>
+
+	<<link [[Leave (0:05)|Farm Work]]>><<pass 5>><</link>>
+	<br>
+<</if>>
+
+<<set $eventskip to 0>>
+
+
+
+:: Farm Tower
+<<effects>>
+
+You climb the tower.
+<<if $farm.tower_guard>>
+	<<loadNPC 0 "farm_tower_guard">><<person1>>
+	
+
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<<print $NPCList[0].name>> puts down <<his>> cigarette. "What can I do for you?"
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		<<print $NPCList[0].name>> smiles at you. "What's up?"
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<<print $NPCList[0].name>> nods at you. "Something amiss?"
+	<<else>>
+		<<print $NPCList[0].name>> checks you out. "What brings your sexy ass up here?"
+	<</if>>
+	<br><br>
+
+	Security skill: <<guard_skill_text "tower">>
+	<br>
+	Wage: <<printmoney $farm.tower_guard_wage>>
+	<br><br>
+
+	<<farm_guard_pay>>
+<<else>>
+	The moor stretches to the horizon in one direction, and the sea in the other.
+	<br><br>
+<</if>>
+<<link [[Leave|Farm Fields]]>><<endevent>><<set $eventskip to 1>><</link>>
+<br>
+
+:: Farm Tower Pay
+<<effects>>
+
+<<if $NPCList[0].traits.includes("relaxed")>>
+	"Thanks," <<print $NPCList[0].name>> says. "I'll keep my watch up."
+<<elseif $NPCList[0].traits.includes("sociable")>>
+	"Cheers love," <<print $NPCList[0].name>>'s smile broadens. "It's more lively out here than I expected."
+<<elseif $NPCList[0].traits.includes("brooding")>>
+	<<print $NPCList[0].name>> nods again, then stares out over the moor.
+<<else>>
+	"Nice," <<print $NPCList[0].name>> says. "I'd suggest another sort of payment, but I need the cash."
+<</if>>
+<br><br>
+
+
+
+<<if $bus is "farm_fields">>
+	You climb down the tower.
+	<br><br>
+
+	<<link [[Leave|Farm Fields]]>><<saveNPC 0 "farm_tower_guard">><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<<else>>
+	<<He>> walks away.
+	<br><br>
+	
+	<<link [[Leave|Farm Work]]>><<saveNPC 0 "farm_tower_guard">><<endevent>><<set $eventskip to 1>><</link>>
+	<br>
+<</if>>
+
+
+
+
+:: Farm Guard Pay Refuse
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"I-I can't afford it," you say. "I'm really sorry."
+<<elseif $submissive lte 850>>
+	"Budgets too tight," you say. "I'll be good for it next week."
+<<else>>
+	"I can't afford it, you say. "I'll pay you back."
+<</if>>
+<br><br>
+
+<<if $NPCList[0].trust gte 1>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<<print $NPCList[0].name>> sighs. <span class="green">"That's fine,"</span> <<he>> says. "See you next week."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		<<print $NPCList[0].name>> shrugs. <span class="green">"I can wait,"</span> <<he>> says. "But not forever."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<span class="green">"I understand,"</span> <<print $NPCList[0].name>> says.
+	<<else>>
+		<<print $NPCList[0].name>> kicks at a mound of dirt. <span class="green">"I'll wait,"</span> <<he>> says. "But only because it's you."
+	<</if>>
+	
+	<<He>> walks away.
+	<br><br>
+
+	<<set $NPCList[0].trust -= 3>>
+	
+	<<link [[Next|Farm Work]]>><<saveNPC 0 "farm_tower_guard">><<set $farm.tower_guard_patience to 1>><<endevent>><</link>>
+	<br>
+<<else>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<<print $NPCList[0].name>> <span class="red">shakes <<his>> head.</span> "Sorry," <<he>> says. "I'd love to help for free, but I've bills to pay. See you around."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		<span class="red">"Sorry <<girl>>,"</span> <<print $NPCList[0].name>> says. "I can't mooch off my friends forever. See you."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<span class="red">"That's it from me,</span> then," <<print $NPCList[0].name>> says. "Good luck."
+	<<else>>
+		<span class="red">Sorry <<girl>>,</span> <<print $NPCList[0].name>> says. "As much as I'd like to feed off your radiance, I need something solid. Bye."
+	<</if>>
+	<br><br>
+	<<He>> leaves the farm.
+	<br><br>
+	<span class="purple">The watchtower will no longer operate until a replacement is found.</span>
+	<br><br>
+	<<link [[Next|Farm Work]]>><<endevent>><<clearNPC "farm_tower_guard">><<set $farm.tower_guard to 0>><</link>>
+	<br>
+<</if>>
+
+
+
+:: Farm Guard Pay Seduce
+<<effects>>
+
+<<if $NPCList[0].traits.includes("relaxed")>>
+	<<set $seductiondifficulty to 8000>>
+<<elseif $NPCList[0].traits.includes("sociable")>>
+	<<set $seductiondifficulty to 8000>>
+<<elseif $NPCList[0].traits.includes("brooding")>>
+	<<set $seductiondifficulty to 10000>>
+<<else>>
+	<<set $seductiondifficulty to 6000>>
+<</if>>
+
+<<seductioncheck>>
+<br><br>
+<<if $seductionskill lt 1000>>
+	<span class="gold">You feel more confident in your powers of seduction.</span>
+	<br><br>
+<</if>>
+<<seductionskilluse>>
+
+<<if $submissive gte 1150>>
+	"A-are you sure there's no other way I can pay?" you purr.
+<<elseif $submissive lte 850>>
+	"Oh, I'll pay you all right," you say. "While you're on your back."
+<<else>>
+	"There's another way I can pay you," you purr.
+<</if>>
+<<promiscuity3>>
+
+<<if $seductionrating gte $seductionrequired>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<span class="green">"I was hoping you'd offer,"</span> <<print $NPCList[0].name>> says. "Didn't want to be a creep." You take <<his>> hand, and lead <<him>> to a secluded spot in the barn.
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		<<print $NPCList[0].name>> tries to speak, <span class="green">but can only manage a gulp.</span> You take <<his>> hand, and lead <<him>> to a secluded spot in the barn.
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<span class="green">"Just this once," <<print $NPCList[0].name>> says. "I know it's hard out here." You take <<his>> hand, and lead <<him>> to a secluded spot in the barn.
+	<<else>>
+		<span class="green">"Nice," <<print $NPCList[0].name>> says. "Let's do it in the barn."
+		<br><br>
+		You find a secluded spot at the back.
+	<</if>>
+	<br><br>
+	
+	<<link [[Next|Farm Guard Sex]]>><<set $sexstart to 1>><</link>>
+	<br>
+<<else>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<span class="red">"Sorry,"</span> <<print $NPCList[0].name>> says. "You're cute, but I've got bills to pay."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		"You're a lewd one," <<print $NPCList[0].name>> says. <span class="red">"But if I took up every offer like that, I'd be destitute."</span>
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<span class="red">"Not interested,"</span> <<print $NPCList[0].name>> says. "Whores a plenty in town."
+	<<else>>
+		"Tempting," <<print $NPCList[0].name>> says. <span class="red">"But my wage could buy many cheaper <<girls>>.</span> Sorry."
+	<</if>>
+	<br><br>
+	<<farm_guard_pay>>
+	<<link [[Say you can't afford it right now|Farm Guard Pay Refuse]]>><</link>><<lltrust>>
+	<br>
+	
+<</if>>
+
+:: Farm Guard Sex
+
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<set $outside to 0>>
+	<<prop haybale>>
+	<<set $rescue to 1>>
+<</if>>
+<<effects>>
+<<effectsman>><<man>>
+<<stateman>>
+<br><br>
+<<actionsman>>
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Farm Guard Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Farm Guard Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Farm Guard Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<span id="next"><<link [[Next|Farm Guard Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Farm Guard Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Farm Guard Sex Finish
+
+<<set $outside to 0>><<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		"Damn," <<print $NPCList[0].name>> says. "Seduced again. Gonna be a tight week."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		"Thanks love," <<print $NPCList[0].name>> says. "Didn't know I was the type to roll around in hay until I met you."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		"I'll get ready for work," <<print $NPCList[0].name>> says. "Deal's a deal."
+	<<else>>
+		"Damn <<girl>>," <<print $NPCList[0].name>> says. "You're good at this. Wanna brag to my friends, but also wanna keep you to myself. Decisions."
+	<</if>>
+	Your employee leaves the barn. | <span class="green">+ Security skill</span> | <span class="red"> + Wage</span>
+	<br><br>
+	<<tearful>> you brush off hay.
+	<br><br>
+	
+	<<farm_guard_paid>>
+	
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Farm Work]]>><</link>>
+<<elseif $enemyhealth lte 0>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		"Sorry," <<print $NPCList[0].name>> says, backing away. "I misread things. Gimme my money, and I'll be on my way."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		"Alright alright!" <<print $NPCList[0].name>> says, holding <<his>> hands up. "I get it. No more touching. I'll just take my money."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		"Easy <<girl>>," <<print $NPCList[0].name>> says, backing off. "Let's keep things civil. My money."
+	<<else>>
+		"I like it rough, but damn," <<print $NPCList[0].name>> says. "You can pay me another way if you insist."
+	<</if>>
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<loadNPC 0 "farm_tower_guard">><<person1>>
+	<<farm_guard_pay>>
+	<<link [[Say you can't afford it right now|Farm Guard Pay Refuse]]>><</link>><<lltrust>>
+	<br>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<<set $rescued += 1>>
+	"I'm coming!" Alex enteres the barn.
+	<br><br>
+	
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		<<print $NPCList[0].name>> backs away from you. "This isn't what this looks like," <<he>> says.
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		<<print $NPCList[0].name>> steps away from you. "Sorry boss," <<he>> says. "Er, bosses. I didn't mean nothing by it."
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		<<print $NPCList[0].name>> throws up <<his>> arms. "I lost my cool," <<he>> says. "I'm sorry."
+	<<else>>
+		<<print $NPCList[0].name>> stumbles away from you. "It was <<his>> idea," <<he>> says. "I swear!"
+	<</if>>
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<npc Alex>>
+	<<loadNPC 1 "farm_tower_guard">>
+	
+	"Get the fuck off my farm," Alex say. "You're fired." 
+	<br>
+	<<person2>>
+	<<print $NPCList[0].name>> opens <<his>> mouth to protest, but decides against it. <<He>> leaves the barn.
+	<br><br>
+	<<person1>>
+	"Are you okay?" Alex asks as <<he>> helps you off the hay. "I thought we could trust <<person2>><<him>><<person1>>. I'll be more watchful in the future.<<ggdom>><<npcincr Alex dom 3>>
+	<br><br>
+
+	<span class="purple">The watchtower will no longer operate until a replacement is found.</span>
+	<br><br>
+	<<link [[Next|Farm Work]]>><<endevent>><<clearNPC "farm_tower_guard">><<set $farm.tower_guard to 0>><</link>>
+	<br>
+<<else>>
+	<<if $NPCList[0].traits.includes("relaxed")>>
+		"Fine," <<print $NPCList[0].name>> says. "I'll take the money instead."
+	<<elseif $NPCList[0].traits.includes("sociable")>>
+		"Suit yourself," <<print $NPCList[0].name>> says. "I'm calm. How about the money?"
+	<<elseif $NPCList[0].traits.includes("brooding")>>
+		"Didn't expect you to work me up so easily," <<print $NPCList[0].name>> says. "Now, about the money."
+	<<else>>
+		"You little tease," <<print $NPCList[0].name>> says. "Getting me all worked up like that. Hope you appreciate the willpower this takes. I'll take my money."
+	<</if>>
+	<br><br>
+	<<tearful>> you brush off the hay.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<loadNPC 0 "farm_tower_guard">><<person1>>
+	<<farm_guard_pay>>
+	<<link [[Say you can't afford it right now|Farm Guard Pay Refuse]]>><</link>><<lltrust>>
+	<br>
+<</if>>

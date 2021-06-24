@@ -107,7 +107,6 @@
 
 		<<else>>
 			You enter the swimming pool room.
-			<<npc Mason>><<person1>>
 			Mason and the class are already in the water. "Glad you could join us!" <<He>> says, beckoning.
 			<<gdelinquency>><<detention 1>>
 			<br><br>
@@ -142,7 +141,12 @@
 			<br>
 		<<else>>
 			<<if $swimCrossdressPermission is undefined>>
-				<<link [[Say you only have a girl's swimming costume|School Pool Wrong]]>><</link>>
+				<<if ($worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")) and 
+				($worn.lower.type.includes("swim") or ($worn.lower.type.includes("naked") and $worn.under_lower.type.includes("swim")))>>
+					<<link [[Say you only have a boy's swimming costume|School Pool Wrong]]>><<set $phase to 1>><</link>>
+				<<else>>
+					<<link [[Say you only have a girl's swimming costume|School Pool Wrong]]>><</link>>
+				<</if>>
 				<br>
 			<</if>>
 			<<link [[Say you don't have anything to change into|School Pool Spare]]>><</link>>
@@ -320,7 +324,7 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 	<br><br>
 
 	<<endevent>><<npc Mason>><<person1>>
-	"I-I can't..." Mason turns you, but is lost for words. Leighton follows <<his>> gaze.
+	"I-I can't..." Mason turns to you, but is lost for words. Leighton follows <<his>> gaze.
 	<br><br>
 
 	<<endevent>><<npc Leighton>><<person1>>
@@ -373,8 +377,9 @@ Once done, Leighton takes the swimwear and puts it in a hamper.
 
 You speak in a low voice, so only the teacher will hear you.
 
-<<if $player.gender is "f" or ($player.gender is "h" and $player.gender_appearance is "f")>>
-	<<if $player.gender_appearance is "f" or $genderknown.includes("Mason")>>
+<<if $player.gender is "f" or ($player.gender is "h" and $player.gender_appearance is "f") or $phase is 1>>
+	<<if $player.gender_appearance is "f" or $genderknown.includes("Mason") or $phase is 1>>
+		<<set $phase to 0>>
 		"I only have a pair of boy's shorts, <<sir>>."
 		<br><br>
 		<<He>> blushes. "Oh. That's better than nothing. 
@@ -664,6 +669,18 @@ You manage to get beneath the flimsy protection of the water, but not before the
 		<</if>>
 	<</if>>
 <</if>>
+	<<if $time gte ($hour * 60 + 5) and $time lte ($hour * 60 + 57)>>
+	<<else>>
+		<<if $player.gender_appearance is "m">>
+			<<link [[Wait for the girls to leave (0:05)|School Pool]]>><<pass 5>><</link>>
+			<br><br>
+		<</if>>
+		<<if $player.gender_appearance is "f">>
+			<<link [[Wait for the boys to leave (0:05)|School Pool]]>><<pass 5>><</link>>
+			<br><br>
+		<</if>>
+	<</if>>
+
 
 :: Swimming Lesson Naked Backstroke
 <<set $outside to 0>><<set $location to "pool">><<schooleffects>><<water>><<effects>>

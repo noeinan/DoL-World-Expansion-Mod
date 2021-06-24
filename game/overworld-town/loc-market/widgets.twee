@@ -1,6 +1,6 @@
 :: Widgets Market [widget]
 <<widget "stall_actions">>
-<<if $stress gte 10000>>
+<<if $stress gte $stressmax>>
 	<<passoutstreet>>
 <<elseif $worn.upper.type.includes("naked") and $player.gender_appearance is "f">>
 	<<if $player.gender is "m">>
@@ -59,7 +59,7 @@ Inventory:
 <<for _t to 0; _t lt _plant_keys.length; _t++>>
 	<<if $plants[_plant_keys[_t]].amount gte 1>>
 		<<set _plant_value to Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost)>>
-		<span class="gold"><<print $plants[_plant_keys[_t]].amount>></span> <<print $plants[_plant_keys[_t]].plural>> (£<<print Math.trunc(_plant_value / 100)>>.<<if _plant_value % 100 lte 9>>0<</if>><<print _plant_value % 100>> each) |
+		<span class="gold"><<print $plants[_plant_keys[_t]].amount>></span> <<print $plants[_plant_keys[_t]].plural>> (<<printmoney _plant_value>> each) |
 		<<set _inventory_found to 1>>
 		<<set $plant_inventory.push($plants[_plant_keys[_t]].name)>>
 		<<if $stall_expensive is undefined>>
@@ -96,7 +96,7 @@ You sell
 <<else>>
 	one <<print setup.plants[$stall_plant].name.replace(/_/g," ")>>
 <</if>>
- for <span class="gold">£<<print Math.round($stall_cost * $stall_amount / 100)>></span>
+ for <<printmoney `$stall_cost * $stall_amount`>>
 <<if $stall_cost * $stall_amount / 100 gte 10000>>
 	It feels good to make so much money at once.
 	<<ltrauma>><<lstress>>
@@ -328,7 +328,7 @@ You sell
 	A <<person>> walks up to your stand. <<He>> lifts a <<print $stall_plant.replace(/_/g," ")>>, and sniffs it.
 	<br><br>
 	<<if $stall_amount gte 2>>
-		"How much?" <<he>> asks, picking up several more until <<he>> holds <<stall_amount>> in <<his>> hand.
+		"How much?" <<he>> asks, picking up several more until <<he>> carries <<stall_amount>> in <<his>> basket.
 	<<else>>
 		"How much for one?" <<he>> asks.
 	<</if>>
@@ -538,11 +538,11 @@ and your tending skill is contributing
 <</widget>>
 
 <<widget "stall_sell_actions">>
-<<link [[Ask for normal price|Stall Sell]]>><</link>> <span class="gold">(£<<print ($stall_cost / 100 * $stall_amount).toFixed(2)>>)</span>
+<<link [[Ask for normal price|Stall Sell]]>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount`>>)</span>
 <br>
-<<link [[Give a discount|Stall Sell]]>><<set $stall_cost *= 0.8>><<set $enemytrust += 20>><</link>> <span class="gold">(£<<print (($stall_cost / 100) * $stall_amount * 0.8).toFixed(2)>>)</span> <<gtrust>>
+<<link [[Give a discount|Stall Sell]]>><<set $stall_cost *= 0.8>><<set $enemytrust += 20>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount * 0.8`>>)</span> <<gtrust>>
 <br>
-<<link [[Ask for more than they're worth|Stall Sell]]>><<set $enemytrust -= 20>><<set $stall_cost *= 1.2>><</link>> <span class="gold">(£<<print ($stall_cost / 100 * $stall_amount * 1.2).toFixed(2)>>)</span> <<ltrust>>
+<<link [[Ask for more than they're worth|Stall Sell]]>><<set $enemytrust -= 20>><<set $stall_cost *= 1.2>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount * 1.2`>>)</span> <<ltrust>>
 <br>
 <<if $stall_plant isnot $stall_expensive and $stall_expensive isnot undefined>>
 	<<link [[Push your most expensive stock|Stall Sell Push]]>><<set $stall_plant to $stall_expensive>><<set $enemytrust -= 20>><</link>><<ltrust>>
@@ -619,11 +619,11 @@ and your tending skill is contributing
 	<<stall_trust>>
 	<br><br>
 
-	<<link [[Refuse to budge|Stall Sell]]>><</link>> <span class="gold">(£<<print ($stall_cost / 100 * $stall_amount).toFixed(2)>>)</span>
+	<<link [[Refuse to budge|Stall Sell]]>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount`>>)</span>
 	<br>
-	<<link [[Agree to lower price|Stall Sell]]>><<set $stall_cost *= 0.8>><<set $enemytrust += 20>><</link>> <span class="gold">(£<<print ($stall_cost / 100 * $stall_amount * 0.8).toFixed(2)>>)</span> <<gtrust>>
+	<<link [[Agree to lower price|Stall Sell]]>><<set $stall_cost *= 0.8>><<set $enemytrust += 20>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount * 0.8`>>)</span> <<gtrust>>
 	<br>
-	<<link [[Raise your price|Stall Sell]]>><<set $enemytrust -= 20>><<set $stall_cost *= 1.2>><</link>> <span class="gold">(£<<print ($stall_cost / 100 * $stall_amount * 1.2).toFixed(2)>>)</span> <<ltrust>>
+	<<link [[Raise your price|Stall Sell]]>><<set $enemytrust -= 20>><<set $stall_cost *= 1.2>><</link>> <span class="gold">(<<printmoney `$stall_cost * $stall_amount * 1.2`>>)</span> <<ltrust>>
 	<br>
 <<else>>
 	The <<person1>><<person>> scoffs and walks away.

@@ -4,9 +4,7 @@
 	<<if $args[0]>>
 		<<if $currentOverlay isnot $args[0]>>
 			<<set $currentOverlay to $args[0]>>
-			<<if $currentOverlay isnot "options">>
-				<<replace #customOverlaySaveContent>><</replace>>
-			<</if>>
+			<<run $(".customOverlay").attr("data-overlay",$currentOverlay)>>
 			<<switch $args[0]>>
 			<<case "characteristics">>
 				<<replace #customOverlayTitle>><<OverlayTitle "colorCodes">><</replace>>
@@ -17,12 +15,18 @@
 			<<case "social">>
 				<<replace #customOverlayTitle>><<OverlayTitle "colorCodes">><</replace>>
 				<<replace #customOverlayContent>><<social>><</replace>>
+			<<case "journal">>
+				<<replace #customOverlayTitle>><<OverlayTitle>><</replace>>
+				<<replace #customOverlayContent>><<journal>><</replace>>
 			<<case "statistics">>
 				<<replace #customOverlayTitle>><<OverlayTitle "statistics">><</replace>>
 				<<replace #customOverlayContent>><<statistics>><</replace>>
 			<<case "extraStatistics">>
 				<<replace #customOverlayTitle>><<OverlayTitle "extraStatistics">><</replace>>
 				<<replace #customOverlayContent>><<extraStatistics>><</replace>>
+			<<case "extraStatisticsWarning">>
+				<<replace #customOverlayTitle>><<OverlayTitle "extraStatisticsWarning">><</replace>>
+				<<replace #customOverlayContent>><<extraStatisticsWarning>><</replace>>
 			<<case "gameFeats">>
 				<<replace #customOverlayTitle>><<OverlayTitle "feats">><</replace>>
 				<<replace #customOverlayContent>><<feats>><</replace>>
@@ -31,19 +35,30 @@
 				<<replace #customOverlayContent>><<feats>><</replace>>
 			<<case "options">>
 				<<replace #customOverlayTitle>><<OverlayTitle "options">><</replace>>
-				<<replace #customOverlaySaveContent>>
+				<<replace #customOverlayContent>><<options>><</replace>>
+			<<case "saves">>
+				<<replace #customOverlayTitle>><<OverlayTitle "saves">><</replace>>
+				<<replace #customOverlayContent>>
 					<h3>Saves</h3>
 					<div id="saveList">
 						<<saveList>>
 					</div>
 				<</replace>>
-				<<replace #customOverlayContent>><<options>><</replace>>
 			<<case "optionsExportImport">>
 				<<replace #customOverlayTitle>><<OverlayTitle "optionsExportImport">><</replace>>
 				<<replace #customOverlayContent>><<optionsExportImport>><</replace>>
 			<<case "cheats">>
 				<<replace #customOverlayTitle>><<OverlayTitle "cheats">><</replace>>
 				<<replace #customOverlayContent>><<cheats>><</replace>>
+			<<case "canvasLayers">>
+				<<replace #customOverlayTitle>><<OverlayTitle "canvasLayers">><</replace>>
+				<<replace #customOverlayContent>><<canvasLayersEditor>><</replace>>
+			<<case "canvasColours">>
+				<<replace #customOverlayTitle>><<OverlayTitle "canvasColours">><</replace>>
+				<<replace #customOverlayContent>><<canvasColoursEditor `$cheatdisable is "f"`>><</replace>>
+			<<case "canvasModel">>
+				<<replace #customOverlayTitle>><<OverlayTitle "canvasModel">><</replace>>
+				<<replace #customOverlayContent>><<canvasModelEditor>><</replace>>
 			<<case "blackjackHelp">>
 				<<replace #customOverlayTitle>><<OverlayTitle>><</replace>>
 				<<replace #customOverlayContent>><<blackjackHelp>><</replace>>
@@ -62,7 +77,7 @@
 	<<addclass "#customOverlay" "hidden">>
 	<<set $currentOverlay to null>>
 <</button>>
-<<if $args[0] is "options">>
+<<if $args[0] is "saves">>
 	<<button "Export/Import Save">>
 		<<overlayReplace "optionsExportImport">>
 		<<set $currentOverlay to null>>
@@ -70,31 +85,21 @@
 <</if>>
 <<if $args[0] is "optionsExportImport">>
 	<<button "Return to Options">>
-		<<overlayReplace "options">>
-		<<set $currentOverlay to "options">>
+		<<overlayReplace "saves">>
+		<<set $currentOverlay to "saves">>
 	<</button>>
 <</if>>
 <<if $args[0] is "statistics">>
 	<<button "Extra Stats (Spoilers)">>
-		<<overlayReplace "extraStatistics">>
-		<<set $currentOverlay to null>>
-	<</button>>
-	<<button "Feats">>
-		<<overlayReplace "gameFeats">>
+		<<if $skipStatisticsConfirmation>>
+			<<overlayReplace "extraStatistics">>
+		<<else>>
+			<<overlayReplace "extraStatisticsWarning">>
+		<</if>>
 		<<set $currentOverlay to null>>
 	<</button>>
 <</if>>
 <<if $args[0] is "extraStatistics">>
-	<<button "Statistics">>
-		<<overlayReplace "statistics">>
-		<<set $currentOverlay to null>>
-	<</button>>
-	<<button "Feats">>
-		<<overlayReplace "gameFeats">>
-		<<set $currentOverlay to null>>
-	<</button>>
-<</if>>
-<<if $args[0] is "feats">>
 	<<button "Statistics">>
 		<<overlayReplace "statistics">>
 		<<set $currentOverlay to null>>
@@ -120,6 +125,56 @@
 		<span class="red">Terrible</span>
 		<br>
 	</div>
+<</if>>
+<<if $args[0] && $args[0].indexOf("canvas") == 0>>
+	<<if $args[0] is not "canvasLayers">>
+		<<button "Layers">>
+			<<overlayReplace "canvasLayers">>
+		<</button>>
+	<<else>>
+		<div class="buttonlike -noborder">Layers</div>
+	<</if>>
+	<<if $args[0] is not "canvasColours">>
+		<<button "Colours">>
+			<<overlayReplace "canvasColours">>
+		<</button>>
+	<<else>>
+		<div class="buttonlike -noborder">Colours</div>
+	<</if>>
+	<<if $args[0] is not "canvasModel">>
+		<<button "Model">>
+			<<overlayReplace "canvasModel">>
+		<</button>>
+	<<else>>
+		<div class="buttonlike -noborder">Model</div>
+	<</if>>
+	<br>
+	<<if Renderer.lastAnimation>>
+		<<button "Start/stop animation">>
+			<<script>>
+				if (Renderer.lastAnimation.playing) Renderer.lastAnimation.stop();
+				else Renderer.lastAnimation.start();
+			<</script>>
+		<</button>>
+	<</if>>
+	<<button "Refresh caches">>
+		<<script>>
+			Renderer.Stats.logmsgLoad.value = "";
+			Renderer.Stats.logmsgRender.value = "";
+			Renderer.Stats.logmsgAnimate.value = "";
+			Renderer.ImageCaches = {};
+			Renderer.ImageErrors = {};
+			Renderer.lastAnimation.invalidateCaches();
+			Renderer.invalidateLayerCaches(Renderer.lastModel.layerList);
+			Renderer.lastModel.redraw();
+		<</script>>
+	<</button>>
+	<br>
+	<<script>>
+	output.append(Renderer.Stats.logmsgLoad.bindText($("<div>")[0]));
+	output.append(Renderer.Stats.logmsgRender.bindText($("<div>")[0]));
+	output.append(Renderer.Stats.logmsgAnimate.bindText($("<div>")[0]));
+	<</script>>
 <</if>>
 <br><br>
 <</widget>>

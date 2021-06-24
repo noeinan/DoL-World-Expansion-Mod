@@ -2,6 +2,7 @@
 <<widget "variablesVersionUpdate">>
 /*Variable that you need to check on every new version, page load/refresh or save load*/
 
+<<updatehistorycontrols>>
 <<if $objectVersion is undefined>>
 	<<set $objectVersion to {}>>
 <</if>>
@@ -205,8 +206,8 @@
 	<<set $schooleventtimer to 5>>
 <</if>>
 
-<<if $stressmax is undefined>>
-	<<set $stressmax to 10010>>
+<<if $stressmax is undefined or $stressmax is 10010>>
+	<<set $stressmax to 10000>>
 <</if>>
 <<if $tirednessmax is undefined>>
 	<<set $tirednessmax to 2000>>
@@ -243,7 +244,7 @@
 	<<set $analpregdisable to "f">>
 <</if>>
 
-<<if $robindebtlimit is undefined and $robinintro is 1>>
+<<if $robindebtlimit is undefined and $docksrobinintro is 1>>
 	<<set $robindebtlimit to 5>>
 	<<if $robindebt gte $robindebtlimit>>
 		<<set $robindebt to ($robindebtlimit - 1)>>
@@ -1483,9 +1484,9 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 24 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 26 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 24>>
+	<<set $objectVersion.updateClothes to 26>>
 	<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 	Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 <</if>>
@@ -1947,6 +1948,22 @@
 <<if typeof $farm_yield is "string">>
 	<<set $farm_yield to 0>>
 <</if>>
+
+<<if $farm is undefined>>
+<<elseif $farm.build_finished is "parasite 1">>
+	<<set $farm.build_finished to ["parasites 1"]>>
+<<elseif $farm.build_finished is "parasite 2">>
+	<<set $farm.build_finished to ["parasites 2"]>>
+<</if>>
+
+<<if $farm is undefined>>
+<<elseif $farm.build_finished is undefined or $farm.build_finished is 0>>
+	<<set $farm.build_finished to []>>
+<<elseif Array.isArray($farm.build_finished)>>
+<<else>>
+	<<set $farm.build_finished to [$farm.build_finished]>>
+<</if>>
+
 <<if typeof $money is "string">>
 	<<set $money to 0>>
 <</if>>
@@ -2274,11 +2291,22 @@
 	<<set $clothesPriceSchool to 1>>
 	<<set $clothesPriceLewd to 1>>
 <</if>>
+
+<<if $analingusdisablegiving is undefined or $analingusdisablereceiving is undefined>>
+	<<set $analingusdisablegiving to $analdisable>>
+	<<set $analingusdisablereceiving to $analdisable>>
+<</if>>
+
 <<if $rentmod is undefined>>
 	<<set $rentmod to 1>>
 <<elseif $rentmod gt 3>>
 	<<set $rentmod to 3>>
 <</if>>
+
+<<if $money % 1>>
+	<<set $money to Math.floor($money)>>
+<</if>>
+
 <<if $blackjack_played is undefined>>
 	<<set $blackjack_played to 0>>
 	<<set $blackjack_won to 0>>
@@ -2309,5 +2337,67 @@
 <</if>>
 <<if $hoodDown is undefined>>
 	<<set $hoodDown to 0>>
+<</if>>
+
+<<if $cardcover is undefined>>
+	<<set $cardcover = { style: 0, colour: 'red' }>>
+<</if>>
+
+<<if $sidebarRenderer is undefined>>
+	<<set $sidebarRenderer to 'canvas'>>
+<</if>>
+<<if $showDebugRenderer is undefined>>
+	<<set $showDebugRenderer to !!StartConfig.debug>>
+<</if>>
+
+<<if $makeup.pbcolour isnot 0 and !($makeup.pbcolour in setup.colours.hair_map)>>
+	<<set _record to setup.guessColourInMap(setup.colours.hair_map, $makeup.pbcolour)>>
+	<<if _record>>
+		<<set $makeup.pbcolour to _record.variable>>
+	<<else>>
+		<<run Errors.report("Failed to update makeup.pbcolour from " + $makeup.pbcolour)>>
+	<</if>>
+<</if>>
+<<for _item range $makeup.owned.hairdye>>
+	<<if !(_item.colour in setup.colours.hair_map)>>
+		<<set _record to setup.guessColourInMap(setup.colours.hair_map, _item.colour)>>
+		<<if _record>>
+			<<set _item.colour to _record.variable>>
+		<<else>>
+			<<run Errors.report("Failed to update dye from " + _item.colour)>>
+		<</if>>
+	<</if>>
+<</for>>
+
+<<if $notifyUpdate is undefined>>
+	<<set $notifyUpdate = true>>
+<</if>>
+
+<<if $beedisable is undefined>>
+	<<set $beedisable to "f">>
+<</if>>
+<<if $lurkerdisable is undefined>>
+	<<set $lurkerdisable to "f">>
+<</if>>
+<<if $prof is undefined>>
+	<<set $prof to {}>>
+	<<set $prof.spray to 0>>
+	<<set $stat_lurkers_captured to 0>>
+	<<set $stat_aphrodisiacs_sold to 0>>
+	<<set $sadism to 0>>
+	<<set $sadism_level to 0>>
+<</if>>
+
+<<if $horsedisable is undefined>>
+	<<set $horsedisable to "f">>
+<</if>>
+<<if $farm_stage gte 10 and $lurkers_held is undefined>>
+	<<set $lurkers_held to 0>>
+<</if>>
+
+<<if $edenprepare is 1 and $edenwall is undefined>>
+	<<set $edenwall to 0>>
+	<<set $edenchimney to 0>>
+	<<set $edenroof to 0>>
 <</if>>
 <</widget>>

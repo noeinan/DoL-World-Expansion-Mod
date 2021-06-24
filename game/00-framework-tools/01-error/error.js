@@ -5,28 +5,35 @@ Errors.config = {
 	// TODO: link this to an environment variable
 	// for the time being, it can be enabled on console via `Errors.config.debug = true`
 	debug: false,
-	// by default, the error pane has no presence. Once an error is show, we leave
-	// the open of hiding the pane, but will continue to display a tab to allow the
-	// user the option of re-opening the pane.
-	userHidden: false,
+	maxLogs: 100,
+	showReporterSelector: '.error-reporter-btn'
 }
 Errors.log = []
 Errors.registerMessage = (message, copyData) => {
-	const id = Errors.log.length;
-	Errors.log.push({ message, copyData })
-	return id;
+	while (Errors.log.length >= Errors.config.maxLogs) Errors.log.shift();
+	let error = {message, copyData};
+	Errors.log.push(error);
+	return error;
 }
 Errors.report = (message, copyData) => {
-	let id;
+	let error;
 	try {
-		id = Errors.registerMessage(message, copyData);
+		error = Errors.registerMessage(message, copyData);
 	} catch(e) {
-		console.error(`Failed to append an error log. Something went really wrong: `, message, copyData);
+		console.error(`Failed to append an error log. Something went really wrong: `, message, copyData, e);
 		alert(`A critical error occurred. Please report this issue to the devs. [Errors.report/registerMessage]`);
+		return;
 	}
 	try {
-		Errors.Reporter.createEntry(id, message);
-		Errors.Reporter.updateTab();
+		let showBtn = document.querySelector(Errors.config.showReporterSelector);
+		if (showBtn) showBtn.classList.remove('hidden');
+		if (Errors.Reporter.visible()) {
+			if (Errors.log.length < Errors.config.maxLogs) {
+				Errors.Reporter.messagesContainer().append(Errors.Reporter.createEntry(error));
+			} else {
+				Errors.Reporter.update();
+			}
+		}
 	} catch(e) {
 		console.error(`Failed to render and open in Error console. \nRendering error: `, e, `\n\nError log: `, Errors.log);
 		alert(`A critical error occurred. Please report this issue to the devs. [Errors.report/displayMessage]`);
@@ -40,81 +47,87 @@ Errors.report = (message, copyData) => {
 	// making an additional namespace for this app. Note the scoping
 	const Reporter = Errors.Reporter = {};
 
+	Reporter.visible = function () {
+		return !Reporter.reporterContainer().classList.contains('hidden');
+	}
 	Reporter.reporterContainer = function getReporter() {
 		let reporterContainer = document.getElementById('error-reporter-container');
 		if (!reporterContainer) {
-			document.querySelector('#story').insertAdjacentHTML('afterbegin', `<div id='error-reporter-container'>
-				<div class="pane-tab hidden" onclick="Errors.Reporter.showPane()"></div>
-				<div class="pane hidden">
+			reporterContainer = document.createElement('div');
+			reporterContainer.id = 'error-reporter-container';
+			reporterContainer.className = "hidden";
+			reporterContainer.innerHTML = `
+				<div class="pane">
+					<h3>Errors:</h3>
 					<div class="messages"></div>
 					<div class="actions">
-						<div class="button close" onclick="Errors.Reporter.hidePane()">Close</div>
+						<div class="button close" onclick="Errors.Reporter.hide()">Close</div>
+						<div class="button close" onclick="Errors.Reporter.hide(true)">Clear</div>
+						<div class="button copy" onclick="Errors.Reporter.copyAll()">Copy</div>
 						<textarea class="copy-area hidden"></textarea>
 					</div>
-				</div>
-			</div>`);
-			reporterContainer = document.getElementById('error-reporter-container');
+				</div>`;
+			document.querySelector('#story').insertAdjacentElement('afterbegin', reporterContainer);
 		}
 		return reporterContainer;
 	}
 	Reporter.messagesContainer = () => {
 		return Reporter.reporterContainer().querySelector(`.messages`);
 	}
-	Reporter.entryContainer = (id) => {
-		return Reporter.reporterContainer().querySelector(`.message-entry[data-message-id="${id}"]`);
-	}
 	Reporter.paneContainer = () => {
 		return Reporter.reporterContainer().querySelector(`.pane`);
-	}
-	Reporter.paneTab = () => {
-		return Reporter.reporterContainer().querySelector(`.pane-tab`);
 	}
 	Reporter.copyArea = () => {
 		return Reporter.reporterContainer().querySelector('.copy-area')
 	}
-	Reporter.showPane = () => {
-		Reporter.paneContainer().classList.remove('hidden');
-		Reporter.paneTab().classList.add('hidden');
-	}
-	Reporter.hidePane = () => {
-		Reporter.paneContainer().classList.add('hidden');
-		Reporter.paneTab().classList.remove('hidden');
-		Reporter.copyArea().classList.add('hidden')
-		Errors.config.userHidden = true;
-	}
-	Reporter.updateTab = () => {
-		Reporter.paneTab().textContent = `Error Log: (${Errors.log.length})`
-		if (!Errors.config.userHidden) {
-			Reporter.paneContainer().classList.remove('hidden')
+	Reporter.toggle = () => {
+		if (Reporter.visible()) {
+			Reporter.hide();
+		} else {
+			Reporter.show();
 		}
 	}
-	Reporter.createEntry = (id, message) => {
-		const reports = Reporter.messagesContainer();
-		reports.insertAdjacentHTML('beforeend', `<div class="message-entry" data-message-id="${id}">
-			<div class="message"></div>
-			<div class="actions">
-				<div class="button copy" onclick="Errors.Reporter.copy(${id})">Copy</div>
-			</div>
-		</div>`)
-		const messageLocation = Reporter.entryContainer(id).querySelector(`.message`);
-		// This ensures that only text content is reported
-		messageLocation.textContent = message;
+	Reporter.show = () => {
+		Reporter.reporterContainer().classList.remove('hidden');
+		Reporter.update();
 	}
-	Reporter.copy = (id) => {
-		const data = Errors.log[id];
-		const entry = Reporter.entryContainer(id);
-		const copyButton = entry.querySelector('.button.copy');
+	Reporter.update = () => {
+		const reports = Reporter.messagesContainer();
+		reports.innerHTML = '';
+		for (let error of Errors.log) {
+			reports.append(Reporter.createEntry(error));
+		}
+	}
+	Reporter.hide = (andClear) => {
+		Reporter.reporterContainer().classList.add('hidden');
+		Reporter.copyArea().classList.add('hidden')
+		if (andClear) {
+			Errors.log.splice(0);
+			let showBtn = document.querySelector(Errors.config.showReporterSelector);
+			if (showBtn) showBtn.classList.add('hidden');
+		}
+	}
+	Reporter.createEntry = (error) => {
+		const div = document.createElement("div");
+		div.className = "message-entry";
+		div.innerHTML = `<div class="message"></div>`;
+		// This ensures that only text content is reported
+		div.querySelector(".message").textContent = error.message;
+		return div;
+	}
+	Reporter.copyAll = function() {
+		const copyButton = Reporter.reporterContainer().querySelector('.button.copy');
 		const copyArea = Reporter.copyArea();
-		copyArea.classList.remove('hidden');
 		try {
-			copyArea.textContent = JSON.stringify(data, null, 2);
+			copyArea.textContent = JSON.stringify(Errors.log.map(e=>[e.message,e.copyData]), null, 2);
+			copyArea.classList.remove('hidden');
 			copyArea.focus();
 			copyArea.select();
 			document.execCommand('copy')
 			copyButton.textContent = 'Copied!'
 		} catch(e) {
 			copyButton.textContent = 'Copy Failed :('
-			alert(`Failed to copy to the clipboard. Try manually copying from the textarea, or if nothing has appeared, directly from Errors.log[${id}] in the developer console.`)
+			alert(`Failed to copy to the clipboard. Try manually copying from the textarea, or if nothing has appeared, directly from Errors.log in the developer console.`)
 		}
 		setTimeout(() => {
 			copyButton.textContent = 'Copy';

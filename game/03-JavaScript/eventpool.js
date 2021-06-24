@@ -113,7 +113,12 @@ Macro.add("addevent", {
 Macro.add("runeventpool", {
 	skipArgs: true,
 	handler: function () {
-		var pick = rollWeightedRandomFromArray(State.temporary.eventpool);
+		if(State.temporary.eventpool.includes(State.variables.eventPoolOverride)){
+			var pick = State.variables.eventPoolOverride;
+			delete State.variables.eventPoolOverride;
+		}else{
+			var pick = rollWeightedRandomFromArray(State.temporary.eventpool);
+		}
 		if (!pick) throw new Error("Event pool is empty");
 		jQuery(this.output).wiki(pick.content);
 	}
