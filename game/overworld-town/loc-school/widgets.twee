@@ -23,6 +23,36 @@
 	<<elseif $hour gte 17>>
 		<<set $schoolstate to "late">><<set $schoollesson to 0>>
 	<</if>>
+
+	<!-- changing room is in use a bit longer than school is in session.
+	  -- also include changing times before first, after fifth and
+	  -- during mIdday break -->
+	<<if $time gte (9 * 60 - 2) and $time lte (15 * 60 + 4)>>
+		<<if $time lte ($hour * 60 + 4) or $time gte ($hour * 60 + 58)>>
+			<<if $time gte (14 * 60 - 2)>>
+				<<set $changingroomstate to "own">>
+			<<else>>
+				<<set $changingroomstate to "other">>
+			<</if>>
+		<<else>>
+			<<set $changingroomstate to "empty">>
+		<</if>>
+	<<else>>
+		<<set $changingroomstate to "empty">>
+	<</if>>
+
+	<!-- pool room itself is in use during $schoolstate only -->
+	<<if $schoolstate is "fifth">>
+		<<if $time lte ($hour * 60 + 51)>>
+			<<set $poolroomstate to "own">>
+		<<else>>
+			<<set $poolroomstate to "empty">>
+		<</if>>
+	<<elseif $schoollesson is 1>>
+		<<set $poolroomstate to "other">>
+	<<else>>
+		<<set $poolroomstate to "empty">>
+	<</if>>
 <<else>>
 	<<if $hour lte 6>>
 		<<set $schoolstate to "earlynoschool">><<set $schoollesson to 0>>
@@ -31,6 +61,8 @@
 	<<else>>
 		<<set $schoolstate to "latenoschool">><<set $schoollesson to 0>>
 	<</if>>
+	<<set $changingroomstate to "empty">>
+	<<set $poolroomstate to "empty">>
 <</if>>
 <</widget>>
 
