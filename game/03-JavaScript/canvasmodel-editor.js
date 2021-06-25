@@ -227,7 +227,7 @@ Macro.add('canvasLayersEditor', {
 			element('button', {
 				type: 'button',
 				onclick() {
-					let layerProps = ["name", "show", "src", "z", "alpha", "desaturate", "brightness", "blendMode", "blend", "animation", "frames", "dx", "dy", "width", "height"];
+					let layerProps = ["name", "show", "src", "mask", "z", "alpha", "desaturate", "brightness", "blendMode", "blend", "animation", "frames", "dx", "dy", "width", "height"];
 					copyToClipboard(this.parentElement.querySelector("textarea"), JSON.stringify(layers.map(layer => {
 						let copy = {};
 						for (let key of layerProps) {
@@ -253,7 +253,8 @@ Macro.add('canvasLayersEditor', {
 						element('th', 'contrast'),
 						element('th', 'blendMode'),
 						element('th', 'blend'),
-						element('th', 'animation')
+						element('th', 'animation'),
+						element('th', 'mask')
 					])]),
 			element('tbody',
 				layers.map(layer => element('tr', [
@@ -363,6 +364,14 @@ Macro.add('canvasLayersEditor', {
 						value: layer.animation,
 						onchange: function () {
 							layer.animation = this.value;
+							redrawFull();
+						}
+					})),
+					element('td', eInput({
+						class: 'editlayer-masksrc',
+						value: layer.masksrc,
+						onchange: function () {
+							layer.masksrc = this.value;
 							redrawFull();
 						}
 					}))
