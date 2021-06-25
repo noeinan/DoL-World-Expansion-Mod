@@ -1,6 +1,11 @@
 :: History Classroom
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-
+<<robin_location>>
+<<if _robin_location is "school">>
+	<<set $robinhistory to "active">>
+<<else>>
+	<<set $robinhistory to "missing">>
+<</if>>
 <<if $schoolstate is "fourth">>
 	<<if $worn.upper.type.includes("naked") and $worn.lower.type.includes("naked")>>
 		<<outfitChecks>>
@@ -37,11 +42,52 @@
 			Winter is preparing at the front of the room while the seats fill.
 			<<if $worn.over_upper.name isnot "naked" or $worn.over_lower.name isnot "naked" or $worn.over_head.name isnot "naked">>
 				<<undressOverClothes "historyClassroom">>
-				You hang your coat at the back of the class and take your seat.
+				You hang your coat at the back of the class.
 			<</if>>
-			<br><br>
-			<<link [[Next|History Lesson]]>><<endevent>><</link>>
-			<br>
+			<<if _robin_location is "school">>
+				Robin waves you over, and points at an empty seat beside <<nnpc_him Robin>>.
+				<br><br>
+				<<if random(1, 2) is 2>>
+					<<endevent>>
+					<<npc Robin>><<generatey2>><<person2>>
+					You approach, but a <<person>> sits there before you arrive.
+					<br><br>
+					<<if $NPCName[$NPCNameList.indexOf("Robin")].dom gte 20>>
+						"Excuse me," Robin says. "My <<if $robinromance is 1>><<girlfriend>><<else>>friend<</if>> was going to sit there."
+						<br><br>
+						<<if random(1, 2) is 2>>
+							"I got here first," the <<person2>><<person>> replies, refusing to budge.
+							<br><br>
+
+							<<link [[Ask the student to move|History Robin Move]]>><</link>>
+							<br>
+							<<link [[Find a new seat|History Robin New]]>><</link>>
+							<br>
+						<<else>>
+							"Fine," the <<person2>><<person>> replies. <<He>> grabs <<his>> back and stands. You sit beside Robin.
+							<br><br>
+							<<link [[Next|History Lesson]]>><<endevent>><<set $robinhistory to "seat">><</link>>
+							<br>
+						<</if>>
+					<<else>>
+						Robin lowers <<his>> head.
+						<br><br>
+
+						<<link [[Ask the student to move|History Robin Move]]>><</link>>
+						<br>
+						<<link [[Find a new seat|History Robin New]]>><</link>>
+						<br>
+					<</if>>
+				<<else>>
+					<<link [[Next|History Lesson]]>><<endevent>><<set $robinhistory to "seat">><</link>>
+					<br>
+				<</if>>
+			<<else>>
+				<br><br>
+
+				<<link [[Next|History Lesson]]>><<endevent>><</link>>
+				<br>
+			<</if>>
 		<<else>>
 			You enter the history classroom.
 			<<npc Winter>><<person1>>
@@ -76,7 +122,21 @@
 		<br><br>
 	<</if>>
 <<elseif $schoolstate is "lunch">>
-	You enter the history classroom. No one else has arrived yet. You could use the extra time to study.
+	You enter the history classroom.
+	<<if _robin_location is "school" and $luncheaten is 1>>
+		Robin is already here.
+			<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 20>>
+				<<nnpc_He Robin>> stares out the window.
+			<<elseif $robinromance is 1>>
+				<<nnpc_He Robin>> smiles and waves you over.
+			<<else>>
+				<<nnpc_He Robin>> smiles and waves.
+			<</if>>
+			<<set $robinhistory to "seat">>
+	<<else>>
+		No one else has arrived yet.
+	<</if>>
+	You could use the extra time to study.
 	<br><br>
 
 	<<schoolperiodtext>>
@@ -162,8 +222,13 @@
 	<<link [[Daydream|History Lesson Daydream]]>><</link>><<lstress>> <<lharass>>
 	<br>
 	<<if $exhibitionism gte 55>>
-		<<link [[Masturbate|History Lesson Masturbate]]>><<set $masturbationstart to 1>><</link>><<exhibitionist4>>
-		<br>
+		<<if $robinhistory is "seat" and $NPCName[$NPCNameList.indexOf("Robin")].dom gte 60>>
+			<<link [[Masturbate|History Lesson Masturbate Robin]]>><</link>>
+			<br>
+		<<else>>
+			<<link [[Masturbate|History Lesson Masturbate]]>><<set $masturbationstart to 1>><</link>><<exhibitionist4>>
+			<br>
+		<</if>>
 	<</if>>
 <</if>>
 
@@ -190,7 +255,11 @@ Winter sighs. "Is this really what passes for humour today?" <<He>> guides you t
 :: History Lesson Focus
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
 
-You focus on listening to the teacher and studying the material. It's hard going, but you think you're making progress.
+You focus on listening to the teacher and studying the material.
+<<if $robinhistory is "seat">>
+	Robin is eager to help.
+<</if>>
+It's hard going, but you think you're making progress.
 <br><br>
 
 <<towelup>>
@@ -225,12 +294,27 @@ You focus on listening to the teacher and studying the material. It's hard going
 
 <<towelup>>
 
-<<if $cool gte ($coolmax / 5 * 2)>>
-	You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates. You soon become the centre of attention.
-<<elseif $cool gte ($coolmax / 5)>>
-	You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates.
+<<if $robinhistory is "seat" and $robin_history_chat isnot 1>>
+	<<set $robin_history_chat to 1>>
+	<<npc Robin>><<person1>>
+	<<if $NPCName[$NPCNameList.indexOf("Robin")].trauma gte 20>>
+		You try to strike up a conversation, but <<hes>> busy struggling to focus on the lesson instead. 
+	<<elseif $robinromance is 1>>
+		You try to strike up a conversation with Robin. <<He>> stays focused on the lesson, but nudges your hand beneath the desk. You wrap your fingers around <<his>>, and <<he>> squeezes.
+	<<elseif $NPCName[$NPCNameList.indexOf("Robin")].love gte 50>>
+		You try to strike up a conversation with Robin. <<He>> nods and occasionally smiles at you, but <<hes>> more focused on the lesson.
+	<<else>>
+		You try to strike up a conversation with Robin. <<He>> nods as you speak, but <<hes>> more focused on the lesson.
+	<</if>>
+	<<endevent>>
 <<else>>
-	You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates. Most avoid interacting with you.
+	<<if $cool gte ($coolmax / 5 * 2)>>
+		You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates. You soon become the centre of attention.
+	<<elseif $cool gte ($coolmax / 5)>>
+		You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates.
+	<<else>>
+		You do the bare minimum of work, focusing instead on trying to endear yourself to your classmates. Most avoid interacting with you.
+	<</if>>
 <</if>>
 <br><br>
 
@@ -304,8 +388,16 @@ You focus on listening to the teacher and studying the material. It's hard going
 
 :: History Classroom Study
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
-
-You take a seat and read a history textbook.
+<<robin_location>>
+<<if $robinhistory is "seat">>
+	You sit beside Robin and read a history textbook.
+<<else>>
+	You take a seat and read a history textbook.
+	<<if _robin_location is "school" and $luncheaten isnot 1>>
+		Robin is the next to arrive, and takes the seat beside you.
+		<<set $robinhistory to "seat">>
+	<</if>>
+<</if>>
 <br><br>
 
 <<npc Winter>><<person1>>The classroom soon fills and Winter arrives to begin the lesson.
@@ -315,7 +407,7 @@ You take a seat and read a history textbook.
 	<<link [[Next|History Lesson]]>><<endevent>><</link>>
 	<br>
 <<elseif $rightarm is "bound" or $leftarm is "bound" or $feetuse is "bound">>
-	Winter looks at your bound limbs. "Whatever that's about you need to sort it out before you start my class. Go see the head."
+	Winter looks at your bound limbs. "You need to sort that out before attending my class. Go see the head."
 	<br><br>
 
 	<<link [[Next|Hallways]]>><<endevent>><</link>>
@@ -338,3 +430,81 @@ You take a seat and read a history textbook.
 <!-- gain history skill with half of efficiency of a proper lesson -->
 <<set _history to _time_to_pass / 10>>
 <<historyskill _history>>
+
+
+
+:: History Robin Move
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"E-excuse me," you say. "I was going to sit there. C-Can you move?"
+<<elseif $submissive lte 850>>
+	"I'm sitting there," you say.
+<<else>>
+	"I was going to sit there," you say. "Do you mind moving?"
+<</if>>
+<br><br>
+
+<<if random(1, $coolmax) gt $cool>>
+	"Nope," the <<person2>><<person>> sneers. "What you gonna do about it?"
+	<<if $submissive lte 500>>
+		Your fists clench.
+	<</if>>
+	Other students turn to watch.
+	<br><br>
+
+	<<link [[Find another seat|History Robin New]]>><</link>>
+	<br>
+	<<if $submissive gte 1500>>
+		<<link [[Beg|History Robin Beg]]>><<sub 1>><</link>><<submissivetext>>
+		<br>
+	<</if>>
+	<<if $submissive lte 500>>
+		<<link [[Get physical|History Robin Fight]]>><<def 1>><</link>><<defianttext>>
+		<br>
+	<</if>>
+<<else>>
+	The <<person2>><<person>> nods. "Sure." <<He>> grabs <<his>> bag and looks for another seat.
+	<br><br>
+	<<link [[Next|History Lesson]]>><<set $robinhistory to "seat">><<endevent>><</link>>
+	<br>
+<</if>>
+
+:: History Robin New
+<<effects>>
+
+You find another seat. Robin gives you a sad wave from the other side of the room once you're settled.
+<br><br>
+
+<<link [[Next|History Lesson]]>><<endevent>><</link>>
+<br>
+
+:: History Robin Beg
+<<effects>>
+
+You grasp the <<person2>><<persons>> shirt and nearly drop to your knees. "P-please," you say, pouring everything into your words and stance. "I have to sit by Robin."
+<br><br>
+
+The <<person>> shifts in discomfort. "Fine," <<he>> says. "Get off me." <<He>> grabs <<his>> bag and finds another seat.
+<br><br>
+
+Robin looks concerned as you sit.
+<br><br>
+
+<<link [[Next|History Lesson]]>><<set $robinhistory to "seat">><<endevent>><</link>>
+<br>
+
+:: History Robin Fight
+<<effects>>
+
+You grasp the <<persons>> collar, and pull <<him>> closer. <<He>> tries to steady <<himself>> against <<his>> desk, but loses <<his>> grip.
+<br><br>
+"Get off my seat," you say. You release <<him>>, and <<he>> almost falls to the carpet.
+<br><br>
+"F-fine," <<he>> says while grabbing <<his>> bag. "You're crazy."
+<br><br>
+<<person1>>Robin gives you a concerned look as you sit beside <<him>>.
+<br><br>
+
+<<link [[Next|History Lesson]]>><<set $robinhistory to "seat">><<endevent>><</link>>
+<br>
