@@ -421,21 +421,6 @@ Renderer.CanvasModels["main"] = {
 	preprocess(options) {
 		options.blink_animation = options.blink ? options.trauma ? "blink-trauma" : "blink" : "";
 
-		// Show arm and hand just below outermost clothes layer
-		if (options.worn_over_upper) {
-			options.zarms = ZIndices.over_upper_arms - 0.2;
-		} else if (options.worn_upper) {
-			if (options.upper_tucked) {
-				options.zarms = ZIndices.upper_arms_tucked - 0.2;
-			} else {
-				options.zarms = ZIndices.upper_arms - 0.2;
-			}
-		} else if (options.worn_under_upper) {
-			options.zarms = ZIndices.under_upper_arms - 0.2;
-		} else {
-			options.zarms = ZIndices.armsidle
-		}
-
 		// Generate skin tone & tanlines filters
 		if (options.skin_type !== "custom") {
 			options.filters.body = setup.colours.getSkinFilter(options.skin_type, options.skin_tone);
@@ -546,6 +531,29 @@ Renderer.CanvasModels["main"] = {
 				}
 			}
 		}
+
+		// Show arm and hand just below outermost clothes layer to fully show its main/breasts layer and hide others
+		// -0.1 is to move arms behind sleeves; to display gloves above sleeves they get +0.2 in hand layer decls
+		if (options.worn_over_upper) {
+			options.zarms = ZIndices.over_upper_arms - 0.1;
+		} else if (options.worn_upper) {
+			if (options.upper_tucked) {
+				options.zarms = ZIndices.upper_arms_tucked - 0.1;
+			} else {
+				options.zarms = ZIndices.upper_arms - 0.1;
+			}
+		} else if (options.worn_under_upper) {
+			options.zarms = ZIndices.under_upper_arms - 0.1;
+		} else {
+			options.zarms = ZIndices.armsidle
+		}
+		// Setup below could cover sleeves, so move arms below bottommost sleeves layer
+		if (options.worn_under_upper_setup.sleeve_img === 1) {
+			options.zarms = ZIndices.under_upper_arms - 0.1;
+		} else if (options.worn_upper_setup.sleeve_img === 1) {
+			options.zarms = ZIndices.upper_arms - 0.1;
+		}
+
 		options.genitals_chastity = options.worn_genitals_setup.type.includes("chastity");
 	},
 	layers: {
@@ -2013,7 +2021,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_left !== "none"
 			},
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands"],
 			animation: "idle"
@@ -2033,7 +2041,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_left !== "none"
 			},
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands_acc"],
 			animation: "idle"
@@ -2052,7 +2060,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands"],
 			animation: "idle"
@@ -2072,7 +2080,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands_acc"],
 			animation: "idle"
