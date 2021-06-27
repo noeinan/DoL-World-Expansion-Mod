@@ -42,6 +42,7 @@
  * @property {number} [contrast] Adjust contrast (before recoloring), default 1
  * @property {string} [blendMode] Recoloring mode (see docs for globalCompositeOperation; "hard-light", "multiply" and "screen" ), default none
  * @property {string} [blend] Color for recoloring, CSS color string
+ * @property {string} [masksrc] Mask image path. If present, only parts where mask is opaque will be displayed
  * @property {string} [animation] Name of animation to apply, default none
  * @property {number} [frames] Frame numbers used to display static images, array of subsprite indices. For example, if model frame count is 6 but layer has only 3 subsprites, default frames would be [0, 0, 1, 1, 2, 2].
  * @property {string[]} [filters] Names of filters that should be applied to the layer; filters themselves are taken from model options
@@ -60,6 +61,7 @@
  * @property {function} [contrastftn] (options,V,T)=>number
  * @property {function} [blendModefn] (options,V,T)=>string
  * @property {function} [blendfn] (options,V,T)=>string
+ * @property {function} [masksrcfn] (options,V,T)=>string
  * @property {function} [animationfn] (options,V,T)=>string
  * @property {function} [framesfn] (options,V,T)=>number[]
  * @property {function} [filtersfn] (options,V,T)=>string[]
@@ -296,6 +298,7 @@ window.CanvasModel = class CanvasModel {
 			propeval(layer, "desaturate");
 			propeval(layer, "brightness");
 			propeval(layer, "contrast");
+			propeval(layer, "masksrc");
 			propeval(layer, "animation");
 			propeval(layer, "filters");
 			propeval(layer, "dx");

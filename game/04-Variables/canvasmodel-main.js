@@ -407,6 +407,7 @@ Renderer.CanvasModels["main"] = {
 			"genitals_chastity": false, // generated option
 			"upper_tucked": false,
 			"hood_down": false,
+			"head_mask_src": "", // generated option
 			"blink_animation": "", // generated option
 			"ztan_swimshorts": ZIndices.base, // generated option
 			"ztan_swimsuitTop": ZIndices.base, // generated option
@@ -420,21 +421,6 @@ Renderer.CanvasModels["main"] = {
 	},
 	preprocess(options) {
 		options.blink_animation = options.blink ? options.trauma ? "blink-trauma" : "blink" : "";
-
-		// Show arm and hand just below outermost clothes layer
-		if (options.worn_over_upper) {
-			options.zarms = ZIndices.over_upper_arms - 0.2;
-		} else if (options.worn_upper) {
-			if (options.upper_tucked) {
-				options.zarms = ZIndices.upper_arms_tucked - 0.2;
-			} else {
-				options.zarms = ZIndices.upper_arms - 0.2;
-			}
-		} else if (options.worn_under_upper) {
-			options.zarms = ZIndices.under_upper_arms - 0.2;
-		} else {
-			options.zarms = ZIndices.armsidle
-		}
 
 		// Generate skin tone & tanlines filters
 		if (options.skin_type !== "custom") {
@@ -546,6 +532,35 @@ Renderer.CanvasModels["main"] = {
 				}
 			}
 		}
+
+		// Show arm and hand just below outermost clothes layer to fully show its main/breasts layer and hide others
+		// -0.1 is to move arms behind sleeves; to display gloves above sleeves they get +0.2 in hand layer decls
+		if (options.worn_over_upper) {
+			options.zarms = ZIndices.over_upper_arms - 0.1;
+		} else if (options.worn_upper) {
+			if (options.upper_tucked) {
+				options.zarms = ZIndices.upper_arms_tucked - 0.1;
+			} else {
+				options.zarms = ZIndices.upper_arms - 0.1;
+			}
+		} else if (options.worn_under_upper) {
+			options.zarms = ZIndices.under_upper_arms - 0.1;
+		} else {
+			options.zarms = ZIndices.armsidle
+		}
+		// Setup below could cover sleeves, so move arms below bottommost sleeves layer
+		if (options.worn_under_upper_setup.sleeve_img === 1) {
+			options.zarms = ZIndices.under_upper_arms - 0.1;
+		} else if (options.worn_upper_setup.sleeve_img === 1) {
+			options.zarms = ZIndices.upper_arms - 0.1;
+		}
+
+		if (options.worn_head_setup.mask_img === 1) {
+			options.head_mask_src = "img/clothes/head/"+options.worn_head_setup.variable+"/mask.png";
+		} else {
+			options.head_mask_src = null;
+		}
+
 		options.genitals_chastity = options.worn_genitals_setup.type.includes("chastity");
 	},
 	layers: {
@@ -918,6 +933,9 @@ Renderer.CanvasModels["main"] = {
 					return ZIndices.backhair
 				}
 			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
 			showfn(options) {
 				return !!options.show_hair && !!options.hair_sides_type
 			},
@@ -930,6 +948,9 @@ Renderer.CanvasModels["main"] = {
 			},
 			showfn(options) {
 				return !!options.show_hair && !!options.hair_fringe_type
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
 			},
 			filters: ["hair"],
 			z: ZIndices.fronthair,
@@ -944,6 +965,9 @@ Renderer.CanvasModels["main"] = {
 				} else {
 					return ""
 				}
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
 			},
 			showfn(options) {
 				return !!options.show_hair && !!options.hair_sides_type
@@ -1332,6 +1356,9 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.wolf_ears_type)
 			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
@@ -1394,6 +1421,9 @@ Renderer.CanvasModels["main"] = {
 			srcfn(options) {
 				return 'img/transformations/cat/ears/'+options.cat_ears_type+'.png'
 			},
+			masksrcfn(options) {
+				return options.head_mask_src;
+			},
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.cat_ears_type)
 			},
@@ -1423,6 +1453,9 @@ Renderer.CanvasModels["main"] = {
 		"cow_ears": {
 			srcfn(options) {
 				return 'img/transformations/cow/ears/'+options.cow_ears_type+'.png'
+			},
+			masksrcfn(options) {
+				return options.head_mask_src;
 			},
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.cow_ears_type)
@@ -2013,7 +2046,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_left !== "none"
 			},
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands"],
 			animation: "idle"
@@ -2033,7 +2066,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_left !== "none"
 			},
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_left === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands_acc"],
 			animation: "idle"
@@ -2052,7 +2085,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands"],
 			animation: "idle"
@@ -2072,7 +2105,7 @@ Renderer.CanvasModels["main"] = {
 					options.arm_right !== "none"
 			},
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.1);
+				return options.arm_right === "cover" ? ZIndices.hands : (options.zarms+0.2);
 			},
 			filters: ["worn_hands_acc"],
 			animation: "idle"
