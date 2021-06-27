@@ -66,57 +66,85 @@
 <</if>>
 <</widget>>
 
+<<widget "advancelesson">><!-- advances time during a lesson and sets $phase to 1 if the lesson has ended -->
+<<set _time_left to 59 - $minute>>
+<!-- the lesson ends at 59th minute to give time to walk to the next class -->
+<<set _state to $schoolstate>>
+<<schooleffects>>
+<<if _state isnot $schoolstate>>
+<!-- only happens if we somehow jumped into another lesson, abort! -->
+	<<set $phase to 1>>
+<<elseif _time_left gte 23>>
+<!-- make sure that there's at least a couple of minutes left for the next phase of a lesson -->
+	<<pass 20>>
+<<else>>
+<!-- end of the lesson -->
+	<<set $phase to 1>>
+	<<pass _time_left>>
+<</if>>
+<<schooleffects>>
+<!-- an extra variable for use in adding learning points, stress, etc.
+	1 point per 5 minutes + 1 for being present at the end of the lesson -->
+<<set _lesson_progress to (_time_left gte 20 ? 4 : Math.trunc(_time_left / 5)) + $phase>>
+<</widget>>
+
 <<widget "schoolperiod">>
 <<if $exposed lte 0>>
-<<if $schoolstate is "morning">>
-<<scienceicon>><<link [[Go to your science lesson (0:01)|Science Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "first">>
-<<scienceicon>><<link [[Go to your science lesson (0:01)|Science Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "second">>
-<<mathicon>><<link [[Go to your maths lesson (0:01)|Maths Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "third">>
-<<englishicon>><<link [[Go to your English lesson (0:01)|English Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "lunch">>
-<<eaticon>><<link [[Join the masses in the canteen (0:01)|Canteen]]>><<pass 1>><</link>>
-<br>
-<<historyicon>><<link [[Wait in the history classroom (0:01)|History Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "fourth">>
-<<historyicon>><<link [[Go to your history lesson (0:01)|History Classroom]]>><<pass 1>><</link>>
-<br><br>
-<<elseif $schoolstate is "fifth">>
-<<swimmingicon>><<link [[Go to your swimming lesson (0:01)|School Pool Entrance]]>><<pass 1>><</link>>
-<br><br>
-<</if>>
+	<<if $schoolstate is "morning" or ($schoolstate is "first" and $minute lte 58)>>
+		<<scienceicon>><<link [[Go to your science lesson (0:01)|Science Classroom]]>><<pass 1>><</link>>
+		<br><br>
+	<<elseif $schoolstate is "first" or ($schoolstate is "second" and $minute lte 58)>>
+		<<mathicon>><<link [[Go to your maths lesson (0:01)|Maths Classroom]]>><<pass 1>><</link>>
+		<br><br>
+	<<elseif $schoolstate is "second" or ($schoolstate is "third" and $minute lte 58)>>
+		<<englishicon>><<link [[Go to your English lesson (0:01)|English Classroom]]>><<pass 1>><</link>>
+		<br><br>
+	<<elseif $schoolstate is "third" or ($schoolstate is "lunch" and $minute lte 58)>>
+		<<eaticon>><<link [[Join the masses in the canteen (0:01)|Canteen]]>><<pass 1>><</link>>
+		<br>
+		<<historyicon>><<link [[Wait in the history classroom (0:01)|History Classroom]]>><<pass 1>><</link>>
+		<br><br>
+	<<elseif $schoolstate is "lunch" or ($schoolstate is "fourth" and $minute lte 58)>>
+		<<historyicon>><<link [[Go to your history lesson (0:01)|History Classroom]]>><<pass 1>><</link>>
+		<br><br>
+	<<elseif $schoolstate is "fourth" or ($schoolstate is "fifth" and $minute lte 58)>>
+		<<swimmingicon>><<link [[Go to your swimming lesson (0:01)|School Pool Entrance]]>><<pass 1>><</link>>
+		<br><br>
+	<</if>>
 <</if>>
 <</widget>>
 
 <<widget "schoolperiodtext">>
 <<if $schoolstate is "morning">>
-Your science lesson starts at <<if $timestyle is "ampm">>9:00 am<<else>>9:00<</if>>.
-<br><br>
+	Your science lesson starts at <<if $timestyle is "ampm">>9:00 am<<else>>9:00<</if>>.
+	<br><br>
+<<elseif $schoolstate is "first" and $minute lte 58>>
+	Your science lesson started at <<if $timestyle is "ampm">>9:00 am<<else>>9:00<</if>>!
+	<br><br>
 <<elseif $schoolstate is "first">>
-Your science lesson started at <<if $timestyle is "ampm">>9:00 am<<else>>9:00<</if>>!
-<br><br>
+	Your maths lesson starts at <<if $timestyle is "ampm">>10:00 am<<else>>10:00<</if>>.
+	<br><br>
+<<elseif $schoolstate is "second" and $minute lte 58>>
+	Your maths lesson started at <<if $timestyle is "ampm">>10:00 am<<else>>10:00<</if>>!
+	<br><br>
 <<elseif $schoolstate is "second">>
-Your maths lesson started at <<if $timestyle is "ampm">>10:00 am<<else>>10:00<</if>>!
-<br><br>
-<<elseif $schoolstate is "third">>
-Your English lesson started at <<if $timestyle is "ampm">>11:00 am<<else>>11:00<</if>>!
-<br><br>
+	Your English lesson starts at <<if $timestyle is "ampm">>11:00 am<<else>>11:00<</if>>.
+	<br><br>
+<<elseif $schoolstate is "third" and $minute lte 58>>
+	Your English lesson started at <<if $timestyle is "ampm">>11:00 am<<else>>11:00<</if>>!
+	<br><br>
 <<elseif $schoolstate is "lunch">>
-Your history lesson starts at <<if $timestyle is "ampm">>1:00 pm<<else>>13:00<</if>>.
-<br><br>
+	Your history lesson starts at <<if $timestyle is "ampm">>1:00 pm<<else>>13:00<</if>>.
+	<br><br>
+<<elseif $schoolstate is "fourth" and $minute lte 58>>
+	Your history lesson started at <<if $timestyle is "ampm">>1:00 pm<<else>>13:00<</if>>!
+	<br><br>
 <<elseif $schoolstate is "fourth">>
-Your history lesson started at <<if $timestyle is "ampm">>1:00 pm<<else>>13:00<</if>>!
-<br><br>
+	Your swimming lesson starts at <<if $timestyle is "ampm">>2:00 pm<<else>>14:00<</if>>.
+	<br><br>
 <<elseif $schoolstate is "fifth">>
-Your swimming lesson started at <<if $timestyle is "ampm">>2:00 pm<<else>>14:00<</if>>!
-<br><br>
+	Your swimming lesson started at <<if $timestyle is "ampm">>2:00 pm<<else>>14:00<</if>>!
+	<br><br>
 <</if>>
 <</widget>>
 
@@ -2028,60 +2056,28 @@ Doren asks you to demonstrate your grammar on the whiteboard. As you walk to the
 
 <<widget "swimminglessoneffects">>
 
-<<pass 5>><<stress 1>><<tiredness 1>>
-<<schooleffects>>
-<<if $time gte ($hour * 60 + 5) and $time lte ($hour * 60 + 57)>>
-<<pass 5>><<stress 1>><<tiredness 1>>
-<<schooleffects>>
-<<else>>
-<<set $phase to 1>>
-<</if>>
-<<if $time gte ($hour * 60 + 5) and $time lte ($hour * 60 + 57)>>
-<<pass 5>><<stress 1>><<tiredness 1>>
-<<schooleffects>>
-<<else>>
-<<set $phase to 1>>
-<</if>>
-<<if $time gte ($hour * 60 + 5) and $time lte ($hour * 60 + 57)>>
-<<pass 5>><<stress 1>><<tiredness 1>>
-<<schooleffects>>
-<<else>>
-<<set $phase to 1>>
-<</if>>
-
-<<if $time gte ($hour * 60 + 5) and $time lte ($hour * 60 + 57)>>
-<<else>>
-<<set $phase to 1>>
-<</if>>
+<<advancelesson>>
+<<stress _lesson_progress>>
+<<tiredness _lesson_progress>>
 
 <<if $phase is 1>>
 	<<set $phase to 0>>
-  <<if $exposed gte 1 and $swimall isnot 1>>
-
+	<<if $exposed gte 1 and $swimall isnot 1>>
 		The bell rings, signifying the end of the lesson. You wait as the other students leave. Some students linger, doubtlessly hoping to get a nice view when you climb out, but Mason herds them away, giving you some privacy.
 		<br><br>
 
 	<<elseif $exposed lte 0>>
+		The bell rings, signifying the end of the lesson. You climb out of the pool.
+		<br><br>
 
-	  The bell rings, signifying the end of the lesson. You climb out of the pool.
-	  <br><br>
-
-	<</if>>
-
-	<<if $time is ($hour * 60 + 57)>>
-		<<pass 3>>
-	<<elseif $time is ($hour * 60 + 58)>>
-		<<pass 2>>
-	<<elseif $time is ($hour * 60 + 59)>>
-		<<pass 1>>
 	<</if>>
 
 	<<if $exposed lte 0 or $swimall is 1>>
 		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><</link>>
 		<br>
-
 		<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><</link>>
 		<br><br>
+
 	<</if>>
 
 	<<if $exposed gte 1>>
@@ -2089,30 +2085,25 @@ Doren asks you to demonstrate your grammar on the whiteboard. As you walk to the
 		<br>
 		<<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><</link>>
 		<br><br>
-	<</if>>
 
+	<</if>>
 <<else>>
-
-  <<if $exposed gte 1>>
-
-  <<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-	<<if $danger gte (8900 - $allure)>>
-	<<eventsswimming>>
-	<<else>>
-	<<eventsswimmingsafe>>
+	<<if $exposed gte 1>>
+		<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+		<<if $danger gte (8900 - $allure)>>
+			<<eventsswimming>>
+		<<else>>
+			<<eventsswimmingsafe>>
+		<</if>>
+	<<elseif $exposed lte 0>>
+		<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
+		<<if $danger gte (8900 - ($allure / 5))>>
+			<<eventsswimming>>
+		<<else>>
+			<<eventsswimmingsafe>>
+		<</if>>
 	<</if>>
-
-  <<elseif $exposed lte 0>>
-
-  <<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
-	<<if $danger gte (8900 - ($allure / 5))>>
-	<<eventsswimming>>
-	<<else>>
-	<<eventsswimmingsafe>>
-	<</if>>
-  <</if>>
 <</if>>
-
 <</widget>>
 
 <<widget "school_pool_swap">>
