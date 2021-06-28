@@ -6,6 +6,18 @@
 
 <<widget "sleephour">>
 	<<set $sleepHoursTotal to 0>>
+	<<set _equip to ["over_upper", "over_lower", "upper", "lower", "over_head", "head", "face", "neck", "hands", "legs", "feet"]>>
+	<<set _sleepTraitEffect to 10>>
+	<<if $worn.upper.type.includes("sleep") or $worn.lower.type.includes("sleep")>>
+		<<set _sleepTraitEffect to 15>>
+	<</if>>
+	<<for $_i to 0; $_i lt _equip.length; $_i++>>
+		<<if $worn[_equip[$_i]].type.includes("naked") or $worn[_equip[$_i]].type.includes("sleep") or $worn[_equip[$_i]].type.includes("eerie")>>
+			<<continue>>
+		<</if>>
+		<<set _sleepTraitEffect to 0>>
+		<<break>>
+	<</for>>
 	<<for $sleephour gte 1>><<set $sleephour -= 1>><<set $sleepStat++>>
 		<<effectstime>>
 		<<if $location is "asylum">>
@@ -58,6 +70,9 @@
 				<<set $tiredness -= 200>>
 			<<else>>
 				<<set $tiredness -= 250>>
+			<</if>>
+			<<if _sleepTraitEffect>>
+				<<set $tiredness -= _sleepTraitEffect>>
 			<</if>>
 			<<if $location isnot "tower">>
 				<<pass 1 hour>>
@@ -140,12 +155,17 @@
 <</widget>>
 
 <<widget "bedclotheson">>
+	<<if $args[0] is undefined>>
+		<<set _store to "bed">>
+	<<else>>
+		<<set _store to $args[0]>>
+	<</if>>
 	<<set $wardrobe_location to "wardrobe">>
 	<<if $wear_outfit is "clotheson">>
 		<<undress "wardrobe">>
-		<<storeon "bed">>
+		<<storeon _store>>
 	<<elseif $wear_outfit isnot "none">>
-		<<storeon "bed">>
+		<<storeon _store>>
 		<<undress "wardrobe">>
 		<<wearoutfit>>
 	<</if>>

@@ -611,7 +611,7 @@ window.settingsObjects = function (type) {
 				pronoun: { strings: ["m", "f"] },
 				gender: { strings: ["m", "f"] },
 				penissize: { min: 0, max: 4, decimals: 0 },
-				breastsize: { min: 0, max: 5, decimals: 0 },
+				breastsize: { min: 0, max: 12, decimals: 0 },
 			}
 			break;
 	}
