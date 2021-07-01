@@ -20,8 +20,6 @@ Macro.add('canvasColoursEditor', {
 			}, 50);
 		}
 
-		let V = State.variables;
-
 		let groups = [
 			{
 				name: 'Hair',

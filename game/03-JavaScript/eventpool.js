@@ -82,14 +82,14 @@ window.rollWeightedRandomFromArray = rollWeightedRandomFromArray;
 Macro.add("cleareventpool", {
 	skipArgs: true,
 	handler: function () {
-		State.temporary.eventpool = [];
+		T.eventpool = [];
 	}
 });
 
 Macro.add("addinlineevent", {
 	tags: null,
 	handler: function () {
-		State.temporary.eventpool.push({
+		T.eventpool.push({
 			name: this.args[0] || "",
 			weight: this.args.length == 2 ? +this.args[1] : 1.0,
 			content: this.payload[0].contents
@@ -101,7 +101,7 @@ Macro.add("addevent", {
 	handler: function () {
 		var widget = this.args[0];
 		if (typeof widget !== 'string' || !widget || this.args.length > 2) throw new Error("Bad addevent args "+JSON.stringify(this.args));
-		State.temporary.eventpool.push({
+		T.eventpool.push({
 			name: widget,
 			content: "<<"+widget+">>",
 			weight: this.args.length == 2 ? +this.args[1] : 1.0
@@ -113,11 +113,11 @@ Macro.add("addevent", {
 Macro.add("runeventpool", {
 	skipArgs: true,
 	handler: function () {
-		if(State.temporary.eventpool.includes(State.variables.eventPoolOverride)){
-			var pick = State.variables.eventPoolOverride;
-			delete State.variables.eventPoolOverride;
+		if(T.eventpool.includes(V.eventPoolOverride)){
+			var pick = V.eventPoolOverride;
+			delete V.eventPoolOverride;
 		}else{
-			var pick = rollWeightedRandomFromArray(State.temporary.eventpool);
+			var pick = rollWeightedRandomFromArray(T.eventpool);
 		}
 		if (!pick) throw new Error("Event pool is empty");
 		jQuery(this.output).wiki(pick.content);

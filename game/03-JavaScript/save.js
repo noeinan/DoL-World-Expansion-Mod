@@ -42,14 +42,14 @@ window.setSaveDetail = function (saveSlot, metadata, story){
 	var saveDetails = JSON.parse(localStorage.getItem("dolSaveDetails"));
 	if(saveSlot === "autosave"){
 		saveDetails.autosave = {
-			title:SugarCube.Story.get(SugarCube.State.variables.passage).description(),
+			title:SugarCube.Story.get(V.passage).description(),
 			date:Date.now(),
 			metadata:metadata
 		};
 	}else{
 		var slot = parseInt(saveSlot);
 		saveDetails.slots[slot] = {
-			title:SugarCube.Story.get(SugarCube.State.variables.passage).description(),
+			title:SugarCube.Story.get(V.passage).description(),
 			date:Date.now(),
 			metadata:metadata
 		};
@@ -86,7 +86,7 @@ window.resetSaveMenu = function () {
 }
 
 window.loadSave = function (saveSlot, confirm) {
-	if (SugarCube.State.variables.confirmLoad === true && confirm === undefined) {
+	if (V.confirmLoad === true && confirm === undefined) {
 		new Wikifier(null, '<<loadConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot === "auto") {
@@ -100,14 +100,14 @@ window.loadSave = function (saveSlot, confirm) {
 window.save = function (saveSlot, confirm, saveId, saveName) {
 	if (saveId == null) {
 		new Wikifier(null, '<<saveConfirm ' + saveSlot + '>>');
-	} else if ((SugarCube.State.variables.confirmSave === true && confirm != true) || (SugarCube.State.variables.saveId != saveId && saveId != null)) {
+	} else if ((V.confirmSave === true && confirm != true) || (V.saveId != saveId && saveId != null)) {
 		new Wikifier(null, '<<saveConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot != undefined) {
 			updateSavesCount();
 			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
 			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
-			SugarCube.State.variables.currentOverlay = null;
+			V.currentOverlay = null;
 			overlayShowHide("customOverlay");
 		}
 	}
@@ -123,7 +123,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			deleteAllSaveDetails();
 		}
 	} else if (saveSlot === "auto") {
-		if (SugarCube.State.variables.confirmDelete === true && confirm === undefined) {
+		if (V.confirmDelete === true && confirm === undefined) {
 			new Wikifier(null, '<<deleteConfirm ' + saveSlot + '>>');
 			return;
 		} else {
@@ -131,7 +131,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			deleteSaveDetails("autosave");
 		}
 	} else {
-		if (SugarCube.State.variables.confirmDelete === true && confirm === undefined) {
+		if (V.confirmDelete === true && confirm === undefined) {
 			new Wikifier(null, '<<deleteConfirm ' + saveSlot + '>>');
 			return;
 		} else {
@@ -213,17 +213,17 @@ window.copySavedata = function (id) {
 }
 
 window.updateExportDay = function(){
-	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
-		SugarCube.State.variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+	if(V.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		V.saveDetails.exported.days = clone(V.days);
 		SugarCube.State.history[0].variables.saveDetails.exported.days = clone(SugarCube.State.history[0].variables.days);
-		SugarCube.State.variables.saveDetails.exported.count++;
+		V.saveDetails.exported.count++;
 		SugarCube.State.history[0].variables.saveDetails.exported.count++;
-		SugarCube.State.variables.saveDetails.exported.dayCount++;
+		V.saveDetails.exported.dayCount++;
 		SugarCube.State.history[0].variables.saveDetails.exported.dayCount++;
 		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
 		if(sessionJson != undefined){
 			var session = JSON.parse(sessionJson);
-			session.delta[0].variables.saveDetails.exported.days = clone(SugarCube.State.variables.days);
+			session.delta[0].variables.saveDetails.exported.days = clone(V.days);
 			session.delta[0].variables.saveDetails.exported.dayCount++;
 			session.delta[0].variables.saveDetails.exported.count++;
 			sessionStorage.setItem(SugarCube.Story.domId + ".state", JSON.stringify(session));
@@ -232,10 +232,10 @@ window.updateExportDay = function(){
 }
 
 window.updateSavesCount = function(){
-	if(SugarCube.State.variables.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
-		SugarCube.State.variables.saveDetails.slot.count++;
+	if(V.saveDetails != undefined && SugarCube.State.history[0].variables.saveDetails != undefined){
+		V.saveDetails.slot.count++;
 		SugarCube.State.history[0].variables.saveDetails.slot.count++;
-		SugarCube.State.variables.saveDetails.slot.dayCount++;
+		V.saveDetails.slot.dayCount++;
 		SugarCube.State.history[0].variables.saveDetails.slot.dayCount++;
 		var sessionJson = sessionStorage.getItem(SugarCube.Story.domId + ".state");
 		if(sessionJson != undefined){
@@ -250,13 +250,13 @@ window.updateSavesCount = function(){
 window.importSettings = function (data, type) {
 	switch(type){
 		case "text":
-			SugarCube.State.variables.importString = document.getElementById("settingsDataInput").value
+			V.importString = document.getElementById("settingsDataInput").value
 			new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
 			break;
 		case "file":
 			var reader = new FileReader();
 			reader.addEventListener('load', function (e) {
-				SugarCube.State.variables.importString = e.target.result;
+				V.importString = e.target.result;
 				new Wikifier(null, '<<displaySettings "importConfirmDetails">>');
 			});
 			reader.readAsBinaryString(data[0]);
@@ -268,7 +268,6 @@ window.importSettings = function (data, type) {
 }
 
 var importSettingsData = function (data) {
-	var V = State.variables;
 	var S = null;
 	var result = data;
 	if (result != null && result != undefined) {
@@ -338,7 +337,7 @@ var importSettingsData = function (data) {
 				if (S.npc[V.NPCNameList[i]] != undefined) {
 					for (var j = 0; j < listKey.length; j++) {
 						//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-						if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none"){
+						if (V.passage === "Start" && ["pronoun","gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none"){
 							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 						else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
@@ -387,7 +386,6 @@ window.validateValue = function (keys, value) {
 }
 
 window.exportSettings = function (data, type) {
-	var V = State.variables;
 	var S = {
 		general: {
 			map: {},
@@ -453,7 +451,7 @@ window.exportSettings = function (data, type) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (var j = 0; j < listKey.length; j++) {
 			//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-			if (SugarCube.State.variables.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none"){
+			if (V.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none"){
 				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
 			}
 			else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
@@ -688,7 +686,7 @@ window.loadExternalExportFile = function () {
 // !!Hack warning!! Don't use it maybe?
 window.updateMoment = function () {
 	// change last (and only) moment in local history
-	State.history[State.history.length - 1].variables = JSON.parse(JSON.stringify(State.variables));
+	State.history[State.history.length - 1].variables = JSON.parse(JSON.stringify(V));
 	// prepare the moment object with modified history
 	let moment = SugarCube.State.marshalForSave();
 	// replace moment.history with moment.delta, because that's what SugarCube expects to find

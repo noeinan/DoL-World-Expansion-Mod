@@ -3350,7 +3350,7 @@ __Map__<br>
 				<<set _showMarker = $debug || ($map.markers && (_canMoveTo || $passage is $map.arrayList[_i]))>>
 
 				<a class="mapmove"
-						@onclick="'mapMove(SugarCube.State.variables.map.arrayList[' + _i + ']);'"
+						@onclick="'mapMove(V.map.arrayList[' + _i + ']);'"
 						@alt="$map.arrayList[_i] + (_canMoveTo ? ' (0:05)' : '')"
 						@title="$map.arrayList[_i] + (_canMoveTo ? ' (0:05)' : '')">
 
@@ -3681,20 +3681,20 @@ __Map__<br>
 
 		/* Loop through the provided states to find the one we are currently at*/
 		<<script>>
-			for(let i = 0; i < State.temporary.config.states.length; i++) {
+			for(let i = 0; i < T.config.states.length; i++) {
 
-				if(State.temporary.config.currentValue >= State.temporary.config.states[i].requiredValue) {
+				if(T.config.currentValue >= T.config.states[i].requiredValue) {
 
-					if(State.temporary.config.states[i].secondaryStates) {
+					if(T.config.states[i].secondaryStates) {
 
-						for(let j = 0; j < State.temporary.config.states[i].secondaryStates.length; j++) {
-							if(State.temporary.config.secondaryValue >= State.temporary.config.states[i].secondaryStates[j].requiredValue) {
-								State.temporary.config.currentLevel = State.temporary.config.states[i].secondaryStates[j];
+						for(let j = 0; j < T.config.states[i].secondaryStates.length; j++) {
+							if(T.config.secondaryValue >= T.config.states[i].secondaryStates[j].requiredValue) {
+								T.config.currentLevel = T.config.states[i].secondaryStates[j];
 							}
 						}
 
 					} else {
-						State.temporary.config.currentLevel = State.temporary.config.states[i];
+						T.config.currentLevel = T.config.states[i];
 					}
 				}
 			}
@@ -3743,8 +3743,8 @@ __Map__<br>
 		<<script>>
 
 			/* Returns true/false based on whether the requirements to display a stat are met, automatically true if no requirement specified */
-			State.temporary.checkRequirements = function (stat) {
-				let statOverrides = State.temporary.npcOverrides[stat];
+			T.checkRequirements = function (stat) {
+				let statOverrides = T.npcOverrides[stat];
 
 				if(statOverrides)
 					return !statOverrides.hasOwnProperty("requirements") || statOverrides.requirements;
@@ -3752,20 +3752,20 @@ __Map__<br>
 					return true;
 			};
 
-			State.temporary.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
-			State.temporary.otherNpcStats = ["love", "lust"];
+			T.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			T.otherNpcStats = ["love", "lust"];
 
 			let statDefaults = {
 				"love" : {
 					name : "Love",
-					value : State.temporary.npcData.love,
+					value : T.npcData.love,
 					activeIcon : 'img/ui/heart.png',
 					inactiveIcon: 'img/ui/emptyheart.png',
 					color: 'red'
 				},
 				"lust" : {
 					name : "Lust",
-					value : State.temporary.npcData.lust,
+					value : T.npcData.lust,
 					iconOrientation : 'vertical',
 					activeIcon : 'img/ui/vial.png',
 					inactiveIcon : 'img/ui/emptyvial.png',
@@ -3773,39 +3773,39 @@ __Map__<br>
 				},
 				"dom" : {
 					name : "Dominance",
-					value : State.temporary.npcData.dom,
+					value : T.npcData.dom,
 					activeIcon : "img/ui/collar.png",
 					color: 'purple'
 				},
 				"trauma" : {
 					name : "Trauma",
-					value : State.temporary.npcData.trauma,
+					value : T.npcData.trauma,
 					activeIcon : "img/ui/redbolt.png",
 					color: 'teal'
 				},
 				"rage" : {
 					name : "Rage",
-					value : State.temporary.npcData.rage,
+					value : T.npcData.rage,
 					activeIcon : "img/ui/rage.png",
 					color: 'gold'
 				}
 			};
 
-			State.temporary.getStatConfig = function(stat) {
+			T.getStatConfig = function(stat) {
 				let baseConfig = statDefaults[stat] || {};
 
-				return Object.assign({}, baseConfig, State.temporary.npcOverrides[stat]);
+				return Object.assign({}, baseConfig, T.npcOverrides[stat]);
 			};
-			if(State.variables.loveInterest){
+			if(V.loveInterest){
 				/* Check if this is a main love interest */
-				if (State.variables.loveInterest.primary == State.temporary.npcData.nam) {
-					State.temporary.loveInterest = true;
-				} else if (State.variables.loveInterest.secondary == State.temporary.npcData.nam) {
-					State.temporary.loveInterest = true;
-				} else if (State.variables.loveInterest.tertiary == State.temporary.npcData.nam) {
-					State.temporary.loveInterest = true;
+				if (V.loveInterest.primary == T.npcData.nam) {
+					T.loveInterest = true;
+				} else if (V.loveInterest.secondary == T.npcData.nam) {
+					T.loveInterest = true;
+				} else if (V.loveInterest.tertiary == T.npcData.nam) {
+					T.loveInterest = true;
 				} else {
-					State.temporary.loveInterest = false;
+					T.loveInterest = false;
 				}
 			}
 		<</script>>

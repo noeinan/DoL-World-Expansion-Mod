@@ -1,5 +1,4 @@
 function setfemininitymultiplierfromgender(gender) {
-	const T = State.temporary;
 	if (gender === "f") {
 		T.femininity_multiplier = 1;
 	} else if (gender === "m") {
@@ -11,7 +10,6 @@ function setfemininitymultiplierfromgender(gender) {
 DefineMacro("setfemininitymultiplierfromgender", setfemininitymultiplierfromgender);
 
 function addfemininityfromfactor(femininity_boost, factor_description, no_overwear_check) {
-	const T = State.temporary;
 	if (no_overwear_check) {
 		T.gender_appearance_factors_noow.push({
 			femininity: femininity_boost,
@@ -37,8 +35,6 @@ DefineMacro("addfemininityofclothingarticle", addfemininityofclothingarticle);
 
 /** Calculate the player's gender appearance */
 function genderappearancecheck() {
-	const T = State.temporary;
-	const V = State.variables;
 	/* Calculate bulge size */
 	T.penis_compressed = V.penisexist && V.worn.genitals.type.includes("hidden");
 	if (V.worn.genitals.type.includes("cage")) {
@@ -210,17 +206,17 @@ function genderappearancecheck() {
 DefineMacro("genderappearancecheck", genderappearancecheck);
 
 function updatehistorycontrols(){
-	if (State.variables.maxStates === undefined || State.variables.maxStates > 20) {
+	if (V.maxStates === undefined || V.maxStates > 20) {
 		/* initiate new variable based on engine config and limit it to 20 */
-		State.variables.maxStates = Math.clamp(1, 20, Config.history.maxStates);
+		V.maxStates = Math.clamp(1, 20, Config.history.maxStates);
 	}
-	if (State.variables.maxStates == 1) {
+	if (V.maxStates == 1) {
 		/* when disabled, irreversibly delete history controls the way sugarcube intended */
 		Config.history.maxStates = 1;
 		jQuery('#ui-bar-history').remove();
 	} else {
 		/* set actual maxStates in accordance with our new variable */
-		Config.history.maxStates = State.variables.maxStates;
+		Config.history.maxStates = V.maxStates;
 		/* ensure that controls are enabled so sugarcube won't destroy them on reload */
 		Config.history.controls = true;
 		/* if irreversibly deleted, restore #ui-bar-history from oblivion and pop it after #ui-bar-toggle */
