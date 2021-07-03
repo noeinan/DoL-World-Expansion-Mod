@@ -43,11 +43,7 @@
 
 	<!-- pool room itself is in use during $schoolstate only -->
 	<<if $schoolstate is "fifth">>
-		<<if $time lte ($hour * 60 + 51)>>
-			<<set $poolroomstate to "own">>
-		<<else>>
-			<<set $poolroomstate to "empty">>
-		<</if>>
+		<<set $poolroomstate to "own">>
 	<<elseif $schoollesson is 1>>
 		<<set $poolroomstate to "other">>
 	<<else>>
@@ -2122,3 +2118,68 @@ Doren asks you to demonstrate your grammar on the whiteboard. As you walk to the
 	<</if>>
 <</if>>
 <</widget>>
+
+<!-- "upperruined" doesn't take sets into account, so use "strip" and destroy
+     the carried towel parts -->
+<<widget "droptowel">>
+	<<if _toweldrop is "both">>
+		<<upperruined>><<lowerruined>>
+	<<elseif _toweldrop is "lower">>
+		<<lowerruined>>
+	<<elseif _toweldrop is "upper">>
+		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
+			<<set _temp to clone($carried)>>
+			<<generalStrip "upper">>
+			<<set $carried to _temp>>
+		<</if>>
+	<</if>>
+<</widget>>
+
+<!-- Will check if the pc can drop a towel to expose themselves. Returns its
+     result in "_exlevel" and "_toweldrop".-->
+<<widget "checkdroptowel">>
+	<<set _exposed to $exposed>>
+	<<set _upper to $exposed>>
+	<<set _lower to $exposed>>
+	<<set _both to $exposed>>
+	<<if $exhibitionism gte 50>>
+		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
+			<<generalStrip "upper">>
+			<<exposure>>
+			<<set _upper to $exposed>>
+			<<if $worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom">>
+				<<generalStrip "lower">>
+				<<exposure>>
+				<<set _both to $exposed>>
+			<</if>>
+		<<elseif $worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom">>
+			<<generalStrip "lower">>
+			<<exposure>>
+			<<set _lower to $exposed>>
+		<</if>>
+		<!-- undo generalStrip -->
+		<<run Object.keys($carried).forEach(slot => {
+			$worn[slot] = clone($carried[slot]);
+			$carried[slot] = clone(setup.clothes[slot][0]);
+		})>>
+		<<exposure>>
+	<</if>>
+
+	<<if _both gt _exposed and (_both lt 2 or $exhibitionism gte 75)>>
+		<<set _exlevel to _both>>
+		<<set _toweldrop to "both">>
+	<<elseif _lower gt _exposed and (_lower lt 2 or $exhibitionism gte 75)>>
+		<<set _exlevel to _lower>>
+		<<set _toweldrop to "lower">>
+	<<elseif _upper gt _exposed and (_upper lt 2 or $exhibitionism gte 75)>>
+		<<set _exlevel to _upper>>
+		<<set _toweldrop to "upper">>
+	<<else>>
+		<<set _exlevel to 0>>
+		<<set _toweldrop to "none">>
+	<</if>>
+
+<</widget>>
+
+
+
