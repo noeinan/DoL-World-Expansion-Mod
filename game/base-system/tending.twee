@@ -321,6 +321,16 @@ here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertilis
 <<set _plotKeys to Object.keys($plots)>>
 <<for _s to 0; _s lt _plotKeys.length; _s++>>
 	<<set _plot to _plotKeys[_s]>>
+	<<switch _plot>>
+		<<case "farm">>
+			<<if $farm.irrigation>>
+				<<set _irrigation to $farm.irrigation>>
+			<<else>>
+				<<set _irrigation to 0>>
+			<</if>>
+		<<default>>
+			<<set _irrigation to 0>>
+	<</switch>>
 	<<for _t to 0; _t lt $plots[_plot].length; _t++>>
 		<<capture _t>>
 		<<set $plots[_plot][_t].days += 1>>
@@ -344,6 +354,9 @@ here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertilis
 		<</switch>>
 		<<if $weather is "rain">>
 			<<set $plots[_plot][_t].water to 1>>
+		<<elseif _irrigation gt 0>>
+			<<set $plots[_plot][_t].water to 1>>
+			<<set _irrigation-->>
 		<<else>>
 			<<set $plots[_plot][_t].water to 0>>
 		<</if>>

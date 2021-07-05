@@ -35,6 +35,10 @@ declare interface CompositeLayerParams {
 	 */
 	contrast?: number;
 	/**
+	 * Mask, a stencil image to cut out and display only select parts of this layer.
+	 */
+	masksrc?: string;
+	/**
 	 * Alpha, 0-1. Default 1
 	 */
 	alpha?: number;
@@ -95,7 +99,7 @@ declare interface IsochronousAnimationSpec {
 
 declare interface CompositeLayer extends CompositeLayerSpec {
 	/**
-	 * Cached image src
+	 * `src` of cached `image` (if `src` changes, `image` will be reloaded)
 	 */
 	imageSrc?: string;
 	/**
@@ -103,11 +107,19 @@ declare interface CompositeLayer extends CompositeLayerSpec {
 	 */
 	image?: CanvasImageSource;
 	/**
+	 * Loaded/cached mask image
+	 */
+	mask?: CanvasImageSource;
+	/**
+	 * Value of `masksrc` corresponding to current `mask` (if masksrc changes mask will be reloaded)
+	 */
+	cachedMaskSrc?: string;
+	/**
 	 * Encoded processing options used to display cachedImage
 	 */
 	cachedProcessing?: string;
 	/**
-	 * Last displayed image
+	 * Last displayed composed image
 	 */
 	cachedImage?: CanvasImageSource;
 }
