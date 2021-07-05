@@ -128,7 +128,7 @@ Zia
 Zohar
 */
 
-<<widget "initnpcgender">><<set $test2 to 2>>
+<<widget "initnpcgender">>
 <<for _i to 0; _i lt $NPCName.length; _i++>>
 
 <!-- Set Pronoun -->
@@ -157,35 +157,13 @@ Zohar
 <</if>>
 <!-- Set breast defaults-->
 
-<<if $breast_mod is 12>>/*Clumsy way to get average breast size setting working for NNPCs.*/
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 12>>
-<<elseif $breast_mod gte 10>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 10>>
-<<elseif $breast_mod gte 8>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 8>>
-<<elseif $breast_mod gte 6>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 7>>
-<<elseif $breast_mod gte 4>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 5>>
-<<elseif $breast_mod gte 2>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 3>>
-<<elseif $breast_mod gte 0>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -2>>
-	<<set _b_mod_upper to 10>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -4>>
-	<<set _b_mod_upper to 8>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -6>>
-	<<set _b_mod_upper to 6>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -8>>
-	<<set _b_mod_upper to 4>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -10>>
-	<<set _b_mod_upper to 2>><<set _b_mod_lower to 1>>
-<<else>>
-	<<set _b_mod_upper to 1>><<set _b_mod_lower to 1>>
-<</if>>
+<<set _b_mod_lower to Math.clamp($breast_mod, 0, 12)>>
+<<set _b_mod_upper to Math.clamp($breast_mod + 12, 0, 12)>>
 
-<<if $NPCName[_i].breastsize is 0 or $args[0] is "breasts">>
+<!-- can't use breastsize, since that would either break the numberslider
+ or make one of the sizes always be randomized, 
+ but can use breastdesc not being changed from 0 as a substitute -->
+<<if $NPCName[_i].breastdesc is 0 or $args[0] is "breasts">>
 	<<if $NPCName[_i].pronoun is "f">>
 		<<set $NPCName[_i].breastsize to random (_b_mod_lower, _b_mod_upper)>>
 	<<else>>
