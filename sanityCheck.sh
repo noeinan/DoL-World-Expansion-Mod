@@ -17,6 +17,10 @@ myprint() {
 }
 
 GREP="git grep -n --color"
+# Check, e.g.  <<<
+$GREP "<<<[^\\\"']" -- 'game/*' | myprint "trippleOpen"
+# Check, e.g.  >>>
+$GREP "[^\\\"']>>>" -- 'game/*' | myprint "trippleClose"
 # Check, e.g.  <<print "abc" $d, some false positives in complex constructs because git-grep cannot do most (? constructs
 # Note: " *" is on purpose, "\s*" doesn't work here in git-grep
 $GREP -E "^[^']*<<(print|set)[^'\\\">]+('[^']*')([^'>]+'[^']*')* *[_'\\\$]" -- 'game/*' | myprint "RunInConcat"
