@@ -32,18 +32,14 @@
 		<</if>>
 	<<elseif _generate_partner is 1>>
 		<<unset _generate_partner>>
-		<<if $NPCList[0].gender is "f">>
-			<<if $homochance lt random(1, 100)>>
+		<<if $homochance lt random(1, 100)>>
+			<<if $NPCList[0].gender is "f">>
 				<<set $NPCList[_n].gender to "m">><<set $NPCList[_n].pronoun to "m">>
 			<<else>>
 				<<set $NPCList[_n].gender to "f">><<set $NPCList[_n].pronoun to "f">>
 			<</if>>
 		<<else>>
-			<<if $homochance lt random(1, 100)>>
-				<<set $NPCList[_n].gender to "f">><<set $NPCList[_n].pronoun to "f">>
-			<<else>>
-				<<set $NPCList[_n].gender to "m">><<set $NPCList[_n].pronoun to "m">>
-			<</if>>
+			<<set $NPCList[_n].gender to $NPCList[0].gender>><<set $NPCList[_n].pronoun to $NPCList[0].pronoun>>
 		<</if>>
 	<<else>>
 		<<if $malechance lt $rng>>
@@ -649,7 +645,7 @@
 	<<if $breast_mod lt 0>><<set _blo[_i] to Math.clamp(_blo[_i]+$breast_mod, 0, 12)>><<set _bhi[_i] to Math.clamp(_bhi[_i]+$breast_mod, 0, 12)>><</if>>
 <</if>>
 
-<<if $NPCList[_n].pronoun is "f">><<set _rng to random(_blo[_i], _bhi[_i])>><</if>>
+<<if $NPCList[_n].pronoun is "f">><<set _rngbr to random(_blo[_i], _bhi[_i])>><</if>>
 <<if $NPCList[_n].gender is "m">><<set _rngpp to random(_plo[_i], _phi[_i])>><</if>>
 
 <<set $NPCList[_n].fullDescription to $NPCList[_n].description + " ">>
@@ -672,42 +668,36 @@
 <</if>>
 */
 
-<<if $NPCList[_n].adult is 1>> <!-- set adult breast size -->
-	<<if $NPCList[_n].pronoun is "m">>
-		<<set $NPCList[_n].breastsize to 0>>
-		<<set $NPCList[_n].breastsdesc to "nipples">>
-		<<set $NPCList[_n].breastdesc to "nipple">>
-	<<else>>
-		<<set $NPCList[_n].breastsize to _rng>>
-		<<switch _rng>>
+<<if $NPCList[_n].pronoun is "m">>
+	<<set $NPCList[_n].breastsize to 0>>
+	<<set $NPCList[_n].breastsdesc to "nipples">>
+	<<set $NPCList[_n].breastdesc to "nipple">>
+<<else>>
+	<<if $NPCList[_n].adult is 1>> <!-- set adult breast size -->
+		<<set $NPCList[_n].breastsize to _rngbr>>
+		<<switch _rngbr>>
 		<<case 0>>
 			<<set $NPCList[_n].breastsdesc to "nipples">>
 			<<set $NPCList[_n].breastdesc to "nipple">>
 		<<default>>
-			<<set $NPCList[_n].breastsdesc to _brdes[_rng]+" breasts">>
-			<<set $NPCList[_n].breastdesc to _brdes[_rng]+" breast">>
+			<<set $NPCList[_n].breastsdesc to _brdes[_rngbr]+" breasts">>
+			<<set $NPCList[_n].breastdesc to _brdes[_rngbr]+" breast">>
 		<</switch>>
-	<</if>>
-<<else>> <!-- set student breast size -->
-	<<if $NPCList[_n].pronoun is "m">>
-		<<set $NPCList[_n].breastsize to 0>>
-		<<set $NPCList[_n].breastsdesc to "nipples">>
-		<<set $NPCList[_n].breastdesc to "nipple">>
-	<<else>>
-		<<set $NPCList[_n].breastsize to _rng>>
-		<<switch _rng>>
+	<<else>> <!-- set student breast size -->
+		<<set $NPCList[_n].breastsize to _rngbr>>
+		<<switch _rngbr>>
 		<<case 0>>
 			<<set $NPCList[_n].breastsdesc to "nipples">>
 			<<set $NPCList[_n].breastdesc to "nipple">>
 		<<default>>
-			<<set $NPCList[_n].breastsdesc to _brdes[_rng]+" breasts">>
-			<<set $NPCList[_n].breastdesc to _brdes[_rng]+" breast">>
+			<<set $NPCList[_n].breastsdesc to _brdes[_rngbr]+" breasts">>
+			<<set $NPCList[_n].breastdesc to _brdes[_rngbr]+" breast">>
 		<</switch>>
 	<</if>>
 <</if>>
 
-<<if $NPCList[_n].adult is 1>> <!-- set adult pp size -->
-	<<if $NPCList[_n].gender is "m" or $NPCList[_n].gender is "h">>
+<<if $NPCList[_n].penis isnot "none">>
+	<<if $NPCList[_n].adult is 1>> <!-- set adult pp size -->
 		<<switch _rngpp>>
 		<<case 0>>
 			<<set $NPCList[_n].penisdesc to "tiny penis">>
@@ -722,9 +712,7 @@
 			<<set $NPCList[_n].penisdesc to "penis">>
 			<<set $NPCList[_n].penissize to 2>>
 		<</switch>>
-	<</if>>
-<<else>> <!-- set student pp size -->
-	<<if $NPCList[_n].gender is "m" or $NPCList[_n].gender is "h">>
+	<<else>> <!-- set student pp size -->
 		<<switch _rngpp>>
 		<<case 0>>
 			<<set $NPCList[_n].penisdesc to "tiny penis">>
@@ -741,18 +729,11 @@
 
 <<set $rng to random(1, 100)>>
 <<if $NPCList[_n].pronoun is "f">>
-	<<if $NPCList[_n].adult is 1>>
-		<<if $rng gte 61>>
-			<<set $NPCList[_n].lactation to 1>>
-		<<else>>
-			<<set $NPCList[_n].lactation to 0>>
-		<</if>>
+	<<if $NPCList[_n].adult is 1>><<set $rng += 20>><</if>>
+	<<if $rng gte 81>>
+		<<set $NPCList[_n].lactation to 1>>
 	<<else>>
-		<<if $rng gte 81>>
-			<<set $NPCList[_n].lactation to 1>>
-		<<else>>
-			<<set $NPCList[_n].lactation to 0>>
-		<</if>>
+		<<set $NPCList[_n].lactation to 0>>
 	<</if>>
 <</if>>
 
