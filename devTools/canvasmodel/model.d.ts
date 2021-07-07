@@ -4,6 +4,21 @@ declare interface AnyDict {
 declare interface Dict<T> {
 	[index: string]: T;
 }
+declare interface BlendGradientSpec {
+	gradient: 'linear'|'radial';
+	/**
+	 * * For linear gradient: [x0, y0, x1, y1].
+	 * * For radial gradient: [x0, y0, r0, x1, y1, r1].
+	 */
+	values: number[];
+	/**
+	 * Color stops.
+	 * Long form: pairs of `[offset, color]`.
+	 * Short form: [color0, color1] for `[[0.0, color0], [1.0, color1]]`
+	 */
+	colors: [number, string][] | [string,string];
+}
+declare type BlendSpec = string|BlendGradientSpec;
 
 declare interface CompositeLayerParams {
 	/**
@@ -15,9 +30,9 @@ declare interface CompositeLayerParams {
 	 */
 	z?: number;
 	/**
-	 * Blend color, CSS color string
+	 * Blend color/gradient/pattern. For color, CSS color string.
 	 */
-	blend?: string;
+	blend?: BlendSpec;
 	/**
 	 * Blend mode.
 	 */

@@ -43,6 +43,10 @@ var Renderer;
      * Last result of animateLayers
      */
     Renderer.lastAnimation = undefined;
+    /**
+     * Use "pixels" of this size when generating images.
+     */
+    Renderer.pixelSize = 1;
     function emptyLayerFilter() {
         return {
             desaturate: false,
@@ -77,6 +81,7 @@ var Renderer;
         return c2d;
     }
     Renderer.createCanvas = createCanvas;
+    const globalC2D = createCanvas(1, 1);
     /**
      * Creates a cutout of color in shape of sourceImage
      */
@@ -112,6 +117,64 @@ var Renderer;
         return canvas;
     }
     Renderer.composeOverCutout = composeOverCutout;
+    /**
+     * Repeatedly fill all sub-frames of canvas with same style.
+     * (Makes sense with gradient and pattern fills, to keep consistents across all sub-frames)
+     */
+    function fillFrames(fillStyle, canvas, frameCount, frameWidth) {
+        const frameHeight = canvas.canvas.height;
+        canvas.globalCompositeOperation = 'source-over';
+        canvas.fillStyle = fillStyle;
+        canvas.fillRect(0, 0, frameWidth, frameHeight);
+        if (Renderer.pixelSize > 1) {
+            // downscale, redraw on temp canvas, then draw again
+            const tw = Math.floor(frameWidth / Renderer.pixelSize), th = Math.floor(frameHeight / Renderer.pixelSize);
+            const tmpcanvas = createCanvas(tw, th);
+            tmpcanvas.imageSmoothingEnabled = false;
+            canvas.imageSmoothingEnabled = false;
+            tmpcanvas.drawImage(canvas.canvas, 0, 0, frameWidth, frameHeight, 0, 0, tw, th);
+            canvas.drawImage(tmpcanvas.canvas, 0, 0, tw, th, 0, 0, frameWidth, frameHeight);
+        }
+        for (let i = 1; i < frameCount; i++) {
+            canvas.drawImage(canvas.canvas, 0, 0, frameWidth, frameHeight, i * frameWidth, 0, frameWidth, frameHeight);
+        }
+    }
+    Renderer.fillFrames = fillFrames;
+    function createGradient(spec) {
+        let gradient;
+        switch (spec.gradient) {
+            case "linear":
+                gradient = globalC2D.createLinearGradient(spec.values[0], spec.values[1], spec.values[2], spec.values[3]);
+                break;
+            case "radial":
+                gradient = globalC2D.createRadialGradient(spec.values[1], spec.values[2], spec.values[3], spec.values[4], spec.values[5], spec.values[6]);
+                break;
+            default:
+                throw new Error("Invalid gradient type: " + spec.gradient);
+        }
+        if (spec.colors.length === 2 && typeof spec.colors[0] === 'string' && typeof spec.colors[1] === 'string') {
+            gradient.addColorStop(0.0, spec.colors[0]);
+            gradient.addColorStop(1.0, spec.colors[1]);
+        }
+        else {
+            for (let [offset, color] of spec.colors) {
+                gradient.addColorStop(offset, color);
+            }
+        }
+        return gradient;
+    }
+    Renderer.createGradient = createGradient;
+    /**
+     * Paints sourceImage over same-sized canvas filled with pattern or gradient
+     */
+    function composeOverSpecialRect(sourceImage, fillStyle, blendMode, frameCount, targetCanvas = createCanvas(sourceImage.width, sourceImage.height)) {
+        let fw = sourceImage.width / frameCount;
+        fillFrames(fillStyle, targetCanvas, frameCount, fw);
+        targetCanvas.globalCompositeOperation = blendMode;
+        targetCanvas.drawImage(sourceImage, 0, 0);
+        return targetCanvas;
+    }
+    Renderer.composeOverSpecialRect = composeOverSpecialRect;
     /**
      * Paints sourceImage over same-sized canvas filled with color
      */
@@ -305,7 +368,7 @@ var Renderer;
         return adjustLevels(image, contrast, shift, resultCanvas);
     }
     Renderer.adjustBrightnessAndContrast = adjustBrightnessAndContrast;
-    function processLayer(layer, listener) {
+    function processLayer(layer, rects, listener) {
         let name = layer.name || layer.src;
         let image = layer.image;
         let needsCutout = false;
@@ -336,9 +399,19 @@ var Renderer;
                 listener.processingStep(name, "contrast", image);
             }
         }
-        if (layer.blend && layer.blendMode) {
+        const blend = layer.blend;
+        if (blend && layer.blendMode) {
             needsCutout = true;
-            image = composeOverRect(image, layer.blend, layer.blendMode).canvas;
+            if (typeof blend === 'string') {
+                image = composeOverRect(image, blend, layer.blendMode).canvas;
+            }
+            else if ('gradient' in blend) {
+                let gradient = createGradient(blend);
+                image = composeOverSpecialRect(image, gradient, layer.blendMode, rects.subspriteFrameCount).canvas;
+            }
+            else {
+                throw new Error("Invalid blend spec for layer " + layer.name + ": " + JSON.stringify(blend));
+            }
             if (listener && listener.processingStep) {
                 listener.processingStep(name, "blend", image);
             }
@@ -358,7 +431,31 @@ var Renderer;
         return image;
     }
     Renderer.processLayer = processLayer;
-    function composeProcessedLayer(layer, targetCanvas, frameCount = 1) {
+    function layerFrameCount(frameCount, targetWidth, layer) {
+        const frameWidth = targetWidth / frameCount;
+        const subspriteWidth = layer.width || frameWidth;
+        return layer.cachedImage.width / subspriteWidth;
+    }
+    function calcLayerRects(layer, layerImageWidth, targetWidth, targetHeight, frameCount) {
+        const frameWidth = targetWidth / frameCount;
+        const subspriteWidth = layer.width || frameWidth;
+        const subspriteHeight = layer.height || targetHeight;
+        const dx = layer.dx || 0;
+        const dy = layer.dy || 0;
+        const subspriteFrameCount = layerImageWidth / subspriteWidth;
+        return {
+            width: targetWidth,
+            height: targetHeight,
+            frameWidth,
+            frameCount,
+            subspriteWidth,
+            subspriteHeight,
+            subspriteFrameCount,
+            dx,
+            dy
+        };
+    }
+    function composeProcessedLayer(layer, targetCanvas, rects) {
         const image = layer.cachedImage;
         targetCanvas.filter = 'none';
         if (typeof layer.alpha === 'number') {
@@ -367,18 +464,13 @@ var Renderer;
         else {
             targetCanvas.globalAlpha = 1.0;
         }
-        const frameWidth = targetCanvas.canvas.width / frameCount;
-        const subspriteWidth = layer.width || frameWidth;
-        const subspriteHeight = layer.height || targetCanvas.canvas.height;
-        const dx = layer.dx || 0;
-        const dy = layer.dy || 0;
-        const imageFrameCount = image.width / subspriteWidth;
-        if (imageFrameCount === frameCount && !layer.frames) {
+        const { frameWidth, frameCount, subspriteWidth, subspriteHeight, subspriteFrameCount, dx, dy } = rects;
+        if (rects.subspriteFrameCount === frameCount && !layer.frames) {
             targetCanvas.drawImage(image, dx, dy);
         }
         else {
             for (let i = 0; i < frameCount; i++) {
-                const imageFrameIndex = Math.min(imageFrameCount - 1, layer.frames ? layer.frames[i] : Math.floor(i * imageFrameCount / frameCount));
+                const imageFrameIndex = Math.min(subspriteFrameCount - 1, layer.frames ? layer.frames[i] : Math.floor(i * subspriteFrameCount / frameCount));
                 targetCanvas.drawImage(image, imageFrameIndex * subspriteWidth, 0, subspriteWidth, subspriteHeight, dx + i * frameWidth, dy, subspriteWidth, subspriteHeight);
             }
         }
@@ -419,12 +511,15 @@ var Renderer;
             if (listener && listener.beforeRender) {
                 listener.beforeRender(layers);
             }
+            const targetWidth = targetCanvas.canvas.width;
+            const targetHeight = targetCanvas.canvas.height;
             const t1 = millitime();
             for (const layer of layers) {
                 if (layer.show === false)
                     continue; // Could be disabled due to load error
                 let name = layer.name || layer.src;
                 let image = layer.image;
+                let layerRects = calcLayerRects(layer, image.width, targetWidth, targetHeight, frameCount);
                 let currentProcessing = encodeProcessing(layer);
                 if (layer.cachedProcessing && layer.cachedImage && currentProcessing === layer.cachedProcessing) {
                     if (listener && listener.layerCacheHit) {
@@ -436,11 +531,11 @@ var Renderer;
                     if (listener && listener.layerCacheMiss) {
                         listener.layerCacheMiss(layer);
                     }
-                    image = processLayer(layer, listener);
+                    image = processLayer(layer, layerRects, listener);
                     layer.cachedProcessing = currentProcessing;
                     layer.cachedImage = image;
                 }
-                composeProcessedLayer(layer, targetCanvas, frameCount);
+                composeProcessedLayer(layer, targetCanvas, layerRects);
                 if (listener && listener.composition) {
                     listener.composition(name, targetCanvas.canvas);
                 }
