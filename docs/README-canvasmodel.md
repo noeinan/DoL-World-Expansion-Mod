@@ -238,14 +238,7 @@ T.modeloptions.filters.hair_color = {
 }
 ```
 will apply following gradient coloring to the layer:
-<div style="width:256px;height:256px;background: linear-gradient(135deg, red 0%, red 25%, green 37.5%, blue 75%, blue 100%);position:relative;color:white">
-    <div style="position:absolute;top:64px;left:64px">
-        <div style="width:4px;height:4px;background:white;transform:translate(-2px,-2px)"></div>64, 64
-    </div>
-    <div style="position:absolute;top:192px;left:192px">
-        <div style="width:4px;height:4px;background:white;transform:translate(-2px,-2px)"></div>192,192
-    </div>
-</div>
+![result](canvasmodel-demo2.png)
 
 See <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient" target="_blank">createLinearGradient</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient" target="_blank">createRadialGradient</a>, and <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient/addColorStop" target="_blank">addColorStop</a> documentation with more details and examples.
 
