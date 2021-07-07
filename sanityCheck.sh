@@ -23,7 +23,7 @@ $GREP "<<[^>()]*>[^()<>"$'\r]*\r'"\?$" -- 'game/*' | myprint "MissingClosingAngl
 # Check for missing left angle bracket: </if>>
 $GREP "\([^<]\|^\)</\?\(if\|else\|case\|set\|print\|elseif\)" -- 'game/*' | myprint "MissingOpeningAngleBracket2"
 # Check for accidental assignment.  e.g.:   <<if $foo = "hello">>
-$GREP "<<[ ]*if[^>=]*[^><\!=]=[^=][^>]*>>" -- 'game/*' | myprint "AccidentalAssignmentInIf"
+$GREP "<<[ ]*if[^>=]*[^><\!=]=[^=>][^>]*>>" -- 'game/*' | myprint "AccidentalAssignmentInIf"
 # Check for accidental assignment.  e.g.:   <<elseif $foo = "hello">>
 $GREP "<<[ ]*elseif[^>=]*[^><\!=]=[^=][^>]*>>" -- 'game/*' | myprint "AccidentalAssignmentInElseIf"
 # Check for missing ".  e.g.:   <<if $foo == "hello>>
@@ -44,13 +44,14 @@ $GREP -e "<<[ a-zA-Z]\+[^()<>]*([^()]*)[^()]*)[^()<>]*>>"  -- "game/*" | myprint
 $GREP -e "<<[ a-zA-Z]\+[^()<>]*([^()]*([^()]*)[^()<>]*>>"  -- "game/*" | myprint "MissingClosingBracket2"
 $GREP -e "<<.*[(][^<>)]*[(][^<>)]*)\?[^<>)]*>>" -- "game/*" | myprint "MissingClosingBracket3"
 # Check for missing >>.  e.g.:   <<if $foo
-$GREP "<<[^<>]*[^,\"\[{"$'\r]\r'"\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
+#$GREP "<<[^<>]*[^,\"\[{"$'\r]\r'"\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
+$GREP "<<[^<>]*[^,\"\[{]\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
 # Check for too many >>>.  e.g.: <</if>>>
 $GREP "<<[^<>\"]*[<>]\?[^<>\"]*>>>" -- "game/*" | myprint "TooManyAngleBrackets"
 # Check for too many <<<.  e.g.: <<</if>>
 $GREP "<<<[^<>\"]*[<>]\?[^<>\"]*>>" -- "game/*" | myprint "TooManyAngleBrackets2"
 # Check for wrong capitalisation on 'activeslave' and other common typos
-$GREP  "\(csae\|[a-z] She \|attepmts\|youreslf\|advnaces\|canAcheive\|setBellySize\|SetbellySize\|setbellySize\|bellypreg\|pregBelly\|bellyimplant\|bellyfluid\|pronounCaps\|carress\)" -- 'game/*' | myprint "SpellCheck"
+$GREP  "\(csae\|[a-z] She \|attepmts\|youreslf\|advnaces\|canAcheive\|setBellySize\|SetbellySize\|gendre\|apperance\|setbellySize\|bellypreg\|pregBelly\|bellyimplant\|bellyfluid\|pronounCaps\|carress\)" -- 'game/*' | myprint "SpellCheck"
 $GREP  "\(recieve\|recieves\)" -- 'game/*' | myprint "PregmodderCannotSpellReceive"
 $GREP "\$slave\[" -- 'game/*' | myprint "ShouldBeSlaves"
 # Check for strange spaces e.g.  $slaves[$i]. lips
@@ -70,7 +71,7 @@ $GREP -e "<<[a-zA-Z]\([^>\"]\|[^>]>[^>]\|\"[^\"]*\"\)* [a-zA-Z]\+ * =" -- game/*
 # Check for missing command, e.g.  <<foo =
 $GREP -e "<<[a-zA-Z]* = *" -- game/* | myprint "BadCommand"
 # Check for duplicate words, e.g. with with
-$GREP -e  " \(\b[a-zA-Z][a-zA-Z]\+\) \1\b " --and --not -e " her her " --and --not -e " you you " --and --not -e " New New " --and --not -e "Slave Slave " --and --not -e " that that " --and --not -e " in in " --and --not -e " is is " -- 'game/*' | myprint "Duplicate words"
+$GREP -e  " \(\b[a-zA-Z][a-zA-Z]\+\) \1\b " --and --not -e " her her " --and --not -e " you you " --and --not -e " New New " --and --not -e "true true" --and --not -e "No No" --and --not -e "Slave Slave " --and --not -e " that that " --and --not -e " in in " --and --not -e " is is " -- 'game/*' | myprint "Duplicate words"
 # Check for obsolete SugarCube macros
 $GREP -E "<<display |<<click|<<.*\.contains" -- game/* | myprint "ObsoleteMacro"
 # Check for double articles
@@ -85,20 +86,27 @@ $GREP '<<\s*\$' -- 'game/*'  | myprint "VarSignAtMacroStart"
 # check for missing ; before statement
 $GREP 'if $ ' -- 'game/*'  | myprint "missing ; before statement"
 $GREP 'elseif $ ' -- 'game/*'  | myprint "missing ; before statement"
+$GREP '^::[^ ]' -- 'game/*' | myprint "MissingSpaceInMacro"
+$GREP '^: ' -- 'game/*' | myprint "MissingColonInMacro"
+$GREP -P '[(]0:0(.)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
+$GREP -P '[(]0:([^0].)[)].*<pass (?!\1)' -- 'game/*' | myprint "MismatchedPassTimes"
+# Look for variables like $foo.bar  where it occurs only once.
+# There's a lot of false-positives, but it also catches a lot of
+# mistakes, so use grep to filter out the false-positives.
+# Feel free to add to the list to filter out false-positives as they occur
+git grep -h -o "[$][a-zA-Z0-9_-]\+[.][a-zA-Z0-9_]\+[^a-zA-Z0-9_(]"  -- game | sed -e 's/.$//' | grep -v '[.]\(replace\|deleteAt\|push\|delete\|length\|indexOf\)' | grep -v "[$]\(attitudesControl\|debug\|carried\|dateCount\|newVersionData\|skul_dock\|store\|wardrobe\|shopClothingFilter\|replayScene\|per_npc\|featsBoosts\|_item\|map\|swarm\|NPCList\)" | sort | uniq -u | xargs -I '{}' $GREP '{}' -- 'game/*' | myprint "VariableUsedOnlyOnce"
 # Check that we do not have any variables that we use only once.   e.g.	 $onlyUsedOnce
 # Ignore  *Nationalities
 (
 cd game/
-find . -name "*.twee" -exec cat '{}' ';' | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq -u | sed 's/^[$]/-e[$]/' | sed 's/$/\\\\W/' | xargs -r  git grep -n --color | myprint "OnlyUsedOnce"
-find . -name "*.twee" -exec cat '{}' ';' | tr -c '.$a-zA-Z[]_' '\n' | sed 's/SugarCube\.State\.variables\./$/g' | sed -n -e 's/^[$]\(PC\|activeSlave\|\(slaves\|tanks\)\[[^]]*\]*\)[.]\([a-zA-Z]\+\).*$/[.]\3/p' | sort | uniq -u |sed 's/^\(.*\)$/-e\1\\\\\b/'  | xargs -r git grep -n --color | myprint "SlaveAttributeUsedOnce"
-$GREP "\$\(PC\|activeSlave\|slaves\|tanks\)[.][^a-zA-Z]" | myprint "UnexpectedCharAfterDot"
+find . -name "*.twee" -not -path "./special-templates/*" -exec cat '{}' ';' | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq -u | sed 's/^[$]/-e[$]/' | sed 's/$/\\\\W/' | xargs -r  git grep -n --color | myprint "OnlyUsedOnce"
 
 #Find all the variables listed in init.twee
-VARIABLELIST=$(cat base-system/init.twee | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq)
+VARIABLELIST=$(cat base-*/init.twee | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq)
 # Find all variables anywhere.  Commented out because the output is too noisy currently
 #VARIABLELIST=$(find . -name "*.twee" -exec cat '{}' ';' | tr -c '$a-zA-Z' '\n'  | sed -n '/^[$]/p' | sort | uniq)
-MISSINGFROMVERSIONUPDATE=$(for variable in $VARIABLELIST; do grep -q "$variable" base-system/version-update.twee || echo "$variable"; done)
-echo -e "base-system/version-update.twee$ENDC: $(echo $MISSINGFROMVERSIONUPDATE)" | myprint "MissingFromVersionUpdate"
+MISSINGFROMVERSIONUPDATE=$(for variable in $VARIABLELIST; do grep -q "$variable" 04-Variables/variables-versionUpdate.twee || echo "$variable"; done)
+echo -e "game/04-Variables/variables-versionUpdate.twee$ENDC: $(echo $MISSINGFROMVERSIONUPDATE)" | myprint "MissingFromVersionUpdate"
 )
 
 git ls-files "game/*.twee" | xargs -d '\n'  ./devTools/check.py

@@ -39,12 +39,18 @@
 <<set $spiderdisable to "t">>
 <<set $slugdisable to "t">>
 <<set $waspdisable to "t">>
+<<set $beedisable to "f">>
+<<set $lurkerdisable to "f">>
+<<set $horsedisable to "f">>
 <<set $bodywritingdisable to "t">>
 <<set $parasitedisable to "t">>
+<<set $bestialitydisable to "t">>
 <<set $slimedisable to "f">>
 <<set $voredisable to "t">>
 <<set $tentacledisable to "f">>
 <<set $analdisable to "f">>
+<<set $analingusdisablegiving to "f">>
+<<set $analingusdisablereceiving to "f">>
 <<set $transformdisable to "f">>
 <<set $hirsutedisable to "t">>
 <<set $breastfeedingdisable to "t">>
@@ -84,6 +90,8 @@
 <<set $clothesPriceSchool to 1>>
 <<set $clothesPriceLewd to 1>>
 <<set $rentmod to 1>>
+
+<<set $notifyUpdate = true>>
 
 <<startingPlayerImageReset>>
 <</widget>>
@@ -128,6 +136,7 @@
 <</widget>>
 
 <<widget "settings">>
+<<updatehistorycontrols>><!-- hides controls on going back in history after enabling that option -->
 <<if $passage is "Start">>
 <div id="settingsExit">
 	<<settingsExit>>
@@ -243,6 +252,7 @@
 	<<if $gamemode is "soft" or $alluremod lt 1>>
 		<<set $feats.soft to true>>
 	<</if>>
+	<<updatehistorycontrols>>
 	<<initnpcgender>>
 	<<hirsuteHideCheck>>
 	<<tanned 0 "ignoreCoverage">>
@@ -338,7 +348,7 @@
 <<widget "characterSettings">>
 
 	<<if StartConfig.enableImages is true>>
-		<span class="gold">View a preview of the character in the side bar.</span> <label>Show Clothes <<print '<<checkbox "_showClothes" false true '+(_showClothes isnot false ? "checked" : "")+'>>'>></label> <label>Show Underwear <<print '<<checkbox "_showUnderwear" false true '+(_showUnderwear isnot false ? "checked" : "")+'>>'>></label>
+		<span class="gold">View a preview of the character in the side bar.</span> <label>Show Clothes <<checkbox "_showClothes" false true autocheck>></label> <label>Show Underwear <<checkbox "_showUnderwear" false true autocheck>></label>
 		<br>
 		<span class="red">'Visual representation of the player character's skin colour' needs to be enabled in the general tab for skin colouring to show during normal gameplay.</span>
 		<br>
@@ -355,60 +365,60 @@
 	<<else>>
 		<span class="gold">Body size</span> - A smaller body makes you inflict less damage during encounters, making defiance harder.
 		<br>
-		<label>Tiny <<print '<<radiobutton "$bodysize" 0 ' + ($bodysize is 0 ? "checked" : "") + '>>'>></label> |
-		<label>Small <<print '<<radiobutton "$bodysize" 1 ' + ($bodysize is 1 ? "checked" : "") + '>>'>></label> |
-		<label>Normal <<print '<<radiobutton "$bodysize" 2 ' + ($bodysize is 2 ? "checked" : "") + '>>'>></label> |
-		<label>Large <<print '<<radiobutton "$bodysize" 3 ' + ($bodysize is 3 ? "checked" : "") + '>>'>></label>
+		<label>Tiny <<radiobutton "$bodysize" 0 autocheck>></label> |
+		<label>Small <<radiobutton "$bodysize" 1 autocheck>></label> |
+		<label>Normal <<radiobutton "$bodysize" 2 autocheck>></label> |
+		<label>Large <<radiobutton "$bodysize" 3 autocheck>></label>
 		<br><br>
 	<</if>>
 
 	<span class="gold">Gender</span>
 	<br>
-	<label>Male <<print '<<radiobutton "$player.gender" "m" ' + ($player.gender is "m" ? "checked" : "") + '>>'>></label> |
-	<label>Female <<print '<<radiobutton "$player.gender" "f" ' + ($player.gender is "f" ? "checked" : "") + '>>'>></label> |
+	<label>Male <<radiobutton "$player.gender" "m" autocheck>></label> |
+	<label>Female <<radiobutton "$player.gender" "f" autocheck>></label> |
 	/*noeinan mod START*/
 	/*Changed Hermaphrodite to Intersex*/
-	<label>Intersex <<print '<<radiobutton "$player.gender" "h" ' + ($player.gender is "h" ? "checked" : "") + '>>'>></label>
+	<label>Intersex <<radiobutton "$player.gender" "h" autocheck>></label>
 	/*noeinan mod END*/
 	<br><br>
 
 	<span class="gold">Natural features</span>
 	<br>
-	<label>Masculine <<print '<<radiobutton "$player.gender_body" "m" ' + ($player.gender_body is "m" ? "checked" : "") + '>>'>></label> |
-	<label>Feminine <<print '<<radiobutton "$player.gender_body" "f" ' + ($player.gender_body is "f" ? "checked" : "") + '>>'>></label> |
-	<label>Androgynous <<print '<<radiobutton "$player.gender_body" "a" ' + ($player.gender_body is "a" ? "checked" : "") + '>>'>></label> |
+	<label>Masculine <<radiobutton "$player.gender_body" "m" autocheck>></label> |
+	<label>Feminine <<radiobutton "$player.gender_body" "f" autocheck>></label> |
+	<label>Androgynous <<radiobutton "$player.gender_body" "a" autocheck>></label> |
 	<br><br>
 
 	<<if $dev is 1>>
 		<span class="gold">Sex</span>
 		<br>
-		<label>Penis <<print '<<radiobutton "$player.sex" "m" ' + ($player.sex is "m" ? "checked" : "") + '>>'>></label> |
-		<label>Vagina <<print '<<radiobutton "$player.sex" "f" ' + ($player.sex is "f" ? "checked" : "") + '>>'>></label>
+		<label>Penis <<radiobutton "$player.sex" "m" autocheck>></label> |
+		<label>Vagina <<radiobutton "$player.sex" "f" autocheck>></label>
 		<br><br>
 	<</if>>
 
 	<span class="gold">Penis size</span> - if applicable
 	<br>
-	<label>Tiny <<print '<<radiobutton "$penissize" 0 ' + ($penissize is 0 ? "checked" : "") + '>>'>></label> |
-	<label>Small <<print '<<radiobutton "$penissize" 1 ' + ($penissize is 1 ? "checked" : "") + '>>'>></label> |
-	<label>Normal <<print '<<radiobutton "$penissize" 2 ' + ($penissize is 2 ? "checked" : "") + '>>'>></label>
+	<label>Tiny <<radiobutton "$penissize" 0 autocheck>></label> |
+	<label>Small <<radiobutton "$penissize" 1 autocheck>></label> |
+	<label>Normal <<radiobutton "$penissize" 2 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Breast size</span>
 	<br>
-	<label>Flat <<print '<<radiobutton "$breastsize" 0 ' + ($breastsize is 0 ? "checked" : "") + '>>'>></label> |
-	<label>Budding <<print '<<radiobutton "$breastsize" 1 ' + ($breastsize is 1 ? "checked" : "") + '>>'>></label> |
-	<label>Tiny <<print '<<radiobutton "$breastsize" 2 ' + ($breastsize is 2 ? "checked" : "") + '>>'>></label> |
-	<label>Small <<print '<<radiobutton "$breastsize" 3 ' + ($breastsize is 3 ? "checked" : "") + '>>'>></label> |
-	<label>Pert <<print '<<radiobutton "$breastsize" 4 ' + ($breastsize is 4 ? "checked" : "") + '>>'>></label>
+	<label>Flat <<radiobutton "$breastsize" 0 autocheck>></label> |
+	<label>Budding <<radiobutton "$breastsize" 1 autocheck>></label> |
+	<label>Tiny <<radiobutton "$breastsize" 2 autocheck>></label> |
+	<label>Small <<radiobutton "$breastsize" 3 autocheck>></label> |
+	<label>Pert <<radiobutton "$breastsize" 4 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Ass size</span>
 	<br>
-	<label>Slender <<print '<<radiobutton "$bottomsize" 0 ' + ($bottomsize is 0 ? "checked" : "") + '>>'>></label> |
-	<label>Slim <<print '<<radiobutton "$bottomsize" 1 ' + ($bottomsize is 1 ? "checked" : "") + '>>'>></label> |
-	<label>Modest <<print '<<radiobutton "$bottomsize" 2 ' + ($bottomsize is 2 ? "checked" : "") + '>>'>></label> |
-	<label>Cushioned <<print '<<radiobutton "$bottomsize" 3 ' + ($bottomsize is 3 ? "checked" : "") + '>>'>></label>
+	<label>Slender <<radiobutton "$bottomsize" 0 autocheck>></label> |
+	<label>Slim <<radiobutton "$bottomsize" 1 autocheck>></label> |
+	<label>Modest <<radiobutton "$bottomsize" 2 autocheck>></label> |
+	<label>Cushioned <<radiobutton "$bottomsize" 3 autocheck>></label>
 	<br><br>
 
 	/*noeinan mod START*/
@@ -416,81 +426,81 @@
 	<span class="gold">Testes</span> - applicable only if intersex
 	/*noeinan mod END*/
 	<br>
-	<label>Yes <<print '<<radiobutton "$player.ballsExist" true ' + ($player.ballsExist is true ? "checked" : "") + '>>'>></label> |
-	<label>No <<print '<<radiobutton "$player.ballsExist" false ' + ($player.ballsExist is false ? "checked" : "") + '>>'>></label> |
+	<label>Yes <<radiobutton "$player.ballsExist" true autocheck>></label> |
+	<label>No <<radiobutton "$player.ballsExist" false autocheck>></label> |
 	<br><br>
 
 	<span class="gold">Chest sensitivity</span>
 	<br>
-	<label>Normal <<print '<<radiobutton "$breastsensitivity" 1 ' + ($breastsensitivity is 1 ? "checked" : "") + '>>'>></label> |
-	<label><span class="pink">Sensitive</span> <<print '<<radiobutton "$breastsensitivity" 3 ' + ($breastsensitivity is 3 ? "checked" : "") + '>>'>></label> |
-	<label><span class="red">Very sensitive</span> <<print '<<radiobutton "$breastsensitivity" 5 ' + ($breastsensitivity is 5 ? "checked" : "") + '>>'>></label>
+	<label>Normal <<radiobutton "$breastsensitivity" 1 autocheck>></label> |
+	<label><span class="pink">Sensitive</span> <<radiobutton "$breastsensitivity" 3 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$breastsensitivity" 5 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Genital sensitivity</span>
 	<br>
-	<label>Normal <<print '<<radiobutton "$genitalsensitivity" 1 ' + ($genitalsensitivity is 1 ? "checked" : "") + '>>'>></label> |
-	<label><span class="pink">Sensitive</span> <<print '<<radiobutton "$genitalsensitivity" 3 ' + ($genitalsensitivity is 3 ? "checked" : "") + '>>'>></label> |
-	<label><span class="red">Very sensitive</span> <<print '<<radiobutton "$genitalsensitivity" 5 ' + ($genitalsensitivity is 5 ? "checked" : "") + '>>'>></label>
+	<label>Normal <<radiobutton "$genitalsensitivity" 1 autocheck>></label> |
+	<label><span class="pink">Sensitive</span> <<radiobutton "$genitalsensitivity" 3 autocheck>></label> |
+	<label><span class="red">Very sensitive</span> <<radiobutton "$genitalsensitivity" 5 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Eye Colour</span>
 	<br>
-	<label><span class="purple">Purple</span> <<print '<<radiobutton "$eyeselect" "purple" ' + ($eyeselect is "purple" ? "checked" : "") + '>>'>></label> |
-	<label><span class="blue">Dark Blue</span> <<print '<<radiobutton "$eyeselect" "dark blue" ' + ($eyeselect is "dark blue" ? "checked" : "") + '>>'>></label> |
-	<label><span class="lblue">Light Blue</span> <<print '<<radiobutton "$eyeselect" "light blue" ' + ($eyeselect is "light blue" ? "checked" : "") + '>>'>></label> |
-	<label><span class="tangerine">Amber</span> <<print '<<radiobutton "$eyeselect" "amber" ' + ($eyeselect is "amber" ? "checked" : "") + '>>'>></label> |
-	<label><span class="brown">Hazel</span> <<print '<<radiobutton "$eyeselect" "hazel" ' + ($eyeselect is "hazel" ? "checked" : "") + '>>'>></label> |
-	<label><span class="green">Green</span> <<print '<<radiobutton "$eyeselect" "green" ' + ($eyeselect is "green" ? "checked" : "") + '>>'>></label> |
-	<label><span class="red">Red</span> <<print '<<radiobutton "$eyeselect" "red" ' + ($eyeselect is "red" ? "checked" : "") + '>>'>></label> |
-	<label><span class="pink">Pink</span> <<print '<<radiobutton "$eyeselect" "pink" ' + ($eyeselect is "pink" ? "checked" : "") + '>>'>></label> |
-	<label><span class="grey">Grey</span> <<print '<<radiobutton "$eyeselect" "grey" ' + ($eyeselect is "grey" ? "checked" : "") + '>>'>></label>
+	<label><span class="purple">Purple</span> <<radiobutton "$eyeselect" "purple" autocheck>></label> |
+	<label><span class="blue">Dark Blue</span> <<radiobutton "$eyeselect" "dark blue" autocheck>></label> |
+	<label><span class="lblue">Light Blue</span> <<radiobutton "$eyeselect" "light blue" autocheck>></label> |
+	<label><span class="tangerine">Amber</span> <<radiobutton "$eyeselect" "amber" autocheck>></label> |
+	<label><span class="brown">Hazel</span> <<radiobutton "$eyeselect" "hazel" autocheck>></label> |
+	<label><span class="green">Green</span> <<radiobutton "$eyeselect" "green" autocheck>></label> |
+	<label><span class="red">Red</span> <<radiobutton "$eyeselect" "red" autocheck>></label> |
+	<label><span class="pink">Pink</span> <<radiobutton "$eyeselect" "pink" autocheck>></label> |
+	<label><span class="grey">Grey</span> <<radiobutton "$eyeselect" "grey" autocheck>></label>
 	<br><br>
 
 	<span class="gold">Hair Colour</span>
 	<br>
-	<label><span class="red">Red</span> <<print '<<radiobutton "$hairselect" "red" ' + ($hairselect is "red" ? "checked" : "") + '>>'>></label> |
-	<label><span class="black">Jet Black</span> <<print '<<radiobutton "$hairselect" "jetblack" ' + ($hairselect is "jetblack" ? "checked" : "") + '>>'>></label> |
-	<label><span class="black">Black</span> <<print '<<radiobutton "$hairselect" "black" ' + ($hairselect is "black" ? "checked" : "") + '>>'>></label> |
-	<label><span class="brown">Brown</span> <<print '<<radiobutton "$hairselect" "brown" ' + ($hairselect is "brown" ? "checked" : "") + '>>'>></label> |
-	<label><span class="softbrown">Soft Brown</span> <<print '<<radiobutton "$hairselect" "softbrown" ' + ($hairselect is "softbrown" ? "checked" : "") + '>>'>></label> |
-	<label><span class="lightbrown">Light brown</span> <<print '<<radiobutton "$hairselect" "lightbrown" ' + ($hairselect is "lightbrown" ? "checked" : "") + '>>'>></label> |
-	<label><span class="burntorange">Burnt Orange</span> <<print '<<radiobutton "$hairselect" "burntorange" ' + ($hairselect is "burntorange" ? "checked" : "") + '>>'>></label> |
-	<label><span class="gold">Blond</span> <<print '<<radiobutton "$hairselect" "blond" ' + ($hairselect is "blond" ? "checked" : "") + '>>'>></label> |
-	<label><span class="softblond">Soft Blond</span> <<print '<<radiobutton "$hairselect" "softblond" ' + ($hairselect is "softblond" ? "checked" : "") + '>>'>></label> |
-	<label><span class="platinum">Platinum blond</span> <<print '<<radiobutton "$hairselect" "platinumblond" ' + ($hairselect is "platinumblond" ? "checked" : "") + '>>'>></label> |
-	<label><span class="ashy">Ashy blond</span> <<print '<<radiobutton "$hairselect" "ashyblond" ' + ($hairselect is "ashyblond" ? "checked" : "") + '>>'>></label> |
-	<label><span class="strawberry">Strawberry blond</span> <<print '<<radiobutton "$hairselect" "strawberryblond" ' + ($hairselect is "strawberryblond" ? "checked" : "") + '>>'>></label> |
-	<label><span class="tangerine">Ginger</span> <<print '<<radiobutton "$hairselect" "ginger" ' + ($hairselect is "ginger" ? "checked" : "") + '>>'>></label>
+	<label><span class="red">Red</span> <<radiobutton "$hairselect" "red" autocheck>></label> |
+	<label><span class="black">Jet Black</span> <<radiobutton "$hairselect" "jetblack" autocheck>></label> |
+	<label><span class="black">Black</span> <<radiobutton "$hairselect" "black" autocheck>></label> |
+	<label><span class="brown">Brown</span> <<radiobutton "$hairselect" "brown" autocheck>></label> |
+	<label><span class="softbrown">Soft Brown</span> <<radiobutton "$hairselect" "softbrown" autocheck>></label> |
+	<label><span class="lightbrown">Light brown</span> <<radiobutton "$hairselect" "lightbrown" autocheck>></label> |
+	<label><span class="burntorange">Burnt Orange</span> <<radiobutton "$hairselect" "burntorange" autocheck>></label> |
+	<label><span class="gold">Blond</span> <<radiobutton "$hairselect" "blond" autocheck>></label> |
+	<label><span class="softblond">Soft Blond</span> <<radiobutton "$hairselect" "softblond" autocheck>></label> |
+	<label><span class="platinum">Platinum blond</span> <<radiobutton "$hairselect" "platinumblond" autocheck>></label> |
+	<label><span class="ashy">Ashy blond</span> <<radiobutton "$hairselect" "ashyblond" autocheck>></label> |
+	<label><span class="strawberry">Strawberry blond</span> <<radiobutton "$hairselect" "strawberryblond" autocheck>></label> |
+	<label><span class="tangerine">Ginger</span> <<radiobutton "$hairselect" "ginger" autocheck>></label>
 	<br><br>
 
 	<span class="gold">Hair length</span>
 	<br>
-	<label>Ear <<print '<<radiobutton "$hairlength" 0 ' + ($hairlength is 0 ? "checked" : "") + '>>'>></label> |
-	<label>Neck <<print '<<radiobutton "$hairlength" 200 ' + ($hairlength is 200 ? "checked" : "") + '>>'>></label> |
-	<label>Chest <<print '<<radiobutton "$hairlength" 400 ' + ($hairlength is 400 ? "checked" : "") + '>>'>></label>
+	<label>Ear <<radiobutton "$hairlength" 0 autocheck>></label> |
+	<label>Neck <<radiobutton "$hairlength" 200 autocheck>></label> |
+	<label>Chest <<radiobutton "$hairlength" 400 autocheck>></label>
 	<br><br>
 
 	<span class="gold">Freckles</span>
 	<br>
-	<label>Yes <<print '<<radiobutton "$player.freckles" true ' + ($player.freckles is true ? "checked" : "") + '>>'>></label> |
-	<label>No <<print '<<radiobutton "$player.freckles" false ' + ($player.freckles is false ? "checked" : "") + '>>'>></label> |
-	<label>Random <<print '<<radiobutton "$player.freckles" "random" ' + ($player.freckles is "random" ? "checked" : "") + '>>'>></label> |
+	<label>Yes <<radiobutton "$player.freckles" true autocheck>></label> |
+	<label>No <<radiobutton "$player.freckles" false autocheck>></label> |
+	<label>Random <<radiobutton "$player.freckles" "random" autocheck>></label> |
 	<br><br>
 
 	<span class="gold">Skin Colour</span>
 	<br>
 	Reddish:
-	<label>Light <<print '<<radiobutton "$skinColor.natural" "light" ' + ($skinColor.natural is "light" ? "checked" : "") + '>>'>></label> |
-	<label>Medium <<print '<<radiobutton "$skinColor.natural" "medium" ' + ($skinColor.natural is "medium" ? "checked" : "") + '>>'>></label> |
-	<label>Dark <<print '<<radiobutton "$skinColor.natural" "dark" ' + ($skinColor.natural is "dark" ? "checked" : "") + '>>'>></label> |
-	<label>Gyaru <<print '<<radiobutton "$skinColor.natural" "gyaru" ' + ($skinColor.natural is "gyaru" ? "checked" : "") + '>>'>> (Pale with no tan, very dark with full tan)</label>
+	<label>Light <<radiobutton "$skinColor.natural" "light" autocheck>></label> |
+	<label>Medium <<radiobutton "$skinColor.natural" "medium" autocheck>></label> |
+	<label>Dark <<radiobutton "$skinColor.natural" "dark" autocheck>></label> |
+	<label>Gyaru <<radiobutton "$skinColor.natural" "gyaru" autocheck>> (Pale with no tan, very dark with full tan)</label>
 	<br>
 	Yellowish:
-	<label>Light <<print '<<radiobutton "$skinColor.natural" "ylight" ' + ($skinColor.natural is "ylight" ? "checked" : "") + '>>'>></label> |
-	<label>Medium <<print '<<radiobutton "$skinColor.natural" "ymedium" ' + ($skinColor.natural is "ymedium" ? "checked" : "") + '>>'>></label> |
-	<label>Dark <<print '<<radiobutton "$skinColor.natural" "ydark" ' + ($skinColor.natural is "ydark" ? "checked" : "") + '>>'>></label> |
-	<label>Gyaru <<print '<<radiobutton "$skinColor.natural" "ygyaru" ' + ($skinColor.natural is "ygyaru" ? "checked" : "") + '>>'>></label>
+	<label>Light <<radiobutton "$skinColor.natural" "ylight" autocheck>></label> |
+	<label>Medium <<radiobutton "$skinColor.natural" "ymedium" autocheck>></label> |
+	<label>Dark <<radiobutton "$skinColor.natural" "ydark" autocheck>></label> |
+	<label>Gyaru <<radiobutton "$skinColor.natural" "ygyaru" autocheck>></label>
 	<br><br>
 
 	<label>Initial Tan Value: <<numberslider "$skinColor.range" $skinColor.range 0 100 1>></label>
@@ -515,36 +525,36 @@
 
 	<span class="gold">Awareness</span> - Whether your character knows a thing or two about sex despite their lack of experience.
 	<br>
-	<label>Innocent <<print '<<radiobutton "$awareselect" "innocent" ' + ($awareselect is "innocent" ? "checked" : "") + '>>'>></label> |
-	<label>Knowledgeable <<print '<<radiobutton "$awareselect" "knowledgeable" ' + ($awareselect is "knowledgeable" ? "checked" : "") + '>>'>></label>
+	<label>Innocent <<radiobutton "$awareselect" "innocent" autocheck>></label> |
+	<label>Knowledgeable <<radiobutton "$awareselect" "knowledgeable" autocheck>></label>
 	<br><br>
 
 	<span class="gold">Background</span>
 	<br>
-	<label>Waif <<print '<<radiobutton "$background" "waif" ' + ($background is "waif" ? "checked" : "") + '>>'>> - No special advantages or disadvantages. <i>Recommended for beginners.</i></label>
+	<label>Waif <<radiobutton "$background" "waif" autocheck>> - No special advantages or disadvantages. <i>Recommended for beginners.</i></label>
 	<br>
-	<label>Nerd <<print '<<radiobutton "$background" "nerd" ' + ($background is "nerd" ? "checked" : "") + '>>'>> - Good at school. Picked on. <span class="red">(This will prevent Unsocial Moth feat from being earned)</span></label>
+	<label>Nerd <<radiobutton "$background" "nerd" autocheck>> - Good at school. Picked on. <span class="red">(This will prevent Unsocial Moth feat from being earned)</span></label>
 	<br>
-	<label>Athlete <<print '<<radiobutton "$background" "athlete" ' + ($background is "athlete" ? "checked" : "") + '>>'>> - Physically capable. Grades have suffered.</label>
+	<label>Athlete <<radiobutton "$background" "athlete" autocheck>> - Physically capable. Grades have suffered.</label>
 	<br>
-	<label>Delinquent <<print '<<radiobutton "$background" "delinquent" ' + ($background is "delinquent" ? "checked" : "") + '>>'>> - Your antics have made you popular with other students. Less so with the teachers.</label>
+	<label>Delinquent <<radiobutton "$background" "delinquent" autocheck>> - Your antics have made you popular with other students. Less so with the teachers.</label>
 	<br>
-	<label>Promiscuous <<print '<<radiobutton "$background" "promiscuous" ' + ($background is "promiscuous" ? "checked" : "") + '>>'>> - You've experimented sexually.</label>
+	<label>Promiscuous <<radiobutton "$background" "promiscuous" autocheck>> - You've experimented sexually.</label>
 	<br>
-	<label>Exhibitionist <<print '<<radiobutton "$background" "exhibitionist" ' + ($background is "exhibitionist" ? "checked" : "") + '>>'>> - You have an affinity for exposing yourself in public places.</label>
+	<label>Exhibitionist <<radiobutton "$background" "exhibitionist" autocheck>> - You have an affinity for exposing yourself in public places.</label>
 	<br>
-	<label>Deviant <<print '<<radiobutton "$background" "deviant" ' + ($background is "deviant" ? "checked" : "") + '>>'>> - You <i>really</i> like animals.</label>
+	<label>Deviant <<radiobutton "$background" "deviant" autocheck>> - You <i>really</i> like animals.</label>
 	<br>
-	<label>Beautiful <<print '<<radiobutton "$background" "beautiful" ' + ($background is "beautiful" ? "checked" : "") + '>>'>> - You turn heads. <i>Not recommended for beginners.</i></label>
+	<label>Beautiful <<radiobutton "$background" "beautiful" autocheck>> - You turn heads. <i>Not recommended for beginners.</i></label>
 	<br>
 	/*noeinan mod START*/
 	/*Changed hermaphrodite to enby*/
-	<label>Crossdresser <<print '<<radiobutton "$background" "crossdresser" ' + ($background is "crossdresser" ? "checked" : "") + '>>'>> - You've taken a liking to the clothing of the opposite sex. Does nothing for enbies.</label>
+	<label>Crossdresser <<radiobutton "$background" "crossdresser" autocheck>> - You've taken a liking to the clothing of the opposite sex. Does nothing for enbies.</label>
 	/*noeinan mod END*/
 	<br>
-	<label>Lustful <<print '<<radiobutton "$background" "lustful" ' + ($background is "lustful" ? "checked" : "") + '>>'>> - Arousal increases over time, and needs to be managed.</label>
+	<label>Lustful <<radiobutton "$background" "lustful" autocheck>> - Arousal increases over time, and needs to be managed.</label>
 	<br>
-	<label>Green Thumb <<print '<<radiobutton "$background" "greenthumb" ' + ($background is "greenthumb" ? "checked" : "") + '>>'>> - Increased starting tending, more bountiful crops and no decay when using fertiliser.</label>
+	<label>Green Thumb <<radiobutton "$background" "greenthumb" autocheck>> - Increased starting tending, more bountiful crops and no decay when using fertiliser.</label>
 
 <</widget>>
 
@@ -591,15 +601,15 @@
 <<widget "gameSettings">>
 	<span class="gold">Game Mode</span>
 	<br>
-	<label><span class = "green">Normal mode</span> <<print '<<radiobutton "$gamemode" "normal" ' + ($gamemode is "normal" ? "checked" : "") + '>>'>> - Survive in a dangerous world.</label>
+	<label><span class = "green">Normal mode</span> <<radiobutton "$gamemode" "normal" autocheck>> - Survive in a dangerous world.</label>
 	<br>
 	<label><span class = "blue">Soft mode</span>
-	<<print '<<radiobutton "$gamemode" "soft" ' + ($gamemode is "soft" ? "checked" : "") + '>>'>>
+	<<radiobutton "$gamemode" "soft" autocheck>>
 	- For those who prefer a light-hearted lewd adventure, though the game is still dark in places. <span class="red">This is an experimental feature, and contains gamebreaking bugs. It will be changed or removed in the future. Leaving the settings with soft mode will prevent you from earning feats until it is set to normal mode. Doing this will permanently prevent some feats from being earned.</span></label>
 	<br>
 	<<if $intro is 1 or $gamemode is "hard">>
 		<label><span class = "purple">Hard mode</span>
-		<<print '<<radiobutton "$gamemode" "hard" ' + ($gamemode is "hard" ? "checked" : "") + '>>'>>
+		<<radiobutton "$gamemode" "hard" autocheck>>
 		- Removes lewd stat decay (promiscuity, exhibitionism, deviancy) making trauma and control increasingly difficult to manage. Can only be chosen at the game's start, and being incarcerated in the asylum will put you in normal mode. <span class="red">This is an experimental feature, and will be changed or removed in the future.</span></label>
 		<br>
 	<</if>>
@@ -707,7 +717,7 @@
 			/*Made it so there is always at least a 50% chance to have beastfolk instead of animals.*/
 			/*Removed hallucinations option, because it doesn't make sense with the setting.*/
 
-			<span class="gold">Percentage of beasts attracted to you that are male</span>
+			<span class="gold">Percentage of beastfolk attracted to you that are male</span>
 			<br>
 			<<numberslider "$beastmalechance" $beastmalechance 0 100 1>>
 			<br><br>
@@ -716,10 +726,8 @@
 			<br>
 			<<numberslider "$monsterchance" $monsterchance 50 100 1>>
 			<br><br>
-
-			<span class="gold">Percentage of beastfolk attracted to you that are male</span>
-			<br>
-			<<numberslider "$beastmalechance" $beastmalechance 0 100 1>>
+			<label>Only when hallucinating <<radiobutton "$monsterhallucinations" "t" autocheck>></label> |
+			<label>At any time <<radiobutton "$monsterhallucinations" "f" autocheck>></label>
 			<br><br>
 
 			/*noeinan mod END*/
@@ -739,36 +747,43 @@
 			<</button>>
 			</span><br>
 			<label><div class="settingsToggle">
-
-			/*noeinan mod START*/
-			/*Removed ability to enable beastiality in preferences*/
-			/*noeinan mod END*/
-
-			<<print '<<checkbox "$swarmdisable" "t" "f" ' + ($swarmdisable is "f" ? "checked" : "") + '>>'>> Enable swarms (Eels, etc)
+			<<checkbox "$bestialitydisable" "t" "f" autocheck>> Enable bestiality
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$parasitedisable" "t" "f" ' + ($parasitedisable is "f" ? "checked" : "") + '>>'>> Enable parasites
+			<<checkbox "$swarmdisable" "t" "f" autocheck>> Enable swarms (Eels, etc)
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$analpregdisable" "t" "f" ' + ($analpregdisable is "f" ? "checked" : "") + '>>'>> Enable anal parasitic pregnancy
+			<<checkbox "$parasitedisable" "t" "f" autocheck>> Enable parasites
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$tentacledisable" "t" "f" ' + ($tentacledisable is "f" ? "checked" : "") + '>>'>> Enable tentacles
+			<<checkbox "$analpregdisable" "t" "f" autocheck>> Enable anal parasitic pregnancy
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$slimedisable" "t" "f" ' + ($slimedisable is "f" ? "checked" : "") + '>>'>> Enable slimes
+			<<checkbox "$tentacledisable" "t" "f" autocheck>> Enable tentacles
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$voredisable" "t" "f" ' + ($voredisable is "f" ? "checked" : "") + '>>'>> Enable soft monster vore
+			<<checkbox "$slimedisable" "t" "f" autocheck>> Enable slimes
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$spiderdisable" "t" "f" ' + ($spiderdisable is "f" ? "checked" : "") + '>>'>> Enable spiders
+			<<checkbox "$voredisable" "t" "f" autocheck>> Enable soft monster vore
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$slugdisable" "t" "f" ' + ($slugdisable is "f" ? "checked" : "") + '>>'>> Enable slugs
+			<<checkbox "$spiderdisable" "t" "f" autocheck>> Enable spiders
 			</div></label>
 			<label><div class="settingsToggle">
-			<<print '<<checkbox "$waspdisable" "t" "f" ' + ($waspdisable is "f" ? "checked" : "") + '>>'>> Enable wasps
+			<<checkbox "$slugdisable" "t" "f" autocheck>> Enable slugs
+			</div></label>
+			<label><div class="settingsToggle">
+			<<checkbox "$waspdisable" "t" "f" autocheck>> Enable wasps
+			</div></label>
+			<label><div class="settingsToggle">
+			<<checkbox "$beedisable" "t" "f" autocheck>> Enable bees
+			</div></label>
+			<label><div class="settingsToggle">
+			<<checkbox "$lurkerdisable" "t" "f" autocheck>> Enable lurkers
+			</div></label>
+			<label><div class="settingsToggle">
+			<<checkbox "$horsedisable" "t" "f" autocheck>> Enable horses and centaur
 			</div></label>
 			<div style="clear:both;">/*Keep at end of toggles*/</div>
 		</div>
@@ -840,25 +855,34 @@
 	<span class="gold">Togglable Features</span>
 	<br>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$analdisable" "t" "f" ' + ($analdisable is "f" ? "checked" : "") + '>>'>> Enable anal
+	<<checkbox "$analdisable" "t" "f" autocheck>> Enable anal
+	</div></label>
+	<div class="settingsToggle" role="group" aria-labelledby="settingsAnalingusHead">
+	<span id="settingsAnalingusHead">Analingus:</span>
+	<label>
+		<<checkbox "$analingusdisablegiving" "t" "f" autocheck>> Giving
+	</label>
+	<label>
+		<<checkbox "$analingusdisablereceiving" "t" "f" autocheck>> Receiving
+	</label>
+	</div>
+	<label><div class="settingsToggle">
+	<<checkbox "$pbdisable" "t" "f" autocheck>> Enable pubic hair growth
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$pbdisable" "t" "f" ' + ($pbdisable is "f" ? "checked" : "") + '>>'>> Enable pubic hair growth
-	</div></label>
-	<label><div class="settingsToggle">
-	<<print '<<checkbox "$transformdisable" "t" "f" ' + ($transformdisable is "f" ? "checked" : "") + '>>'>> Enable transformations
+	<<checkbox "$transformdisable" "t" "f" autocheck>> Enable transformations
 	</div></label>
 	/*<label><div class="settingsToggle">
-	<<print '<<checkbox "$hirsutedisable" "t" "f" ' + ($hirsutedisable is "f" ? "checked" : "") + '>>'>> Extra hirsute/hairy wolf transformation
+	<<checkbox "$hirsutedisable" "t" "f" autocheck>> Extra hirsute/hairy wolf transformation
 	</div></label>*/
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$breastfeedingdisable" "t" "f" ' + ($breastfeedingdisable is "f" ? "checked" : "") + '>>'>> Enable lactation
+	<<checkbox "$breastfeedingdisable" "t" "f" autocheck>> Enable lactation
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$watersportsdisable" "t" "f" ' + ($watersportsdisable is "f" ? "checked" : "") + '>>'>> Enable watersports
+	<<checkbox "$watersportsdisable" "t" "f" autocheck>> Enable watersports
 	</div></label>
 	<label><div class="settingsToggle">
-	<<print '<<checkbox "$bodywritingdisable" "t" "f" ' + ($bodywritingdisable is "f" ? "checked" : "") + '>>'>> Enable body-writing and forced tattoos
+	<<checkbox "$bodywritingdisable" "t" "f" autocheck>> Enable body-writing and forced tattoos
 	</div></label>
 	<div class="settingsToggle" style="display: inline-flex;">
 	Asphyxiation
@@ -873,6 +897,7 @@
 	<br>
 	<<set _name to ["Flat", "Budding", "Tiny", "Small", "Pert", "Modest", "Full", "Large", "Ample", "Massive", "Huge", "Gigantic", "Enormous"]>>
 	<<for _i to 0; _i lt _name.length; _i++>>
+		<!-- this hack is still required for arrays -->
 		<label><<print _name[_i]>> <<print '<<radiobutton "$breastsizemax" _i ' + ($breastsizemax is _i ? "checked" : "") + '>>'>></label> |
 	<</for>>
 	<br><br>
@@ -905,27 +930,26 @@
 
 <<widget "generalSettings">>
 	<span class="gold">Images</span>
-	<br>
 	<<if StartConfig.enableImages is true>>
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$images" 0 1 ' + ($images is 1 ? "checked" : "") + '>>'>> Enable images
+		<<checkbox "$images" 0 1 autocheck>> Enable images
 		<div class="description">Images may not load properly on older Androids.</div>
 		</div></label>
 
 		<label><div class="settingsToggleBig">
 		CSS animations
-		<div><label><<print '<<checkbox "$sidebarAnimations" false true ' + ($sidebarAnimations is true ? "checked" : "") + '>>'>> Sidebar animations</label></div>
-		<div><label><<print '<<checkbox "$combatAnimations" false true ' + ($combatAnimations is true ? "checked" : "") + '>>'>> Combat animations</label></div>
+		<div><label><<checkbox "$sidebarAnimations" false true autocheck>> Sidebar animations</label></div>
+		<div><label><<checkbox "$combatAnimations" false true autocheck>> Combat animations</label></div>
 		<div class="description">Disabling may help improve performance and prevent images from loading incorrectly. Gif images will not be affected. Try disabling sidebar images first.</div>
 		</div></label>
 
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$bodywritingImages" false true ' + ($bodywritingImages is true ? "checked" : "") + '>>'>> Enable body-writing Images
+		<<checkbox "$bodywritingImages" false true autocheck>> Enable body-writing Images
 		<div class="description">Disabling may improve performance and potentially prevent images from not loading correctly.</div>
 		</div></label>
 
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$silhouettedisable" "t" "f" ' + ($silhouettedisable is "f" ? "checked" : "") + '>>'>> Enable NPC silhouettes
+		<<checkbox "$silhouettedisable" "t" "f" autocheck>> Enable NPC silhouettes
 		</div></label>
 
 		<<if $skinColor.init is false and $passage isnot "Start">>
@@ -935,19 +959,19 @@
 
 			Skin colour:<br>
 			Reddish:
-			<label>Light <<print '<<radiobutton "$naturalSkinColor" "light" ' + ($naturalSkinColor is "light" ? "checked" : "") + '>>'>></label> |
-			<label>Medium <<print '<<radiobutton "$naturalSkinColor" "medium" ' + ($naturalSkinColor is "medium" ? "checked" : "") + '>>'>></label> |
-			<label>Dark <<print '<<radiobutton "$naturalSkinColor" "dark" ' + ($naturalSkinColor is "dark" ? "checked" : "") + '>>'>></label> |
-			<label>Gyaru <<print '<<radiobutton "$naturalSkinColor" "gyaru" ' + ($naturalSkinColor is "gyaru" ? "checked" : "") + '>>'>> (Pale with no tan, very dark with full tan)</label>
+			<label>Light <<radiobutton "$naturalSkinColor" "light" autocheck>></label> |
+			<label>Medium <<radiobutton "$naturalSkinColor" "medium" autocheck>></label> |
+			<label>Dark <<radiobutton "$naturalSkinColor" "dark" autocheck>></label> |
+			<label>Gyaru <<radiobutton "$naturalSkinColor" "gyaru" autocheck>> (Pale with no tan, very dark with full tan)</label>
 			<br>
 			Yellowish:
-			<label>Light <<print '<<radiobutton "$naturalSkinColor" "ylight" ' + ($naturalSkinColor is "ylight" ? "checked" : "") + '>>'>></label> |
-			<label>Medium <<print '<<radiobutton "$naturalSkinColor" "ymedium" ' + ($naturalSkinColor is "ymedium" ? "checked" : "") + '>>'>></label> |
-			<label>Dark <<print '<<radiobutton "$naturalSkinColor" "ydark" ' + ($naturalSkinColor is "ydark" ? "checked" : "") + '>>'>></label>
-			<label>Gyaru <<print '<<radiobutton "$naturalSkinColor" "ygyaru" ' + ($naturalSkinColor is "ygyaru" ? "checked" : "") + '>>'>></label>
+			<label>Light <<radiobutton "$naturalSkinColor" "ylight" autocheck>></label> |
+			<label>Medium <<radiobutton "$naturalSkinColor" "ymedium" autocheck>></label> |
+			<label>Dark <<radiobutton "$naturalSkinColor" "ydark" autocheck>></label>
+			<label>Gyaru <<radiobutton "$naturalSkinColor" "ygyaru" autocheck>></label>
 			<br><br>
 
-			<label>Initial Tan: <<print '<<numberslider "$range" '+($range isnot undefined? $range:0)+' 0 100 1>>'>></label>
+			<label>Initial Tan: <<numberslider "$range" ($range isnot undefined? $range:0) 0 100 1>>'>></label>
 			<br>
 			<<link Test>>
 				<<if $range isnot undefined and $naturalSkinColor isnot undefined>>
@@ -969,22 +993,22 @@
 			<</link>> - <span class="red">These settings can not be changed after Confirming.</span>
 		<<else>>
 			<label><div class="settingsToggleBig">
-			<<print '<<checkbox "$skinColor.tanImgEnabled" "f" "t" ' + ($skinColor.tanImgEnabled is "t" ? "checked" : "") + '>>'>> Visual representation of the player character's skin colour
+			<<checkbox "$skinColor.tanImgEnabled" "f" "t" autocheck>> Visual representation of the player character's skin colour
 			<div class="description"><span class="pink">May hinder performance on some devices.</span></div>
 			</div></label>
 			<label><div class="settingsToggleBig">
-			<<print '<<checkbox "$skinColor.tanningEnabled" false true ' + ($skinColor.tanningEnabled is true ? "checked" : "") + '>>'>> Tanning changes due to sun exposure
+			<<checkbox "$skinColor.tanningEnabled" false true autocheck>> Tanning changes due to sun exposure
 			<div class="description"><span class="red">Option to disable may be removed at a later date.</span></div>
 			</div></label>
 		<</if>>
 
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$blinkingdisable" "t" "f" ' + ($blinkingdisable is "t" ? "" : "checked") + '>>'>> Animate eyes blinking
+		<<checkbox "$blinkingdisable" "t" "f" autocheck>> Animate eyes blinking
 		<div class="description">Works only if CSS animations are enabled.</div>
 		</div></label>
 		<<if $eyelidTEST is true>>
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$halfcloseddisable" "t" "f" ' + ($halfcloseddisable is "t" ? "" : "checked") + '>>'>> Enable half-closed eyes graphics
+		<<checkbox "$halfcloseddisable" "t" "f" autocheck>> Enable half-closed eyes graphics
 		<div class="description">Draw eyelids in sidebar as half-closed when highly aroused.</div>
 		</div></label>
 		<</if>>
@@ -996,40 +1020,41 @@
 			<<script>>jQuery(document).ready(() => { jQuery('#textbox-facestyle').css('width', '100%').css('min-width', 'unset').css('height', '0.75em'); });<</script>>
 			</div></label>
 		<</if>>
-		<br>
 	<<else>>
+		<br>
 		Not Available
 	<</if>>
-	<div id="spacer" class="">&nbsp;</div>
 	<span class="gold">Numbered link navigation</span>
-	<br>
 	<<if StartConfig.enableLinkNumberify is true>>
 		<label><div class="settingsToggleBig">
-		<<print '<<checkbox "$numberify_enabled" 0 1 ' + ($numberify_enabled is 1 ? "checked" : "") + '>>'>> Enable numbered link navigation
+		<<checkbox "$numberify_enabled" 0 1 autocheck>> Enable numbered link navigation
 		<div class="description">Allows navigation with keyboard.</div>
 		</div></label>
 	<<else>>
+		<br>
 		Not Available
 	<</if>>
 	<br><br>
 
 	<span class="gold">Time format</span>
 	<br>
-	<label>24-hour <<print '<<radiobutton "$timestyle" "military" ' + ($timestyle is "military" ? "checked" : "") + '>>'>></label> |
-	<label>12-hour <<print '<<radiobutton "$timestyle" "ampm" ' + ($timestyle is "ampm" ? "checked" : "") + '>>'>></label>
+	<label>24-hour <<radiobutton "$timestyle" "military" autocheck>></label> |
+	<label>12-hour <<radiobutton "$timestyle" "ampm" autocheck>></label>
+	<br>
+	<<checkbox "$oldclock" false true autocheck>> Use old clock style in the sidebar
+
 	<br><br>
 
 	<span class="gold">Skill check display</span>
 	<br>
-	<label>Show exact percentage <<print '<<radiobutton "$checkstyle" "percentage" ' + ($checkstyle is "percentage" ? "checked" : "") + '>>'>></label> |
-	<label>Show only general description <<print '<<radiobutton "$checkstyle" "words" ' + ($checkstyle is "words" ? "checked" : "") + '>>'>></label> |
-	<label>Show only skill name <<print '<<radiobutton "$checkstyle" "skillname" ' + ($checkstyle is "skillname" ? "checked" : "") + '>>'>></label> |
+	<label>Show exact percentage <<radiobutton "$checkstyle" "percentage" autocheck>></label> |
+	<label>Show only general description <<radiobutton "$checkstyle" "words" autocheck>></label> |
+	<label>Show only skill name <<radiobutton "$checkstyle" "skillname" autocheck>></label> |
 	<br><br>
 
 	<span class="gold">In game hints and tips</span>
-	<br>
 	<label><div class="settingsToggleBig">
-	<<print '<<checkbox "$tipdisable" "t" "f" ' + ($tipdisable is "f" ? "checked" : "") + '>>'>> Enable hints and tips
+	<<checkbox "$tipdisable" "t" "f" autocheck>> Enable hints and tips
 	<div class="description">Shows in the sidebar.</div>
 	<div><<link [["View all tips"|Tips]]>><<set $lastPassage to $passage>><</link>></div>
 	</div></label>
@@ -1038,7 +1063,7 @@
 	<span class="gold">Additional error information</span>
 	<br>
 	<label><div class="settingsToggleBig">
-	<<print '<<checkbox "$debugdisable" "t" "f" ' + ($debugdisable is "f" ? "checked" : "") + '>>'>> Enable additional error messages
+	<<checkbox "$debugdisable" "t" "f" autocheck>> Enable additional error messages
 	<div class="description">Shows in the sidebar.</div>
 	</div></label>
 	<br><br>
@@ -1048,7 +1073,7 @@
 	<<textbox "$saveName" $saveName>>
 	<div class="description">Shows in the save menu in place of the save id.</div>
 	<div class="description"><span class="red">Only 10 characters at most will show in the save menu, leave empty to show the save ID.</span></div>
-	<br><br>
+	<br>
 	<span class="gold">Game Zoom</span> -Will allow you to adjust the size of game elements and text. 100 is the default value.
 	A value of 50 will zoom the page out to half of its original size, while a value of 200 will zoom the page in to double its size.
 	The test button will not save the zoom value into the current save.
@@ -1064,20 +1089,53 @@
 	<input type="button" value="Reset Zoom" onclick="zoom(100, true)"/>
 	<input type="button" value="Set Zoom" onclick="zoom(undefined, true)"/>
 	<br><br>
+
+	<span class="gold">History depth</span><br>
+	<div class="description">Enables going back in history up to N-1 passages. Changes take effect on settings exit.<br>
+	<span class="red"><b>WARNING:</b> May cause slowdowns. Additionally, values above 5 can exceed your localStorage quota and cause <br>
+	<b>troubles with saves</b>. Use at your own risk.</span>
+	</div>
+	<<numberslider "$maxStates" $maxStates 1 20 1>>
+	<br><br>
+
 	<span class="gold">Cheats menu</span>
-	<br>
 	<label><div class="settingsToggleBig">
-	<<print '<<checkbox "$cheatdisable" "t" "f" ' + ($cheatdisable is "f" ? "checked" : "") + '>>'>> Enable cheats
+	<<checkbox "$cheatdisable" "t" "f" autocheck>> Enable cheats
 	<div class="description">Button shows in sidebar. <span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span></div>
 	</div></label>
 	<br><br>
+	<span class="gold">Gallery</span> - these will not affect your save in any way.
+	<br>
 	<<if version.major gt 2 or version.minor gt 29>>
 		<<link [["Character Viewer"|Clothes Testing]]>>
 			<<set $lastPassage to $passage>>
 			<<set $gameTanImgSetting to clone($skinColor.tanImgEnabled)>>
+			<<if $cheatdisable is "f" and $feats.locked is false>>
+				<<set $cheatdisable to "t">>
+			<</if>>
 		<</link>>
-		- This will allow you to have a play with the character sprites, this will not affect your save in any way.
+		- This will allow you to have a play with the character sprites.
+		<br>
 	<</if>>
+	<<if $passage isnot "Start">>
+		<<link [["Scene Viewer"|Scene Viewer]]>>
+			<<set $lastPassage to $passage>>
+			<<seenPassageChecks>>
+			<<if $cheatdisable is "f" and $feats.locked is false>>
+				<<set $cheatdisable to "t">>
+			<</if>>
+		<</link>>
+		- This will allow you to replay scenes that you have unlocked.
+		<br>
+	<<else>>
+		The Scene Viewer is not avaliable on the start page.
+		<br>
+	<</if>>
+	<<link [["Test Renderer"|Renderer Test Page]]>>
+		<<set $lastPassage to $passage>>
+	<</link>>
+	- This will check your browser's capabilities required for new renderer.
+	<br>
 
 <</widget>>
 
@@ -1210,12 +1268,12 @@ Click on "Copy Text Area" to copy the current contents for you. The button name 
 <br><br>
 <span class="gold">$NPCName[_npcId].nam the $NPCName[_npcId].title</span>
 <br>
-<label><<print '<<radiobutton "$NPCName['+_npcId+'].pronoun" "f" ' + ($NPCName[_npcId].pronoun is "f" ? "checked" : "") + '>>'>> Female</label> |
-<label><<print '<<radiobutton "$NPCName['+_npcId+'].pronoun" "m" ' + ($NPCName[_npcId].pronoun is "m" ? "checked" : "") + '>>'>> Male</label>
+<label><<radiobutton "$NPCName[_npcId].pronoun" "f" autocheck>> Female</label> |
+<label><<radiobutton "$NPCName[_npcId].pronoun" "m" autocheck>> Male</label>
 <br>
-<label><<print '<<radiobutton "$NPCName['+_npcId+'].gender" "f" ' + ($NPCName[_npcId].gender is "f" ? "checked" : "") + '>>'>> Vagina</label> |
-<label><<print '<<radiobutton "$NPCName['+_npcId+'].gender" "m" ' + ($NPCName[_npcId].gender is "m" ? "checked" : "") + '>>'>> Penis</label>
-<label><<print '<<radiobutton "$NPCName['+_npcId+'].gender" "h" ' + ($NPCName[_npcId].gender is "h" ? "checked" : "") + '>>'>> Both</label>
+<label><<radiobutton "$NPCName[_npcId].gender" "f" autocheck>> Vagina</label> |
+<label><<radiobutton "$NPCName[_npcId].gender" "m" autocheck>> Penis</label> |
+<label><<radiobutton "$NPCName[_npcId].gender" "h" autocheck>> Both</label>
 <br><br>
 Penis size - if applicable:
 <br>
@@ -1235,12 +1293,19 @@ Breast size
 <div style="clear:both;">/*Keep at end of toggles*/</div>
 
 <<if $NPCName[_npcId].nam is "Black Wolf">>
+	Beast Type:
+	<br>
+	<label><<radiobutton "$blackwolfmonster" 0 autocheck>> Always a beast</label> |
+	<label><<radiobutton "$blackwolfmonster" 1 autocheck>> Monster girl or boy when requirements met</label> |
+	<label><<radiobutton "$blackwolfmonster" 2 autocheck>> Always a monster girl or boy</label>
+	<br><br>
 <<elseif $NPCName[_npcId].nam is "Great Hawk">>
-
-	/*noeinan mod START*/
-	/*Removed ability to turn Black Wolf into a beast in preferences*/
-	/*noeinan mod END*/
-	
+	Beast Type:
+	<br>
+	<label><<radiobutton "$greathawkmonster" 0 autocheck>> Always a beast</label> |
+	<label><<radiobutton "$greathawkmonster" 1 autocheck>> Monster girl or boy when requirements met</label> |
+	<label><<radiobutton "$greathawkmonster" 2 autocheck>> Always a monster girl or boy</label>
+	<br><br>
 <</if>>
 
 <<if $debug is 1>>

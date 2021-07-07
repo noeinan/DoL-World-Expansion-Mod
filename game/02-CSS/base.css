@@ -42,17 +42,42 @@ mouse.tooltip:hover span {
 	width: 95%
 }
 
+#ui-bar-history {
+	position: relative;
+	z-index: 499;
+	font-size: 0.82em;
+	text-align: right;
+	padding-right: 3em;
+	display: none;
+}
+
+#ui-bar-history [id|=history] {
+	color: #666;
+	border: none;
+}
+
+#ui-bar-history [id|=history]:not(:first-child) {
+	margin-left: 0;
+}
+
 .passage {
 	-o-transition:.2s ease-in;
 	transition:.2s ease-in;
 }
 
-.closeButton, .macro-button {
+.closeButton, .macro-button, .buttonlike {
 	width: 100%;
 	font-size: 110%;
-	max-width: 240px;
+	max-width: 260px;
 	background-color: #222;
 	border: 1px solid #444;
+}
+.buttonlike {
+	display: inline-block;
+	text-align: center;
+}
+.buttonlike.-noborder {
+	border: 1px solid transparent;
 }
 
 .widerButton button {
@@ -94,6 +119,11 @@ mouse.tooltip:hover span {
 	overflow-y: scroll;
 	z-index: 1000;
 	max-width: 1000px;
+}
+.customOverlay[data-overlay="canvasLayers"],
+.customOverlay[data-overlay="canvasColours"],
+.customOverlay[data-overlay="canvasModel"] {
+	max-width: unset;
 }
 
 @media only screen and (min-width: 870px) {
@@ -253,6 +283,52 @@ mouse.tooltip:hover span {
 	z-index: 1001;
 }
 
+#scenesViewer, #produceDisplay {
+	display: inline-flex;
+	flex-wrap: wrap;
+}
+
+#scenesViewer span {
+	padding: 2px;
+	border: solid 1px #aaa;
+	height: 30px;
+	width: 48%;
+	min-width: 400px;
+	margin: 0px 3px 3px;
+}
+
+#produceDisplay .produceItem {
+	padding: 2px;
+	border: solid 1px #aaa;
+	width: 48%;
+	min-width: 400px;
+	margin: 0px 3px 3px;
+}
+
+#scenesViewerControls, #produceDisplayControls {
+	display: inline-flex;
+	margin: 2px;
+	padding: 5px;
+	min-width: 230px;
+	width: 47%;
+}
+
+#scenesViewerControls div, #produceDisplayControls div {
+	flex-grow: 1;
+	text-align: center;
+}
+
+@media only screen and (max-width: 750px) {
+	#scenesViewerControls, #produceDisplayControls, .produceItem {
+		width: 100%;
+	}
+}
+
+#produceConfirm {
+	width: 100%;
+}
+
+
 #mobileStats {
 	position: fixed;
 	left: 0px;
@@ -375,7 +451,9 @@ mouse.tooltip:hover span {
 .right {
 	float: right;
 }
-
+.sidebarButtonSplit {
+	display: flex;
+}
 .saveMenuButton {
 	background-color: #4372FF !important;
 }
@@ -415,7 +493,7 @@ mouse.tooltip:hover span {
 	width: 100%;
 	min-width: 275px;
 	padding: 3px;
-	margin: 10px 0px;
+	margin-bottom: 20px;
 }
 
 .v-spacer {
@@ -519,19 +597,66 @@ mouse.tooltip:hover span {
 body.has-images header#title {
 	display: none;
 }
+
 body.has-images #story-caption #storyCaptionDiv {
-	/* 256 px: images
-	2.5 em: ui-bar-body margin-top */
-	margin-top: calc(256px - 2.5em);
+	/* 232 px: img size, 1.32 em: stats line height, 4px: stats borders */
+	position: fixed;
+	top: calc(232px + 1.32em);
+	left: 10px;
+	height: calc(100% - 246px - 1.32em);
+	width: 268px;
+	padding-right: 2px;
+	padding-bottom: 12px;
+	overflow-y: scroll;
+	overflow-wrap: anywhere;
+	scrollbar-color: #444 #222;
 }
 
 body.has-images #story-caption .storyCaptionDivExtended {
-	margin-top: calc(281px - 2.5em) !important;
+	height: calc(100% - 246px - 2.64em)!important;
+	top: calc(232px + 2.64em)!important;
 }
+
+*::-webkit-scrollbar-thumb{
+	background-color: #444;
+}
+
+*::-webkit-scrollbar{
+	background-color: #222;
+	width: 10px;
+}
+
 
 #story-caption {
 	-webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+#story-caption .error-reporter-btn {
+	position: absolute;
+	right: 16px;
+	top: 48px;
+	z-index: 999;
+}
+.error-reporter-btn::before {
+	content: "!";
+}
+.error-reporter-btn {
+	width: 16px;
+	height: 16px;
+	border-radius: 8px;
+	font-size: 12pt;
+	background: red;
+	line-height: 1;
+	cursor: pointer;
+}
+
+#ui-bar-body {
+	line-height: 1.32em;
+	overflow: hidden;
+}
+
+body.no-images #ui-bar-body {
+	overflow: auto!important;
 }
 
 .nostyle {
@@ -596,7 +721,7 @@ body.has-images #story-caption .storyCaptionDivExtended {
 	overflow: hidden;
 }
 
-#wardrobeLinks .selected {
+#wardrobeLinks .selected, #bodywritingMenuLinks .selected a {
 	color: #FFD700;
 	text-decoration: underline;
 }
@@ -1016,25 +1141,27 @@ span.number, span.suit {
 }
 
 #stats {
-	height: 20px;
-	width: 256px;
+	height: 1.25em;
+	line-height: 1.25em;
+	width: 280px;
 	overflow: hidden;
 	border-top: #fff 2px solid;
 	border-bottom: #fff 2px solid;
+	padding-top: 1px;
 	position: fixed;
-	top: 232px;
+	top: 228px;
 	left: 0px;
 	background-color: #222;
 	z-index: 1000;
 }
 
 #stats > * {
-	top: 232px;
+	top: 228px;
 	left: 0px;
 }
 
 .statsExtended {
-	height: 45px !important;
+	height: 2.5em !important;
 }
 
 .icon_ui {
@@ -1058,6 +1185,10 @@ span.number, span.suit {
 	top: 0px;
 	left: 0px;
 	background-color: #222;
+}
+
+#img > .canvasimg-both {
+	left: 64px;
 }
 
 #img > * {
@@ -1094,12 +1225,17 @@ span.number, span.suit {
 	z-index: 2;
 }
 
+#story-title {
+    font-size: 1.69em;
+    line-height: 1.25em;
+}
+
 #startingPlayerImage {
 	margin-top:130px;
 }
 
-#startingPlayerImage #img{
-	top: 100px;
+#startingPlayerImage #img {
+	top: 5.44em;
 	left: 20px;
 }
 
@@ -1152,6 +1288,13 @@ span.number, span.suit {
 	left: 0px;
 	top: 128px;
 	z-index: 10;
+}
+
+#world_map {
+	position: relative;
+	left: 0%;
+	top: 0%;
+	z-index: -10;
 }
 
 #spray1 {
@@ -1239,6 +1382,7 @@ span.number, span.suit {
 	left: 0px;
 	top: 0px;
 	z-index: 4;
+	height: 128px;
 }
 
 #xraypenile, #divsex #xraypenile {
@@ -1253,6 +1397,22 @@ span.number, span.suit {
 	left: 512px;
 	top: 0px;
 	z-index: 1;
+}
+
+#xrayandroidvaginal, #divsex #xrayandroidvaginal {
+	position: relative;
+	left: 0px;
+	top: -8px;
+	z-index: 3;
+	height: 128px;
+}
+
+#xrayandroidpenile, #divsex #xrayandroidpenile {
+	position: relative;
+	left: 0px;
+	top: -8px;
+	z-index: 2;
+	height: 128px;
 }
 
 #xrayandroidanal, #divsex #xrayandroidanal {
@@ -1608,6 +1768,13 @@ removed unused:
 	z-index: 250;
 }
 
+#closechest, #divsex #closechest {
+		position: absolute;
+		left: 255px;
+		top: -30px;
+	z-index: 250;
+}
+
 .layer-behind {
 	z-index: -100;
 }
@@ -1908,7 +2075,7 @@ label {
 
 .meter {
 	position: relative;
-	height: 0.3em;
+	height: 0.25em;
 	width: 100%;
 	background-color: gray;
 	text-align: center;
@@ -1924,7 +2091,7 @@ label {
 
 .rightMeter {
 	position: relative;
-	height: 0.4em;
+	height: 0.375em;
 	width: 55%;
 	background-color: gray;
 	text-align: center;
@@ -1937,112 +2104,112 @@ label {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #EC3535;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .redbar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .pinkbar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #E40081;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .pinkbar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .purplebar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #AA4BC8;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .purplebar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .bluebar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #4372FF;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .bluebar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .lbluebar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #559BC0;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .lbluebar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .tealbar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #08C1C1;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .tealbar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .greenbar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #38B20A;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .greenbar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 .goldbar {
 	position: absolute;
 	left: 0;
 	top: 0;
-	height: 0.3em;
+	height: 0.25em;
 	background-color: #FFD700;
 	z-index: 0;
 	max-width: 100%;
 }
 
 .rightMeter .goldbar {
-	height: 0.4em;
+	height: 0.375em;
 }
 
 /*
@@ -2223,7 +2390,7 @@ label {
 .brows-green,
 .hair-green .colour-hair,
 .pbhair-green {
-	-webkit-filter: hue-rotate(125) saturate(100%) brightness(80%) contrast(100%);
+	-webkit-filter: hue-rotate(125deg) saturate(100%) brightness(80%) contrast(100%);
 	filter: hue-rotate(125deg) saturate(100%) brightness(80%) contrast(100%);
 }
 .hair-toxic-green .colour-hair,
@@ -2532,11 +2699,11 @@ label {
 }
 
 /* Old Clothing classes, need to be removed once all use of them is replaced, this includes the wetness classes */
-.upper-blue .colour-upper, .lower-blue .colour-lower, .under_lower-blue .colour-under_lower, .under_upper-blue .colour-under_upper, .head-blue .colour-head, .face-blue .colour-face, .neck-blue .colour-neck .hands-blue .colour-hands, .legs-blue .colour-legs, .feet-blue .colour-feet, .upper_acc-blue .colour-upper_acc, .lower_acc-blue .colour-lower_acc, .under_lower_acc-blue .colour-under_lower_acc, .under_upper_acc-blue .colour-under_upper_acc, .head_acc-blue .colour-head_acc, .face_acc-blue .colour-face_acc, .neck_acc-blue .colour-neck_acc, .hands_acc-blue .colour-hands_acc, .legs_acc-blue .colour-legs_acc, .feet_acc-blue .colour-feet_acc , .icon-blue{
+.upper-blue .colour-upper, .lower-blue .colour-lower, .under_lower-blue .colour-under_lower, .under_upper-blue .colour-under_upper, .head-blue .colour-head, .face-blue .colour-face, .neck-blue .colour-neck, .hands-blue .colour-hands, .legs-blue .colour-legs, .feet-blue .colour-feet, .upper_acc-blue .colour-upper_acc, .lower_acc-blue .colour-lower_acc, .under_lower_acc-blue .colour-under_lower_acc, .under_upper_acc-blue .colour-under_upper_acc, .head_acc-blue .colour-head_acc, .face_acc-blue .colour-face_acc, .neck_acc-blue .colour-neck_acc, .hands_acc-blue .colour-hands_acc, .legs_acc-blue .colour-legs_acc, .feet_acc-blue .colour-feet_acc , .icon-blue{
 	-webkit-filter: hue-rotate(-120deg) saturate(100%) brightness(100%) contrast(100%);
 	filter: hue-rotate(-120deg) saturate(100%) brightness(100%) contrast(100%);
 }
-.upper-light-blue .colour-upper, .lower-light-blue .colour-lower, .under_lower-light-blue .colour-under_lower, .under_upper-light-blue .colour-under_upper, .head-light-blue .colour-head, .face-light-blue .colour-face, .neck-light-blue .colour-neck .hands-light-blue .colour-hands, .legs-light-blue .colour-legs, .feet-light-blue .colour-feet, .upper_acc-light-blue .colour-upper_acc, .lower_acc-light-blue .colour-lower_acc, .under_lower_acc-light-blue .colour-under_lower_acc, .under_upper_acc-light-blue .colour-under_upper_acc, .head_acc-light-blue .colour-head_acc, .face_acc-light-blue .colour-face_acc, .neck_acc-light-blue .colour-neck_acc, .hands_acc-light-blue .colour-hands_acc, .legs_acc-light-blue .colour-legs_acc, .feet_acc-light-blue .colour-feet_acc , .icon-light-blue{
+.upper-light-blue .colour-upper, .lower-light-blue .colour-lower, .under_lower-light-blue .colour-under_lower, .under_upper-light-blue .colour-under_upper, .head-light-blue .colour-head, .face-light-blue .colour-face, .neck-light-blue .colour-neck, .hands-light-blue .colour-hands, .legs-light-blue .colour-legs, .feet-light-blue .colour-feet, .upper_acc-light-blue .colour-upper_acc, .lower_acc-light-blue .colour-lower_acc, .under_lower_acc-light-blue .colour-under_lower_acc, .under_upper_acc-light-blue .colour-under_upper_acc, .head_acc-light-blue .colour-head_acc, .face_acc-light-blue .colour-face_acc, .neck_acc-light-blue .colour-neck_acc, .hands_acc-light-blue .colour-hands_acc, .legs_acc-light-blue .colour-legs_acc, .feet_acc-light-blue .colour-feet_acc , .icon-light-blue{
 	-webkit-filter: hue-rotate(210deg) saturate(20%) brightness(260%) contrast(100%);
 	filter: hue-rotate(210deg) saturate(20%) brightness(260%) contrast(100%);
 }
@@ -2633,7 +2800,7 @@ label {
 	-webkit-filter: hue-rotate(-120deg) saturate(0.5) brightness(90%) contrast(100%) opacity(0.5);
 	filter: hue-rotate(-120deg) saturate(0.5) brightness(90%) contrast(100%) opacity(0.5);
 }
-.upper-wetlight-blue .colour-upper, .lower-wetlight-blue .colour-lower, .under_lower-wetlight-blue .colour-under_lower, .under_upper-wetlight-blue .colour-under_upper, .head-wetlight-blue .colour-head, .face-wetlight-blue .colour-face, .neck-wetlight-blue .colour-neck .hands-wetlight-blue .colour-hands, .legs-wetlight-blue .colour-legs, .feet-wetlight-blue .colour-feet, .upper_acc-wetlight-blue .colour-upper_acc, .lower_acc-wetlight-blue .colour-lower_acc, .under_lower_acc-wetlight-blue .colour-under_lower_acc, .under_upper_acc-wetlight-blue .colour-under_upper_acc, .head_acc-wetlight-blue .colour-head_acc, .face_acc-wetlight-blue .colour-face_acc, .neck_acc-wetlight-blue .colour-neck_acc, .hands_acc-wetlight-blue .colour-hands_acc, .legs_acc-wetlight-blue .colour-legs_acc, .feet_acc-wetlight-blue .colour-feet_acc , .icon-wetlight-blue{
+.upper-wetlight-blue .colour-upper, .lower-wetlight-blue .colour-lower, .under_lower-wetlight-blue .colour-under_lower, .under_upper-wetlight-blue .colour-under_upper, .head-wetlight-blue .colour-head, .face-wetlight-blue .colour-face, .neck-wetlight-blue .colour-neck, .hands-wetlight-blue .colour-hands, .legs-wetlight-blue .colour-legs, .feet-wetlight-blue .colour-feet, .upper_acc-wetlight-blue .colour-upper_acc, .lower_acc-wetlight-blue .colour-lower_acc, .under_lower_acc-wetlight-blue .colour-under_lower_acc, .under_upper_acc-wetlight-blue .colour-under_upper_acc, .head_acc-wetlight-blue .colour-head_acc, .face_acc-wetlight-blue .colour-face_acc, .neck_acc-wetlight-blue .colour-neck_acc, .hands_acc-wetlight-blue .colour-hands_acc, .legs_acc-wetlight-blue .colour-legs_acc, .feet_acc-wetlight-blue .colour-feet_acc , .icon-wetlight-blue{
 	-webkit-filter: hue-rotate(210deg) saturate(20%) brightness(260%) contrast(100%) opacity(0.5);
 	filter: hue-rotate(210deg) saturate(20%) brightness(260%) contrast(100%) opacity(0.5);
 }
@@ -2866,6 +3033,10 @@ label {
 	-webkit-animation-name: anim-default;
 	animation-iteration-count: infinite;
 	animation-name: anim-default;
+}
+
+canvas {
+	max-width: unset; /* fix sugarcube default css */
 }
 
 /* joint duration & frame-count classes */
@@ -3154,6 +3325,46 @@ label {
 	-webkit-animation-name: anim-default;
 	animation-duration: 1320ms; /* 330ms x 4 */
 	animation-timing-function: steps(4);
+	animation-iteration-count: infinite;
+	animation-name: anim-default;
+}
+.anim-close-10f-vfast {
+	-webkit-animation-duration: 800ms; /* 80ms x 10 */
+	-webkit-animation-timing-function: steps(10);
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: anim-default;
+	animation-duration: 800ms; /* 80ms x 10 */
+	animation-timing-function: steps(10);
+	animation-iteration-count: infinite;
+	animation-name: anim-default;
+}
+.anim-close-10f-fast {
+	-webkit-animation-duration: 1100ms; /* 110ms x 10 */
+	-webkit-animation-timing-function: steps(10);
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: anim-default;
+	animation-duration: 1100ms; /* 110ms x 10 */
+	animation-timing-function: steps(10);
+	animation-iteration-count: infinite;
+	animation-name: anim-default;
+}
+.anim-close-10f-mid {
+	-webkit-animation-duration: 1700ms; /* 170ms x 10 */
+	-webkit-animation-timing-function: steps(10);
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: anim-default;
+	animation-duration: 1700ms; /* 170ms x 10 */
+	animation-timing-function: steps(10);
+	animation-iteration-count: infinite;
+	animation-name: anim-default;
+}
+.anim-close-10f-slow {
+	-webkit-animation-duration: 3300ms; /* 330ms x 10 */
+	-webkit-animation-timing-function: steps(10);
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: anim-default;
+	animation-duration: 3300ms; /* 330ms x 10 */
+	animation-timing-function: steps(10);
 	animation-iteration-count: infinite;
 	animation-name: anim-default;
 }
@@ -3876,4 +4087,202 @@ label {
 
 .clothes-price-container .numberslider-inline > .macro-numberslider {
 	display: flex;
+}
+
+.button {
+    width: fit-content;
+	border: 1px solid #888;
+    padding: 0 0.5em;
+}
+.button:hover {
+	background-color: #333;
+	cursor: pointer;
+}
+
+
+#card-cover-options {
+	display: flex;
+    flex-wrap: wrap;
+}
+
+.card.active {
+	filter: drop-shadow(-1px -1px 0px white) drop-shadow(1px -1px 0px white) drop-shadow(-1px 1px 0px white) drop-shadow(1px 1px 0px white);
+}
+
+#card-cover-options .cardcover0 {
+    background-color: #222;
+    line-height: 1.75;
+}
+
+/* patterns are taken from http://projects.verou.me/css3pattern */
+.cardcover1 {
+	background-color: #600;
+    background-image: repeating-linear-gradient(135deg, transparent, transparent 5px, #a88 6px, transparent 7px), repeating-linear-gradient(225deg, transparent, transparent 5px, #a88 6px, transparent 7px);
+    box-shadow: inset 0px 0px 0px 2px #400;
+}
+.cardcover2 {
+	background-color: #300;
+    background-image: radial-gradient(maroon 3px, transparent 3.33px),repeating-radial-gradient(maroon 0, maroon 1.33px, transparent 1.66px, transparent 6.66px, maroon 7px, maroon 8.33px, transparent 8.66px, transparent 16.66px);
+    background-size: 10px 10px, 30px 30px;
+    background-position: -5px -2px;
+	box-shadow: inset 0px 0px 0px 2px #400;
+}
+.cardcover3 {
+	background-color: #900;
+    background-image: repeating-linear-gradient(120deg, rgba(255,255,255,.1), rgba(255,255,255,0.1) 1px, transparent 1px, transparent 60px), repeating-linear-gradient(60deg, rgba(255,255,255,-0.8), rgba(255,255,255,0.1) 1px, transparent 2px, transparent 60px), linear-gradient(60deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 75%), linear-gradient(120deg, rgba(0,0,0,0.2) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.2) 75%);
+    background-size: 70px 120px;
+    background-position: -10px -17px;
+	box-shadow: inset 0px 0px 0px 2px #660000;
+}
+.cardcover4 {
+	background-color: #400;
+    background-image: linear-gradient(135deg, rgba(200,0,0,.5) 50%, transparent 50%), linear-gradient(225deg, rgba(200,0,0,.5) 50%, transparent 50%);
+    background-size: 14px 17px;
+    background-position: 11px 17px;
+	box-shadow: inset 0px 0px 0px 2px #400;
+}
+.cardcover5 {
+	background-color: #400;
+    background-image: linear-gradient(90deg, rgba(200,0,0,.5) 50%, transparent 50%), linear-gradient(0deg, rgba(200,0,0,.5) 50%, transparent 50%);
+    background-size: 12px 12px;
+    background-position: -2px 4px;
+	box-shadow: inset 0px 0px 0px 2px #400;
+}
+.cardcover6 {
+	background: linear-gradient(135deg, maroon 25%, transparent 25%) -50px 0,linear-gradient(225deg, maroon 25%, transparent 25%) -50px 0,linear-gradient(315deg, maroon 25%, transparent 25%),linear-gradient(45deg, maroon 25%, transparent 25%);
+    background-size: 20px 21px;
+    background-position: 5px 1px, 5px 1px, 15px 1px, 15px 1px;
+    background-color: #300;
+	box-shadow: inset 0px 0px 0px 2px #400;
+}
+.cardcover7 {
+	background-image: url('img/ui/vrellogo.png');
+	background-position: 0 3px;
+	background-color: #600;
+	box-shadow: inset 0px 0px 0px 2px #300;
+}
+
+#new-version-notification {
+    position: fixed;
+    top: 0.5em;
+    display: inline-flex;
+	flex-wrap: wrap;
+    border: 2px solid greenyellow;
+    border-radius: 4px;
+    background: green;
+    padding: 0 1em;
+    font-size: 90%;
+	align-items: center;
+}
+#new-version-notification .new-version-notification-buttons {
+	display: flex;
+	flex-wrap: wrap;
+}
+#new-version-notification .btn-update {
+	border: 1px solid greenyellow;
+    border-radius: 3px;
+    background-color: green;
+	color: greenyellow;
+    text-decoration: none;
+    align-self: center;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 0.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+	padding: 0 0.5em;
+}
+#new-version-notification .btn-update a {
+	color: greenyellow;
+}
+#new-version-notification .btn-update:hover {
+    background-color: darkgreen;
+}
+#new-version-notification .btn-update::after {
+	filter: invert(0.75);
+    mix-blend-mode: luminosity;
+}
+
+a[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+  line-height: unset;
+}
+
+#action-popup {
+    position: fixed;
+    top: 0;
+	transform: translateY(-100%);
+    transition: all 0.25s;
+    border: 1px solid #888;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    padding: 0 3em;
+    text-align: center;
+    background-color: #222;
+    z-index: 100;
+}
+#action-popup br {
+    display: none;
+}
+#wardrobewear {
+	display: table;
+	background-color: #0000;
+    border-radius: 3px;
+    transition: all 1.25s;
+}
+#wardrobewear.flash {
+	background-color: #edd464aa;
+}
+.wardrobe-action {
+	display: inline-block;
+	transition: all 1.25s;
+}
+.action-flash {
+	border-color: #edd464 !important;
+    color: #edd464 !important;
+}
+.action-flash a {
+	color: #edd464 !important;
+}
+.notransition {
+	transition: none !important;
+}
+
+
+img, canvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.rotate-90 {
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+}
+
+.rotate-180 {
+	-webkit-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+
+.rotate-270 {
+	-webkit-transform: rotate(270deg);
+	transform: rotate(270deg);
+}
+
+.flip {
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+  }
+
+.none {
+	-webkit-transform: scaleX(0);
+	transform: scaleX(0);
+}
+
+.resize {
+	max-width: 100%;
+	height: auto;
 }

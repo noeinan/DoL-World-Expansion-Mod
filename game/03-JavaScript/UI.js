@@ -166,7 +166,8 @@ $(document).on('keyup', function (ev) {
 	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
 		return;
 
-	if (document.activeElement.tagName === "INPUT" && document.activeElement.type === "number")
+	if (document.activeElement.tagName === "INPUT" && document.activeElement.type !== "radio"
+		&& document.activeElement.type !== "checkbox")
 		return;
 
 	if ((ev.keyCode >= 48 && ev.keyCode <= 57) || (ev.keyCode >= 96 && ev.keyCode <= 105)) {
@@ -307,7 +308,10 @@ window.beastTogglesCheck = function () {
 		"voredisable",
 		"spiderdisable",
 		"slugdisable",
-		"waspdisable"
+		"waspdisable",
+		"beedisable",
+		"lurkerdisable",
+		"horsedisable"
 	];
 	temp.anyBeastOn = temp.beastVars.some(x => vars[x] == 'f');
 }

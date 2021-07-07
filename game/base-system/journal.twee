@@ -2,16 +2,26 @@
 <<widget "journal">>
 
 <h4>Journal</h4>
+
+
+<<if $season is "winter">>
+	<img id="world_map" src="img/misc/world_map_winter.png">
+<<else>>
+	<img id="world_map" src="img/misc/world_map.png">
+<</if>>
+<br>
+
+
 <<if $rentday isnot undefined>>
 	<<if $renttime lte 0>>
-		Bailey is looking for you, and wants <span class="gold">£<<print $rentmoney / 100>></span>.
+		Bailey is looking for you, and wants <<printmoney $rentmoney>>.
 		<br>
 	<<else>>
-		Bailey wants <span class="gold">£<<print $rentmoney / 100>></span> on <<rentday>>
+		Bailey wants <<printmoney $rentmoney>> on <<rentday>>
 		<br>
 	<</if>>
-<<else>>
-	Bailey wants <span class="gold">£<<print $rentmoney / 100>></span>.
+<<elseif $rentmoney isnot undefined>>
+	Bailey wants <<printmoney $rentmoney>>.
 	<br>
 <</if>>
 
@@ -25,6 +35,12 @@
 		Eden will be watching the asylum at <<if $timestyle is "military">>20:00<<else>>10:00 pm<</if>> tonight.
 	<<else>>
 		Eden is watching the asylum, waiting for you to mark your room.
+	<</if>>
+<</if>>
+
+<<if $edendistract gte 1 and $location is "asylum">>
+	<<if $hour lt 21>>
+		Eden will create a distraction at <<if $timestyle is "military">>21:00<<else>>9:00 pm<</if>> tonight.
 	<</if>>
 <</if>>
 
@@ -58,6 +74,7 @@
 
 <<if $police_hack is 1>>
 	Landry might be able to help you with the locked police computer.
+	<br>
 <<elseif $pub_hack_job is 1>>
 	Landry wants you to find a young hacker living at the Domus street orphanage.
 	<br>
@@ -89,6 +106,16 @@
 	<br>
 <</if>>
 
+<<if $valentines is 1>>
+	Valentine's day is held on February 14th.
+	<<if $valentines_eden is 1 and !$valentines_eden_bought>>
+		You can buy something for Eden to celebrate.
+	<<elseif $valentines_eden_bought is 1>>
+		You can prepare a bath for Eden on Valentine's day at <<if $timestyle is "military">>17:00<<else>>5:00 pm<</if>>.
+	<</if>>
+	<br>
+<</if>>
+
 <<if $halloween is 1>>
 	Halloween is held on October 31st.
 	<<if $halloween_whitney is 1 and $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon">>
@@ -99,6 +126,9 @@
 	<</if>>
 	<<if $halloween_kylar is 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state isnot "prison">>
 		Kylar has asked you to meet in the park after <<if $timestyle is "military">>21:00<<else>>9:00 pm<</if>>.
+	<</if>>
+	<<if $halloween_eden is 1>>
+		You can buy sweets for Eden to celebrate Halloween.
 	<</if>>
 	<br>
 <</if>>
@@ -148,6 +178,7 @@
 	<</if>>
 	<<if $edenmeal is 1>>
 		Eden's invited you for a Christmas dinner at <<if $timestyle is "military">>18:00<<else>>6:00pm<</if>>.
+		<br>
 	<</if>>
 <</if>>
 
@@ -244,6 +275,26 @@
 	<br>
 <<elseif $estate_fence is "landry">>
 	Search the Remy estate fence for an entrance made by Landry's specialist.
+	<br>
+<</if>>
+
+<<if $farm>>
+	<<if $farm.tower gte 1 and !$farm.tower_guard>>
+		The watchtower at the farm isn't staffed. You can find suitable candidates in the pub on Harvest Street.
+		<br>
+	<</if>>
+<</if>>
+
+<<if $farm_stage gte 7>>
+	Remy will attack the farm
+	<<if $farm_attack_timer is 0>>
+		tonight.
+	<<elseif $farm_attack_timer is 1>>
+		tomorrow.
+	<<else>>
+		in $farm_attack_timer days.
+	<</if>>
+	They'll arrive between <<if $timestyle is "ampm">>9:00 pm<<else>>21:00<</if>> and midnight.
 	<br>
 <</if>>
 
@@ -403,5 +454,19 @@
 	<</if>>
 	<hr>
 <</if>>
+
+
+<h4>Seeds</h4>
+<<set _plant_keys to Object.keys(setup.plants)>>
+<<for _i to 0; _i lt _plant_keys.length; _i++>>
+	<<if setup.plants[_plant_keys[_i]].type is "flower" or setup.plants[_plant_keys[_i]].type is "vegetable">>
+		<<if $plants_known.includes( setup.plants[_plant_keys[_i]].name)>>
+			<span class="green"><<print setup.plants[_plant_keys[_i]].plural[0].toUpperCase() + setup.plants[_plant_keys[_i]].plural.substring(1)>></span> |
+		<<else>>
+			??? |
+		<</if>>
+	<</if>>
+<</for>>
+
 
 <</widget>>

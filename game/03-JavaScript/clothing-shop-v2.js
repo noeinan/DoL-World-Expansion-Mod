@@ -94,16 +94,24 @@ window.linkifyDivs = function (parentSelector = "") {
 // Hook custom colour sliders and preset dropdowns
 window.attachCustomColourHooks = function (slot = "") {
 	$(() => {
-		$('.custom-colour-sliders.primary > .colour-slider:nth-child(1) > div > input').on('input change', (e) => { updateCustomColour('primary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.primary > .colour-slider:nth-child(2) > div > input').on('input change', (e) => { updateCustomColour('primary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.primary > .colour-slider:nth-child(3) > div > input').on('input change', (e) => { updateCustomColour('primary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.primary > .colour-slider:nth-child(4) > div > input').on('input change', (e) => { updateCustomColour('primary'); updateMannequin(slot); });
-
-		$('.custom-colour-sliders.secondary > .colour-slider:nth-child(1) > div > input').on('input change', (e) => { updateCustomColour('secondary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.secondary > .colour-slider:nth-child(2) > div > input').on('input change', (e) => { updateCustomColour('secondary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.secondary > .colour-slider:nth-child(3) > div > input').on('input change', (e) => { updateCustomColour('secondary'); updateMannequin(slot); });
-		$('.custom-colour-sliders.secondary > .colour-slider:nth-child(4) > div > input').on('input change', (e) => { updateCustomColour('secondary'); updateMannequin(slot); });
-
+		// throttling for smoother experience
+		let updating = false;
+		$('.custom-colour-sliders.primary input[type=range]').on('input change', ()=>{
+			if (updating) return;
+			updating = true;
+			requestAnimationFrame(()=>{
+				updating = false;
+				updateCustomColour('primary', slot); updateMannequin(slot);
+			})
+		});
+		$('.custom-colour-sliders.secondary input[type=range]').on('input change', ()=>{
+			if (updating) return;
+			updating = true;
+			requestAnimationFrame(()=>{
+				updating = false;
+				updateCustomColour('secondary', slot); updateMannequin(slot);
+			})
+		});
 		$('.custom-colour.primary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('primary'); new Wikifier(null, '<<updateclotheslist>>'); });
 		$('.custom-colour.secondary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('secondary'); new Wikifier(null, '<<updateclotheslist>>'); });
 
@@ -112,8 +120,17 @@ window.attachCustomColourHooks = function (slot = "") {
 	});
 }
 
-window.updateCustomColour = function(type) {
+window.updateCustomColour = function(type, slot) {
 	$('.colour-options-div.' + type + ' > .colour-button > .bg-custom').css('filter', getCustomColourStyle(type, true));
+	let model = Renderer.locateModel("main", "shop");
+	if (model) {
+		let customColors = State.variables.customColors;
+		model.options.filters["worn_" + slot + (type === "primary" ? "_custom" : "_acc_custom")] =
+			getCustomClothesColourCanvasFilter(customColors.color[type],
+				customColors.saturation[type],
+				customColors.brightness[type],
+				customColors.contrast[type]);
+	}
 }
 
 window.updateMannequin = function(slot = "") {

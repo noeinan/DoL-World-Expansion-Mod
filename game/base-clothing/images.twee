@@ -3,6 +3,19 @@
 <<set _filters to $skinColor.current>>
 <<set _img to setup.tanImg.sidebar[$skinColor.tanImgEnabled]>>
 <div id="img" @class="limitedColourContainerClasses() + ($imgLighten isnot ''? ' '+ $imgLighten :'') + ($sidebarAnimations isnot false ? '':' noAnimations')">
+<<if $sidebarRenderer is 'canvas'>>
+	<<for _i to 1; _i lte $spraymax; _i++>>
+		<<if $spray gte _i>>
+			<img @id="'spray'+_i" src="img/ui/pepperspray.png">
+		<<else>>
+			<img @id="'spray'+_i" src="img/ui/emptyspray.png">
+		<</if>>
+	<</for>>
+	<<canvasimg>>
+<<else>>
+	<<if $sidebarRenderer is 'both'>>
+		<<canvasimg 'canvasimg-both'>>
+	<</if>>
 	/*Prep for image checks*/
 	<<if $worn.under_upper.type.includes("chest_bind")>>
 		<<set _breastSize to 1>>
@@ -23,22 +36,7 @@
 		<</switch>>
 	<</if>>
 	<<if $penisexist is 1>>
-		<<switch $penissize>>
-		<<case 4>>
-			<<set _penisSize to 5>>
-		<<case 3>>
-			<<set _penisSize to 4>>
-		<<case 2>>
-			<<set _penisSize to 3>>
-		<<case 1>>
-			<<set _penisSize to 2>>
-		<<case 0>>
-			<<set _penisSize to 1>>
-		<<case -1>>
-			<<set _penisSize to 0>>
-		<<case -2>>
-			<<set _penisSize to -1>>
-		<</switch>>
+		<<set _penisSize to Math.clamp($penissize, -2, 4)>>
 	<</if>>
 	<<if ($worn.over_head.hood is 1 or $worn.head.hood is 1) and $hoodDown is 0>>
 		<<set _hairlengthstage to "short">>
@@ -48,6 +46,7 @@
 		<<set _fringelengthstage to $fringelengthstage>>
 	<</if>>
 	<<set _disabled to ["disabled","hidden"]>>
+
 
 	<<if $leftarm isnot "bound" and $leftarm isnot "grappled">>
 		<<if $dontHide is false and $worn.over_upper.exposed gte 1 and ($worn.upper.exposed gte 1 or $upperwetstage gte 3)
@@ -77,7 +76,6 @@
 			<img @id="'spray'+_i" src="img/ui/emptyspray.png">
 		<</if>>
 	<</for>>
-
 	<<if $skinColor.tanImgEnabled is "t">>
 		<<if $skinColor.tanValues[0] isnot $skinColor.tanValues[2]>>
 			<img class="layer-base anim-idle-2f" @src="_img.baseTanSwimshorts" @style="'filter: '+_filters.swimshorts">
@@ -113,7 +111,7 @@
 		<</if>>
 		<<if $player.ballsExist is true and $pblevelballs gt 1 and !$worn.genitals.name.startsWith("chastity")>>
 			<div @class="'layer-pbhairballs pbhair-' + _pbColour">
-			<img class="anim-idle-2f" @src="'img/hair/phair/balls/' + $penissize + '_pb' + $pblevelballs + '.png'">
+			<img class="anim-idle-2f" @src="'img/hair/phair/balls/' + _penisSize + '_pb' + $pblevelballs + '.png'">
 			</div>
 		<</if>>
 	<</if>>
@@ -167,21 +165,25 @@
 				<img class="layer-backhair colour-hair anim-idle-2f" @src="'img/transformations/bird/rightwing/'+$transformationParts.bird.wings+'.png'">
 			<</if>>
 			<<if !_disabled.includes($transformationParts.bee.wings)>>
-				<img class="layer-backhair colour-hair anim-idle-2f" @src="'img/transformations/bee/rightwing/'+$transformationParts.bee.wings+'.png'">
+				<img class="layer-backhair anim-idle-2f" @src="'img/transformations/bee/rightwing/'+$transformationParts.bee.wings+'.png'">
 			<</if>>
 		<<elseif _coverLeft is true>>
 			<<if !_disabled.includes($transformationParts.demon.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/demon/leftcover/'+$transformationParts.demon.wings+'.png'">
 				<img class="layer-leftarm" @src="_img.leftarmidle" @style="'filter: '+_filters.body">
+				<<set _coverLeft to false>>
 			<<elseif !_disabled.includes($transformationParts.angel.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/angel/rightcover/'+$transformationParts.angel.wings+'.png'">
 				<img class="layer-leftarm" @src="_img.leftarmidle" @style="'filter: '+_filters.body">
+				<<set _coverLeft to false>>
 			<<elseif !_disabled.includes($transformationParts.fallenAngel.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/fallen/rightcover/'+$transformationParts.fallenAngel.wings+'.png'">
 				<img class="layer-leftarm" @src="_img.leftarmidle" @style="'filter: '+_filters.body">
+				<<set _coverLeft to false>>
 			<<elseif !_disabled.includes($transformationParts.bird.wings)>>
 				<img class="layer-tailPenisCover colour-hair anim-idle-2f" @src="'img/transformations/bird/rightcover/'+$transformationParts.bird.wings+'.png'">
 				<img class="layer-leftarm" @src="_img.leftarmidle" @style="'filter: '+_filters.body">
+				<<set _coverLeft to false>>
 			<<else>>
 				<img class="layer-leftarm anim-idle-2f" @src="_img.leftarm" @style="'filter: '+_filters.body">
 			<</if>>
@@ -234,21 +236,25 @@
 				<img class="layer-backhair colour-hair anim-idle-2f" @src="'img/transformations/bird/leftwing/'+$transformationParts.bird.wings+'.png'">
 			<</if>>
 			<<if !_disabled.includes($transformationParts.bee.wings)>>
-				<img class="layer-backhair colour-hair anim-idle-2f" @src="'img/transformations/bee/leftwing/'+$transformationParts.bee.wings+'.png'">
+				<img class="layer-backhair anim-idle-2f" @src="'img/transformations/bee/leftwing/'+$transformationParts.bee.wings+'.png'">
 			<</if>>
 		<<elseif _coverRight is true>>
 			<<if !_disabled.includes($transformationParts.demon.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/demon/rightcover/'+$transformationParts.demon.tail+'.png'">
-				<img class="layer-rightarm" @src="_img.rightarm" @style="'filter: '+_filters.body">
+				<img class="layer-rightarm" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
+				<<set _coverRight to false>>
 			<<elseif !_disabled.includes($transformationParts.angel.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/angel/leftcover/'+$transformationParts.angel.wings+'.png'">
-				<img class="layer-rightarm" @src="_img.rightarm" @style="'filter: '+_filters.body">
+				<img class="layer-rightarm" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
+				<<set _coverRight to false>>
 			<<elseif !_disabled.includes($transformationParts.fallenAngel.wings)>>
 				<img class="layer-tailPenisCover anim-idle-2f" @src="'img/transformations/fallen/leftcover/'+$transformationParts.fallenAngel.wings+'.png'">
-				<img class="layer-rightarm" @src="_img.rightarm" @style="'filter: '+_filters.body">
+				<img class="layer-rightarm" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
+				<<set _coverRight to false>>
 			<<elseif !_disabled.includes($transformationParts.bird.wings)>>
 				<img class="layer-tailPenisCover colour-hair anim-idle-2f" @src="'img/transformations/bird/leftcover/'+$transformationParts.bird.wings+'.png'">
-				<img class="layer-rightarm" @src="_img.rightarm" @style="'filter: '+_filters.body">
+				<img class="layer-rightarm" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
+				<<set _coverRight to false>>
 			<<else>>
 				<img class="layer-rightarm" @src="_img.rightarm" @style="'filter: '+_filters.body">
 			<</if>>
@@ -562,7 +568,10 @@
 			<img class="layer-underParasite" @src="'img/body/'+_clitImage+'.png'">
 		<</if>>
 	<</if>>
+<</if>>
 </div>
+
+
 
 <</widget>>
 
@@ -600,7 +609,7 @@
 	<<else>>
 		<<set _sclera = "sclera">>
 	<</if>>
-	<<if $halfcloseddisable isnot "t" and ($arousal gte 8000 or $orgasmdown gte 1) and _trauma is "" and $pain lt 60 and _diagram is 0 and $eyelidTEST is true>>
+	<<if $halfcloseddisable isnot "t" and ($arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1) and _trauma is "" and $pain lt 60 and _diagram is 0 and $eyelidTEST is true>>
 		<<set _half = "_halfclosed">>
 	<<else>>
 		<<set _half = "">>
@@ -625,7 +634,7 @@
 		<<set _brows = "top">>
 	<<elseif $pain gte 60>>
 		<<set _brows = "low">>
-	<<elseif $arousal gte 8000 or $orgasmdown gte 1>>
+	<<elseif $arousal gte ($arousalmax / 5) * 4 or $orgasmdown gte 1>>
 		<<set _brows = "orgasm">>
 	<<elseif $pain gte 20>>
 		<<set _brows = "mid">>
@@ -837,12 +846,20 @@
 	<<if $leftarm is "bound" or $leftarm is "grappled">>
 		<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/left_sleeve_bound.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 	<<elseif $leftarm is "penis" or $leftarmstate is "tentacle">>
-		<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/left_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<<if $enemytype is "beast">>
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/left_sleeve_handjob_beast.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<<else>>
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/left_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<</if>>
 	<<else>>
 		<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/left_sleeve.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 	<</if>>
 	<<if $rightarm is "penis" or $rightarmstate is "tentacle">>
-		<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/right_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<<if $enemytype is "beast">>
+			<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/right_sleeve_handjob_beast.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<<else>>
+			<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/right_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
+		<</if>>
 	<<elseif $rightarm isnot "bound" and $rightarm isnot "grappled">>
 		<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/doggy/active/sleeves/right_sleeve.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 	<</if>>
@@ -935,7 +952,9 @@
 <<if $worn.hands.name isnot "naked">>
 	<<if $worn.hands.leftImage is 1>>
 		<<if $leftarm is "penis">>
-			<img @class="'layer-sexunder colour-hands anim-doggy-4f-'+_animspeed" @src="'img/sex/doggy/active/hands/'+$worn.hands.variable+'/left handjob.png'" @style="$worn.hands.colourCustom">
+			<<if $enemytype isnot "beast">>
+				<img @class="'layer-sexunder colour-hands anim-doggy-4f-'+_animspeed" @src="'img/sex/doggy/active/hands/'+$worn.hands.variable+'/left handjob.png'" @style="$worn.hands.colourCustom">
+			<</if>>
 		<<elseif $leftarm is "bound">>
 		<<elseif $leftarm is "grappled">>
 		<<elseif $leftarmstate is "tentacle">>
@@ -945,7 +964,9 @@
 	<</if>>
 	<<if $worn.hands.rightImage is 1>>
 		<<if $rightarm is "penis">>
-			<img @class="'layer-sexBackArm colour-hands anim-doggy-4f-'+_animspeed" @src="'img/sex/doggy/active/hands/'+$worn.hands.variable+'/right handjob.png'" @style="$worn.hands.colourCustom">
+			<<if $enemytype isnot "beast">>
+				<img @class="'layer-sexBackArm colour-hands anim-doggy-4f-'+_animspeed" @src="'img/sex/doggy/active/hands/'+$worn.hands.variable+'/right handjob.png'" @style="$worn.hands.colourCustom">
+			<</if>>
 		<<elseif $rightarm is "bound">>
 		<<elseif $rightarm is "grappled">>
 		<<elseif $rightarmstate is "tentacle">>
@@ -1963,19 +1984,19 @@
 
 <<if $worn.upper.sleeve_img is 1 and $worn.upper.name isnot "t-shirt">>
 	<<if ($leftarm is "bound" or $leftarm is "grappled") and ($rightarm is "bound" or $rightarm is "grappled")>>
-		<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/both_sleeves_bound.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+		<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/both_sleeves_bound.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 	<<else>>
 		<<if $leftarm is "penis" or $leftarmstate is "tentacle">>
-			<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/left_sleeve_handjob.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+			<img @class="'layer-sexsleeveback colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/left_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 		<</if>>
 		<<if $rightarm is "penis" or $rightarmstate is "tentacle">>
-			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_handjob.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_handjob.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 		<<elseif ($rightarm is "bound" or $rightarm is "grappled") and $leftarm isnot "bound" and $leftarm isnot "grappled">>
-			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_bound.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_bound.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 		<<elseif $enemytype is "beast" and $monster isnot 1 and _stanceCheck is "top" and $leftarm isnot "bound" and $leftarm isnot "grappled">>
-			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_stroke.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve_stroke.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 		<<elseif $leftarm isnot "bound" and $leftarm isnot "grappled">>
-			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve.png" @style="($worn.upperr.colour is 'custom' ? $worn.upperr.colourCustom + _upperOpacity : '')">
+			<img @class="'layer-sexsleeve colour-upper anim-doggy-4f-'+_animspeed" src="img/sex/missionary/active/sleeves/right_sleeve.png" @style="($worn.upper.colour is 'custom' ? $worn.upper.colourCustom + _upperOpacity : '')">
 		<</if>>
 	<</if>>
 <</if>>
@@ -2290,7 +2311,7 @@
 	</div>
 	<<if $worn[$args[0]].back_img is 1 and !_isHoodDown>>
 		<div @class="'clothes-div layer-'+$args[0]+'-back'">
-			<img @class="_classAcc" @src="'img/clothes/'+[$args[0]]+'/' + $worn[$args[0]].variable + '/' + 'back.png'" @style="_styleAcc">
+			<img @class="$worn[$args[0]].back_img_colour is 'secondary' ? _classAcc : _class" @src="'img/clothes/'+[$args[0]]+'/' + $worn[$args[0]].variable + '/' + 'back.png'" @style="_styleAcc">
 		</div>
 	<</if>>
 <</if>>
@@ -2325,7 +2346,7 @@
 		<<if $worn.hands.leftImage is 1 and $leftarm isnot "bound" and $leftarm isnot "grappled">>
 			<<set _leftImage to "left">>
 			<<if _coverLeft is true>>
-				<<run _leftImage += " cover">>
+				<<run _leftImage += "_cover">>
 			<</if>>
 			<img @class="_class" @src="'img/clothes/hands/' + $worn.hands.variable + '/' + _leftImage + '.png'" @style="_style">
 			<<if $worn.hands.accessory is 1>>
@@ -2335,7 +2356,7 @@
 		<<if $worn.hands.rightImage is 1 and $rightarm isnot "bound" and $rightarm isnot "grappled">>
 			<<set _rightImage to "right">>
 			<<if _coverRight is true>>
-				<<run _rightImage += " cover">>
+				<<run _rightImage += "_cover">>
 			<</if>>
 			<img @class="_class" @src="'img/clothes/hands/' + $worn.hands.variable + '/' + _rightImage + '.png'" @style="_style">
 			<<if $worn.hands.accessory is 1>>
@@ -2373,27 +2394,33 @@
 			<img @class="_class" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + (Math.min(_breastSize, 5)) + '.png'" @style="_style">
 		<</if>>
 		<<if $worn.under_upper.accessory is 1>>
-			<img @class="_classAcc" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'acc.png'" @style="_styleAcc">
+			<img @class="_classAcc" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'acc' + ($worn.under_upper.accessory_integrity_img ? '_' + _imgName : '') + '.png'" @style="_styleAcc">
 		<</if>>
 		<<if $worn.under_upper.breast_acc_img is 1>>
 			<img @class="_classAcc" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + (Math.min(_breastSize, 5)) + '_acc.png'" @style="_styleAcc">
 		<</if>>
 	</div>
+	<<set _sleeveClass to {
+		"": _class,
+		"primary": _class,
+		"no": "",
+		"secondary": _classAcc
+	}[$worn.under_upper.sleeve_colour||""]>>
 	<<if _coverRight isnot undefined and $worn.under_upper.sleeve_img is 1>>
 		<div @class="'clothes-div layer-rightarmunderclothes' + _underUpperWetness">
 		<<if _coverRight is true>>
-			<img @class="_class" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'right_cover.png'" @style="_style">
+			<img @class="_sleeveClass" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'right_cover.png'" @style="_style">
 		<<else>>
-			<img @class="_class" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'right.png'" @style="_style">
+			<img @class="_sleeveClass" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'right.png'" @style="_style">
 		<</if>>
 		</div>
 	<</if>>
 	<<if _coverLeft isnot undefined and $worn.under_upper.sleeve_img is 1>>
 		<div @class="'clothes-div layer-leftarmunderclothes' + _underUpperWetness">
 		<<if _coverLeft is true>>
-			<img @class="_class" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'left_cover.png'" @style="_style">
+			<img @class="_sleeveClass" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'left_cover.png'" @style="_style">
 		<<else>>
-			<img @class="_class" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'left.png'" @style="_style">
+			<img @class="_sleeveClass" @src="'img/clothes/under_upper/' + $worn.under_upper.variable + '/' + 'left.png'" @style="_style">
 		<</if>>
 		</div>
 	<</if>>
@@ -2474,12 +2501,12 @@
 			<img @class="_class" @src="'img/clothes/lower/' + $worn.lower.variable + '/' + _imgName + '.png'" @style="_style">
 		<</if>>
 		<<if $worn.lower.accessory is 1>>
-			<img @class="_classAcc" @src="'img/clothes/lower/' + $worn.lower.variable + '/' + 'acc.png'" @style="_styleAcc">
+			<img @class="_classAcc" @src="'img/clothes/lower/' + $worn.lower.variable + '/' + 'acc' + ($worn.lower.accessory_integrity_img ? '_' + _imgName : '') + '.png'" @style="_styleAcc">
 		<</if>>
 	</div>
 	<<if $worn.lower.back_img is 1>>
 		<div @class="'clothes-div layer-back-lower' + _lowerWetness">
-			<img @class="_class" @src="'img/clothes/lower/' + $worn.lower.variable + '/' + 'back.png'" @style="_style">
+			<img @class="$worn.lower.back_img_colour is 'secondary' ? _classAcc : _class" @src="'img/clothes/lower/' + $worn.lower.variable + '/' + 'back.png'" @style="_style">
 		</div>
 	<</if>>
 <</if>>
@@ -2507,7 +2534,7 @@
 	</div>
 	<<if $worn.over_lower.back_img is 1>>
 		<div class="layer-back-lower">
-			<img @class="_class" @src="'img/clothes/over_lower/' + $worn.over_lower.variable + '/' + 'back.png'" @style="_style">
+			<img @class="$worn.over_lower.back_img_colour is 'secondary' ? _classAcc : _class" @src="'img/clothes/over_lower/' + $worn.over_lower.variable + '/' + 'back.png'" @style="_style">
 		</div>
 	<</if>>
 <</if>>
@@ -2583,27 +2610,33 @@
 			<img @class="_class" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + (Math.min(_breastSize, 5)) + '.png'" @style="_style">
 		<</if>>
 		<<if $worn.upper.accessory is 1>>
-			<img @class="_classAcc" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'acc.png'" @style="_styleAcc">
+			<img @class="_classAcc" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'acc' + ($worn.upper.accessory_integrity_img ? '_' + _imgName : '') + '.png'" @style="_styleAcc">
 		<</if>>
 		<<if $worn.upper.breast_acc_img is 1>>
 			<img @class="_classAcc" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + (Math.min(_breastSize, 5)) + '_acc.png'" @style="_styleAcc">
 		<</if>>
 	</div>
+	<<set _sleeveClass to {
+		"": _class,
+		"primary": _class,
+		"no": "",
+		"secondary": _classAcc
+	}[$worn.upper.sleeve_colour||""]>>
 	<<if _coverRight isnot undefined and $worn.upper.sleeve_img is 1>>
 		<div @class="'clothes-div layer-rightarmclothes' + _upperWetness">
 			<<if _coverRight is true>>
-				<img @class="_class" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'right_cover.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'right_cover.png'" @style="_style">
 			<<else>>
-				<img @class="_class" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'right.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'right.png'" @style="_style">
 			<</if>>
 		</div>
 	<</if>>
 	<<if _coverLeft isnot undefined and $worn.upper.sleeve_img is 1>>
 		<div @class="'clothes-div layer-leftarmclothes' + _upperWetness">
 			<<if _coverLeft is true>>
-				<img @class="_class" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'left_cover.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'left_cover.png'" @style="_style">
 			<<else>>
-				<img @class="_class" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'left.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/upper/' + $worn.upper.variable + '/' + 'left.png'" @style="_style">
 			<</if>>
 		</div>
 	<</if>>
@@ -2633,21 +2666,27 @@
 			<img @class="_classAcc" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'acc.png'" @style="_styleAcc">
 		<</if>>
 	</div>
+	<<set _sleeveClass to {
+		"": _class,
+		"primary": _class,
+		"no": "",
+		"secondary": _classAcc
+	}[$worn.over_upper.sleeve_colour||""]>>
 	<<if _coverRight isnot undefined and $worn.over_upper.sleeve_img is 1>>
 		<div class="layer-rightarmoverclothes">
 			<<if _coverRight is true>>
-				<img @class="_class" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'right_cover.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'right_cover.png'" @style="_style">
 			<<else>>
-				<img @class="_class" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'right.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'right.png'" @style="_style">
 			<</if>>
 		</div>
 	<</if>>
 	<<if _coverLeft isnot undefined and $worn.over_upper.sleeve_img is 1>>
 		<div class="layer-leftarmoverclothes">
 			<<if _coverLeft is true>>
-				<img @class="_class" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'left_cover.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'left_cover.png'" @style="_style">
 			<<else>>
-				<img @class="_class" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'left.png'" @style="_style">
+				<img @class="_sleeveClass" @src="'img/clothes/over_upper/' + $worn.over_upper.variable + '/' + 'left.png'" @style="_style">
 			<</if>>
 		</div>
 	<</if>>
@@ -2709,6 +2748,10 @@
 	<<set _filters to $skinColor.current>>
 	<<set _img to setup.tanImg.sidebar[$skinColor.tanImgEnabled]>>
 	<div id="img" @class="limitedColourContainerClasses() + ($imgLighten isnot '' ? ' '+ $imgLighten :'') + ' noAnimations'">
+		<<if $sidebarRenderer is 'canvas' or $sidebarRenderer is 'both'>> /* <img> renderer */
+			<<canvas-player-base-body>>
+		<</if>>
+		<<if $sidebarRenderer is 'img' or $sidebarRenderer is 'both'>> /* legacy renderer */
 		/*Prep for image checks*/
 		<<switch $player.perceived_breastsize>>
 		<<case 12>>
@@ -2725,22 +2768,7 @@
 			<<set _breastSize to 1>>
 		<</switch>>
 		<<if $penisexist is 1>>
-			<<switch $penissize>>
-			<<case 4>>
-				<<set _penisSize to 5>>
-			<<case 3>>
-				<<set _penisSize to 4>>
-			<<case 2>>
-				<<set _penisSize to 3>>
-			<<case 1>>
-				<<set _penisSize to 2>>
-			<<case 0>>
-				<<set _penisSize to 1>>
-			<<case -1>>
-				<<set _penisSize to 0>>
-			<<case -2>>
-				<<set _penisSize to -1>>
-			<</switch>>
+			<<set _penisSize to Math.clamp($penissize, -2, 4)>>
 		<</if>>
 		<<set _disabled to ["disabled","hidden"]>>
 
@@ -2775,7 +2803,7 @@
 			<img class="layer-backhair colour-hair" @src="'img/transformations/bird/rightwing/'+$transformationParts.bird.wings+'.png'">
 		<</if>>
 		<<if !_disabled.includes($transformationParts.bee.wings)>>
-			<img class="layer-backhair colour-hair" @src="'img/transformations/bee/rightwing/'+$transformationParts.bee.wings+'.png'">
+			<img class="layer-backhair" @src="'img/transformations/bee/rightwing/'+$transformationParts.bee.wings+'.png'">
 		<</if>>
 
 		<img class="layer-base" @src="_img.rightarmidle" @style="'filter: '+_filters.body">
@@ -2796,7 +2824,7 @@
 			<img class="layer-backhair colour-hair" @src="'img/transformations/bird/leftwing/'+$transformationParts.bird.wings+'.png'">
 		<</if>>
 		<<if !_disabled.includes($transformationParts.bee.wings)>>
-			<img class="layer-backhair colour-hair" @src="'img/transformations/bee/leftwing/'+$transformationParts.bee.wings+'.png'">
+			<img class="layer-backhair" @src="'img/transformations/bee/leftwing/'+$transformationParts.bee.wings+'.png'">
 		<</if>>
 		
 		<<if !_disabled.includes($transformationParts.fallenAngel.halo)>>
@@ -2949,7 +2977,7 @@
 				</div>
 				<div @class="'layer-pbhairballs pbhair-' + _pbColour">
 				<<if $player.ballsExist is true and $pblevelballs gt 1 and !$worn.genitals.name.startsWith("chastity")>>
-					<img class="anim-idle-2f" @src="'img/hair/phair/balls/' + $penissize + '_pb' + $pblevelballs + '.png'">
+					<img class="anim-idle-2f" @src="'img/hair/phair/balls/' + _penisSize + '_pb' + $pblevelballs + '.png'">
 				<</if>>
 				</div>
 			<</if>>
@@ -2965,5 +2993,6 @@
 		<</if>>
 
 		<<faceimg 1>>
+		<</if>> /* $sidebarRenderer is img */
 	</div>
 <</widget>>

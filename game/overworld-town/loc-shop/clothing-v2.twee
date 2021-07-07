@@ -53,7 +53,10 @@
 
 	<!-- List of clothes -->
 	<<set _items = setup.clothes[$clothingShopSlot].filter(x => x.shop.includes(_shopLocation) and x.outfitSecondary is undefined
-		and ((_outfits and x.outfitPrimary isnot undefined) or (!_outfits and x.outfitPrimary is undefined)))>>
+		and ((_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.contains("lower")))
+			or
+			(!_outfits and (x.outfitPrimary is undefined or Object.keys(x.outfitPrimary).every(secSlot => !secSlot.contains("lower")))))
+	)>>
 	<<set _items = applyClothingShopFilters(_items)>>
 	<<set _maxPage = Math.ceil(_items.length / $shopItemsPerPage)>>
 
@@ -229,6 +232,9 @@
 	<<set _hidden = _page == $shopPage ? "" : " hidden">>
 	<<set _compact = $shopDefaults.compactMode ? "compact" : "">>
 
+	<<set _colCustomPrimary = getCustomColourStyle('primary')>>
+	<<set _colCustomSecondary = getCustomColourStyle('secondary')>>
+
 	<div @class="'clothing-shop-page page-' + _page + _hidden">
 		<<for _itemTemp range _itemsOnPage>>
 			<<set _item = clone(_itemTemp)>>
@@ -245,6 +251,9 @@
 								<<set _item.colour = _item.colour_options[random(_item.colour_options.length - 1)]>>
 							<<elseif $shopDefaults.colourItems == "default" and _item.colour_options.contains($shopDefaults.color)>>
 								<<set _item.colour = $shopDefaults.color>>
+								<<if $shopDefaults.color == "custom">>
+									<<set _item.colourCustom = _colCustomPrimary>>
+								<</if>>
 							<</if>>
 						<</if>>
 						<<if _item.accessory_colour_options.length > 0>>
@@ -252,6 +261,9 @@
 								<<set _item.accessory_colour = _item.accessory_colour_options[random(_item.accessory_colour_options.length - 1)]>>
 							<<elseif $shopDefaults.colourItems == "default" and _item.accessory_colour_options.contains($shopDefaults.secColor)>>
 								<<set _item.accessory_colour = $shopDefaults.secColor>>
+								<<if $shopDefaults.secColor == "custom">>
+									<<set _item.accessory_colourCustom = _colCustomSecondary>>
+								<</if>>
 							<</if>>
 						<</if>>
 						<<clothingicon _item>>
@@ -292,7 +304,8 @@
 						<<if _locked>>
 							<span class="lblue">_item.name_cap</span><span class="black">&nbsp;| Locked</span>
 						<<else>>
-							<<capture _item _shopLocation $clothingShopSlot _outfits>>
+							<<set _csslot = $clothingShopSlot>>
+							<<capture _item _shopLocation _csslot _outfits>>
 								<<link _item.name_cap>>
 									<<set $clothes_choice = _item.index>>
 									<<set $clothes_choice_reveal = _item.reveal>>
@@ -300,7 +313,7 @@
 									<<unset $colouraction>>
 									<<unset $accessorycolouraction>>
 									<<run window.scrollTo(0, 0)>>
-									<<updateclotheslist _shopLocation $clothingShopSlot _outfits>>
+									<<updateclotheslist _shopLocation _csslot _outfits>>
 								<</link>>
 							<</capture>>
 							<<if _unlocked>>
@@ -316,7 +329,7 @@
 						</div>
 					<<else>>
 						<!-- Price tag -->
-						<span class="clothing-price">£<<print getClothingCost(_item) / 100>></span>
+						<span class="clothing-price"><<printmoney `getClothingCost(_item)` true>></span>
 						<!-- Integrity, Reveal and Warmth indicators -->
 						<<if !$shopDefaults.compactMode>>
 							<div class="clothing-integrity">
@@ -421,7 +434,7 @@
 		<<elseif _temp_choice.gender is "f">>
 			<span class="pink">For girls.</span>
 		<</if>>
-		<<print _temp_choice.description>> Costs <span class="gold">£<<print getClothingCost(_temp_choice) / 100>>.</span>
+		<<print _temp_choice.description>> Costs <<printmoney `getClothingCost(_temp_choice)`>>.
 		<br>
 		<<set _truewarmth = getTrueWarmth(_temp_choice)>>
 		<<warmth _truewarmth>>
@@ -432,7 +445,7 @@
 			<div class="clothing-colours-div">
 				<<set _hiddenMannequin = $images is 1 ? "" : "hidden">>
 				<!-- Item preview -->
-				<div id="mannequin" @class="'mannequin ' + _hiddenMannequin">
+				<div id="mannequin" @class="'mannequin ' + _hiddenMannequin + ($sidebarRenderer is 'both' ? ' both-renderers' : '')">
 					<<mannequin>>
 				</div>
 				<!-- Item colour selection -->
@@ -545,6 +558,7 @@
 										<<unset $clothes_choice>>
 									<</if>>
 									<<updateclotheslist>>
+									<<exposedcheck>>
 									<<updatesidebarimg>>
 									<<updatesidebarmoney>>
 									<<updatesidebardescription>>
@@ -555,7 +569,7 @@
 									<</if>>
 									<<run updateMoment()>>
 								<</link>>
-								<span>(<span class="gold">£<<print getClothingCost(_temp_choice) / 100>></span>)</span>
+								(<<printmoney `getClothingCost(_temp_choice)`>>)
 							<</if>>
 						</div>
 					</div>
@@ -577,6 +591,7 @@
 						<<link "Try On">>
 							<<shopbuyv2 $clothingShopSlot "try" null $clothes_choice>>
 							<<updateclotheslist>>
+							<<exposedcheck>>
 							<<updatesidebarimg>>
 							<<updatesidebardescription>>
 							<<updateallure>>
@@ -590,6 +605,7 @@
 							<<link "Return">>
 								<<shopbuyv2 $clothingShopSlot "return" null $clothes_choice>>
 								<<updateclotheslist>>
+								<<exposedcheck>>
 								<<updatesidebarimg>>
 								<<updatesidebardescription>>
 								<<updateallure>>
@@ -626,7 +642,7 @@
 						<<run updateMoment()>>
 					<</if>>
 				<</link>>
-				<span>(<span class="gold">£<<print getClothingCost(_temp_choice) * $buyMultiple / 100>></span>)</span>
+				<span>(<span class="gold"><<print getClothingCost(_temp_choice) * $buyMultiple / 100>></span>)</span>
 		</div>
 
 		<div id="buy-multiple-slider" class="buy-multiple-slider">
@@ -876,6 +892,67 @@
 			<<set _clothed = (((_slot != "under_upper" and $neverNudeMenus) or (_slot == "under_upper" and !_item.type.includes("naked"))) and _breastImg >= 2) ? "_clothed" : "">>
 
 			<div class="mannequin-inner">
+				<<if $sidebarRenderer isnot "img">>
+					<<selectmodel "main" "shop">>
+						<<set _modeloptions.mannequin to true>>
+						<<set _modeloptions.show_face to false>>
+						<<set _modeloptions.show_hair to false>>
+						<<set _modeloptions.breasts to _breastImg ? (_clothed ? "cleavage" : "default") : "">>
+						<<set _modeloptions.breast_size to _breastImg>>
+						<<set _modeloptions.crotch_visible to true>>
+						<<if $mannequinHasPenis>>
+							<<set _modeloptions.penis to "default">>
+						<</if>>
+						<<if $neverNudeMenus>>
+							<<if _slot != "under_upper" and (_mannequinGender == "f" or _mannequinGender == "h")>>
+								<<set _modeloptions.worn_under_upper to 12>>
+								<<set _modeloptions.worn_under_upper_colour to "pale white">>
+							<</if>>
+							<<if _slot != "under_lower" and (_item.set == _slot or _slot != 'under_upper')>>
+								<<if $mannequinHasPenis>>
+									<<set _modeloptions.worn_under_lower to 0>>
+									<<set _modeloptions.worn_under_lower_colour to "pale white">>
+								<</if>>
+							<</if>>
+						<</if>>
+						<!-- Draw primary and all secondary items -->
+						<<set _items_list = [{slot: _slot, item: _item}]>>
+						<<if _item.outfitPrimary>>
+							<<set _items_list = _items_list.concat(Object.keys(_item.outfitPrimary).map(s => { return {slot: s, item: setup.clothes[s].find(x => x.name == _item.outfitPrimary[s])} }))>>
+						<</if>>
+						<<for _clothing range _items_list>>
+							<<set _item = _clothing.item>>
+							<<set _slot = _clothing.slot>>
+							<<set _modeloptions['worn_' + _slot] to _item.index>>
+							<<if _col>>
+								<<set _modeloptions['worn_' + _slot + '_colour'] to _col>>
+								<<if _col is "custom">>
+									<<set _modeloptions.filters["worn_" + _slot + "_custom"] =
+											getCustomClothesColourCanvasFilter($customColors.color.primary,
+												$customColors.saturation.primary,
+												$customColors.brightness.primary,
+												$customColors.contrast.primary);>>
+								<</if>>
+							<</if>>
+							<<if _acc_col>>
+								<<set _modeloptions['worn_' + _slot + '_acc_colour'] to _acc_col>>
+								<<if _acc_col is "custom">>
+									<<set _modeloptions.filters["worn_" + _slot + "_acc_custom"] =
+											getCustomClothesColourCanvasFilter($customColors.color.secondary,
+												$customColors.saturation.secondary,
+												$customColors.brightness.secondary,
+												$customColors.contrast.secondary);>>
+								<</if>>
+							<</if>>
+						<</for>>
+						<<if $sidebarRenderer is "both">>
+							<<set _item = _items_list[0].item>>
+							<<set _slot = _items_list[0].slot>>
+						<</if>>
+					<<rendermodel "canvas-mannequin">>
+				<</if>>
+
+				<<if $sidebarRenderer isnot "canvas">>
 				<div class="mannequin-body">
 					<img src="img/body/mannequin/leftarmidle.png">
 					<img src="img/body/mannequin/basenoarms.png">
@@ -905,6 +982,7 @@
 						</div>
 					<</if>>
 				</div>
+				<</if>> <!-- renderer switch -->
 
 				<!-- Mannequin gender toggle button -->
 				<div class="mannequin-buttons no-numberify">
@@ -919,6 +997,7 @@
 					</div>
 				</div>
 
+				<<if $sidebarRenderer isnot "canvas">>
 				<div class="mannequin-clothes">
 					<<unset _styleP>>
 					<<unset _styleS>>
@@ -959,8 +1038,8 @@
 							<<set _styleS = getCustomColourStyle('secondary')>>
 						<</if>>
 						<div @class="'clothes-' + _acc_col.replace(/ /g, '-')" @style="_styleS">
-							<<if _item.accessory>>
-								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/acc.png'">
+							<<if _item.accessory and _slot != "hands">>
+								<img @src="'img/clothes/' + _slot + '/' + _item.variable + (_item.accessory_integrity_img ? '/acc_full.png' : '/acc.png')">
 							<</if>>
 							<<if _item.breast_acc_img>>
 								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + _breastImg + '_acc.png'">
@@ -973,13 +1052,14 @@
 							<</if>>
 						</div>
 						<<if _item.back_img is 1>>
-							<<set _back_col = _slot == "head" or _slot == "over_head" ? _acc_col.replace(/ /g, '-') : _col.replace(/ /g, '-')>>
+							<<set _back_col = _item.back_img_colour is 'secondary' ? _acc_col.replace(/ /g, '-') : _col.replace(/ /g, '-')>>
 							<div @class="'clothes-' + _back_col" @style="'z-index: -1; position: absolute; ' + _styleS">
 								<img @src="'img/clothes/' + _slot + '/' + _item.variable + '/' + 'back.png'">
 							</div>
 						<</if>>
 					<</for>>
 				</div>
+				<</if>> <!-- renderer switch -->
 			</div>
 			<div class="div-link mannequin-gender-textbutton no-numberify">
 				Toggle gender
@@ -1008,7 +1088,11 @@
 <</widget>>
 
 <<widget "updatesidebarmoney">>
-	<<replace #stats>><<statsCaption>><</replace>>
+	<<if $images>>
+		<<replace #stats>><<statsCaption>><</replace>>
+	<<else>>
+		<<replace #money-noimg>><<statsMoneyNoImg>><</replace>>
+	<</if>>
 <</widget>>
 
 <<widget "loadFiltersMenu">>
@@ -1017,6 +1101,7 @@
 			<div class="filter-button button-apply div-link">
 				<<link "Apply and Close">>
 					<<set $shopClothingFilter.active = true>>
+					<<set $shopPage to 0>>
 					<<addclass '#filters' 'hidden'>>
 					<<updateclotheslist>>
 					<<run updateMoment()>>
@@ -1250,6 +1335,12 @@
 				Clothing shop filters.
 			</div>
 			<br>
+		<<else>>
+			I - Integrity rating. How hard it is to tear clothing into scraps.
+			<br>
+			R - Reveal rating. How alluring clothing makes you.
+			<br>
+			W - Warmth rating. How good clothing protects you from cold.
 		<</if>>
 
 		<div class="legend-warmth">
