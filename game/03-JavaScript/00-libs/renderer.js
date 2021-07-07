@@ -96,7 +96,7 @@ var Renderer;
      * Modifies and returns base.
      */
     function cutoutFrom(base, stencil) {
-        base.globalCompositeOperation = 'destination-atop';
+        base.globalCompositeOperation = 'destination-in';
         base.drawImage(stencil, 0, 0);
         return base;
     }
@@ -205,7 +205,8 @@ var Renderer;
             desaturate: spec.desaturate,
             brightness: spec.brightness,
             contrast: spec.contrast,
-            prefilter: spec.prefilter
+            prefilter: spec.prefilter,
+            masksrc: spec.masksrc
         });
     }
     Renderer.encodeProcessing = encodeProcessing;
@@ -311,7 +312,7 @@ var Renderer;
         if (layer.desaturate) {
             image = desaturateImage(image, undefined, false);
             needsCutout = true;
-            if (listener && listener.composition) {
+            if (listener && listener.processingStep) {
                 listener.processingStep(name, "desaturate", image);
             }
         }
@@ -324,14 +325,14 @@ var Renderer;
         if (typeof layer.brightness === 'number' && layer.brightness !== 0) {
             image = adjustBrightness(image, layer.brightness, undefined, false);
             needsCutout = true;
-            if (listener && listener.composition) {
+            if (listener && listener.processingStep) {
                 listener.processingStep(name, "brightness", image);
             }
         }
         if (typeof layer.contrast === 'number' && layer.contrast !== 1) {
             image = adjustContrast(image, layer.contrast, undefined);
             needsCutout = true;
-            if (listener && listener.composition) {
+            if (listener && listener.processingStep) {
                 listener.processingStep(name, "contrast", image);
             }
         }
@@ -342,8 +343,17 @@ var Renderer;
                 listener.processingStep(name, "blend", image);
             }
         }
+        if (layer.mask) {
+            image = cutoutFrom(image.getContext('2d'), layer.mask).canvas;
+            if (listener && listener.processingStep) {
+                listener.processingStep(name, "mask", image);
+            }
+        }
         if (needsCutout) {
             image = cutoutFrom(image.getContext('2d'), layer.image).canvas;
+            if (listener && listener.processingStep) {
+                listener.processingStep(name, "cutout", image);
+            }
         }
         return image;
     }
@@ -444,6 +454,8 @@ var Renderer;
             for (const layer of layers) {
                 if (layer.show !== false && !layer.image)
                     return;
+                if (layer.masksrc && !layer.mask)
+                    return;
             }
             if (listener && listener.loadingDone)
                 listener.loadingDone(millitime() - t0, layersLoaded);
@@ -454,7 +466,7 @@ var Renderer;
                 rendererError(listener, e);
             }
         }
-        function enqueueLayer(layer) {
+        function loadLayerImage(layer) {
             Renderer.ImageLoader.loadImage(layer.src, layer, (src, layer, image) => {
                 layersLoaded++;
                 if (listener && listener.loaded) {
@@ -477,10 +489,34 @@ var Renderer;
                 maybeRenderResult();
             });
         }
+        function loadLayerMask(layer) {
+            Renderer.ImageLoader.loadImage(layer.masksrc, layer, (src, layer, image) => {
+                layersLoaded++;
+                if (listener && listener.loaded) {
+                    listener.loaded(layer.name || 'unnamed', src);
+                }
+                layer.mask = image;
+                layer.cachedMaskSrc = src;
+                Renderer.ImageCaches[src] = image;
+                maybeRenderResult();
+            }, (src, layer, error) => {
+                // Mark this src as erroneous to avoid blinking due to reload attempts
+                Renderer.ImageErrors[src] = true;
+                if (listener && listener.loadError) {
+                    listener.loadError(layer.name || 'unnamed', src);
+                }
+                else {
+                    console.error('Failed to load mask ' + src + (layer.name ? ' for layer ' + layer.name : ''));
+                }
+                delete layer.masksrc;
+                maybeRenderResult();
+            });
+        }
         for (const layer of layers) {
+            let needImage = true;
             if (layer.image) {
                 if (layer.imageSrc === layer.src) {
-                    continue;
+                    needImage = false;
                 }
                 else {
                     // Layer was loaded in previous render, but then its src was changed - purge cache
@@ -488,15 +524,41 @@ var Renderer;
                     delete layer.imageSrc;
                 }
             }
-            if (Renderer.ImageErrors[layer.src]) {
-                layer.show = false;
+            if (needImage) {
+                if (Renderer.ImageErrors[layer.src]) {
+                    layer.show = false;
+                    continue;
+                }
+                else if (layer.src in Renderer.ImageCaches) {
+                    layer.image = Renderer.ImageCaches[layer.src];
+                    layer.imageSrc = layer.src;
+                }
+                else {
+                    loadLayerImage(layer);
+                }
             }
-            else if (layer.src in Renderer.ImageCaches) {
-                layer.image = Renderer.ImageCaches[layer.src];
-                layer.imageSrc = layer.src;
+            let needMask = !!layer.masksrc;
+            if (layer.mask) {
+                if (layer.cachedMaskSrc === layer.masksrc) {
+                    needMask = false;
+                }
+                else {
+                    // Layer mask was loaded in previous render, but then its masksrc was changed - purge cache
+                    delete layer.mask;
+                    delete layer.cachedMaskSrc;
+                }
             }
-            else {
-                enqueueLayer(layer);
+            if (needMask) {
+                if (Renderer.ImageErrors[layer.masksrc]) {
+                    delete layer.masksrc;
+                }
+                else if (layer.masksrc in Renderer.ImageCaches) {
+                    layer.mask = Renderer.ImageCaches[layer.masksrc];
+                    layer.cachedMaskSrc = layer.masksrc;
+                }
+                else {
+                    loadLayerMask(layer);
+                }
             }
         }
         maybeRenderResult();
@@ -506,6 +568,8 @@ var Renderer;
         for (let layer of layers) {
             delete layer.image;
             delete layer.imageSrc;
+            delete layer.mask;
+            delete layer.cachedMaskSrc;
             delete layer.cachedImage;
             delete layer.cachedProcessing;
         }

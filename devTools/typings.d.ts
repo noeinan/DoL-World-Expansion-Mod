@@ -85,6 +85,11 @@ declare interface ClothesItem {
 	outfitPrimary: object;
 	outfitSecondary: string[];
 	notuck: number;
+	/**
+	 * (For head slots)
+	 * if 1, this item has mask.png image to cut out hair & animal ears layers
+	 */
+	mask_img?: number;
 	// TODO list and document other options
 }
 

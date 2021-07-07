@@ -131,7 +131,7 @@ namespace Renderer {
 	 */
 	export function cutoutFrom(base: CanvasRenderingContext2D,
 	                           stencil: CanvasImageSource): CanvasRenderingContext2D {
-		base.globalCompositeOperation = 'destination-atop';
+		base.globalCompositeOperation = 'destination-in';
 		base.drawImage(stencil, 0, 0);
 		return base;
 	}
@@ -269,7 +269,8 @@ namespace Renderer {
 			desaturate: spec.desaturate,
 			brightness: spec.brightness,
 			contrast: spec.contrast,
-			prefilter: spec.prefilter
+			prefilter: spec.prefilter,
+			masksrc: spec.masksrc
 		});
 
 	}
@@ -393,7 +394,7 @@ namespace Renderer {
 		if (layer.desaturate) {
 			image = desaturateImage(image, undefined, false);
 			needsCutout = true;
-			if (listener && listener.composition) {
+			if (listener && listener.processingStep) {
 				listener.processingStep(name, "desaturate", image);
 			}
 		}
@@ -406,14 +407,14 @@ namespace Renderer {
 		if (typeof layer.brightness === 'number' && layer.brightness !== 0) {
 			image = adjustBrightness(image, layer.brightness, undefined, false);
 			needsCutout = true;
-			if (listener && listener.composition) {
+			if (listener && listener.processingStep) {
 				listener.processingStep(name, "brightness", image);
 			}
 		}
 		if (typeof layer.contrast === 'number' && layer.contrast !== 1) {
 			image = adjustContrast(image, layer.contrast, undefined);
 			needsCutout = true;
-			if (listener && listener.composition) {
+			if (listener && listener.processingStep) {
 				listener.processingStep(name, "contrast", image);
 			}
 		}
@@ -424,8 +425,17 @@ namespace Renderer {
 				listener.processingStep(name, "blend", image);
 			}
 		}
+		if (layer.mask) {
+			image = cutoutFrom((image as HTMLCanvasElement).getContext('2d'), layer.mask).canvas;
+			if (listener && listener.processingStep) {
+				listener.processingStep(name, "mask", image);
+			}
+		}
 		if (needsCutout) {
 			image = cutoutFrom((image as HTMLCanvasElement).getContext('2d'), layer.image!!).canvas;
+			if (listener && listener.processingStep) {
+				listener.processingStep(name, "cutout", image);
+			}
 		}
 		return image;
 	}
@@ -531,6 +541,7 @@ namespace Renderer {
 			if (rendered) return;
 			for (const layer of layers) {
 				if (layer.show !== false && !layer.image) return;
+				if (layer.masksrc && !layer.mask) return;
 			}
 			if (listener && listener.loadingDone) listener.loadingDone(millitime() - t0, layersLoaded);
 			try {
@@ -540,7 +551,7 @@ namespace Renderer {
 			}
 		}
 
-		function enqueueLayer(layer: CompositeLayer) {
+		function loadLayerImage(layer: CompositeLayer) {
 			ImageLoader.loadImage(
 				layer.src,
 				layer,
@@ -567,24 +578,75 @@ namespace Renderer {
 				}
 			)
 		}
+		function loadLayerMask(layer: CompositeLayer) {
+			ImageLoader.loadImage(
+				layer.masksrc,
+				layer,
+				(src,layer,image)=>{
+					layersLoaded++;
+					if (listener && listener.loaded) {
+						listener.loaded(layer.name || 'unnamed', src);
+					}
+					layer.mask = image;
+					layer.cachedMaskSrc = src;
+					ImageCaches[src] = image;
+					maybeRenderResult();
+				},
+				(src,layer,error)=>{
+					// Mark this src as erroneous to avoid blinking due to reload attempts
+					ImageErrors[src] = true;
+					if (listener && listener.loadError) {
+						listener.loadError(layer.name || 'unnamed', src);
+					} else {
+						console.error('Failed to load mask ' + src + (layer.name ? ' for layer ' + layer.name : ''));
+					}
+					delete layer.masksrc;
+					maybeRenderResult();
+				}
+			)
+		}
 
 		for (const layer of layers) {
+			let needImage = true;
 			if (layer.image) {
 				if (layer.imageSrc === layer.src) {
-					continue;
+					needImage = false;
 				} else {
 					// Layer was loaded in previous render, but then its src was changed - purge cache
 					delete layer.image;
 					delete layer.imageSrc;
 				}
 			}
-			if (ImageErrors[layer.src]) {
-				layer.show = false;
-			} else if (layer.src in ImageCaches) {
-				layer.image = ImageCaches[layer.src];
-				layer.imageSrc = layer.src;
-			} else {
-				enqueueLayer(layer);
+			if (needImage) {
+				if (ImageErrors[layer.src]) {
+					layer.show = false;
+					continue;
+				} else if (layer.src in ImageCaches) {
+					layer.image = ImageCaches[layer.src];
+					layer.imageSrc = layer.src;
+				} else {
+					loadLayerImage(layer);
+				}
+			}
+			let needMask = !!layer.masksrc;
+			if (layer.mask) {
+				if (layer.cachedMaskSrc === layer.masksrc) {
+					needMask = false;
+				} else {
+					// Layer mask was loaded in previous render, but then its masksrc was changed - purge cache
+					delete layer.mask;
+					delete layer.cachedMaskSrc;
+				}
+			}
+			if (needMask) {
+				if (ImageErrors[layer.masksrc]) {
+					delete layer.masksrc;
+				} else if (layer.masksrc in ImageCaches) {
+					layer.mask = ImageCaches[layer.masksrc];
+					layer.cachedMaskSrc = layer.masksrc;
+				} else {
+					loadLayerMask(layer);
+				}
 			}
 		}
 
@@ -636,6 +698,8 @@ namespace Renderer {
 		for (let layer of layers) {
 			delete layer.image;
 			delete layer.imageSrc;
+			delete layer.mask;
+			delete layer.cachedMaskSrc;
 			delete layer.cachedImage;
 			delete layer.cachedProcessing;
 		}

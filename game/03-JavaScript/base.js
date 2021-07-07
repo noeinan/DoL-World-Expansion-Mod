@@ -70,7 +70,7 @@ Mousetrap.bind(["f"], function () {
 
 Macro.add('time', {
 	handler: function () {
-		var time = State.variables.time;
+		var time = V.time;
 		var hour, daystate; // Never checked and always overwritten - no need to init with old value
 		// Sanity check
 		if (time < 0) time = 0;
@@ -87,8 +87,8 @@ Macro.add('time', {
 		} else {
 			daystate = "night";
 		}
-		State.variables.hour = hour;
-		State.variables.daystate = daystate;
+		V.hour = hour;
+		V.daystate = daystate;
 	}
 });
 
@@ -263,37 +263,37 @@ function integrityWord(worn) {
 }
 
 function underlowerintegrity() {
-	return integrityWord(State.variables.worn.under_lower);
+	return integrityWord(V.worn.under_lower);
 }
 DefineMacroS("underlowerintegrity", underlowerintegrity);
 
 function underupperintegrity() {
-	return integrityWord(State.variables.worn.under_upper);
+	return integrityWord(V.worn.under_upper);
 }
 DefineMacroS("underupperintegrity", underupperintegrity);
 
 function overlowerintegrity() {
-	return integrityWord(State.variables.worn.over_lower);
+	return integrityWord(V.worn.over_lower);
 }
 DefineMacroS("overlowerintegrity", overlowerintegrity);
 
 function lowerintegrity() {
-	return integrityWord(State.variables.worn.lower);
+	return integrityWord(V.worn.lower);
 }
 DefineMacroS("lowerintegrity", lowerintegrity);
 
 function overupperintegrity() {
-	return integrityWord(State.variables.worn.over_upper);
+	return integrityWord(V.worn.over_upper);
 }
 DefineMacroS("overupperintegrity", overupperintegrity);
 
 function upperintegrity() {
-	return integrityWord(State.variables.worn.upper);
+	return integrityWord(V.worn.upper);
 }
 DefineMacroS("upperintegrity", upperintegrity);
 
 function genitalsintegrity() {
-	return integrityWord(State.variables.worn.genitals);
+	return integrityWord(V.worn.genitals);
 }
 DefineMacroS("genitalsintegrity", genitalsintegrity);
 
@@ -438,7 +438,7 @@ window.initTouchToFixAnimations = function() {
 }
 
 $(document).on(':passagedisplay', function (ev) {
-	if (State.variables.combat) {
+	if (V.combat) {
 		initTouchToFixAnimations();
 	}
 });

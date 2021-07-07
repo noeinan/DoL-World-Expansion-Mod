@@ -115,8 +115,8 @@ window.attachCustomColourHooks = function (slot = "") {
 		$('.custom-colour.primary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('primary'); new Wikifier(null, '<<updateclotheslist>>'); });
 		$('.custom-colour.secondary > .custom-colour-presets > .presets-dropdown > select').on('change', () => { loadCustomColourPreset('secondary'); new Wikifier(null, '<<updateclotheslist>>'); });
 
-		$('.custom-colour-sliders.primary > .colour-slider > div > input').on('input', (e) => { State.variables.customColors.sepia.primary = 0; });
-		$('.custom-colour-sliders.secondary > .colour-slider > div > input').on('input', (e) => { State.variables.customColors.sepia.secondary = 0; });
+		$('.custom-colour-sliders.primary > .colour-slider > div > input').on('input', (e) => { V.customColors.sepia.primary = 0; });
+		$('.custom-colour-sliders.secondary > .colour-slider > div > input').on('input', (e) => { V.customColors.sepia.secondary = 0; });
 	});
 }
 
@@ -124,7 +124,7 @@ window.updateCustomColour = function(type, slot) {
 	$('.colour-options-div.' + type + ' > .colour-button > .bg-custom').css('filter', getCustomColourStyle(type, true));
 	let model = Renderer.locateModel("main", "shop");
 	if (model) {
-		let customColors = State.variables.customColors;
+		let customColors = V.customColors;
 		model.options.filters["worn_" + slot + (type === "primary" ? "_custom" : "_acc_custom")] =
 			getCustomClothesColourCanvasFilter(customColors.color[type],
 				customColors.saturation[type],
@@ -140,52 +140,52 @@ window.updateMannequin = function(slot = "") {
 window.getCustomColourStyle = function (type, valueOnly = false) {
 	if (type != 'primary' && type != 'secondary')
 		return;
-	return (valueOnly ? '' : 'filter: ') + 'hue-rotate(' + State.variables.customColors.color[type] + 'deg) saturate(' + State.variables.customColors.saturation[type] + ') brightness(' + State.variables.customColors.brightness[type] + ') contrast(' + State.variables.customColors.contrast[type] + ')' + (valueOnly ? '' : ';');
+	return (valueOnly ? '' : 'filter: ') + 'hue-rotate(' + V.customColors.color[type] + 'deg) saturate(' + V.customColors.saturation[type] + ') brightness(' + V.customColors.brightness[type] + ') contrast(' + V.customColors.contrast[type] + ')' + (valueOnly ? '' : ';');
 }
 
 window.saveCustomColourPreset = function (slot = "primary") {
 	let setName = prompt("Enter new colour preset name", "New preset");
 	if (setName != null) {
-		if (Object.keys(State.variables.customColors.presets).contains(setName)) {
+		if (Object.keys(V.customColors.presets).contains(setName)) {
 			alert('Preset "' + setName + '" already exists!');
 			return;
 		}
 
-		State.variables.customColors.presets[setName] = {
+		V.customColors.presets[setName] = {
 			ver: 2,
-			color: State.variables.customColors.color[slot],
-			brightness: State.variables.customColors.brightness[slot],
-			saturation: State.variables.customColors.saturation[slot],
-			contrast: State.variables.customColors.contrast[slot]
+			color: V.customColors.color[slot],
+			brightness: V.customColors.brightness[slot],
+			saturation: V.customColors.saturation[slot],
+			contrast: V.customColors.contrast[slot]
 		};
 	}
 }
 
 window.loadCustomColourPreset = function (slot = "primary") {
-	let setName = State.temporary.preset_choice[slot];
-	let preset = State.variables.customColors.presets[setName];
+	let setName = T.preset_choice[slot];
+	let preset = V.customColors.presets[setName];
 	if (preset) {
 		// new version of preset (has only one set of colour parameters and doesn't have sepia)
 		if (preset.ver >= 2) {
-			State.variables.customColors.color[slot] = preset.color;
-			State.variables.customColors.brightness[slot] = preset.brightness;
-			State.variables.customColors.saturation[slot] = preset.saturation;
-			State.variables.customColors.contrast[slot] = preset.contrast;
-			State.variables.customColors.sepia[slot] = 0;
+			V.customColors.color[slot] = preset.color;
+			V.customColors.brightness[slot] = preset.brightness;
+			V.customColors.saturation[slot] = preset.saturation;
+			V.customColors.contrast[slot] = preset.contrast;
+			V.customColors.sepia[slot] = 0;
 		}
 		// legacy preset (has both primary and secondary colours information)
 		else {
-			State.variables.customColors.color.primary = preset.color.primary;
-			State.variables.customColors.brightness.primary = preset.brightness.primary;
-			State.variables.customColors.saturation.primary = preset.saturation.primary;
-			State.variables.customColors.contrast.primary = preset.contrast.primary;
-			State.variables.customColors.sepia.primary = preset.sepia.primary;
+			V.customColors.color.primary = preset.color.primary;
+			V.customColors.brightness.primary = preset.brightness.primary;
+			V.customColors.saturation.primary = preset.saturation.primary;
+			V.customColors.contrast.primary = preset.contrast.primary;
+			V.customColors.sepia.primary = preset.sepia.primary;
 
-			State.variables.customColors.color.secondary = preset.color.secondary;
-			State.variables.customColors.brightness.secondary = preset.brightness.secondary;
-			State.variables.customColors.saturation.secondary = preset.saturation.secondary;
-			State.variables.customColors.contrast.secondary = preset.contrast.secondary;
-			State.variables.customColors.sepia.secondary = preset.sepia.secondary;
+			V.customColors.color.secondary = preset.color.secondary;
+			V.customColors.brightness.secondary = preset.brightness.secondary;
+			V.customColors.saturation.secondary = preset.saturation.secondary;
+			V.customColors.contrast.secondary = preset.contrast.secondary;
+			V.customColors.sepia.secondary = preset.sepia.secondary;
 		}
 	}
 }
@@ -197,11 +197,11 @@ window.getFilterRevealOptions = function (type) {
 
 	if (type == 'from') {
 		// this line removes values that are larger than reveal.to
-		return Object.keys(optionsFrom).filter(x => optionsFrom[x] < State.variables.shopClothingFilter.reveal.to).reduce((res, key) => (res[key] = optionsFrom[key], res), {})
+		return Object.keys(optionsFrom).filter(x => optionsFrom[x] < V.shopClothingFilter.reveal.to).reduce((res, key) => (res[key] = optionsFrom[key], res), {})
 	}
 	else {
 		// this line removes values that are smaller than reveal.from
-		return Object.keys(optionsTo).filter(x => optionsTo[x] > State.variables.shopClothingFilter.reveal.from).reduce((res, key) => (res[key] = optionsTo[key], res), {})
+		return Object.keys(optionsTo).filter(x => optionsTo[x] > V.shopClothingFilter.reveal.from).reduce((res, key) => (res[key] = optionsTo[key], res), {})
 	}
 }
 
@@ -216,7 +216,7 @@ window.toggleAllTraitsFilter = function () {
 
 // accepts a list of clothes, returns a filtered list of clothes
 window.applyClothingShopFilters = function (items) {
-	let f = State.variables.shopClothingFilter;
+	let f = V.shopClothingFilter;
 	if (!f.active)
 		return items;
 
@@ -231,15 +231,15 @@ window.applyClothingShopFilters = function (items) {
 }
 
 window.getWarmthScaleData = function(newWarmth) {
-	let maxWarmth = Math.max(260, State.variables.warmth * 1.04);
+	let maxWarmth = Math.max(260, V.warmth * 1.04);
 	if (newWarmth)
 		maxWarmth = Math.max(maxWarmth, newWarmth * 1.04);
-	let chill = State.variables.chill;
+	let chill = V.chill;
 	let cold = chill - 90;
 	let warm = chill * 1.3 + 70;
 	let hot = chill * 1.3 + 150;
-	let minW = Math.min(State.variables.warmth, newWarmth);
-	let maxW = Math.max(State.variables.warmth, newWarmth);
+	let minW = Math.min(V.warmth, newWarmth);
+	let maxW = Math.max(V.warmth, newWarmth);
 
 	return {
 		cold: cold / maxWarmth * 100 + '%',
@@ -250,9 +250,9 @@ window.getWarmthScaleData = function(newWarmth) {
 		nowarm: warm > maxWarmth ? 'nowarm' : '',
 		nohot: hot > maxWarmth ? 'nohot' : '',
 		nocold: cold < 0 ? 'nocold' : '',
-		player: State.variables.warmth / maxWarmth * 100 + '%',
-		playerNew: (State.variables.warmth > newWarmth ? minW : maxW) / maxWarmth * 100 + '%',
-		diffUpDown: (State.variables.warmth > newWarmth ? 'down' : 'up'),
+		player: V.warmth / maxWarmth * 100 + '%',
+		playerNew: (V.warmth > newWarmth ? minW : maxW) / maxWarmth * 100 + '%',
+		diffUpDown: (V.warmth > newWarmth ? 'down' : 'up'),
 		diffStart: minW / maxWarmth * 100 + '%',
 		diffWidth: (maxW - minW) / maxWarmth * 100 + '%'
 	};
@@ -260,9 +260,9 @@ window.getWarmthScaleData = function(newWarmth) {
 
 window.getWarmthWithOtherClothing = function(slot, clothingId) {
 	let newClothing = setup.clothes[slot][clothingId];
-	let worn = State.variables.worn;
+	let worn = V.worn;
 
-	let newWarmth = State.variables.warmth + getTrueWarmth(newClothing);
+	let newWarmth = V.warmth + getTrueWarmth(newClothing);
 
 	// subtract warmth of all clothes that would be taken off
 	if (newClothing.outfitPrimary) {

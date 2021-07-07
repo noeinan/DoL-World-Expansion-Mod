@@ -1,0 +1,285 @@
+:: School Swimming Late
+<!-- no effects, this is included not called -->
+
+<<if $exposed gte 2 and $swimall is 1>>
+	<<set $cstate to "fine">>
+<<elseif $exposed gte 2 and $swimall isnot 1>>
+	<<if $swimnudecounter is 0>>
+		<<set $cstate to "naked">>
+	<<else>>
+		<<set $cstate to "fine">>
+	<</if>>
+<<elseif $swimall is 1>>
+	<<if $exposed gte 2>>
+		<<set $cstate to "fine">>
+	<<else>>
+		<<set $cstate to "clothed">>
+	<</if>>
+<<elseif ($worn.under_lower.type.includes("swim") or $worn.lower.type.includes("swim"))
+and ($worn.under_upper.type.includes("swim") or $worn.upper.type.includes("swim") or ($worn.under_upper.type.includes("naked") and $worn.upper.type.includes("naked") and ($player.gender_appearance is "m" or $swimCrossdressPermission is true)))
+and (($worn.upper.type.includes("naked") or $worn.upper.type.includes("swim")) and ($worn.lower.type.includes("naked") or $worn.lower.type.includes("swim")))>>
+	<<set $cstate to "fine">>
+<<else>>
+	<<set $cstate to "wrong">>
+<</if>>
+
+<<if $cstate is "nakedfirst">>
+	<<schoolpoolexposed>>
+	<!-- no asking to swin naked here, you're late -->
+	<!-- detention 6 already is in the widget -->
+<<else>>
+
+	<<npc Mason>><<person1>>You enter the swimming pool room.<br><br>
+	<<if $rng gte 50>>
+		Mason and the class are in the water.
+	<<elseif $rng gte 25>>
+		Mason stands by the pool explaining something to the class.
+	<<elseif $rng gte 5 or $swimall is 1>>
+		Mason is demonstrating a swimming technique by the poolside.
+	<<else>>
+		The class is in the pool but Mason is nowhere to be seen. After a moment <<he>> enters through a side door with a
+		<<print either("swimsuit", "pair of swim shorts")>> in <<his>> hand. <<He>> hands it to a <<generatey2>><<person2>><<person>><<person1>> in the water before
+		<<he>> turns to you.
+	<</if>>		
+
+	<<if (($delinquency gte 800 and $rng lte 90) or ($delinquency gte 500 and $rng lte 50)) and $swimall isnot 1>>
+		<!-- Note Mason won't do this if they are naked. Or will they? -->
+		"You again!" <<He>> says, "I've got enough, you're now Leighton's problem. Class dismissed."<<detention 2>>
+		<<He>> grabs your arm and guides you toward the exit<<if $exposed is 1>> without regard for your modesty<</if>>.
+		<<if $exposed gte 2 and ($rightarm is "bound" or $leftarm is "bound")>>
+			On the way out <<he>> picks up a towel from the rack and puts it around your waist.
+			<!-- Note: Mason's stressed so they will miss towelling up breasts -->
+			"I don't even want to know how you got yourself bound up," <<he>> exclaims, "you can explain that to Leighton, too."<<detention 1>>
+			<br><br>
+
+			<<link [[Next|School Swimming Late Detention]]>><<endevent>><<pass 2>><<towelupm>><</link>>
+		<<elseif $exposed gte 2>>
+			On the way out <<he>> picks up a towel from the rack. "Put this on," <<he>> demands.
+			<br><br>
+
+			<<link [[Put on the towel|School Swimming Late Detention]]>><<endevent>><<pass 2>><<towelup>><</link>>
+			<!-- TODO: refuse -->
+		<<else>>
+			<br><br>
+		
+			<<link [[Next|School Swimming Late Detention]]>><<endevent>><<pass 2>><</link>>
+		<</if>>
+	<<elseif $rng gte 25>>
+		"Glad you could join us!" <<He>> says, "sadly you are way to late to
+		participate.<<if $cstate isnot "fine">> And you are not even dressed
+		<<if $swimall is 1>>'properly'<<detention 5>><!-- Mason may be a bit miffed having to teach naked because of you --><<else>>properly<<detention 1>><</if>>
+		to attend.<</if>>"
+
+		<<He>> points to a chair in the corner, "sit there and be still."<<detention 1>>
+		<br><br><<pass 2>>
+
+		<<link [[Sit and Wait|School Swimming Late Wait]]>><<endevent>><</link>><br>
+		<<if $exposed lte 0>>
+			<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<detention 1>><<endevent>><</link>><<gdelinquency>><br>
+			<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<detention 1>><<endevent>><</link>><<gdelinquency>>
+		<<elseif $exposed gte 1>>
+			<<maleicon>><<link [[Grab some towels and enter the boy's changing room|School Boy Changing Room]]>><<towelupm>><<detention 1>><<endevent>><</link>><<gdelinquency>><br>
+			<<femaleicon>><<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><<detention 1>><<endevent>><</link>><<gdelinquency>>
+		<</if>>
+	<<elseif $rng gte 10>>
+		"<<if $player.gender_appearance is "m">>Mylord<<else>>Mylady<</if>> have decided to grace us with their appearance afterall, it seems?"
+		<<he>> asks mockingly. "Thou may extend that honour to the head 
+		<<if $NPCName[$NPCNameList.indexOf("Leighton")].pronoun is "m">>master<<else>>mistress<</if>> right this instant."
+		A <<generatey3>><<person3>><<person>><<person1>> snickers.
+		<br><br>
+		<<He>> points to to the exit door, "now..."<<detention 1>>
+		<br><br><<pass 2>>
+
+		<<link [[Leave|School Pool Entrance]]>><<endevent>><</link>>
+		<<if $exposed gte 1>>
+			<<maleicon>><<link [[Grab some towels and enter the boy's changing room|School Boy Changing Room]]>><<towelupm>><<detention 1>><<endevent>><</link>><<gdelinquency>><br>
+			<<femaleicon>><<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><<detention 1>><<endevent>><</link>><<gdelinquency>>
+		<</if>>
+	<<else>>
+		<<He>> shakes <<his>> head <<print either("tiredly", "with resignation")>>. "Why do you even bother this late? Just get out."<<detention 1>>
+		<br><br>
+
+		<<if $exposed lte 0>>
+			<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<endevent>><</link>><br>
+			<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<endevent>><</link>>
+		<<elseif $exposed gte 1>>
+			<<maleicon>><<link [[Grab some towels and enter the boy's changing room|School Boy Changing Room]]>><<towelupm>><<endevent>><</link>><br>
+			<<femaleicon>><<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><<endevent>><</link>>
+		<</if>>
+	<</if>>
+<</if>>
+
+
+:: School Swimming Late Wait
+<<set $outside to 0>><<set $location to "pool">><<schooleffects>><<effects>>
+
+You sit down on the chair.
+<<if $exposed gte 2>>
+	<<if $swimall isnot 1>>
+		<<if $exhibitionism gte 75>>
+			Your exposed <<genitalsandbreasts is are>> on display for the whole class.<<arousal 600>>
+		<<else>>
+			You cover your exposed <<genitalsandbreasts>> with your hands.<<arousal 300>><<stress 1>>
+		<</if>>
+	<<else>>
+		While your exposed <<genitalsandbreasts is are>> on display for the whole class, the same
+		is true for everyone else here.<<arousal 100>>
+	<</if>>
+<</if>>
+You feel the stares of your classmates.<<stress 1>><<status +1>><<gcool>><!-- rulebreaker bonus -->
+<br><br>
+
+<<if $stress gte $stressmax>>
+	<<link [[Everything fades to black...|School Passout]]>><</link>>
+<<else>>
+	<<set $cwaittime = Math.clamp(15*60 - $time, 1, 9)>>
+	<<link [[Wait|School Swimming Late Wait End]]>><<stress 1>><<pass $cwaittime>><</link>><<gstress>><br>
+	<<if $exposed lte 0>>
+		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<detention 1>><</link>><<gdelinquency>><br>
+		<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<detention 1>><</link>><<gdelinquency>>
+	<<elseif $exposed gte 1>>
+		<<maleicon>><<link [[Grab some towels and enter the boy's changing room|School Boy Changing Room]]>><<towelupm>><<detention 1>><</link>><<gdelinquency>><br>
+		<<femaleicon>><<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><<detention 1>><</link>><<gdelinquency>>
+	<</if>>
+<</if>>
+
+
+:: School Swimming Late Wait End
+<<set $outside to 0>><<set $location to "pool">><<schooleffects>><<effects>>
+
+<<if $swimall is 1>>
+	The bell rings, signifying the end of the lesson. Mason hands out towels to each student as they pass, trying to avoid eye contact.
+<<else>>
+	The bell rings, signifying the end of the lesson.
+<</if>>
+<br><br>
+
+<<if $exposed lte 0>>
+	<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><</link>><br>
+	<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><</link>>
+<<elseif $exposed gte 1>>
+	<<maleicon>><<link [[Grab some towels and enter the boy's changing room|School Boy Changing Room]]>><<towelupm>><</link>><br>
+	<<femaleicon>><<link [[Grab some towels and enter the girl's changing room|School Girl Changing Room]]>><<towelup>><</link>>
+<</if>>
+
+
+:: School Swimming Late Detention
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+You are in the school hallways.<<pass 2>>
+
+<<if $time gte (15 * 60)>>
+	Classes have just ended and the hallways are full of students on their way out.
+<<else>>
+	You hear speaking behind the various classroom doors, but some classes have ended just ended and students are streaming out.
+<</if>>
+<br><br>
+Mason is holding you fast and is dragging you towards the Head's Office.
+<br><br>
+
+<<if $exposed gte 1>>
+	You're steered round a corner and into a corridor full of <<peopley>>. <<covered>> 
+	A nearby <<persony>> looks at you and <<if $exposed gte 2>>gasps in shock<<else>>snickers<</if>>.<<stress 1>>
+	Others have a similar reaction. As the noise grows more turn to look, until everyone is watching you.
+	<br><br>
+<<else>>
+	Most students ignore you, but a <<generatey1>><<person1>><<person>> points at you. "Someone's going to visit Leighton," <<he>> stage whispers
+	to <<his>> friends.<<stress 1>>
+	<br><br>
+<</if>>
+
+<<if $stress gte $stressmax>>
+	<<link [[Everything fades to black...|School Passout]]>><<endevent>><</link>>
+<<else>>
+	<<link [[Next|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 1>><</link>><br>
+	<<if $exposed gte 2 and $exhibitionism gte 75>>
+		<<link [[Flaunt|School Swimming Late Detention Flaunt]]>><<endevent>><</link>><<exhibitionist5>><br>
+	<<elseif $exposed gte 1 and $exhibitionism gte 50>>
+		<<link [[Flaunt|School Swimming Late Detention Flaunt]]>><<endevent>><</link>><<exhibitionist4>><br>
+	<</if>>
+	<<if $exhibitionism gte 50 and ($rightarm isnot "bound" or $leftarm isnot "bound") and $exposed lt 2>>
+		<<checkdroptowel>>
+		<<if _exlevel gte 2>>
+			<<link [[Drop the towel and flaunt|School Swimming Late Detention Flaunt]]>><<droptowel>><<endevent>><</link>><<exhibitionist5>><br>
+		<<elseif _exlevel>>
+			<<link [[Drop the towel and flaunt|School Swimming Late Detention Flaunt]]>><<droptowel>><<endevent>><</link>><<exhibitionist4>><br>
+		<</if>>
+	<</if>>
+	<<if $feetuse isnot "bound">>
+		<<link [[Run Away|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 2>><</link>><<athleticsdifficulty 100 600>>
+	<</if>>
+<</if>>
+
+
+:: School Swimming Late Detention Flaunt
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+<<flaunting>> you march down the corridor like it was a catwalk. Some look away, going red in the face.
+Most though are keen to take in the sight of the <<if $worn.lower.type.includes("naked") and $worn.under_lower.type.includes("naked")>>naked<<else>>nearly naked<</if>> <<girl>> marching down the centre.
+<br><br>
+
+"Feel free to look," you announce. "There's no shame in it."<<status 5>><<arousal 50>>
+<br><br>
+
+<<if $exposed gte 2>>
+	<<exhibitionism5>>
+	<<fameexhibitionism 50>>
+	<<npc Mason>><<person1>>Mason is trying <<his>> best to shield your body with <<his>>.
+	<br><br>
+
+	<<link [[Next|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 1>><</link>><br>
+	<<if $feetuse isnot "bound">>
+		<<link [[Try to bolt|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 2>><</link>><<athleticsdifficulty 1 400>><br>
+		<<link [[Try to duck|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 2>><</link>><<dancedifficulty 100 600>>
+	<</if>>
+<<else>>
+	<<exhibitionism4>>
+	<<fameexhibitionism 25>>
+	<<npc Mason>><<person1>>Mason tightens <<his>> grip and pushes you along, trying <<his>> best to shield your body with <<his>>.
+	<br><br>
+
+	<<if $feetuse isnot "bound">>
+		<<link [[Try to bolt|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 2>><</link>><<athleticsdifficulty 200 1000>><br>
+	<</if>>
+	<<link [[Next|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 1>><</link>>
+<</if>>
+
+
+:: School Swimming Late Detention 2
+<<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
+
+<<if $phase is 2 and $danceSuccess>>
+	With quick feet you duck out of Mason's grip and weave your way between the other students. Mason gives chase but you
+	manage to hide in a nearby maintenance cupboard.
+	<br><br>
+
+	<<link [[Next (0:10)|Hallways]]>><<pass 10>><</link>>
+<<elseif $phase is 2 and $athleticsSuccess>>
+	With a sudden jolt you escape Mason's grip and dive between the other students. Mason gives chase but you
+	manage to hide in a nearby maintenance cupboard.
+	<br><br>
+
+	<<link [[Next (0:10)|Hallways]]>><<pass 10>><</link>>
+<<else>>
+	<<if $phase is 2>>
+		You try to break free but Mason's grip is too firm.<<gpain>><<pain 4>>
+		<br><br>
+	<</if>>
+
+	You are in the school hallways in front of Leighton's Office.<<pass 2>>
+	
+	<<if $time gte (15 * 60)>>
+		Classes have just ended and the hallway is full of students on their way out.
+	<<else>>
+		You hear speaking behind the various classroom doors, but some classes have ended just ended and students are streaming out.
+	<</if>>
+	<<if $exposed gte 1>><<covered>><</if>>
+	<br><br>
+	Mason opens the Head's Office's door and pushes you in.<!-- Mason would accompany you but "School Detention" assumes you're alone -->
+	<br><br>
+	
+	<<link [[Next|School Detention]]>><</link>><br>
+	<<if $phase is 1 and $feetuse isnot "bound">>
+		<<link [[Run Away|School Swimming Late Detention 2]]>><<endevent>><<set $phase to 2>><</link>><<athleticsdifficulty 200 800>>
+	<</if>>
+<</if>>

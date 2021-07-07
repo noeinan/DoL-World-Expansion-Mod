@@ -2,7 +2,7 @@
 :: Farm Upgrades
 <<effects>>
 <<farm_work_update>>
-<<if $farm_work.alex is "admin">>
+<<if $farm_work.alex is "admin" or ($farm_work.alex is "clearing" and $farm_stage is 12)>>
 	You sit beside Alex, and look through the ways the farm could be improved.
 	<br><br>
 <<else>>
@@ -38,6 +38,8 @@
 		The stable is being expanded.
 	<<case "coop">>
 		The coop is being expanded.
+	<<case "irrigation">>
+		Irrigation is being installed in a field.
 	<</switch>>
 	<<if $farm.build_timer is 1>>
 		It'll be finished tomorrow.
@@ -124,6 +126,16 @@ Wall:
 		<<link [[Expand|Farm Upgrades Coop 1]]>><</link>>
 	<</if>>
 	<br>
+	Farm Irrigation:
+	<<if $farm.irrigation gte 9>>
+		<span class="green">Every field has irrigation.</span>
+		<<set _upgrade_count += 1>>
+	<<elseif $farm.irrigation is $plots.farm.length>>
+		<span class="green">Every current field has irrigation.</span>
+	<<else>>
+		<<link [[Build Field irrigation|Farm Upgrades Irrigation]]>><</link>>
+	<</if>>
+	<br>
 	<<if $sexStats.anus.pregnancy.motherStatus gte 1>>
 		Parasite Barn:
 		<<if $farm.parasitebarn gte 2 or $farm.build is "parasites 2">>
@@ -161,7 +173,7 @@ Wall:
 
 You unfurl the paper. The details have been crossed out, but it looks like plans for a greenhouse.
 
-<<if $farm_work.alex is "admin">>
+<<if $farm_work.alex is "admin" or ($farm_work.alex is "clearing" and $farm_stage is 12)>>
 	<<npc Alex>><<person1>>
 	<<if $NPCName[$NPCNameList.indexOf("Alex")].love gte 80>>
 		Alex takes it, and sighs. "I thought a greenhouse might be more managable for me," <<he>> says. "Growing herbs and flowers just as a hobby. Drew up all the plans, but I don't think I'd have time."
@@ -699,7 +711,6 @@ A new barn to store your parasites.
 	<br>
 <</if>>
 <br>
-<br>
 <<link [[Back|Farm Upgrades]]>><</link>>
 <br>
 
@@ -719,11 +730,34 @@ A new barn to store your parasites.
 <<if $farm.build>>
 	<span class="blue">Only one upgrade can be worked on at once.</span>
 	<br>
-<<elseif $money gte 500000>>
-	<<link [[Build (0:20)|Farm Upgrades Build]]>><<pass 20>><<set $money -= 500000>><<set $farm.build to "parasites 2">><<set $farm.build_timer to 7>><</link>>
+<<elseif $money gte 2000000>>
+	<<link [[Build (0:20)|Farm Upgrades Build]]>><<pass 20>><<set $money -= 2000000>><<set $farm.build to "parasites 2">><<set $farm.build_timer to 7>><</link>>
 	<br>
 <</if>>
 <br>
+<<link [[Back|Farm Upgrades]]>><</link>>
+<br>
+
+:: Farm Upgrades Irrigation
+
+Irrigation channels from the local river.
+<br><br>
+
+<span class="green">Adds irrigation to a field so that you no longer need to water the crops.</span>
+<br>
+<span class="gold">Costs £5000.</span>
+<br>
+<span class="blue">Will take three days to build.</span>
+<br>
+<span class="blue">There'll be workers on the farm until the project is completed.</span>
+<br><br>
+<<if $farm.build>>
+	<span class="blue">Only one upgrade can be worked on at once.</span>
+	<br>
+<<elseif $money gte 500000>>
+	<<link [[Build (0:20)|Farm Upgrades Build]]>><<pass 20>><<set $money -= 500000>><<set $farm.build to "irrigation">><<set $farm.build_timer to 3>><</link>>
+	<br>
+<</if>>
 <br>
 <<link [[Back|Farm Upgrades]]>><</link>>
 <br>
