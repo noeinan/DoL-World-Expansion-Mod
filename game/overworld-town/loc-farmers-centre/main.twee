@@ -69,6 +69,17 @@ Items added. Something about them sending a lorry to the farm shortly.
 		<<produceDisplayItem _item>>
 	</div>
 <</for>>
+<<run $(() => {
+	$('.produceItem input').on('input change', e => {
+		let valSpan = $(e.currentTarget).siblings().first();
+		let item = e.currentTarget.id.split("producetosell")[1].replace(/-/g,"_");
+		let value = valSpan.text();
+		if(!value.includes("£")){
+			valSpan.text((i, value) => value + " - £" + (bulkProduceValue(SugarCube.setup.plants[item],value) / 100).toFixed(2));
+			$('#produceConfirm').replaceWith(new Wikifier(null, '<<produceDisplayConfirm>>').output);
+		}
+	})
+})>>
 <div id="produceDisplayControls">
 	<<set _disabled = _listPage > 1 ? "" : "disabled">>
 	<div @class="'div-link btn-pagination prev ' + _disabled">
@@ -140,21 +151,12 @@ Items added. Something about them sending a lorry to the farm shortly.
 			<<if $plants[_item] is undefined>>
 				You dont have any <<print $plants[_item].plural>> right now.
 			<<elseif $plants[_item].amount lt 250>>
-				You dont have enough of <<print $plants[_item].plural>> right now to sell.
+				You dont have enough <<print $plants[_item].plural>> right now to sell.
 			<<else>>
 				<<set _max to $plants[_item].amount - ($plants[_item].amount % 250)>>
 				<<set _base to bulkProduceValue(setup.plants[_item])>>
 				<<print $plants[_item].plural.toUpperFirst()>> - Sold for <<printmoney _base>> per bulk of 250.
 				<<numberslider `"$farmersProduce.toSell['"+_item+"']"` $farmersProduce.toSell[_item] 0 `_max` 250>>
-				<<run $(() => {
-					$('#numberslider-input-farmersproducetosell'+_item).on('input change', e => {
-						let valSpan = $(e.currentTarget).siblings().first();
-						let item = e.currentTarget.id.split("producetosell")[1];
-						let value = valSpan.text();
-						valSpan.text((i, value) => value + " - £" + (bulkProduceValue(SugarCube.setup.plants[item],value) / 100).toFixed(2));
-						$('#produceConfirm').replaceWith(new Wikifier(null, '<<produceDisplayConfirm>>').output)
-					})
-				})>>
 			<</if>>
 		</div>
 		<<if $farmersProduce.selling[_item]>>

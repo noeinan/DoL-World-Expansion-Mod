@@ -20,19 +20,16 @@
 /*Made it so wearing pyjamas in farmhouse won't teleport you to the orphanage*/
 
 <<widget "listsleepoutfits">>
+<<if $args[0] is undefined>>
+	<<set _passage to "Bed">>
+<<else>>
+	<<set _passage to $args[0]>>
+<</if>>
 <<if $alwaysSleepNaked isnot true>>
 	<<for _i to 0; _i lt $outfit.length; _i++>>
 		<<if $outfit[_i].type.includes("sleep")>>
-			<<if $location is "farmhouse">>
-				<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|Farmhouse Guest Bed]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
-				<br>
-			<<elseif $location is "alexroom">>
-				<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|Farmhouse Alex Bed]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
-				<br>
-			<<else>>
-				<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|Bed]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
-				<br>
-			<</if>>
+			<<print '<<link [["Wear "+$outfit[_i].name+($outfit[_i].colors is false? "" : " [C]") + " and climb in bed"|"'+_passage+'"]]>><<set $wear_outfit to ' + _i + '>><</link>>'>>
+			<br>
 		<</if>>
 	<</for>>
 <<else>>
@@ -202,8 +199,10 @@
 
 				/*If the main outfit has not been found, use the last resort*/
 				<<if _foundEquip is null and _lastResort isnot null>>
-					<<set _foundEquip to {}>>
-					<<set _foundEquip[_equip[_i]] to _lastResort.id>>
+					<<if !($worn[_equip[_i]].name is $outfit[$wear_outfit][_equip[_i]] and $worn[_equip[_i]].one_piece is 1)>>
+						<<set _foundEquip to {}>>
+						<<set _foundEquip[_equip[_i]] to _lastResort.id>>
+					<</if>>
 				<</if>>
 
 				/*Ensure at this point, the main piece of clothing has been found*/
@@ -278,7 +277,7 @@
 						<</if>>
 					<<else>>
 						<<set _notEquipped[_equip[_i]] to {"name": $outfit[$wear_outfit][_equip[_i]], "reason": "not found"}>>
-						<<if $wardrobe_location isnot "wardrobe">>
+						<<if $wardrobe_location isnot "wardrobe" and $worn[_equip[_i]].name isnot "naked">>
 							<<set _makeTempClothing to 1>>
 							<<storeItem $wardrobe_location _equip[_i]>>
 						<</if>>

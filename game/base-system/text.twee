@@ -1384,6 +1384,18 @@
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
+<!-- optionally takes 2 parameters: what to add after the text for singular/plural   -->
+<<widget "genitalsandbreasts">>
+	<<genitals>> <<if $breastsize gte 1>>and <<breasts>><</if>>
+	<<if $args[0] isnot undefined and $args[1] isnot undefined>>
+		<<if ($penisexist is 1 and $vaginaexist is 1) or $breastsize gte 1>>
+			$args[1]
+		<<else>>
+			$args[0]
+		<</if>>
+	<</if>>
+<</widget>>
+
 <<widget "lcorruption">> |
 <span class="teal">- Corruption</span>
 <</widget>>
@@ -2920,7 +2932,7 @@
 <</widget>>
 
 <<widget "openinghours">>
-A sign reads "Opening hours: <<if $timestyle is "ampm">>8:00 am - 9:00 pm<<else>>8:00 - 21:00<</if>>"
+A sign reads "Opening hours: <<ampm 8 00>> - <<ampm 21 00>>"
 <br>
 <</widget>>
 
@@ -6001,4 +6013,27 @@ and
 
 <<widget "gggskulduggery">> |
 <span class="green">+ + + Skulduggery</span>
+<</widget>>
+
+<<widget "ampm">>
+	<<if $args[0] isnot undefined>>
+		<<set _hour to $args[0]>>
+	<<else>>
+		<<set _hour to $hour>>
+	<</if>>
+	<<if $args[1] isnot undefined>>
+		<<set _minute to $args[1]>>
+	<<else>>
+		<<set _minute to ($time - $hour * 60)>>
+	<</if>>
+	<<if $timestyle is "ampm">>
+		<<if _hour gte 13>>
+			<<set _text_output to (_hour - 12) +":"+ _minute.toString().padStart(2, "0") + " pm">>
+		<<else>>
+			<<set _text_output to (_hour is 0 ? "12" : _hour) +":"+ _minute.toString().padStart(2, "0") + (_hour is 12 ? " pm" : " am")>>
+		<</if>>
+	<<else>>
+		<<set _text_output to _hour.toString().padStart(2,"0") +":"+ _minute.toString().padStart(2, "0")>>
+	<</if>>
+	<<print _text_output>>
 <</widget>>

@@ -128,7 +128,7 @@ Zia
 Zohar
 */
 
-<<widget "initnpcgender">><<set $test2 to 2>>
+<<widget "initnpcgender">>
 <<for _i to 0; _i lt $NPCName.length; _i++>>
 
 <!-- Set Pronoun -->
@@ -157,39 +157,17 @@ Zohar
 <</if>>
 <!-- Set breast defaults-->
 
-<<if $breast_mod is 12>>/*Clumsy way to get average breast size setting working for NNPCs.*/
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 12>>
-<<elseif $breast_mod gte 10>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 10>>
-<<elseif $breast_mod gte 8>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 8>>
-<<elseif $breast_mod gte 6>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 7>>
-<<elseif $breast_mod gte 4>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 5>>
-<<elseif $breast_mod gte 2>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 3>>
-<<elseif $breast_mod gte 0>>
-	<<set _b_mod_upper to 12>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -2>>
-	<<set _b_mod_upper to 10>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -4>>
-	<<set _b_mod_upper to 8>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -6>>
-	<<set _b_mod_upper to 6>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -8>>
-	<<set _b_mod_upper to 4>><<set _b_mod_lower to 1>>
-<<elseif $breast_mod gte -10>>
-	<<set _b_mod_upper to 2>><<set _b_mod_lower to 1>>
-<<else>>
-	<<set _b_mod_upper to 1>><<set _b_mod_lower to 1>>
-<</if>>
+<<set _b_mod_lower to Math.clamp($breast_mod, 0, 12)>>
+<<set _b_mod_upper to Math.clamp($breast_mod + 12, 0, 12)>>
 
-<<if $NPCName[_i].breastsize is 0 or $args[0] is "breasts">>
-	<<if $NPCName[_i].pronoun is "f">>
-		<<set $NPCName[_i].breastsize to random (_b_mod_lower, _b_mod_upper)>>
-	<<else>>
+<!-- can't use breastsize, since that would either break the numberslider
+ or make one of the sizes always be randomized, 
+ but can use breastdesc not being changed from 0 as a substitute -->
+<<if $NPCName[_i].breastdesc is 0 or $args[0] is "breasts">>
+	<<if $NPCName[_i].pronoun is "m">>
 		<<set $NPCName[_i].breastsize to 0>>
+	<<else>>
+		<<set $NPCName[_i].breastsize to random (_b_mod_lower, _b_mod_upper)>>
 	<</if>>
 <</if>>
 <<if $NPCName[_i].breastsize gt 0>>
@@ -223,7 +201,10 @@ Zohar
 <</if>>
 
 <<if $NPCName[_i].penissize is 0 or $args[0] is "penis">>
-	<<if $NPCName[_i].gender is "m">>
+	<<if $NPCName[_i].gender is "f">>
+		<<set $NPCName[_i].penissize to 0>>
+		<<set $NPCName[_i].penisdesc to "none">>
+	<<else>>
 		<<switch random (_p_mod_lower, _p_mod_upper)>>
 		<<case 5 6 7>>
 			<<set $NPCName[_i].penisdesc to either("thick cock","hefty cock","big cock","large cock","veiny cock","meaty cock")>>
@@ -238,9 +219,6 @@ Zohar
 			<<set $NPCName[_i].penisdesc to either("tiny penis","pathetic cock","little penis","small penis","mini penis","micro penis")>>
 			<<set $NPCName[_i].penissize to 1>>
 		<</switch>>
-	<<else>>
-		<<set $NPCName[_i].penissize to 0>>
-		<<set $NPCName[_i].penisdesc to "none">>
 	<</if>>
 <</if>>
 <!-- Set pp to size in case PC selected it-->
@@ -395,13 +373,17 @@ Zohar
 <<set $NPCList[0].breastsize to $NPCName[_i].breastsize>>
 <<set $NPCList[0].breastsdesc to $NPCName[_i].breastsdesc>>
 <<set $NPCList[0].breastdesc to $NPCName[_i].breastdesc>>
+<<set $NPCList[0].vagina to "clothed">>
+
+<<set $NPCList[0].penis to "clothed">>
+<<set $NPCList[0].penissize to $NPCName[_i].penissize>>
+<<set $NPCList[0].penisdesc to $NPCName[_i].penisdesc>>
 
 <<if $NPCName[_i].gender is "m">>
-	<<set $NPCList[0].penis to "clothed">>
-	<<set $NPCList[0].penissize to $NPCName[_i].penissize>>
-	<<set $NPCList[0].penisdesc to $NPCName[_i].penisdesc>>
-<<else>>
-	<<set $NPCList[0].vagina to "clothed">>
+	<<set $NPCList[0].vagina to "none">>
+<</if>>
+<<if $NPCName[_i].gender is "f">>
+	<<set $NPCList[0].penis to "none">>
 <</if>>
 
 <<set $NPCList[0].insecurity to $NPCName[_i].insecurity>>
@@ -422,11 +404,12 @@ Zohar
 	<<set $NPCList[0].lefthand to "none">>
 	<<set $NPCList[0].righthand to "none">>
 	<<set $NPCList[0].stance to "approach">>
+	<<set $NPCList[0].penis to 0>>
+	<<set $NPCList[0].vagina to 0>>
 	<<if $NPCName[_i].gender is "m">>
-		<<set $NPCList[0].penis to 0>>
 		<<set $NPCList[0].vagina to "none">>
-	<<else>>
-		<<set $NPCList[0].vagina to 0>>
+	<</if>>
+	<<if $NPCName[_i].gender is "f">>
 		<<set $NPCList[0].penis to "none">>
 	<</if>>
 	<<if $blackWolfMonsterRoll isnot undefined and $blackwolfmonster is 1>>

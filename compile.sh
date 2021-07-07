@@ -63,7 +63,7 @@ function compile() {
 		exit 1
 	else
 		echo "Done: \"$TARGET\""
-		exit 1
+		exit 0
 	fi
 }
 
