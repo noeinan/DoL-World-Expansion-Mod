@@ -8,5 +8,8 @@ Object.defineProperties(window, {
 		get: function() {
 			return State.temporary;
 		}
+	},
+	C: {
+		value: {}
 	}
 });
