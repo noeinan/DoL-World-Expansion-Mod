@@ -718,12 +718,12 @@ You’re left outside the throne room.
 
 :: Hive Pollen Collection
 <<set $outside to 1>><<set $location to "forest">><<effects>>
+<<beastNEWinit 5 bee>>
 You meet with a small group of fellow <<beastsplural>> and leave to start collecting pollen for the hive.
 <br><br>
 
 <<cleareventpool>>
 <<addinlineevent "hive_pollen_collection_1">>
-	<<beastNEWinit 5 bee>>
 	You follow the <<beastsplural>> to a large open clearing in the woods full of bright, colorful, and beautiful flowers. You and the other <<beastsplural>> get to work collecting pollen. You collect a large quantity and return back to the hive early. 
 	<br><br>
 
@@ -737,7 +737,7 @@ You meet with a small group of fellow <<beastsplural>> and leave to start collec
 	<<link [[Prostrate self|Hive Pollen Collection 2 Allow]]>><</link>><<deviant2>>
 	<br>
 
-	<<link [[Resist|Hive Pollen Collection 2 Resist]]>><</link>>
+	<<link [[Resist|Hive Pollen Collection 2 Resist]]>><<set $molestationstart is 1>><</link>>
 <</addinlineevent>>
 <<addinlineevent "hive_pollen_collection_3">>
 	You find a large flower overflowing with pollen. It’s more than enough to wrap up your collection for the day. You gather as much as you can and return to the Hive.
@@ -819,14 +819,14 @@ The <<beasttype>> paces towards you and sniffs.
 <<if $enemyarousal gte $enemyarousalmax>>
 	<<beastejaculation>>
 
-	The <<beasttype>> licks your <<undies>> then slinks away between the trees.
+	The <<beasttype>> hurriedly runs away leaving you exhausted.
 	<<if $monster is 1>>
 		"Tasty."
 	<</if>>
 	<<wolfpacktrust>>
 	<br><br>
 
-	<<tearful>> you gather yourself and continue your job. Because of the setback, you’re late returning to the hive.
+	After you gather yourself you finish up collecting pollen. Because of the setback, you’re late returning to the hive.
 	<br><br>
 
 	<<clotheson>>
@@ -860,6 +860,84 @@ The <<beasttype>> paces towards you and sniffs.
 	<<endcombat>>
 
 	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><<pass 180>><</link>>
+	<br>
+<</if>>
+
+:: Hive Pollen Collection 2 Resist
+<<if $molestationstart is 1>>
+<<set $molestationstart to 0>>
+<<controlloss>>
+<<violence 1>>
+<<neutral 1>>
+<<molested>>
+	<<beastCombatInit>>
+
+<<set $enemytrust -= 40>>
+	<<if $loveInterest>>
+		<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden") and $location is "forest" and random(1, 2) is 2>>
+			<<set $rescue to 1>>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<br>
+<<beast $enemyno>>
+<br><br>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Resist Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Resist Finish]]>><</link>></span><<nexttext>>
+<<elseif $rescue is 1 and $alarm is 1>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Resist Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Resist]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Hive Pollen Collection 2 Resist Finish
+<<set $outside to 1>><<set $location to "forest">><<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+
+	<<tearful>> you gather yourself and continue your job. Because of the setback, you’re late returning to the hive.
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><</link>><<pass 360>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	The <<beasttype>> yips and runs away.
+	<br><br>
+
+	<<tearful>> you gather yourself and continue to gather pollen and return to the Hive earlier than expected.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><</link>><<pass 180>>
+	<br>
+<<elseif $rescue is 1 and $alarm is 1>>
+	You hear a gun fire close by, and a bullet lands near the <<beasttype>>. It backs off in fear and flees into the forest.
+	<br><br>
+	Eden emerges and helps you collect yourself.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+	"Are you okay?" Eden asks.
+	<br><br>
+	<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+	<br>
+	<<link [[Say goodbye|Hive Entrance]]>><<endevent>><</link>><<pass 180>>
 	<br>
 <</if>>
 
