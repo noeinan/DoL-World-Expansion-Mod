@@ -887,6 +887,7 @@ args[4]: hide the skill text.*/
 /*noeinan mod START*/
 /*created martialdifficulty widget*/
 /*modified to combatdifficulty to take into account both martial and brawl*/
+/*created mathsdifficulty widget*/
 
 <<widget "combatdifficulty">>
 <<if $args[0]>>
@@ -937,6 +938,54 @@ args[4]: hide the skill text.*/
 	<<set $combatSuccess to 1>>
 <<else>>
 	<<set $combatSuccess to 0>>
+<</if>>
+<</widget>>
+
+<<widget "mathsdifficulty">>
+<<if $args[0]>>
+	<<set _mathsdifficultymin to $args[0]>>
+<<else>>
+	<<set _mathsdifficultymin to 1>>
+<</if>>
+<<if $args[1]>>
+	<<set _mathsdifficultymax to $args[1]>>
+<<else>>
+	<<set _mathsdifficultymax to 1000>>
+<</if>>
+<<set _maths to clone($maths)>>
+<<if $moorLuck gt 0>>
+	<<set _maths to Math.floor(_maths * (1 + ($moorLuck / 100)))>>
+<</if>>
+<<if $args[2] is undefined>>
+	<<if $checkstyle is "skillname">>
+		| <span class="orange">Maths</span>
+	<<else>>
+		| <span class="orange">Maths</span>:
+		<<set _difficulty to Math.round(Math.clamp(_maths - _mathsdifficultymin, 0, _mathsdifficultymax) / (_mathsdifficultymax - _mathsdifficultymin) * 100)>>
+		<<if _difficulty gt 100>>
+			<<set _difficulty to 100>>
+		<</if>>
+		<<if _difficulty gte 100>>
+			<span class="green">Simple <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 80>>
+			<span class="teal">Easy <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 60>>
+			<span class="lblue">Reasonable <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 40>>
+			<span class="blue">Challenging <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 20>>
+			<span class="purple">Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<elseif _difficulty gte 1>>
+			<span class="pink">Very Hard <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<<else>>
+			<span class="red">Impossible <<if $checkstyle is "percentage">><<print _difficulty>>%<</if>></span>
+		<</if>>
+	<</if>>
+<</if>>
+<<if _maths gte random(_mathsdifficultymin, _mathsdifficultymax)>>
+	<<set $mathsSuccess to 1>>
+<<else>>
+	<<set $mathsSuccess to 0>>
 <</if>>
 <</widget>>
 
