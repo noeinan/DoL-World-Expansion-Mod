@@ -42,12 +42,31 @@
 	Standing before you is an enormous wax hive, guarded by two strong-looking wasps. 
 	<br><br>
 
+	<<if $hour lte 9>>
+		<<if $bjob is "Worker">>
+			You also see a group of pollen gatherers gathering for today's harvest.
+			<br><br>
+		<<elseif $bjob is "Hunter">>
+			You also see a group of hunters gathering for today's hunt.
+			<br><br>
+		<</if>>
+	<</if>>
+
 	<<if $daystate isnot "night" and !random(3)>>
 		<<link [[Observe|Hive Observe]]>><</link>>
 		<br>
 	<</if>>
 	<<link [[Approach (0:02)|Hive Approach]]>><<pass 2>><</link>>
 	<br>
+	<<if $hour lte 9>>
+		<<if $bjob is "Worker">>
+			<<link [[Work|Hive Pollen Collection]]>><</link>>
+			<br>
+		<<elseif $bjob is "Hunter">>
+			<<link [[Hunt|Hive Animal Hunting]]>><</link>>
+			<br>
+		<</if>>
+	<</if>>
 	<<link [[Forest (0:20)|Forest]]>><<pass 20>><</link>>
 	<br>
 
@@ -652,7 +671,7 @@ You approach the two and you feel a very heavy sensation, their presence feels l
 
 
 :: Throne Hunter Job
-<<set $outside to 0>><<set $location to "hive">><<effects>>
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $bjob to "Hunter">>
 
 <<if $beeprisoner is 1>>
 	“Great when or if you ever pay off your crimes we might have something else for you. The hunters meet at the front of the hive every morning. Now guards.” 
@@ -675,7 +694,7 @@ You’re left outside the throne room.
 <<link [[Next|Hive Corridor]]>><<endevent>><</link>>
 
 :: Throne Worker Job
-<<set $outside to 0>><<set $location to "hive">><<effects>>
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $bjob to "Worker">>
 
 <<if $beeprisoner is 1>>
 	“Great when or if you ever pay off your crimes we might have something else for you. The pollen collectors meet at the front of the hive every morning. Now guards.” 
@@ -697,4 +716,282 @@ You’re left outside the throne room.
 
 <<link [[Next|Hive Corridor]]>><<endevent>><</link>>
 
+:: Hive Pollen Collection
+<<set $outside to 1>><<set $location to "forest">><<effects>>
+You meet with a small group of fellow <<beastsplural>> and leave to start collecting pollen for the hive.
+<br><br>
 
+<<cleareventpool>>
+<<addinlineevent "hive_pollen_collection_1">>
+	<<beastNEWinit 5 bee>>
+	You follow the <<beastsplural>> to a large open clearing in the woods full of bright, colorful, and beautiful flowers. You and the other <<beastsplural>> get to work collecting pollen. You collect a large quantity and return back to the hive early. 
+	<br><br>
+
+	<<link [[Next|Hive Entrance]]>><<endevent>><<pass 180>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_2">>
+	<<beastNEWinit 5 bee>>
+	You follow the <<beastsplural>> to a large open clearing in the woods full of bright, colorful, and beautiful flowers. The other <<beastsplural>> start gathering but you hear an odd noise.<<endevent>><<beastNEWinit 1 wolf>> You look around and spot a large <<beasttype>> bound from the trees towards you.
+	<br><br>
+
+	<<link [[Prostrate self|Hive Pollen Collection 2 Allow]]>><</link>><<deviant2>>
+	<br>
+
+	<<link [[Resist|Hive Pollen Collection 2 Resist]]>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_3">>
+	You find a large flower overflowing with pollen. It’s more than enough to wrap up your collection for the day. You gather as much as you can and return to the Hive.
+	<br>
+
+	<<link [[Next|Hive Entrance]]>><<endevent>><<pass 60>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_4" 0.2>>
+	<<beastNEWinit 2 bee>>
+	While leaving you’re stopped by one of the guards. <<bHe>> tells you something has come up and one of the cleaners has slipped and injured <<bhimself 2>> and needs someone to take <<bhis 2>> place for the day. 
+	<br>
+
+	<<link [[Agree|Hive Pollen Collection Cleaner Agree]]>><</link>>
+	<br>
+
+	<<link [[Agree|Hive Pollen Collection Refuse]]>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_5" 0.2>>
+	<<beastNEWinit 2 bee>>
+	While leaving you’re stopped by one of the guards. <<bHe>> tells you something has come up and one of the nurses has been injured and needs someone to take <<bhis 2>> place for the day. 
+	<br>
+
+	<<link [[Next|Hive Pollen Collection Nurse Agree]]>><</link>>
+	<br>
+
+	<<link [[Agree|Hive Pollen Collection Refuse]]>><</link>>
+<</addinlineevent>>
+<<runeventpool>>
+
+:: Hive Pollen Collection 2 Allow
+<<set $outside to 1>><<set $location to "forest">><<effects>>
+
+You drop to the ground and adopt a mating posture.
+<<deviancy2>>
+
+The <<beasttype>> paces towards you and sniffs.
+<<if $monster is 1>>
+	"Curious. Good smell."
+<</if>>
+<<bHe>> takes advantage of your position and mounts you.
+<br><br>
+
+<<link [[Next|Hive Pollen Collection 2 Sex]]>><<set $sexstart to 1>><</link>>
+
+:: Hive Pollen Collection 2 Sex
+<<if $sexstart is 1>>
+	<<set $sexstart to 0>>
+	<<consensual>>
+	<<set $consensual to 1>>
+	<<neutral 1>>
+	<<beastCombatInit>>
+
+	<<set $NPCList[0].stance to "top">><<set $enemytrust -= 20>><<deviancy2>>
+<</if>>
+
+<<effects>>
+<<effectsman>>
+<br>
+<<beast $enemyno>>
+<br><br>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $finish is 1>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Sex Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Sex Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Hive Pollen Collection 2 Sex]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Hive Pollen Collection 2 Sex Finish
+<<set $outside to 1>><<set $location to "forest">><<effects>>
+
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+
+	The <<beasttype>> licks your <<undies>> then slinks away between the trees.
+	<<if $monster is 1>>
+		"Tasty."
+	<</if>>
+	<<wolfpacktrust>>
+	<br><br>
+
+	<<tearful>> you gather yourself and continue your job. Because of the setback, you’re late returning to the hive.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><<pass 360>><</link>>
+	<br>
+<<elseif $enemyhealth lte 0>>
+	The <<beasttype>> yips and runs away.
+	<<if $monster is 1>>
+		"Too strong!"
+	<</if>>
+	<br><br>
+
+	<<tearful>> you gather yourself and continue to gather pollen and return to the Hive earlier than expected.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><<pass 180>><</link>>
+	<br>
+<<else>>
+	The <<beasttype>> turns away from you and slinks between the trees.
+	<br><br>
+
+	You gather yourself and continue the job.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Hive Entrance]]>><<set $eventskip to 1>><<pass 180>><</link>>
+	<br>
+<</if>>
+
+:: Hive Pollen Collection Cleaner Agree
+<<set $outside to 0>><<set $location to "hive">><<effects>>
+“Sure I’d be happy to help.” You agree. “Great come this way.” <<bHe>> beckons you deeper into the Hive and into the barracks. “Your job is to make sure these pods are clean for the hunters and gatherers upon their return.” <<bHe>> turns his back and leaves the room leaving you and the other cleaners alone. You look around to them to see them start licking the pods clean.
+<br><br>
+
+<<link [[Start Licking|Hive Pollen Collection Licking End]]>><<endevent>><</link>><<promiscuous3>>
+<br>
+<<link [[Find a small soft piece of wax as a sponge|Hive Pollen Collection Wax End]]>><<endevent>><</link>>
+
+:: Hive Pollen Collection Licking End
+You start licking the pods with the other cleaners, before long you can tell the pods are noticeably cleaner than they were prior. You and the other cleaners finish up your work for the day and relax together for the rest of the day. <<lstress>><<set $stress -= 100>>
+<br><br>
+
+<<link [[Next|Hive Barracks]]>><<pass 360>><</link>>
+
+:: Hive Pollen Collection Wax End
+You start scrubbing down the pods with the wax. It’s noticeably less clean than the other cleaners work making you have to do double and sometimes triple over. By the time you finish it’s already time to leave.
+<br><br>
+
+<<link [[Next|Hive Barracks]]>><<pass 360>><</link>>
+
+:: Hive Pollen Collection Cleaner Refuse
+“I’m sorry I’m much too busy collecting pollen today.” You assert before continuing to your group.
+<br><br>
+
+<<link [[Next|Hive Pollen Collection Refuse]]>><</link>>
+
+:: Hive Pollen Collection Refuse
+<<cleareventpool>>
+<<addinlineevent "hive_pollen_collection_1">>
+	<<beastNEWinit 5 bee>>
+	You follow the <<beastsplural>> to a large open clearing in the woods full of bright, colorful, and beautiful flowers. You and the other <<beastsplural>> get to work collecting pollen. You collect a large quantity and return back to the hive early. 
+	<br><br>
+
+	<<link [[Next|Hive Entrance]]>><<endevent>><<pass 180>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_2">>
+	<<beastNEWinit 5 bee>>
+	You follow the <<beastsplural>> to a large open clearing in the woods full of bright, colorful, and beautiful flowers. The other <<beastsplural>> start gathering but you hear an odd noise.<<endevent>><<beastNEWinit 1 wolf>> You look around and spot a large <<beasttype>> bound from the trees towards you.
+	<br><br>
+
+	<<link [[Prostrate self|Hive Pollen Collection 2 Allow]]>><</link>><<deviant2>>
+	<br>
+
+	<<link [[Resist|Hive Pollen Collection 2 Resist]]>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_3">>
+	You find a large flower overflowing with pollen. It’s more than enough to wrap up your collection for the day. You gather as much as you can and return to the Hive.
+	<br>
+
+	<<link [[Next|Hive Entrance]]>><<endevent>><<pass 60>><</link>>
+<</addinlineevent>>
+<<runeventpool>>
+
+:: Hive Pollen Collection Nurse Agree
+“Sure I’d be happy to help.” You agree. “Great come this way.” <<bHe>> beckons you deeper into the Hive and into a room you never noticed before. The room is full of eggs and young children. “This is the brood nest where our eggs are stored and the babies grow into strong workers or drones.” <<bHe>> informs you. “Your job is to make sure the children are fed, groomed, and cleaned.” <<bHe>> makes <<bhis>> way to the exit and leaves you with the children and other nurses.
+<br><br>
+<<endevent>>
+<<cleareventpool>>
+<<addinlineevent "hive_pollen_collection_nurse_1">>
+	You sit with a group of children and start to groom them. You brush your fingers through their hair making sure they’re clean and healthy. Their healthy smiles warm your heart and make you feel much better.<<lstress>><<ltrauma>><<set $stress -= 100>><<set $trauma -= 100>>
+	<br><br>
+
+	<<link [[Next|Hive Corridor]]>><</link>><<pass 360>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_nurse_2">>
+	A small <<beasttype>> runs over and hugs you. <<bHe>> whines about being hungry so you get a small bundle of honey and give it to <<bhim>>. <<bHe>> sits on your lap and happily eats the honey before running off to play with the other kids. <<lstress>><<set $stress -= 100>>
+	<br><br>
+
+	<<link [[Next|Hive Corridor]]>><</link>><<pass 360>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_nurse_3">>
+	As you’re watching the kids you see one of the older kids bullying one of the younger ones.
+	<br><br>
+
+	<<link [[Intervene|Hive Pollen Collection Bully Do Nothing]]>><</link>>
+	<br>
+	<<link [[Do nothing|Hive Pollen Collection Bully Do Nothing]]>><</link>>
+<</addinlineevent>>
+<<addinlineevent "hive_pollen_collection_nurse_4">>
+	A group of children come over and beg you to play with them.
+	<br><br>
+
+	<<link [[Play|Hive Pollen Collection Children Play]]>><</link>>
+	<br>
+	<<link [[Refuse|Hive Pollen Collection Children Refuse]]>><</link>>
+<</addinlineevent>>
+<<runeventpool>>
+
+:: Hive Pollen Collection Bully Intervene
+<<beastNEWinit 2 bee>>
+You break the two apart and sternly tell the older <<beasttype 2>> to knock it off or you’ll have to get the guards involved. The older <<beasttype 2>> grumbles and walks away. You feel good stopping the fight and helping the smaller <<beasttype>>.<<ltrauma>><<set $trauma -= 100>>
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><</link>><<endevent>><<pass 360>>
+
+:: Hive Pollen Collection Bully Do Nothing
+<<beastNEWinit 1 bee>>
+You do nothing and let the bullying continue. The younger <<beasttype>> gets shoved to the ground as the older laughs and walks away. Afterwards you help the smaller <<beasttype>> up but <<bhe>> looks upset you didn’t help.
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><</link>><<endevent>><<pass 360>>
+
+:: Hive Pollen Collection Children Play
+You agree to play with the children and they pull you over to their play area. “So what game do you want to play?” You ask them. They argue for a moment before settling for a game much like tag. They want you to go first.
+<br><br>
+
+<<link [[Win the game|Hive Pollen Collection Children Win]]>><</link>><<athleticsdifficulty 250 700>>
+<br>
+<<link [[Lose on purpose|Hive Pollen Collection Children Lose]]>><</link>>
+
+:: Hive Pollen Collection Children Win
+<<if $athleticsSuccess>>
+	You easily are able to tag someone and avoid being it for the entire game. The kids look a bit upset about how good you are. They continue talking to you until you have to leave. <<lstress>><<gtiredness>><<set $stress -= 100>><<set $tiredness += 100>>
+<<else>>
+	You try to tag someone but you’re too out of shape and run out of breath easily. You end up being it for most of the game and feel very embarrassed that you lost to some children. They continue talking to you until you have to leave. <<gtiredness>><<set $tiredness += 100>>
+<</if>>
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><</link>><<pass 360>>
+
+:: Hive Pollen Collection Children Lose
+You purposely lose the game and are it for most of the game. The kids look proud and that makes you quite happy. They continue talking to you until you have to leave. <<lstress>><<set $stress -= 100>>
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><</link>><<pass 360>>
+
+:: Hive Pollen Collection Children Refuse
+You turn down the kids' offer to play. They look quite sad before walking away. You continue to sit until your time is up.
+<br><br>
+
+<<link [[Next|Hive Corridor]]>><</link>><<pass 360>>
