@@ -35,10 +35,14 @@ Explanation of layer processing options:
     <dd>Convert to grayscale before processing. Optional, default false.</dd>
     <dt>brightness: number</dt>
     <dd>Adjust brightness before processing, from -1 (completely black) to +1 (completely white). Optional, default 0</dd>
+    <dt>contrast: number</dt>
+    <dd>Adjust contrast before processing, where 1 (default) is don't change, values in 0..1 reduce contrast (0 makes image gray) and values above 1 raise contrast.</dd>
     <dt>blend: string</dt>
     <dd>Blend color, CSS color string. Optional, default none.</dd>
     <dt>blendMode: string</dt>
     <dd>Blend mode. Optional, default none. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">globalCompositionOperation docs</a> for list of modes</dd>
+    <dt>masksrc: string</dt>
+    <dd>Mask image file path. Optional. Result alpha = image alpha &times; mask alpha, so image pixels where mask is transparent will be removed. Mask color does not matter.</dd>
 </dl>
 
 In addition to processing, layer has composition-related options that govern how multiple layers are composed into single image:

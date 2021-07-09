@@ -418,10 +418,10 @@ Stored Variables are lost on page refresh.
 <</widget>>
 
 <<widget "saveCompareUI">>
-<<link "Store Save1">><<set window.variableData1 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<link "Store Save1">><<set window.variableData1 to clone(V)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
 <<print (window.variableData1 isnot undefined ? "(Stored)" : "")>>
 <br>
-<<link "Store Save2">><<set window.variableData2 to clone(SugarCube.State.variables)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
+<<link "Store Save2">><<set window.variableData2 to clone(V)>><<replace "#saveCompareUI">><<saveCompareUI>><</replace>><</link>>
 <<print (window.variableData2 isnot undefined ? "(Stored)" : "")>>
 <br><br>
 <<if window.variableData1 and window.variableData2>>
@@ -458,10 +458,10 @@ Stored Variables are lost on page refresh.
 <<set $statFreeze to true>>
 <<set $frozenValues to {}>>
 <<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
-<<set $frozenKeys to Object.keys(SugarCube.State.variables)>>
+<<set $frozenKeys to Object.keys(V)>>
 <<run $frozenKeys.forEach(function(key){
 	if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
-		SugarCube.State.variables.frozenValues[key] = clone(SugarCube.State.variables[key]);
+		V.frozenValues[key] = clone(V[key]);
 	}
 })>>
 <</widget>>
@@ -469,16 +469,16 @@ Stored Variables are lost on page refresh.
 <<widget "unfreezePlayerStats">>
 <<unset $statFreeze>>
 <<if $frozenValues>>
-	<<run Object.keys(SugarCube.State.variables.frozenValues).forEach(function(key){
-		SugarCube.State.variables[key] = clone(SugarCube.State.variables.frozenValues[key]);
+	<<run Object.keys(V.frozenValues).forEach(function(key){
+		V[key] = clone(V.frozenValues[key]);
 	})>>
 <</if>>
 <<if $frozenKeys>>
 	<<set _skipKeys to ["replayScene","frozenKeys","frozenValues","statFreeze","passage","debug"]>>
-	<<run Object.keys(SugarCube.State.variables).forEach(function(key){
+	<<run Object.keys(V).forEach(function(key){
 		if(!_skipKeys.includes(key) && key.indexOf("real_") !== 0){
-			if(!SugarCube.State.variables.frozenKeys.includes(key)){
-				delete SugarCube.State.variables[key];
+			if(!V.frozenKeys.includes(key)){
+				delete V[key];
 			}
 		}
 	})>>

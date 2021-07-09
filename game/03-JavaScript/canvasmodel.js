@@ -42,6 +42,7 @@
  * @property {number} [contrast] Adjust contrast (before recoloring), default 1
  * @property {string} [blendMode] Recoloring mode (see docs for globalCompositeOperation; "hard-light", "multiply" and "screen" ), default none
  * @property {string} [blend] Color for recoloring, CSS color string
+ * @property {string} [masksrc] Mask image path. If present, only parts where mask is opaque will be displayed
  * @property {string} [animation] Name of animation to apply, default none
  * @property {number} [frames] Frame numbers used to display static images, array of subsprite indices. For example, if model frame count is 6 but layer has only 3 subsprites, default frames would be [0, 0, 1, 1, 2, 2].
  * @property {string[]} [filters] Names of filters that should be applied to the layer; filters themselves are taken from model options
@@ -50,23 +51,24 @@
  * @property {number} [width] Layer subsprite width, default = model width
  * @property {number} [height] Layer subsprite width, default = model height
  *
- * The following functions can be used instead of constant properties. Theit arguments are (options,V,T) where V=State.variables, T=State.temporary, options are model options provided in render call (from _modeloptions variable for <<rendermodel>>/<<animatemodel>> widget)
- * @property {function} [showfn] (options,V,T)=>boolean Function generating `show` property. Should return boolean, do not use undefined/null/0/"" to hide layer, use of !! (double not) operator recommended.
- * @property {function} [srcfn] (options,V,T)=>string
- * @property {function} [zfn] (options,V,T)=>number
- * @property {function} [alphafn] (options,V,T)=>number
- * @property {function} [desaturatefn] (options,V,T)=>boolean
- * @property {function} [brightnessfn] (options,V,T)=>number
- * @property {function} [contrastftn] (options,V,T)=>number
- * @property {function} [blendModefn] (options,V,T)=>string
- * @property {function} [blendfn] (options,V,T)=>string
- * @property {function} [animationfn] (options,V,T)=>string
- * @property {function} [framesfn] (options,V,T)=>number[]
- * @property {function} [filtersfn] (options,V,T)=>string[]
- * @property {function} [dxfn] (options,V,T)=>number
- * @property {function} [dyfn] (options,V,T)=>number
- * @property {function} [widthfn] (options,V,T)=>number
- * @property {function} [heightfn] (options,V,T)=>number
+ * The following functions can be used instead of constant properties. Their arguments are (options) where options are model options provided in render call (from _modeloptions variable for <<rendermodel>>/<<animatemodel>> widget)
+ * @property {function} [showfn] (options)=>boolean Function generating `show` property. Should return boolean, do not use undefined/null/0/"" to hide layer, use of !! (double not) operator recommended.
+ * @property {function} [srcfn] (options)=>string
+ * @property {function} [zfn] (options)=>number
+ * @property {function} [alphafn] (options)=>number
+ * @property {function} [desaturatefn] (options)=>boolean
+ * @property {function} [brightnessfn] (options)=>number
+ * @property {function} [contrastftn] (options)=>number
+ * @property {function} [blendModefn] (options)=>string
+ * @property {function} [blendfn] (options)=>string
+ * @property {function} [masksrcfn] (options)=>string
+ * @property {function} [animationfn] (options)=>string
+ * @property {function} [framesfn] (options)=>number[]
+ * @property {function} [filtersfn] (options)=>string[]
+ * @property {function} [dxfn] (options)=>number
+ * @property {function} [dyfn] (options)=>number
+ * @property {function} [widthfn] (options)=>number
+ * @property {function} [heightfn] (options)=>number
  */
 
 /**
@@ -226,10 +228,8 @@ window.CanvasModel = class CanvasModel {
 	 * Pre-process options. Typically you calculate some expression here and store them as generated options
 	 * Override in subclass.
 	 * @param options Model options
-	 * @param V State.variables
-	 * @param T State.temporary
 	 */
-	preprocess(options, V, T) {
+	preprocess(options) {
 	}
 
 	/**
@@ -238,12 +238,11 @@ window.CanvasModel = class CanvasModel {
 	 * @return {CompositeLayerSpec[]} layers
 	 */
 	compile(options) {
-		const V = State.variables, T = State.temporary;
 		const debug = V.debug;
 		if (!options) options = {filters: {}};
 		if (!('filters' in options)) options.filters = {};
 		try {
-			this.preprocess(options, V, T);
+			this.preprocess(options);
 		} catch (e) {
 			console.error(e);
 			throw "Error in model preprocessing: "+e.stack
@@ -272,7 +271,7 @@ window.CanvasModel = class CanvasModel {
 			let fnkey = propname + "fn";
 			if (fnkey in layer) {
 				try {
-					layer[propname] = layer[fnkey](options, V, T);
+					layer[propname] = layer[fnkey](options);
 				} catch (e) {
 					if (layer.show) {
 						console.error("Error evaluating layer " + layer.name + " property " + propname,)
@@ -296,6 +295,7 @@ window.CanvasModel = class CanvasModel {
 			propeval(layer, "desaturate");
 			propeval(layer, "brightness");
 			propeval(layer, "contrast");
+			propeval(layer, "masksrc");
 			propeval(layer, "animation");
 			propeval(layer, "filters");
 			propeval(layer, "dx");

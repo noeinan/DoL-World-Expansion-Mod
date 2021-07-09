@@ -138,7 +138,7 @@ window.getCustomColourName = function (hue, saturation, brightness, contrast) {
 	}
 
 	let rgb = getCustomColourRGB(hue, saturation, brightness, contrast);
-	State.temporary.customRGB = `rgb(${Math.round(rgb.r)},${Math.round(rgb.g)},${Math.round(rgb.b)});`;
+	T.customRGB = `rgb(${Math.round(rgb.r)},${Math.round(rgb.g)},${Math.round(rgb.b)});`;
 	let hsv = rgbToHsv(rgb);
 
 	// very specific colours

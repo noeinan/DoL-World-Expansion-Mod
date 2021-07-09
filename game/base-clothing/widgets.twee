@@ -139,7 +139,9 @@
 
 	<<if $_outfitPrimary isnot undefined>>
 		<<set _colour to $wardrobe[$args[1]].last().colour>>
+		<<if $wardrobe[$args[1]].last().colourCustom isnot undefined>><<set _colourCustom to $wardrobe[$args[1]].last().colourCustom>><</if>>
 		<<set _accessory_colour to $wardrobe[$args[1]].last().accessory_colour>>
+		<<if $wardrobe[$args[1]].last().accessory_colourCustom isnot undefined>><<set _accessory_colourCustom to $wardrobe[$args[1]].last().accessory_colourCustom>><</if>>
 		<<for $_label, $_value range $_outfitPrimary>>
 			<<unset _pieceId>>
 			<<for _iSend to 0; _iSend lt setup.clothes[$_label].length; _iSend++>>
@@ -463,7 +465,19 @@
 		/*Re-buy*/
 		<<if $args[0] isnot "genitals">>
 			<<if $carried[$args[0]].name isnot "naked" and $clothingrebuy is 1 and $carried[$args[0]].one_piece isnot "broken" and $carried[$args[0]].shop.length gt 0>>
-				<<if $money gte Math.trunc(getClothingCost($carried[$args[0]]) * 1.5)>>
+				<<if $carried[$args[0]].colourCustom isnot undefined>><<set _colourCustom to $carried[$args[0]].colourCustom>><</if>>
+				<<if $carried[$args[0]].accessory_colourCustom isnot undefined>><<set _accessory_colourCustom to $carried[$args[0]].accessory_colourCustom>><</if>>
+				<<if $carried[$args[0]].outfitSecondary isnot undefined>>
+					<<set _outfitSecondaryRebuy to $carried[$args[0]].outfitSecondary>>
+					<<if $money gte Math.trunc(getClothingCost($carried[_outfitSecondaryRebuy[0]]) * 1.5)>>
+						<<generalSend "wardrobe" _outfitSecondaryRebuy[0] $carried[_outfitSecondaryRebuy[0]].index $carried[_outfitSecondaryRebuy[0]].colour $carried[_outfitSecondaryRebuy[0]].accessory_colour>>
+						<<set $money -= Math.trunc(getClothingCost($carried[_outfitSecondaryRebuy[0]]) * 1.5)>>
+						<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($carried[_outfitSecondaryRebuy[0]].name))>>
+					<<else>>
+						<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($carried[_outfitSecondaryRebuy[0]].name))>>
+					<</if>>
+					<<unset _outfitSecondaryRebuy>>
+				<<elseif $money gte Math.trunc(getClothingCost($carried[$args[0]]) * 1.5)>>
 					<<generalSend "wardrobe" $args[0] $carried[$args[0]].index $carried[$args[0]].colour $carried[$args[0]].accessory_colour>>
 					<<set $money -= Math.trunc(getClothingCost($carried[$args[0]]) * 1.5)>>
 					<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($carried[$args[0]].name))>>
@@ -474,19 +488,15 @@
 				<<if $worn[$args[0]].colourCustom isnot undefined>><<set _colourCustom to $worn[$args[0]].colourCustom>><</if>>
 				<<if $worn[$args[0]].accessory_colourCustom isnot undefined>><<set _accessory_colourCustom to $worn[$args[0]].accessory_colourCustom>><</if>>
 				<<if $worn[$args[0]].outfitSecondary isnot undefined>>
-					<<if $args[0] is "lower">>
-						<<if $money gte Math.trunc(getClothingCost($worn["upper"]) * 1.5)>>
-							<<generalSend "wardrobe" "upper" $worn["upper"].index $worn["upper"].colour $worn["upper"].accessory_colour>>
-							<<set $money -= Math.trunc(getClothingCost($worn["upper"]) * 1.5)>>
-							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["upper"].name))>>
-						<</if>>
-					<<elseif $args[0] is "under_lower">>
-						<<if $money gte Math.trunc(getClothingCost($worn["under_upper"]) * 1.5)>>
-							<<generalSend "wardrobe" "under_upper" $worn["under_upper"].index $worn["under_upper"].colour $worn["under_upper"].accessory_colour>>
-							<<set $money -= Math.trunc(getClothingCost($worn["under_upper"]) * 1.5)>>
-							<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn["under_upper"].name))>>
-						<</if>>
+					<<set _outfitSecondaryRebuy to $worn[$args[0]].outfitSecondary>>
+					<<if $money gte Math.trunc(getClothingCost($worn[_outfitSecondaryRebuy[0]]) * 1.5)>>
+						<<generalSend "wardrobe" _outfitSecondaryRebuy[0] $worn[_outfitSecondaryRebuy[0]].index $worn[_outfitSecondaryRebuy[0]].colour $worn[_outfitSecondaryRebuy[0]].accessory_colour>>
+						<<set $money -= Math.trunc(getClothingCost($worn[_outfitSecondaryRebuy[0]]) * 1.5)>>
+						<<set $effectsmessage to 1>><<run $rebuy_success.push(clone($worn[_outfitSecondaryRebuy[0]].name))>>
+					<<else>>
+						<<set $effectsmessage to 1>><<run $rebuy_failure.push(clone($worn[_outfitSecondaryRebuy[0]].name))>>
 					<</if>>
+					<<unset _outfitSecondaryRebuy>>
 				<<elseif $money gte Math.trunc(getClothingCost($worn[$args[0]]) * 1.5)>>
 					<<generalSend "wardrobe" $args[0] $worn[$args[0]].index $worn[$args[0]].colour $worn[$args[0]].accessory_colour>>
 					<<set $money -= Math.trunc(getClothingCost($worn[$args[0]]) * 1.5)>>
@@ -550,6 +560,7 @@
 						<<generalRuined _outfitSecondaryRuined[0] $args[1]>>
 					<<else>>
 						<<set $carried[_outfitSecondaryRuined[0]].outfitPrimary[$args[0]] to "broken">>
+						<<set $carried[_outfitSecondaryRuined[0]].one_piece to "broken">>
 					<</if>>
 				<</if>>
 			<</if>>
@@ -1004,6 +1015,16 @@
 <<generalUndress _undress_temp "feet">>
 <</widget>>
 
+<<widget "undressSleep">>
+<<set _undress_temp to $args[0]>>
+<<for $_label, $_value range $worn>>
+	<<if $_value.type.includes("eerie")>>
+		<<continue>>
+	<</if>>
+	<<generalUndress _undress_temp $_label>>
+<</for>>
+<</widget>>
+
 <<widget "undressOverClothes">>
 <<set _undress_temp to $args[0]>>
 <<generalUndress _undress_temp "over_upper">>
@@ -1053,11 +1074,13 @@
 			<<set _skip to ["naked","towel top","large towel","towel skirt","large towel bottom","plant skirt","plant top"]>>
 			<<if _outfitPrimaryUndress isnot undefined>>
 				<<for _labelUndress, _valueUndress range _outfitPrimaryUndress>>
-					<<if !_skip.includes($worn[_labelUndress].name) and $worn[_labelUndress].name is _valueUndress>>
-						<<set $wardrobe[_labelUndress].push(clone($worn[_labelUndress]))>>
-						<<run _slots.push(_labelUndress)>>
+					<<if _valueUndress isnot "broken">>
+						<<if !_skip.includes($worn[_labelUndress].name) and $worn[_labelUndress].name is _valueUndress>>
+							<<set $wardrobe[_labelUndress].push(clone($worn[_labelUndress]))>>
+							<<run _slots.push(_labelUndress)>>
+						<</if>>
+						<<set $worn[_labelUndress] to clone(setup.clothes[_labelUndress][0])>>
 					<</if>>
-					<<set $worn[_labelUndress] to clone(setup.clothes[_labelUndress][0])>>
 				<</for>>
 			<</if>>
 			<<if !_skip.includes($worn[_undressSlot].name)>>
