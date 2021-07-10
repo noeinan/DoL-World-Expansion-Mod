@@ -13,10 +13,10 @@ declare interface BlendGradientSpec {
 	values: number[];
 	/**
 	 * Color stops.
-	 * Long form: pairs of `[offset, color]`.
-	 * Short form: [color0, color1] for `[[0.0, color0], [1.0, color1]]`
+	 * Pairs of `[offset, color]` or `[color]`.
+	 * Default offsets are for evenly spaced gradient
 	 */
-	colors: [number, string][] | [string,string];
+	colors: ([number,string]|string)[];
 }
 declare type BlendSpec = string|BlendGradientSpec;
 
@@ -101,14 +101,26 @@ declare interface KeyframeSpec {
 	 * Duration of this keyframe, milliseconds (= delay before next keyframe)
 	 */
 	duration: number;
+
+	// Animating layer properties
+	blend?: BlendSpec;
+	show?: boolean;
+	brightness?: number;
+	contrast?: number;
+	alpha?: number;
+	dx?: number;
+	dy?: number;
 }
 
-declare type AnimationSpec = KeyframeAnimationSpec | IsochronousAnimationSpec;
+declare type AnimationSpec = KeyframeAnimationSpec | SimpleAnimationSpec;
 declare interface KeyframeAnimationSpec {
 	keyframes: KeyframeSpec[];
 }
-declare interface IsochronousAnimationSpec {
+declare interface SimpleAnimationSpec {
 	frames: number;
+	/**
+	 * Duration of *every* keyframe
+	 */
 	duration: number;
 }
 

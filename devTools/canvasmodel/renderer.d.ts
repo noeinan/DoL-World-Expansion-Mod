@@ -129,6 +129,10 @@ declare namespace Renderer {
     export interface AnimationInfo {
         spec: KeyframeAnimationSpec;
         /**
+         * True if any layer properties other than `frame`, are animated
+         */
+        complex: boolean;
+        /**
          * Affected layers
          */
         layers: CompositeLayerSpec[];
@@ -156,6 +160,10 @@ declare namespace Renderer {
         target: CanvasRenderingContext2D;
         keyframeCaches: Dict<CanvasRenderingContext2D>;
         animations: AnimationInfo[];
+        /**
+         * True during rendering a frame
+         */
+        busy: boolean;
         redraw(): void;
         invalidateCaches(): void;
         start(): void;
@@ -163,7 +171,18 @@ declare namespace Renderer {
     }
     export function invalidateLayerCaches(layers: CompositeLayer[]): void;
     export function animateLayersAgain(): any;
-    export function animateLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], animations: Dict<AnimationSpec>, listener: RendererListener, autoStop?: boolean): AnimatingCanvas;
+    export let Animations: Dict<AnimationSpec>;
+    /**
+     * Animation spec provider; default implementation is look up in Renderer.Animations by layer's `animation` property.
+     *
+     * Can be overridden to auto-generate animations, for example.
+     */
+    export let AnimationProvider: (layer: CompositeLayerSpec) => (AnimationSpec | undefined);
+    /**
+     * Animatable properties of KeyframeSpec and CompositeLayer
+     */
+    export const AnimatableProps: string[];
+    export function animateLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], listener: RendererListener, autoStop?: boolean): AnimatingCanvas;
     /**
      * Linear interpolation.
      *

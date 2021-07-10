@@ -152,14 +152,20 @@ var Renderer;
             default:
                 throw new Error("Invalid gradient type: " + spec.gradient);
         }
-        if (spec.colors.length === 2 && typeof spec.colors[0] === 'string' && typeof spec.colors[1] === 'string') {
-            gradient.addColorStop(0.0, spec.colors[0]);
-            gradient.addColorStop(1.0, spec.colors[1]);
-        }
-        else {
-            for (let [offset, color] of spec.colors) {
-                gradient.addColorStop(offset, color);
+        if (spec.colors.length < 2)
+            throw new Error("Invalid gradient stops: " + JSON.stringify(spec.colors));
+        for (let i = 0; i < spec.colors.length; i++) {
+            let stop = spec.colors[i];
+            let offset, color;
+            if (typeof stop === 'string') {
+                color = stop;
+                offset = i / (spec.colors.length - 1);
             }
+            else {
+                offset = stop[0];
+                color = stop[1];
+            }
+            gradient.addColorStop(offset, color);
         }
         return gradient;
     }
@@ -431,11 +437,6 @@ var Renderer;
         return image;
     }
     Renderer.processLayer = processLayer;
-    function layerFrameCount(frameCount, targetWidth, layer) {
-        const frameWidth = targetWidth / frameCount;
-        const subspriteWidth = layer.width || frameWidth;
-        return layer.cachedImage.width / subspriteWidth;
-    }
     function calcLayerRects(layer, layerImageWidth, targetWidth, targetHeight, frameCount) {
         const frameWidth = targetWidth / frameCount;
         const subspriteWidth = layer.width || frameWidth;
@@ -675,8 +676,19 @@ var Renderer;
     }
     Renderer.animateLayersAgain = animateLayersAgain;
     const animatingCanvases = new WeakMap();
-    function animateLayers(targetCanvas, layerSpecs, animations, listener, autoStop = true) {
-        Renderer.lastAnimateCall = [targetCanvas, layerSpecs, animations, listener, autoStop];
+    Renderer.Animations = {};
+    /**
+     * Animation spec provider; default implementation is look up in Renderer.Animations by layer's `animation` property.
+     *
+     * Can be overridden to auto-generate animations, for example.
+     */
+    Renderer.AnimationProvider = layer => Renderer.Animations[layer.animation];
+    /**
+     * Animatable properties of KeyframeSpec and CompositeLayer
+     */
+    Renderer.AnimatableProps = ["alpha", "show", "blend", "brightness", "contrast", "dx", "dy"];
+    function animateLayers(targetCanvas, layerSpecs, listener, autoStop = true) {
+        Renderer.lastAnimateCall = [targetCanvas, layerSpecs, listener, autoStop];
         const keyframeCaches = {};
         function invalidateCaches() {
             for (let key in keyframeCaches)
@@ -689,6 +701,7 @@ var Renderer;
             keyframeCaches: keyframeCaches,
             animations: [],
             playing: false,
+            busy: false,
             start() {
                 if (this.playing)
                     this.stop();
@@ -704,11 +717,12 @@ var Renderer;
                     if (!layer.src || layer.show === false)
                         continue;
                     if (layer.animation) {
-                        let spec = animations[layer.animation];
+                        let spec = Renderer.AnimationProvider(layer);
                         if (!spec) {
                             console.error("Layer '" + (layer.name || layer.src) + "' animation '" + layer.animation + "' not found");
                             continue;
                         }
+                        let complex = false;
                         if ('frames' in spec) {
                             let frames = spec.frames, duration = spec.duration;
                             spec = {
@@ -718,10 +732,23 @@ var Renderer;
                                 spec.keyframes.push({ frame: i, duration: duration });
                             }
                         }
+                        else {
+                            for (let kf of spec.keyframes) {
+                                for (let ap of Renderer.AnimatableProps) {
+                                    if (ap in kf) {
+                                        complex = true;
+                                        break;
+                                    }
+                                }
+                                if (complex)
+                                    break;
+                            }
+                        }
                         let animation = usedAnimations[layer.animation];
                         if (!animation) {
                             animation = usedAnimations[layer.animation] = {
                                 name: layer.animation,
+                                complex: complex,
                                 spec: spec,
                                 timeoutId: 0,
                                 keyframeIndex: 0,
@@ -731,7 +758,7 @@ var Renderer;
                             };
                         }
                         animation.layers.push(layer);
-                        layer.frames = [animation.keyframe.frame];
+                        applyKeyframe(animation.keyframe, layer);
                     }
                     else {
                         layer.frames = [0];
@@ -769,7 +796,12 @@ var Renderer;
         function genAnimationSpec() {
             let j = {};
             for (let animation of animatingCanvas.animations) {
-                j[animation.name] = animation.keyframe.frame;
+                if (animation.complex) {
+                    j[animation.name] = animation.keyframeIndex;
+                }
+                else {
+                    j[animation.name] = animation.keyframe.frame;
+                }
             }
             return JSON.stringify(j);
         }
@@ -786,6 +818,7 @@ var Renderer;
                         animatingCanvas.time = Math.max(t1, animatingCanvas.time);
                         for (let task of tasks)
                             task();
+                        // noinspection JSIgnoredPromiseFromCall
                         compose();
                     }
                     catch (e) {
@@ -801,32 +834,51 @@ var Renderer;
                 nextKeyframe(animation);
             });
         }
+        function applyKeyframe(keyframe, layer) {
+            layer.frames = [keyframe.frame];
+            for (let ap of Renderer.AnimatableProps) {
+                if (ap in keyframe)
+                    layer[ap] = keyframe[ap];
+            }
+        }
         function nextKeyframe(animation) {
             let keyframes = animation.spec.keyframes;
             animation.keyframeIndex = (animation.keyframeIndex + 1) % keyframes.length;
             animation.keyframe = keyframes[animation.keyframeIndex];
             for (let layer of animation.layers) {
-                layer.frames = [animation.keyframe.frame];
+                applyKeyframe(animation.keyframe, layer);
             }
             scheduleNextKeyframe(animation);
             if (listener && listener.keyframe)
                 listener.keyframe(animation.name, animation.keyframeIndex, animation.keyframe);
         }
-        function compose() {
+        function stopCheck() {
             if (autoStop && animatingCanvas.time > 0 && !(document.body.contains(targetCanvas.canvas))) {
                 /* the canvas was removed from DOM. we exclude frame 0 because it might not yet be added */
                 animatingCanvas.stop();
-                return;
+                return true;
             }
-            requestAnimationFrame(() => {
-                try {
-                    doCompose();
-                }
-                catch (e) {
-                    rendererError(listener, e);
-                }
+            return false;
+        }
+        function compose() {
+            if (stopCheck() || animatingCanvas.busy) {
+                return Promise.reject();
+            }
+            animatingCanvas.busy = true;
+            return new Promise((resolve, reject) => {
+                requestAnimationFrame(() => {
+                    animatingCanvas.busy = false;
+                    try {
+                        doCompose0();
+                        resolve();
+                    }
+                    catch (e) {
+                        rendererError(listener, e);
+                        reject(e);
+                    }
+                });
             });
-            function doCompose() {
+            function doCompose0() {
                 let spec = genAnimationSpec();
                 let cachedCanvas = keyframeCaches[spec];
                 if (cachedCanvas) {

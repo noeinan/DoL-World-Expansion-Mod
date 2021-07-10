@@ -213,7 +213,6 @@ window.CanvasModel = class CanvasModel {
 		if (this.animated) {
 			return Renderer.animateLayers(this.canvas,
 				this.compile(this.options),
-				Renderer.Animations,
 				this.listener,
 				true);
 		} else {

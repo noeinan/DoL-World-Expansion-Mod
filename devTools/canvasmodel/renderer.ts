@@ -215,13 +215,18 @@ namespace Renderer {
 			default:
 				throw new Error("Invalid gradient type: "+spec.gradient);
 		}
-		if (spec.colors.length === 2 && typeof spec.colors[0] === 'string' && typeof spec.colors[1] === 'string') {
-			gradient.addColorStop(0.0, spec.colors[0]);
-			gradient.addColorStop(1.0, spec.colors[1]);
-		} else {
-			for (let [offset, color] of (spec.colors as [number,string][])) {
-				gradient.addColorStop(offset, color);
+		if (spec.colors.length < 2) throw new Error("Invalid gradient stops: "+JSON.stringify(spec.colors));
+		for (let i = 0; i < spec.colors.length; i++) {
+			let stop = spec.colors[i];
+			let offset:number, color:string;
+			if (typeof stop === 'string') {
+				color = stop;
+				offset =  i/(spec.colors.length-1);
+			} else {
+				offset = stop[0];
+				color = stop[1];
 			}
+			gradient.addColorStop(offset, color);
 		}
 		return gradient
 	}
@@ -792,6 +797,10 @@ namespace Renderer {
 	export interface AnimationInfo {
 		spec: KeyframeAnimationSpec;
 		/**
+		 * True if any layer properties other than `frame`, are animated
+		 */
+		complex: boolean;
+		/**
 		 * Affected layers
 		 */
 		layers: CompositeLayerSpec[];
@@ -820,6 +829,10 @@ namespace Renderer {
 		target: CanvasRenderingContext2D;
 		keyframeCaches: Dict<CanvasRenderingContext2D>;
 		animations: AnimationInfo[];
+		/**
+		 * True during rendering a frame
+		 */
+		busy: boolean;
 
 		redraw(): void;
 
@@ -847,12 +860,24 @@ namespace Renderer {
 
 	const animatingCanvases = new WeakMap<CanvasRenderingContext2D, AnimatingCanvas>();
 
+	export let Animations: Dict<AnimationSpec> = {};
+	/**
+	 * Animation spec provider; default implementation is look up in Renderer.Animations by layer's `animation` property.
+	 *
+	 * Can be overridden to auto-generate animations, for example.
+	 */
+	export let AnimationProvider: (layer:CompositeLayerSpec)=>(AnimationSpec|undefined) =
+			layer=>Animations[layer.animation];
+
+	/**
+	 * Animatable properties of KeyframeSpec and CompositeLayer
+	 */
+	export const AnimatableProps = ["alpha","show","blend","brightness","contrast","dx","dy"];
 	export function animateLayers(targetCanvas: CanvasRenderingContext2D,
 	                              layerSpecs: CompositeLayerSpec[],
-	                              animations: Dict<AnimationSpec>,
 	                              listener: RendererListener,
 	                              autoStop: boolean = true): AnimatingCanvas {
-		lastAnimateCall = [targetCanvas, layerSpecs, animations, listener, autoStop];
+		lastAnimateCall = [targetCanvas, layerSpecs, listener, autoStop];
 		const keyframeCaches: Dict<CanvasRenderingContext2D> = {};
 
 		function invalidateCaches() {
@@ -868,6 +893,7 @@ namespace Renderer {
 			keyframeCaches: keyframeCaches,
 			animations: [],
 			playing: false,
+			busy: false,
 			start() {
 				if (this.playing) this.stop();
 				this.playing = true;
@@ -881,11 +907,12 @@ namespace Renderer {
 				for (let layer of layerSpecs) {
 					if (!layer.src || layer.show === false) continue;
 					if (layer.animation) {
-						let spec = animations[layer.animation];
+						let spec = AnimationProvider(layer);
 						if (!spec) {
 							console.error("Layer '" + (layer.name || layer.src) + "' animation '" + layer.animation + "' not found");
 							continue;
 						}
+						let complex = false;
 						if ('frames' in spec) {
 							let frames = spec.frames, duration = spec.duration;
 							spec = {
@@ -894,11 +921,22 @@ namespace Renderer {
 							for (let i = 0; i < frames; i++) {
 								spec.keyframes.push({frame: i, duration: duration});
 							}
+						} else {
+							for (let kf of spec.keyframes) {
+								for (let ap of AnimatableProps) {
+									if (ap in kf) {
+										complex = true;
+										break;
+									}
+								}
+								if (complex) break;
+							}
 						}
 						let animation = usedAnimations[layer.animation];
 						if (!animation) {
 							animation = usedAnimations[layer.animation] = {
 								name: layer.animation,
+								complex: complex,
 								spec: spec,
 								timeoutId: 0,
 								keyframeIndex: 0,
@@ -908,7 +946,7 @@ namespace Renderer {
 							};
 						}
 						animation.layers.push(layer);
-						layer.frames = [animation.keyframe.frame];
+						applyKeyframe(animation.keyframe, layer);
 					} else {
 						layer.frames = [0];
 					}
@@ -942,7 +980,11 @@ namespace Renderer {
 		function genAnimationSpec(): string {
 			let j = {};
 			for (let animation of animatingCanvas.animations) {
-				j[animation.name] = animation.keyframe.frame;
+				if (animation.complex) {
+					j[animation.name] = animation.keyframeIndex;
+				} else {
+					j[animation.name] = animation.keyframe.frame;
+				}
 			}
 			return JSON.stringify(j);
 		}
@@ -958,6 +1000,7 @@ namespace Renderer {
 						delete schedule[t1];
 						animatingCanvas.time = Math.max(t1, animatingCanvas.time);
 						for (let task of tasks) task();
+						// noinspection JSIgnoredPromiseFromCall
 						compose();
 					} catch (e) {
 						rendererError(listener, e);
@@ -972,31 +1015,50 @@ namespace Renderer {
 			});
 		}
 
+		function applyKeyframe(keyframe: KeyframeSpec, layer: CompositeLayer) {
+			layer.frames = [keyframe.frame];
+			for (let ap of AnimatableProps) {
+				if (ap in keyframe) layer[ap] = keyframe[ap];
+			}
+		}
+
 		function nextKeyframe(animation: AnimationInfo) {
 			let keyframes = animation.spec.keyframes;
 			animation.keyframeIndex = (animation.keyframeIndex + 1) % keyframes.length;
 			animation.keyframe = keyframes[animation.keyframeIndex];
 			for (let layer of animation.layers) {
-				layer.frames = [animation.keyframe.frame];
+				applyKeyframe(animation.keyframe, layer);
 			}
 			scheduleNextKeyframe(animation);
 			if (listener && listener.keyframe) listener.keyframe(animation.name, animation.keyframeIndex, animation.keyframe);
 		}
 
-		function compose() {
+		function stopCheck():boolean {
 			if (autoStop && animatingCanvas.time > 0 && !(document.body.contains(targetCanvas.canvas))) {
 				/* the canvas was removed from DOM. we exclude frame 0 because it might not yet be added */
 				animatingCanvas.stop();
-				return;
+				return true;
 			}
-			requestAnimationFrame(()=>{
-				try {
-					doCompose();
-				} catch (e) {
-					rendererError(listener, e);
-				}
-			});
-			function doCompose() {
+			return false;
+		}
+		function compose(): Promise<void> {
+			if (stopCheck() || animatingCanvas.busy) {
+				return Promise.reject();
+			}
+			animatingCanvas.busy = true;
+			return new Promise((resolve,reject)=>{
+				requestAnimationFrame(()=>{
+					animatingCanvas.busy = false;
+					try {
+						doCompose0();
+						resolve();
+					} catch (e) {
+						rendererError(listener, e);
+						reject(e)
+					}
+				})
+			})
+			function doCompose0() {
 				let spec = genAnimationSpec();
 				let cachedCanvas = keyframeCaches[spec];
 				if (cachedCanvas) {

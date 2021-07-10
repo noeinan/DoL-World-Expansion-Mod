@@ -80,4 +80,3 @@ window.ZIndices = {
     over_upper_arms_cover: 174
 };
 
-Renderer.Animations = {};

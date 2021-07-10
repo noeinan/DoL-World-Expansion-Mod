@@ -164,6 +164,25 @@ Renderer.Animations["idle"] = {
 Durations are in milliseconds and `frame` refers to sub-sprite in the layer sprite.
 Animations are referenced by its name in the model layer's `animation` property, and can be functions (`animationfn(options) { ... }`).
 
+### Animating layer properties
+
+Animatable layer properties are: `show`, `alpha`, `blend`, `brightness`, `contrast`, `dx`, `dy`. They should be specified in animation keyframes.
+
+Example:
+```js
+Renderer.Animations["idle_redblue"] = {
+    keyframes: [{
+        frame: 0,
+        duration: 1000,
+        blend: "#ff0000"
+    }, {
+        frame: 1,
+        duration: 1000,
+        blend: "#0000ff"
+    }
+};
+```
+
 ## SugarCube widgets
 
 ### Model API
@@ -223,7 +242,7 @@ Render previously prepared images into it.
 Instead of fixed color string, layer's `blend` property can define a linear or radial gradient. A gradient specification is a JSON object of structure:
 * `gradient: "linear"|"radial"` - type of the gradient.
 * `values: number[]` - gradient coordinates. For linear gradient: `[x0, y0, x1, y1]`; for radial gradient: `[x0, y0, r0, x1, y1, r1]`. The coordinates are in pixels, relative to canvas top left corner.
-* `colors: [step, color][]` - color stops, array of pairs. `step:number` is a value between 0 and 1, and `color` is CSS color string. For a simple 2-color gradient, `colors` can have a `[startColor, endColor]` value (equivalent to `[[0.0, startColor], [1.0, endColor]]`.
+* `colors` - color stops, array of either pairs `[offset:number, color:string]` (where `offset` is position between 0 and 1), or simply `color` strings (in that case, `offset` is generated to create evenly spaced stops). 
 
 Example:
 ```js
@@ -231,7 +250,8 @@ T.modeloptions.filters.hair_color = {
     blend: {
         gradient: "linear",
         values: [64, 64, 192, 192],
-        colors: [ [0,'red'], [0.25,'green'], [1.0,'blue']]
+        colors: [ 'red', [0.25,'green'], 'blue' ]
+        // ==   [ [0.0,'red'], [0.25,'green'], [1.0,'blue']]
     },
     blendMode: "hard-light",
     desaturate: true

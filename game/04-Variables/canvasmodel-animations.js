@@ -2,6 +2,58 @@ Renderer.Animations["idle"] = {
 	frames: 2,
 	duration: 1000
 };
+// Example animation for testing
+Renderer.Animations["idle_rainbow"] = {
+	keyframes: [{
+		frame: 0,
+		duration: 200, // 1x200 + 5x160 = 1000, to align with idle animation
+		blend: "#ff0000"
+	}, {
+		frame: 0,
+		duration: 160,
+		blend: "#ff8000"
+	}, {
+		frame: 0,
+		duration: 160,
+		blend: "#ffff00"
+	}, {
+		frame: 0,
+		duration: 160,
+		blend: "#80ff00"
+	}, {
+		frame: 0,
+		duration: 160,
+		blend: "#00ff00"
+	}, {
+		frame: 0,
+		duration: 160,
+		blend: "#00ff80"
+	}, {
+		frame: 1,
+		duration: 200,
+		blend: "#00ffff"
+	}, {
+		frame: 1,
+		duration: 160,
+		blend: "#0080ff"
+	}, {
+		frame: 1,
+		duration: 160,
+		blend: "#0000ff"
+	}, {
+		frame: 1,
+		duration: 160,
+		blend: "#8000ff"
+	}, {
+		frame: 1,
+		duration: 160,
+		blend: "#ff00ff"
+	}, {
+		frame: 1,
+		duration: 160,
+		blend: "#ff0080"
+	}]
+};
 Renderer.Animations["blink"] = {
 	keyframes: [{
 		frame: 0,
