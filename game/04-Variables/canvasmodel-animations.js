@@ -2,7 +2,26 @@ Renderer.Animations["idle"] = {
 	frames: 2,
 	duration: 1000
 };
-// Example animation for testing
+// Example animations for testing
+let demo_rainbow_colors = [
+	"#FF0000", "#FF8000", "#FFFF00", "#80FF00",
+	"#00FF00", "#00FF80", "#00FFFF", "#0080FF",
+	"#0000FF", "#8000FF", "#FF00FF", "#FF0080"
+];
+Renderer.Animations["idle_rainbow_gradient"] = {
+	keyframes: demo_rainbow_colors.map((color, i) => ({
+		frame: Math.floor(i * 2 / 12),
+		duration: (i%6 === 0) ? 200 : 160, // 200 ms + 5 x 160 ms = 1000 ms
+		blend: {
+			gradient: "linear",
+			values: [128, 0, 128, 256],
+			colors: [
+				...demo_rainbow_colors.slice(i),
+				...demo_rainbow_colors.slice(0,i)
+			]
+		}
+	}))
+}
 Renderer.Animations["idle_rainbow"] = {
 	keyframes: [{
 		frame: 0,
