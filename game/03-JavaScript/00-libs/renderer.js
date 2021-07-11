@@ -81,7 +81,7 @@ var Renderer;
         return c2d;
     }
     Renderer.createCanvas = createCanvas;
-    const globalC2D = createCanvas(1, 1);
+    Renderer.globalC2D = createCanvas(1, 1);
     /**
      * Creates a cutout of color in shape of sourceImage
      */
@@ -140,14 +140,25 @@ var Renderer;
         }
     }
     Renderer.fillFrames = fillFrames;
+    Renderer.Patterns = {};
+    /**
+     * CanvasPattern generator/provider.
+     * Default implementation looks up in the Renderer.Patterns object, can be replaced to accept complex object
+     * and generate custom pattern.
+     */
+    Renderer.PatternProvider = (spec) => {
+        if (typeof spec === 'string' && spec in Renderer.Patterns)
+            return Renderer.Patterns[spec];
+        return null;
+    };
     function createGradient(spec) {
         let gradient;
         switch (spec.gradient) {
             case "linear":
-                gradient = globalC2D.createLinearGradient(spec.values[0], spec.values[1], spec.values[2], spec.values[3]);
+                gradient = Renderer.globalC2D.createLinearGradient(spec.values[0], spec.values[1], spec.values[2], spec.values[3]);
                 break;
             case "radial":
-                gradient = globalC2D.createRadialGradient(spec.values[1], spec.values[2], spec.values[3], spec.values[4], spec.values[5], spec.values[6]);
+                gradient = Renderer.globalC2D.createRadialGradient(spec.values[1], spec.values[2], spec.values[3], spec.values[4], spec.values[5], spec.values[6]);
                 break;
             default:
                 throw new Error("Invalid gradient type: " + spec.gradient);
@@ -408,6 +419,7 @@ var Renderer;
         const blend = layer.blend;
         if (blend && layer.blendMode) {
             needsCutout = true;
+            let noop = false;
             if (typeof blend === 'string') {
                 image = composeOverRect(image, blend, layer.blendMode).canvas;
             }
@@ -415,10 +427,19 @@ var Renderer;
                 let gradient = createGradient(blend);
                 image = composeOverSpecialRect(image, gradient, layer.blendMode, rects.subspriteFrameCount).canvas;
             }
+            else if ('pattern' in blend) {
+                let pattern = Renderer.PatternProvider(blend.pattern);
+                if (pattern) {
+                    image = composeOverSpecialRect(image, pattern, layer.blendMode, rects.subspriteFrameCount).canvas;
+                }
+                else {
+                    noop = true;
+                }
+            }
             else {
                 throw new Error("Invalid blend spec for layer " + layer.name + ": " + JSON.stringify(blend));
             }
-            if (listener && listener.processingStep) {
+            if (listener && listener.processingStep && !noop) {
                 listener.processingStep(name, "blend", image);
             }
         }
@@ -429,6 +450,11 @@ var Renderer;
             }
         }
         if (needsCutout) {
+            if (!(image instanceof HTMLCanvasElement)) {
+                let i2 = createCanvas(image.width, image.height);
+                i2.drawImage(image, 0, 0);
+                image = i2.canvas;
+            }
             image = cutoutFrom(image.getContext('2d'), layer.image).canvas;
             if (listener && listener.processingStep) {
                 listener.processingStep(name, "cutout", image);
@@ -770,7 +796,8 @@ var Renderer;
                     if (listener && listener.keyframe)
                         listener.keyframe(animation.name, animation.keyframeIndex, animation.keyframe);
                 }
-                compose();
+                compose().catch((e) => { if (e)
+                    console.error(e); });
             },
             stop() {
                 if (!this.playing)
@@ -790,7 +817,8 @@ var Renderer;
             invalidateCaches,
             time: 0,
             redraw() {
-                compose();
+                compose().catch((e) => { if (e)
+                    console.error(e); });
             }
         };
         function genAnimationSpec() {
@@ -818,8 +846,8 @@ var Renderer;
                         animatingCanvas.time = Math.max(t1, animatingCanvas.time);
                         for (let task of tasks)
                             task();
-                        // noinspection JSIgnoredPromiseFromCall
-                        compose();
+                        compose().catch((e) => { if (e)
+                            console.error(e); });
                     }
                     catch (e) {
                         rendererError(listener, e);

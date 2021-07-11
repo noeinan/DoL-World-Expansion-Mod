@@ -18,7 +18,13 @@ declare interface BlendGradientSpec {
 	 */
 	colors: ([number,string]|string)[];
 }
-declare type BlendSpec = string|BlendGradientSpec;
+declare interface BlendPatternSpec {
+	/**
+	 * Pattern identifier or a specification, sent to pattern provider to get an actual image
+	 */
+	pattern: string|object;
+}
+declare type BlendSpec = string|BlendGradientSpec|BlendPatternSpec;
 
 declare interface CompositeLayerParams {
 	/**

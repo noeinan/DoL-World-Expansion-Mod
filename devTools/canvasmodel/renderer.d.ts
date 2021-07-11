@@ -44,6 +44,7 @@ declare namespace Renderer {
      */
     export function gray(value: number): string;
     export function createCanvas(w: number, h: number, fill?: string): CanvasRenderingContext2D;
+    export const globalC2D: CanvasRenderingContext2D;
     /**
      * Creates a cutout of color in shape of sourceImage
      */
@@ -62,6 +63,13 @@ declare namespace Renderer {
      * (Makes sense with gradient and pattern fills, to keep consistents across all sub-frames)
      */
     export function fillFrames(fillStyle: string | CanvasGradient | CanvasPattern, canvas: CanvasRenderingContext2D, frameCount: number, frameWidth: number): void;
+    export let Patterns: Dict<CanvasPattern>;
+    /**
+     * CanvasPattern generator/provider.
+     * Default implementation looks up in the Renderer.Patterns object, can be replaced to accept complex object
+     * and generate custom pattern.
+     */
+    export let PatternProvider: (spec: string | object) => (CanvasPattern | null);
     export function createGradient(spec: BlendGradientSpec): CanvasGradient;
     /**
      * Paints sourceImage over same-sized canvas filled with pattern or gradient

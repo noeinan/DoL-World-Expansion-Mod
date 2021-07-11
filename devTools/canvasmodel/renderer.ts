@@ -112,7 +112,11 @@ namespace Renderer {
 		}
 		return c2d;
 	}
-	const globalC2D = createCanvas(1,1);
+
+	/**
+	 * Free to use CanvasRenderingContext2D (to create image data, gradients, patterns)
+	 */
+	export const globalC2D = createCanvas(1,1);
 
 	/**
 	 * Creates a cutout of color in shape of sourceImage
@@ -196,6 +200,17 @@ namespace Renderer {
 				i*frameWidth, 0, frameWidth, frameHeight);
 		}
 	}
+
+	export let Patterns:Dict<CanvasPattern> = {};
+	/**
+	 * CanvasPattern generator/provider.
+	 * Default implementation looks up in the Renderer.Patterns object, can be replaced to accept complex object
+	 * and generate custom pattern.
+	 */
+	export let PatternProvider: (spec: string|object)=>(CanvasPattern|null) = (spec)=>{
+		if (typeof spec === 'string' && spec in Patterns) return Patterns[spec];
+		return null;
+	};
 
 	export function createGradient(spec: BlendGradientSpec): CanvasGradient {
 		let gradient: CanvasGradient;
@@ -522,16 +537,24 @@ namespace Renderer {
 		const blend = layer.blend;
 		if (blend && layer.blendMode) {
 			needsCutout = true;
+			let noop = false;
 			if (typeof blend === 'string') {
 				image = composeOverRect(image, blend, layer.blendMode).canvas;
 			} else if ('gradient' in blend) {
 				let gradient = createGradient(blend);
 				image = composeOverSpecialRect(image, gradient, layer.blendMode, rects.subspriteFrameCount).canvas;
+			} else if ('pattern' in blend) {
+				let pattern = PatternProvider(blend.pattern);
+				if (pattern) {
+					image = composeOverSpecialRect(image, pattern, layer.blendMode, rects.subspriteFrameCount).canvas;
+				} else {
+					noop = true;
+				}
 			} else {
 				throw new Error("Invalid blend spec for layer "+layer.name+": "+JSON.stringify(blend));
 			}
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "blend", image);
+			if (listener && listener.processingStep && !noop) {
+				listener.processingStep(name, "blend", image as HTMLCanvasElement);
 			}
 		}
 		if (layer.mask) {
@@ -541,7 +564,12 @@ namespace Renderer {
 			}
 		}
 		if (needsCutout) {
-			image = cutoutFrom((image as HTMLCanvasElement).getContext('2d'), layer.image!!).canvas;
+			if (!(image instanceof HTMLCanvasElement)) {
+				let i2 = createCanvas(image.width as number, image.height as number);
+				i2.drawImage(image, 0, 0);
+				image = i2.canvas;
+			}
+			image = cutoutFrom(image.getContext('2d'), layer.image!!).canvas;
 			if (listener && listener.processingStep) {
 				listener.processingStep(name, "cutout", image);
 			}
@@ -956,7 +984,7 @@ namespace Renderer {
 					scheduleNextKeyframe(animation);
 					if (listener && listener.keyframe) listener.keyframe(animation.name, animation.keyframeIndex, animation.keyframe);
 				}
-				compose();
+				compose().catch((e)=>{if (e) console.error(e)});
 			},
 			stop() {
 				if (!this.playing) return;
@@ -973,7 +1001,7 @@ namespace Renderer {
 			invalidateCaches,
 			time: 0,
 			redraw() {
-				compose();
+				compose().catch((e)=>{if (e) console.error(e)});
 			}
 		}
 
@@ -1000,8 +1028,7 @@ namespace Renderer {
 						delete schedule[t1];
 						animatingCanvas.time = Math.max(t1, animatingCanvas.time);
 						for (let task of tasks) task();
-						// noinspection JSIgnoredPromiseFromCall
-						compose();
+						compose().catch((e)=>{if (e) console.error(e)});
 					} catch (e) {
 						rendererError(listener, e);
 					}
