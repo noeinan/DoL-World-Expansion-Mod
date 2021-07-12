@@ -35,7 +35,7 @@
 <<if $stress gte 10000>>
 	<<passoutforest>>
 <<elseif $foresthunt gte 10>>
-		<<foresthunt>>
+	<<foresthunt>>
 <<else>>
 	<<set $danger to random(1, 10000)>><<set $dangerevent to 0>>
 	<<throneVouch>>
@@ -74,80 +74,89 @@
 
 
 :: Hive Approach 
-<<set $outside to 1>><<set $location to "hive">><<effects>>
-<<throneVouch>>
-<<if $hivemember is 1>>
-	The guards recognize you and don't block your way. 
-	<br><br>
-
-	<<link [[Enter Hive|Hive Corridor]]>><</link>><<endevent>>
-	<br>
-	<<link [[Leave|Hive Entrance]]>><</link>><<endevent>>
-	<br>
-<<elseif $bee gte 6>>
-	“Stop there bee.” <<bhe>> sniffs you and thinks for a moment. “You don’t smell like another hive. Are you wild?”
-	<br><br>
-	<<link [[Say you’re wild|Hive Entrance Accepted]]>><</link>><<endevent>>
-	<br>
-	<<link [[Say you’re a member of another hive|Hive Entrance Rejected]]>><</link>><<endevent>>
-	<br>
+<<set $outside to 1>><<set $location to "hive">><<effects>><<set $hivestage to 0>>
+<<if $stress gte 10000 and $hivemember is 1>>
+	<<passouthive>>
+<<elseif $stress gte 10000 and $hivemember is 0>>
+	<<passoutforest>>
 <<else>>
-	<<if ($monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($bestialitydisable is "t")>>
-		<<beastNEWinit 2 wasp>>
-		“Stand back human, not welcome inside” <<bhe>> buzzes menacingly. 
+	<<throneVouch>>
+	<<if $hivemember is 1>>
+		The guards recognize you and don't block your way. 
+		<br><br>
+
+		<<link [[Enter Hive|Hive Corridor]]>><</link>><<endevent>>
+		<br>
+		<<link [[Leave|Hive Entrance]]>><</link>><<endevent>>
+		<br>
+	<<elseif $bee gte 6>>
+		“Stop there bee.” <<bhe>> sniffs you and thinks for a moment. “You don’t smell like another hive. Are you wild?”
+		<br><br>
+		<<link [[Say you’re wild|Hive Entrance Accepted]]>><</link>><<endevent>>
+		<br>
+		<<link [[Say you’re a member of another hive|Hive Entrance Rejected]]>><</link>><<endevent>>
+		<br>
 	<<else>>
-		The wasps buzz angrily at you, chasing you away from the hive. 
+		<<if ($monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($bestialitydisable is "t")>>
+			<<beastNEWinit 2 wasp>>
+			“Stand back human, not welcome inside” <<bhe>> buzzes menacingly. 
+		<<else>>
+			The wasps buzz angrily at you, chasing you away from the hive. 
+		<</if>>
+		<br><br>
+
+		<<link [[Next|Hive Entrance]]>><</link>><<endevent>>
+		<br>
 	<</if>>
-	<br><br>
-
-	<<link [[Next|Hive Entrance]]>><</link>><<endevent>>
-	<br>
 <</if>>
-
 
 :: Hive Corridor 
-<<set $outside to 0>><<set $location to "hive">><<effects>>
-<<throneVouch>>
-<<if $daystate is "dawn">>
-	<<if random(1)>>
-		<<beastNEWinit 5 bee>>
-	<<else>>
-		<<beastNEWinit 5 wasp>>
-	<</if>>
-	The corridors are busy with commotion as the <<beastsplural>> hurry to their jobs.
-<<elseif $daystate is "day">>
-	The corridors are silent with almost all hive members at their jobs.
-<<elseif $daystate is "dusk">>
-	<<if random(1)>>
-		<<beastNEWinit 5 bee>>
-	<<else>>
-		<<beastNEWinit 5 wasp>>
-	<</if>>
-	The corridors are a bit more active since most <<beastsplural>> have finished their work and are winding down for the night.
-<<elseif $daystate is "night">>
-	The corridors are dead silent. All other hive members are either asleep or staying respectfully quiet.
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $hivestage to 1>>
+<<if $stress gte 10000>>
+	<<passouthive>>
 <<else>>
-	You are in the corridor of the hive. 
-<</if>>
-<br><br>
-
-<<if $TaylorSeen is 1 and $TaylorMissing is 1>>
-	While you’re walking down the corridors you see a guard walking a young <<personsimple>> to the cells.
+	<<throneVouch>>
+	<<if $daystate is "dawn">>
+		<<if random(1)>>
+			<<beastNEWinit 5 bee>>
+		<<else>>
+			<<beastNEWinit 5 wasp>>
+		<</if>>
+		The corridors are busy with commotion as the <<beastsplural>> hurry to their jobs.
+	<<elseif $daystate is "day">>
+		The corridors are silent with almost all hive members at their jobs.
+	<<elseif $daystate is "dusk">>
+		<<if random(1)>>
+			<<beastNEWinit 5 bee>>
+		<<else>>
+			<<beastNEWinit 5 wasp>>
+		<</if>>
+		The corridors are a bit more active since most <<beastsplural>> have finished their work and are winding down for the night.
+	<<elseif $daystate is "night">>
+		The corridors are dead silent. All other hive members are either asleep or staying respectfully quiet.
+	<<else>>
+		You are in the corridor of the hive. 
+	<</if>>
 	<br><br>
-<</if>>
 
-<<link [[Leave Hive|Hive Approach]]>><<endevent>><</link>>
-<br>
-<<link [[Barracks|Hive Barracks]]>><<endevent>><</link>>
-<br>
-<<link [[Cells|Hive Cell Outside]]>><<endevent>><</link>>
-<br>
-<<link [[Throne Room|Hive Throne Room]]>><<endevent>><</link>>
-<br>
+	<<if $TaylorSeen is 1 and $TaylorMissing is 1>>
+		While you’re walking down the corridors you see a guard walking a young <<personsimple>> to the cells.
+		<br><br>
+	<</if>>
+
+	<<link [[Leave Hive|Hive Approach]]>><<endevent>><</link>>
+	<br>
+	<<link [[Barracks|Hive Barracks]]>><<endevent>><</link>>
+	<br>
+	<<link [[Cells|Hive Cell Outside]]>><<endevent>><</link>>
+	<br>
+	<<link [[Throne Room|Hive Throne Room]]>><<endevent>><</link>>
+	<br>
+<</if>>
 
 
 :: Hive Barracks 
-<<set $outside to 0>><<set $location to "hive">><<effects>>
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $hivestage to 2>>
 <<throneVouch>>
 <<roomoptions>>
 
@@ -176,8 +185,10 @@ You’re in a large open room. The walls are lined with small hexagonal holes ma
 	    <<link [[Masturbate (0:05)|Hive Masturbation]]>><<pass 5>><<set $masturbationstart to 1>><</link>>
 		<br><br>
     <</if>>
-    <<link [[Relax (0:30)|Hive Barracks Relax]]>><<pass 30>><<endevent>><</link>>
-    <br><br>
+	<<if $daystate is "dusk">>
+		<<link [[Relax (0:30)|Hive Barracks Relax]]>><<pass 30>><<endevent>><</link>>
+		<br><br>
+	<</if>>
     <<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
     <br><br>
     <<link [[Settings|Hive Settings]]>><<endevent>><</link>>
@@ -307,31 +318,38 @@ You squeeze into the pod, feeling the waxy walls against your skin.
 
 
 :: Hive Throne Room 
-<<set $outside to 0>><<set $location to "hive">><<effects>>
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $hivestage to 4>>
+<<if $stress gte 10000>>
+	<<passouthive>>
+<<else>>
 <<throneVouch>>
-You try the door but seem to recall it being locked.
-<br><br>
+	You try the door but seem to recall it being locked.
+	<br><br>
 
-<<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
-
+	<<link [[Corridor|Hive Corridor]]>><<endevent>><</link>>
+<</if>>
 
 :: Hive Cell Outside
-<<set $outside to 0>><<set $location to "hive">><<effects>>
-<<throneVouch>>
-<<if ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorFreed is 0>>
-	<<npc Taylor>><<person1>>
-	A row of cells line the back wall of the hive. One cell is occupied by a human prisoner.
+<<set $outside to 0>><<set $location to "hive">><<effects>><<set $hivestage to 3>>
+<<if $stress gte 10000>>
+	<<passouthive>>
 <<else>>
-	A row of cells line the back wall of the hive. At the moment all of the cells are empty although there are still guards stationed here nonetheless. 
-<</if>>
-<br><br>
+	<<throneVouch>>
+	<<if ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorFreed is 0>>
+		<<npc Taylor>><<person1>>
+		A row of cells line the back wall of the hive. One cell is occupied by a human prisoner.
+	<<else>>
+		A row of cells line the back wall of the hive. At the moment all of the cells are empty although there are still guards stationed here nonetheless. 
+	<</if>>
+	<br><br>
 
-<<link [[Corridor|Hive Corridor]]>><</link>>
-<br>
-<<if ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorIntroduction is 0 and $TaylorFreed is 0>>
-	<<link [[Talk to prisoner|Hive Taylor Introduction]]>><<npcincr Taylor love 1>><</link>><<glove>>
-<<elseif ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorFreed is 0>>
-	<<link [[Talk to prisoner|Hive Taylor Hangout]]>><<npcincr Taylor love 1>><</link>><<glove>>
+	<<link [[Corridor|Hive Corridor]]>><</link>>
+	<br>
+	<<if ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorIntroduction is undefined and $TaylorFreed is 0>>
+		<<link [[Talk to prisoner|Hive Taylor Introduction]]>><<npcincr Taylor love 1>><</link>><<glove>>
+	<<elseif ($TaylorArrested is 1 or $TaylorMissing is 1) and $TaylorFreed is 0>>
+		<<link [[Talk to Taylor|Hive Taylor Hangout]]>><<npcincr Taylor love 1>><</link>><<glove>>
+	<</if>>
 <</if>>
 
 :: Hive Cell
