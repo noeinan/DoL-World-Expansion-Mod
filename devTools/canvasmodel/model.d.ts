@@ -4,6 +4,27 @@ declare interface AnyDict {
 declare interface Dict<T> {
 	[index: string]: T;
 }
+declare interface BlendGradientSpec {
+	gradient: 'linear'|'radial';
+	/**
+	 * * For linear gradient: [x0, y0, x1, y1].
+	 * * For radial gradient: [x0, y0, r0, x1, y1, r1].
+	 */
+	values: number[];
+	/**
+	 * Color stops.
+	 * Pairs of `[offset, color]` or `[color]`.
+	 * Default offsets are for evenly spaced gradient
+	 */
+	colors: ([number,string]|string)[];
+}
+declare interface BlendPatternSpec {
+	/**
+	 * Pattern identifier or a specification, sent to pattern provider to get an actual image
+	 */
+	pattern: string|object;
+}
+declare type BlendSpec = string|BlendGradientSpec|BlendPatternSpec;
 
 declare interface CompositeLayerParams {
 	/**
@@ -15,9 +36,9 @@ declare interface CompositeLayerParams {
 	 */
 	z?: number;
 	/**
-	 * Blend color, CSS color string
+	 * Blend color/gradient/pattern. For color, CSS color string.
 	 */
-	blend?: string;
+	blend?: BlendSpec;
 	/**
 	 * Blend mode.
 	 */
@@ -86,14 +107,26 @@ declare interface KeyframeSpec {
 	 * Duration of this keyframe, milliseconds (= delay before next keyframe)
 	 */
 	duration: number;
+
+	// Animating layer properties
+	blend?: BlendSpec;
+	show?: boolean;
+	brightness?: number;
+	contrast?: number;
+	alpha?: number;
+	dx?: number;
+	dy?: number;
 }
 
-declare type AnimationSpec = KeyframeAnimationSpec | IsochronousAnimationSpec;
+declare type AnimationSpec = KeyframeAnimationSpec | SimpleAnimationSpec;
 declare interface KeyframeAnimationSpec {
 	keyframes: KeyframeSpec[];
 }
-declare interface IsochronousAnimationSpec {
+declare interface SimpleAnimationSpec {
 	frames: number;
+	/**
+	 * Duration of *every* keyframe
+	 */
 	duration: number;
 }
 
