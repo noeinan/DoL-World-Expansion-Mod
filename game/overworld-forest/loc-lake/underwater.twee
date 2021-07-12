@@ -187,6 +187,10 @@ You swim up to the surface, <span class="red">but you can't find the hole in the
 /*added*/
 :: Lake Ruin Enter
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+<<if $TaylorWith is 1>>
+	<<set $oxygenmax to (1200*45)>><<set $oxygen to $oxygenmax>>
+	You two dip into the water and swim down into the murky depths. 
+<</if>>
 You arrive at a large moss covered stone temple lying upon the lake floor. A large arch doorway lies ahead beckoning divers inside.
 <br><br>
 <<if $stress gte $stressmax>>
@@ -216,8 +220,13 @@ As you swim inside the cracked stone walls are coated in a strange glowing liche
 	<<link [[Swim deeper|Lake Ruin Deep]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
 	<br>
 	/*changed*/
-	<<link [[Swim towards the surface|Lake Ruin Enter]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
+	<<if $TaylorWith is 1>>
+		<<link [[Swim towards the surface|Lake Taylor Surface]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+		<br>
+	<<else>>
+		<<link [[Swim towards the surface|Lake Ruin Enter]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+		<br>
+	<</if>>
 <</if>>
 
 /*Continue*/
@@ -373,7 +382,7 @@ Red moonlight filters down from cracks in the ceiling. The plinth seems to glow 
 :: Lake Ruin Hallway
 <<set $lakestage to 3>>
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
-You swim past the plinth and through the back door of the room into another hallway that's entirely pitch black. You take out your waterproof torch and click the button on the side. You click the button on the side and it flashes on lightening the hallway causing a few swarms of fish to scatter from the sudden exposure. Down the dimly lit corridor you can see several side doors and another large door at the end of the hallway.
+You swim past the plinth and through the back door of the room into another hallway that's entirely pitch black. <<if $TaylorWith is 1>>Taylor hands you a small waterproof flashlight and motions for you to turn it on.<<else>>You take out your waterproof torch and click the button on the side.<</if>> You click the button on the side and it flashes on lightening the hallway causing a few swarms of fish to scatter from the sudden exposure. Down the dimly lit corridor you can see several side doors and another large door at the end of the hallway.
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutlake>>
@@ -558,7 +567,7 @@ You count $tentacles.active tentacles surrounding you.
 	/*added*/
 	<<set $rng to random(1, 100)>>
 	/*changed*/
-	<<if $rng gte (81/$lakepotsmult)>>
+	<<if $rng gte (81/$lakepotsmult) and $TaylorWith is 0>>
 		You reach inside one of the pots, and find a small ivory box. It's sealed by a bronze lock.
 		<br><br>
 		<<if $historytrait gte 4>>
@@ -580,7 +589,7 @@ You count $tentacles.active tentacles surrounding you.
 		/*added lakepottravel check*/
 		<<lakepottravel>>
 	/*changed*/
-	<<elseif $rng gte (78/$lakepotsmult) and $swarmdisable is "f">>
+	<<elseif $rng gte (78/$lakepotsmult) and $swarmdisable is "f" and $TaylorWith is 0>>
 		You reach inside one of the pots. Swarms of small fish surge out, surrounding you.
 		<br><br>
 		<<link [[Next|Lake Swarm]]>><<set $molestationstart to 1>><</link>>
@@ -594,8 +603,12 @@ You count $tentacles.active tentacles surrounding you.
 		<<lakepottravel>>
 	/*changed*/
 	<<elseif $rng gte (41/$lakepotsmult) and $lakeruinkey is undefined>>
-		You reach inside one of the pots. You find a decaying bronze key.
-		<br><br>
+		<<if $TaylorWith is 1>>
+			You swim over to the ancient pots and stick your hand inside feeling around. Taylor glares at you for disturbing an ancient temple but you continue to search the pots until you find a small brass key.
+		<<else>>
+			You reach inside one of the pots. You find a decaying bronze key.
+			<br><br>
+		<</if>>
 		<<set $lakeruinkey to 1>>
 		/*added lakepottravel check*/ 
 		<<lakepottravel>>
@@ -910,3 +923,26 @@ The creature recoils from you and disappears into darkness. <<tearful>> you turn
 	<<link [[Next|Lake Depths]]>><<set $eventskip to 1>><</link>>
 	<br>
 <</if>>
+
+:: Lake Taylor Surface
+You two resurface and take off your masks. "What's the matter, are we leaving already?" Taylor asks, looking at you.
+<br><br>
+
+<<link [[Leave|Lake Taylor Leave]]>><</link>>
+<br>
+<<link [[Go back|Lake Taylor Dive Again]]>><</link>>
+
+:: Lake Taylor Leave
+You tell Taylor you've explored everything you wanted for now as you start swimming to the shore. The two of you arrive on the shore and rest for a moment. You both change back into your clothes and start heading back to town.
+<br><br>
+
+You arrive in town a while later and part ways. Taylor keeps your diving gear for you in case it's needed for a later exploration.
+<br><br>
+
+<<link [[Next|Danube Street]]>><</link>>
+
+:: Lake Taylor Dive Again
+You inform Taylor that you weren’t quite finished and dive once again. 
+<br><br>
+
+<<link [[Next|Lake Ruin Enter]]>><</link>>
