@@ -313,8 +313,8 @@ Renderer.CanvasModels["main"] = {
 			"bee_ears_type": "disabled",
 			"bee_tail_type": "disabled",
 			"bee_wings_type": "disabled",
-			"bee_wings_right": "disabled",
-			"bee_wings_left": "disabled",
+			"bee_wings_right": "idle",
+			"bee_wings_left": "idle",
 			/*noeinan mod END*/
 			// body writings
 			"writing_forehead": "",
