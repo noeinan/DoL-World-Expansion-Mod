@@ -1,4 +1,38 @@
 :: Widgets variablesVersionUpdate [widget]
+
+<<widget "dolwemergeupdate">>
+	<<if $dolweversion is undefined or $dolweversion lt 31>>
+		<<set $dolweversion to 31>>
+		/* update changed indexes of worn and wardrobe items */
+		/* cloud hair clip: old = 33, new = 36 */
+		<<if $worn.head.name is "prayer beads">>
+			<<set $worn.head.index to 36>>
+		<</if>>
+		<<for _i = 0; _i lt $wardrobe.head.length; _i++>>
+			<<if $wardrobe.head[_i].name is "cloud hair clip">>
+				<<set $wardrobe.head[_i].index to 36>>
+			<</if>>
+		<</for>>
+		/* prayer beads: old = 19, new = 20 */
+		<<if $worn.neck.name is "prayer beads">>
+			<<set $worn.neck.index to 20>>
+		<</if>>
+		<<for _i = 0; _i lt $wardrobe.neck.length; i++>>
+			<<if $wardrobe.neck[_i].name is "prayer beads">>
+				<<set $wardrobe.neck[_i].index to 20>>
+			<</if>>
+		<</for>>
+		/* update changed indexes of bodywriting objects */
+		/* Complex array: old = 111, new = 121*/
+		<<for _key range Object.keys(V.skin)>>
+			<<if $skin[_key].writing is "Complex array">>
+				<<set $skin[_key].index to 121>>
+			<</if>>
+		<</for>>
+	<</if>>
+
+<</widget>>
+
 <<widget "variablesVersionUpdate">>
 /*Variable that you need to check on every new version, page load/refresh or save load*/
 
@@ -6,9 +40,14 @@
 <<if $objectVersion is undefined>>
 	<<set $objectVersion to {}>>
 <</if>>
+
 <<if $saveVersions is undefined>>
 	<<set $saveVersions to [StartConfig.version]>>
 <<elseif $saveVersions.last() isnot StartConfig.version>>
+/* noeinan mod start */
+/* update unique mod items */
+	<<dolwemergeupdate>>
+/* noeinan mod end */
 	<<set $saveVersions.push(StartConfig.version)>>
 <</if>>
 <<if $saveId is undefined>>
