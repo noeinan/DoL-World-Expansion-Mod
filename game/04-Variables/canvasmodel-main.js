@@ -1710,20 +1710,20 @@ Renderer.CanvasModels["main"] = {
 		},
 		"bee_wings_right": {
 			srcfn(options) {
-				return 'img/transformations/bee/rightwing/'+options.bee_wings_right+'.png'
+				return 'img/transformations/bee/rightwing/'+options.bee_wings_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(options.bee_wings_right)
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_right === "idle"
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
 		"bee_wings_left": {
 			srcfn(options) {
-				return 'img/transformations/bee/leftwing/'+options.bee_wings_left+'.png'
+				return 'img/transformations/bee/leftwing/'+options.bee_wings_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(options.bee_wings_left)
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_left === "idle"
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
