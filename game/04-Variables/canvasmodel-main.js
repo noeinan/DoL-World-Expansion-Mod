@@ -1619,7 +1619,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/fox/ears/'+options.fox_ears_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(fox_ears_type)
+				return options.show_tf && tf_enabled(options.fox_ears_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1630,7 +1630,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/fox/tail/'+options.fox_tail_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(fox_tail_type)
+				return options.show_tf && tf_enabled(options.fox_tail_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1650,7 +1650,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/sheep/horns/'+options.sheep_horns_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(sheep_horns_type)
+				return options.show_tf && tf_enabled(options.sheep_horns_type)
 			},
 			z: ZIndices.horns,
 			animation: "idle"
@@ -1660,7 +1660,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/sheep/ears/'+options.sheep_ears_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(sheep_ears_type)
+				return options.show_tf && tf_enabled(options.sheep_ears_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1671,7 +1671,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/sheep/tail/'+options.sheep_tail_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(sheep_tail_type)
+				return options.show_tf && tf_enabled(options.sheep_tail_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1691,7 +1691,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/ears/'+options.bee_ears_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(bee_ears_type)
+				return options.show_tf && tf_enabled(options.bee_ears_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1699,10 +1699,10 @@ Renderer.CanvasModels["main"] = {
 		},
 		"bee_tail_type": {
 			srcfn(options) {
-				return 'img/transformations/tail/ears/'+options.bee_tail_type+'.png'
+				return 'img/transformations/bee/tail/'+options.bee_tail_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(bee_tail_type)
+				return options.show_tf && tf_enabled(options.bee_tail_type)
 			},
 			filters: ["hair"],
 			z: ZIndices.backhair,
@@ -1713,7 +1713,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/rightwing/'+options.bee_wings_right+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(bee_wings_right)
+				return options.show_tf && tf_enabled(options.bee_wings_right)
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
@@ -1723,7 +1723,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/leftwing/'+options.bee_wings_left+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(bee_wings_left)
+				return options.show_tf && tf_enabled(options.bee_wings_left)
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
