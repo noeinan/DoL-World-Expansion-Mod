@@ -1694,7 +1694,7 @@ Renderer.CanvasModels["main"] = {
 				return options.show_tf && tf_enabled(options.bee_ears_type)
 			},
 			filters: ["hair"],
-			z: ZIndices.backhair,
+			z: ZIndices.fronthair,
 			animation: "idle"
 		},
 		"bee_tail_type": {
