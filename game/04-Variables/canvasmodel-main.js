@@ -304,6 +304,18 @@ Renderer.CanvasModels["main"] = {
 			"bird_malar_type": "disabled",
 			"bird_plumage_type": "disabled",
 			"bird_pubes_type": "disabled",
+			/*noeinan mod START*/
+			"fox_ears_type": "disabled",
+			"fox_tail_type": "disabled",
+			"sheep_horns_type": "disabled",
+			"sheep_ears_type": "disabled",
+			"sheep_tail_type": "disabled",
+			"bee_ears_type": "disabled",
+			"bee_tail_type": "disabled",
+			"bee_wings_type": "disabled",
+			"bee_wings_right": "disabled",
+			"bee_wings_left": "disabled",
+			/*noeinan mod END*/
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -1591,6 +1603,132 @@ Renderer.CanvasModels["main"] = {
 			z: ZIndices.hirsute,
 			animation: "idle"
 		},
+
+		/*noeinan mod START*/
+		/***
+        *    ███████  ██████  ██    ██
+        *    ██      ██    ██  ██  ██
+        *    ████    ██    ██    ██
+        *    ██      ██    ██  ██  ██
+        *    ██       ██████  ██    ██
+        *
+        *
+        */
+		"fox_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/fox/ears/'+options.fox_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(fox_ears_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"fox_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/fox/tail/'+options.fox_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(fox_tail_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/***
+         *     █████   ██   ██  ███████  ███████  ██████
+         *    ██       ██   ██  ██       ██       ██   ██
+         *     █████   ███████  ██████   ██████   ██████
+         *         ██  ██   ██  ██       ██       ██
+         *     █████   ██   ██  ███████  ███████  ██
+         *
+         *
+         */
+		"sheep_horns_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/horns/'+options.sheep_horns_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(sheep_horns_type)
+			},
+			z: ZIndices.horns,
+			animation: "idle"
+		},
+		"sheep_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/ears/'+options.sheep_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(sheep_ears_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"sheep_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/tail/'+options.sheep_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(sheep_tail_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/***
+         *    ██████    ███████  ███████
+         *    ██    ██  ██       ██
+         *    ██████    ██████   ██████
+         *    ██    ██  ██       ██
+         *    ██████    ███████  ███████
+         *
+         *
+         */
+		"bee_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/bee/ears/'+options.bee_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(bee_ears_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"bee_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/tail/ears/'+options.bee_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(bee_tail_type)
+			},
+			filters: ["hair"],
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"bee_wings_right": {
+			srcfn(options) {
+				return 'img/transformations/bee/rightwing/'+options.bee_wings_right+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(bee_wings_right)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"bee_wings_left": {
+			srcfn(options) {
+				return 'img/transformations/bee/leftwing/'+options.bee_wings_left+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(bee_wings_left)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/*noeinan mod END*/
 
 		/***
 		 *    ██     ██ ██████  ██ ████████ ██ ███    ██  ██████  ███████
