@@ -3,7 +3,7 @@ window.overlayShowHide = function (elementId) {
 	if (div != undefined) {
 		div.classList.toggle("hidden");
 		if (elementId === "debugOverlay") {
-			SugarCube.State.variables.debugMenu[0] = !SugarCube.State.variables.debugMenu[0];
+			V.debugMenu[0] = !V.debugMenu[0];
 		}
 	}
 }
@@ -15,7 +15,7 @@ window.overlayMenu = function (elementId, type) {
 			for (var i = 0, l = debug.length; i < l; i++) {
 				var div = document.getElementById(debug[i]);
 				if (div != undefined) {
-					SugarCube.State.variables.debugMenu[1] = elementId;
+					V.debugMenu[1] = elementId;
 					if (elementId === debug[i]) {
 						div.classList.remove("hidden");
 					} else {
@@ -139,7 +139,7 @@ $(document).on(':passagerender', function (ev) {
 Links.keyNumberMatcher = /^\([^\)]+\)/
 
 Links.generateLinkNumbers = function generateLinkNumbers(content) {
-	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify)
+	if (!V.numberify_enabled || !StartConfig.enableLinkNumberify)
 		return;
 
 	for (var i = 0; i < disableNumberifyInVisibleElements.length; i++) {
@@ -163,7 +163,7 @@ Links.generateLinkNumbers = function generateLinkNumbers(content) {
 Links.generate = () => Links.generateLinkNumbers(document.getElementsByClassName("passage")[0] || document);
 
 $(document).on('keyup', function (ev) {
-	if (!State.variables.numberify_enabled || !StartConfig.enableLinkNumberify || State.variables.tempDisable)
+	if (!V.numberify_enabled || !StartConfig.enableLinkNumberify || V.tempDisable)
 		return;
 
 	if (document.activeElement.tagName === "INPUT" && document.activeElement.type !== "radio"
@@ -254,10 +254,10 @@ window.getTimeNumber = function (t) {
 }
 
 window.extendStats = function () {
-	SugarCube.State.variables.extendedStats = !SugarCube.State.variables.extendedStats;
+	V.extendedStats = !V.extendedStats;
 	var captionDiv = document.getElementById('storyCaptionDiv'),
 		statsDiv = document.getElementById('stats');
-	if (SugarCube.State.variables.extendedStats === true) {
+	if (V.extendedStats === true) {
 		captionDiv.classList.add("storyCaptionDivExtended");
 		statsDiv.classList.add("statsExtended");
 	} else {
@@ -280,12 +280,12 @@ window.zoom = function (size, set) {
 	if (parsedSize >= 50 && parsedSize <= 200 && parsedSize !== 100) {
 		body.style.zoom = size + "%";
 		if (set === true) {
-			SugarCube.State.variables.zoom = size;
+			V.zoom = size;
 		}
 	} else {
 		body.style.zoom = "";
 		if (set === true) {
-			SugarCube.State.variables.zoom = 100;
+			V.zoom = 100;
 		}
 	}
 }
@@ -296,9 +296,7 @@ window.isImageOk = function (id) {
 }
 
 window.beastTogglesCheck = function () {
-	let vars = SugarCube.State.variables;
-	let temp = SugarCube.State.temporary;
-	temp.beastVars = [
+	T.beastVars = [
 		"bestialitydisable",
 		"swarmdisable",
 		"parasitedisable",
@@ -313,12 +311,12 @@ window.beastTogglesCheck = function () {
 		"lurkerdisable",
 		"horsedisable"
 	];
-	temp.anyBeastOn = temp.beastVars.some(x => vars[x] == 'f');
+	T.anyBeastOn = T.beastVars.some(x => V[x] == 'f');
 }
 
 window.settingsAsphyxiation = function () {
 	let updateText = () => {
-		let val = SugarCube.State.variables.asphyxiaLvl;
+		let val = V.asphyxiaLvl;
 		let text = null;
 		switch (val) {
 			case 0:
@@ -351,8 +349,8 @@ window.settingsNamedNpcBreastSize = function () {
 	const breastSizes = ["nipple","budding","tiny","small","pert","modest","full","large","ample","massive","huge","gigantic","enormous"];
 
 	let updateText = () => {
-		const npcId = SugarCube.State.temporary.npcId;
-		const npc = SugarCube.State.variables.NPCName[npcId];
+		const npcId = T.npcId;
+		const npc = V.NPCName[npcId];
 		const val = npc.breastsize;
 
 		const text = breastSizes[val];

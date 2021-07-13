@@ -1,16 +1,16 @@
 window.mapMove = function (moveTo) {
-	var currentPassage = SugarCube.State.variables.passage;
+	var currentPassage = V.passage;
 	var destination_table = [];
-	for (var i = 1; i < SugarCube.State.variables.link_table.length; i++) {
-		var temp = SugarCube.State.variables.link_table[i].split("|")[1];
+	for (var i = 1; i < V.link_table.length; i++) {
+		var temp = V.link_table[i].split("|")[1];
 		if (temp) {
 			destination_table[destination_table.length] = temp.split("]]")[0];
 		}
 	}
-	var available = SugarCube.State.variables.map.available;
+	var available = V.map.available;
 
-	if (SugarCube.State.variables.debug == 1 || available[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
-	//if(SugarCube.State.variables.debug == 1 || available[currentPassage].includes(moveTo))
+	if (V.debug == 1 || available[currentPassage].includes(moveTo) && destination_table.includes(moveTo))
+	//if(V.debug == 1 || available[currentPassage].includes(moveTo))
 	{
 		new Wikifier(null, '<<pass 5>>');
 		SugarCube.State.display(moveTo);
@@ -18,7 +18,7 @@ window.mapMove = function (moveTo) {
 }
 
 window.shopClothingFilterToggleTrait = function(trait) {
-	let traits = SugarCube.State.variables.shopClothingFilter.traits;
+	let traits = V.shopClothingFilter.traits;
 	if (traits) {
 		let index = traits.indexOf(trait)
 		if (index == -1) {
@@ -61,7 +61,7 @@ window.combatListColor = function (name, value, type) {
 	if (value != undefined) {
 		check = value;
 	} else {
-		check = SugarCube.State.variables[name];
+		check = V[name];
 	}
 	if (type === "") {
 		switch (check) {
@@ -296,7 +296,7 @@ DefineMacroS("updateAskColour", updateAskColour);
 window.bulkProduceValue = function(plant, quantity = 250) {
 	if(plant !== undefined){
 		let baseCost = plant.plant_cost * quantity / 2;
-		let seasonBoost = !plant.season.includes(State.variables.season) ? 1.1 : 1;
+		let seasonBoost = !plant.season.includes(V.season) ? 1.1 : 1;
 		return Math.floor(baseCost * seasonBoost);
 	}
 }

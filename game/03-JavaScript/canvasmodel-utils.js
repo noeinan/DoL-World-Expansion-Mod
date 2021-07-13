@@ -14,7 +14,7 @@
  * <<run canvaslayer({z:10, src:'img.png'}, {blendMode:'hard-light', blend:'#00ff00'});>>
  */
 function canvaslayer() {
-	var layers = State.temporary.CanvasLayers;
+	var layers = T.CanvasLayers;
 	if (!layers) throw "'canvaslayer()' without 'canvasstart'"
 
 	var theOptions = {};

@@ -17,6 +17,16 @@ myprint() {
 }
 
 GREP="git grep -n --color"
+# Check, e.g.  <<<
+$GREP "<<<[^\\\"']" -- 'game/*' | myprint "trippleOpen"
+# Check, e.g.  >>>
+$GREP "[^\\\"']>>>" -- 'game/*' | myprint "trippleClose"
+# Check, e.g.  <<print "abc" $d, some false positives in complex constructs because git-grep cannot do most (? constructs
+# Note: " *" is on purpose, "\s*" doesn't work here in git-grep
+$GREP -E "^[^']*<<(print|set)[^'\\\">]+('[^']*')([^'>]+'[^']*')* *[_'\\\$]" -- 'game/*' | myprint "RunInConcat"
+$GREP -E '^[^"]*<<(print|set)[^\\"'"'"'>]+("[^"]*")([^">]+"[^"]*")* *[_"\\\$]' -- 'game/*' | myprint "RunInConcat"
+$GREP -E "^[^']*<<(print|set)[^'\\\">]+('[^']*')([^'>]+'[^']*')*[^'>]*([a-np-ru-zA-Z)]|[^t]o|[^i]s|[^o]t) *'" -- 'game/*' | myprint "RunInConcat"
+$GREP -E '^[^"]*<<(print|set)[^\\"'"'"'>]+("[^"]*")([^">]+"[^"]*")*[^">]*([a-np-ru-zA-Z)]|[^t]o|[^i]s|[^o]t) *"' -- 'game/*' | myprint "RunInConcat"
 # Check for missing right angle bracket: <</if>
 $GREP "<</[^>]*>[^>]" -- 'game/*'  | myprint "MissingClosingAngleBracket"
 $GREP "<<[^>()]*>[^()<>"$'\r]*\r'"\?$" -- 'game/*' | myprint "MissingClosingAngleBracket"
@@ -60,6 +70,8 @@ $GREP "\$slaves\[\$i\]\. " -- 'game/*' | myprint "MissingPropertyAfterSlaves"
 $GREP "<</[a-zA-Z]*[^a-zA-Z<>]\+[a-zA-Z]*>>" -- 'game/*' | myprint "DoubleSlash"
 # Check, e.g.  <<else $foo==4
 $GREP "<<else >\?[^>]" -- 'game/*' | myprint "ShouldBeElseIf"
+# Check, e.g.  <</else
+$GREP "<</else" -- 'game/*' | myprint "ElseForAnIf"
 # Check, e.g., =to
 $GREP "=to" -- 'game/*' | myprint "EqualAndTo"
 # Check, e.g.  <<set foo == 4>>

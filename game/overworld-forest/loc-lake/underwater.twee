@@ -182,11 +182,32 @@ You swim up to the surface, <span class="red">but you can't find the hole in the
 	<br>
 <</if>>
 
+/*Noeinan mod START*/
+/*Lake Ruin Rework, just look for "added" or "changed"*/
+/*added*/
+:: Lake Ruin Enter
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+<<if $TaylorWith is 1>>
+	<<set $oxygenmax to (1200*45)>><<set $oxygen to $oxygenmax>>
+	You two dip into the water and swim down into the murky depths. 
+<</if>>
+You arrive at a large moss covered stone temple lying upon the lake floor. A large arch doorway lies ahead beckoning divers inside.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<link [[Swim inside|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+	<<link [[Swim towards the surface|Lake Underwater]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+<</if>>
 
+/*Inside Hallway*/
 :: Lake Ruin
 
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
-You are in the submerged ruin beneath the lake. Glowing purple lichen covers ancient walls.
+/*changed*/
+As you swim inside the cracked stone walls are coated in a strange glowing lichen painting the room in a bright eerie purple glow.
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutlake>>
@@ -195,50 +216,48 @@ You are in the submerged ruin beneath the lake. Glowing purple lichen covers anc
 		<<link [[Retrieve lichen for your science project|Lake Lichen]]>><<set $sciencelichenlake to 1>><<wateraction>><</link>><<loxygen>>
 		<br>
 	<</if>>
+	/*added*/
 	<<link [[Swim deeper|Lake Ruin Deep]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
 	<br>
-	<<link [[Swim towards the surface|Lake Underwater]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
+	/*changed*/
+	<<if $TaylorWith is 1>>
+		<<link [[Swim towards the surface|Lake Taylor Surface]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+		<br>
+	<<else>>
+		<<link [[Swim towards the surface|Lake Ruin Enter]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+		<br>
+	<</if>>
 <</if>>
 
+/*Continue*/
 :: Lake Ruin Deep
-
+<<set $lakestage to 1>>
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
-You are deep in the submerged ruin beneath the lake. Pots of different sizes fill the room. There's an ancient door opposite the entrance.
+/*changed*/
+You continue to swim down the hallway until you arrive at a large door leading deeper in.
 <<if $lakeruinkey isnot 2>>
-	It's closed.
+/*changed*/
+	The solid door is locked tight.
 <<else>>
-	It's open.
+/*changed*/
+	The door is hinged open slightly, the lock having already been unlocked.
 <</if>>
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutlake>>
 <<else>>
-	<<if $lakeruinkey is 1>>
-		<<link [[Use bronze key|Lake Ruin Door]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-	<</if>>
-	<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-	<br>
-	<<if $lakeruinkey is 2>>
-		<<link [[Swim inside plinth room|Lake Ruin Plinth]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-		<br>
-	<</if>>
-	<br>
-	<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
+	<<lakepottravel>>
 <</if>>
 
+/*Unlock*/
 :: Lake Ruin Door
-
-<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>>
 <<set $lakeruinkey to 2>>
-You hear the ancient mechanism creak and the door groans open. Beyond is a plinth, stood alone in a rubble-strewn room. Atop it sits an ivory necklace. It's studded with blue jewels.
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>>
+/*changed*/
+You slide the brass key into the door's lock and with a little struggle manage to turn the key as the lock pops open, the door slowly sliding open.
 <br><br>
-<<link [[Take it|Lake Ruin Deep]]>><<set $antiquemoney += 2000>><<museumAntiqueStatus "antiqueivorynecklace" "found">><</link>>
-<br>
-<<link [[Leave|Lake Ruin Deep]]>><</link>>
-<br>
+/*changed*/
+<<link [[Enter plinth room|Lake Ruin Plinth]]>><</link>><<loxygen>><<gswimming>>
 
 :: Lake Ruin Sit
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>>
@@ -281,7 +300,7 @@ Over a dozen tentacles curl up the side of the plinth, forming a prison around y
 
 <<else>>
 
-<<link [[Next|Lake Ruin Plinth]]>><</link>>
+<<link [[Next|Lake Ruin Plinth]]>><</link>><<loxygen>><<gswimming>>
 <br>
 
 <</if>>
@@ -317,12 +336,16 @@ The creature recoils from you and disappears into darkness. <<tearful>> you look
 <<link [[Next|Lake Ruin Plinth]]>><</link>>
 <br>
 
+/*Enter Plinth*/
 :: Lake Ruin Plinth
-
+<<set $lakestage to 2>>
 <<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
-You are deep in the lake ruin, in a small room with a plinth.
+/*changed*/
+You push the door further open and swim inside. The room is huge and dominated by a large plinth. Pews line the room and beautiful images are carved into the walls. Another door lies upon the back wall.
+<br><br>
 <<if $moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6>>
-Red moonlight filters down from cracks in the ceiling. There isn't much, but the plinth seems to glow where the light hits it.
+/*changed slightly*/
+Red moonlight filters down from cracks in the ceiling. The plinth seems to glow where the light hits it.
 	<<if $moonEvent is true and $parasite.left_ear.name is undefined and $parasite.right_ear.name is undefined and $worn.genitals.name is "gold chastity belt">>
 		<<unset $moonEvent>><<set $worn.genitals.integrity *= 0.5>><<control 50>>
 		You're drawn to the plinth, and feel an odd sense of peace.
@@ -336,21 +359,94 @@ Red moonlight filters down from cracks in the ceiling. There isn't much, but the
 
 	<<link [[Sit on the plinth|Lake Ruin Sit]]>><</link>>
 	<br>
-<<elseif $museumAntiques.antiques.antiqueivorynecklace is "notFound">>
-	An ivory necklace sits atop it. It's studded with blue jewels.
-	<br><br>
-	<<link [[Take it|Lake Ruin Deep]]>><<set $antiquemoney += 2000>><<museumAntiqueStatus "antiqueivorynecklace" "found">><</link>>
-	<br>
+/*moved ivory necklace*/
 <<elseif $tentacledisable is "f" and $hallucinations gte 2>>
-	You look around the barren room. You don't see anything besides the plinth, but you hear a faint slithering sound. <span class="blue">Something's watching you.</span>
+/*changed slightly*/
+	You look around the room. You don't see anything besides the plinth and the pews, but you hear a faint slithering sound. <span class="blue">Something's watching you.</span>
 	<br><br>
 	<<link [[Search|Lake Ruin Deep Offer]]>><<loxygen>><</link>>
 	<br>
-<<else>>
-	<br><br>
 <</if>>
-<<link [[Leave|Lake Ruin Deep]]>><</link>>
+/*added*/
+<<if $museumAntiques.antiques.antiqueivorynecklace is "notFound">>
+    Atop the plinth sits an ivory necklace sits atop it. It's studded with blue jewels.
+    <br><br>
+    <<link [[Take it|Lake Ruin Plinth]]>><<set $antiquemoney += 2000>><<museumAntiqueStatus "antiqueivorynecklace" "found">><</link>>
+    <br>
+<</if>>
+/*added*/
+<<lakepottravel>>
 <br>
+
+/*added*/
+:: Lake Ruin Hallway
+<<set $lakestage to 3>>
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+You swim past the plinth and through the back door of the room into another hallway that's entirely pitch black. <<if $TaylorWith is 1>>Taylor hands you a small waterproof flashlight and motions for you to turn it on.<<else>>You take out your waterproof torch and click the button on the side.<</if>> You click the button on the side and it flashes on lightening the hallway causing a few swarms of fish to scatter from the sudden exposure. Down the dimly lit corridor you can see several side doors and another large door at the end of the hallway.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<lakepottravel>>
+<</if>>
+
+/*added*/
+:: Lake Ruin Hall Room 1
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+You push open the first door in the hall and swim inside. The room is full of large stone slabs that look like they used to be beds. You assume this is probably where the old monks would have slept. Besides that there's not much to this room.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<link [[Go back|Lake Ruin Hallway]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+<</if>>
+
+/*added*/
+:: Lake Ruin Hall Room 2
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+You push open the second door and are met with a ritual room. Pieces of old chalk and candles lie around the room and a bunch of faded marks are scrawled across the floor. One candle jumps out at you as it's colored a bright green standing out from the other cream candles surrounding it.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<link [[Go back|Lake Ruin Hallway]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+	<<if $greencandle is 0 or $greencandle is undefined>>
+		<<set $greencandle to 1>>
+		<<link [[Take the green candle|Lake Ruin Candle Take]]>><<wateraction>><</link>><<loxygen>>
+		<br>
+	<</if>>
+<</if>>
+
+/*added*/
+:: Lake Ruin Candle Take
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+<<set $antiquemoney += 1000>><<museumAntiqueStatus "antiquecandlegreen" "found">>
+You grab the bright green candle and slide it into your pocket.
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<link [[Go back|Lake Ruin Hallway]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+<</if>>
+
+/*added*/
+:: Lake Ruin End Hall
+<<set $outside to 0>><<set $location to "lake_ruin">><<underwater>><<effects>><<lakeeffects>><<physique 3>><<tinyswimmingskilluse>>
+You approach the large door at the end of the hall and push it open. Inside are a collection of old looking items. It seems this room used to be a storage room the temple used to use. Most of the items are old and dilapidated junk. 
+<<if $purplespiralgemstone is 0>>
+	<<set $purplespiralgemstone to 1>>
+	One thing catches your eye however. You reach out and grab a small glowing gem. A spiral is carved out into its face and it shines a brilliant purple similar to the lichin around the entrance to the temple. As you grip the stone you feel a sense of impurity corrupt you. <<lpurity>> <<purity -1>>
+<</if>>
+<br><br>
+<<if $stress gte $stressmax>>
+	<<passoutlake>>
+<<else>>
+	<<link [[Go back|Lake Ruin Hallway]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
+	<br>
+<</if>>
 
 :: Lake Ruin Deep Offer
 
@@ -460,68 +556,62 @@ You count $tentacles.active tentacles surrounding you.
 <<if $stress gte $stressmax>>
 	<<passoutlake>>
 <<else>>
-	<<if $rng gte 81>>
+	/*added*/
+	<<if $lakestage is 1>>
+		<<set $lakepotsmult to 1>>
+	<<elseif $lakestage is 2>>
+		<<set $lakepotsmult to 1.1>>
+	<<else>>
+		<<set $lakepotsmult to 1.2>>
+	<</if>>
+	/*added*/
+	<<set $rng to random(1, 100)>>
+	/*changed*/
+	<<if $rng gte (81/$lakepotsmult) and $TaylorWith is 0>>
 		You reach inside one of the pots, and find a small ivory box. It's sealed by a bronze lock.
 		<br><br>
 		<<if $historytrait gte 4>>
 			The box itself is very old. It must be valuable.
 			<br><br>
-			<<link [[Just take the box|Lake Ruin Deep]]>><<set $antiquemoney += 20>><<museumAntiqueStatus "antiquebox" "found">><</link>>
+			/*added lakestage check*/
+			<<if $lakestage is 1>>
+				<<link [[Just take the box|Lake Ruin]]>><<set $antiquemoney += 20>><<museumAntiqueStatus "antiquebox" "found">><</link>>
+			<<elseif $lakestage is 2>>
+				<<link [[Just take the box|Lake Ruin Plinth]]>><<set $antiquemoney += 20>><<museumAntiqueStatus "antiquebox" "found">><</link>>
+			<<else>>
+				<<link [[Just take the box|Lake Ruin Hallway]]>><<set $antiquemoney += 20>><<museumAntiqueStatus "antiquebox" "found">><</link>>
+			<</if>>
 			<br>
 		<</if>>
 		<<set $skulduggerydifficulty to 300>>
 		<<link [[Open it|Lake Ruin Box]]>><<wateraction>><</link>><<skulduggerydifficulty>><<loxygen>>
 		<br>
-		<<if $lakeruinkey is 1>>
-			<<link [[Use bronze key|Lake Ruin Door]]>><<wateraction>><</link>><<loxygen>>
-			<br>
-		<</if>>
-		<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-		<<if $lakeruinkey is 2>>
-			<<link [[Swim inside plinth room|Lake Ruin Plinth]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-			<br>
-		<</if>>
-		<br>
-		<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-		<br>
-	<<elseif $rng gte 78 and $swarmdisable is "f">>
+		/*added lakepottravel check*/
+		<<lakepottravel>>
+	/*changed*/
+	<<elseif $rng gte (78/$lakepotsmult) and $swarmdisable is "f" and $TaylorWith is 0>>
 		You reach inside one of the pots. Swarms of small fish surge out, surrounding you.
 		<br><br>
 		<<link [[Next|Lake Swarm]]>><<set $molestationstart to 1>><</link>>
 		<br>
-	<<elseif $rng gte 51>>
+	/*changed*/
+	<<elseif $rng gte (51/$lakepotsmult)>>
 		You reach inside one of the pots. There's purple dust at the bottom. Your probing disturbs it, and it swirls around your arm. You feel heated.
 		<<gstress>><<stress 3>><<garousal>><<arousal 600>>
 		<br><br>
-		<<if $lakeruinkey is 1>>
-			<<link [[Use bronze key|Lake Ruin Door]]>><<wateraction>><</link>><<loxygen>>
-			<br>
+		/*added lakepottravel check*/ 
+		<<lakepottravel>>
+	/*changed*/
+	<<elseif $rng gte (41/$lakepotsmult) and $lakeruinkey is undefined>>
+		<<if $TaylorWith is 1>>
+			You swim over to the ancient pots and stick your hand inside feeling around. Taylor glares at you for disturbing an ancient temple but you continue to search the pots until you find a small brass key.
+		<<else>>
+			You reach inside one of the pots. You find a decaying bronze key.
+			<br><br>
 		<</if>>
-		<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-		<<if $lakeruinkey is 2>>
-			<<link [[Swim inside plinth room|Lake Ruin Plinth]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-			<br>
-		<</if>>
-		<br>
-		<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-		<br>
-	<<elseif $rng gte 41 and $lakeruinkey is undefined>>
-		You reach inside one of the pots. You find a decaying bronze key.
-		<br><br>
 		<<set $lakeruinkey to 1>>
-		<<link [[Open door with bronze key|Lake Ruin Door]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-		<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-		<<if $lakeruinkey is 2>>
-			<<link [[Swim inside plinth room|Lake Ruin Plinth]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-			<br>
-		<</if>>
-		<br>
-		<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-		<br>
+		/*added lakepottravel check*/ 
+		<<lakepottravel>>
 	<<else>>
 		<<set $rng to random(1, 100)>>
 		<<if $rng gte 81>>
@@ -537,19 +627,8 @@ You count $tentacles.active tentacles surrounding you.
 			You reach inside one of the pots. It's empty.
 		<</if>>
 		<br><br>
-		<<if $lakeruinkey is 1>>
-			<<link [[Use bronze key|Lake Ruin Door]]>><<wateraction>><</link>><<loxygen>>
-			<br>
-		<</if>>
-		<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-		<br>
-		<<if $lakeruinkey is 2>>
-			<<link [[Swim inside plinth room|Lake Ruin Plinth]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-			<br>
-		<</if>>
-		<br>
-		<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-		<br>
+		/*added lakepottravel check*/
+		<<lakepottravel>>
 	<</if>>
 <</if>>
 
@@ -609,10 +688,8 @@ You count $tentacles.active tentacles surrounding you.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
-	<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-	<br>
+	/*added lakepottravel check*/
+	<<lakepottravel>>
 <</if>>
 
 :: Lake Ruin Box
@@ -627,8 +704,8 @@ You count $tentacles.active tentacles surrounding you.
 		<span class="blue">That was too easy. You didn't learn anything.</span>
 		<br><br>
 	<</if>>
-	<<if $rng gte 95>>
-		<<if random(0,100) gte 80>>
+	<<if random(1, 100) gte (95/$lakepotsmult)>>
+		<<if random(0,100) gte (80/$lakepotsmult)>>
 			You find a gold chastity belt.
 			<<set $antiquemoney += 2000>><<museumAntiqueStatus "antiquegoldchastitybelt" "found">>
 			<<set _goldchastity to true>>
@@ -653,10 +730,8 @@ You count $tentacles.active tentacles surrounding you.
 		<<link [[Wear it|Lake Gold Chastity Belt]]>><<wateraction>><</link>><<loxygen>>
 		<br>
 	<</if>>
-	<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-	<br>
-	<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
+	/*added lakepottravel check*/
+	<<lakepottravel>>
 <<else>>
 	You fail to pick the lock.
 	<br><br>
@@ -670,10 +745,8 @@ You count $tentacles.active tentacles surrounding you.
 	<</if>>
 	<<link [[Try again|Lake Ruin Box]]>><<wateraction>><</link>><<skulduggerydifficulty>><<loxygen>>
 	<br>
-	<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><</link>><<loxygen>><<gswimming>>
-	<br>
-	<<link [[Search pots|Lake Pots]]>><<wateraction>><</link>><<loxygen>>
-	<br>
+	/*added lakepottravel check*/
+	<<lakepottravel>>
 <</if>>
 
 :: Lake Gold Chastity Belt
@@ -690,9 +763,8 @@ You feel an urge to try it on. You wrap it around your waist. As it clicks shut 
 <<earnFeat "Locked In Gold">>
 <<set $worn.genitals.origin to "Underwater Temple">>
 
-<<link [[Search pots|Lake Pots]]>><<wateraction>><<clotheson>><</link>><<loxygen>>
-	<br>
-<<link [[Swim towards exit|Lake Ruin]]>><<wateraction>><<clotheson>><</link>><<loxygen>><<gswimming>>
+/*added lakepottravel check*/
+<<lakepottravel>>
 
 :: Lake Lichen
 
@@ -851,3 +923,28 @@ The creature recoils from you and disappears into darkness. <<tearful>> you turn
 	<<link [[Next|Lake Depths]]>><<set $eventskip to 1>><</link>>
 	<br>
 <</if>>
+
+:: Lake Taylor Surface
+You two resurface and take off your masks. "What's the matter, are we leaving already?" Taylor asks, looking at you.
+<br><br>
+
+<<link [[Leave|Lake Taylor Leave]]>><</link>>
+<br>
+<<link [[Go back|Lake Taylor Dive Again]]>><</link>>
+
+:: Lake Taylor Leave
+<<set $TaylorWith to 0>>
+You tell Taylor you've explored everything you wanted for now as you start swimming to the shore. The two of you arrive on the shore and rest for a moment. You both change back into your clothes and start heading back to town.
+<br><br>
+
+You arrive in town a while later and part ways. Taylor keeps your diving gear for you in case it's needed for a later exploration.
+<br><br>
+<<endevent>>
+
+<<link [[Next|Danube Street]]>><</link>>
+
+:: Lake Taylor Dive Again
+You inform Taylor that you weren’t quite finished and dive once again. 
+<br><br>
+
+<<link [[Next|Lake Ruin Enter]]>><</link>>

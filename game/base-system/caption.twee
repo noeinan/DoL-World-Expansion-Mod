@@ -62,18 +62,8 @@
 		</div>
 		<br>
 
-		<<if $timestyle is "ampm">>
-			<<if $hour gte 13>>
-				It is <<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm
-				<br>
-			<<else>>
-				It is <<print ($hour is 0 ? "12" : $hour)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am<</if>>
-				<br>
-			<</if>>
-		<<else>>
-			It is <<print ($hour).toString().padStart(2,"0")>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>>
-			<br>
-		<</if>>
+		It is <<ampm>>
+		<br>
 		It is <<if $weekday eq 1>><<print "Sunday">><<elseif $weekday eq 2>><<print "Monday">><<elseif $weekday eq 3>><<print "Tuesday">><<elseif $weekday eq 4>><<print "Wednesday">><<elseif $weekday eq 5>><<print "Thursday">><<elseif $weekday eq 6>><<print "Friday">><<elseif $weekday eq 7>><<print "Saturday">>.<</if>>
 		<br>
 	<</if>>
@@ -403,6 +393,12 @@
 	<<if $moorLuck gt 0>>
 		<<set $allure to Math.floor($allure * (1 - ($moorLuck / 100)))>>
 	<</if>>
+	/*noeinan mod START*/
+	/*runestone decreases allure*/
+	<<if $forestmansionrunestone is 3>>
+		<<set $allure to Math.floor($allure * 0.9)>>
+	<</if>>
+	/*noeinan mod END*/
 	<<if $allure lt 0>>
 		<<set $allure to 0>>
 	<</if>>
@@ -822,15 +818,7 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 	<<else>>
 		<img class="icon_ui" src="img/ui/icon_time.png">
 	<</if>>
-	<<if $timestyle is "ampm">>
-		<<if $hour gte 13>>
-			<<print ($hour - 12)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> pm.
-		<<else>>
-			<<print ($hour is 0 ? "12" : $hour)>>:<<print ($time - $hour * 60).toString().padStart(2, "0")>> <<if $hour is 12>>pm<<else>>am.<</if>>
-		<</if>>
-	<<else>>
-	<<if $hour lt 10>>0<</if>>$hour:<<print ($time - $hour * 60).toString().padStart(2, "0")>>
-	<</if>>
+	<<ampm>>
 	&nbsp;
 	<<if $extendedStats>>
 		<br>
@@ -913,22 +901,7 @@ Your $worn.under_upper.name <<underupperhas>> been pulled to your $worn.under_up
 		<<set _breastSize to 1>>
 	<</switch>>
 	<<if $player.gender is "m" or $player.gender is "h">>
-		<<switch $penissize>>
-		<<case 4>>
-			<<set _penisSize to 5>>
-		<<case 3>>
-			<<set _penisSize to 4>>
-		<<case 2>>
-			<<set _penisSize to 3>>
-		<<case 1>>
-			<<set _penisSize to 2>>
-		<<case 0>>
-			<<set _penisSize to 1>>
-		<<case -1>>
-			<<set _penisSize to 0>>
-		<<case -2>>
-			<<set _penisSize to -1>>
-		<</switch>>
+		<<set _penisSize to $penissize>>
 	<<else>>
 		<<unset _penisSize>>
 	<</if>>

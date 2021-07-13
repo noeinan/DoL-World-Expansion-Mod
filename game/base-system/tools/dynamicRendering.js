@@ -37,11 +37,11 @@ Dynamic.render = (...ids) => {
  *
  * #### Without eventBinder
  *
- * Even in the simplest case, using something like `@onclick="$var=1; Dynamic.render()"` does not perform as expected (nor does the non-`@` version). In order to correctly reference `$var`, you must either refer to `SugarCube.State.variables.var` in the literal `onclick=` handler, OR build an explicit string version using `@onclick=`. For reference, the `@onclick=` version is as follows
- * ```@onclick="return 'SugarCube.State.variables.var=1; Dynamic.render()'"```
+ * Even in the simplest case, using something like `@onclick="$var=1; Dynamic.render()"` does not perform as expected (nor does the non-`@` version). In order to correctly reference `$var`, you must either refer to `V.var` in the literal `onclick=` handler, OR build an explicit string version using `@onclick=`. For reference, the `@onclick=` version is as follows
+ * ```@onclick="return 'V.var=1; Dynamic.render()'"```
  *
  * The reason one might need to use the `@onclick` version is, some variables (for example, temporary ones) may not be available or overwritten when the click is evaluated. For example, if instead we wanted `$var = _myName`, in order to express this, we'd have to do:
- * ```@onclick="return 'SugarCube.State.variables.var=\'' + _myName + '\'; Dynamic.render()'"```
+ * ```@onclick="return 'V.var=\'' + _myName + '\'; Dynamic.render()'"```
  *
  * This is both error prone and difficult to read (missing one of the `'` will result in an error, as will adding an extra `'`).
  *
@@ -255,7 +255,7 @@ Dynamic.createBoundHandler = (sourceHandler, ...valuesToInject) => {
 		SUGARCUBE_IDENTIFIER.lastIndex = 0;
 		lastMatch = SUGARCUBE_IDENTIFIER.exec(handlerContents);
 		while (lastMatch) {
-			const newContent = `SugarCube.State.variables.${lastMatch[2]}`;
+			const newContent = `V.${lastMatch[2]}`;
 			handlerContents = handlerContents.slice(0, lastMatch.index) + lastMatch[1] + newContent + lastMatch[3]
 			SUGARCUBE_IDENTIFIER.lastIndex = lastMatch.index + lastMatch[1].length + newContent.length;
 			lastMatch = SUGARCUBE_IDENTIFIER.exec(handlerContents);
