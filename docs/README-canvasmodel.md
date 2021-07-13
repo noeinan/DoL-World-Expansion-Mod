@@ -10,11 +10,11 @@ Example code that displays a single layer.
 ```js
 var canvas = Renderer.createCanvas(256, 256);
 Renderer.composeLayers(canvas, [{
-src: "img/hair/sides/default/chest.png",
-desaturate: true,
-brightness: -0.3,
-blendMode: 'hard-light',
-blend: '#e49b67'
+    src: "img/hair/sides/default/chest.png",
+    desaturate: true,
+    brightness: -0.3,
+    blendMode: 'hard-light',
+    blend: '#e49b67'
 }]);
 ```
 **SugarCube**:
@@ -38,7 +38,7 @@ Explanation of layer processing options:
     <dt>contrast: number</dt>
     <dd>Adjust contrast before processing, where 1 (default) is don't change, values in 0..1 reduce contrast (0 makes image gray) and values above 1 raise contrast.</dd>
     <dt>blend: string</dt>
-    <dd>Blend color, CSS color string. Optional, default none.</dd>
+    <dd>Blend color, CSS color string or gradient/pattern specification (see section at the bottom of the document). Optional, default none.</dd>
     <dt>blendMode: string</dt>
     <dd>Blend mode. Optional, default none. See <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">globalCompositionOperation docs</a> for list of modes</dd>
     <dt>masksrc: string</dt>
@@ -164,6 +164,25 @@ Renderer.Animations["idle"] = {
 Durations are in milliseconds and `frame` refers to sub-sprite in the layer sprite.
 Animations are referenced by its name in the model layer's `animation` property, and can be functions (`animationfn(options) { ... }`).
 
+### Animating layer properties
+
+Animatable layer properties are: `show`, `alpha`, `blend`, `brightness`, `contrast`, `dx`, `dy`. They should be specified in animation keyframes.
+
+Example:
+```js
+Renderer.Animations["idle_redblue"] = {
+    keyframes: [{
+        frame: 0,
+        duration: 1000,
+        blend: "#ff0000"
+    }, {
+        frame: 1,
+        duration: 1000,
+        blend: "#0000ff"
+    }
+};
+```
+
 ## SugarCube widgets
 
 ### Model API
@@ -217,3 +236,52 @@ Render and animate previously prepared images into it.
 #### \<\<canvasdraw \[FRAMECOUNT] \[CSS_CLASSES]>>
 Insert HTML `<canvas>` element right here.
 Render previously prepared images into it.
+
+## Gradients & Patterns
+
+Instead of fixed color string, layer's `blend` property can define a linear or radial gradient, or a pattern.
+
+### Gradients
+
+A gradient specification is a JSON object of structure:
+* `gradient: "linear"|"radial"` - type of the gradient.
+* `values: number[]` - gradient coordinates. For linear gradient: `[x0, y0, x1, y1]`; for radial gradient: `[x0, y0, r0, x1, y1, r1]`. The coordinates are in pixels, relative to canvas top left corner.
+* `colors` - color stops, array of either pairs `[offset:number, color:string]` (where `offset` is position between 0 and 1), or simply `color` strings (in that case, `offset` is generated to create evenly spaced stops). 
+
+Example:
+```js
+T.modeloptions.hair_colour = "custom";
+T.modeloptions.filters.hair = {
+    blend: {
+        gradient: "linear",
+        values: [64, 64, 192, 192],
+        colors: [ 'red', [0.25,'green'], 'blue' ]
+        // ==   [ [0.0,'red'], [0.25,'green'], [1.0,'blue']]
+    },
+    blendMode: "hard-light",
+    desaturate: true
+}
+```
+will apply following gradient coloring to the layer:
+![result](canvasmodel-demo2.png)
+
+See <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient" target="_blank">createLinearGradient</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createRadialGradient" target="_blank">createRadialGradient</a>, and <a href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasGradient/addColorStop" target="_blank">addColorStop</a> documentation with more details and examples.
+
+### Patterns
+
+Patterns are images that are tiled horizontally and vertically, and applied to the layer with specified blend mode.
+
+```js
+T.modeloptions.worn_upper_colour = "custom";
+T.modeloptions.filters.worn_lower_custom = {
+    blend: { pattern:"wolfharmony" }, 
+    blendMode:"hard-light"
+}
+```
+Result:
+
+![result](canvasmodel-demo3.png)
+
+Pattern image in this example is ![pattern](../img/ui/wolfharmony.png). It is registered in `game/04-Variables/canvasmodel-patterns-lib.js` file.
+
+It is also possible to define a procedurally generated pattern that takes parameters. See same file.

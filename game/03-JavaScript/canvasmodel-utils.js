@@ -43,6 +43,9 @@ function canvaslayer() {
 }
 window.canvaslayer = canvaslayer;
 
+// use 2x2 pixels in generated images
+Renderer.pixelSize = 2;
+
 Renderer.Stats = {
 	trace: false,
 	traceAnim: false,
