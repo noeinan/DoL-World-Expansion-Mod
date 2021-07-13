@@ -1621,6 +1621,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.fox_ears_type)
 			},
+			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1631,6 +1632,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.fox_tail_type)
 			},
+			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1660,6 +1662,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.sheep_ears_type)
 			},
+			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1670,6 +1673,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.sheep_tail_type)
 			},
+			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
