@@ -1621,7 +1621,6 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.fox_ears_type)
 			},
-			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1632,7 +1631,6 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.fox_tail_type)
 			},
-			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1662,7 +1660,6 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.sheep_ears_type)
 			},
-			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1673,7 +1670,6 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.sheep_tail_type)
 			},
-			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
@@ -1691,9 +1687,8 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/ears/'+options.bee_ears_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(options.bee_ears_type)
+				return options.show_tf && tf_enabled(options.bee_ears_type) && V.worn.head.name != "hoodie hood"
 			},
-			filters: ["hair"],
 			z: ZIndices.fronthair,
 			animation: "idle"
 		},
@@ -1704,7 +1699,6 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.bee_tail_type)
 			},
-			filters: ["hair"],
 			z: ZIndices.backhair,
 			animation: "idle"
 		},
