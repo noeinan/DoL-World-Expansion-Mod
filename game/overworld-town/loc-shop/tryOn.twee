@@ -167,6 +167,7 @@
 <<if $tryOn.ownedStored[$args[0]]>>
 	<<set $_.outfitSecondary to $tryOn.ownedStored[$args[0]].outfitSecondary>>
 	<<set $_.slot to false>>
+	<<set _wearStored to true>>
 	<<if $_.outfitSecondary isnot undefined>>
 		<<if $_.outfitSecondary[1] is $tryOn.ownedStored[$_.outfitSecondary[0]].name>>
 			<<set $_.slot to $_.outfitSecondary[0]>>
@@ -174,19 +175,36 @@
 	<</if>>
 	<<if $_.slot is false>>
 		<<set $_.slot to $args[0]>>
+	<<elseif $tryOn.tryingOn[$_.slot] isnot null>>
+		<<set _wearStored to false>>
 	<</if>>
-	<<set $_.outfitPrimary to $tryOn.ownedStored[$_.slot].outfitPrimary>>
-	<<if $_.outfitPrimary isnot undefined>>
-		<<for _labelOCR, _valueOCR range $_.outfitPrimary>>
-			<<if $tryOn.ownedStored[_labelOCR].name is _valueOCR>>
-				<<set $worn[_labelOCR] to clone($tryOn.ownedStored[_labelOCR])>>
-				<<removeTryingOn _labelOCR>>
-			<</if>>
-		<</for>>
+	<<if _wearStored>>
+		<<set $_.outfitPrimary to $tryOn.ownedStored[$_.slot].outfitPrimary>>
+		<<if $_.outfitPrimary isnot undefined>>
+			<<for _labelOCR, _valueOCR range $_.outfitPrimary>>
+				<<if _labelOCR isnot $args[0] and $tryOn.tryingOn[_labelOCR] isnot null>>
+					<<set _wearStored to false>>
+				<</if>>
+			<</for>>
+		<</if>>
 	<</if>>
 
-	<<set $worn[$_.slot] to clone($tryOn.ownedStored[$_.slot])>>
-	<<removeTryingOn $_.slot>>
+	<<if _wearStored>>
+		<<if $_.outfitPrimary isnot undefined>>
+			<<for _labelOCR, _valueOCR range $_.outfitPrimary>>
+				<<if $tryOn.ownedStored[_labelOCR].name is _valueOCR>>
+					<<set $worn[_labelOCR] to clone($tryOn.ownedStored[_labelOCR])>>
+					<<removeTryingOn _labelOCR>>
+				<</if>>
+			<</for>>
+		<</if>>
+
+		<<set $worn[$_.slot] to clone($tryOn.ownedStored[$_.slot])>>
+		<<removeTryingOn $_.slot>>
+	<<else>>
+		<<set $worn[$args[0]] to clone(setup.clothes[$args[0]][0])>>
+		<<removeTryingOn $args[0]>>
+	<</if>>
 <</if>>
 <</widget>>
 

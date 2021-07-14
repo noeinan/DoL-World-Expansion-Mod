@@ -10,40 +10,90 @@
 	}>>
 <</if>>
 
-<<if $farmersProduce.money gt 10000>>
-	<<link [[Collect Money|Farmers Centre Money Collection]]>><</link>>
-	<br>
+<<if $NPCList[0].pronoun is 0>>
+	<<generate1>>
 <</if>>
-<<link [[Inquire about Selling Produce|Farmers Centre Produce Sale]]>><</link>>
-<br><br>
-<<link [[Leave|Harvest Street]]>><<endevent>><</link>>
+<<person1>>
 
+<<if $factory_intro is undefined>>
+	<<set $factory_intro to 1>>
+	You approach the factory, a colossal brick structure at the entrance of town. A <<person>> stands by the gate, waving through a fleet of lorries.
+	<br><br>
+	<<He>> turns to you as the gate clanks shut. "Nothing for you to see here," <<he>> says. "Not unless you have a lot of produce to sell. We could handle that for you. For a cut."
+	<br><br>
+	<<link [[Next|Farmers Centre]]>><</link>>
+	<br>
+<<else>>
+	You are outside a factory on Harvest street. They'll process and sell produce on your behalf, but only so fast, and won't pay as much as customers at market.
+	<br><br>
+
+	<<if $rng gte 91>>
+		A <<person>> sits in a kiosk outside, thumbing through a magazine.
+	<<elseif $rng gte 81>>
+		A <<person>> leans against the wall, smoking a cigarette.
+	<<elseif $rng gte 71>>
+		A <<person>> sits in a kiosk outside, staring at a small television in the corner.
+	<<elseif $rng gte 61>>
+		A <<person>> sits in a kiosk outside, staring at <<his>> phone.
+	<<elseif $rng gte 51>>
+		A <<person>> waves a fleet of lorries through the gate.
+	<<elseif $rng gte 41>>
+		A <<person>> sits in a kiosk outside, talking on <<his>> phone.
+	<<elseif $rng gte 31>>
+		A <<person>> sits in a kiosk outside, thumbing through paper.
+	<<elseif $rng gte 21>>
+		A <<person>> leans against the wall, watching the traffic pass.
+	<<elseif $rng gte 11>>
+		A <<person>> watches you from a kiosk.
+	<<else>>
+		A <<person>> sits in a kiosk outside, reclining in a chair.
+	<</if>>
+	<br><br>
+
+	<<if $farmersProduce.money gt 10000>>
+		<<link [[Collect Money|Farmers Centre Money Collection]]>><</link>>
+		<br>
+	<</if>>
+	<<link [[Inquire about Selling Produce|Farmers Centre Produce Sale]]>><</link>>
+	<br><br>
+	<<link [[Leave|Harvest Street]]>><<endevent>><</link>>
+
+<</if>>
 
 :: Farmers Centre Money Collection
 
-<<moneyGain `(parseFloat($farmersProduce.money / 100).toFixed(2))`>>
+The <<person>> enters the factory proper, and emerges with a wad of notes. You've made <<moneyGain `(parseFloat($farmersProduce.money / 100).toFixed(2))`>>.
 <<set $farmersProduce.money to 0>>
 <br><br>
 <<link [[Leave|Farmers Centre]]>><</link>>
 
 :: Farmers Centre Produce Sale
+The <<person>> opens a laptop. "So what do you have for me?"
+<br><br>
+<i>Money from sales will become available every day at noon. Higher business fame will help the factory sell your produce faster.</i>
+<br><br>
 <<set $farmersProduce.toSell to {}>>
 <<set _plant_keys to Object.keys($plants)>>
 <<set _plantItems to {}>>
-<<for _i to 0; _i lt _plant_keys.length; _i++>>
-	<<if ["produce","vegetable","fruit","shroom"].includes(setup.plants[_plant_keys[_i]].type)>>
-		<<set _plantItems[_plant_keys[_i]] to clone($plants[_plant_keys[_i]])>>
-	<</if>>
-<</for>>
-<div id="produceDisplay">
-	<<produceDisplay>>
-</div>
-<br>
+<<if _plant_keys.length gte 1>>
+	<<for _i to 0; _i lt _plant_keys.length; _i++>>
+		<<if ["produce","vegetable","fruit","shroom"].includes(setup.plants[_plant_keys[_i]].type)>>
+			<<set _plantItems[_plant_keys[_i]] to clone($plants[_plant_keys[_i]])>>
+		<</if>>
+	<</for>>
+	<div id="produceDisplay">
+		<<produceDisplay>>
+	</div>
+<<else>>
+	You don't have any produce.
+	<br><br>
+<</if>>
+<br><br>
 <<link [[Leave|Farmers Centre]]>><<set $farmersProduce.toSell to {}>><</link>>
 
 :: Farmers Centre Produce Sale Confirm
 
-Items added. Something about them sending a lorry to the farm shortly.
+The gate shudders open, and a lorry rumbles out, on its way to collect your produce.
 <br><br>
 <<link [[Leave|Farmers Centre]]>><</link>>
 
@@ -135,7 +185,7 @@ Items added. Something about them sending a lorry to the farm shortly.
 			<<set $farmersProduce.toSell to {}>>
 		<</link>>
 	<<else>>
-		You still need to add items to the request.
+		
 	<</if>>
 </div>
 <</widget>>
@@ -151,17 +201,17 @@ Items added. Something about them sending a lorry to the farm shortly.
 			<<if $plants[_item] is undefined>>
 				You dont have any <<print $plants[_item].plural>> right now.
 			<<elseif $plants[_item].amount lt 250>>
-				You dont have enough <<print $plants[_item].plural>> right now to sell.
+				<<print $plants[_item].plural.charAt(0).toUpperCase() + $plants[_item].plural.slice(1)>>: Not enough to sell.
 			<<else>>
 				<<set _max to $plants[_item].amount - ($plants[_item].amount % 250)>>
 				<<set _base to bulkProduceValue(setup.plants[_item])>>
-				<<print $plants[_item].plural.toUpperFirst()>> - Sold for <<printmoney _base>> per bulk of 250.
+				<<print $plants[_item].plural.toUpperFirst()>> - Sold for <<printmoney _base>> per 250.
 				<<numberslider `"$farmersProduce.toSell['"+_item+"']"` $farmersProduce.toSell[_item] 0 `_max` 250>>
 			<</if>>
 		</div>
 		<<if $farmersProduce.selling[_item]>>
 			<div>
-				They are still selling <<print $farmersProduce.selling[_item]>> <<print $plants[_item].plural>>.
+				They are still processing <<print $farmersProduce.selling[_item]>> <<print $plants[_item].plural>>.
 			</div>
 		<</if>>
 	<</capture>>
