@@ -548,11 +548,15 @@ Renderer.CanvasModels["main"] = {
 		} else {
 			options.zarms = ZIndices.armsidle
 		}
-		// Setup below could cover sleeves, so move arms below bottommost sleeves layer
+		// Do not put skin above sleeves
 		if (options.worn_under_upper_setup.sleeve_img === 1) {
 			options.zarms = ZIndices.under_upper_arms - 0.1;
 		} else if (options.worn_upper_setup.sleeve_img === 1) {
-			options.zarms = ZIndices.upper_arms - 0.1;
+			if (options.upper_tucked) {
+				options.zarms = ZIndices.upper_arms_tucked - 0.1;
+			} else {
+				options.zarms = ZIndices.upper_arms - 0.1;
+			}
 		}
 
 		if (options.worn_head_setup.mask_img === 1) {
