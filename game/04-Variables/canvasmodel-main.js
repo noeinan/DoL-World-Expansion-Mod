@@ -559,7 +559,12 @@ Renderer.CanvasModels["main"] = {
 			}
 		}
 
-		if (options.worn_head_setup.mask_img === 1) {
+		// Generate mask images
+		if (options.worn_over_head_setup.mask_img === 1 &&
+			!(options.hood_down && options.worn_over_head_setup.hood && options.worn_over_head_setup.outfitSecondary !== undefined)) {
+			options.head_mask_src = "img/clothes/head/"+options.worn_over_head_setup.variable+"/mask.png";
+		} else if (options.worn_head_setup.mask_img === 1 &&
+			!(options.hood_down && options.worn_head_setup.hood && options.worn_head_setup.outfitSecondary !== undefined)) {
 			options.head_mask_src = "img/clothes/head/"+options.worn_head_setup.variable+"/mask.png";
 		} else {
 			options.head_mask_src = null;
