@@ -91,172 +91,51 @@
 
 <<widget "npcNamedUpdate">>/*Applies new system to old saves, and carries over relevant variables.*/
 
-<<if $npcNamedVersion is undefined or $npcNamedVersion is 1>>
-<<npcNamed>>
-<</if>>
+<<if $npcNamedVersion isnot 2>><!-- Needed for compatibility with V2.5 and prior saves -->
+	<<npcNamed>>
 
-<<if $npcNamedVersion is 1>><<set $npcNamedVersion to 2>><!-- Runs only if a game was saved during V2.5. -->
-<<set $NPCName = [_n1, _n2, _n3, _n4, _n5, _n6, _n7, _n8, _n9, _n10, _n11, _n12, _n13, _n14, _n15, _n16, _n17, _n18, _n19, _n20, _n21]>>
+	<<for _e to 0; _e lt $NPCNameList.length; _e++>>
+		<<set _lowerCaseName to $NPCNameList[_e].toLowerCase()>>
+		<<set _upperCaseName to $NPCNameList[_e]>>
 
-	<<for _e to 0; _e lt $NPCName.length; _e++>>
-		<<if _e is 0>>
-		<<set _lowerCaseName to "avery">>
-		<<set _upperCaseName to "Avery">>
-		<<elseif _e is 1>>
-		<<set _lowerCaseName to "bailey">>
-		<<set _upperCaseName to "Bailey">>
-		<<elseif _e is 2>>
-		<<set _lowerCaseName to "briar">>
-		<<set _upperCaseName to "Briar">>
-		<<elseif _e is 3>>
-		<<set _lowerCaseName to "charlie">>
-		<<set _upperCaseName to "Charlie">>
-		<<elseif _e is 4>>
-		<<set _lowerCaseName to "darryl">>
-		<<set _upperCaseName to "Darryl">>
-		<<elseif _e is 5>>
-		<<set _lowerCaseName to "doren">>
-		<<set _upperCaseName to "Doren">>
-		<<elseif _e is 6>>
-		<<set _lowerCaseName to "eden">>
-		<<set _upperCaseName to "Eden">>
-		<<elseif _e is 7>>
-		<<set _lowerCaseName to "gwylan">>
-		<<set _upperCaseName to "Gwylan">>
-		<<elseif _e is 8>>
-		<<set _lowerCaseName to "harper">>
-		<<set _upperCaseName to "Harper">>
-		<<elseif _e is 9>>
-		<<set _lowerCaseName to "jordan">>
-		<<set _upperCaseName to "Jordan">>
-		<<elseif _e is 10>>
-		<<set _lowerCaseName to "kylar">>
-		<<set _upperCaseName to "Kylar">>
-		<<elseif _e is 11>>
-		<<set _lowerCaseName to "landry">>
-		<<set _upperCaseName to "Landry">>
-		<<elseif _e is 12>>
-		<<set _lowerCaseName to "leighton">>
-		<<set _upperCaseName to "Leighton">>
-		<<elseif _e is 13>>
-		<<set _lowerCaseName to "mason">>
-		<<set _upperCaseName to "Mason">>
-		<<elseif _e is 14>>
-		<<set _lowerCaseName to "morgan">>
-		<<set _upperCaseName to "Morgan">>
-		<<elseif _e is 15>>
-		<<set _lowerCaseName to "river">>
-		<<set _upperCaseName to "River">>
-		<<elseif _e is 16>>
-		<<set _lowerCaseName to "robin">>
-		<<set _upperCaseName to "Robin">>
-		<<elseif _e is 17>>
-		<<set _lowerCaseName to "sam">>
-		<<set _upperCaseName to "Sam">>
-		<<elseif _e is 18>>
-		<<set _lowerCaseName to "sirris">>
-		<<set _upperCaseName to "Sirris">>
-		<<elseif _e is 19>>
-		<<set _lowerCaseName to "whitney">>
-		<<set _upperCaseName to "Whitney">>
-		<<elseif _e is 20>>
-		<<set _lowerCaseName to "winter">>
-		<<set _upperCaseName to "Winter">>
+		<<if $npcNamedVersion is undefined>>
+			/* .init and .pronoun can't be set within an easy loop */
+			<<if V['init' + _lowerCaseName] isnot undefined>>
+				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].init to V['init' + _lowerCaseName]>>
+				<<run delete V['init' + _lowerCaseName]>>
+			<</if>>
+			<<if V[_lowerCaseName + 'gender'] isnot undefined>>
+				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].pronoun to V[_lowerCaseName + 'gender']>>
+				/* do not unset old gender, it is still needed within a loop */
+			<</if>>
+			/* set new npc attribute vars and remove old ones in a loop */
+			<<for _attribute range ["trust", "love", "dom", "lust", "rage", "state", "trauma", "gender", "penissize", "penisdesc", "penis", "vagina"]>>
+				<<if V[_lowerCaseName + _attribute] isnot undefined>>
+					<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)][_attribute] to V[_lowerCaseName + _attribute]>>
+					<<run delete V[_lowerCaseName + _attribute]>>
+				<</if>>
+			<</for>>
+
+		<<elseif $npcNamedVersion is 1>>
+			<<if V[_lowerCaseName + 'gender'] isnot undefined>>
+				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].pronoun to V[_lowerCaseName + 'gender']>>
+				<<run delete V[_lowerCaseName + 'gender']>>
+			<</if>>
+			<<if V[_lowerCaseName + 'penis'] isnot undefined>>
+				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].penis to V[_lowerCaseName + 'penis']>>
+				<<run delete V[_lowerCaseName + 'penis']>>
+			<</if>>
+			<<if V[_lowerCaseName + 'vagina'] isnot undefined>>
+				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].vagina to V[_lowerCaseName + 'vagina']>>
+				<<run delete V[_lowerCaseName + 'vagina']>>
+			<</if>>
 		<</if>>
-
-		<<print '<<if $' + _lowerCaseName + 'gender isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].pronoun to $' + _lowerCaseName + 'gender>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'penis isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].penis to $' + _lowerCaseName + 'penis>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'vagina isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].vagina to $' + _lowerCaseName + 'vagina>><</if>>'>>
-
 	<</for>>
 
-<<set $NPCName to clone(_tempNPCName)>>
+	<<set $npcNamedVersion to 2>>
+	<<set $NPCName to clone(_tempNPCName)>>
 
-<<updateNewNamedNpcs>>
-<<elseif $npcNamedVersion is undefined>><<set $npcNamedVersion to 2>><!-- needed for compatibility for V2.4 and prior saves -->
-	<<for _e to 0; _e lt $NPCName.length; _e++>>
-		<<if _e is 0>>
-		<<set _lowerCaseName to "avery">>
-		<<set _upperCaseName to "Avery">>
-		<<elseif _e is 1>>
-		<<set _lowerCaseName to "bailey">>
-		<<set _upperCaseName to "Bailey">>
-		<<elseif _e is 2>>
-		<<set _lowerCaseName to "briar">>
-		<<set _upperCaseName to "Briar">>
-		<<elseif _e is 3>>
-		<<set _lowerCaseName to "charlie">>
-		<<set _upperCaseName to "Charlie">>
-		<<elseif _e is 4>>
-		<<set _lowerCaseName to "darryl">>
-		<<set _upperCaseName to "Darryl">>
-		<<elseif _e is 5>>
-		<<set _lowerCaseName to "doren">>
-		<<set _upperCaseName to "Doren">>
-		<<elseif _e is 6>>
-		<<set _lowerCaseName to "eden">>
-		<<set _upperCaseName to "Eden">>
-		<<elseif _e is 7>>
-		<<set _lowerCaseName to "gwylan">>
-		<<set _upperCaseName to "Gwylan">>
-		<<elseif _e is 8>>
-		<<set _lowerCaseName to "harper">>
-		<<set _upperCaseName to "Harper">>
-		<<elseif _e is 9>>
-		<<set _lowerCaseName to "jordan">>
-		<<set _upperCaseName to "Jordan">>
-		<<elseif _e is 10>>
-		<<set _lowerCaseName to "kylar">>
-		<<set _upperCaseName to "Kylar">>
-		<<elseif _e is 11>>
-		<<set _lowerCaseName to "landry">>
-		<<set _upperCaseName to "Landry">>
-		<<elseif _e is 12>>
-		<<set _lowerCaseName to "leighton">>
-		<<set _upperCaseName to "Leighton">>
-		<<elseif _e is 13>>
-		<<set _lowerCaseName to "mason">>
-		<<set _upperCaseName to "Mason">>
-		<<elseif _e is 14>>
-		<<set _lowerCaseName to "morgan">>
-		<<set _upperCaseName to "Morgan">>
-		<<elseif _e is 15>>
-		<<set _lowerCaseName to "river">>
-		<<set _upperCaseName to "River">>
-		<<elseif _e is 16>>
-		<<set _lowerCaseName to "robin">>
-		<<set _upperCaseName to "Robin">>
-		<<elseif _e is 17>>
-		<<set _lowerCaseName to "sam">>
-		<<set _upperCaseName to "Sam">>
-		<<elseif _e is 18>>
-		<<set _lowerCaseName to "sirris">>
-		<<set _upperCaseName to "Sirris">>
-		<<elseif _e is 19>>
-		<<set _lowerCaseName to "whitney">>
-		<<set _upperCaseName to "Whitney">>
-		<<elseif _e is 20>>
-		<<set _lowerCaseName to "winter">>
-		<<set _upperCaseName to "Winter">>
-		<</if>>
-
-		<<print '<<if $' + _lowerCaseName + 'trust isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].trust to $' + _lowerCaseName + 'trust>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'love isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].love to $' + _lowerCaseName + 'love>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'dom isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].dom to $' + _lowerCaseName + 'dom>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'lust isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].lust to $' + _lowerCaseName + 'lust>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'rage isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].rage to $' + _lowerCaseName + 'rage>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'state isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].state to $' + _lowerCaseName + 'state>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'trauma isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].trauma to $' + _lowerCaseName + 'trauma>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'gender isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].pronoun to $' + _lowerCaseName + 'gender>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'gender isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].gender to $' + _lowerCaseName + 'gender>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'penissize isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].penissize to $' + _lowerCaseName + 'penissize>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'penisdesc isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].penisdesc to $' + _lowerCaseName + 'penisdesc>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'penis isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].penis to $' + _lowerCaseName + 'penis>><</if>>'>>
-		<<print '<<if $' + _lowerCaseName + 'vagina isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].vagina to $' + _lowerCaseName + 'vagina>><</if>>'>>
-		<<print '<<if $init' + _lowerCaseName + ' isnot undefined>><<set $NPCName[$NPCNameList.indexOf("' + _upperCaseName + '")].init to $init' + _lowerCaseName + '>><</if>>'>>
-
-	<</for>>
-<<updateNewNamedNpcs>>
+	<<updateNewNamedNpcs>>
 <</if>>
 <</widget>>
 

@@ -27,7 +27,7 @@ window.StartConfig = {
 config.saves.autosave = "autosave";
 
 Config.saves.isAllowed = function () {
-	if (tags().contains("nosave")) {
+	if (tags().includes("nosave")) {
 		return false;
 	}
 	return true;

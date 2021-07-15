@@ -5859,17 +5859,28 @@ and
 <span class="green">+ + + Skulduggery</span>
 <</widget>>
 
-<<widget "ampm">>
-	<<if $args[0] isnot undefined>>
-		<<set _hour to $args[0]>>
-	<<else>>
+<<widget "ampm">><!-- [hour] [minute] -->
+/* displays time in accordance with player-set time format */
+	<<if ndef $args[0]>>
+	/* when called without arguments, display current time */
 		<<set _hour to $hour>>
-	<</if>>
-	<<if $args[1] isnot undefined>>
-		<<set _minute to $args[1]>>
+		<<set _minute to $minute>>
+	<<elseif typeof($args[0]) is "string">>
+	/* if string, assume format H:mm or hh:mm */
+		<<set _numberstring to $args[0].replace(":", ".")>>
+		<<set _hour to Math.trunc(_numberstring)>>
+		<<set _minute to _numberstring * 100 % 100>>
 	<<else>>
-		<<set _minute to ($time - $hour * 60)>>
+	/* assume first numeric argument is hour */
+		<<set _hour to $args[0]>>
+		<<if ndef $args[1]>>
+		/* without a second argument, assume 00 */
+			<<set _minute to 0>>
+		<<else>>
+			<<set _minute to $args[1]>>
+		<</if>>
 	<</if>>
+
 	<<if $timestyle is "ampm">>
 		<<if _hour gte 13>>
 			<<set _text_output to (_hour - 12) +":"+ _minute.toString().padStart(2, "0") + " pm">>
