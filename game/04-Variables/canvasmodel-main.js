@@ -10,6 +10,8 @@ replace (?<!["'\w])_(?=\w) with T.
  * MODEL OPTIONS
  * =============
  * See also defaultOptions()
+ * Be careful searching for option usages in this file: there's a lot of computed-name property accesses
+ * like options["arm_"+arm] or options["arm_"+arm]
  *
  * GROUP TOGGLES:
  * -------------
@@ -157,6 +159,7 @@ replace (?<!["'\w])_(?=\w) with T.
  * "worn_XXXX_setup":object - whole setup.clothes.XXXX object
  * "ztan_XXXX":number - Z-index of tanline level to keep brighter skin above
  * "zarms":number - Z-index of arms
+ * "zupper":number - Z-index of "upper" clothing
  *
  * =============
  * MODEL FILTERS
@@ -415,6 +418,9 @@ Renderer.CanvasModels["main"] = {
 			"ztan_bikiniTop": ZIndices.breasts, // generated option
 			"ztan_bikiniBottom": ZIndices.base, // generated option
 			"zarms": ZIndices.armsidle, // generated options
+			"zupper": ZIndices.upper, // generated options
+			"zupperleft": ZIndices.upper_arms, // generated options
+			"zupperright": ZIndices.upper_arms, // generated options
 			// filters
 			"filters": {}
 		}
@@ -558,6 +564,18 @@ Renderer.CanvasModels["main"] = {
 				options.zarms = ZIndices.upper_arms - 0.1;
 			}
 		}
+
+		if (options.upper_tucked) {
+			options.zupper = ZIndices.upper_tucked;
+			options.zupperleft = ZIndices.upper_arms_tucked;
+			options.zupperright = ZIndices.upper_arms_tucked;
+		} else {
+			options.zupper = ZIndices.upper;
+			options.zupperleft = ZIndices.upper_arms;
+			options.zupperright = ZIndices.upper_arms;
+		}
+		if (options.arm_right === "cover") options.zupperright = ZIndices.upper_arms_cover;
+		if (options.arm_left === "cover") options.zupperleft = ZIndices.upper_arms_cover;
 
 		// Generate mask images
 		if (options.worn_over_head_setup.mask_img === 1 &&
@@ -1853,34 +1871,42 @@ Renderer.CanvasModels["main"] = {
 		 */
 		"upper_main": genlayer_clothing_main('upper', {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+				return options.zupper
 			}
 		}),
 		"upper_breasts": genlayer_clothing_breasts("upper", {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+				return options.zupper
 			}
 		}),
 		"upper_acc": genlayer_clothing_accessory("upper", {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+				return options.zupper
 			}
 		}),
 		"upper_breasts_acc": genlayer_clothing_breasts_acc("upper", {
 			zfn(options) {
-				return options.upper_tucked ? ZIndices.upper_tucked : ZIndices.upper
+				return options.zupper
 			}
 		}),
-		"upper_rightarm": genlayer_clothing_rightarm("upper", {
+		"upper_rightarm": genlayer_clothing_arm("right", "upper", {
 			zfn(options) {
-				return options.arm_right === "cover" ? ZIndices.upper_arms_cover :
-					options.upper_tucked ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
+				return options.zupperright
 			}
 		}),
-		"upper_leftarm": genlayer_clothing_leftarm("upper", {
+		"upper_leftarm": genlayer_clothing_arm("left", "upper", {
 			zfn(options) {
-				return options.arm_left === "cover" ? ZIndices.upper_arms_cover :
-					options.upper_tucked ? ZIndices.upper_arms_tucked : ZIndices.upper_arms;
+				return options.zupperleft
+			}
+		}),
+		"upper_rightarm_acc": genlayer_clothing_arm_acc("right", "upper", {
+			zfn(options) {
+				return options.zupperright
+			}
+		}),
+		"upper_leftarm_acc": genlayer_clothing_arm_acc("left", "upper", {
+			zfn(options) {
+				return options.zupperleft
 			}
 		}),
 		/***
@@ -1895,12 +1921,12 @@ Renderer.CanvasModels["main"] = {
 		"over_upper_main": genlayer_clothing_main('over_upper'),
 		"over_upper_breasts": genlayer_clothing_breasts("over_upper"),
 		"over_upper_acc": genlayer_clothing_accessory('over_upper'),
-		"over_upper_rightarm": genlayer_clothing_rightarm("over_upper", {
+		"over_upper_rightarm": genlayer_clothing_arm("right", "over_upper", {
 			zfn(options) {
 				return options.arm_right === "cover" ? ZIndices.over_upper_arms_cover : ZIndices.over_upper_arms;
 			}
 		}),
-		"over_upper_leftarm": genlayer_clothing_leftarm("over_upper", {
+		"over_upper_leftarm": genlayer_clothing_arm("left", "over_upper", {
 			zfn(options) {
 				return options.arm_left === "cover" ? ZIndices.over_upper_arms_cover : ZIndices.over_upper_arms;
 			}
@@ -2021,12 +2047,12 @@ Renderer.CanvasModels["main"] = {
 		"under_upper_acc": genlayer_clothing_accessory('under_upper'),
 		"under_upper_breasts_acc": genlayer_clothing_breasts_acc('under_upper'),
 		"under_upper_back": genlayer_clothing_back_img('under_upper'),
-		"under_upper_rightarm": genlayer_clothing_rightarm("under_upper", {
+		"under_upper_rightarm": genlayer_clothing_arm("right", "under_upper", {
 			zfn(options) {
 				return options.arm_right === "cover" ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arms;
 			}
 		}),
-		"under_upper_leftarm": genlayer_clothing_leftarm("under_upper", {
+		"under_upper_leftarm": genlayer_clothing_arm("left", "under_upper", {
 			zfn(options) {
 				return options.arm_left === "cover" ? ZIndices.under_upper_arms_cover : ZIndices.under_upper_arms;
 			}
@@ -2357,21 +2383,25 @@ function genlayer_clothing_back_img(slot, overrideOptions) {
 
 /**
  * Does not setup z-index, it should be in overrideOptions
+ *
+ * @param {"left"|"right"} arm
+ * @param {string} slot
+ * @param {object?} overrideOptions
  */
-function genlayer_clothing_rightarm(slot, overrideOptions) {
+function genlayer_clothing_arm(arm, slot, overrideOptions) {
 	return Object.assign({
 		srcfn(options) {
 			let path = 'img/clothes/'+
 				slot+'/' +
 				options["worn_"+slot+"_setup"].variable + '/' +
-				(options.arm_right === "cover" ? 'right_cover.png' : "right.png");
+				(options["arm_"+arm] === "cover" ? (arm+'_cover.png') : (arm+".png"));
 			return gray_suffix(path, options.filters[this.filtersfn(options)[0]]);
 		},
 		showfn(options) {
 			return options.show_clothes &&
 				options["worn_"+slot] > 0 &&
 				options["worn_"+slot+"_setup"].sleeve_img === 1 &&
-				options.arm_right !== "none"
+				options["arm_"+arm] !== "none"
 		},
 		alphafn(options) {
 			return options["worn_"+slot+"_alpha"]
@@ -2394,27 +2424,32 @@ function genlayer_clothing_rightarm(slot, overrideOptions) {
 }
 /**
  * Does not setup z-index, it should be in overrideOptions
+ *
+ * @param {"left"|"right"} arm
+ * @param {string} slot
+ * @param {object?} overrideOptions
  */
-function genlayer_clothing_leftarm(slot, overrideOptions) {
+function genlayer_clothing_arm_acc(arm, slot, overrideOptions) {
 	return Object.assign({
 		srcfn(options) {
 			let path = 'img/clothes/'+
 				slot+'/' +
 				options["worn_"+slot+"_setup"].variable + '/' +
-				(options.arm_left === "cover" ? 'left_cover.png' : "left.png");
+				(options["arm_"+arm] === "cover" ? (arm+'_cover_acc.png') : (arm+"_acc.png"));
 			return gray_suffix(path, options.filters[this.filtersfn(options)[0]]);
 		},
 		showfn(options) {
 			return options.show_clothes &&
 				options["worn_"+slot] > 0 &&
 				options["worn_"+slot+"_setup"].sleeve_img === 1 &&
-				options.arm_left !== "none"
+				options["worn_"+slot+"_setup"].sleeve_acc_img === 1 &&
+				options["arm_"+arm] !== "none"
 		},
 		alphafn(options) {
 			return options["worn_"+slot+"_alpha"]
 		},
 		filtersfn(options) {
-			switch (options["worn_"+slot+"_setup"].sleeve_colour) {
+			switch (options["worn_"+slot+"_setup"].accessory_colour_sidebar) {
 				case undefined:
 				case "":
 				case "primary":
