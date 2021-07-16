@@ -141,8 +141,13 @@
 		<<elseif Object.keys($tryOn.showEquip).includes($args[0]) and $tryOn.showEquip[$args[0]] isnot null>>
 			<<ShowUnderEquip "over">>
 		<</if>>
+		<<if $worn[$args[0]].outfitSecondary isnot undefined and $worn[$args[0]].outfitSecondary[1] isnot "broken">>
+			<<set _resetSlot to $worn[$args[0]].outfitSecondary[0]>>
+		<<else>>
+			<<set _resetSlot to $args[0]>>
+		<</if>>
 		<<unset _outfitPrimaryCR>>
-		<<set _outfitPrimaryCR to $worn[$args[0]].outfitPrimary>>
+		<<set _outfitPrimaryCR to $worn[_resetSlot].outfitPrimary>>
 		<<if _outfitPrimaryCR isnot undefined>>
 			<<for _labelCR, _valueCR range _outfitPrimaryCR>>
 				<<if $worn[_labelCR].name is _valueCR>>
@@ -150,7 +155,7 @@
 				<</if>>
 			<</for>>
 		<</if>>
-		<<clothingResetOwnedReset $args[0]>>
+		<<clothingResetOwnedReset _resetSlot>>
 	<</if>>
 <<else>>
 	<<set _equip to ["over_upper","over_lower","upper", "lower", "under_upper", "under_lower","over_head","head", "face", "neck", "hands", "legs", "feet"]>>
@@ -256,6 +261,7 @@
 	<</if>>
 
 	/*Unequips the required slots*/
+	<<set _returnSlots to []>>
 	<<unset _unequipSlot>>
 	<<for _labelTO, _valueTO range _items>>
 		<<if $worn[_labelTO].name is "naked">>
@@ -269,14 +275,16 @@
 		<<if _unequipSlot is undefined>>
 			<<set _unequipSlot to _labelTO>>
 		<</if>>
+		<<set _returnSlots.push(_unequipSlot)>>
 
 		<<unset _outfitPrimaryTO>>
-		<<set _outfitPrimaryTO to $worn[_slotTO].outfitPrimary>>
+		<<set _outfitPrimaryTO to $worn[_unequipSlot].outfitPrimary>>
 		<<if _outfitPrimaryTO isnot undefined>>
 			<<for _labelTO2, _valueTO2 range _outfitPrimaryTO>>
 				<<if _valueTO2 isnot "broken">>
 					<<set $worn[_labelTO2] to clone(setup.clothes[_labelTO2][0])>>
 					<<removeTryingOn _labelTO2>>
+					<<set _returnSlots.push(_labelTO2)>>
 				<</if>>
 			<</for>>
 		<</if>>
@@ -290,6 +298,27 @@
 		<<set $tryOn.tryingOn[_labelTO] to clone(_valueTO)>>
 		<<set $tryOn.value += getClothingCost($tryOn.tryingOn[_labelTO])>>
 	<</for>>
+
+	/*re-equip original clothes where needed*/
+	<<for _returnSlot range _returnSlots>>
+		<<if $worn[_returnSlot].name is "naked" and $tryOn.ownedStored[_returnSlot].name isnot "naked">>
+			<<if $tryOn.ownedStored[_returnSlot].outfitSecondary is undefined>>
+				<<set _reequip to true>>
+				<<unset _outfitPrimaryTO>>
+				<<set _outfitPrimaryTO to $tryOn.ownedStored[_returnSlot].outfitPrimary>>
+				<<if _outfitPrimaryTO isnot undefined>>
+					<<for _labelTO, _valueTO range _outfitPrimaryTO>>
+						<<if $worn[_labelTO].name isnot "naked">>
+							<<set _reequip to false>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if _reequip>>
+					<<clothingReset _returnSlot>>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</for>>
 <</if>>
 <</widget>>
 
@@ -301,13 +330,31 @@
 		<<if _outfitPrimaryUO isnot undefined>>
 			<<for _labelUO, _valueUO range _outfitPrimaryUO>>
 				<<if $worn[_labelUO].name is _valueUO>>
-					<<set $tryOn.ownedStored[_labelUO] to clone($worn[_labelUO])>>
+					<<updateStoredSlot _labelUO>>
 				<</if>>
 			<</for>>
 		<</if>>
-		<<set $tryOn.ownedStored[$args[0]] to clone($worn[$args[0]])>>
+		<<updateStoredSlot $args[0]>>
 	<</if>>
 <</if>>
+<</widget>>
+
+<<widget "updateStoredSlot">>
+	<<if $tryOn.ownedStored[$args[0]].outfitSecondary isnot undefined and $tryOn.ownedStored[$args[0]].outfitSecondary[1] isnot "broken">>
+		<<set _updateSlot to $tryOn.ownedStored[$args[0]].outfitSecondary[0]>>
+	<<else>>
+		<<set _updateSlot to $args[0]>>
+	<</if>>
+	<<unset _outfitPrimaryUSS>>
+	<<set _outfitPrimaryUSS to $tryOn.ownedStored[_updateSlot].outfitPrimary>>
+	<<if _outfitPrimaryUSS isnot undefined>>
+		<<for _labelUSS, _valueUSS range _outfitPrimaryUSS>>
+			<<if _valueUSS isnot "broken">>
+				<<set $tryOn.ownedStored[_labelUSS] to clone($worn[_labelUSS])>>
+			<</if>>
+		<</for>>
+	<</if>>
+	<<set $tryOn.ownedStored[_updateSlot] to clone($worn[_updateSlot])>>
 <</widget>>
 
 <<widget "removeTryingOn">>
