@@ -81,6 +81,18 @@ var Renderer;
 		return c2d;
 	}
 	Renderer.createCanvas = createCanvas;
+	function ensureCanvas(image) {
+		if (image instanceof HTMLCanvasElement) {
+			return image;
+		}
+		let i2 = createCanvas(image.width, image.height);
+		i2.drawImage(image, 0, 0);
+		return i2.canvas;
+	}
+	Renderer.ensureCanvas = ensureCanvas;
+	/**
+	 * Free to use CanvasRenderingContext2D (to create image data, gradients, patterns)
+	 */
 	Renderer.globalC2D = createCanvas(1, 1);
 	/**
 	 * Creates a cutout of color in shape of sourceImage
@@ -385,82 +397,131 @@ var Renderer;
 		return adjustLevels(image, contrast, shift, resultCanvas);
 	}
 	Renderer.adjustBrightnessAndContrast = adjustBrightnessAndContrast;
+	const RenderingStepDesaturate = {
+		name: "desaturate",
+		condition(layer, context) {
+			return layer.desaturate;
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			return desaturateImage(image, undefined, false);
+		}
+	};
+	const RenderingStepPrefilter = {
+		name: "prefilter",
+		condition(layer, context) {
+			return layer.prefilter && layer.prefilter !== "none";
+		},
+		render(image, layer, context) {
+			return filterImage(image, layer.prefilter);
+		}
+	};
+	const RenderingStepBrightness = {
+		name: "brightness",
+		condition(layer, context) {
+			return typeof layer.brightness === 'number' && layer.brightness !== 0;
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			return adjustBrightness(image, layer.brightness, undefined, false);
+		}
+	};
+	const RenderingStepContrast = {
+		name: "contrast",
+		condition(layer, context) {
+			return typeof layer.contrast === 'number' && layer.contrast !== 1;
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			return adjustContrast(image, layer.contrast, undefined);
+		}
+	};
+	const RenderingStepBlendColor = {
+		name: "blend:color",
+		condition(layer, context) {
+			return layer.blendMode && layer.blend && typeof layer.blend === "string";
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			return composeOverRect(image, layer.blend, layer.blendMode).canvas;
+		}
+	};
+	const RenderingStepBlendGradient = {
+		name: "blend:gradient",
+		condition(layer, context) {
+			return layer.blendMode && layer.blend && typeof layer.blend === 'object' && 'gradient' in layer.blend;
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			let gradient = createGradient(layer.blend);
+			return composeOverSpecialRect(image, gradient, layer.blendMode, context.rects.subspriteFrameCount).canvas;
+		}
+	};
+	const RenderingStepBlendPattern = {
+		name: "blend:pattern",
+		condition(layer, context) {
+			return layer.blendMode && layer.blend && typeof layer.blend === 'object' && 'pattern' in layer.blend;
+		},
+		render(image, layer, context) {
+			context.needsCutout = true;
+			let pattern = Renderer.PatternProvider(layer.blend.pattern);
+			if (!pattern) {
+				return ensureCanvas(image);
+			}
+			return composeOverSpecialRect(image, pattern, layer.blendMode, context.rects.subspriteFrameCount).canvas;
+		}
+	};
+	const RenderingStepMask = {
+		name: "mask",
+		condition(layer, context) {
+			return !!layer.mask;
+		},
+		render(image, layer, context) {
+			return cutoutFrom(ensureCanvas(image).getContext('2d'), layer.mask).canvas;
+		}
+	};
+	const RenderingStepCutout = {
+		name: "cutout",
+		condition(layer, context) {
+			return context.needsCutout;
+		},
+		render(image, layer, context) {
+			return cutoutFrom(ensureCanvas(image).getContext('2d'), layer.image).canvas;
+		}
+	};
+	/**
+	 * Rendering steps used. Order matters!
+	 */
+	Renderer.RenderingPipeline = [
+		RenderingStepDesaturate,
+		RenderingStepPrefilter,
+		RenderingStepBrightness,
+		RenderingStepContrast,
+		RenderingStepBlendPattern,
+		RenderingStepBlendGradient,
+		RenderingStepBlendColor,
+		RenderingStepMask,
+		RenderingStepCutout
+	];
 	function processLayer(layer, rects, listener) {
-		let name = layer.name || layer.src;
-		let image = layer.image;
-		let needsCutout = false;
-		if (layer.desaturate) {
-			image = desaturateImage(image, undefined, false);
-			needsCutout = true;
+		let context = {
+			layer: layer,
+			image: layer.image,
+			needsCutout: false,
+			rects: rects,
+			listener: listener
+		};
+		for (let step of Renderer.RenderingPipeline) {
+			if (!step.condition(context.layer, context))
+				continue;
+			let t0 = millitime();
+			let listener = context.listener;
+			context.image = step.render(context.image, context.layer, context);
 			if (listener && listener.processingStep) {
-				listener.processingStep(name, "desaturate", image);
+				listener.processingStep(context.layer.name, step.name, context.image, millitime() - t0);
 			}
 		}
-		if (layer.prefilter && layer.prefilter !== 'none') {
-			image = filterImage(image, layer.prefilter);
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "prefilter", image);
-			}
-		}
-		if (typeof layer.brightness === 'number' && layer.brightness !== 0) {
-			image = adjustBrightness(image, layer.brightness, undefined, false);
-			needsCutout = true;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "brightness", image);
-			}
-		}
-		if (typeof layer.contrast === 'number' && layer.contrast !== 1) {
-			image = adjustContrast(image, layer.contrast, undefined);
-			needsCutout = true;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "contrast", image);
-			}
-		}
-		const blend = layer.blend;
-		if (blend && layer.blendMode) {
-			needsCutout = true;
-			let noop = false;
-			if (typeof blend === 'string') {
-				image = composeOverRect(image, blend, layer.blendMode).canvas;
-			}
-			else if ('gradient' in blend) {
-				let gradient = createGradient(blend);
-				image = composeOverSpecialRect(image, gradient, layer.blendMode, rects.subspriteFrameCount).canvas;
-			}
-			else if ('pattern' in blend) {
-				let pattern = Renderer.PatternProvider(blend.pattern);
-				if (pattern) {
-					image = composeOverSpecialRect(image, pattern, layer.blendMode, rects.subspriteFrameCount).canvas;
-				}
-				else {
-					noop = true;
-				}
-			}
-			else {
-				throw new Error("Invalid blend spec for layer " + layer.name + ": " + JSON.stringify(blend));
-			}
-			if (listener && listener.processingStep && !noop) {
-				listener.processingStep(name, "blend", image);
-			}
-		}
-		if (layer.mask) {
-			image = cutoutFrom(image.getContext('2d'), layer.mask).canvas;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "mask", image);
-			}
-		}
-		if (needsCutout) {
-			if (!(image instanceof HTMLCanvasElement)) {
-				let i2 = createCanvas(image.width, image.height);
-				i2.drawImage(image, 0, 0);
-				image = i2.canvas;
-			}
-			image = cutoutFrom(image.getContext('2d'), layer.image).canvas;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "cutout", image);
-			}
-		}
-		return image;
+		return context.image;
 	}
 	Renderer.processLayer = processLayer;
 	function calcLayerRects(layer, layerImageWidth, targetWidth, targetHeight, frameCount) {
