@@ -57,19 +57,18 @@ DOL.Perflog.logWidgetStart = function(widgetName) {
 		i: 0
 	});
 }
-DOL.Perflog.logWidgetEnd = function(widgetName) {
-	if (!DOL.Perflog.enabled) return;
-	const time = millitime();
-	const perflog = wpStack[wpStack.length - 1];
-	if (!perflog || perflog.name !== widgetName) {
-		Errors.report("Inconsistent widget performance stack", wpStack);
-		return;
-	}
-	const prevPerflog = wpStack[wpStack.length - 2];
-	perflog.t1 = time;
-	const dt = perflog.t1-perflog.t0;
+/**
+ * Record that widget `widgetName` executed in `totaltime` ms,
+ * including `internaltime` internal widget calls
+ * @param {string} widgetName
+ * @param {number} totaltime
+ * @param {number=0} internaltime
+ */
+DOL.Perflog.logWidgetTime = function(widgetName, totaltime, internaltime) {
+	if (typeof internaltime !== "number") internaltime = 0;
+	const prevPerflog = wpStack[wpStack.length - 1];
 	if (prevPerflog) {
-		prevPerflog.i += dt;
+		prevPerflog.i += totaltime;
 	}
 	var perfrec = wpRec[widgetName];
 	if (!perfrec) perfrec = wpRec[widgetName] = {
@@ -79,9 +78,19 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
 		own:0
 	};
 	perfrec.n++;
-	perfrec.total += dt;
-	perfrec.own += dt - perflog.i;
+	perfrec.total += totaltime;
+	perfrec.own += totaltime - internaltime;
+}
+DOL.Perflog.logWidgetEnd = function(widgetName) {
+	if (!DOL.Perflog.enabled) return;
+	const time = millitime();
+	const perflog = wpStack[wpStack.length - 1];
+	if (!perflog || perflog.name !== widgetName) {
+		Errors.report("Inconsistent widget performance stack", wpStack);
+		return;
+	}
 	wpStack.pop();
+	DOL.Perflog.logWidgetTime(widgetName, time-perflog.t0, perflog.i);
 	if (DOL.Perflog.self) {
 		const selfDt = millitime() - time
 		wpSelf.n++;

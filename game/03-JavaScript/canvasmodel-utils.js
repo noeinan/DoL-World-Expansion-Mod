@@ -73,6 +73,9 @@ Renderer.defaultListener = {
 			console.log(DOL.Perflog.millitime().toFixed(3), "Composing "+layers.length+" layers...");
 		}
 	},
+	processingStep: function(layer, processing, canvas, dt) {
+		DOL.Perflog.logWidgetTime("_render:"+processing, dt);
+	},
 	loadError: function(layer, src) {
 		// logged to console by Renderer itself
 		Renderer.Stats.loadErrors++;
