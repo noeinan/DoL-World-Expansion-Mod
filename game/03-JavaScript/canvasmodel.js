@@ -41,7 +41,7 @@
  * @property {number} [brightness] Adjust brightness, from -1 to +1 (before recoloring), default 0
  * @property {number} [contrast] Adjust contrast (before recoloring), default 1
  * @property {string} [blendMode] Recoloring mode (see docs for globalCompositeOperation; "hard-light", "multiply" and "screen" ), default none
- * @property {string} [blend] Color for recoloring, CSS color string
+ * @property {string|object} [blend] Color for recoloring, CSS color string or gradient spec (see model.d.ts)
  * @property {string} [masksrc] Mask image path. If present, only parts where mask is opaque will be displayed
  * @property {string} [animation] Name of animation to apply, default none
  * @property {number} [frames] Frame numbers used to display static images, array of subsprite indices. For example, if model frame count is 6 but layer has only 3 subsprites, default frames would be [0, 0, 1, 1, 2, 2].
@@ -59,7 +59,7 @@
  * @property {function} [desaturatefn] (options)=>boolean
  * @property {function} [brightnessfn] (options)=>number
  * @property {function} [contrastftn] (options)=>number
- * @property {function} [blendModefn] (options)=>string
+ * @property {function} [blendModefn] (options)=>(string|object)
  * @property {function} [blendfn] (options)=>string
  * @property {function} [masksrcfn] (options)=>string
  * @property {function} [animationfn] (options)=>string
@@ -213,7 +213,6 @@ window.CanvasModel = class CanvasModel {
 		if (this.animated) {
 			return Renderer.animateLayers(this.canvas,
 				this.compile(this.options),
-				Renderer.Animations,
 				this.listener,
 				true);
 		} else {

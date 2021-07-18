@@ -53,29 +53,248 @@
 <</widget>>
 
 <<widget "stall_inventory">>
-Inventory:
+
+<<silently>>
 <<set $plant_inventory to []>>
 <<set _plant_keys to Object.keys($plants)>>
+<<set _total_worth to 0>>
+<<set _total_amount to 0>>
+<<set _total_sold_amount to 0>>
 <<for _t to 0; _t lt _plant_keys.length; _t++>>
+	<<if ndef $stall_stats[_plant_keys[_t]]>>
+		<<set $stall_stats[_plant_keys[_t]] to { inventory:{amount:0, price:0, total:0}, sold:{amount:0, total:0} }>>
+	<</if>>
 	<<if $plants[_plant_keys[_t]].amount gte 1>>
 		<<set _plant_value to Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost)>>
-		<span class="gold"><<print $plants[_plant_keys[_t]].amount>></span> <<print $plants[_plant_keys[_t]].plural>> (<<printmoney _plant_value>> each) |
+		<<set _total_worth += $plants[_plant_keys[_t]].amount * _plant_value>>
+		<<set _total_amount += $plants[_plant_keys[_t]].amount>>
 		<<set _inventory_found to 1>>
-		<<set $plant_inventory.push($plants[_plant_keys[_t]].name)>>
-		<<if $stall_expensive is undefined>>
+		<<run $plant_inventory.push($plants[_plant_keys[_t]].name)>>
+		<<if ($stall_expensive is undefined) or ($plants[$stall_expensive].amount lte 0) or (setup.plants[$plants[_plant_keys[_t]].name].plant_cost gte setup.plants[$stall_expensive].plant_cost)>>
 			<<set $stall_expensive to clone(setup.plants[$plants[_plant_keys[_t]].name].name)>>
 		<</if>>
-		<<if $plants[$stall_expensive].amount lte 0>>
-			<<set $stall_expensive to clone(setup.plants[$plants[_plant_keys[_t]].name].name)>>
-		<</if>>
-		<<if setup.plants[$plants[_plant_keys[_t]].name].plant_cost gte setup.plants[$stall_expensive].plant_cost>>
-			<<set $stall_expensive to clone(setup.plants[$plants[_plant_keys[_t]].name].name)>>
-		<</if>>
+		<<set $stall_stats[_plant_keys[_t]].inventory to {amount:$plants[_plant_keys[_t]].amount, price:_plant_value, total:($plants[_plant_keys[_t]].amount * _plant_value)}>>
+	<<else>>
+		<<set $stall_stats[_plant_keys[_t]].inventory to {amount:0, price:Math.round(setup.plants[$plants[_plant_keys[_t]].name].plant_cost), total:0}>>
 	<</if>>
+	<<set _total_sold_amount += $stall_stats[_plant_keys[_t]].sold.amount>>
 <</for>>
-<<if _inventory_found isnot 1>>
-	You're out of stock!
+<</silently>>
+
+<<switch $mathstrait>>
+	<<case -1>><!-- F -->
+		<<set _canmath to ($maths_exam lt 50 ? 0 : 1)>>
+	<<case 0>><!-- D -->
+		<<set _canmath to ($maths_exam lt 50 ? 2 : 3)>>
+	<<case 1>><!-- C -->
+		<<set _canmath to 4>>
+	<<case 2>><!-- B -->
+		<<set _canmath to 5>>
+	<<case 3 4>><!-- A A* -->
+		<<set _canmath to 6>>
+	<<default>>
+		<<set _canmath to 0>>
+<</switch>>
+
+<<set _mobile to ($useNarrowMarket and _canmath gt 4)>>
+
+<!-- <<for _mobile to 0; _mobile lt 2; _mobile++>><<for _canmath to 0; _canmath lt 7; _canmath++>><center>---mobile:_mobile math:_canmath---</center> -->
+
+<!--
+_canmath                :	0		1		2		3		4		5		6
+table                   :	-		-		-		x		x		x		x
+
+item inventory worth    :	-		-		-		-		x		x		x
+total inventory worth   :	-		-		txt		txt		x		x		x
+
+sold average            :	-		-		-		-		-		-		x
+per item sold           :	-		-		-		-		-		x		x
+total sold              :	-		txt		txt		txt		txt		x		x
+
+math skill min          :	F		F50		D		D50		C		B		A	A*
+colums                  :	-		-		-		2+0		3+0		3+2		3+3
+total colums            :	-		-		-		2		3		5		6
+-->
+
+<<if _canmath gte 3>>
+	<center style="max-height:50vh;overflow-y:auto">
+		<table border="1" style="background-color:#c0ffff08;font-size:95%"><!-- TODO: Put that CSS in some stylesheet -->
+			<<if _mobile and 0>>
+				<tr>
+					<<switch _canmath>>
+						<<case 3>>
+							<th colspan="2" align="left">Item</th>
+						<<case 4>>
+							<th colspan="3" align="left">Item</th>
+						<<case 5>>
+							<th colspan="4" align="left">Item</th>
+						<<case 6>>
+							<th colspan="6" align="left">Item</th>
+					<</switch>>
+				</tr>
+			<</if>>
+			<tr>
+				<<if not _mobile>>
+					<th rowspan="2" style="border-bottom-width:2px" valign="middle" width="40%" align="left">Item</th>
+				<</if>>
+				<<switch _canmath>>
+					<<case 3>>
+						<th colspan="2" align="center">Inventory</th>
+					<<case 4 5 6>>
+						<th colspan="3" align="center">Inventory</th>
+				<</switch>>
+				<<switch _canmath>>
+					<<case 5>>
+						<th colspan="2" align="center">Sold Today</th>
+					<<case 6>>
+						<th colspan="3" align="center">Sold Today</th>
+				<</switch>>
+			</tr>
+			<tr>
+				<th style="border-bottom-width:2px;min-width:7ch" align="center">Amount</th>
+				<th style="border-bottom-width:2px;min-width:7ch" align="center">Each</th>
+				<<if _canmath gte 4>>
+					<th style="border-bottom-width:2px;min-width:7ch" align="center">Total</th>
+				<</if>>
+				<<if _canmath gte 5>>
+					<th style="border-bottom-width:2px;min-width:7ch" align="center">Amount</th>
+					<<if _canmath gte 6>>
+						<th style="border-bottom-width:2px;min-width:7ch" align="center">Avg</th>
+					<</if>>
+					<th style="border-bottom-width:2px;min-width:7ch" align="center">Total</th>
+				<</if>>
+			</tr>
+
+			<<for _t to 0; _t lt _plant_keys.length; _t++>>
+				<<if $stall_stats[_plant_keys[_t]].inventory.amount gt 0 or (_canmath gte 5 and $stall_stats[_plant_keys[_t]].sold.amount gt 0)>>
+					<<if _mobile>>
+						<tr>
+							<td align="left" colspan="6" style="border-top-width:2px"><<=$plants[_plant_keys[_t]].plural.charAt(0).toUpperCase() + $plants[_plant_keys[_t]].plural.slice(1)>></td>
+						</tr>
+					<</if>>
+					<tr>
+						<<if not _mobile>>
+							<td align="left"><<=$plants[_plant_keys[_t]].plural.charAt(0).toUpperCase() + $plants[_plant_keys[_t]].plural.slice(1)>></td>
+						<</if>>
+						<<if $stall_stats[_plant_keys[_t]].inventory.amount gt 0>>
+							<td align="right"><<=$stall_stats[_plant_keys[_t]].inventory.amount>></td>
+							<td align="right"><<printmoney $stall_stats[_plant_keys[_t]].inventory.price>></td>
+							<<if _canmath gte 4>>
+								<td align="right"><<printmoney $stall_stats[_plant_keys[_t]].inventory.total>></td>
+							<</if>>
+						<<else>>
+							<td align="right">-&nbsp;</td>
+							<td align="right"><<printmoney $stall_stats[_plant_keys[_t]].inventory.price>></td>
+							<<if _canmath gte 4>>
+								<td align="right">-&nbsp;</td>
+							<</if>>
+						<</if>>
+						<<if _canmath gte 5>>
+							<<if $stall_stats[_plant_keys[_t]].sold.amount gt 0>>
+								<td align="right"><<=$stall_stats[_plant_keys[_t]].sold.amount>></td>
+								<<if _canmath gte 6>>
+									<td align="right"><<set _avg to Math.round($stall_stats[_plant_keys[_t]].sold.total / $stall_stats[_plant_keys[_t]].sold.amount)>><<printmoney _avg>></td>
+								<</if>>
+								<td align="right"><<printmoney $stall_stats[_plant_keys[_t]].sold.total>></td>
+							<<else>>
+								<td align="right">-&nbsp;</td>
+								<<if _canmath gte 6>>
+									<td align="right">-&nbsp;</td>
+								<</if>>
+								<td align="right">-&nbsp;</td>
+							<</if>>
+						<</if>>
+					</tr>
+				<</if>>
+			<</for>>
+
+			<<if _canmath gte 4>>
+				<tr>
+					<<if not _mobile>>
+						<th style="border-top-width:4px;border-top-style:double" align="left">Total</th>
+					<</if>>
+					<td style="border-top-width:4px;border-top-style:double" align="right">_total_amount</td>
+					<td style="border-top-width:4px;border-top-style:double"></td>
+					<td style="border-top-width:4px;border-top-style:double" align="right"><<printmoney _total_worth>></td>
+					<<if _canmath gte 5>>
+						<td style="border-top-width:4px;border-top-style:double" align="right">_total_sold_amount</td>
+						<<if _canmath gte 6>>
+							<td style="border-top-width:4px;border-top-style:double"></td>
+						<</if>>
+						<td style="border-top-width:4px;border-top-style:double" align="right"><<printmoney $stall_money>></td>
+					<</if>>
+				</tr>
+			<</if>>
+		</table>
+	</center>
+<<elseif _inventory_found is 1>>
+	Inventory:
+	<<set _first to 1>>
+	<<for _t to 0; _t lt _plant_keys.length; _t++>>
+		<<if $stall_stats[_plant_keys[_t]].inventory.amount gt 0>>
+			<<if _first>>
+				<span class="gold"><<=$stall_stats[_plant_keys[_t]].inventory.amount>></span>
+				<<=$plants[_plant_keys[_t]].plural.charAt(0).toUpperCase() + $plants[_plant_keys[_t]].plural.slice(1)>>
+				(<<printmoney _plant_value>> each)
+			<<else>>
+				|
+				<span class="gold"><<=$stall_stats[_plant_keys[_t]].inventory.amount>></span>
+				<<=$plants[_plant_keys[_t]].plural>>
+				(<<printmoney _plant_value>> each)
+			<</if>>
+			<<set _first to 0>>
+		<</if>>
+	<</for>>
+	<br>
+<<else>>
+	Inventory: You're out of stock!<br>
 <</if>>
+
+<<switch _canmath>>
+	<<case 1>>
+		<<if $stall_money is 0>>
+			You haven't sold anything yet.
+		<<else>>
+			You earned <<printmoney $stall_money>> from sales today.
+		<</if>>
+	<<case 2>>
+		<<if $stall_money is 0>>
+			<<if _inventory_found is 1>>
+				Your inventory is worth <<printmoney _total_worth>>.
+			<</if>>
+			You haven't sold anything yet.
+		<<else>>
+			<<if _inventory_found is 1>>
+				Your remaining inventory is worth <<printmoney _total_worth>>.
+			<</if>>
+			You earned <<printmoney $stall_money>> from sales today.
+		<</if>>
+	<<case 3>>
+		<center>
+			<<if $stall_money is 0>>
+				<<if _inventory_found is 1>>
+					Your inventory is worth <<printmoney _total_worth>>.
+				<</if>>
+				You haven't sold anything yet.
+			<<else>>
+				<<if _inventory_found is 1>>
+					Your remaining inventory is worth <<printmoney _total_worth>>.
+				<</if>>
+				You earned <<printmoney $stall_money>> from sales today.
+			<</if>>
+		</center>
+	<<case 4>>
+		<center>
+			<<if $stall_money is 0>>
+				You haven't sold anything yet.
+			<<else>>
+				You earned <<printmoney $stall_money>> from sales today.
+			<</if>>
+		</center>
+<</switch>>
+
+<!-- <</for>><</for>> -->
+
 <</widget>>
 
 <<widget "endstall">>
@@ -87,8 +306,15 @@ Inventory:
 <</widget>>
 
 <<widget "stall_sell">>
+<<if ndef $stall_stats[$stall_plant]>>
+	<<set $stall_stats[$stall_plant] to { inventory:{amount:0, price:0, total:0}, sold:{amount:0, total:0} }>>
+<</if>>
+<<set $stall_stats[$stall_plant].sold.amount += $stall_amount>>
+<<set $stall_stats[$stall_plant].sold.total  += Math.round($stall_cost * $stall_amount)>>
+
 <<set $plants[$stall_plant].amount -= $stall_amount>>
 <<set $money += Math.round($stall_cost * $stall_amount)>>
+<<set $stall_money += Math.round($stall_cost * $stall_amount)>>
 <<set $produce_sold += $stall_amount>>
 You sell
 <<if $stall_amount gte 2>>

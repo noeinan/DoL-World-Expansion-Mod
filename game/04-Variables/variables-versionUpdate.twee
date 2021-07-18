@@ -1,11 +1,68 @@
 :: Widgets variablesVersionUpdate [widget]
+
+<<widget "updateclothingindexes">><!-- "name", "slot", newindex -->
+/* changes the clothes index in case of conflicts with base game additions */
+	/* args */
+	<<set _name to $args[0]>>
+	<<set _slot to $args[1]>>
+	<<set _newindex to $args[2]>>
+	
+	<<if _slot is "skin">>
+		/* tattoos */
+		<<for _key range Object.keys($skin)>>
+			<<if $skin[_key].writing is _name>>
+				<<set $skin[_key].index to _newindex>>
+			<</if>>
+		<</for>>
+	<<else>>
+		/* worn */
+		<<if $worn[_slot].name is _name>>
+			<<set $worn[_slot].index to _newindex>>
+		<</if>>
+		/* carried */
+		<<if $carried[_slot].name is _name>>
+			<<set $carried[_slot].index to _newindex>>
+		<</if>>
+		/* wardrobe */
+		<<for _item = 0; _item lt $wardrobe[_slot].length; _item++>>
+			<<if $wardrobe[_slot][_item].name is _name>>
+				<<set $wardrobe[_slot][_item].index to _newindex>>
+			<</if>>
+		<</for>>
+		/* store */
+		<<for _item = 0; _item lt $store[_slot].length; _item++>>
+			<<if $store[_slot][_item].name is _name>>
+				<<set $store[_slot][_item].index to _newindex>>
+			<</if>>
+		<</for>>
+	<</if>>
+<</widget>>
+
+<<widget "dolwe-update">>
+	/* update changed indexes of mod-specific clothes and tattoos
+	 * increment the number and update the list whenever
+	 * new clothes/tattoos need to change due to additions to base game */
+	<<if $dolweversion is undefined or $dolweversion lt 32>>
+		<<set $dolweversion to 32>>
+		<!-- cloud hair clip (head): old = 33, new = 36 -->
+		<<updateclothingindexes "cloud hair clip" "head" 36>>
+		<!-- prayer beads (neck): old = 19, new = 20 -->
+		<<updateclothingindexes "prayer beads" "neck" 20>>
+		<!-- Complex array (tattoo): old = 111, new = 121 -->
+		<<updateclothingindexes "Complex Array" "skin" 121>>
+	<</if>>
+<</widget>>
+
+
 <<widget "variablesVersionUpdate">>
 /*Variable that you need to check on every new version, page load/refresh or save load*/
 
+<<dolwe-update>>
 <<updatehistorycontrols>>
 <<if $objectVersion is undefined>>
 	<<set $objectVersion to {}>>
 <</if>>
+
 <<if $saveVersions is undefined>>
 	<<set $saveVersions to [StartConfig.version]>>
 <<elseif $saveVersions.last() isnot StartConfig.version>>
@@ -634,7 +691,7 @@
 	<<set $ibchance to 0>>
 <</if>>
 
-/*noeinan mod START*/
+/*noeinan mod END*/
 
 <<if StartConfig.enableImages is false>>
 	<<set $images to 0>>
@@ -1511,9 +1568,9 @@
 	<<set $wear_hands to "none">>
 <</if>>
 
-<<if $objectVersion.updateClothes lt 26 or $objectVersion.updateClothes is undefined>>
+<<if $objectVersion.updateClothes lt 27 or $objectVersion.updateClothes is undefined>>
 	<<updateClothes>>
-	<<set $objectVersion.updateClothes to 26>>
+	<<set $objectVersion.updateClothes to 27>>
 	<!--If you have added any `colour_combat` or `accessory_colour_combat` to clothes that need their `colour` or `accessory_colour`, this will clear them.
 	Remove `colour_combat` or `accessory_colour_combat` where this is the case, they are independant so `colour_combat` will only clear `colour`-->
 <</if>>
@@ -2558,5 +2615,13 @@
 	<<set $edenwall to 0>>
 	<<set $edenchimney to 0>>
 	<<set $edenroof to 0>>
+<</if>>
+
+<<if $stat_panties_stolen is undefined>>
+	<<set $stat_panties_stolen to 0>>
+	<<set $stat_police to {}>>
+	<<set $stat_police.pillory to 0>>
+	<<set $stat_police.community to 0>>
+	<<set $stat_police.prison to 0>>
 <</if>>
 <</widget>>

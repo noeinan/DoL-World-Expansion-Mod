@@ -304,6 +304,18 @@ Renderer.CanvasModels["main"] = {
 			"bird_malar_type": "disabled",
 			"bird_plumage_type": "disabled",
 			"bird_pubes_type": "disabled",
+			/*noeinan mod START*/
+			"fox_ears_type": "disabled",
+			"fox_tail_type": "disabled",
+			"sheep_horns_type": "disabled",
+			"sheep_ears_type": "disabled",
+			"sheep_tail_type": "disabled",
+			"bee_ears_type": "disabled",
+			"bee_tail_type": "disabled",
+			"bee_wings_type": "disabled",
+			"bee_wings_right": "idle",
+			"bee_wings_left": "idle",
+			/*noeinan mod END*/
 			// body writings
 			"writing_forehead": "",
 			"writing_left_cheek": "",
@@ -548,11 +560,15 @@ Renderer.CanvasModels["main"] = {
 		} else {
 			options.zarms = ZIndices.armsidle
 		}
-		// Setup below could cover sleeves, so move arms below bottommost sleeves layer
+		// Do not put skin above sleeves
 		if (options.worn_under_upper_setup.sleeve_img === 1) {
 			options.zarms = ZIndices.under_upper_arms - 0.1;
 		} else if (options.worn_upper_setup.sleeve_img === 1) {
-			options.zarms = ZIndices.upper_arms - 0.1;
+			if (options.upper_tucked) {
+				options.zarms = ZIndices.upper_arms_tucked - 0.1;
+			} else {
+				options.zarms = ZIndices.upper_arms - 0.1;
+			}
 		}
 
 		if (options.worn_head_setup.mask_img === 1) {
@@ -1591,6 +1607,126 @@ Renderer.CanvasModels["main"] = {
 			z: ZIndices.hirsute,
 			animation: "idle"
 		},
+
+		/*noeinan mod START*/
+		/***
+        *    ███████  ██████  ██    ██
+        *    ██      ██    ██  ██  ██
+        *    ████    ██    ██    ██
+        *    ██      ██    ██  ██  ██
+        *    ██       ██████  ██    ██
+        *
+        *
+        */
+		"fox_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/fox/ears/'+options.fox_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.fox_ears_type)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"fox_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/fox/tail/'+options.fox_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.fox_tail_type)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/***
+         *     █████   ██   ██  ███████  ███████  ██████
+         *    ██       ██   ██  ██       ██       ██   ██
+         *     █████   ███████  ██████   ██████   ██████
+         *         ██  ██   ██  ██       ██       ██
+         *     █████   ██   ██  ███████  ███████  ██
+         *
+         *
+         */
+		"sheep_horns_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/horns/'+options.sheep_horns_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.sheep_horns_type)
+			},
+			z: ZIndices.horns,
+			animation: "idle"
+		},
+		"sheep_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/ears/'+options.sheep_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.sheep_ears_type)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"sheep_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/sheep/tail/'+options.sheep_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.sheep_tail_type)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/***
+         *    ██████    ███████  ███████
+         *    ██    ██  ██       ██
+         *    ██████    ██████   ██████
+         *    ██    ██  ██       ██
+         *    ██████    ███████  ███████
+         *
+         *
+         */
+		"bee_ears_type": {
+			srcfn(options) {
+				return 'img/transformations/bee/ears/'+options.bee_ears_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.bee_ears_type) && V.worn.head.name != "hoodie hood"
+			},
+			z: ZIndices.fronthair,
+			animation: "idle"
+		},
+		"bee_tail_type": {
+			srcfn(options) {
+				return 'img/transformations/bee/tail/'+options.bee_tail_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.bee_tail_type)
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"bee_wings_right": {
+			srcfn(options) {
+				return 'img/transformations/bee/rightwing/'+options.bee_wings_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_right === "idle"
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		"bee_wings_left": {
+			srcfn(options) {
+				return 'img/transformations/bee/leftwing/'+options.bee_wings_type+'.png'
+			},
+			showfn(options) {
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_left === "idle"
+			},
+			z: ZIndices.backhair,
+			animation: "idle"
+		},
+		/*noeinan mod END*/
 
 		/***
 		 *    ██     ██ ██████  ██ ████████ ██ ███    ██  ██████  ███████

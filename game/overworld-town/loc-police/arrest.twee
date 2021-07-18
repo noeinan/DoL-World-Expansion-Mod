@@ -258,6 +258,11 @@ You decide against going through the strange hatch. The police arrive, panting. 
 <</if>>
 
 :: Police Cell
+/*Punishment explanation:
+First time caught with crime gte 5000: Pillory.
+Caught additional times with crime above 5000: Prison.
+Caught with crime lt 5000: Community service.
+Caught with crime lt 5000 while already performing community service: Pillory. */
 
 <<set $outside to 0>><<set $location to "police_station">><<effects>>
 You sit on the dingy bed and wait.
@@ -275,10 +280,33 @@ After an hour, a <<generate1>><<person1>><<person>> in a police uniform arrives 
 <<set $worn.neck.collaredpolice to 1>>
 <<He>> leads you up another flight of stairs and into a small room. Three people in suits sit at a table on the far side. In the middle, a <<generate2>><<person2>><<person>> gestures at the chair in front of <<him>>. "Take a seat," <<he>> says. "And don't tarry." The <<person1>><<person>> follows you in, and closes the door behind you.
 <br><br>
-Once seated, the <<person2>><<person>> continues. "You didn't think you'd get away with it did you? You've been leaving traces of yourself all over. These are only petty crimes however, so public humiliation is an appropriate punishment. Take <<phim>> to the pillory."
-<br><br>
-<<link [[Next|Police Pillory Start]]>><</link>>
-<br>
+
+<<if $crime gte 5000>>
+	Once seated, the <<person2>><<person>> continues. "You didn't think you'd get away with it did you? You've been leaving traces of yourself all over. These are only petty crimes however, so public humiliation is an appropriate punishment. Take <<phim>> to the pillory."
+	<br><br>
+	<<link [[Next|Police Pillory Start]]>><</link>>
+	<br>
+<<else>>
+	<<if $community_service gte 1>>
+		Once seated, the <<person2>><<person>> continues. "You were given the chance to give back to the community, but couldn't keep your nose clean, could you? Public humiliation will teach bettter. Take <<phim>> to the pillory."
+		<br><br>
+		<<link [[Next|Police Pillory Start]]>><</link>>
+		<br>
+	<<else>>
+		Once seated, the <<person2>><<person>> continues. "These are only petty crimes. You'll be given the chance to make amends, and give back to the community. <span class="pink">You are to report to the police station every day.</span> There you will be assigned a service. It'll take about an hour. You can arrive any time during daylight hours."
+		<br><br>
+		"These crimes warrant,
+		<<set _service to Math.trunc($crime / 200)>>
+		<span class="pink">_service days</span> of community service. If you don't reform your ways, or don't turn up, the situation could get much worse for you. Take <<phim>> outside."
+		<br><br>
+		<<set $community_service to _service>>
+		<<set $community_service_done to 1>>
+		
+
+		<<link [[Next|Police Community Start]]>><<set $stat_police.community += 1>><</link>>
+		<br>
+	<</if>>
+<</if>>
 
 :: Hospital Arrest Molestation Finish
 

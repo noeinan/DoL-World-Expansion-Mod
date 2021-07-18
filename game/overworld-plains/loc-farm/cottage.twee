@@ -69,9 +69,9 @@ You are downstairs in Alex's cottage. It's tight, and cozy. There's a kitchen wi
 	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 3>><</link>>
 	<br>
 <<elseif $hour is 5 and $alex_breakfast is undefined>>
-	<<link [[Help Alex make breakfast (0:20)|Farm Breakfast Make]]>><<set $alex_breakfast to 1>><<pass 20>><<npcincr Alex love 1>><<stress -6>><</link>><<glove>><<lstress>>
+	<<link [[Help Alex make breakfast (0:20)|Farm Breakfast Make]]>><<set $alex_breakfast to 1>><<pass 20>><<npcincr Alex love 1>><<stress -6>><<tiredness -6>><</link>><<glove>><<lstress>><<ltiredness>>
 	<br>
-	<<link [[Eat breakfast (0:20)|Farm Breakfast Eat]]>><<set $alex_breakfast to 1>><<pass 20>><<stress -12>><</link>><<llstress>>
+	<<link [[Eat breakfast (0:20)|Farm Breakfast Eat]]>><<set $alex_breakfast to 1>><<pass 20>><<stress -12>><<tiredness -6>><</link>><<llstress>><<ltiredness>>
 	<br>
 	<<farm_cottage_options>>
 <<elseif $hour is 5>>
@@ -122,6 +122,12 @@ You are downstairs in Alex's cottage. It's tight, and cozy. There's a kitchen wi
 You are in your room at Alex's cottage. It's cramped, but larger than your room at the orphanage. A wardrobe stands opposite your bed. There's a desk beside a window overlooking the farm.
 <br><br>
 
+<<if $unbind is 1>>
+	<<unset $unbind>>
+	You remove your bindings.
+	<br><br>
+<</if>>
+
 <<if $alex_bed is "player">>
 	Alex snores in your bed.
 	<<if $hour is 5>>
@@ -155,19 +161,23 @@ You are in your room at Alex's cottage. It's cramped, but larger than your room 
 	<<link [[Prepare|Farm Assault Wardrobe]]>><<endevent>><<set $phase to 3>><</link>>
 	<br>
 <<else>>
-	<<link [[Strip and get in bed|Farm Bed]]>><<undressSleep "farm bed">><</link>>
+	<<if $leftarm is "bound" or $rightarm is "bound" or $feetuse is "bound">>
+		<<link [[Undo your bindings (0:10)|Farm Bedroom]]>><<set $unbind to 1>><<pass 10>><<unbind>><</link>>
+		<br><br>
+	<</if>>
+	<<bedicon>><<link [[Strip and get in bed|Farm Bed]]>><<undressSleep "farm bed">><</link>>
 	<br>
 	<<listsleepoutfits "Farm Bed">>
 	<<roomoptions>>
 
-	<<link [[Wardrobe|Farm Wardrobe]]>><</link>>
+	<<wardrobeicon>><<link [[Wardrobe|Farm Wardrobe]]>><</link>>
 	<br>
 	<<link [[Mirror|Farm Mirror]]>><</link>>
 	<br>
 	<br>
 	<<link [[Go downstairs (0:01)|Farm Cottage]]>><<pass 1>><</link>>
 	<br>
-	<<link [[Alex's room|Farm Alex Bedroom]]>><</link>>
+	<<link [[Alex's room (0:01)|Farm Alex Bedroom]]>><<pass 1>><</link>>
 	<br>
 	<br>
 	<<link [[Settings|Farm Settings]]>><</link>>
@@ -335,7 +345,7 @@ You shuffle away from Alex.
 	<<link [[Relent|Farm Alex Allow]]>><<sub 1>><<npcincr Alex dom 3>><</link>><<promiscuous1>><<ggdom>>
 	<br>
 <<else>>
-	<<He>> doesn't stop you climbing from the bed. "Suit yourself," <<he>> says. <<He>> rolls over>
+	<<He>> doesn't stop you climbing from the bed. "Suit yourself," <<he>> says. <<He>> rolls over.
 	<br><br>
 	<<link [[Next|Farm Alex Bedroom]]>><<endevent>><</link>>
 	<br>
@@ -631,7 +641,7 @@ You stand on Alex's sheets, between <<him>> and the wardrobe. <<He>> lunges for 
 
 	<<link [[Give them back|Farm Alex Tease Give]]>><<npcincr Alex love 1>><</link>><<glove>>
 	<br>
-	<<link [[Demand a show|Farm Alex Tease Demand]]>><<npcincr Alex love -1>><<npcincr Alex dom 3>><<npcincr Alex lust 5>><</link>><<llove>><<ggdom>><<gglust>>
+	<<link [[Demand a show|Farm Alex Tease Demand]]>><<npcincr Alex love -1>><<npcincr Alex dom -3>><<npcincr Alex lust 5>><</link>><<llove>><<lldom>><<gglust>>
 	<br>
 <<else>>
 	<span class="red">and snatches them from your grasp.</span> <<gdom>><<npcincr Alex dom 1>>
@@ -811,7 +821,7 @@ You are in Alex's bedroom. It's similar to yours. Clothes tumble from the wardro
 		<<link [[Strip and get in Alex's bed|Farm Alex Bed]]>><<undressSleep "farm alex bed">><</link>>
 		<br>
 		<<if $alwaysSleepNaked isnot true>>
-			<<link [[Climb in Alex's bed|Farm Alex Bed]]>><</link>>
+			<<bedicon>><<link [[Climb in Alex's bed|Farm Alex Bed]]>><</link>>
 		<<else>>
 			<span class="red">The slime is not allowing you to sleep with anything on.</span>
 		<</if>>
@@ -1324,7 +1334,12 @@ You sit in front of the TV as Alex enters the kitchen. You hear the water boil. 
 :: Farm Breakfast Kiss
 <<effects>>
 
-You hold the back of Alex's head, and pull <<him>> into a kiss.<<set $consensual to 1>><<takeKissVirginityNamed "Alex">>
+You hold the back of Alex's head, and pull <<him>> into a kiss.<<set $consensual to 1>>
+<<if $farm_stage gte 7 and $alex_countdown is undefined>>
+	<<takeKissVirginity "Alex" "loveInterest">>
+<<else>>
+	<<takeKissVirginity "Alex" "romantic">>
+<</if>>
 <<promiscuity1>>
 
 <<He>> straddles you, pinning you to the chair as <<his>> lips work down your jaw, then assault your neck. <<He>> gives you a playful bite before rolling onto the sofa beside you.

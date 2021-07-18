@@ -1,12 +1,12 @@
 /// <reference path="model.d.ts" />
 /// <reference types="tinycolor2" />
 declare namespace Renderer {
-    interface LayerImageLoader {
+    export interface LayerImageLoader {
         loadImage(src: string, layer: CompositeLayer, successCallback: (src: string, layer: CompositeLayer, image: HTMLImageElement) => any, errorCallback: (src: string, layer: CompositeLayer, error: any) => any): any;
     }
-    const DefaultImageLoader: LayerImageLoader;
-    let ImageLoader: LayerImageLoader;
-    interface RendererListener {
+    export const DefaultImageLoader: LayerImageLoader;
+    export let ImageLoader: LayerImageLoader;
+    export interface RendererListener {
         error?: (error: Error, context: any) => any;
         composeLayers?: (layers: CompositeLayer[]) => any;
         loaded?: (layer: string, src: string) => any;
@@ -25,69 +25,91 @@ declare namespace Renderer {
     /**
      * Last arguments to composeLayers
      */
-    let lastCall: any[] | undefined;
+    export let lastCall: any[] | undefined;
     /**
      * Last arguments to animateLayers
      */
-    let lastAnimateCall: any[] | undefined;
+    export let lastAnimateCall: any[] | undefined;
     /**
      * Last result of animateLayers
      */
-    let lastAnimation: AnimatingCanvas | undefined;
-    function emptyLayerFilter(): CompositeLayerParams;
+    export let lastAnimation: AnimatingCanvas | undefined;
+    /**
+     * Use "pixels" of this size when generating images.
+     */
+    export let pixelSize: number;
+    export function emptyLayerFilter(): CompositeLayerParams;
     /**
      * 0 -> "#000000", 0.5 -> "#808080", 1.0 -> "#FFFFFF"
      */
-    function gray(value: number): string;
-    function createCanvas(w: number, h: number, fill?: string): CanvasRenderingContext2D;
+    export function gray(value: number): string;
+    export function createCanvas(w: number, h: number, fill?: string): CanvasRenderingContext2D;
+    export const globalC2D: CanvasRenderingContext2D;
     /**
      * Creates a cutout of color in shape of sourceImage
      */
-    function cutout(sourceImage: CanvasImageSource, color: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export function cutout(sourceImage: CanvasImageSource, color: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
     /**
      * Cuts out from base a shape in form of stencil.
      * Modifies and returns base.
      */
-    function cutoutFrom(base: CanvasRenderingContext2D, stencil: CanvasImageSource): CanvasRenderingContext2D;
+    export function cutoutFrom(base: CanvasRenderingContext2D, stencil: CanvasImageSource): CanvasRenderingContext2D;
     /**
      * Paints sourceImage over cutout of it filled with color.
      */
-    function composeOverCutout(sourceImage: CanvasImageSource, color: string, blendMode?: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export function composeOverCutout(sourceImage: CanvasImageSource, color: string, blendMode?: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    /**
+     * Repeatedly fill all sub-frames of canvas with same style.
+     * (Makes sense with gradient and pattern fills, to keep consistents across all sub-frames)
+     */
+    export function fillFrames(fillStyle: string | CanvasGradient | CanvasPattern, canvas: CanvasRenderingContext2D, frameCount: number, frameWidth: number): void;
+    export let Patterns: Dict<CanvasPattern>;
+    /**
+     * CanvasPattern generator/provider.
+     * Default implementation looks up in the Renderer.Patterns object, can be replaced to accept complex object
+     * and generate custom pattern.
+     */
+    export let PatternProvider: (spec: string | object) => (CanvasPattern | null);
+    export function createGradient(spec: BlendGradientSpec): CanvasGradient;
+    /**
+     * Paints sourceImage over same-sized canvas filled with pattern or gradient
+     */
+    export function composeOverSpecialRect(sourceImage: CanvasImageSource, fillStyle: CanvasGradient | CanvasPattern, blendMode: string, frameCount: number, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
     /**
      * Paints sourceImage over same-sized canvas filled with color
      */
-    function composeOverRect(sourceImage: CanvasImageSource, color: string, blendMode: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export function composeOverRect(sourceImage: CanvasImageSource, color: string, blendMode: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
     /**
      * Paints over sourceImage a cutout of it filled with color.
      */
-    function composeUnderCutout(sourceImage: CanvasImageSource, color: string, blendMode?: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export function composeUnderCutout(sourceImage: CanvasImageSource, color: string, blendMode?: string, canvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
     /**
      * Paints over sourceImage a same-sized canvas filled with color
      */
-    function composeUnderRect(sourceImage: CanvasImageSource, color: string, blendMode?: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
-    let ImageCaches: {
+    export function composeUnderRect(sourceImage: CanvasImageSource, color: string, blendMode?: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export let ImageCaches: {
         [index: string]: HTMLImageElement;
     };
-    let ImageErrors: {
+    export let ImageErrors: {
         [index: string]: boolean;
     };
     /**
      * Switch between compose(Over|Under)(Rect|Cutout)
      */
-    function compose(composeOver: boolean, doCutout: boolean, sourceImage: CanvasImageSource, color: string, blendMode: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
+    export function compose(composeOver: boolean, doCutout: boolean, sourceImage: CanvasImageSource, color: string, blendMode: string, targetCanvas?: CanvasRenderingContext2D): CanvasRenderingContext2D;
     /**
      * Fills properties in `target` from `source`.
      * If `overwrite` is false, only missing properties are copied.
      * In both cases, brightness is added, contrast is multiplied.
      * Returns target
      */
-    function mergeLayerData(target: CompositeLayerSpec, source: CompositeLayerParams, overwrite?: boolean): CompositeLayerSpec;
-    function encodeProcessing(spec: CompositeLayerSpec): string;
-    function composeLayersAgain(): void;
-    function desaturateImage(image: CanvasImageSource, resultCanvas?: CanvasRenderingContext2D, doCutout?: boolean): HTMLCanvasElement;
-    function filterImage(image: CanvasImageSource, filter: string, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
-    function adjustBrightness(image: CanvasImageSource, brightness: number, resultCanvas?: CanvasRenderingContext2D, doCutout?: boolean): HTMLCanvasElement;
-    function adjustLevels(image: CanvasImageSource, 
+    export function mergeLayerData(target: CompositeLayerSpec, source: CompositeLayerParams, overwrite?: boolean): CompositeLayerSpec;
+    export function encodeProcessing(spec: CompositeLayerSpec): string;
+    export function composeLayersAgain(): void;
+    export function desaturateImage(image: CanvasImageSource, resultCanvas?: CanvasRenderingContext2D, doCutout?: boolean): HTMLCanvasElement;
+    export function filterImage(image: CanvasImageSource, filter: string, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
+    export function adjustBrightness(image: CanvasImageSource, brightness: number, resultCanvas?: CanvasRenderingContext2D, doCutout?: boolean): HTMLCanvasElement;
+    export function adjustLevels(image: CanvasImageSource, 
     /**
      * scale factor, 1 - no change, >1 - higher contrast, <1 - lower contrast.
      */
@@ -96,13 +118,28 @@ declare namespace Renderer {
      * shift, 0 - no change, >0 - brighter, <0 - darker
      */
     shift: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
-    function adjustContrast(image: CanvasImageSource, factor: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
-    function adjustBrightnessAndContrast(image: CanvasImageSource, brightness: number, contrast: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
-    function processLayer(layer: CompositeLayer, listener: RendererListener): CanvasImageSource;
-    function composeProcessedLayer(layer: CompositeLayer, targetCanvas: CanvasRenderingContext2D, frameCount?: number): void;
-    function composeLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], frameCount: number, listener: RendererListener): void;
-    interface AnimationInfo {
+    export function adjustContrast(image: CanvasImageSource, factor: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
+    export function adjustBrightnessAndContrast(image: CanvasImageSource, brightness: number, contrast: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
+    export function processLayer(layer: CompositeLayer, rects: LayerRects, listener: RendererListener): CanvasImageSource;
+    interface LayerRects {
+        width: number;
+        height: number;
+        frameWidth: number;
+        frameCount: number;
+        subspriteWidth: number;
+        subspriteHeight: number;
+        subspriteFrameCount: number;
+        dx: number;
+        dy: number;
+    }
+    export function composeProcessedLayer(layer: CompositeLayer, targetCanvas: CanvasRenderingContext2D, rects: LayerRects): void;
+    export function composeLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], frameCount: number, listener: RendererListener): void;
+    export interface AnimationInfo {
         spec: KeyframeAnimationSpec;
+        /**
+         * True if any layer properties other than `frame`, are animated
+         */
+        complex: boolean;
         /**
          * Affected layers
          */
@@ -125,31 +162,47 @@ declare namespace Renderer {
          */
         time: number;
     }
-    interface AnimatingCanvas {
+    export interface AnimatingCanvas {
         playing: boolean;
         time: number;
         target: CanvasRenderingContext2D;
         keyframeCaches: Dict<CanvasRenderingContext2D>;
         animations: AnimationInfo[];
+        /**
+         * True during rendering a frame
+         */
+        busy: boolean;
         redraw(): void;
         invalidateCaches(): void;
         start(): void;
         stop(): void;
     }
-    function invalidateLayerCaches(layers: CompositeLayer[]): void;
-    function animateLayersAgain(): any;
-    function animateLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], animations: Dict<AnimationSpec>, listener: RendererListener, autoStop?: boolean): AnimatingCanvas;
+    export function invalidateLayerCaches(layers: CompositeLayer[]): void;
+    export function animateLayersAgain(): any;
+    export let Animations: Dict<AnimationSpec>;
+    /**
+     * Animation spec provider; default implementation is look up in Renderer.Animations by layer's `animation` property.
+     *
+     * Can be overridden to auto-generate animations, for example.
+     */
+    export let AnimationProvider: (layer: CompositeLayerSpec) => (AnimationSpec | undefined);
+    /**
+     * Animatable properties of KeyframeSpec and CompositeLayer
+     */
+    export const AnimatableProps: string[];
+    export function animateLayers(targetCanvas: CanvasRenderingContext2D, layerSpecs: CompositeLayerSpec[], listener: RendererListener, autoStop?: boolean): AnimatingCanvas;
     /**
      * Linear interpolation.
      *
      * f(0) = min,
      * f(1) = max.
      */
-    function lint(value: number, min: number, max: number, allowOverflow?: boolean): number;
-    function lintArray(value: number, mins: number[], maxes: number[], allowOverflow?: boolean): number[];
-    function lintStaged(value: number, points: number[]): number;
-    function lintRgb(value: number, min: tinycolor.ColorInput, max: tinycolor.ColorInput): tinycolor.Instance;
-    function lintRgbStaged(value: number, points: tinycolor.ColorInput[]): tinycolor.Instance;
+    export function lint(value: number, min: number, max: number, allowOverflow?: boolean): number;
+    export function lintArray(value: number, mins: number[], maxes: number[], allowOverflow?: boolean): number[];
+    export function lintStaged(value: number, points: number[]): number;
+    export function lintRgb(value: number, min: tinycolor.ColorInput, max: tinycolor.ColorInput): tinycolor.Instance;
+    export function lintRgbStaged(value: number, points: tinycolor.ColorInput[]): tinycolor.Instance;
+    export {};
 }
 interface Window {
     lint(value: number, min: number, max: number, allowOverflow?: boolean): number;
