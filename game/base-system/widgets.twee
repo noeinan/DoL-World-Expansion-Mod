@@ -3755,12 +3755,12 @@ __Map__<br>
 				let statOverrides = T.npcOverrides[stat];
 
 				if(statOverrides)
-					return !statOverrides.hasOwnProperty("requirements") || statOverrides.requirements;
+					return !statOverrides.hasOwnProperty("requirements") || V[statOverrides.requirements] || false;
 				else
 					return true;
 			};
 
-			T.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			T.importantNpcStats = V.baseNNPCd;
 			T.otherNpcStats = ["love", "lust"];
 
 			let statDefaults = {
@@ -3908,32 +3908,34 @@ __Map__<br>
 <</widget>>
 
 <<widget "relationshipclamp">>
-	<<set _i to $NPCNameList.indexOf("Robin")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
-	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
-	<<set $NPCName[_i].trauma = Math.clamp($NPCName[_i].trauma, 0, 100)>>
-	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
-	<<set _i to $NPCNameList.indexOf("Whitney")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 30)>>
-	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
-	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 20)>>
-	<<set _i to $NPCNameList.indexOf("Eden")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 200)>>
-	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
-	<<set _i to $NPCNameList.indexOf("Kylar")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
-	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
-	<<set $NPCName[_i].rage = Math.clamp($NPCName[_i].rage, 0, 100)>>
-	<<set _i to $NPCNameList.indexOf("Avery")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
-	<<set $NPCName[_i].rage = Math.clamp($NPCName[_i].rage, 0, 100)>>
-	<<set _i to $NPCNameList.indexOf("Great Hawk")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
-	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
-	<<set _i to $NPCNameList.indexOf("Alex")>>
-	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
-	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
-	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
+/* clamp relationship values of the love interests */
+	<<for _npc range $NPCNameList>>
+		<<set _npcConfig to $NPCName[_npc].npcConfig>>
+		<<for _stat range $baseNNPCd>>
+			<<if def $NPCName[_npc][_stat]>>
+				<<if ndef _npcConfig or ndef _npcConfig.important and ndef _npcConfig[_stat]>>
+				/* common npc defaults are between -50 and 50 */
+					<<set _minValue to -50; _maxValue to 50>>
+				<<elseif ndef _npcConfig[_stat]>>
+				/* important npc defaults are between 0 and 100 */
+					<<set _minValue to 0; _maxValue to 100>>
+				<<else>>
+				/* apply overrides or set defaults */
+					<<if def _npcConfig[_stat].minValue>>
+						<<set _minValue to _npcConfig[_stat].minValue>>
+					<<else>>
+						<<set _minValue to _npcConfig.important ? 0 : -50>>
+					<</if>>
+					<<if def _npcConfig[_stat].maxValue>>
+						<<set _maxValue to _npcConfig[_stat].maxValue>>
+					<<else>>
+						<<set _maxValue to _npcConfig.important ? 100 : 50>>
+					<</if>>
+				<</if>>
+				<<set $NPCName[_npc][_stat] to Math.clamp($NPCName[_npc][_stat], _minValue, _maxValue)>>
+			<</if>>
+		<</for>>
+	<</for>>
 <</widget>>
 
 <<widget "fringecheck">>

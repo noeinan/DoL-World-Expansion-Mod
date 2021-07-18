@@ -336,12 +336,12 @@ var importSettingsData = function (data) {
 			for (var i = 0; i < V.NPCNameList.length; i++) {
 				if (S.npc[V.NPCNameList[i]] != undefined) {
 					for (var j = 0; j < listKey.length; j++) {
-						//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
+						/* Overwrite to allow for "none" default value in the start passage to allow for rng to decide */
 						if (V.passage === "Start" && ["pronoun","gender"].includes(listKey[j]) && S.npc[V.NPCNameList[i]][listKey[j]] === "none"){
-							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+							V.NPCName[NPCNameList[i]][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 						else if (validateValue(listObject[listKey[j]], S.npc[V.NPCNameList[i]][listKey[j]])) {
-							V.NPCName[i][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
+							V.NPCName[NPCNameList[i]][listKey[j]] = S.npc[V.NPCNameList[i]][listKey[j]];
 						}
 					}
 				}
@@ -451,11 +451,11 @@ window.exportSettings = function (data, type) {
 		S.npc[V.NPCNameList[i]] = {};
 		for (var j = 0; j < listKey.length; j++) {
 			//Overwrite to allow for "none" default value in the start passage to allow for rng to decide
-			if (V.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[i][listKey[j]] === "none"){
-				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
+			if (V.passage === "Start" && ["pronoun","gender"].includes(listKey[i]) && V.NPCName[NPCNameList[i]][listKey[j]] === "none"){
+				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[NPCNameList[i]][listKey[j]];
 			}
-			else if (validateValue(listObject[listKey[j]], V.NPCName[i][listKey[j]])) {
-				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[i][listKey[j]];
+			else if (validateValue(listObject[listKey[j]], V.NPCName[NPCNameList[i]][listKey[j]])) {
+				S.npc[V.NPCNameList[i]][listKey[j]] = V.NPCName[NPCNameList[i]][listKey[j]];
 			}
 		}
 	}

@@ -4,85 +4,25 @@
 
 
 <div id="relation-display">
-	<<silently>>
-		<<script>>
-			/*data config for non-standard NPCs boxes, allows for different stat configs, custom display data, and dynamic requirements*/
-			T.npcConfig = {
-				"Robin" : {
-					important : true,
-					dom :  { name : "Confidence", activeIcon : "img/ui/confidence.png", color: "blue" }
-				},
-				"Whitney" : {
-					important : true,
-					love : { maxValue : 30 },
-					dom : { maxValue: 20 }
-				},
-				"Eden" : {
-					important : true,
-					love : { maxValue: 200 },
-					dom : { requirements : false } /*false always hides this stat*/
-				},
-				"Kylar" : {
-					important : true,
-					rage : { name : "Jealousy", activeIcon : "img/ui/wideeye.png", color: "green" }
-				},
-				"Avery" : {
-					important : true,
-					rage : { requirements : V.averyragerevealed }
-				},
-				"Great Hawk" : {
-					important : true,
-				},
-				"Mason" : {
-					love : { maxValue : 50 }
-				},
-				"Alex" : {
-					important : true,
-					love : { maxValue : 100 },
-					lust : { maxValue : 100 },
-					dom : { maxValue : 100 }
-				},
-				"Darryl" : {
-					love : { maxValue : 50 }
-				},
-				"River" : {
-					love : { maxValue : 50 }
-				},
-				"Sam" : {
-					love : { maxValue : 50 }
-				}
-			};
-
-			/*This list is backwards due to the method used to sort via index, with unimportant NPCs being assigned -1*/
-			T.importantNpcOrder = [ "Alex", "Great Hawk", "Avery", "Kylar", "Eden", "Whitney", "Robin"];
-
-			/*Clones the NPC list, and orderes it by important first, then by alphabetical order*/
-			T.orderedNPCs = V.NPCName.slice().sort(function(a, b) {
-				let diff = T.importantNpcOrder.indexOf(a.nam) - T.importantNpcOrder.indexOf(b.nam);
-
-				if(diff == 0) {
-					diff = a.nam < b.nam ? 1 : -1;
-				}
-
-				return diff;
-			});
-			T.orderedNPCs.reverse();
-
-
-			T.importantNPCs = T.orderedNPCs.slice(0, T.importantNpcOrder.length);
-			T.otherNPCs = T.orderedNPCs.slice(T.importantNpcOrder.length);
-		<</script>>
-	<</silently>>
+	<<set _importantNPCs to []>>
+	<<set _otherNPCs to []>>
+	<<for _npc range $NPCNameList>>
+		<<if def $NPCName[_npc].npcConfig and $NPCName[_npc].npcConfig.important eq true>>
+			<<run _importantNPCs.push(_npc)>>
+		<<else>>
+			<<run _otherNPCs.push(_npc)>>
+		<</if>>
+	<</for>>
 	<h4>Primary Relationships</h4>
 	<div id="npc-relations" class="relation-box-list">
-		<<for _k = 0; _k lt _importantNPCs.length; _k++>>
-			<<relation-box _importantNPCs[_k] _npcConfig[_importantNPCs[_k].nam]>>
+		<<for _npc range _importantNPCs>>
+			<<relation-box $NPCName[_npc] $NPCName[_npc].npcConfig>>
 		<</for>>
 	</div>
 	<h4>People of Interest</h4>
 	<div id="secondary-npcs" class="relation-box-list">
-		<<for _k= 0; _k lt _otherNPCs.length; _k++>>
-			<<relation-box _otherNPCs[_k] _npcConfig[_otherNPCs[_k].nam]>>
+		<<for _npc range _otherNPCs>>
+			<<relation-box $NPCName[_npc] $NPCName[_npc].npcConfig>>
 		<</for>>
 	</div>
 	<h4>Reputation</h4>

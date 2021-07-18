@@ -1,288 +1,285 @@
 :: npcNamed [widget]
 <<widget "npcNamed">>
-<!-- To add new Named NPC, add new _nXX variable and tag values to end. Rest of code should automatically scope based on size of list. -->
-<!-- NPC descriptions is set as names, and their titles are being established for compatibility with general NPCs -->
-<<if $npcNamedVersion is 1>>
-<<set _tempNPCName to clone($NPCName)>>
-<</if>>
-<<set $baseNNPC = {penis : 0, vagina: 0, gender: 0, description: 0, title: 0, insecurity: 0, pronoun: 0, penissize: 0, penisdesc: 0, bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 0, init: 0, intro: 0, type: 0, trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0, eyeColour: 0, hairColour: 0}>>
+/* to add new Named NPC, add their unique data to $NPCName_unique_data below
+ * all values except for `title` are optional. possible values are:
+ * -----------------------------
+ * title: npc title in the social tab
+ * insecurity: what bothers npc during combat. random if not set
+ * important: whether npc is a potential LI
+ * maxlove, maxlust, maxdom, maxtrauma, maxrage: upper caps on the LI variables
+ * eyecolor: eye colour. can be an array of possible colors
+ * haircolor: hair colour. can be an array of possible colors
+ * type: beast type (wolf, dog, hawk, etc.)
+ * age: defaults to "adult", can be switched to "teen"
+ */
+<<set $NPCName_unique_data to {	Avery:{		title: "businessperson",
+											insecurity: "weak",
+											npcConfig: {	important: true,
+															rage: { requirements: "averyragerevealed" }}
+								},
+								Bailey:{	title: "caretaker",
+											insecurity: "weak",
+											hairColour: ["black","brown"]
+								},
+								Briar:{		title: "brothel owner",
+											insecurity: "looks"
+								}, 
+								Charlie:{	title: "dance coach",
+											insecurity: "ethics",
+											hairColour: "ginger"
+								},
+								Darryl:{	title: "club owner",
+											insecurity: "ethics",
+											hairColour: "brown",
+											npcConfig: { love: { maxValue: 50 }}
+								},
+								Doren:{		title: "English teacher",
+											insecurity: "ethics",
+											hairColour: "red"
+								}, 
+								Eden:{		title: "hunter",
+											insecurity: "looks",
+											npcConfig:	{	important : true,
+															love : { maxValue: 200 },
+															dom : { requirements: false }}
+								},
+								Gwylan:{	title: "shopkeeper",
+											insecurity: "weak",
+											age: "teen",
+											hairColour: "mousy"
+								},
+								Harper:{	title: "doctor",
+											insecurity: "skill"
+								},
+								Jordan:{	title: "pious",
+											insecurity: "ethics",
+											eyeColour: "light blue",
+											hairColour: "blond"
+								},
+								Kylar:{		title: "loner",
+											insecurity: "weak",
+											important: true,
+											age: "teen",
+											hairColour: ["black", "brown"]
+								},
+								Landry:{	title: "criminal",
+											insecurity: "skill",
+											hairColour: "black"
+								},
+								Leighton:{	title: "headteacher",
+											insecurity: "skill",
+											eyeColour: "green",
+											hairColour: "black"
+								},
+								Mason:{		title: "swimming teacher",
+											insecurity: "ethics",
+											npcConfig: { love: { maxValue : 50 }}
+								},
+								Morgan:{	title: "sewer dweller",
+											insecurity: "weak",
+											hairColour: "ginger"
+								},
+								River:{		title: "maths teacher",
+											insecurity: "ethics",
+											eyeColour: "light blue",
+											hairColour: "brown",
+											npcConfig: { love: { maxValue: 50 }}
+								},
+								Robin:{		title: "orphan",
+											insecurity: "ethics",
+											age: "teen",
+											npcConfig: {	important: true,
+															dom: { name: "Confidence", activeIcon: "img/ui/confidence.png", color: "blue" }}
+								},
+								Sam:{		title: "cafe owner",
+											insecurity: "ethics",
+											npcConfig: { love: { minValue: -50, maxValue: 50 }}
+								},
+								Sirris:{	title: "science teacher",
+											insecurity: "ethics"
+								},
+								Whitney:{	title: "bully",
+											insecurity: "looks",
+											important: true,
+											age: "teen",
+											maxlove: 30,
+											maxdom: 20,
+											hairColour: "blond",
+											npcConfig: {	important: true,
+															love: { maxValue : 30 },
+															dom: { maxValue : 30 }}
+								},
+								Winter:{	title: "history teacher",
+											insecurity: "skill"
+								},
+								'Black Wolf':{	title: "alpha",
+												insecurity: "weak",
+												type: "wolf",
+												hairColour: "black"
+								},
+								Niki:{		title: "photographer",
+											insecurity: "skill"
+								},
+								Quinn:{		title: "mayor",
+											insecurity: "looks"
+								},
+								Remy:{		title: "farmer",
+											insecurity: "looks",
+											eyeColour: "green",
+											hairColour: "brown"
+								},
+								Alex:{		title: "farmhand",
+											insecurity: "weak",
+											important: true,
+											age: "teen",
+											eyeColour: "green",
+											hairColour: "red",
+											npcConfig: {	important: true,
+															love: { minValue: -50, maxValue: 100 },
+															lust: { maxValue: 100 },
+															dom: { minValue: -50, maxValue: 100 }}
+								},
+								'Great Hawk':{	title: "terror",
+												insecurity: "looks",
+												type: "hawk",
+												eyeColour: "light blue",
+												hairColour: "brown",
+												npcConfig: { important: true }
+								},
+								Wren:{		title: "smuggler",
+											insecurity: "ethics",
+											eyeColour: "brown",
+											hairColour: "blond"
+								}
+}>>
+/* list of variables that will be set for every npc. keep it short. */
+<<set $baseNNPC to ["init",
+					"intro",
+					"state",
+					"title",
+					"description",
+					"insecurity",
+					"type",
+					"age",
+					"gender",
+					"pronoun",
+					"bottomsize",
+					"breastsize",
+					"breastdesc",
+					"breastsdesc",
+					"penis",
+					"penisdesc",
+					"penissize",
+					"ballssize",
+					"vagina",
+					"trust",
+					"love",
+					"dom",
+					"lust",
+					"rage",
+					"trauma",
+					"eyeColour",
+					"hairColour"
+					]>>
+/* list of dynamic NPC values that need to be clamped */
+<<set $baseNNPCd to ["love", "dom", "lust", "rage", "trauma"]>>
 
-/*Old: {penis : 0, vagina: 0, gender: 0, description: 0, insecurity: 0, pronoun: 0, penissize: 0, penisdesc: 0, bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 0, intro: 0, type: 0}*/
+<<set $NPCNameList to Object.keys($NPCName_unique_data)>>
+<<if ndef $NPCName>><<set $NPCName to {}>><</if>>
 
-	<<set _n1 to clone($baseNNPC)>>
-	<<set _n2 to clone($baseNNPC)>>
-	<<set _n3 to clone($baseNNPC)>>
-	<<set _n4 to clone($baseNNPC)>>
-	<<set _n5 to clone($baseNNPC)>>
-	<<set _n6 to clone($baseNNPC)>>
-	<<set _n7 to clone($baseNNPC)>>
-	<<set _n8 to clone($baseNNPC)>>
-	<<set _n9 to clone($baseNNPC)>>
-	<<set _n10 to clone($baseNNPC)>>
-	<<set _n11 to clone($baseNNPC)>>
-	<<set _n12 to clone($baseNNPC)>>
-	<<set _n13 to clone($baseNNPC)>>
-	<<set _n14 to clone($baseNNPC)>>
-	<<set _n15 to clone($baseNNPC)>>
-	<<set _n16 to clone($baseNNPC)>>
-	<<set _n17 to clone($baseNNPC)>>
-	<<set _n18 to clone($baseNNPC)>>
-	<<set _n19 to clone($baseNNPC)>>
-	<<set _n20 to clone($baseNNPC)>>
-	<<set _n21 to clone($baseNNPC)>>
-	<<set _n22 to clone($baseNNPC)>>
-	<<set _n23 to clone($baseNNPC)>>
-	<<set _n24 to clone($baseNNPC)>>
-	<<set _n25 to clone($baseNNPC)>>
-	<<set _n26 to clone($baseNNPC)>>
-	<<set _n27 to clone($baseNNPC)>>
-	<<set _n28 to clone($baseNNPC)>>
-
-<<set $NPCName = [_n1, _n2, _n3, _n4, _n5, _n6, _n7, _n8, _n9, _n10, _n11, _n12, _n13, _n14, _n15, _n16, _n17, _n18, _n19, _n20, _n21, _n22, _n23, _n24, _n25, _n26, _n27, _n28]>>
-
-<<set $NPCNameList to ["Avery","Bailey","Briar","Charlie","Darryl","Doren","Eden","Gwylan","Harper","Jordan","Kylar","Landry","Leighton","Mason","Morgan","River","Robin","Sam","Sirris","Whitney","Winter","Black Wolf","Niki","Quinn","Remy","Alex","Great Hawk","Wren"]>>
-
-<!-- Draft default pronoun list. Random selection is part of initNPCgender widget -->
-/% <<set _pro to ["m","f","f","m","m","m","m","m","f","f","m","m","f","m","f","m","m","m","f","m","m","m","m","m","f","m"]>> %/
-
-<<set _tit to ["businessperson", "caretaker", "brothel owner", "dance coach", "club owner","English teacher","hunter", "shopkeeper", "doctor","pious","loner","criminal","headteacher", "swimming teacher","sewer dweller","maths teacher","orphan","cafe owner","science teacher","bully", "history teacher","alpha","photographer","mayor","farmer","farmhand","terror","smuggler"]>>
-
-<<set _ins to ["weak","weak","looks","ethics","ethics","ethics","looks","weak","skill","ethics","weak","skill","skill","ethics","weak","ethics","ethics","ethics","ethics","looks","skill","weak","skill", "looks","looks","weak","looks","ethics"]>>
-
-<!-- Type needs to conform to beast type: wolf, dog, etc. -->
-<<set _tpe to ["human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","human","wolf","human","human","human","human","hawk","human"]>>
-
-<<set _swi to ["a","a","a","a","a","a","a","t","a","a","t","a","a","a","a","a","t","a","a","t","a","a","a","a","a","t","a","a"]>>
-
-<<for _i to 0; _i lt $NPCName.length; _i++>>
-
-	<<set $NPCName[_i].nam to $NPCNameList[_i]>>
-	<<set $NPCName[_i].description to $NPCNameList[_i]>>
-	<<set $NPCName[_i].title to _tit[_i]>>
-	<<set $NPCName[_i].pronoun to "none">>
-	<<set $NPCName[_i].gender to "none">>
-	<<set $NPCName[_i].penissize to 0>>
-	<<set $NPCName[_i].penisdesc to "none">>
-	<<if $npcNamedVersion isnot 1>>/*Keeps init from resetting for saves made in 0.2.5*/
-		<<set $NPCName[_i].init to 0>>
+/* main npc set/update loop 
+ * initializes undefined $baseNNPC properties with zeroes,
+ * then overwrites them with npc-specific properties,
+ * if a property is an array - chooses 1 element randomly,
+ * then changes remaining zeroes to more sane values if needed
+ */
+<<for _npc range $NPCNameList>>
+	<<if ndef $NPCName[_npc]>><<set $NPCName[_npc] to {}>><</if>>
+	<<for _var range $baseNNPC>>
+		<<if ndef $NPCName[_npc][_var]>><<set $NPCName[_npc][_var] to 0>><</if>>
+	<</for>>
+	<<set $NPCName[_npc].nam to _npc>>
+	<<set $NPCName[_npc].description to _npc>>
+	<<for _stat range Object.keys($NPCName_unique_data[_npc])>>
+		<<set $NPCName[_npc][_stat] to $NPCName_unique_data[_npc][_stat]>>
+		<<set $NPCName[_npc][_stat] to either($NPCName[_npc][_stat])>>
+	<</for>>
+	<<if $NPCName[_npc].insecurity eq 0>>
+		<<set $NPCName[_npc].insecurity to either(["weak", "ethics", "looks", "skill"])>>
 	<</if>>
-	<<set $NPCName[_i].insecurity to _ins[_i]>>
-	<<if _swi[_i] is "t">>
-		<<set $NPCName[_i].adult to 0>>
-		<<set $NPCName[_i].teen to 1>>
-	<<else>>
-		<<set $NPCName[_i].adult to 1>>
-		<<set $NPCName[_i].teen to 0>>
+	<<if $NPCName[_npc].age eq 0>>
+		<<set $NPCName[_npc].age to "adult">>
 	<</if>>
-	<<set $NPCName[_i].type to _tpe[_i]>>
-	<<set $NPCName[_i].trust to 0>>
-	<<set $NPCName[_i].love to 0>>
-	<<set $NPCName[_i].dom to 0>>
-	<<set $NPCName[_i].lust to 0>>
-	<<set $NPCName[_i].rage to 0>>
-	<<if $npcNamedVersion isnot 1>>
-		<<set $NPCName[_i].state to "">>
+	<<if $NPCName[_npc].type eq 0>>
+		<<set $NPCName[_npc].type to "human">>
 	<</if>>
-	<<set $NPCName[_i].trauma to 0>>
+	<<if $NPCName[_npc].eyeColour eq 0>>
+		<<set $NPCName[_npc].eyeColour to either(["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"])>>	
+	<</if>>
+	<<if $NPCName[_npc].hairColour eq 0>>
+		<<set $NPCName[_npc].hairColour to either(["red","black","brown","lightbrown","blond","platinumblond","strawberryblond","ginger"])>>
+	<</if>>
 <</for>>
-<<generateNPCNameHairAndEyeColors true>>
 
 <</widget>>
+
 
 <<widget "npcNamedUpdate">>/*Applies new system to old saves, and carries over relevant variables.*/
-
-<<if $npcNamedVersion isnot 2>><!-- Needed for compatibility with V2.5 and prior saves -->
+<<if $objectVersion.NPCName isnot 3>>
+	<<set $objectVersion.NPCName to 3>>
+	<<if def $NPCName>>
+		<<set _oldNPCName to clone($NPCName)>>
+		<<set _oldNPCNameList to clone($NPCNameList)>>
+		<<run delete $NPCName>>
+	<</if>>
 	<<npcNamed>>
 
-	<<for _e to 0; _e lt $NPCNameList.length; _e++>>
-		<<set _lowerCaseName to $NPCNameList[_e].toLowerCase()>>
-		<<set _upperCaseName to $NPCNameList[_e]>>
-
+	<<set _oldvars to ["trust", "love", "dom", "lust", "rage", "state", "trauma", "gender", "penissize", "penisdesc", "penis", "vagina"]>>
+	<<for _npc range $NPCNameList>>
+		<<set _lowerCaseName to _npc.toLowerCase()>>
+		<<if _oldNPCNameList.includes(_npc)>>
+		<<set _i to _oldNPCNameList.indexOf(_npc)>>
+		<</if>>
 		<<if $npcNamedVersion is undefined>>
-			/* .init and .pronoun can't be set within an easy loop */
 			<<if V['init' + _lowerCaseName] isnot undefined>>
-				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].init to V['init' + _lowerCaseName]>>
-				<<run delete V['init' + _lowerCaseName]>>
-			<</if>>
-			<<if V[_lowerCaseName + 'gender'] isnot undefined>>
-				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].pronoun to V[_lowerCaseName + 'gender']>>
-				/* do not unset old gender, it is still needed within a loop */
-			<</if>>
-			/* set new npc attribute vars and remove old ones in a loop */
-			<<for _attribute range ["trust", "love", "dom", "lust", "rage", "state", "trauma", "gender", "penissize", "penisdesc", "penis", "vagina"]>>
-				<<if V[_lowerCaseName + _attribute] isnot undefined>>
-					<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)][_attribute] to V[_lowerCaseName + _attribute]>>
-					<<run delete V[_lowerCaseName + _attribute]>>
+			<!-- no point in checking other vars if init is not defined -->
+				<<set $NPCName[_npc].init to V['init' + _lowerCaseName]>>
+				<<if V[_lowerCaseName + 'gender'] isnot undefined>>
+					<<set $NPCName[_npc].pronoun to V[_lowerCaseName + 'gender']>>
 				<</if>>
-			<</for>>
-
+				<<for _var range _oldvars>>
+					<<if V[_lowerCaseName + _var] isnot undefined>>
+						<<set $NPCName[_npc][_var] to V[_lowerCaseName + _var]>>
+					<</if>>
+				<</for>>
+			<</if>>
 		<<elseif $npcNamedVersion is 1>>
 			<<if V[_lowerCaseName + 'gender'] isnot undefined>>
-				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].pronoun to V[_lowerCaseName + 'gender']>>
-				<<run delete V[_lowerCaseName + 'gender']>>
+				<<set _oldNPCName[_i].pronoun to V[_lowerCaseName + 'gender']>>
 			<</if>>
 			<<if V[_lowerCaseName + 'penis'] isnot undefined>>
-				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].penis to V[_lowerCaseName + 'penis']>>
-				<<run delete V[_lowerCaseName + 'penis']>>
+				<<set _oldNPCName[_i].penis to V[_lowerCaseName + 'penis']>>
 			<</if>>
 			<<if V[_lowerCaseName + 'vagina'] isnot undefined>>
-				<<set $NPCName[$NPCNameList.indexOf(_upperCaseName)].vagina to V[_lowerCaseName + 'vagina']>>
-				<<run delete V[_lowerCaseName + 'vagina']>>
+				<<set _oldNPCName[_i].vagina to V[_lowerCaseName + 'vagina']>>
 			<</if>>
 		<</if>>
-	<</for>>
-
-	<<set $npcNamedVersion to 2>>
-	<<set $NPCName to clone(_tempNPCName)>>
-
-	<<updateNewNamedNpcs>>
-<</if>>
-<</widget>>
-
-<<widget "newNamedNpc">>
-<<if $args[0]>>
-	<<if !$NPCNameList.includes($args[0].nam)>>
-		<<set _values to clone($args[0])>>
-		<<set _valueKeys to Object.keys(_values)>>
-		<<set _nnpc to clone(setup.baseNNPC)>>
-		<<for _i to 0; _i lt _valueKeys.length; _i++>>
-			<<set _nnpc[_valueKeys[_i]] to _values[_valueKeys[_i]]>>
+		/* update from v2 */
+		<<if $npcNamedVersion gte 1>>
+			<<if _i gte 0>>
+				<<for _var range $baseNNPC>>
+					<<if def _oldNPCName[_i][_var]>>
+						<<set $NPCName[_npc][_var] to _oldNPCName[_i][_var]>>
+					<</if>>
+				<</for>>
+			<</if>>
+		<</if>>
+		/* unset old vars */
+		<<for _attribute range _oldvars>>
+			<<run delete V[_lowerCaseName + _attribute]>>
 		<</for>>
-		<<set $NPCName.push(clone(_nnpc))>>
-		<<set $NPCNameList.push(clone(_nnpc.nam))>>
-	<</if>>
-<</if>>
-<</widget>>
-
-<<widget "updateNewNamedNpcs">>
-<<if $npcListVersion gte 1>>
-	<<set _newNNPCs to {
-		"blackwolf": {nam : "Black Wolf", penis : 0, vagina: 0, gender: "none", description: "Black Wolf", title: "alpha", insecurity: "weak", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "wolf", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0},
-		"niki": {nam : "Niki", penis : 0, vagina: 0, gender: "none", description: "Niki", title: "photographer", insecurity: "skill", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0},
-		"quinn": {nam : "Quinn", penis : 0, vagina: 0, gender: "none", description: "Quinn", title: "mayor", insecurity: "looks", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0},
-		"remy": {nam : "Remy", penis : 0, vagina: 0, gender: "none", description: "Remy", title: "farmer", insecurity: "looks", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0},
-		"alex": {nam : "Alex", penis : 0, vagina: 0, gender: "none", description: "Alex", title: "farmhand", insecurity: "weak", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 1, adult: 0, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0},
-		"greathawk": {nam : "Great Hawk", penis : 0, vagina: 0, gender: "none", description: "Great Hawk", title: "terror", insecurity: "looks", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "hawk", trust: 0, love: 0, dom: 100, lust: 0, rage: 0, state: 0, trauma: 0},
-		"wren": {nam : "Wren", penis : 0, vagina: 0, gender: "none", description: "Wren", title: "smuggler", insecurity: "ethics", pronoun: "none", penissize: 0, penisdesc: "none", bottomsize: 0, ballssize: 0, breastsize: 0, breastdesc: 0, breastsdesc: 0, skincolour: 0, teen: 0, adult: 1, init: 0, intro: 0, type: "human", trust: 0, love: 0, dom: 0, lust: 0, rage: 0, state: 0, trauma: 0}
-	}>>
-	<<set _npcs to Object.keys(_newNNPCs)>>
-	<<for _j to 0; _j lt _npcs.length; _j++>>
-		<<if _newNNPCs[_npcs[_j]].nam isnot undefined and !$NPCNameList.includes(_newNNPCs[_npcs[_j]].nam)>>
-			<<newNamedNpc _newNNPCs[_npcs[_j]]>>
-			<<set _npcsAdded to true>>
-		<</if>>
+		<<run delete V["init" + _lowerCaseName]>>
 	<</for>>
-	<<if _npcsAdded is true>>
-		<<initnpcgender>>
-	<</if>>
+	<<unset $npcNamedVersion>>
 <</if>>
-<</widget>>
-
-<<widget "generateNPCNameHairAndEyeColors">>
-<<for _i to 0; _i lt $NPCName.length; _i++>>
-	<<switch $NPCName[_i].nam>>
-		<<case "Whitney">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "blond">>
-			<</if>>
-		<<case "Jordan">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].eyeColour to "light blue">>
-				<<set $NPCName[_i].hairColour to "blond">>
-			<</if>>
-		<<case "Leighton">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].eyeColour to "green">>
-				<<set $NPCName[_i].hairColour to "black">>
-			<</if>>
-		<<case "Landry">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "black">>
-			<</if>>
-		<<case "Darryl">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "brown">>
-			<</if>>
-		<<case "River">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].eyeColour to "light blue">>
-				<<set $NPCName[_i].hairColour to "brown">>
-			<</if>>
-		<<case "Kylar" "Bailey">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to ["black","brown"].pluck()>>
-			<</if>>
-		<<case "Gwylan">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "mousy">>
-			<</if>>
-		<<case "Doren">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "red">>
-			<</if>>
-		<<case "Charlie" "Morgan">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "ginger">>
-			<</if>>
-		<<case "Black Wolf">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "black">>
-			<</if>>
-		<<case "Remy">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to "green">>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "brown">>
-			<</if>>
-		<<case "Alex">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to "green">>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "red">>
-			<</if>>
-		<<case "Great Hawk">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to "light blue">>
-			<</if>>
-			<<if $NPCName[_i].hairColour is 0 or $NPCName[_i].hairColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].hairColour to "brown">>
-			<</if>>
-		<<case "Wren">>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined or $args[0] is "default">>
-				<<set $NPCName[_i].eyeColour to "brown">>
-				<<set $NPCName[_i].hairColour to "blond">>
-			<</if>>
-		<<default>>
-			<<if $NPCName[_i].eyeColour is 0 or $NPCName[_i].eyeColour is undefined>>
-				<<set $NPCName[_i].eyeColour to ["purple","dark blue","light blue","amber","hazel","green","red","pink","grey"].pluck()>>
-				<<set $NPCName[_i].hairColour to ["red","black","brown","lightbrown","blond","platinumblond","strawberryblond","ginger"].pluck()>>
-			<</if>>
-	<</switch>>
-<</for>>
 <</widget>>
