@@ -46,7 +46,7 @@ namespace Renderer {
 		beforeRender?: (layers: CompositeLayer[]) => any;
 		layerCacheMiss?: (layer: CompositeLayer) => any;
 		layerCacheHit?: (layer: CompositeLayer) => any;
-		processingStep?: (layer: string, processing: string, canvas: HTMLCanvasElement) => any;
+		processingStep?: (layer: string, processing: string, canvas: HTMLCanvasElement, dt: number) => any;
 		composition?: (layer: string, result: HTMLCanvasElement) => any;
 		renderingDone?: (time: number) => any;
 
@@ -111,6 +111,15 @@ namespace Renderer {
 			c2d.fillRect(0, 0, w, h);
 		}
 		return c2d;
+	}
+
+	export function ensureCanvas(image: CanvasImageSource): HTMLCanvasElement {
+		if (image instanceof HTMLCanvasElement) {
+			return image;
+		}
+		let i2 = createCanvas(image.width as number, image.height as number);
+		i2.drawImage(image, 0, 0);
+		return i2.canvas;
 	}
 
 	/**
@@ -499,82 +508,197 @@ namespace Renderer {
 		return adjustLevels(image, contrast, shift, resultCanvas);
 	}
 
+	export interface RenderPipelineContext {
+		layer: CompositeLayer;
+		/**
+		 * Updates along the pipeline
+		 */
+		image: CanvasImageSource;
+		listener: RendererListener;
+		rects: LayerRects;
+		needsCutout: boolean;
+
+		// extra properties are allowed
+		[index:string]: any;
+	}
+
+	/**
+	 * Abstraction of layer processing steps.
+	 * All steps are stored in RenderingPipeline array, and can be changed externally
+	 */
+	export interface RenderingStep {
+		name:string;
+
+		/**
+		 * Return true if this step has to be performed
+		 */
+		condition(layer:CompositeLayer, context: RenderPipelineContext):boolean;
+
+		/**
+		 * Rendering function, returns resulting image.
+		 */
+		render(image:CanvasImageSource,
+		                 layer:CompositeLayer,
+		                 context: RenderPipelineContext
+		): HTMLCanvasElement;
+	}
+
+	const RenderingStepDesaturate:RenderingStep = {
+		name: "desaturate",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return layer.desaturate;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			return desaturateImage(image, undefined, false);
+		}
+	};
+
+	const RenderingStepPrefilter:RenderingStep = {
+		name: "prefilter",
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return layer.prefilter && layer.prefilter !== "none";
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			return filterImage(image, layer.prefilter);
+		}
+
+	};
+
+	const RenderingStepBrightness:RenderingStep = {
+		name: "brightness",
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return typeof layer.brightness === 'number' && layer.brightness !== 0;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			return adjustBrightness(image, layer.brightness, undefined, false);
+		}
+	}
+
+	const RenderingStepContrast:RenderingStep = {
+		name: "contrast",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return typeof layer.contrast === 'number' && layer.contrast !== 1;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			return adjustContrast(image, layer.contrast, undefined);
+		}
+
+	}
+
+	const RenderingStepBlendColor:RenderingStep = {
+		name: "blend:color",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return layer.blendMode && layer.blend && typeof layer.blend === "string";
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			return composeOverRect(image, layer.blend as string, layer.blendMode).canvas;
+		}
+	}
+
+	const RenderingStepBlendGradient:RenderingStep = {
+		name: "blend:gradient",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return layer.blendMode && layer.blend && typeof layer.blend === 'object' && 'gradient' in layer.blend;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			let gradient = createGradient(layer.blend as BlendGradientSpec);
+			return composeOverSpecialRect(image, gradient, layer.blendMode, context.rects.subspriteFrameCount).canvas;
+		}
+	}
+
+	const RenderingStepBlendPattern:RenderingStep = {
+		name: "blend:pattern",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return layer.blendMode && layer.blend && typeof layer.blend === 'object' && 'pattern' in layer.blend;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			context.needsCutout = true;
+			let pattern = PatternProvider((layer.blend as BlendPatternSpec).pattern);
+			if (!pattern) {
+				return ensureCanvas(image);
+			}
+			return composeOverSpecialRect(image, pattern, layer.blendMode, context.rects.subspriteFrameCount).canvas;
+		}
+	}
+
+	const RenderingStepMask:RenderingStep = {
+		name: "mask",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return !!layer.mask;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			return cutoutFrom(ensureCanvas(image).getContext('2d'), layer.mask).canvas;
+		}
+	}
+
+	const RenderingStepCutout:RenderingStep = {
+		name: "cutout",
+
+		condition(layer: CompositeLayer, context: Renderer.RenderPipelineContext): boolean {
+			return context.needsCutout;
+		},
+
+		render(image: CanvasImageSource, layer: CompositeLayer, context: Renderer.RenderPipelineContext): HTMLCanvasElement {
+			return cutoutFrom(ensureCanvas(image).getContext('2d'), layer.image!!).canvas;
+		}
+	}
+
+	/**
+	 * Rendering steps used. Order matters!
+	 */
+	export const RenderingPipeline: RenderingStep[] = [
+		RenderingStepDesaturate,
+		RenderingStepPrefilter,
+		RenderingStepBrightness,
+		RenderingStepContrast,
+		RenderingStepBlendPattern,
+		RenderingStepBlendGradient,
+		RenderingStepBlendColor,
+		RenderingStepMask,
+		RenderingStepCutout
+	]
+
 	export function processLayer(
 		layer: CompositeLayer,
 		rects: LayerRects,
 		listener: RendererListener
 	) {
-		let name = layer.name || layer.src;
-		let image = layer.image!!;
-		let needsCutout = false;
-		if (layer.desaturate) {
-			image = desaturateImage(image, undefined, false);
-			needsCutout = true;
+		let context: RenderPipelineContext = {
+			layer: layer,
+			image: layer.image!!,
+			needsCutout: false,
+			rects: rects,
+			listener: listener
+		}
+		for (let step of RenderingPipeline) {
+			if (!step.condition(context.layer, context)) continue;
+			let t0 = millitime();
+			let listener = context.listener;
+			context.image = step.render(context.image, context.layer, context);
 			if (listener && listener.processingStep) {
-				listener.processingStep(name, "desaturate", image);
+				listener.processingStep(context.layer.name, step.name, context.image, millitime() - t0);
 			}
 		}
-		if (layer.prefilter && layer.prefilter !== 'none') {
-			image = filterImage(image, layer.prefilter);
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "prefilter", image);
-			}
-		}
-		if (typeof layer.brightness === 'number' && layer.brightness !== 0) {
-			image = adjustBrightness(image, layer.brightness, undefined, false);
-			needsCutout = true;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "brightness", image);
-			}
-		}
-		if (typeof layer.contrast === 'number' && layer.contrast !== 1) {
-			image = adjustContrast(image, layer.contrast, undefined);
-			needsCutout = true;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "contrast", image);
-			}
-		}
-		const blend = layer.blend;
-		if (blend && layer.blendMode) {
-			needsCutout = true;
-			let noop = false;
-			if (typeof blend === 'string') {
-				image = composeOverRect(image, blend, layer.blendMode).canvas;
-			} else if ('gradient' in blend) {
-				let gradient = createGradient(blend);
-				image = composeOverSpecialRect(image, gradient, layer.blendMode, rects.subspriteFrameCount).canvas;
-			} else if ('pattern' in blend) {
-				let pattern = PatternProvider(blend.pattern);
-				if (pattern) {
-					image = composeOverSpecialRect(image, pattern, layer.blendMode, rects.subspriteFrameCount).canvas;
-				} else {
-					noop = true;
-				}
-			} else {
-				throw new Error("Invalid blend spec for layer "+layer.name+": "+JSON.stringify(blend));
-			}
-			if (listener && listener.processingStep && !noop) {
-				listener.processingStep(name, "blend", image as HTMLCanvasElement);
-			}
-		}
-		if (layer.mask) {
-			image = cutoutFrom((image as HTMLCanvasElement).getContext('2d'), layer.mask).canvas;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "mask", image);
-			}
-		}
-		if (needsCutout) {
-			if (!(image instanceof HTMLCanvasElement)) {
-				let i2 = createCanvas(image.width as number, image.height as number);
-				i2.drawImage(image, 0, 0);
-				image = i2.canvas;
-			}
-			image = cutoutFrom(image.getContext('2d'), layer.image!!).canvas;
-			if (listener && listener.processingStep) {
-				listener.processingStep(name, "cutout", image);
-			}
-		}
-		return image;
+		return context.image;
 	}
 
 	interface LayerRects {

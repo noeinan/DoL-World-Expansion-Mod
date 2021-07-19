@@ -41,7 +41,7 @@ function handleVersionResponse(response) {
 					// create data for notification
 					State.variables.newVersionData = { version: version, days: days, hours: hours };
 					delete State.variables.newVersionDismissed;
-					
+
 					// show notification if one isn't there already
 					if ($('#new-version-notification').length == 0)
 						$('.passage').prepend((new Wikifier(null, '<<newversionnotification>>')).output);

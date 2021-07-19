@@ -146,7 +146,7 @@ window.getCustomColourStyle = function (type, valueOnly = false) {
 window.saveCustomColourPreset = function (slot = "primary") {
 	let setName = prompt("Enter new colour preset name", "New preset");
 	if (setName != null) {
-		if (Object.keys(V.customColors.presets).contains(setName)) {
+		if (Object.keys(V.customColors.presets).includes(setName)) {
 			alert('Preset "' + setName + '" already exists!');
 			return;
 		}
@@ -223,10 +223,10 @@ window.applyClothingShopFilters = function (items) {
 	// (example) turns f.gender object {female: true, neutral: true, male: false} into ["f", "n"], ready to compare with gender in items
 	let allowedGenders = Object.keys(f.gender).filter(x => f.gender[x]).map(x => x.first());
 
-	return items.filter(x => allowedGenders.contains(x.gender)
+	return items.filter(x => allowedGenders.includes(x.gender)
 		&& x.reveal >= f.reveal.from && x.reveal < f.reveal.to
 		&& x.warmth >= f.warmth.from && x.warmth < f.warmth.to
-		&& (f.traits.length == 0 || f.traits.containsAny(x.type))
+		&& (f.traits.length == 0 || f.traits.includesAny(x.type))
 	);
 }
 

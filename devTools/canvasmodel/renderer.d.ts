@@ -15,7 +15,7 @@ declare namespace Renderer {
         beforeRender?: (layers: CompositeLayer[]) => any;
         layerCacheMiss?: (layer: CompositeLayer) => any;
         layerCacheHit?: (layer: CompositeLayer) => any;
-        processingStep?: (layer: string, processing: string, canvas: HTMLCanvasElement) => any;
+        processingStep?: (layer: string, processing: string, canvas: HTMLCanvasElement, dt: number) => any;
         composition?: (layer: string, result: HTMLCanvasElement) => any;
         renderingDone?: (time: number) => any;
         keyframe?: (animation: string, keyframeIndex: number, keyframe: KeyframeSpec) => any;
@@ -44,6 +44,10 @@ declare namespace Renderer {
      */
     export function gray(value: number): string;
     export function createCanvas(w: number, h: number, fill?: string): CanvasRenderingContext2D;
+    export function ensureCanvas(image: CanvasImageSource): HTMLCanvasElement;
+    /**
+     * Free to use CanvasRenderingContext2D (to create image data, gradients, patterns)
+     */
     export const globalC2D: CanvasRenderingContext2D;
     /**
      * Creates a cutout of color in shape of sourceImage
@@ -120,6 +124,36 @@ declare namespace Renderer {
     shift: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
     export function adjustContrast(image: CanvasImageSource, factor: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
     export function adjustBrightnessAndContrast(image: CanvasImageSource, brightness: number, contrast: number, resultCanvas?: CanvasRenderingContext2D): HTMLCanvasElement;
+    export interface RenderPipelineContext {
+        layer: CompositeLayer;
+        /**
+         * Updates along the pipeline
+         */
+        image: CanvasImageSource;
+        listener: RendererListener;
+        rects: LayerRects;
+        needsCutout: boolean;
+        [index: string]: any;
+    }
+    /**
+     * Abstraction of layer processing steps.
+     * All steps are stored in RenderingPipeline array, and can be changed externally
+     */
+    export interface RenderingStep {
+        name: string;
+        /**
+         * Return true if this step has to be performed
+         */
+        condition(layer: CompositeLayer, context: RenderPipelineContext): boolean;
+        /**
+         * Rendering function, returns resulting image.
+         */
+        render(image: CanvasImageSource, layer: CompositeLayer, context: RenderPipelineContext): HTMLCanvasElement;
+    }
+    /**
+     * Rendering steps used. Order matters!
+     */
+    export const RenderingPipeline: RenderingStep[];
     export function processLayer(layer: CompositeLayer, rects: LayerRects, listener: RendererListener): CanvasImageSource;
     interface LayerRects {
         width: number;
