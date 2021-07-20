@@ -54,8 +54,9 @@ $GREP -e "<<[ a-zA-Z]\+[^()<>]*([^()]*)[^()]*)[^()<>]*>>"  -- "game/*" | myprint
 $GREP -e "<<[ a-zA-Z]\+[^()<>]*([^()]*([^()]*)[^()<>]*>>"  -- "game/*" | myprint "MissingClosingBracket2"
 $GREP -e "<<.*[(][^<>)]*[(][^<>)]*)\?[^<>)]*>>" -- "game/*" | myprint "MissingClosingBracket3"
 # Check for missing >>.  e.g.:   <<if $foo
+# doesn't play well with multiple lines, should be moved to check.py
 #$GREP "<<[^<>]*[^,\"\[{"$'\r]\r'"\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
-$GREP "<<[^<>]*[^,\"\[{]\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
+#$GREP "<<[^<>]*[^,\"\[{]\?$" -- 'game/*' | myprint "MissingClosingAngleBrackets"
 # Check for too many >>>.  e.g.: <</if>>>
 $GREP "<<[^<>\"]*[<>]\?[^<>\"]*>>>" -- "game/*" | myprint "TooManyAngleBrackets"
 # Check for too many <<<.  e.g.: <<</if>>

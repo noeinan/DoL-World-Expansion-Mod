@@ -28,66 +28,75 @@ DOL.Perflog.self = true; // Record own performance
 const wpStack = []; // Widget performance stack
 DOL.Perflog.nPassages = 0;
 $(document).on(':passageend', function() {
-    if (!DOL.Perflog.enabled) return;
-    try {
-        if (DOL.Perflog.self) DOL.Perflog.logWidgetStart("__perflog_passageEnd")
-        DOL.Perflog.nPassages++;
-        for (var name in wpRec) {
-            var rec = wpRec[name];
-            var grec = DOL.Perflog.globalRec[name];
-            if (!grec) {
-                DOL.Perflog.globalRec[name] = rec;
-            } else {
-                grec.n += rec.n;
-                grec.total += rec.total;
-                grec.own += rec.own;
-            }
-        }
-        DOL.Perflog.lastRec = wpRec;
-        wpRec = {};
-    } finally {
-        if (DOL.Perflog.self) DOL.Perflog.logWidgetEnd("__perflog_passageEnd")
-    }
+	if (!DOL.Perflog.enabled) return;
+	try {
+		if (DOL.Perflog.self) DOL.Perflog.logWidgetStart("__perflog_passageEnd")
+		DOL.Perflog.nPassages++;
+		for (var name in wpRec) {
+			var rec = wpRec[name];
+			var grec = DOL.Perflog.globalRec[name];
+			if (!grec) {
+				DOL.Perflog.globalRec[name] = rec;
+			} else {
+				grec.n += rec.n;
+				grec.total += rec.total;
+				grec.own += rec.own;
+			}
+		}
+		DOL.Perflog.lastRec = wpRec;
+		wpRec = {};
+	} finally {
+		if (DOL.Perflog.self) DOL.Perflog.logWidgetEnd("__perflog_passageEnd")
+	}
 });
 DOL.Perflog.logWidgetStart = function(widgetName) {
-    if (!DOL.Perflog.enabled) return;
-    wpStack.push({
-        name: widgetName,
-        t0: millitime(),
-        i: 0
-    });
+	if (!DOL.Perflog.enabled) return;
+	wpStack.push({
+		name: widgetName,
+		t0: millitime(),
+		i: 0
+	});
+}
+/**
+ * Record that widget `widgetName` executed in `totaltime` ms,
+ * including `internaltime` internal widget calls
+ * @param {string} widgetName
+ * @param {number} totaltime
+ * @param {number=0} internaltime
+ */
+DOL.Perflog.logWidgetTime = function(widgetName, totaltime, internaltime) {
+	if (typeof internaltime !== "number") internaltime = 0;
+	const prevPerflog = wpStack[wpStack.length - 1];
+	if (prevPerflog) {
+		prevPerflog.i += totaltime;
+	}
+	var perfrec = wpRec[widgetName];
+	if (!perfrec) perfrec = wpRec[widgetName] = {
+		name:widgetName,
+		n:0,
+		total:0,
+		own:0
+	};
+	perfrec.n++;
+	perfrec.total += totaltime;
+	perfrec.own += totaltime - internaltime;
 }
 DOL.Perflog.logWidgetEnd = function(widgetName) {
-    if (!DOL.Perflog.enabled) return;
-    const time = millitime();
-    const perflog = wpStack[wpStack.length - 1];
-    if (!perflog || perflog.name !== widgetName) {
-        Errors.report("Inconsistent widget performance stack", wpStack);
-        return;
-    }
-    const prevPerflog = wpStack[wpStack.length - 2];
-    perflog.t1 = time;
-    const dt = perflog.t1-perflog.t0;
-    if (prevPerflog) {
-        prevPerflog.i += dt;
-    }
-    var perfrec = wpRec[widgetName];
-    if (!perfrec) perfrec = wpRec[widgetName] = {
-        name:widgetName,
-        n:0,
-        total:0,
-        own:0
-    };
-    perfrec.n++;
-    perfrec.total += dt;
-    perfrec.own += dt - perflog.i;
-    wpStack.pop();
-    if (DOL.Perflog.self) {
-        const selfDt = millitime() - time
-        wpSelf.n++;
-        wpSelf.own += selfDt;
-        wpSelf.total += selfDt;
-    }
+	if (!DOL.Perflog.enabled) return;
+	const time = millitime();
+	const perflog = wpStack[wpStack.length - 1];
+	if (!perflog || perflog.name !== widgetName) {
+		Errors.report("Inconsistent widget performance stack", wpStack);
+		return;
+	}
+	wpStack.pop();
+	DOL.Perflog.logWidgetTime(widgetName, time-perflog.t0, perflog.i);
+	if (DOL.Perflog.self) {
+		const selfDt = millitime() - time
+		wpSelf.n++;
+		wpSelf.own += selfDt;
+		wpSelf.total += selfDt;
+	}
 }
 
 /**
@@ -95,12 +104,12 @@ DOL.Perflog.logWidgetEnd = function(widgetName) {
  * @param {number} x
  */
 function niceround(x) {
-    if (Math.floor(x) === x) return x; // Integers
-    if (-1 < x && x < 1) {
-        // Small number, round to 0.001 instead
-        return Math.round(x*1000)/1000;
-    }
-    return Math.round(x*10)/10;
+	if (Math.floor(x) === x) return x; // Integers
+	if (-1 < x && x < 1) {
+		// Small number, round to 0.001 instead
+		return Math.round(x*1000)/1000;
+	}
+	return Math.round(x*10)/10;
 }
 /**
  * Return performance report. Can be viewed by DevTools table() function.
@@ -123,56 +132,56 @@ function niceround(x) {
  * @param {boolean} [options.round=true] Round to 0.1 precision
  */
 DOL.Perflog.report = function (options) {
-    options = Object.assign({
-        sort: 'own',
-        limit: 20,
-        global: true,
-        round: true
-    }, options);
-    const numfn = options.round ? niceround : (x)=>x;
-    var entries;
-    if (options.global) {
-        const np = DOL.Perflog.nPassages;
-        // Add 'per passage' metrics
-        entries = Object.values(DOL.Perflog.globalRec).map(e=>({
-            name: e.name,
-            n: e.n,
-            total: numfn(e.total),
-            own: numfn(e.own),
-            npp: numfn(e.n/np),
-            totalpp: numfn(e.total/np),
-            ownpp: numfn(e.own/np),
-            totalp1: numfn(e.total/e.n),
-            ownp1: numfn(e.own/e.n)
-        }));
-    } else {
-        entries = Object.values(DOL.Perflog.lastRec).map(e=>({
-            name: e.name,
-            n: e.n,
-            total: numfn(e.total),
-            own: numfn(e.own),
-            totalp1: numfn(e.total/e.n),
-            ownp1: numfn(e.own/e.n),
-        }));
-    }
-    var comparator;
-    const sort = options.sort;
-    switch (sort) {
-        case 'own':
-        case 'total':
-        case 'n':
-        case 'npp':
-        case 'ownpp':
-        case 'totalpp':
-        case 'totalp1':
-        case 'ownp1':
-            comparator = (a,b)=>b[sort] - a[sort];
-            break;
-        case 'name':
-        default:
-            comparator = (a,b)=> a.name < b.name ? -1 : a.name > b.name ? +1 : 0;
-    }
-    entries.sort(comparator);
-    if (options.limit > 0 && entries.length > options.limit) entries.splice(options.limit);
-    return entries;
+	options = Object.assign({
+		sort: 'own',
+		limit: 20,
+		global: true,
+		round: true
+	}, options);
+	const numfn = options.round ? niceround : (x)=>x;
+	var entries;
+	if (options.global) {
+		const np = DOL.Perflog.nPassages;
+		// Add 'per passage' metrics
+		entries = Object.values(DOL.Perflog.globalRec).map(e=>({
+			name: e.name,
+			n: e.n,
+			total: numfn(e.total),
+			own: numfn(e.own),
+			npp: numfn(e.n/np),
+			totalpp: numfn(e.total/np),
+			ownpp: numfn(e.own/np),
+			totalp1: numfn(e.total/e.n),
+			ownp1: numfn(e.own/e.n)
+		}));
+	} else {
+		entries = Object.values(DOL.Perflog.lastRec).map(e=>({
+			name: e.name,
+			n: e.n,
+			total: numfn(e.total),
+			own: numfn(e.own),
+			totalp1: numfn(e.total/e.n),
+			ownp1: numfn(e.own/e.n),
+		}));
+	}
+	var comparator;
+	const sort = options.sort;
+	switch (sort) {
+		case 'own':
+		case 'total':
+		case 'n':
+		case 'npp':
+		case 'ownpp':
+		case 'totalpp':
+		case 'totalp1':
+		case 'ownp1':
+			comparator = (a,b)=>b[sort] - a[sort];
+			break;
+		case 'name':
+		default:
+			comparator = (a,b)=> a.name < b.name ? -1 : a.name > b.name ? +1 : 0;
+	}
+	entries.sort(comparator);
+	if (options.limit > 0 && entries.length > options.limit) entries.splice(options.limit);
+	return entries;
 }
