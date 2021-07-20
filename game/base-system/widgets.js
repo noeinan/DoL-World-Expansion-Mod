@@ -203,7 +203,43 @@ function genderappearancecheck() {
 		T.gender_appearance_noow = V.player.gender;
 	}
 }
-DefineMacro("genderappearancecheck", genderappearancecheck);
+
+function apparentbreastsizecheck(){
+	T.tempbreast = V.breastsize;
+	if ( V.worn.upper.bustresize != undefined ){ T.tempbreast += V.worn.upper.bustresize };
+	if ( V.worn.under_upper.bustresize != undefined ){ T.tempbreast += V.worn.under_upper.bustresize };
+	if ( V.worn.over_upper.bustresize != undefined){ T.tempbreast += V.worn.over_upper.bustresize };
+	V.player.perceived_breastsize = Math.clamp( V.breastsizemin, T.tempbreast, V.breastsizemax );
+}
+
+function apparentbottomsizecheck(){
+	T.tempbutt = V.bottomsize;
+	if ( V.worn.lower.rearresize != undefined ){ T.tempbutt += V.worn.lower.rearresize };
+	if ( V.worn.under_lower.rearresize != undefined ){ T.tempbutt += V.worn.under_lower.rearresize };
+	if ( V.worn.lower.rearresize != undefined ){ T.tempbutt += V.worn.over_lower.rearresize };
+	V.player.perceived_bottomsize = Math.clamp( V.bottomsizemin, T.tempbutt, V.bottomsizemax );
+}
+
+function exposedcheck() { 
+	if ( !V.combat || V.args[0] === true ){
+		genderappearancecheck();
+		V.player.gender_appearance = T.gender_appearance;
+		T.gender_appearance_factors.sort((a, b) => a.femininity > b.femininity);
+		V.player.gender_appearance_factors = T.gender_appearance_factors;
+		V.player.femininity = T.apparent_femininity;
+
+		V.player.gender_appearance_without_overwear = T.gender_appearance_noow;
+		T.gender_appearance_factors_noow.sort((a, b) => a.femininity > b.femininity);
+		V.player.gender_appearance_without_overwear_factors = T.gender_appearance_factors_noow;
+		V.player.femininity_without_overwear = T.apparent_femininity_noow;
+
+		V.breastindicator = T.breast_indicator;
+
+		apparentbreastsizecheck();
+		apparentbottomsizecheck();
+	}
+}
+DefineMacro("exposedcheck", exposedcheck);
 
 function updatehistorycontrols(){
 	if (V.maxStates === undefined || V.maxStates > 20) {
