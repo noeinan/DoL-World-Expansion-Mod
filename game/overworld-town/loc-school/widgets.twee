@@ -2300,58 +2300,41 @@ Doren asks you to demonstrate your grammar on the whiteboard. As you walk to the
 	 the carried towel parts -->
 <<widget "droptowel">>
 	<<if _toweldrop is "both">>
-		<<upperruined>><<lowerruined>>
+		<<generalStrip "upper">>
+		<<generalStrip "lower">>
 	<<elseif _toweldrop is "lower">>
-		<<lowerruined>>
+		<<generalStrip "lower">>
 	<<elseif _toweldrop is "upper">>
-		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
-			<<set _temp to clone($carried)>>
-			<<generalStrip "upper">>
-			<<set $carried to _temp>>
-		<</if>>
+		<<generalStrip "upper">>
 	<</if>>
 <</widget>>
 
 <!-- Will check if the pc can drop a towel to expose themselves. Returns its
 	 result in "_exlevel" and "_toweldrop".-->
 <<widget "checkdroptowel">>
-	<<set _exposed to $exposed>>
-	<<set _upper to $exposed>>
-	<<set _lower to $exposed>>
-	<<set _both to $exposed>>
-	<<if $exhibitionism gte 50>>
-		<<if $worn.upper.name is "towel top" or $worn.upper.name is "large towel">>
-			<<generalStrip "upper">>
-			<<exposure>>
-			<<set _upper to $exposed>>
-			<<if $worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom">>
-				<<generalStrip "lower">>
-				<<exposure>>
-				<<set _both to $exposed>>
+	<<set _bottom to "nothing">>
+	<<set _top to "nothing">>
+	<<if $exhibitionism gte 55>>
+		<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.over_lower.exposed gte 2>>
+			<<if $worn.under_lower.exposed lt 1 or $exhibitionism gte 75>>
+				<<set _bottom to "strip">>
 			<</if>>
-		<<elseif $worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom">>
-			<<generalStrip "lower">>
-			<<exposure>>
-			<<set _lower to $exposed>>
 		<</if>>
-		<!-- undo generalStrip -->
-		<<run Object.keys($carried).forEach(slot => {
-			if ($worn[slot].name is "naked") {
-				$worn[slot] = clone($carried[slot]);
-				$carried[slot] = clone(setup.clothes[slot][0]);
-			}
-		})>>
-		<<exposure>>
+		<<if ($worn.upper.name is "towel top" or $worn.upper.name is "large towel") and $worn.over_upper.exposed gte 2>>
+			<<if $worn.upper.one_piece isnot 1 or _bottom is "strip">>
+				<<set _top to "strip">>
+			<</if>>
+		<</if>>
 	<</if>>
 
-	<<if _both gt _exposed and (_both lt 2 or $exhibitionism gte 75)>>
-		<<set _exlevel to _both>>
+	<<if _bottom is "strip" and _top is "strip">>
+		<<set _exlevel to ($worn.under_lower.exposed lt 1 ? 1 : 2)>>
 		<<set _toweldrop to "both">>
-	<<elseif _lower gt _exposed and (_lower lt 2 or $exhibitionism gte 75)>>
-		<<set _exlevel to _lower>>
+	<<elseif _bottom is "strip">>
+		<<set _exlevel to ($worn.under_lower.exposed lt 1 ? 1 : 2)>>
 		<<set _toweldrop to "lower">>
-	<<elseif _upper gt _exposed and (_upper lt 2 or $exhibitionism gte 75)>>
-		<<set _exlevel to _upper>>
+	<<elseif _top is "strip">>
+		<<set _exlevel to 1>>
 		<<set _toweldrop to "upper">>
 	<<else>>
 		<<set _exlevel to 0>>
