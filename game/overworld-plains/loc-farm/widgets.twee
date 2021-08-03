@@ -967,11 +967,15 @@ You've pushed yourself too much. You pass out.
 		<br>
 	<</if>>
 <</if>>
-<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
+<<if $farm_stage isnot 12 and $farm_work.alex is "clearing" and ($exposed lt 2 or $exhibitionism gte 75) and $daystate isnot "night">>
 	<<link [[Help Alex clear a field (0:20)|Farm Clearing]]>><<farm_count 20>><<pass 20>><<tiredness 2>><<physique 2>><<set $farm.clearing -= 1>><</link>><<gtiredness>><<run _actions++>>
 	<br>
 <</if>>
-
+<<if $farm_stage isnot 12 and $farm_stage gte 7 and _actions is 0 and $farm_work.alex isnot "clearing" and ($exposed lt 2 or $exhibitionism gte 75)>>
+	<<link [[Clear a field alone (0:40)|Farm Clearing Alone]]>><<farm_count 40>><<pass 40>><<tiredness 4>><<physique 3>><<set $farm.clearing -= 1>><</link>><<ggtiredness>><<run _actions++>>
+	<br>
+<</if>>
+<<print _actions>>
 <<if (_actions lt 2 or $farm_stage lt 7) and ($farm_work.alex isnot "relax" or $exposed gte 0)>>
 	<!-- as worker you can be lazy any time, but as partner you only get that luxury when there's (nearly) nothing else to do.
 		 also, if Alex is resting you should join them unless you're too naked for comfort -->
@@ -985,8 +989,8 @@ You've pushed yourself too much. You pass out.
 <<if $daystate isnot "night">>
 	<<farm_alex>>
 	<<farm_status>>
-	<<farm_actions>>
 <</if>>
+<<farm_actions>>
 <br>
 
 <</widget>>
@@ -1840,7 +1844,11 @@ You've pushed yourself too much. You pass out.
 
 		<<link [[Keep working|Farm Tending Lurker Work]]>><</link>>
 		<br>
-		<<link [[Call for Alex (0:05)|Farm Tending Lurker Alex]]>><<npcincr Alex dom 1>><<farm_count 5>><<pass 5>><</link>><<gdom>>
+		<<if $hour lt 21 or $hour gt 4>>
+			<<link [[Call for Alex (0:05)|Farm Tending Lurker Alex]]>><<npcincr Alex dom 1>><<farm_count 5>><<pass 5>><</link>><<gdom>>
+		<<else>>
+			<<link [[Call for Alex (0:05)|Farm Tending Lurker Alex Fail]]>><<farm_count 5>><<pass 5>><</link>>
+		<</if>>
 		<br>
 	<<else>>
 		You're digging in the earth when you see something dark move in your peripheral, low to the ground. It leaps at you before you can look. You tumble backward.<<gtrauma>><<gstress>><<gpain>><<trauma 6>><<stress 6>><<pain 4>>
@@ -1862,7 +1870,11 @@ You've pushed yourself too much. You pass out.
 		<br>
 		<<link [[Struggle|Farm Tending Tentacle Struggle]]>><</link>><<physiquedifficulty 1 24000>>
 		<br>
-		<<link [[Scream|Farm Tending Scream]]>><<npcincr Alex dom 3>><<sub 1>><</link>><<npc Alex>><<person1>><<ggdom>><<endevent>>
+		<<if $hour lt 21 or $hour gt 4>>
+			<<link [[Scream|Farm Tending Scream]]>><<npcincr Alex dom 3>><<sub 1>><</link>><<npc Alex>><<person1>><<ggdom>><<endevent>>
+		<<else>>
+			<<link [[Scream|Farm Tending Scream Fail]]>><<sub 1>><</link>>
+		<</if>>
 		<br>
 		<<link [[Brace yourself|Farm Tending Brace]]>><</link>>
 		<br>
@@ -1911,8 +1923,11 @@ You've pushed yourself too much. You pass out.
 			<<if $skulduggery gte random(500, 700)>>
 				<span class="green">You shiver.</span> Something's wrong. This isn't your usual pervert. You glance around, and spot them. A <<person2>><<person>> and <<person3>><<person>> creep through the crops, trying to sneak up on you.
 				<br><br>
-
-				<<link [[Scream|Farm Tending Group Alex]]>><<sub 1>><<npcincr Alex dom 1>><</link>> | <span class="purple">+ Alex's Dominance</span>
+				<<if $hour lt 21 or $hour gt 4>>
+					<<link [[Scream|Farm Tending Group Alex]]>><<sub 1>><</link>> | <span class="purple">+ Alex's Dominance</span>
+				<<else>>
+					<<link [[Scream|Farm Tending Group Alex Fail]]>><<sub 1>><<npcincr Alex dom 1>><</link>> | <span class="purple">+ Alex's Dominance</span>
+				<</if>>
 				<br>
 				<<link [[Seize the initiative|Farm Tending Group Fight]]>><<def 1>>/*<<farm_aggro -5>>*/<</link>>/*<<laggro>>*/
 				<br>
