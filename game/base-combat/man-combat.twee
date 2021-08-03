@@ -1594,7 +1594,7 @@
 		<<else>>
 
 			<<combat-get-other-hand $args[0]>>
-	
+
 			<<if $worn.over_upper.name isnot "naked" and $noupper isnot 1>>
 				<span class="purple"><<He>> grasps your $worn.over_upper.name with <<his>> $args[0] hand.</span>
 				<<combat-set-hand-target $args[0] "overupperclothes">><<neutral 1>>
@@ -1707,30 +1707,35 @@
 			<<combat-set-hand-target $args[0] "hair">><<violence 2>><<set $speechhair to 1>>
 			<<bodypart_admire_chance forehead>>
 		<</if>>
-	<<elseif $enemyanger + $rng lte 160 and $NPCList[_n].lefthand isnot "arms" and $NPCList[_n].righthand isnot "arms" and $leftarm isnot "bound" and $rightarm isnot "bound">>
-		<span class="purple"><<He>> pins down your arms.</span>
-		<<combat-set-hand-target $args[0] "arms">><<set $leftarm to "grappled">><<set $rightarm to "grappled">><<disablearms>><<violence 2>><<bruise leftarm>><<bruise rightarm>><<set $speecharms to 1>>
-		<<if $vaginause is "cover">>
-			<<set $vaginause to 0>>
-		<</if>>
-		<<if $anususe is "cover">>
-			<<set $anususe to 0>>
-		<</if>>
-		<<if $penisuse is "cover">>
-			<<set $penisuse to 0>>
-		<</if>>
-		<<if random(1, 2) is 2>>
-			<<bodypart_admire_chance left_shoulder>>
+	<<elseif $enemyanger + $rng lte 160>>		
+		<<if $asphyxiaLvl gte 4 and $nochoke isnot 1 and ($neckuse isnot "hand" or $otherNPChand is "throat") and random(1,2) is 1>>
+			<span class="purple"><<He>> grabs your throat.</span>
+			<<violence 2>><<combat-set-hand-target $args[0] "throat">><<set $neckuse to "hand">>
+		<<elseif $leftarm isnot "bound" and $rightarm isnot "bound" and $NPCList[_n].lefthand isnot "arms" and $NPCList[_n].righthand isnot "arms">>
+			<span class="purple"><<He>> pins down your arms.</span>
+			<<combat-set-hand-target $args[0] "arms">><<set $leftarm to "grappled">><<set $rightarm to "grappled">><<disablearms>><<violence 2>><<bruise leftarm>><<bruise rightarm>><<set $speecharms to 1>>
+			<<if $vaginause is "cover">>
+				<<set $vaginause to 0>>
+			<</if>>
+			<<if $anususe is "cover">>
+				<<set $anususe to 0>>
+			<</if>>
+			<<if $penisuse is "cover">>
+				<<set $penisuse to 0>>
+			<</if>>
+			<<if random(1, 2) is 2>>
+				<<bodypart_admire_chance left_shoulder>>
+			<<else>>
+				<<bodypart_admire_chance right_shoulder>>
+			<</if>>
 		<<else>>
-			<<bodypart_admire_chance right_shoulder>>
-		<</if>>
-	<<elseif $enemyanger + $rng lte 160>>
-		<<He>> slaps your <<bottom>>.
-		<<violence 10>><<bruise bottom>><<hitstat>><<set $speechspank to 1>>
-		<<if random(1, 2) is 2>>
-			<<bodypart_admire_chance left_bottom>>
-		<<else>>
-			<<bodypart_admire_chance right_bottom>>
+			<<He>> slaps your <<bottom>>.
+			<<violence 10>><<bruise bottom>><<hitstat>><<set $speechspank to 1>>
+			<<if random(1, 2) is 2>>
+				<<bodypart_admire_chance left_bottom>>
+			<<else>>
+				<<bodypart_admire_chance right_bottom>>
+			<</if>>
 		<</if>>
 	<<elseif $enemyanger + $rng lte 175>>
 		<<He>> digs <<his>> nails into your <<bottom>> while groping, giving no heed to you comfort.
@@ -4298,7 +4303,7 @@
 <<set _handname = _hands == 2 ? "hands" : (_left ? "left hand" : "right hand")>>
 <<set _handvar = _left ? "lefthand" : "righthand">>
 
-<<if $enemyanger gte 100 or $keepchoke>>
+<<if $enemyanger gte 100 or $keepchoke or ($enemyanger + $rng gte 150 and $asphyxiaLvl gte 4)>>	
 	<<if $underwater isnot 1 and $asphyxiaLvl gte 3>>
 		<<if _hands == 2>>
 			<!-- -200 per turn with both hands: max to 0 oxygen in 6 turns -->
