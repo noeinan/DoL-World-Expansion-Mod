@@ -5892,3 +5892,38 @@ and
 	<</if>>
 	<<print _text_output>>
 <</widget>>
+
+<!-- usage
+  <<number -69>> -> "negative sixty-nine"
+  <<number 69 silent>> -> _text_output = "sixty-nine"
+-->
+<<widget "number">><<silently>>
+    <<set $_x to $args[0]>>
+    <<if $_x lte -100 or $_x gte 100 or Math.floor($_x) isnot $_x>>
+        <<set _text_output to ""+$_x>>
+    <<else>>
+        <<if $_x lt 0>>
+            <<set _text_output to "negative ">>
+            <<set $_x to -$_x>>
+        <<else>>
+            <<set _text_output to "">>
+        <</if>>
+        <<if $_x is 0>>
+            <<set _text_output to "zero">>
+        <<elseif $_x gte 10 and $_x lte 20>>
+            <<set _text_output to  ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"][$_x-10]>>
+        <<else>>
+            <<set $_ones to ($_x % 10)>>
+            <<set $_tens to ($_x - $_ones)/10>>
+            <<set $_tenword to ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eigty", "ninety"][$_tens]>>
+            <<set $_oneword to ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][$_ones]>>
+            <<if $_tenword and $_oneword>>
+                <<set _text_output to  $_tenword + "-" + $_oneword>>
+            <<else>>
+                <<set _text_output to  $_tenword + "" + $_oneword>>
+            <</if>>
+        <</if>>
+    <</if>>
+<</silently>><<if $args[1] isnot "silent">><<print _text_output>><</if>><</widget>>
+
+<<widget "Number">><<number $args[0] silent>><<print _text_output.toLocaleUpperFirst()>><</widget>>
