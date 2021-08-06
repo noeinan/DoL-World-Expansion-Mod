@@ -329,7 +329,7 @@ window.settingsAsphyxiation = function () {
 				text = "NPCs may try to <span class='red' style='margin-left: unset; min-width: unset;'>strangle</span> you during non-consensual intercourse."; break;
 			case 4:
 				text = "NPCs will <span class='red' style='margin-left: unset; min-width: unset;'>often</span> try to <span class='red' style='margin-left: unset; min-width: unset;'>strangle</span> you during non-consensual intercourse."; break;
-	
+
 			default:
 				text = "Error: bad value: " + val;
 				val = 0;
