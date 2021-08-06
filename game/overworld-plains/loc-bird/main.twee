@@ -433,7 +433,6 @@ You are inside a ruined tower, deep in the moor.
 		<<link [[Enter the trap door (0:05)|Bird Tower Base Descend]]>><<bird_pass 5>><</link>>
 		<br>
 	<</if>>
-	<<link [[Sleep in the nest|Bird Tower Bed]]>><</link>>
 	<br>
 	<<if $syndromebird isnot 1>>
 		<<link [[Search for materials (1:00)|Bird Tower Search]]>><<bird_pass 60>><</link>>
@@ -443,6 +442,10 @@ You are inside a ruined tower, deep in the moor.
 		<<link [[Ask for help breaking into the Remy estate|Bird Tower Estate]]>><</link>>
 		<br>
 	<</if>>
+	<br>
+	<<link [[Sleep in the nest|Bird Tower Bed]]>><</link>>
+	<br>
+	<<link [[Sleep elsewhere|Bird Tower Bed Alone]]>><<bird_stockholm -2>><</link>>
 	<<if $bird.mirror is 1>>
 		<br>
 		<<link [[Mirror|Bird Tower Mirror]]>><</link>>
@@ -736,11 +739,22 @@ You tie one end of your rope around a chunk of upward-pointing stone, and throw 
 	<<npc "Great Hawk">>
 	You glance at the <<beasttype>>. <<bHe>> is not paying attention. You take the rope in both hands, turn around, and ease yourself down the tower wall.
 	<br><br>
+	You drop the last few feet, landing in the castle courtyard.
 
-	You drop the last few feet, landing in the castle courtyard. <span class="red">You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<<if $bird.activity isnot "sleep">>
+		<<set $moor_hunt to 9>>
+
+	 	<span class="red"> You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<<elseif $bird.activity is "sleep" and $rng lte 70>>
+		<<set $moor_hunt to 9>>
+
+	 	<span class="red"> You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<</if>>
+
 	<br><br>
-	<<set $moor_hunt to 9>>
+
 	<<endevent>>
+
 <<else>>
 	You take the rope in both hands, turn around, and ease yourself down the tower wall. You drop the last few feet, landing in the castle courtyard.
 	<br><br>
@@ -1412,6 +1426,41 @@ You don't move.
 <<link [[Climb out of bed|Bird Tower]]>><</link>>
 <br><br>
 
+:: Bird Tower Bed Alone
+<<effects>>
+You lie in a covered corner of the tower. It's hard to get comfortable.
+<<endevent>>
+<br><br>
+
+
+<<if $sleeptrouble is 1 and $controlled is 0>>
+	<<link [[Sleep for 10 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 9 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+	<br>
+<</if>>
+
+<<link [[Sleep for 8 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 7 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 6 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 5 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 4 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 3 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 2 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 1 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 1>>)<<ltiredness>>
+<br>
+<<link [[Just sleep|Bird Tower Sleep Alone]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
+<br><br>
+<<link [[Climb out of bed|Bird Tower]]>><</link>>
+<br><br>
+
 :: Bird Tower Rainwater Pool
 <<effects>><<set $outside to 0>>
 You sit by the rainwater pool.
@@ -1536,6 +1585,70 @@ You sit by the rainwater pool.
 		<br>
 		<<link [[Push away|Bird Tower Sleep Push]]>><<npcincr "Great Hawk" dom -1>><<def 1>><</link>><<ldom>>
 		<br>
+	<</if>>
+<<else>>
+	<br><br>
+
+	<<link [[Climb from the nest|Bird Tower]]>><</link>>
+	<br><br>
+<</if>>
+
+:: Bird Tower Sleep Alone
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasm>><<set _orgasm to true>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep as soundly as you can on a stone floor.
+	<</if>>
+<</if>>
+
+<<sleepeffects>>
+
+
+<<if $schoolwake is 1>><<set $schoolwake to 0>>
+	<<if $bird.state is "hunting">>
+		<<npc "Great Hawk">>
+		<<if $monster is 1>>
+			You slowly wake, hearing the harpy's voice. "<<Wife>>?"
+			<br><br>
+		<<else>>
+			You're nudged awake by the <<beasttype>>.
+		<</if>>
+		<<bird_hunt_return>>
+	<<elseif random(1,4) is 1>>
+		<<npc "Great Hawk">>
+		<<if $monster is 1>>
+			You feel a massive pair of wings closing around you. The <<beasttype>> embraces you.
+		<<else>>
+			Wings flap on either side as the <<beasttype>> tries to mount you.
+		<</if>>
+		<br><br>
+
+		<<link [[Let it happen|Bird Tower Sleep Sex]]>><<set $sexstart to 1>><<transform bird 1>><<npcincr "Great Hawk" love 1>><<npcincr "Great Hawk" dom 1>><<bird_stockholm 1>><</link>><<deviant1>><<gbirdstockholm>><<glove>><<gdom>>
+		<br>
+		<<link [[Push away|Bird Tower Sleep Push]]>><<npcincr "Great Hawk" dom -1>><<def 1>><</link>><<ldom>>
+		<br>
+	<<else>>
+		<br><br>
+
+		<<link [[Climb from the nest|Bird Tower]]>><</link>>
+		<br><br>
 	<</if>>
 <<else>>
 	<br><br>
