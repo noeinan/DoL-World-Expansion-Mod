@@ -929,29 +929,82 @@ You soon arrive at a log cabin. Inside is a single, spartan room. <<He>> drops y
 	<<link [[Say goodbye|Forest]]>><<endevent>><</link>>
 <</if>>
 
-:: Forest Wolf2 End
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+:: Forest Wolf2 Finish
+<<effects>>
 
-<<if $enemywounded is 1 and $enemyejaculated is 0>>
-	The <<beasttype>> whimpers and flees into the forest.
-<<elseif $enemywounded is 0 and $enemyejaculated is 1>>
-	The <<beasttype>> leaves you lying on the grass.
-<<elseif $enemywounded gte 2 and $enemyejaculated is 0>>
-	Feeling that you're more trouble than you're worth, the <<beastsplural>> flee into the forest.
-<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
-	The <<beastsplural>> leave you spent and shivering on the grass.
-<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
-	The <<beastsplural>> leave you spent and shivering on the grass. One is slowed by a limp.
+<<if $enemyhealth lte 0>>
+	<<beastwound>>
+	<<if $combatTrain.length gt 0>>
+		The <<beasttype>> recoils in pain and fear, but the other is eager for a go.
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Forest Wolf Sex2]]
+	<<else>>
+		The <<beasttype>> recoils in pain and fear.
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Forest Wolf2 Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<<beastejaculation>>
+	<<if $combatTrain.length gt 0>>
+		Satisfied, the <<beasttype>> moves and another <<print $combatTrain.beastTypes[1]>> takes its turn.
+		<<wolfpacktrust>>
+		<<combatTrainAdvance>>
+		<br><br>
+		[[Next|Forest Wolf2]]
+	<<else>>
+		Satisfied, the <<beasttype>> moves away from you.
+		<<wolfpacktrust>>
+		<<combatTrainAdvance>>
+		<br><br>
+		<<link [[Next|Forest Wolf2 Finish]]>><<set $finish to 1>><</link>>
+	<</if>>
+<<elseif $rescue is 1 and $alarm is 1>>
+	You hear a gun fire close by, and a bullet lands near the <<beasttype>>. <<bHe>> backs off in fear and flees into the forest, the other following close behind.
+	<br><br>
+	Eden emerges and helps you collect yourself. "Damn wolves," <<nnpc_he "Eden">> mutters. "Are you okay?"
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+	<<if $gwylan_eden_coop gte 1>>
+		Eden glances around for a moment. "We must be in too deep for that shopkeep," <<nnpc_he "Eden">> says.
+		<br><br>
+	<</if>>
+
+	<<if $eden_rescue isnot 1>>
+		<<set $eden_rescue to 1>>
+		Eden pats you on the shoulder. "I was able to save you because I happened to be in the area," <<nnpc_he "Eden">> says. "<span class="gold">I might not always be around, but I should be able to save you anywhere in the forest.</span> Give me a holler if you're in trouble."
+		<br><br>
+	<</if>>
+
+	<<link [[Go back to the cabin (0:30)|Forest Cabin Return]]>><<pass 30>><</link>>
+	<br>
+	<<link [[Say goodbye|Forest]]>><<endevent>><</link>>
+<<elseif $finish is 1>>
+	<<if $enemywounded is 1 and $enemyejaculated is 0>>
+		The <<beasttype>> whimpers and flees into the darkness between the trees.
+	<<elseif $enemywounded is 0 and $enemyejaculated is 1>>
+		The <<beasttype>> leaves you lying on the grass.
+	<<elseif $enemywounded gte 2 and $enemyejaculated is 0>>
+		Feeling that you're more trouble than you're worth, the <<beastsplural>> flee between the trees.
+	<<elseif $enemywounded is 0 and $enemyejaculated gte 2>>
+		The <<beastsplural>> leave you spent and shivering on the grass.
+	<<elseif $enemywounded gte 1 and $enemyejaculated gte 1>>
+		The <<beastsplural>> leave you spent and shivering on the grass.
+	<</if>>
+	<br><br>
+
+	<<tearful>> you gather yourself.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
+	<br>
 <</if>>
-<br><br>
-
-<<tearful>> you rise to your feet.
-<br><br>
-
-<<clotheson>>
-<<endcombat>>
-
-<<link [[Next|Forest]]>><<set $eventskip to 1>><</link>>
 
 :: Forest Swim
 
@@ -3403,7 +3456,7 @@ You escape into the forest.
 		<<stress 3>><<gstress>>
 		<br><br>
 
-		"It's true, really!" Gwylan glances in your direction, not looking away from Eden. "I run a shop by the entrance to town, and was taking stock when I heard <<phim>> scream. <<if $gwylan_rescue is 1>>I've saved <<phim>> before, <<pshes>> my friend!<<else>><<pHes>> one of my customers, of course I wanted to save <<phim>>!<</if>>"
+		"It's true, really!" Gwylan glances in your direction, not looking away from Eden. "I run a shop by the entrance to town, and was taking stock when I heard <<phim>> scream. <<if $gwylan_rescue is 1>>I've saved <<phim>> before, <<pshes>> my friend!<<else>><<pShes>> one of my customers, of course I wanted to save <<phim>>!<</if>>"
 		<br><br>
 
 		Eden looks at you for confirmation. You nod, and <span class="green"><<nnpc_he "Eden">> lowers <<nnpc_his "Eden">> gun</span>. "Fine. But don't try anything."
