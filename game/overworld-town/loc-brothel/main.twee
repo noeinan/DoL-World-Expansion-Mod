@@ -7,8 +7,8 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 <br><br>
 <<if $stress gte $stressmax>>
 	<<passoutshop>>
-<<elseif $brothelshowmissed gte 1>>
-	<<set $brothelshowmissed to 0>><<npcincr Briar love -1>>
+<<elseif $brothelshowdata.missed>>
+	<<set $brothelshowdata.missed to false>><<npcincr Briar love -1>>
 	<<npc Briar>><<generate2>><<generate3>><<person1>>Briar storms towards you as two of <<his>> thugs block the entrance. "Where were you?" <<he>> asks. "The crowd were expecting a show. It cost me, but you'll pay for it," <<he>> holds out <<his>> hand. "£1000. Now."
 	<br><br>
 	<<if $money gte 100000>>
@@ -42,7 +42,7 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 	<br><br>
 <</if>>
 
-<<if $brotheljob is 1 and $fameprostitution gte 30 and $brothelshowintro is undefined>><<set $brothelshowintro to 0>>
+<<if $brotheljob is 1 and $fameprostitution gte 30 and not $brothelshowdata.intro>><<set $brothelshowdata.intro to true>>
 	<<generate1>><<person1>>The <<person>> guarding the door rests a hand on your shoulder. <span class="gold">"Boss wants to see you."</span><<endevent>>
 	<br><br>
 <</if>>
@@ -51,7 +51,7 @@ You are in the brothel. Several stages dot the crowded room. The staff look flus
 
 <<link [[Work as a dancer|Brothel Dance]]>><<danceinit>><<set $dancing to 1>><<set $venuemod to 3>><<stress -4>><<tiredness 4>><<set $dancelocation to "brothel">><</link>><<lstress>><<gtiredness>>
 <br>
-	<<if $brothelshowintro is 1>>
+	<<if $brothelshowdata.intro>>
 		<<link [[Go behind the stage|Brothel Stage]]>><</link>>
 		<br>
 	<</if>>
@@ -302,8 +302,8 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 
 	<<link [[Next|Brothel]]>><<endevent>><</link>>
 
-<<elseif $brothelshowintro is 0>>
-	<<set $brothelshowintro to 1>><<set $brothelshow to "none">>
+<<elseif not $brothelshowdata.intro>>
+	<<set $brothelshowdata.intro to true>><<set $brothelshowdata.type to "none">>
 	Briar leans beside the window, staring out. "Glad you could join me," <<he>> says, not turning to look. "People have been asking for you. Seems you've made a name for yourself." <<He>> turns and sizes you up. "I'd like to hold a little show on <span class="gold">Fridays</span>. Get the punters in. How'd you like to be the star?"
 	<br><br>
 
@@ -331,7 +331,7 @@ I'd like to offer you work looking after our guests. You saw how it works on the
 	Briar sprawls on the sofa, holding a glass of wine. <<He>> looks up as you enter. "Something I can do for you?"
 	<br><br>
 
-	<<if $brothelshowintro is 1 and $brothelshow is "none">>
+	<<if $brothelshowdata.intro and $brothelshowdata.type is "none">>
 		<<link [[Set up a show|Briar's Office Show]]>><</link>>
 		<br>
 	<</if>>
@@ -1098,28 +1098,28 @@ You aren't promiscuous or deviant enough to take up any of the offers.
 <</if>>
 
 <<if $promiscuity gte 55>>
-	<<link [[Flirt and fuck|Briar's Office Show 2]]>><<set $brothelshow to "flirt">><</link>><<promiscuous4>>
+	<<link [[Flirt and fuck|Briar's Office Show 2]]>><<acceptbrothelshow "flirt">><</link>><<promiscuous4>>
 	<br>
 <</if>>
 <<if $promiscuity gte 75>>
-	<<link [[Roleplay gangbang|Briar's Office Show 2]]>><<set $brothelshow to "gangbang">><</link>><<promiscuous5>>
+	<<link [[Roleplay gangbang|Briar's Office Show 2]]>><<acceptbrothelshow "gangbang">><</link>><<promiscuous5>>
 	<br>
 <</if>>
 <<if $brothel_machine_repair gte 4 and $promiscuity gte 75 and ($vaginaexist is 1 or $analdisable is "f")>>
-	<<link [[Sex Machine|Briar's Office Show 2]]>><<set $brothelshow to "machine">><</link>><<promiscuous5>>
+	<<link [[Sex Machine|Briar's Office Show 2]]>><<acceptbrothelshow "machine">><</link>><<promiscuous5>>
 	<br>
 <</if>>
 <!-- Modified for Monster People -->
 <<if $deviancy gte 75>>
-	<<link [[Pig|Briar's Office Show 2]]>><<set $brothelshow to "pig">><</link>><<deviant5>>
+	<<link [[Pig|Briar's Office Show 2]]>><<acceptbrothelshow "pig">><</link>><<deviant5>>
 	<br>
 	<<if $farm_stage gte 7 and $farm.steed>>
-		<<link [[Suggest a horse (pays £2000)|Briar's Office Show 2]]>><<set $brothelshow to "horse">><</link>><<deviant5>>
+		<<link [[Suggest a horse (pays £2000)|Briar's Office Show 2]]>><<acceptbrothelshow "horse">><</link>><<deviant5>>
 		<br>
 	<</if>>
 <</if>>
 <<if $swarmdisable is "f" and $deviancy gte 75>>
-	<<link [[Creatures|Briar's Office Show 2]]>><<set $brothelshow to "swarm">><</link>><<deviant5>>
+	<<link [[Creatures|Briar's Office Show 2]]>><<acceptbrothelshow "swarm">><</link>><<deviant5>>
 	<br>
 <</if>>
 
@@ -1128,18 +1128,17 @@ You aren't promiscuous or deviant enough to take up any of the offers.
 
 :: Briar's Office Show 2
 <<set $outside to 0>><<set $location to "brothel">><<effects>>
-<<if $weekday is 6>><<set $brothelshowdone to 1>><</if>>
-<<if $brothelshow is "flirt">>
+<<if $brothelshowdata.type is "flirt">>
 	You agree to flirt with the audience and get fucked on stage. "Alright," <<he>> says. "Just act cute.
-<<elseif $brothelshow is "gangbang">>
+<<elseif $brothelshowdata.type is "gangbang">>
 	You agree to roleplay as a school <<girl>> and get gangbanged on stage. "Don't be nervous about acting," <<he>> says as <<he>> stands up. "That's not what the audience will be there for.
-<<elseif $brothelshow is "pig">>
+<<elseif $brothelshowdata.type is "pig">>
 	You agree to fuck a pig on stage. "You're a dirty one," <<he>> says as <<he>> stands up. "This is going to draw them in.
-<<elseif $brothelshow is "swarm">>
+<<elseif $brothelshowdata.type is "swarm">>
 	You agree to be submerged in a terrarium filled with small creatures on stage. "You're a kinky one," <<he>> says as <<he>> stands up. "I like that, and I'm sure the audience will like it too".
-<<elseif $brothelshow is "machine">>
+<<elseif $brothelshowdata.type is "machine">>
 	You agree to use the repaired sex machine. Briar claps <<his>> hands together. "Excellent.
-<<elseif $brothelshow is "horse">>
+<<elseif $brothelshowdata.type is "horse">>
 	You suggest performing with a horse. Briar laughs. "That would be a show to remember," <<he>> says. "But I don't have access to a horse."
 	<br><br>
 	"I do," you say.
@@ -1170,11 +1169,11 @@ You are behind the largest stage in the brothel. This is where the more involved
 	<br><br>
 <</if>>
 
-<<if $brothelshow isnot "none" and $weekday is 6 and $brothelshowdone isnot 1>>
+<<if $brothelshowdata.type isnot "none" and $weekday is 6 and not $brothelshowdata.done>>
 You see Briar talking to someone near the largest stage. You agreed to perform today.
 <br><br>
 
-	<<if $brothelshow is "horse">>
+	<<if $brothelshowdata.type is "horse">>
 		<<if $farm.steed>>
 			Your $farm.steed steed awaits you.
 			<br><br>
