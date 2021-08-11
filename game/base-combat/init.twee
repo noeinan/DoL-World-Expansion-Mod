@@ -850,15 +850,21 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 
 <<set $combatgoal to 0>>
 
-<<if $genderknown.includes($npc)>>
-	<<set $crossdressing to 0>>
-<<elseif $exposed gte 2 and not $worn.genitals.type.includesAll("chastity", "hidden")>>
-	<<if $npc isnot 0>>
-		<<set $genderknown.pushUnique($npc)>>
-	<</if>>
-	<<set $crossdressing to 0>>
+<<set _genderexposed to $exposed gte 2 and !($worn.genitals.type.includesAll("chastity", "hidden"))>>
+<<if $npc.length gt 0>>
+  <<for _iii to 0; _iii lt $npc.length; _iii++>>
+    <<if $genderknown.includes($npc[_iii])>>
+      <<set _genderknownbeforehand to true>>
+    <<elseif _genderexposed>>
+      <<run $genderknown.pushUnique($npc[_iii])>>
+    <</if>>
+  <</for>>
+<</if>>
+
+<<if _genderknownbeforehand or _genderexposed>>
+  <<set $crossdressing to 0>>
 <<else>>
-	<<crossdressing_check>>
+  <<crossdressing_check>>
 <</if>>
 
 <<if $enemytype is "beast">>
@@ -941,9 +947,11 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 
 <<set $rng to random(1, 100)>>
 
-<<if $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1 and $npc isnot 0 and $worn.genitals.type.includesAll("chastity", "hidden")>>
-<<elseif $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1 and $npc isnot 0>>
-<<set $genderknown.pushUnique($npc)>>
+<<if $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1 and $npc.length isnot 0 and $worn.genitals.type.includesAll("chastity", "hidden")>>
+<<elseif $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1 and $npc.length isnot 0>>
+	<<for _iii to 0; _iii lt $npc.length; _iii++>>
+		<<set $genderknown.pushUnique($npc[_iii])>>
+	<</for>>
 <</if>>
 
 <<if $worn.genitals.type.includesAll("chastity", "hidden")>>
@@ -951,7 +959,7 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 	/*Comment for seeing herm character genitals for the first time*/
 	<<set $crossdressing to 0>>
 	<<exposedcheck true>>
-	<<if $NPCList[0].teen is 1 and $location is "school" and $npc isnot "Kylar">>
+	<<if $NPCList[0].teen is 1 and $location is "school" and !($npc.length is 1 and $npc[0] is "Kylar")>>
 		<<schoolrep herm 1>>
 	<</if>>
 	<<if $enemyno gte 2>>
@@ -1003,7 +1011,7 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 			<<set _newTrait to true>>
 		<</if>>
 	<</if>>
-	<<if $NPCList[0].teen is 1 and $location is "school" and $npc isnot "Kylar">>
+	<<if $NPCList[0].teen is 1 and $location is "school" and !($npc.length is 1 and $npc[0] is "Kylar")>>
 		<<schoolrep crossdress 1>>
 	<</if>>
 	<<if $enemyno gte 2>>

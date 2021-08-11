@@ -1,8 +1,78 @@
 :: Widgets Named Npcs [widget]
 <<widget "endnpc">>
-<<if $npc>>
-	<<set _i to $NPCNameList.indexOf($npc)>>
-	<<set $NPCName[_i].trust += ($enemytrust / 100)>>
+/* We properly change how Named NPCs are ended.
+* The way we want to do this is: if an argument is passed (the argument being the Named NPC's name) we clearnpc the specific NPC in question.
+* If no argument is passed, we clear all the Named NPCs.
+*/
+<<if $args[0]>>
+	<<set _passargs to $args[0]>>
+	<<set _leindex to $npc.indexOf(_passargs)>>
+	<<set $NPCName[$NPCNameList.indexOf(_passargs)].trust += ($enemytrust / 100)>>
+	<<for _temp to 0; _temp lt $NPCList.length; _temp++>>
+		<<if $NPCList[_temp].fullDescription is _passargs>>
+			<<set _ii to clone(_temp)>>
+		<<break>>
+		<</if>>
+	<</for>>
+	<!-- In case someone calls the wrong NPC, or doesn't use upper case -->
+	<<if _ii is undefined>>
+		<span class="red">Error: <<print _passargs>> is not active. Aborting.</span>
+	<<else>>
+		<<set $NPCList[_ii].lefthand to "none">>
+		<<set $NPCList[_ii].righthand to "none">>
+		<<set $NPCList[_ii].penis to "none">>
+		<<set $NPCList[_ii].vagina to "none">>
+		<<set $NPCList[_ii].mouth to "none">>
+		<<set $NPCList[_ii].chest to "none">>
+		<<set $NPCList[_ii].gender to 0>>
+		<<set $NPCList[_ii].pronoun to 0>>
+		<<set $NPCList[_ii].description to 0>>
+		<<set $NPCList[_ii].fullDescription to 0>>
+		<<set $NPCList[_ii].insecurity to 0>>
+		<<set $NPCList[_ii].lactation to 0>>
+		<<set $NPCList[_ii].intro to 0>>
+		<<set $NPCList[_ii].speechanusescape to 0>>
+		<<set $NPCList[_ii].speechpenisescape to 0>>
+		<<set $NPCList[_ii].speechvaginaescape to 0>>
+		<<set $NPCList[_ii].type to 0>>
+		<<set $NPCList[_ii].stance to 0>>
+		<<set $NPCList[_ii].monster to 0>>
+		<<set $NPCList[_ii].maxOrgasms to 1>>
+		<<set $NPCList[_ii].orgasms to 0>>
+		<<set $NPCList[_ii].paid to 0>>
+		<<if _ii < 1>>
+			<<set $NPCList[_ii].breastsize to 3>>
+			<<set $NPCList[_ii].breastsdesc to "breasts">>
+			<<set $NPCList[_ii].breastdesc to "breast">>
+			<<set $NPCList[_ii].penisdesc to "penis">>
+			<<set $NPCList[_ii].penissize to 2>>
+			<<set $NPCList[_ii].health to 200>>
+		<<else>>
+			<<set $NPCList[_ii].breastsize to 0>>
+			<<set $NPCList[_ii].breastsdesc to 0>>
+			<<set $NPCList[_ii].breastdesc to 0>>
+			<<set $NPCList[_ii].penisdesc to 0>>
+			<<set $NPCList[_ii].penissize to 0>>
+			<<set $NPCList[_ii].health to 0>>
+		<</if>>
+		<<set $enemyno -= 1>>
+		<<if $enemyno is 0>>
+			<<set $pronoun to 0>>
+		<</if>>
+		<<set $npc.splice(_leindex, 1)>>
+		<<set $npcnum.splice(_leindex, 1)>>
+		<<set $npcrow.splice(_leindex, 1)>>
+	<</if>>
+	<<unset _temp>>
+	<<unset _leindex>>
+<<else>>
+	<!-- For each and every named NPC defined, we increase their trust. -->
+	<<for _temp to 0; _temp lt $npc.length; _temp++>>
+		<<set _nam to clone($npc[_temp])>>
+		<<set $NPCName[$NPCNameList.indexOf(_nam)].trust += ($enemytrust / 100)>>
+	<</for>>
+	<<clearnpc>>
+	<<unset _temp>>
 <</if>>
 <</widget>>
 
@@ -328,11 +398,34 @@ Zohar
 <</widget>>
 
 <<widget "npc">>
-
-<<if $enemyno gte 1>>
-	<<set $endeventerror to $lastgenerated>>
-	<<endevent phaseless>>
+/* Prepare the call for multiple Named NPCs at the same time.
+* We do this by changing all $NPCList[0] calls to $NPCList[x] in which x can be any temporary variable. In this case, we'll use _npcno.
+* We also give the option to set the Named NPC in any available row if so desired, by calling a second argument $args[1]. In case no $args[1] is passed, the code will add the Named NPC into the next available row.
+* Remember: available rows go from 0 to 5 ($NPCList[0] to $NPCList[5]). No more than that.
+*/
+<<if $args[1]>>
+	<<set _npcno to $args[1]>>
+	<!-- In case a developer/writer tries to define a named NPC in a row that already has a defined NPC, we warn them and <<endevent>> so nothing breaks -->
+	<<if $NPCList[_npcno].gender isnot 0 and $NPCList[_npcno].description>> <!-- These comparitions could be changed to a proper variable, for example $NPCList[x].active which would store if NPC x is active or not. To make things simple, we compare to .gender and .description since those two are always set to something other than 0 if the NPC in question is in fact active -->
+		<span class="red"> Error: an NPC is already defined in row _npcno. Ending event now.
+		<<set $endeventerror to $lastgenerated>>
+		<<endevent phaseless>>
+	<</if>>
+<<else>>
+	<<for _controller to 0; _controller lt $NPCList.length; _controller++>>
+		<<if _controller gte 6>>
+			<!-- Since 6 is past our limit, we want to alert the user something went wrong. For simplicity, we'll set _npcno to 0 and overwrite $NPCList[0] -->
+			<span class="red"> Error: There are already 6 active NPCs. Clearing NPC 0 to make space for Named NPC.</span>
+			<<set _npcno to 0>>
+			<<break>> <!-- Always remember to break the for loop when the condition is met -->
+		<</if>>
+		<<if $NPCList[_controller].gender is 0 and $NPCList[_controller].description is 0>> <!-- These comparitions could be changed to a proper variable, for example $NPCList[x].active which would store if NPC x is active or not. To make things simple, we compare to .gender and .description since those two are always set to something other than 0 if the NPC in question is in fact active -->
+			<<set _npcno to clone(_controller)>>
+			<<break>> <!-- Always remember to break the for loop when the condition is met -->
+		<</if>>
+	<</for>>
 <</if>>
+
 <<set $lastgenerated to $passage>>
 
 <<set _nam to $args[0]>>
@@ -344,9 +437,21 @@ Zohar
 <</if>>
 
 <!-- Set global variables -->
-<<set $npc to _nam>>
-<<set $NPCList[0].fullDescription to _nam>>
+/* Both $npc and $npcnum will keep defined NPCs in the order they were defined.
+* DO NOT COMPARE NEITHER $npc NOR $npcnum TO $NPCList.
+* Since when defining an NPC one can choose in which row of $NPCList to put it, comparing them could result in missmatches.
+*/
+<<set $npc.push(_nam)>>
+<<set $npcnum.push(_i)>>
+<<set $NPCList[_npcno].fullDescription to _nam>>
+<!-- Set a variable to be compared to $NPCList, for simplicity. The row indicates which NPC it is, value is where in $NPCList it was defined. -->
+<<set $npcrow.push(_npcno)>>
 
+<<if $npc.length gt 1>>
+	<<set $pronoun to "t">> <!-- In case more than 1 Named NPC is defined, we set pronoun to "they". -->
+<<else>>
+	<<set $pronoun to $NPCName[_i].pronoun>>
+<</if>>
 /*Sets up multiple orgasms, code needs work*/
 /*<<set $NPCList[0].maxOrgasms to 1>>
 <<set $NPCList[0].orgasms to 0>>
@@ -356,49 +461,46 @@ Zohar
 <</if>>
 */
 
-<<set $npcnum to _i>>
-<<set $pronoun to $NPCName[_i].pronoun>>
-
 <!-- Set combat variables -->
-<<set $NPCList[0].pronoun to $NPCName[_i].pronoun>>
-<<set $NPCList[0].gender to $NPCName[_i].gender>>
-<<set $NPCList[0].type to $NPCName[_i].type>>
+<<set $NPCList[_npcno].pronoun to $NPCName[_i].pronoun>>
+<<set $NPCList[_npcno].gender to $NPCName[_i].gender>>
+<<set $NPCList[_npcno].type to $NPCName[_i].type>>
 
-<<set $NPCList[0].lefthand to 0>>
-<<set $NPCList[0].righthand to 0>>
-<<set $NPCList[0].mouth to 0>>
-<<set $NPCList[0].anus to 0>>
-<<set $NPCList[0].chest to 0>>
+<<set $NPCList[_npcno].lefthand to 0>>
+<<set $NPCList[_npcno].righthand to 0>>
+<<set $NPCList[_npcno].mouth to 0>>
+<<set $NPCList[_npcno].anus to 0>>
+<<set $NPCList[_npcno].chest to 0>>
 
-<<set $NPCList[0].breastsize to $NPCName[_i].breastsize>>
-<<set $NPCList[0].breastsdesc to $NPCName[_i].breastsdesc>>
-<<set $NPCList[0].breastdesc to $NPCName[_i].breastdesc>>
-<<set $NPCList[0].vagina to "clothed">>
+<<set $NPCList[_npcno].breastsize to $NPCName[_i].breastsize>>
+<<set $NPCList[_npcno].breastsdesc to $NPCName[_i].breastsdesc>>
+<<set $NPCList[_npcno].breastdesc to $NPCName[_i].breastdesc>>
+<<set $NPCList[_npcno].vagina to "clothed">>
 
-<<set $NPCList[0].penis to "clothed">>
-<<set $NPCList[0].penissize to $NPCName[_i].penissize>>
-<<set $NPCList[0].penisdesc to $NPCName[_i].penisdesc>>
+<<set $NPCList[_npcno].penis to "clothed">>
+<<set $NPCList[_npcno].penissize to $NPCName[_i].penissize>>
+<<set $NPCList[_npcno].penisdesc to $NPCName[_i].penisdesc>>
 
 <<if $NPCName[_i].gender is "m">>
-	<<set $NPCList[0].vagina to "none">>
+	<<set $NPCList[_npcno].vagina to "none">>
 <</if>>
 <<if $NPCName[_i].gender is "f">>
-	<<set $NPCList[0].penis to "none">>
+	<<set $NPCList[_npcno].penis to "none">>
 <</if>>
 
-<<set $NPCList[0].insecurity to $NPCName[_i].insecurity>>
-<<set $npcdescription to $NPCName[_i].title>>
-<<set $NPCList[0].description to $NPCName[_i].title>>
+<<set $NPCList[_npcno].insecurity to $NPCName[_i].insecurity>>
+<<set $NPCList[_npcno].description to $NPCName[_i].title>>
 
-<<set $NPCList[0].adult to $NPCName[_i].adult>>
-<<set $NPCList[0].teen to $NPCName[_i].teen>>
+<<set $NPCList[_npcno].adult to $NPCName[_i].adult>>
+<<set $NPCList[_npcno].teen to $NPCName[_i].teen>>
 
-<<set $NPCList[0].location to {
+<<set $NPCList[_npcno].location to {
 	head: 0,
 	genitals: 0,
 }>>
 
 <!-- Adjust for Beast type NNPCs: Black Wolf -->
+<!-- We don't change anything here, since beasts can only attack one at a time. But in case this changes, it would be better to change the zeroes (0) to _npcno -->
 <<if $NPCList[0].type is "wolf">>
 	<<set $beastname to "blackwolf">>
 	<<set $NPCList[0].lefthand to "none">>
@@ -732,4 +834,27 @@ Zohar
 			<</if>>
 		<</if>>
 <</switch>>
+<</widget>>
+
+<<widget "push_nnpc_genderknown">>
+<!-- Can be used in any situation to let all active named NPCs known the player's gender -->
+<!-- Use $args[0] to ignore clothing -->
+<!-- Won't ignore the chastity belt's "hidden" property (for now) -->
+<<if $args[0]>>
+	<<if !$worn.genitals.type.includes("hidden")>>
+		<<if $npc.length gt 0>>
+			<<for _i to 0; _i lt $npc.length; _i++>>
+				<<set $genderknown.pushUnique($npc[_i])>>
+			<</for>>
+		<</if>>
+	<</if>>
+<<else>>
+	<<if $exposed gte 2 and !$worn.genitals.type.includes("hidden")>>
+		<<if $npc.length gt 0>>
+			<<for _i to 0; _i lt $npc.length; _i++>>
+				<<set $genderknown.pushUnique($npc[_i])>>
+			<</for>>
+		<</if>>
+	<</if>>
+<</if>>
 <</widget>>

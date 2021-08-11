@@ -276,7 +276,15 @@
 <</if>>
 <</silently>>_text_output<</widget>>
 
+
 <<widget "someones">><<silently>>
+/* Take target into consideration. Pre-set _target and use it instead.
+	<<if _target isnot undefined>>
+		<<hisselect _target>>
+	<<else>>
+		<<his>>
+	<</if>>
+ */
 <<if $enemyno gte 2 and $enemytype is "man">>
 	<<set $rng to random(1, $enemyno)>>
 	<<if $rng is 1>>
@@ -298,6 +306,13 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "someone">><<silently>>
+/* Same as above
+	<<if _target isnot undefined>>
+		<<personselect _target>>
+	<<else>>
+		<<him>>
+	<</if>>
+ */
 <<if $enemyno gte 2 and $enemytype is "man">>
 	<<set _text_output to "someone">>
 <<else>>
@@ -322,6 +337,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "he">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "he">>
 <<elseif $pronoun is "f">>
@@ -478,6 +499,12 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "hes">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "he's">>
 <<elseif $pronoun is "f">>
@@ -492,6 +519,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "his">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "his">>
 <<elseif $pronoun is "f">>
@@ -506,6 +539,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "hers">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "his">>
 <<elseif $pronoun is "f">>
@@ -521,19 +560,26 @@
 
 <<widget "He">><<silently>>
 <<if $args[0]>>
-	<<if $enemytype is "man">>
-		<<if $args[0] is 1>>
-			<<person1>>
-		<<elseif $args[0] is 2>>
-			<<person2>>
-		<<elseif $args[0] is 3>>
-			<<person3>>
-		<<elseif $args[0] is 4>>
-			<<person4>>
-		<<elseif $args[0] is 5>>
-			<<person5>>
-		<<elseif $args[0] is 6>>
-			<<person6>>
+	<!-- Add the option to call for a named NPC's name -->
+	<<if $NPCNameList.includes($args[0])>>
+		<<set _args to $args[0]>>
+		<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+		<<unset _args>>
+	<<else>>
+		<<if $enemytype is "man">>
+			<<if $args[0] is 1>>
+				<<person1>>
+			<<elseif $args[0] is 2>>
+				<<person2>>
+			<<elseif $args[0] is 3>>
+				<<person3>>
+			<<elseif $args[0] is 4>>
+				<<person4>>
+			<<elseif $args[0] is 5>>
+				<<person5>>
+			<<elseif $args[0] is 6>>
+				<<person6>>
+			<</if>>
 		<</if>>
 	<</if>>
 	<<if $pronoun is "m">>
@@ -547,23 +593,48 @@
 	<<elseif $pronoun is "t">>
 		<<set _text_output to "They">>
 	<</if>>
-<<elseif $NPCList[0].intro is 1 and $ejaculating isnot 1>>
+<<elseif $NPCList[0].intro is 1>>
 	<<set $NPCList[0].intro to 0>>
-	<<if $npc is 0>>
-		<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<if $npcrow.includes(0)>>
+		<<set _text_output to $npc[$npcrow.indexOf(0)]>>
 	<<else>>
-		<<set _text_output to $npc>>
+		<<person1>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
 	<</if>>
 <<elseif $NPCList[1].intro is 1>>
-	<<set $NPCList[1].intro to 0>><<person2>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<set $NPCList[1].intro to 0>>
+	<<if $npcrow.includes(1)>>
+		<<set _text_output to $npc[$npcrow.indexOf(1)]>>
+	<<else>>
+		<<person2>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<</if>>
 <<elseif $NPCList[2].intro is 1>>
-	<<set $NPCList[2].intro to 0>><<person3>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<set $NPCList[2].intro to 0>>
+	<<if $npcrow.includes(2)>>
+		<<set _text_output to $npc[$npcrow.indexOf(2)]>>
+	<<else>>
+		<<person3>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<</if>>
 <<elseif $NPCList[3].intro is 1>>
-	<<set $NPCList[3].intro to 0>><<person4>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<set $NPCList[3].intro to 0>>
+	<<if $npcrow.includes(3)>>
+		<<set _text_output to $npc[$npcrow.indexOf(3)]>>
+	<<else>>
+		<<person4>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<</if>>
 <<elseif $NPCList[4].intro is 1>>
-	<<set $NPCList[4].intro to 0>><<person5>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<set $NPCList[4].intro to 0>>
+	<<if $npcrow.includes(4)>>
+		<<set _text_output to $npc[$npcrow.indexOf(4)]>>
+	<<else>>
+		<<person5>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<</if>>
 <<elseif $NPCList[5].intro is 1>>
-	<<set $NPCList[5].intro to 0>><<person6>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<<set $NPCList[5].intro to 0>>
+	<<if $npcrow.includes(5)>>
+		<<set _text_output to $npc[$npcrow.indexOf(5)]>>
+	<<else>>
+		<<person6>><<person>><<set _person to _text_output>><<set _text_output to "The " + _person>>
+	<</if>>
 <<else>>
 	<<if $pronoun is "m">>
 		<<set _text_output to "He">>
@@ -580,6 +651,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "His">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "His">>
 <<elseif $pronoun is "f">>
@@ -594,6 +671,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "Hers">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "His">>
 <<elseif $pronoun is "f">>
@@ -607,6 +690,12 @@
 <</silently>>_text_output<</widget>>
 
 <<widget "Hes">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "He's">>
 <<elseif $pronoun is "f">>
@@ -621,6 +710,12 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "him">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "him">>
 <<elseif $pronoun is "f">>
@@ -642,9 +737,9 @@
 <!-- Note calls range from 0-5 corresponding to NPCs 1-6. This was done to simplify FOR loops -->
 <<set _n to $args[0]>>
 <<if $enemytype is "man" and $enemyno gte 2>>
-	<<personselect _n>>
-	<<if $npc_named isnot 0>>
-		$npc's
+	<!-- NPC's name will only appear if they are selected -->
+	<<if $npcrow.includes(_n)>>
+		<<print $npc[$npcrow.indexOf(_n)]>>'s
 	<<elseif $NPCList[_n].intro is 1>>
 		<<set $NPCList[_n].intro to 0>>
 		the <<persons>>
@@ -684,6 +779,12 @@
 <</widget>>
 
 <<widget "himself">><<silently>>
+<!-- Add the option to call for named NPCs individually -->
+<<if $args[0]>>
+	<<set _args to $args[0]>>
+	<<set $pronoun to $NPCName[$NPCNameList.indexOf(_args)].pronoun>>
+	<<unset _args>>
+<</if>>
 <<if $pronoun is "m">>
 	<<set _text_output to "himself">>
 <<elseif $pronoun is "i">>
@@ -1123,8 +1224,8 @@
 <</if>><</silently>><<print _text_output>><</widget>>
 
 <<widget "person">><<silently>>
-<<if $npc_named is 1 and $npcdescription>>
-	<<set _text_output to $npcdescription>>
+<<if $npc_named is 1>>
+	<<set _text_output to $description>>
 <<elseif $npcadult is 1>>
 	<<if $pronoun is "m">>
 		<<set _text_output to $description+" man">>
@@ -1147,8 +1248,8 @@
 <<widget "combatperson">><<silently>>
 <<if $enemytype is "beast">>
 	<<beasttype>>
-<<elseif $npc_named is 1 and $npcdescription>>
-	<<set _text_output to $npcdescription>>
+<<elseif $npc_named is 1>>
+	<<set _text_output to $description>>
 <<elseif $npcadult is 1>>
 	<<if $pronoun is "m">>
 		<<set _text_output to $description+" man">>
@@ -1172,15 +1273,16 @@
 <!-- This replaces calls person1 person2 etc. Used for NPC object calls -->
 <!-- Note calls are 0-5 corresponding to NPCs 1-6 -->
 <<set _n to $args[0]>>
-<<if $args[0] is 0 and $npc>>
-	<<set $npc_named to 1>>
-<<else>>
-	<<set $npc_named to 0>>
-<</if>>
 
 <<set $npcadult to $NPCList[_n].adult>>
 <<set $pronoun to $NPCList[_n].pronoun>>
-<<set $description to $NPCList[_n].description>>
+<<if $npcrow.includes(_n)>>
+	<<set $description to $NPCName[$npcnum[$npcrow.indexOf(_n)]].title>>
+	<<set $npc_named to 1>>
+<<else>>
+	<<set $description to $NPCList[_n].description>>
+	<<set $npc_named to 0>>
+<</if>>
 <</widget>>
 
 <!-- Leaving person1-6 in place for legacy support as of v2.3-->
@@ -1971,72 +2073,72 @@
 <</widget>>
 
 <<widget "gdom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="purple">+ Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">+ $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="purple">+ $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="purple">+ $npc[0]'s Dominance</span>
 <<else>>
 <span class="purple">+ NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "ggdom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="purple">+ + Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">+ + $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="purple">+ + $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="purple">+ + $npc[0]'s Dominance</span>
 <<else>>
 <span class="purple">+ + NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "gggdom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="purple">+ + + Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">+ + + $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="purple">+ + + $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="purple">+ + + $npc[0]'s Dominance</span>
 <<else>>
 <span class="purple">+ + + NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "ldom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="lblue">- Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">- $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="lblue">- $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="lblue">- $npc[0]'s Dominance</span>
 <<else>>
 <span class="lblue">- NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "lldom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="lblue">- - Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">- - $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="lblue">- - $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="lblue">- - $npc[0]'s Dominance</span>
 <<else>>
 <span class="lblue">- - NPC Dominance</span>
 <</if>>
 <</widget>>
 
 <<widget "llldom">> |
-<<if $npc is "Robin" or $args[0] is "Robin">>
+<<if $npc.includes("Robin") or $args[0] is "Robin">>
 <span class="lblue">- - - Robin's Confidence</span>
 <<elseif $args[0] isnot undefined>>
 <span class="purple">- - - $args[0]'s Dominance</span>
-<<elseif $npc isnot 0>>
-<span class="lblue">- - - $npc's Dominance</span>
+<<elseif $npc.length isnot 0>>
+<span class="lblue">- - - $npc[0]'s Dominance</span>
 <<else>>
 <span class="lblue">- - - NPC Dominance</span>
 <</if>>
