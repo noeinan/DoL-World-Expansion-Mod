@@ -1110,7 +1110,7 @@ Renderer.CanvasModels["main"] = {
 					case "urchin":
 						return 'img/body/clitparasite.png'
 					case "slime":
-						return 'img/body/clitparasite.png'
+						return 'img/body/clitslime.png'
 					default:
 						return "";
 				}
