@@ -71,9 +71,14 @@ window.combatListColor = function (name, value, type) {
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
 			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
 			case "stopchoke":
+			case "clench":
+			case "shacklewhack":
+			/*feetaction*/
+			case "run": case "hide":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
+			case "up":
 			/*penisaction*/
 			case "othermouthescape": case "escape": case "otheranusescape":
 			/*vaginaaction*/
@@ -82,16 +87,21 @@ window.combatListColor = function (name, value, type) {
 				break;
 
 			/*leftaction or rightaction*/
-			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle": case "stopchokenoncon":
+			case "spray": case "lefthit": case "righthit": case "leftstruggle": case "rightstruggle": case "stopchokenoncon": case "pursuit_grab":
 			/*feetaction*/
 			case "kick":
 			/*mouthaction*/
 			case "bite": case "demand": case "breastbite": case "handbite": case "headbutt":
 				color = "def";
 				break;
-
+			/*leftaction or rightaction*/
+			case "behind":
+			case "fold":
+			case "leftcovervaginameek": case "leftcoverpenismeek": case "leftcoveranusmeek":
+			case "rightcovervaginameek": case "rightcoverpenismeek": case "rightcoveranusmeek":
 			/*mouthaction*/
 			case "grasp": case "plead": case "forgive":
+			case "down":
 			/*penisaction*/
 			case "thighbay": case "bay": case "otheranusbay":
 			/*vaginaaction*/

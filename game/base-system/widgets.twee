@@ -292,7 +292,7 @@
 	<<else>>
 		<<arousal `$pass * -10`>><<arousalpass>>
 	<</if>>
-	<<if $daystate is "day" and $weather is "clear" and $outside is 1 and $location isnot "forest">>
+	<<if $daystate is "day" and $weather is "clear" and $outside is 1 and $location isnot "forest" and !$worn.head.type.includes("shade")>>
 		<<if $season is "winter">>
 			<<tanned `$pass / 2`>>
 		<<elseif $season is "summer">>
@@ -543,11 +543,12 @@
 		<<combattrauma _negargs>>
 		<<if $args[1] is "demanding">>
 			<<set $enemyanger += 20 * $args[0]>>
-		<<else>>
+		<<elseif $NPCList[0].legs isnot "walk">>
 			<<set $enemyanger += 5 * $args[0]>>
 		<</if>>
 		<<set $submissive -= 1>>
 		<<set $enemytrust -= 2>>
+		<<set $NPCList[0].bold -= ($args[0] * 10)>>
 	<</if>>
 <</widget>>
 
@@ -562,6 +563,7 @@
 		<<arousal _arousal>>
 		<<set $enemyarousal += $args[0]>>
 		<<set $enemytrust += 1>>
+		<<set $enemyanger -= $args[0]>>
 	<</if>>
 <</widget>>
 
@@ -2498,6 +2500,20 @@ or $args[0] is "force">>
 <<set $feetuse to "bound">>
 <</widget>>
 
+<<widget "leg_unbind">>
+<<set $leftleg to 0>>
+<<set $rightleg to 0>>
+<<set $feetuse to 0>>
+<</widget>>
+
+<<widget "remove_shackle">>
+<<if $worn.feet.type.includes("shackle")>>
+	<<set $worn.feet.type.push("broken")>>
+	<<feetruined>>
+	<<leg_unbind>>
+<</if>>
+<</widget>>
+
 <<widget "headbind">>
 <<set $head to "bound">>
 <</widget>>
@@ -3822,6 +3838,9 @@ __Map__<br>
 			<br>
 		<<else>>
 			<span class="red">The pain overwhelms you.</span>
+			<<if $position is "stalk">>
+				You fall to your knees.
+			<</if>>
 			<<ggwillpower>><<willpower 5>><<set $willpowerpain to 0>>
 			<br>
 		<</if>>
@@ -3836,6 +3855,9 @@ __Map__<br>
 			<br>
 		<<else>>
 			<span class="red">You struggle against the orgasmic spasms overwhelming you.</span>
+			<<if $position is "stalk">>
+				You fall to your knees.
+			<</if>>
 			<<gwillpower>><<willpower 1>>
 			<br>
 		<</if>>
@@ -4891,5 +4913,11 @@ __Map__<br>
 <<widget "sadism">>
 <<if $args[0]>>
 	<<set $sadism += $args[0]>>
+<</if>>
+<</widget>>
+
+<<widget "enable_rescue">>
+<<if $drugged lte 0>>
+	<<set $rescue to 1>>
 <</if>>
 <</widget>>

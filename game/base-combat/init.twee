@@ -13,7 +13,9 @@
 <<set $enemyangermax to 200>>
 <<set $enemyhealthmax to $enemyhealth>>
 <<if $enemyhealthmax is 0>><<set $enemyhealthmax to 199>><</if>><!-- This is set for compatibility elsewhere if needed, v2.2.0... -->
-
+<<for _i = 0; _i < $NPCList.length; _i++>>
+	<<set $NPCList[_i].bold to random(0, $allure / 10)>>
+<</for>>
 <<if $dissociation gte 1>>
 	<<set $enemytrust -= 40>>
 <</if>>
@@ -447,7 +449,7 @@
 <<set $traumagain to 0>>
 <<set $stressgain to 0>>
 
-<<if $daystate isnot "night">><<set $rescue to 1>><</if>>
+<<if $daystate isnot "night">><<enable_rescue>><</if>>
 
 <<hand_gag 0 left>>
 
@@ -485,7 +487,7 @@
 <<set $traumagain to 0>>
 <<set $stressgain to 0>>
 
-<<if $daystate isnot "night">><<set $rescue to 1>><</if>>
+<<if $daystate isnot "night">><<enable_rescue>><</if>>
 
 <<combatinit>>
 <</widget>>
@@ -524,7 +526,7 @@
 <<set $traumagain to 0>>
 <<set $stressgain to 0>>
 
-<<if $daystate isnot "night">><<set $rescue to 1>><</if>>
+<<if $daystate isnot "night">><<enable_rescue>><</if>>
 
 <<combatinit>>
 <</widget>>
@@ -898,7 +900,12 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 <</if>>
 
 <<if $worn.face.type.includes("gag")>>
-<<set $mouthuse to "gagged">>
+	<<set $mouthuse to "gagged">>
+<</if>>
+<<if $worn.feet.type.includes("shackle")>>
+	<<set $leftleg to "bound">>
+	<<set $rightleg to "bound">>
+	<<set $feetuse to "bound">>
 <</if>>
 <<resetLastOptions>>
 <<getCombatDefaultsType>>
@@ -920,27 +927,39 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 	<<if $enemyno gte 1>>
 		<br>
 		<<man-combat 1>>
-		<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<if $enemyno gte 2>>
 	<<man-combat 2>>
-	<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<if $enemyno gte 3>>
 		<<man-combat 3>>
-		<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<if $enemyno gte 4>>
 		<<man-combat 4>>
-		<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<if $enemyno gte 5>>
 		<<man-combat 5>>
-		<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 	<<if $enemyno gte 6>>
 		<<man-combat 6>>
-		<br><br>
+		<<if $position isnot "stalk">>
+			<br><br>
+		<</if>>
 	<</if>>
 </div>
 <</if>>
@@ -954,7 +973,7 @@ otherwise there's no easy way of stopping NPC from shoving their stuff in PC's f
 	<</for>>
 <</if>>
 
-<<if $worn.genitals.type.includesAll("chastity", "hidden")>>
+<<if $worn.genitals.type.includesAll("chastity", "hidden") or $NPCList[0].state is "stalk" or $NPCList[0].state is "pursuit">>
 <<elseif $crossdressing is 2 and $worn.under_lower.vagina_exposed gte 1 and $worn.lower.vagina_exposed gte 1 and $worn.over_lower.vagina_exposed gte 1>>
 	/*Comment for seeing herm character genitals for the first time*/
 	<<set $crossdressing to 0>>
