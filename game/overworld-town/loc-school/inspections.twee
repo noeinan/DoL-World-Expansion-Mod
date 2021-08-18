@@ -176,19 +176,18 @@ but Leighton holds them out of reach. "I'll be keeping these," <<person1>><<he>>
 	<<if $args[0]>>
 		<<set _expectedGender to $args[0]>>
 		<<set _oppositeGender to ($args[0] is "m"? "f" : "m")>>
+		<<set _hasGenitals to ($args[0] is "m"? $player.penisExist : $player.vaginaExist)>>
 	<</if>>
 
-	<<if $inspection.gender_appearance is _expectedGender>>
-		<<set $inspection.expect to "join">>
-	<<else>>
-		<<set $inspection.expect to "sit">>
+	<<set $inspection.expect to ($inspection.gender_appearance is _expectedGender? "join" : "sit")>>
+
+	<<if $genderknown.includes("Leighton")>>
+		<<set $inspection.expect to (_hasGenitals? "join" : "sit")>>
 	<</if>>
 
-	<<if $player.gender isnot _oppositeGender>> /* note: this is important because of "h" gender */
-		<<if $genderknown.includes("Leighton") or (($schoolrep.crossdress gte 4 or $schoolrep.herm gte 4) and $cool + random(1,120) lte 240)>>
-			<<set $inspection.expect to "join">>
-		<<elseif $inspection.gender_appearance isnot _expectedGender>>
-			<<set $inspection.expect to "sit">>
+	<<if ($schoolrep.crossdress gte 4 or $schoolrep.herm gte 4) and $cool lte 240>>
+		<<if $inspection.expect is "sit">> /* students cant override leighton setting expectation to join */
+			<<set $inspection.expect to (_hasGenitals? "join" : "sit")>>
 		<</if>>
 	<</if>>
 <</widget>>
@@ -221,7 +220,7 @@ the boys line up at the front of the class please?"
 		<<elseif $cool gte 240>>
 			They'll notice if you don't get in line, but you're popular enough that nobody wants to rat you out.
 		<<else>>
-			They'll notice if you don't get in line.
+			They'll notice if you don't get in line, and <span class="pink">might</span> rat you out.
 		<</if>>
 	<<else>>
 		You are expected to join the line.
@@ -293,11 +292,11 @@ the boys line up at the front of the class please?"
 					Confused murmurs echo around you as you take your seat. One of the boys scoffs. "How come he doesn't have to-"
 					<br><br>
 					
-					"Quiet down," Leighton interrupts. "I'm not interested in <<pher>> today."
+					"Quiet down," Leighton interrupts. "I'm not interested in <<phim>> today."
 					<br><br>
 					
 					The boy scowls and discreetly flips you off. 
-					Others shoot you dirty looks, grumbling their displeasure at your presumed special treatment.<<status -5>><<lcool>>.
+					Others shoot you dirty looks, grumbling their displeasure at your presumed special treatment.<<status -5>><<lcool>>
 					<br><br>
 				<</if>>
 				
@@ -347,33 +346,38 @@ the boys line up at the front of the class please?"
 			
 				<<penisinspection>>
 				<<link [[Next|Penis Inspection 2]]>><</link>>
-			<<elseif ($schoolrep.crossdress gte 4 or $schoolrep.herm gte 4) and $cool lte 120>>
-				<br><br>
-				<<generatey4>><<person4>>
-				
-				<<if $pronoun is "f">>
-					You sneak a glance at your classmates. Most are oblivious, but you notice the <<person>> seated next to you whispering to <<his>> friend, peering at you out of the corner of <<his>> eye. 
-					A grin stretches across <<his>> face as you lock eyes with <<him>>, and <<he>> suddenly shoots out of <<his>> seat, hand raised.
+			<<elseif ($schoolrep.crossdress gte 4 or $schoolrep.herm gte 4)>>
+				<<if $cool + random(1,120) lte 240>>
 					<br><br>
+					<<generatey4>><<person4>>
+					
+					<<if $pronoun is "f">>
+						You sneak a glance at your classmates. Most are oblivious, but you notice the <<person>> seated next to you whispering to <<his>> friend, peering at you out of the corner of <<his>> eye. 
+						A grin stretches across <<his>> face as you lock eyes with <<him>>, and <<he>> suddenly shoots out of <<his>> seat, hand raised.
+						<br><br>
+					<<else>>
+						A <<person>> in line bumps into your chair. <<He>> starts to mumble an apology, but <<he>> trails off when <<he>> meets your gaze. 
+						Recognition flashes across as <<his>> face, and <<his>> once apologetic expression morphs into a vengeful sneer.	
+						<br><br>
+					<</if>>
+					"Excuse me, <<print $NPCName[$NPCNameList.indexOf("Leighton")].title>>!" <<he>> calls out, commanding the attention of the class. 
+					Leighton fixes <<him>> with a glare for the interruption, but the <<person>> continues, pointing at you.
+					
+					<<if $player.gender is "h">>
+						"That thing's got a pussy and a cock. <<pShe>> needs to be checked too, right?"
+					<<else>>
+						"That 'girl' is just a boy playing dress-up. It's not fair that he gets to skip out."
+					<</if>>
+					<br><br>
+					
+					<<person1>>Leighton furrows <<his>> brow as <<he>> addresses you. "Trying to lie your way out of health inspections, are you? You're lucky your fellows are so astute. Get in line, now."<<stress 2>><<gstress>>
+									
+					<br><br>
+					<<set $inspection.choice to "forced">>
 				<<else>>
-					A <<person>> in line bumps into your chair. <<He>> starts to mumble an apology, but <<he>> trails off when <<he>> meets your gaze. 
-					Recognition flashes across as <<his>> face, and <<his>> once apologetic expression morphs into a vengeful sneer.	
+					A couple of girls give you odd looks, but the rest barely react to your presence. You suspect they're well aware of your secret.
 					<br><br>
 				<</if>>
-				"Excuse me, <<print $NPCName[$NPCNameList.indexOf("Leighton")].title>>!" <<he>> calls out, commanding the attention of the class. 
-				Leighton fixes <<him>> with a glare for the interruption, but the <<person>> continues, pointing at you.
-				
-				<<if $player.gender is "h">>
-					"That thing's got a pussy and a cock. <<pShe>> needs to be checked too, right?"
-				<<else>>
-					"That 'girl' is just a boy playing dress-up. It's not fair that he gets to skip out."
-				<</if>>
-				<br><br>
-				
-				<<person1>>Leighton furrows <<his>> brow as <<he>> addresses you. "Trying to lie your way out of health inspections, are you? You're lucky your fellows are so astute. Get in line, now."<<stress 2>><<gstress>>
-								
-				<br><br>
-				<<set $inspection.choice to "forced">>
 
 				<<penisinspection>>
 				<<link [[Next|Penis Inspection 2]]>><</link>>
@@ -637,13 +641,14 @@ A well-endowed <<person2>><<person>> stood beside <<person1>><<him>> starts sobb
 <<if $worn.genitals.type.includes("chastity")>>
 	"What's that?" the <<person4>><<person>> asks, looking at your $worn.genitals.name.
 	<br><br>
+
 	"That's to stop <<phim>> being naughty," Leighton replies. "Just take <<pher>> measurement the best you can."
 	<br><br>
 <<elseif $player.gender is "h">>
 	"Oh, what's this hiding under your penis?" 
 	Leighton questions as <<person1>><<he>> grabs your penis and <<if $player.ballsExist>>lifts your balls<<else>>moves it aside<</if>>, revealing your <<pussy>>. 
 	"A hermaphrodite! Quite the rarity, indeed."
-	<<schoolrep herm 1>>
+	<<schoolrep_naked>>
 	<br><br>
 	"What's that?" the <<person4>><<person>> asks, trying to take a look.
 	<br><br>
@@ -716,7 +721,6 @@ You enjoy the attention.
 <<else>>
 	"I see you have some experience," <<person1>><<he>> says, ignoring your words. "I've inspected enough that I can tell." You stand proud as the girls start whispering amongst themselves.
 <</if>>
-
 <br><br>
 
 <<if $worn.genitals.type.includes("chastity")>>
@@ -729,7 +733,7 @@ You enjoy the attention.
 	"Oh, what's this hiding under your penis?"
 	Leighton questions as <<person1>><<he>> grabs your penis and <<if $player.ballsExist>>lifts your balls<<else>>moves it aside<</if>>, revealing your <<pussy>>. 
 	"A hermaphrodite! Quite the rarity, indeed."
-	<<schoolrep herm 1>>
+	<<schoolrep_naked>>
 	<br><br>
 	"What's that?" the <<person4>><<person>> asks, trying to take a look.
 	<br><br>
@@ -821,7 +825,7 @@ boys sit quietly and avoid looking at each other.
 
 <<fameexhibitionism 50 pic>>
 <<push_nnpc_genderknown true>>
-<<schoolrep crossdress 1>>
+<<schoolrep_naked>>
 
 You tug down your $worn.lower.name, revealing your <<pussy>> to the room.
 The class fall silent as they behold you. You put your hands on your hips and lean back, proud. Some of the boys blush and look away.
@@ -868,7 +872,7 @@ of you before turning to look. <<He>> gasps and falls backwards when <<he>> sees
 		"Don't think I'm done with you just yet," Leighton adds as you finish getting dressed. "Wasting my time, during a government mandated inspection, even." <<person1>><<He>> gives you a sly smile.
 		<br> 
 		"Any young adult such as yourself should know better. I'll be seeing you in my office after school."
-		<<detention 3>><<gdelinquency>><<schoolrep crossdress 1>>
+		<<detention 3>><<gdelinquency>><<schoolrep_naked>>
 		<br><br>
 		
 	<</if>>
@@ -899,7 +903,7 @@ of you before turning to look. <<He>> gasps and falls backwards when <<he>> sees
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
 
 <<fameexhibitionism 50 pic>>
-<<schoolrep crossdress 1>>
+<<schoolrep_naked>>
 <<push_nnpc_genderknown true>>
 
 You <<nervously>> pull down your $worn.lower.name as instructed, exposing your <<pussy>> to the room. The class erupts into excitement.
@@ -925,7 +929,7 @@ Despite your embarrassment, you comply, hurriedly rushing back to sit with the g
 :: Penis Inspection Forced Defiant
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
 
-<<schoolrep crossdress 1>>
+<<schoolrep_naked>>
 <<push_nnpc_genderknown true>>
 
 As Leighton prepares <<his>> camera, you watch the <<person4>><<person>> lick <<his>> lips in anticipation, <<his>> eyes locked on your groin. <<He>> kneels in front of you. "How come you didn't want to come up?" <<he>> whispers, giggling. "You're not shy about your size, are you?"
@@ -1003,7 +1007,7 @@ This process continues down the line. Leighton takes pictures and the pair take 
 			<br>
 		<</if>>
 
-		<<link [[Run away|Penis Inspection Run away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>>
+		<<link [[Run away|Penis Inspection Run Away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>>
 		<br>
 	<<else>>
 		Leighton soon arrives beside you, and looks at you expectantly. 
@@ -1021,7 +1025,7 @@ This process continues down the line. Leighton takes pictures and the pair take 
 			Your knees start to feel weak as you realise what you've gotten yourself into. Losing your nerve, you look towards the door.
 			<br><br>
 		<</if>>
-		<<link [[Run away|Penis Inspection Run away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>>
+		<<link [[Run away|Penis Inspection Run Away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>>
 		<br>
 	<</if>>
 <<elseif $inspection.choice is "forced">>
@@ -1070,7 +1074,7 @@ This process continues down the line. Leighton takes pictures and the pair take 
 			<<link [[Flaunt|Penis Inspection Flaunt]]>><</link>><<exhibitionist4>><br>
 		<</if>>
 	<</if>>
-	<<link [[Run away|Penis Inspection Run away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>><br>
+	<<link [[Run away|Penis Inspection Run Away]]>><<detention 4>><<status -10>><</link>><<gdelinquency>><<lcool>><br>
 <<else>>
 	<<if $player.penisExist>>
 		<<if $schoolrep.herm gte 4 or $schoolrep.crossdress gte 4>>
@@ -1210,7 +1214,7 @@ aren't speaking much, and shift their legs uncomfortably.
 <</if>>
 
 <<exhibitionism4>>
-<<schoolrep crossdress 1>>
+<<schoolrep_naked>>
 <<push_nnpc_genderknown true>>
 The class erupts into whispering when they see your <<penis>>.
 <<if $malechance gte 80>>
@@ -1272,7 +1276,7 @@ The class erupts into whispering when they see your <<penis>>.
 <br><br>
 <<if $player.gender is "h">>
 	<<pussyinspectionherm>>
-	<<schoolrep herm 1>>
+	<<schoolrep_naked>>
 	The girls next to you sneak glances at your penis before blushing and looking away.
 	<br><br>
 <</if>>
@@ -1317,7 +1321,7 @@ You look away as Leighton takes a picture.
 		
 		You drop from the desk and take your place in line.
 	<<else>>
-		<<schoolrep crossdress 1>>
+		<<schoolrep_naked>>
 		"It's unusual for a girl to dress like that, you know," Leighton says.
 		"Good thing you came up on your own. You almost missed your inspection." <<He>> laughs as <<he>> beckons the next student forward.
 		<br>
@@ -1352,7 +1356,7 @@ You lean back and spread your legs, giving the whole class a look. <<exhibitioni
 
 <<if $player.gender is "h">>
 	<<pussyinspectionherm>>
-	<<schoolrep herm 1>>
+	<<schoolrep_naked>>
 	You catch the girls next to you glancing at your <<penis>> before blushing and looking away. <<if $penissize gte 1>>The attention causes blood to rush to your penis, and you feel yourself beginning to harden in your grip.<<arousal 500>><<garousal>><</if>>
 	<br><br>
 <</if>>
@@ -1388,7 +1392,7 @@ Leighton pauses, then smiles as <<he>> takes a picture.
 		
 		You put your clothes back on and take your place in the line, your heart still thumping.
 	<<else>>
-		<<schoolrep crossdress 1>>
+		<<schoolrep_naked>>
 		"It's unusual for a girl to dress like that, you know," Leighton says. 
 		"Good thing you came up on your own. You almost missed your inspection." <<He>> laughs as <<he>> beckons the next student forward.
 		<br>
@@ -1423,7 +1427,7 @@ Leighton pauses, then smiles as <<he>> takes a picture.
 <</if>>
 
 <<if $inspection.gender_appearance is "f">>
-	<<schoolrep crossdress 1>>
+	<<schoolrep_naked>>
 	The class murmurs at the unexpected sight of your <<penis>>.
 <</if>>
 <<push_nnpc_genderknown true>>
@@ -1467,7 +1471,7 @@ Amidst the shocked whispers of your peers, Leighton leers at your crotch in awe,
 Leighton frowns, defeated, but without cause to hold you any longer, <<he>> sighs and shoos you back to your chair.
 
 <<if $inspection.gender_appearance is "f">>
-	<<schoolrep crossdress 1>>
+	<<schoolrep_naked>>
 	The boys give you odd looks as you settle into your seat. You're not sure if they're impressed by your brazen display, or if they just weren't expecting what was beneath your $worn.lower.name.
 <</if>>
 <br>
