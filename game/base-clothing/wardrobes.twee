@@ -352,7 +352,9 @@ __Clothing__
 	<<dynamic "wardrobeLinks" "wardrobeLinks">>
 	<<dynamic "wardrobeContents" "wardrobeList">>
 <<else>>
-	<<oldWardrobeListDisplay>>
+	<div id="oldWardrobeListDisplay">
+		<<oldWardrobeListDisplay>>
+	</div>
 <</if>>
 
 <<set $upperoff to 0>>
@@ -696,10 +698,15 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <</widget>>
 
 <<widget "wearlink_norefresh">>
-	<<capture $args[1]>>
+	<<capture $args[1] $args[2]>>
 		<<link $args[0]>>
-			<<set V[_wear] = $args[1]>>
-			<<updatewardrobe>>
+			<<run console.log($args[1],$args[2])>>
+			<<if $args[2]>>
+				<<set V[$args[2]] = $args[1]>>
+			<<else>>
+				<<set V[_wear] = $args[1]>>
+			<</if>>
+			<<updatewardrobe undefined $args[2]>>
 		<</link>>
 	<</capture>>
 <</widget>>
@@ -722,6 +729,32 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 	<<replace '#clotheson'>><<clotheson>><</replace>>
 	<<if $('#wardrobeList')[0]>><<replace '#wardrobeList'>><<wardrobeContents>><</replace>><</if>>
+	<<if $('#oldWardrobeListDisplay')[0] and $args[1]>>
+		<<run console.log("test",$args[0],$args[1])>>
+		<<set $_slot to $args[1].slice(5)>>
+		<<switch $_slot>>
+			<<case "upper">>
+				<<replace '#clothingBox-upper'>>
+					<<oldWardrobeList "upper" "outfits">>
+					<<oldWardrobeList "upper" "non-outfits">>
+				<</replace>>
+				<<replace '#clothingBox-lower'>>
+					<<oldWardrobeList "lower">>
+				<</replace>>
+			<<case "under_upper">>
+				<<replace '#clothingBox-under_upper'>>
+					<<oldWardrobeList "under_upper" "outfits">>
+					<<oldWardrobeList "under_upper" "non-outfits">>
+				<</replace>>
+				<<replace '#clothingBox-under_lower'>>
+					<<oldWardrobeList "under_lower">>
+				<</replace>>
+			<<default>>
+				<<replace `'#clothingBox-' + $_slot`>><<oldWardrobeList $_slot>><</replace>>
+		<</switch>>
+	<<else>>
+		<<replace '#oldWardrobeListDisplay'>><<oldWardrobeListDisplay>><</replace>>
+	<</if>>
 	<<exposure>>
 	<<run $('#wardrobeExits').html(new Wikifier(null, "<<wardrobeExits>>").output)>>
 	<<numberify ".passage">>
@@ -754,27 +787,34 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<oldWardrobeList "over_upper">>
 	<<oldWardrobeList "over_lower">>
 <</if>>
-<<oldWardrobeList "upper" "outfits">>
-<<oldWardrobeList "upper" "non-outfits">>
-<<oldWardrobeList "lower">>
-<<oldWardrobeList "under_upper" "outfits">>
-<<oldWardrobeList "under_upper" "non-outfits">>
-<<oldWardrobeList "under_lower">>
+<div id="clothingBox-upper">
+	<<oldWardrobeList "upper" "outfits">>
+	<<oldWardrobeList "upper" "non-outfits">>
+</div>
+<div id="clothingBox-lower">
+	<<oldWardrobeList "lower">>
+</div>
+<div id="clothingBox-under_upper">
+	<<oldWardrobeList "under_upper" "outfits">>
+	<<oldWardrobeList "under_upper" "non-outfits">>
+</div>
+<div id="clothingBox-under_lower">
+	<<oldWardrobeList "under_lower">>
+</div>
 <<if $debug is 1>>
 	<<oldWardrobeList "over_head">>
 <</if>>
-<<oldWardrobeList "head">>
-<<oldWardrobeList "face">>
-<<oldWardrobeList "neck">>
-<<oldWardrobeList "hands">>
-<<oldWardrobeList "legs">>
-<<oldWardrobeList "feet">>
+<div id="clothingBox-head"><<oldWardrobeList "head">></div>
+<div id="clothingBox-face"><<oldWardrobeList "face">></div>
+<div id="clothingBox-neck"><<oldWardrobeList "neck">></div>
+<div id="clothingBox-hands"><<oldWardrobeList "hands">></div>
+<div id="clothingBox-legs"><<oldWardrobeList "legs">></div>
+<div id="clothingBox-feet"><<oldWardrobeList "feet">></div>
 <div style="clear:both;"></div>
 <<wardrobeNewOutfit>>
 <</widget>>
 
 <<widget "oldWardrobeList">>
-
 <<set _wardrobe_list to $args[0]>>
 <<set _showType to $args[1]>>
 <<switch _wardrobe_list>>
@@ -799,13 +839,13 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1) + (_show
 <div>
 <ul>
 <<if $worn[_wardrobe_list].name isnot "naked">>
-	<li><a @onclick="`V.`+_wear+` = 'strip';SugarCube.State.display(V.passage)`">Strip</a></li>
+	<li class="no-numberify"><<wearlink_norefresh "Strip" 'strip' _wear>></li>
 <</if>>
-<<if _wardrobe_list is "upper">>
-	<li><a onclick="V.wear_upper='large_towel';SugarCube.State.display(V.passage)">Large Towel</a></li>
+<<if _wardrobe_list is "upper" and _showType is "outfits">>
+	<li class="no-numberify"><<wearlink_norefresh "Large towel" 'large_towel' _wear>></li>
 <</if>>
-<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
-	<li><a @onclick="`V.`+_wear+` = 'towel';SugarCube.State.display(V.passage)`">Towel</a></li>
+<<if (_wardrobe_list is "upper" or _wardrobe_list is "lower") and _showType isnot "outfits">>
+	<li class="no-numberify"><<wearlink_norefresh "Towel" 'towel' _wear>></li>
 <</if>>
 <<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
 	<<set _item to $wardrobe[_wardrobe_list][_i]>>
@@ -817,7 +857,7 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1) + (_show
 	<<if (_item.outfitPrimary isnot undefined and _showType is "non-outfits") or (_item.outfitPrimary is undefined and _showType is "outfits")>>
 		<<continue>>
 	<</if>>
-	<li>/*<<clothingicon _item>>*/<a @onclick="`V.`+_wear+` = `+ _i +`;SugarCube.State.display(V.passage)`">_item.name_cap</a>
+	<li class="no-numberify">/*<<clothingicon _item>>*/<<wearlink_norefresh _item.name_cap _i _wear>>
 	<<if $wardrobe[_wardrobe_list][_i].colour isnot 0>>
 		<span @class="$wardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
 	<</if>>
