@@ -90,7 +90,7 @@
 <<if $args[0]>>
 	<<set $currentSettings to $args[0]>>
 <</if>>
-<<if $passage isnot "Start" and ["quickStart", "presetConfirm", "characterSettings", "featSettings"].includes($currentSettings)>>
+<<if $passage isnot "Start" and ["characterSettings", "featSettings"].includes($currentSettings)>>
 	<<set $currentSettings to "gameSettings">>
 <</if>>
 <<switch $currentSettings>>
@@ -128,16 +128,17 @@
 <<widget "settings">>
 <<updatehistorycontrols>><!-- hides controls on going back in history after enabling that option -->
 <<if $passage is "Start">>
-<div id="settingsExit">
-	<<settingsExit>>
-</div>
-<br>
+	<div id="settingsExit">
+		<<settingsExit>>
+	</div>
+	<br>
 <</if>>
+<<set $cheatdisabletoggle to $cheatdisable>>
 <div class="gold">
+	<<button `$passage is "Start" ? "Quick Start" : "Quick Edit"`>>
+		<<displaySettings "quickStart">>
+	<</button>>
 	<<if $passage is "Start">>
-		<<button "Quick Start<span class='red'>*</span>">>
-			<<displaySettings "quickStart">>
-		<</button>>
 		<<button "Character Creation<span class='red'>*</span>">>
 			<<displaySettings "characterSettings">>
 		<</button>>
@@ -172,7 +173,7 @@
 	<<if $passage is "Start">>
 		<<quickStart>><<set $currentSettings to "quickStart">>
 	<<else>>
-		<<gameSettings>><<set $currentSettings to "gameSettings">>
+		<<quickStart>><<set $currentSettings to "quickStart">>
 	<</if>>
 </div>
 <br>
@@ -198,7 +199,7 @@
 	<<set _buttonName to "Confirm">>
 <</if>>
 <<link _buttonName>>
-	<<if ($feats.locked is true or $cheatdisable is "t") and ($feats.soft is true or ($gamemode isnot "soft" and $alluremod gte 1) and $rentmod gte 1)>>
+	<<if ($feats.locked is true or ($cheatdisabletoggle is "t" and $rentmod gte 1)) and ($feats.soft is true or ($gamemode isnot "soft" and $alluremod gte 1))>>
 		<<settingsExitFunction>>
 	<<else>>
 		<<replace #settingsExit>><<settingsExitConfirm>><</replace>>
@@ -210,7 +211,7 @@
 <span class="red">Some settings will disable feats in some way, is this OK?</span>
 <br>
 <<link "No, please undo these changes">>
-	<<set $cheatdisable to "t">>
+	<<set $cheatdisabletoggle to "t">>
 	<<if $gamemode is "soft">>
 		<<set $gamemode to "normal">>
 	<</if>>
@@ -225,9 +226,6 @@
 <</link>>
 <br><br><br>
 <<link "Yes">>
-	<<if $rentmod lt 1>>
-		<<set $cheatdisable to "f">>
-	<</if>>
 	<<settingsExitFunction>>
 <</link>>
 <</widget>>
@@ -236,9 +234,11 @@
 	<<if $settingsExitPassage is "Start2">>
 		<<setSkinColorBase>>
 	<</if>>
-	<<if $cheatdisable is "f" and !$debug>>
+	<<set $cheatdisable to $cheatdisabletoggle>>
+	<<if $cheatdisable is "f" or $rentmod lt 1>>
 		<<set $feats.locked to true>>
 	<</if>>
+	<<unset $cheatdisabletoggle>>
 	<<if $gamemode is "soft" or $alluremod lt 1>>
 		<<set $feats.soft to true>>
 	<</if>>
@@ -321,10 +321,11 @@
 <span class="gold">Kinks Preset:</span> <<listbox "_kinkPreset" autoselect>><<optionsfrom _quickStartOptions.kink>><</listbox>> |
 <<link Set>><<presets _kinkPreset>><</link>>
 <br><br>
-
-<span class="gold">Difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
-<<link Set>><<presets _gamePreset>><</link>>
-<br><br>
+<<if $passage is "Start">>
+	<span class="gold">Difficulty Preset:</span> <<listbox "_gamePreset" autoselect>><<optionsfrom _quickStartOptions.game>><</listbox>> |
+	<<link Set>><<presets _gamePreset>><</link>>
+	<br><br>
+<</if>>
 <<if StartConfig.enableImages is true>>
 	<span class="gold">Images Preset:</span> <<listbox "_imagesPreset" autoselect>><<optionsfrom _quickStartOptions.images>><</listbox>> |
 	<<link Set>><<presets _imagesPreset>><</link>>
@@ -1067,7 +1068,7 @@
 
 	<span class="gold">Cheats menu</span>
 	<label><div class="settingsToggleBig">
-	<<checkbox "$cheatdisable" "t" "f" autocheck>> Enable cheats
+	<<checkbox "$cheatdisabletoggle" "t" "f" autocheck>> Enable cheats
 	<div class="description">Button shows in sidebar. <span class="red">Leaving the settings with cheats enabled will prevent you from earning feats in a save.</span></div>
 	</div></label>
 	<br><br>
@@ -1077,9 +1078,6 @@
 		<<link [["Character Viewer"|Clothes Testing]]>>
 			<<set $lastPassage to $passage>>
 			<<set $gameTanImgSetting to clone($skinColor.tanImgEnabled)>>
-			<<if $cheatdisable is "f" and $feats.locked is false>>
-				<<set $cheatdisable to "t">>
-			<</if>>
 		<</link>>
 		- This will allow you to have a play with the character sprites.
 		<br>
@@ -1088,9 +1086,6 @@
 		<<link [["Scene Viewer"|Scene Viewer]]>>
 			<<set $lastPassage to $passage>>
 			<<seenPassageChecks>>
-			<<if $cheatdisable is "f" and $feats.locked is false>>
-				<<set $cheatdisable to "t">>
-			<</if>>
 		<</link>>
 		- This will allow you to replay scenes that you have unlocked.
 		<br>
