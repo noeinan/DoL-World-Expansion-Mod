@@ -1,6 +1,6 @@
 Config.history.controls = false;
 
-Config.history.maxStates = 5;
+Config.history.maxStates = 1;
 
 State.prng.init()
 
@@ -18,10 +18,10 @@ Config.saves.onSave = function (save) {
 /*LinkNumberify and images will enable or disable the feature completely*/
 /*debug will enable or disable the feature only for new games*/
 window.StartConfig = {
-	"debug": true,
+	"debug": false,
 	"enableImages": true,
 	"enableLinkNumberify": true,
-	"version": "0.3.2.0",
+	"version": "0.3.2.1",
 }
 
 config.saves.autosave = "autosave";
