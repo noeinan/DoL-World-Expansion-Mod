@@ -73,7 +73,7 @@ function genderappearancecheck() {
 	addfemininityofclothingarticle(V.worn.legs);
 	addfemininityofclothingarticle(V.worn.feet);
 	/* Hair length */
-	if (V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1 && V.hoodDown !== 1) {
+	if ((V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1) || V.hoodDown == 1) {
 		addfemininityfromfactor(Math.trunc((V.hairlength - 200) / 2), "Hair length");
 	}
 	/* Makeup */
