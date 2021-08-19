@@ -568,7 +568,7 @@ window.settingsObjects = function (type) {
 				checkstyle: { strings: ["percentage", "words", "skillname"] },
 				tipdisable: { boolLetter: true, bool: true },
 				debugdisable: { boolLetter: true, bool: true },
-				cheatdisable: { boolLetter: true, bool: true },
+				cheatdisabletoggle: { boolLetter: true, bool: true },
 				showCaptionText: { bool: true },
 				confirmSave: { bool: true },
 				confirmLoad: { bool: true },

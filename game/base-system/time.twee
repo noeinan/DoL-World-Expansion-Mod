@@ -567,27 +567,27 @@
 
 	<<if $schoolday is 1>>
 		<<if $scienceattended isnot 1>>
-			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $sciencemissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $mathsattended isnot 1>>
-			<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $mathsmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $englishattended isnot 1>>
-			<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $englishmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $historyattended isnot 1>>
-			<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $historymissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $swimmingattended isnot 1>>
-			<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $swimmingmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
@@ -779,25 +779,29 @@
 
 	<<if $schoolterm is 1>>
 		<<if $weekday is 2 or $weekday is 3 or $weekday is 4 or $weekday is 5 or $weekday is 6>>
-			<<set $delinquency -= 1>>
+			<<set _delinquencyDecay to 1>>
 			<<if $NPCName[$NPCNameList.indexOf("Leighton")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Sirris")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("River")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Doren")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Winter")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Mason")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
+			<<if _lessonmissed>>
+				<<set _delinquencyDecay to Math.floor(_delinquencyDecay / 2)>>
+			<</if>>
+			<<set $delinquency -= _delinquencyDecay>>
 			<<if $schoolfameblackmail isnot undefined>>
 				<<set $schoolfameblackmail += 1>>
 			<</if>>
