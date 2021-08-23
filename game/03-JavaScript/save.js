@@ -538,6 +538,7 @@ window.settingsObjects = function (type) {
 				analingusdisablegiving: { boolLetter: true, bool: true },
 				analingusdisablereceiving: { boolLetter: true, bool: true },
 				transformdisable: { boolLetter: true, bool: true },
+				transformdisabledivine: { boolLetter: true, bool: true },
 				hirsutedisable: { boolLetter: true, bool: true },
 				breastfeedingdisable: { boolLetter: true, bool: true },
 				analpregdisable: { boolLetter: true, bool: true },
