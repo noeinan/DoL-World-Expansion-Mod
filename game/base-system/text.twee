@@ -4,6 +4,10 @@
 	<<run App.Utils.setLocalPronouns($args[0], $args[1])>>
 <</widget>>
 
+<<widget "capitalise">><<silently>>
+	<<set _text_output to _text_output.toLocaleUpperFirst()>>
+<</silently>>_text_output<</widget>>
+
 <<widget "catcall">>
 
 "<<print either("Hey beautiful.",
@@ -737,6 +741,7 @@
 <!-- Note calls range from 0-5 corresponding to NPCs 1-6. This was done to simplify FOR loops -->
 <<set _n to $args[0]>>
 <<if $enemytype is "man" and $enemyno gte 2>>
+	<<personselect _n>>
 	<!-- NPC's name will only appear if they are selected -->
 	<<if $npcrow.includes(_n)>>
 		<<print $npc[$npcrow.indexOf(_n)]>>'s
@@ -795,36 +800,28 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "people">><<silently>>
-<<if $malechance is 100>>
-	<<set _text_output to "men">>
-<<elseif $malechance is 0>>
-	<<set _text_output to "women">>
-<<else>>
-	<<set _text_output to "men and women">>
-<</if>>
+	<<if $malechance is 100>>
+		<<set _text_output to "men">>
+	<<elseif $malechance is 0>>
+		<<set _text_output to "women">>
+	<<else>>
+		<<set _text_output to "men and women">>
+	<</if>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "peopley">><<silently>>
-<<if $malechance is 100>>
-	<<set _text_output to "boys">>
-<<elseif $malechance is 0>>
-	<<set _text_output to "girls">>
-<<else>>
-	<<set _text_output to "boys and girls">>
-<</if>>
+	<<if $malechance is 100>>
+		<<set _text_output to "boys">>
+	<<elseif $malechance is 0>>
+		<<set _text_output to "girls">>
+	<<else>>
+		<<set _text_output to "boys and girls">>
+	<</if>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "persony">><<silently>>
-<<set $rng to random(1, 100)>>
-<<if $malechance is 100>>
-	<<set _text_output to "boy">>
-<<elseif $malechance is 0>>
-	<<set _text_output to "girl">>
-<<elseif $rng gte 51>>
-	<<set _text_output to "boy">>
-<<else>>
-	<<set _text_output to "girl">>
-<</if>>
+	<<set $rng to random(1, 100)>>
+	<<set _text_output to ($rng lte $malechance? "boy" : "girl")>>
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "group">><<silently>>
@@ -836,69 +833,69 @@
 			<<set $_group_woman to true>>
 		<</if>>
 	<</for>>
-	<<if $_group_man and !$_group_woman>>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "boys">>
-		<<else>>
-			<<set _text_output to "men">>
-		<</if>>
-	<<elseif $_group_woman and !$_group_man>>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "girls">>
-		<<else>>
-			<<set _text_output to "women">>
-		<</if>>
-	<<else>>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "girls and boys">>
-		<<else>>
-			<<set _text_output to "men and women">>
-		<</if>>
+	<<if $_group_man and $_group_woman>>
+		<<set _text_output to ($NPCList[0].teen is 1? "girls and boys" : "men and women")>>
+	<<elseif $_group_man and !$_group_woman>>
+		<<set _text_output to ($NPCList[0].teen is 1? "boys" : "men")>>
+	<<elseif !$_group_man and $_group_woman>>
+		<<set _text_output to ($NPCList[0].teen is 1? "girls" : "women")>>
 	<</if>>
 <<elseif $enemyno is 2>>
-	<<if $NPCList[0].pronoun is "m" and $NPCList[1].pronoun is "m">>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "boys">>
-		<<else>>
-			<<set _text_output to "men">>
-		<</if>>
-	<<elseif $NPCList[0].pronoun is "f" and $NPCList[1].pronoun is "f">>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "girls">>
-		<<else>>
-			<<set _text_output to "women">>
-		<</if>>
-	<<else>>
-		<<if $NPCList[0].teen is 1>>
-			<<set _text_output to "girl and boy">>
-		<<else>>
-			<<set _text_output to "man and woman">>
-		<</if>>
+	<<if $NPCList[0].pronoun isnot $NPCList[1].pronoun>>
+		<<set _text_output to ($NPCList[0].teen is 1? "girl and boy" : "man and woman")>>
+	<<elseif $NPCList[0].pronoun is "m">>
+		<<set _text_output to ($NPCList[0].teen is 1? "boys" : "men")>>
+	<<elseif $NPCList[0].pronoun is "f">>
+		<<set _text_output to ($NPCList[0].teen is 1? "girls" : "women")>>
 	<</if>>
 <<else>>
 	<<person>>
 <</if>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "pshe">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "he">><<elseif $player.gender_appearance is "f">><<set _text_output to "she">><</if>><</silently>>_text_output<</widget>>
+<<widget "gendercheck">>
+	<<if !["m", "f"].contains($player.gender_appearance)>><<set _text_output to "<span class=\"red\">ERROR: Unexpected $$player.gender_appearance: [$player.gender_appearance]</span>">><</if>>
+<</widget>>
 
-<<widget "pShe">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "He">><<elseif $player.gender_appearance is "f">><<set _text_output to "She">><</if>><</silently>>_text_output<</widget>>
+<<widget "pshe">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "he" : "she")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pshes">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "he's">><<elseif $player.gender_appearance is "f">><<set _text_output to "she's">><</if>><</silently>>_text_output<</widget>>
+<<widget "pShe">><<silently>>
+	<<pshe>><<capitalise>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pShes">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "He's">><<elseif $player.gender_appearance is "f">><<set _text_output to "She's">><</if>><</silently>>_text_output<</widget>>
+<<widget "pshes">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "he's" : "she's")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pher">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "his">><<elseif $player.gender_appearance is "f">><<set _text_output to "her">><</if>><</silently>>_text_output<</widget>>
+<<widget "pShes">><<silently>>
+	<<pshes>><<capitalise>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pHer">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "His">><<elseif $player.gender_appearance is "f">><<set _text_output to "Her">><</if>><</silently>>_text_output<</widget>>
+<<widget "pher">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "his" : "her")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
 
-<<widget "phim">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "him">><<elseif $player.gender_appearance is "f">><<set _text_output to "her">><</if>><</silently>>_text_output<</widget>>
+<<widget "pHer">><<silently>>
+	<<pher>><<capitalise>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pHim">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "Him">><<elseif $player.gender_appearance is "f">><<set _text_output to "Her">><</if>><</silently>>_text_output<</widget>>
+<<widget "phim">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "him" : "her")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pherself">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "himself">><<elseif $player.gender_appearance is "f">><<set _text_output to "herself">><</if>><</silently>>_text_output<</widget>>
+<<widget "pHim">><<silently>>
+	<<phim>><<capitalise>>
+<</silently>>_text_output<</widget>>
 
-<<widget "pHerself">><<silently>><<if $player.gender_appearance is "m">><<set _text_output to "Himself">><<elseif $player.gender_appearance is "f">><<set _text_output to "Herself">><</if>><</silently>>_text_output<</widget>>
+<<widget "pherself">><<silently>>
+	<<set _text_output to ($player.gender_appearance is "m"? "himself" : "herself")>><<gendercheck>>
+<</silently>>_text_output<</widget>>
+
+<<widget "pHerself">><<silently>>
+	<<pherself>><<capitalise>>
+<</silently>>_text_output<</widget>>
 
 <<widget "animals">>
 <<print either("bees", "elephants", "bunnies", "octopi", "chimps", "squid", "molluscs", "monkeys", "wasps", "baboons", "wolves", "bears", "elk", "seals", "dolphins", "whales", "jellyfish", "cats", "lions", "tigers", "cheetahs", "wild dogs", "panthers", "moles", "badgers", "honey badgers", "ducks", "geese", "sparrows", "robins", "perch", "pike", "salmon", "sturgeon", "frogs", "newts", "crocodiles", "toads", "hawks", "eagles", "cuttlefish", "pythons", "anacondas", "adders", "cobras", "sturgeon", "trout", "salmon", "tuna", "deer", "robins")>>
@@ -910,7 +907,7 @@
 
 <<widget "semen">>
 <<silently>>
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	<<set _text_output to "semen">>
 <<else>>
 	<<set _text_output to "lewd fluid">>
@@ -933,45 +930,52 @@
 
 <<widget "nipples">><<nipple>>s<</widget>>
 
+/* 
 <<widget "breasts">><<silently>>
-<<switch $breastsize>>
-<<case 0>>
-	<<if $dev is 1>>
-	<<set _text_output to "nipples">>
+	<<if Number.isInteger($breastsize)>>
+		<<if $breastsize lte 0>>
+			<<set _text_output to "nipples">>
+		<<else>>
+			<<set _text_output to ["", "budding", "tiny", "small", "pert", "modest", "full", "large", "ample", "massive", "huge", "gigantic", "enormous"][$breastsize] + " breasts">>
+		<</if>>
 	<<else>>
-	<<set _text_output to "nipples">>
+		<<set _text_output to "ERROR - $$breastsize is not a number: $breastsize">>
 	<</if>>
-<<case 1>>
-	<<if $dev is 1>>
-	<<set _text_output to "budding breasts">>
-	<<else>>
-	<<set _text_output to "budding breasts">>
-	<</if>>
-<<case 2>>
-<<set _text_output to "tiny breasts">>
-<<case 3>>
-<<set _text_output to "small breasts">>
-<<case 4>>
-<<set _text_output to "pert breasts">>
-<<case 5>>
-<<set _text_output to "modest breasts">>
-<<case 6>>
-<<set _text_output to "full breasts">>
-<<case 7>>
-<<set _text_output to "large breasts">>
-<<case 8>>
-<<set _text_output to "ample breasts">>
-<<case 9>>
-<<set _text_output to "massive breasts">>
-<<case 10>>
-<<set _text_output to "huge breasts">>
-<<case 11>>
-<<set _text_output to "gigantic breasts">>
-<<case 12>>
-<<set _text_output to "enormous breasts">>
-<<default>>
-<<set _text_output to "breasts">>
-<</switch>>
+	<</silently>><<breastsensitivity>><<print _text_output>>
+<</widget>> 
+*/
+
+<<widget "breasts">><<silently>>
+	<<switch $breastsize>>
+	<<case 0>>
+		<<set _text_output to "nipples">>
+	<<case 1>>
+		<<set _text_output to "budding breasts">>
+	<<case 2>>
+		<<set _text_output to "tiny breasts">>
+	<<case 3>>
+		<<set _text_output to "small breasts">>
+	<<case 4>>
+		<<set _text_output to "pert breasts">>
+	<<case 5>>
+		<<set _text_output to "modest breasts">>
+	<<case 6>>
+		<<set _text_output to "full breasts">>
+	<<case 7>>
+		<<set _text_output to "large breasts">>
+	<<case 8>>
+		<<set _text_output to "ample breasts">>
+	<<case 9>>
+		<<set _text_output to "massive breasts">>
+	<<case 10>>
+		<<set _text_output to "huge breasts">>
+	<<case 11>>
+		<<set _text_output to "gigantic breasts">>
+	<<case 12>>
+		<<set _text_output to "enormous breasts">>
+	<<default>>
+		<<set _text_output to "breasts">>
+	<</switch>>
 <</silently>><<breastsensitivity>><<print _text_output>><</widget>>
 
 <<widget "undertop">>
@@ -1012,25 +1016,7 @@
 <</widget>>
 
 <<widget "bottom">><<silently>>
-<<if $bottomsize gte 8>>
-	<<set _text_output to "huge">>
-<<elseif $bottomsize is 7>>
-	<<set _text_output to "large">>
-<<elseif $bottomsize is 6>>
-	<<set _text_output to "plump">>
-<<elseif $bottomsize is 5>>
-	<<set _text_output to "round">>
-<<elseif $bottomsize is 4>>
-	<<set _text_output to "soft">>
-<<elseif $bottomsize is 3>>
-	<<set _text_output to "cushioned">>
-<<elseif $bottomsize is 2>>
-	<<set _text_output to "modest">>
-<<elseif $bottomsize is 1>>
-	<<set _text_output to "slim">>
-<<else>>
-	<<set _text_output to "slender">>
-<</if>>
+	<<set _text_output to ["slender", "slim", "modest", "cushioned", "soft", "round", "plump", "large", "huge"][Math.clamp(0, 8, $bottomsize)]>>
 	<<set _text_output to _text_output += [" ass", " bum", " butt"].pluck()>>
 <</silently>><<print _text_output>><</widget>>
 
@@ -1123,7 +1109,7 @@
 <</silently>><<print _text_output>><</widget>>
 
 <<widget "clit">><<silently>>
-<<if $penisexist is 1>>
+<<if $player.penisExist>>
 	<<penis>>
 <<else>>
 	<<set _text_output to "clit">>
@@ -1384,40 +1370,20 @@
 <</widget>>
 
 <<widget "girl">><<silently>>
-<<if $player.gender_appearance is "f">>
-	<<set _text_output to "girl">>
-<<elseif $player.gender_appearance is "m">>
-	<<set _text_output to "boy">>
-<<else>>
-	<<set _text_output to "girl">>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<set _text_output to ($player.gender_appearance is "m"? "boy" : "girl")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "girlfriend">><<silently>>
-<<if $player.gender_appearance is "f">>
-	<<set _text_output to "girlfriend">>
-<<elseif $player.gender_appearance is "m">>
-	<<set _text_output to "boyfriend">>
-<<else>>
-	<<set _text_output to "girlfriend">>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<girl>><<set _text_output to _text_output + "friend">>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "girls">><<silently>>
-<<if $player.gender_appearance is "f">>
-	<<set _text_output to "girls">>
-<<elseif $player.gender_appearance is "m">>
-	<<set _text_output to "boys">>
-<<else>>
-	<<set _text_output to "girls">>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<girl>><<set _text_output to _text_output + "s">>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "wife">><<silently>>
-<<if $player.gender_appearance is "f">>
-	<<set _text_output to "wife">>
-<<elseif $player.gender_appearance is "m">>
-	<<set _text_output to "husband">>
-<<else>>
-	<<set _text_output to "wife">>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<set _text_output to ($player.gender_appearance is "m"? "husband" : "wife")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "Wife">><<silently>>
 <<wife>><<set _text_output to _text_output.toLocaleUpperFirst()>>
@@ -1450,13 +1416,8 @@
 <</widget>>
 
 <<widget "lass">><<silently>>
-<<if $player.gender_appearance is "f">>
-	<<set _text_output to "lass">>
-<<elseif $player.gender_appearance is "m">>
-	<<set _text_output to "lad">>
-<<else>>
-	<<set _text_output to "lass">>
-<</if>><</silently>><<print _text_output>><</widget>>
+	<<set _text_output to ($player.gender_appearance is "m"? "lad" : "lass")>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "gender">><<silently>>
 	<<switch $player.gender>>
@@ -1466,21 +1427,18 @@
 	<</switch>>
 <</silently>><<print _text_output>><</widget>>
 
-<<widget "genitals_are">>
-<<silently>>
+<<widget "genitals_are">><<silently>>
 	<<if $args[0] is undefined>>
 		<<genitals>>
 	<<else>>
 		<<genitals 1>>
 	<</if>>
-<</silently>>
-<<if $penisexist is 1 and $vaginaexist is 1 and (!$worn.genitals.type.includes("chastity") or $args[0] isnot undefined)>>
-	<<set _text_output += " are">>
-<<else>>
-	<<set _text_output += " is">>
-<</if>>
-<<print _text_output>>
-<</widget>>
+	<<if $player.penisExist and $player.vaginaExist and (!$worn.genitals.type.includes("chastity") or $args[0] isnot undefined)>>
+		<<set _text_output += " are">>
+	<<else>>
+		<<set _text_output += " is">>
+	<</if>>
+<</silently>><<print _text_output>><</widget>>
 
 <<widget "genitalsensitivity">><<silently>>
 <<if $genitalsensitivity > 5>>
@@ -1504,16 +1462,16 @@
 	<<elseif $genitalsensitivity >= 1.5>>
 		<<set _text_output += "receptive ">>
 	<</if>>
-	<<if $penisexist is 1>>
+	<<if $player.penisExist>>
 		<<if $player.virginity.penile is true and $args[0] isnot 2>>
 			<<set _text_output += "virgin ">>
 		<</if>>
 		<<set _text_output += "penis">>
 	<</if>>
-	<<if $penisexist is 1 and $vaginaexist is 1>>
+	<<if $player.penisExist and $player.vaginaExist>>
 		<<set _text_output += " and ">>
 	<</if>>
-	<<if $vaginaexist is 1>>
+	<<if $player.vaginaExist>>
 		<<if $player.virginity.vaginal is true and $args[0] isnot 2>>
 			<<set _text_output += "virgin ">>
 		<</if>>
@@ -1533,7 +1491,7 @@
 <<widget "genitalsandbreasts">>
 	<<genitals>> <<if $breastsize gte 1>>and <<breasts>><</if>>
 	<<if $args[0] isnot undefined and $args[1] isnot undefined>>
-		<<if ($penisexist is 1 and $vaginaexist is 1) or $breastsize gte 1>>
+		<<if ($player.penisExist and $player.vaginaExist) or $breastsize gte 1>>
 			$args[1]
 		<<else>>
 			$args[0]
@@ -4326,7 +4284,7 @@ School finishes on the first Monday of December.
 <</widget>>
 
 <<widget "prostate">><<silently>>
-<<if $vaginaexist is 1>>
+<<if $player.vaginaExist>>
 	<<set _text_output to "womb">>
 <<else>>
 	<<set _text_output to "prostate">>
@@ -6053,32 +6011,32 @@ and
   <<number 69 silent>> -> _text_output = "sixty-nine"
 -->
 <<widget "number">><<silently>>
-    <<set $_x to $args[0]>>
-    <<if $_x lte -100 or $_x gte 100 or Math.floor($_x) isnot $_x>>
-        <<set _text_output to ""+$_x>>
-    <<else>>
-        <<if $_x lt 0>>
-            <<set _text_output to "negative ">>
-            <<set $_x to -$_x>>
-        <<else>>
-            <<set _text_output to "">>
-        <</if>>
-        <<if $_x is 0>>
-            <<set _text_output to "zero">>
-        <<elseif $_x gte 10 and $_x lte 20>>
-            <<set _text_output to  ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"][$_x-10]>>
-        <<else>>
-            <<set $_ones to ($_x % 10)>>
-            <<set $_tens to ($_x - $_ones)/10>>
-            <<set $_tenword to ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"][$_tens]>>
-            <<set $_oneword to ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][$_ones]>>
-            <<if $_tenword and $_oneword>>
-                <<set _text_output to  $_tenword + "-" + $_oneword>>
-            <<else>>
-                <<set _text_output to  $_tenword + "" + $_oneword>>
-            <</if>>
-        <</if>>
-    <</if>>
+	<<set $_x to $args[0]>>
+	<<if $_x lte -100 or $_x gte 100 or Math.floor($_x) isnot $_x>>
+		<<set _text_output to ""+$_x>>
+	<<else>>
+		<<if $_x lt 0>>
+			<<set _text_output to "negative ">>
+			<<set $_x to -$_x>>
+		<<else>>
+			<<set _text_output to "">>
+		<</if>>
+		<<if $_x is 0>>
+			<<set _text_output to "zero">>
+		<<elseif $_x gte 10 and $_x lte 20>>
+			<<set _text_output to  ["ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"][$_x-10]>>
+		<<else>>
+			<<set $_ones to ($_x % 10)>>
+			<<set $_tens to ($_x - $_ones)/10>>
+			<<set $_tenword to ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"][$_tens]>>
+			<<set $_oneword to ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][$_ones]>>
+			<<if $_tenword and $_oneword>>
+				<<set _text_output to  $_tenword + "-" + $_oneword>>
+			<<else>>
+				<<set _text_output to  $_tenword + "" + $_oneword>>
+			<</if>>
+		<</if>>
+	<</if>>
 <</silently>><<if $args[1] isnot "silent">><<print _text_output>><</if>><</widget>>
 
 <<widget "Number">><<number $args[0] silent>><<print _text_output.toLocaleUpperFirst()>><</widget>>
