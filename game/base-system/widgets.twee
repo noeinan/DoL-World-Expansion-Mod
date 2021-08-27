@@ -478,6 +478,51 @@
 	<</if>>
 <</widget>>
 
+<<widget "violence_noncombat">>
+	<<if $args.length gte 1>>
+		<<set _violence = $args[0]>>
+		<<set _stressMod = $args[1] || 1>>
+		<<set _traumaMod = $args[2] || 1>>
+		<<set _painMod = $args[3] || 1>>
+		<<set _arousalMod = $args[4] || 1>>
+
+		<<if _violence gt 0 or _violence lt 0>>
+			<<if $drunk gte 480>>
+				<<set _drunkMod = 3>>
+			<<elseif $drunk gte 360>>
+				<<set _drunkMod = 4>>
+			<<elseif $drunk gte 240>>
+				<<set _drunkMod = 6>>
+			<<elseif $drunk gte 120>>
+				<<set _drunkMod = 8>>
+			<<elseif $drunk gte 1>>
+				<<set _drunkMod = 9>>
+			<<else>>
+				<<set _drunkMod = 10>>
+			<</if>>
+			<<set $stress += (_violence * _drunkMod * _stressMod) * (1 - ($masochism / 1200))>>
+			<<trauma _violence * _traumaMod>>
+			<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>
+			<<set _arousal to (_violence * _arousalMod * (0 + ($masochism / 18)))>>
+			<<arousal _arousal>>
+			<<set $arousalmasochism += (_violence * (0 + ($masochism / 7)))>>
+			<<if $orgasmdown gte 1>>
+				<<if $masochism gte 800>>
+					<<set $masochism += (_violence / 20)>>
+				<<elseif $masochism gte 500>>
+					<<set $masochism += (_violence / 10)>>
+				<<elseif $masochism gte 300>>
+					<<set $masochism += (_violence / 6)>>
+				<<elseif $masochism gte 100>>
+					<<set $masochism += (_violence / 2)>>
+				<<else>>
+					<<set $masochism += _violence>>
+				<</if>>
+			<</if>>
+		<</if>>
+	<</if>>
+<</widget>>
+
 <<widget "submission">>
 	<<if $args[0]>>
 		<<if $consensual isnot 1>>
@@ -692,13 +737,13 @@
 		<<default>>
 			<<set _skill_mod to 2.4>>
 	<</switch>>
-	<<if $science_star lt 3>>
+	<<if $science_star lt 3 and $args[1] isnot "no_star">>
 		<<set $science_star += 1>>
 	<</if>>
-	<<if $worn.face.type.includes("glasses")>>
+	<<if $worn.face.type.includes("glasses") and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
-	<<if $exposed gte 1>>
+	<<if $exposed gte 1 and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
 	<<if $args[0]>>
@@ -724,13 +769,13 @@
 		<<default>>
 			<<set _skill_mod to 2.4>>
 	<</switch>>
-	<<if $maths_star lt 3>>
+	<<if $maths_star lt 3 and $args[1] isnot "no_star">>
 		<<set $maths_star += 1>>
 	<</if>>
-	<<if $worn.face.type.includes("glasses")>>
+	<<if $worn.face.type.includes("glasses") and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
-	<<if $exposed gte 1>>
+	<<if $exposed gte 1 and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
 	<<if $args[0]>>
@@ -756,13 +801,13 @@
 		<<default>>
 			<<set _skill_mod to 2.4>>
 	<</switch>>
-	<<if $english_star lt 3>>
+	<<if $english_star lt 3 and $args[1] isnot "no_star">>
 		<<set $english_star += 1>>
 	<</if>>
-	<<if $worn.face.type.includes("glasses")>>
+	<<if $worn.face.type.includes("glasses") and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
-	<<if $exposed gte 1>>
+	<<if $exposed gte 1 and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
 	<<if $args[0]>>
@@ -788,13 +833,13 @@
 		<<default>>
 			<<set _skill_mod to 2.4>>
 	<</switch>>
-	<<if $history_star lt 3>>
+	<<if $history_star lt 3 and $args[1] isnot "no_star">>
 		<<set $history_star += 1>>
 	<</if>>
-	<<if $worn.face.type.includes("glasses")>>
+	<<if $worn.face.type.includes("glasses") and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
-	<<if $exposed gte 1>>
+	<<if $exposed gte 1 and $args[1] isnot "no_star">>
 		<<set _skill_mod *= 1.2>>
 	<</if>>
 	<<if $args[0]>>
@@ -803,6 +848,33 @@
 		<<set $history_exam += (1 * _skill_mod)>>
 	<</if>>
 	<<exam_clamp history>>
+<</if>>
+<</widget>>
+
+<<widget "passiveStudy">>
+<<if $statFreeze isnot true>>
+	<<switch $studyBooks.rented>>
+		<<case "science">>
+			<<scienceskill 6 "no_star">>
+		<<case "maths">>
+			<<mathsskill 6 "no_star">>
+		<<case "English">>
+			<<englishskill 6 "no_star">>
+		<<case "history">>
+			<<historyskill 6 "no_star">>
+		<<default>>
+	<</switch>>
+	<<switch $studyBooks.stolen>>
+		<<case "science">>
+			<<scienceskill 6 "no_star">>
+		<<case "maths">>
+			<<mathsskill 6 "no_star">>
+		<<case "English">>
+			<<englishskill 6 "no_star">>
+		<<case "history">>
+			<<historyskill 6 "no_star">>
+		<<default>>
+	<</switch>>
 <</if>>
 <</widget>>
 
@@ -1556,6 +1628,11 @@
 		<</if>>
 	<</if>>
 <<set $trueconsensual to 1>>
+<<if $npc.length isnot 0>>
+	<<if $npc.length is 1 and ($npc[0] is "Robin" and $NPCName[$NPCNameList.indexOf("Robin")].dom lte 10 and $debug is 1) or ($npc[0] is "Sydney" and $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 50)>>
+		<<npc_submissive>>
+	<</if>>
+<</if>>
 <</widget>>
 
 <<widget "controlloss">>
@@ -3100,7 +3177,6 @@ You negotiate a price of <<printmoney $tip>>,
 		<<set $trauma to $traumamax>><<set $fallenangel to 2>><<set $specialTransform to 1>>
 		<<set $transformationParts.fallenAngel.halo to "default">>
 		<<set $transformationParts.fallenAngel.wings to "default">>
-
 		<<set $transformationParts.angel.halo to "disabled">>
 		<<set $transformationParts.angel.wings to "disabled">>
 		<<earnFeat "Fallen Angel">>
@@ -3630,7 +3706,7 @@ __Map__<br>
 					return true;
 			};
 
-			T.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			T.importantNpcStats = ["love", "lust", "dom", "trauma", "rage", "purity", "corruption"];
 			T.otherNpcStats = ["love", "lust"];
 
 			let statDefaults = {
@@ -3666,6 +3742,19 @@ __Map__<br>
 					value : T.npcData.rage,
 					activeIcon : "img/ui/rage.png",
 					color: 'gold'
+				},
+				"purity" : {
+					name: "Purity",
+					value: State.temporary.npcData.purity,
+					activeIcon: (State.temporary.npcData.virginity.vaginal == false || State.temporary.npcData.virginity.penile == false ? "img/ui/sym_fallen_purity.png" : "img/ui/sym_purity.png"),
+					color: 'white'
+				},
+				"corruption" : {
+					name: "Corruption",
+					value: State.temporary.npcData.corruption,
+					iconOrientation : 'horizontal-inverted',
+					activeIcon: "img/ui/sym_demon_purity.png",
+					color: 'purple'
 				}
 			};
 
@@ -3804,6 +3893,11 @@ __Map__<br>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
 	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
+	<<set _i to $NPCNameList.indexOf("Sydney")>>
+	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
+	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
+	<<set $NPCName[_i].purity = Math.clamp($NPCName[_i].purity, 0, 100)>>
+	<<set $NPCName[_i].corruption = Math.clamp($NPCName[_i].corruption, 0, 50)>>
 <</widget>>
 
 <<widget "fringecheck">>
@@ -4726,6 +4820,7 @@ __Map__<br>
 			<<if $schoolrep.crossdress gte 5>>
 				<<set $genderknown.pushUnique("Kylar")>>
 				<<set $genderknown.pushUnique("Whitney")>>
+				<<set $genderknown.pushUnique("Sydney")>>
 				<<set $genderknown.pushUnique("Sirris")>>
 				<<set $genderknown.pushUnique("River")>>
 				<<set $genderknown.pushUnique("Doren")>>
@@ -4743,6 +4838,7 @@ __Map__<br>
 			<<if $schoolrep.herm gte 5>>
 				<<set $genderknown.pushUnique("Kylar")>>
 				<<set $genderknown.pushUnique("Whitney")>>
+				<<set $genderknown.pushUnique("Sydney")>>
 				<<set $genderknown.pushUnique("Sirris")>>
 				<<set $genderknown.pushUnique("River")>>
 				<<set $genderknown.pushUnique("Doren")>>

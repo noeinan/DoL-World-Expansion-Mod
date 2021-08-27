@@ -211,6 +211,10 @@ Second arg: tool */
 <<set $rng to random(1, 100)>>
 <<if $npc[$npcrow.indexOf(_n)] is "Whitney">>
 	<<bodywriting_npc_whitney $args[0] $args[1]>>
+<<elseif $npc[$npcrow.indexOf(_n)] is "Kylar">>
+	<<bodywriting_npc_kylar $args[0] $args[1]>>
+<<elseif $npc[$npcrow.indexOf(_n)] is "Sydney">>
+	<<bodywriting_npc_sydney $args[0] $args[1]>>
 <<elseif $rng gte 51>>
 	<<bodywriting_npc_special $args[0] $args[1]>>
 <<else>>
@@ -232,6 +236,107 @@ Second arg: tool */
 <<case 3>>
 	<<add_bodywriting $args[0] whitneys_toy $args[1]>>
 <</switch>>
+<<bodywriting_finalisation $args[0]>>
+<</widget>>
+
+<<widget "bodywriting_npc_kylar">>
+<<set $rng to random(1, 3)>>
+<<switch $rng>>
+<<case 1>>
+	<<add_bodywriting $args[0] love_kylar_forever $args[1]>>
+<<case 2>>
+	<<add_bodywriting $args[0] reserved_for_kylar $args[1]>>
+<<case 3>>
+	<<add_bodywriting $args[0] just_kylar $args[1]>>
+<</switch>>
+<<bodywriting_finalisation $args[0]>>
+<</widget>>
+
+<<widget "bodywriting_npc_sydney">>
+<<if $consensual is 1>>
+	<<set $rng to random(1, 5)>>
+	<<switch $rng>>
+	<<case 1>>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1>>
+			<<add_bodywriting $args[0] purest_love $args[1]>>
+		<<else>>
+			<<add_bodywriting $args[0] lusty_sinners $args[1]>>
+		<</if>>
+	<<case 2>>
+		<<add_bodywriting $args[0] bound_to_sydney $args[1]>>
+	<<case 3>>
+		<<add_bodywriting $args[0] sydney_makes_me_smile $args[1]>>
+	<<case 4>>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].corruption gte 10>>
+			<<if $player.gender_appearance is "m">>
+				<<add_bodywriting $args[0] stud $args[1]>>
+			<<else>>
+				<<add_bodywriting $args[0] beauty $args[1]>>
+			<</if>>		
+		<<else>>
+			<<if $player.gender_appearance is "m">>
+				<<add_bodywriting $args[0] handsome $args[1]>>
+			<<else>>
+				<<add_bodywriting $args[0] pretty $args[1]>>
+			<</if>>
+		<</if>>
+	<<case 5>>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].corruption gte 10 and $sydneyDaily.sex gte 2>>
+			<<add_bodywriting $args[0] insatiable $args[1]>>
+		<<else>>
+			<<if $player.gender_appearance is "m">>
+				<<add_bodywriting $args[0] cute_boy $args[1]>>
+			<<else>>
+				<<add_bodywriting $args[0] cute_girl $args[1]>>
+			<</if>>		
+		<</if>>
+	<</switch>>
+<<else>>
+	<<add_bodywriting $args[0] sinner $args[1]>>
+<</if>>
+<<bodywriting_finalisation $args[0]>>
+<</widget>>
+
+<<widget "bodywriting_npc_sydney_book">>
+<<if $sydneyromance is 1>>
+	<<add_bodywriting $args[0] book_criminal_heart $args[1]>>
+<<else>>
+	<<add_bodywriting $args[0] book_criminal_frown $args[1]>>
+<</if>>
+<<bodywriting_finalisation $args[0]>>
+<</widget>>
+
+<<widget "bodywriting_npc_sydney_science">>
+<<if _sydneyStatus.includes("corrupt") or _sydneyStatus.includes("Lust")>>
+	<<switch random(1, 3)>>
+		<<case 1>>
+			<<add_bodywriting $args[0] attractive_force $args[1]>>
+		<<case 2>>
+			<<add_bodywriting $args[0] reproductive_system $args[1]>>
+		<<case 3>>
+			<<add_bodywriting $args[0] breeding_cycle $args[1]>>
+	<</switch>>
+<<else>>
+	<<switch random(1, 3)>>
+		<<case 1>>
+			<<add_bodywriting $args[0] water_tables $args[1]>>
+		<<case 2>>
+			<<add_bodywriting $args[0] cytoplasm $args[1]>>
+		<<case 3>>
+			<<add_bodywriting $args[0] atomic_weight $args[1]>>
+	<</switch>>
+<</if>>
+<<bodywriting_finalisation $args[0]>>
+<</widget>>
+
+<<widget "bodywriting_npc_sydney_friendly">>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 70>>
+	<<add_bodywriting $args[0] best_friend $args[1]>>
+<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].love gte 40>>
+	<<add_bodywriting $args[0] inspiring $args[1]>>
+<<else>>
+	<<add_bodywriting $args[0] interesting $args[1]>>
+<</if>>
 <<bodywriting_finalisation $args[0]>>
 <</widget>>
 
@@ -637,8 +742,7 @@ Second arg: tool */
 	<<case "tattoo">><<set _text_output to "tattoo">>
 	<<case "brand">><<set _text_output to "brand">>
 	<<case "magic">><<set _text_output to "seal">>
-	<<case "text">><<set _text_output to "writing">>
-	<<default>><<set _text_output to "image">>
+	<<default>><<set _text_output to ($skin[$args[0]].type is "text" ? "writing" : "image")>>
 <</switch>>
 <<print _text_output>>
 <</widget>>
@@ -1087,7 +1191,7 @@ Second arg: tool */
 		<<else>>
 			<<He>> examines the "<<print $skin[$args[0]].writing>>" image on your <<bodypart $args[0]>>.
 		<</if>>
-		<<if $npc[$npcrow.indexOf(_n)] isnot "Robin" and $npc[$npcrow.indexOf(_n)] isnot "Kylar" and $npc[$npcrow.indexOf(_n)] isnot "Mason">>
+		<<if $npc[$npcrow.indexOf(_n)] isnot "Robin" and $npc[$npcrow.indexOf(_n)] isnot "Kylar" and $npc[$npcrow.indexOf(_n)] isnot "Mason" and $npc[$npcrow.indexOf(_n)] isnot "Sydney">>
 			<<if $skin[$args[0]].arrow is 1 and
 			($args[0] is "left_cheek" or
 			$args[0] is "right_cheek" or
@@ -1104,7 +1208,7 @@ Second arg: tool */
 				<<bodypart_admire_rape $args[0]>>
 			<<elseif $skin[$args[0]].special is "exhibitionism">>
 				<<bodypart_admire_exhibitionism $args[0]>>
-			<<elseif $skin[$args[0]].special is "bestiality">>
+			<<elseif $skin[$args[0]].special is "bestiality" or $skin[$args[0]].special is "Black Wolf" or $skin[$args[0]].special is "Great Hawk">>
 				<<bodypart_admire_bestiality $args[0]>>
 			<<elseif $skin[$args[0]].special is "sex">>
 				<<bodypart_admire_promiscuity $args[0]>>
@@ -1138,7 +1242,9 @@ Second arg: tool */
 	<<activebodypart>>
 	<<if $skin[_active_bodypart].writing>>
 		<<if $skin[_active_bodypart].type is "text">>
-			<<if $skin[_active_bodypart].special isnot "none">>
+			<<if $skin[_active_bodypart].special is $loveInterest.primary or $skin[_active_bodypart].special is $loveInterest.secondary>>
+				"<span class="lewd"><<print $skin[_active_bodypart].writing>></span>" has been
+			<<elseif $skin[_active_bodypart].special isnot "none">>
 				"<span class="red"><<print $skin[_active_bodypart].writing>></span>" has been
 			<<elseif $skin[_active_bodypart].lewd is 1>>
 				"<span class="pink"><<print $skin[_active_bodypart].writing>></span>" has been
@@ -1278,7 +1384,7 @@ Second arg: tool */
 <<widget "tattoo_parlour">>
 <<generate1>><<person1>>
 <<if $tattoo_choice>>
-	<<if $tattoo_parlour.special is "bestiality">>
+	<<if $tattoo_parlour.special is "bestiality" or $tattoo_parlour.special is "Black Wolf" or $tattoo_parlour.special is "Great Hawk">>
 	Blushing, you tell the tattoo artist you want <<if $tattoo_parlour.type is "text">><span class="pink">"<<print $tattoo_parlour.writing>>"</span><<else>>a <span class="pink"><<print $tattoo_parlour.writing>></span><</if>> tattooed on your <<bodypart $tattoo_bodypart>>. <<Hes>> unfazed by your deviant request.
 	<<control 50>><<gggcontrol>>
 
@@ -1296,7 +1402,7 @@ Second arg: tool */
 
 	<</if>>
 <<else>>
-	<<if $tattoo_parlour.special is "bestiality">>
+	<<if $tattoo_parlour.special is "bestiality" or $tattoo_parlour.special is "Black Wolf" or $tattoo_parlour.special is "Great Hawk">>
 	Blushing, you tell the tattoo artist you want <<if $tattoo_parlour.type is "text">>writing<<else>>image<</if>> on your <<bodypart $tattoo_bodypart>> to become permanent. <<Hes>> unfazed by your deviant request.
 
 	<<elseif $tattoo_parlour.lewd is 1>>
@@ -1440,6 +1546,10 @@ now permanently emblazoned on your <<bodypart $tattoo_bodypart>>.
 The artist explains how to care for your skin while the tattoo is still raw. You get the gist. "Thanks for your custom," <<he>> says as you stand.
 <<if $tattoo_bodypart is "left_bottom" or $tattoo_bodypart is "right_bottom">>"Oh, and be careful sitting down."<</if>>
 <br><br>
+
+<<if $tattoo_parlour.writing is "Book Criminal >:(" or $tattoo_parlour.writing is "Book Criminal <3">>
+	<<earnFeat "A Crime Most Foul">>
+<</if>>
 
 <<unset $tattoo_parlour>>
 <<unset $tattoo_bodypart>>
