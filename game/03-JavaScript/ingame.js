@@ -69,7 +69,7 @@ window.combatListColor = function (name, value, type) {
 			case "steal": case "penwhack": case "freeface": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus":
 			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
-			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
+			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull": case "rightUndressOther": case "leftUndressOther":
 			case "stopchoke":
 			case "clench":
 			case "shacklewhack":
@@ -222,6 +222,16 @@ function hairdressersReset() {
 }
 
 DefineMacroS("hairdressersReset", hairdressersReset);
+
+function hairdressersResetAlt() {
+	jQuery(document).on('click', '.macro-cycle', function (e) {
+		new Wikifier(null, '<<replace #hairDressersSydney>><<hairDressersOptionsSydney>><</replace>>');
+		new Wikifier(null, '<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("hairdressersResetAlt", hairdressersResetAlt);
 
 function browsDyeReset() {
 	jQuery(document).on('change', '.macro-listbox', function (e) {

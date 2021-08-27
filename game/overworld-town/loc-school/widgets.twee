@@ -2376,6 +2376,169 @@
 <</if>>
 <</widget>>
 
+<<widget "bookRentalOptions">>
+<<if $studyBooks is undefined>>
+	<<set $studyBooks to {}>>
+	<<set $studyBooks.rented to "none">>
+	<<set $studyBooks.stolen to "none">>
+<</if>>
+<<if ($schoolday isnot 1 or $schoolstate is "early" or $schoolstate is "late")>>
+	The library is eerily quiet.
+<<else>>
+	There are a number of textbooks available for rental.
+	<<if $studyBooks.rented isnot "none">>
+		You must return your rented book before checking out another. Your current rental is <<if $book_rent_timer gt 0>>due back in <span class="gold">$book_rent_timer day<<if $book_rent_timer gt 1>>s<</if>>.</span><<elseif $book_rent_timer is 0>><span class="blue">due today.</span><<else>><span class="red">overdue.</span><</if>>
+	<<else>>
+		You have no rented books to return.
+	<</if>>
+<</if>>
+<br>
+<<switch $studyBooks.rented>>
+	<<case "science">>
+		<<link [[Return your science textbook|Book Rental]]>><<set $bookRent to "return">><</link>>
+		<br>
+	<<case "maths">>
+		<<link [[Return your maths textbook|Book Rental]]>><<set $bookRent to "return">><</link>>
+		<br>
+	<<case "English">>
+		<<link [[Return your English textbook|Book Rental]]>><<set $bookRent to "return">><</link>>
+		<br>
+	<<case "history">>
+		<<link [[Return your history textbook|Book Rental]]>><<set $bookRent to "return">><</link>>
+		<br>
+	<<case "Raul and Janet">>
+		<<link [[Return "Raul and Janet"|Book Rental]]>><<set $phase to 5>><<set $bookRent to "return">><</link>>
+		<br>
+	<<default>>
+<</switch>>
+<<switch $studyBooks.stolen>>
+	<<case "science">>
+		<<link [[Return your stolen science textbook|Book Rental Return Stolen]]>><</link>>
+		<br>
+	<<case "maths">>
+		<<link [[Return your stolen maths textbook|Book Rental Return Stolen]]>><</link>>
+		<br>
+	<<case "English">>
+		<<link [[Return your stolen English textbook|Book Rental Return Stolen]]>><</link>>
+		<br>
+	<<case "history">>
+		<<link [[Return your stolen history textbook|Book Rental Return Stolen]]>><</link>>
+		<br>
+	<<case "Raul and Janet">>
+		<<link [[Return your stolen copy of "Raul and Janet"|Book Rental Return Stolen]]>><<set $phase to 5>><</link>>
+		<br>
+	<<default>>
+<</switch>>
+<<sydneySchedule>>
+<<if _sydney_location is "library">>
+	<<if $money gte 2000>>
+		<<if $studyBooks.rented is "none">>
+			<<if $studyBooks.stolen isnot "science">>
+				<<link [[Rent a science textbook (£20)|Book Rental]]>><<set $money -= 2000>><<set $bookRent to "rent">><<set $phase to 1>><<set $studyBooks.rented to "science">><</link>> |<span class="green"> + Passive Science</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.stolen isnot "maths">>
+				<<link [[Rent a maths textbook (£20)|Book Rental]]>><<set $money -= 2000>><<set $bookRent to "rent">><<set $phase to 2>><<set $studyBooks.rented to "maths">><</link>> |<span class="green"> + Passive Maths</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.stolen isnot "English">>
+				<<link [[Rent an English textbook (£20)|Book Rental]]>><<set $money -= 2000>><<set $bookRent to "rent">><<set $phase to 3>><<set $studyBooks.rented to "English">><</link>> |<span class="green"> + Passive English</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.stolen isnot "history">>
+				<<link [[Rent a history textbook (£20)|Book Rental]]>><<set $money -= 2000>><<set $bookRent to "rent">><<set $phase to 4>><<set $studyBooks.rented to "history">><</link>> |<span class="green"> + Passive History</span>
+				<br>
+			<</if>>
+			<<if $english gte 300 and $studyBooks.stolen isnot "Raul and Janet">>
+				<<link [[Rent "Raul and Janet" (£20)|Book Rental]]>><<set $money -= 2000>><<set $bookRent to "rent">><<set $phase to 5>><<set $studyBooks.rented to "Raul and Janet">><</link>>
+				<br>
+			<</if>>
+		<<else>>
+			<<if $money gte 1500 and $book_rent_timer lte 13 and $book_rent_timer gt 0>>
+				<<link [[Renew your book rental (£15)|Book Rental]]>><<set $money -= 1500>><<set $bookRent to "renew">><</link>>
+				<br>
+			<<elseif $money lt 1500>>
+				<span class=purple>You can't afford to renew your rental.</span>
+				<br>
+			<<else>>
+			<</if>>
+		<</if>>
+	<<else>>
+		<span class=purple>You can't afford to rent a textbook.</span>
+		<br>
+	<</if>>
+<<else>>
+	<<if ($schoolday isnot 1 or $schoolstate is "early" or $schoolstate is "late")>>
+		<<if $studyBooks.stolen is "none">>
+			<<if $studyBooks.rented isnot "science">>
+				<<link [[Steal a science textbook|Book Rental]]>><<set $bookRent to "steal">><<set $studyBooks.stolen to "science">><</link>><<crime>> |<span class="green"> + Passive Science</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.rented isnot "maths">>
+				<<link [[Steal a maths textbook|Book Rental]]>><<set $bookRent to "steal">><<set $studyBooks.stolen to "maths">><</link>><<crime>> |<span class="green"> + Passive Maths</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.rented isnot "English">>
+				<<link [[Steal an English textbook|Book Rental]]>><<set $bookRent to "steal">><<set $studyBooks.stolen to "English">><</link>><<crime>> |<span class="green"> + Passive English</span>
+				<br>
+			<</if>>
+			<<if $studyBooks.rented isnot "history">>
+				<<link [[Steal a history textbook|Book Rental]]>><<set $bookRent to "steal">><<set $studyBooks.stolen to "history">><</link>><<crime>> |<span class="green"> + Passive History</span>
+				<br>
+			<</if>>
+			<<if $english gte 300 and $studyBooks.rented isnot "Raul and Janet">>
+				<<link [[Steal "Raul and Janet"|Book Rental]]>><<set $phase to 5>><<set $bookRent to "steal">><<set $studyBooks.stolen to "Raul and Janet">><</link>><<crime>>
+				<br>
+			<</if>>
+		<<else>>
+			You can only carry one stolen book at a time.
+			<br>
+		<</if>>
+	<</if>>
+<</if>>
+<</widget>>
+
+<<widget "homeStudyOptions">>
+<<if $studyBooks isnot undefined>>
+	<<switch $studyBooks.rented>>
+		<<case "science">>
+			/*<<link [[Study science (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 1>><</link>><<gscience>>
+			<br>*/
+		<<case "maths">>
+			/*<<link [[Study maths (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 2>><</link>><<gmaths>>
+			<br>*/
+		<<case "English">>
+			/*<<link [[Study English (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 3>><</link>><<genglish>>
+			<br>*/
+		<<case "history">>
+			/*<<link [[Study history (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 4>><</link>><<ghistory>>
+			<br>*/
+		<<case "Raul and Janet">>
+			<<link [[Read "Raul and Janet" (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to $passage>><</link>>
+			<br>
+		<<default>>
+	<</switch>>
+	<<switch $studyBooks.stolen>>
+		<<case "science">>
+			/*<<link [[Study science (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 1>><</link>><<gscience>>
+			<br>*/
+		<<case "maths">>
+			/*<<link [[Study maths (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 2>><</link>><<gmaths>>
+			<br>*/
+		<<case "English">>
+			/*<<link [[Study English (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 3>><</link>><<genglish>>
+			<br>*/
+		<<case "history">>
+			/*<<link [[Study history (0:20)|$passage]]>><<set $study to 1>><<pass 20>><<set $phase to 4>><</link>><<ghistory>>
+			<br>*/
+		<<case "Raul and Janet">>
+			<<link [[Read "Raul and Janet" (0:01)|ScarletBook1]]>><<pass 1>><<set $scarletExitPassage to $passage>><</link>>
+			<br>
+		<<default>>
+	<</switch>>
+<</if>>
+<</widget>>
+
 <!-- "upperruined" doesn't take sets into account, so use "strip" and destroy
 	 the carried towel parts -->
 <<widget "droptowel">>
