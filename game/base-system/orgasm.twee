@@ -32,31 +32,63 @@
 			<<semenvolume -1>>
 		<<else>>
 			<<set $player.bodyliquid.penis.semen += 1>>
-			<<if $parasite.penis.name>>
-			You are overcome by sensation. You ejaculate into the parasite latched onto your penis.
-			<<elseif $penisuse is "othervagina">>
-				<<if $penisstate is "penetrated">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> womb.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "vagina">>
+			<<if $player.condom>>
+				<<if $player.condom.damaged is true or ($player.condom.cum is true and random(0,100) gte 95)>>
+					<<set _condom to "damaged">>
 				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> pussy.</span>
+					<<set _condom to true>>
+				<</if>>
+			<</if>>
+			<<if $parasite.penis.name>>
+				You are overcome by sensation. You ejaculate into the parasite latched onto your penis.
+			<<elseif _condom is true>>
+				You are overcome by sensation. You ejaculate into the condom that covers your penis.
+				<<set $player.condom.cum to true>>
+			<<elseif $penisuse is "othervagina">>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].vagina is "penis">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> womb.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "vagina">>
+						<<recordVaginalSperm $NPCList[$_i].fullDescription "pc" "human">>
+					<<elseif $NPCList[$_i].vagina is "penisimminent" or $NPCList[$_i].vagina is "penisentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> pussy.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "otheranus">>
-				<<if $penisstate is "otheranus">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> bowels.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "anus">>
-				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> ass.</span>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].penis to "otheranus">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> bowels.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "anus">>
+					<<elseif $NPCList[$_i].penis to "otheranusimminent" or $NPCList[$_i].penis to "otheranusentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> ass.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "othermouth">>
-				<<if $penisstate is "othermouth">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate into <<his>> mouth.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "mouth">>
-				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> face.</span>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].mouth to "penis">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate into <<his>> mouth.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "mouth">>
+					<<elseif $NPCList[$_i].mouth to "penisimminent" or $NPCList[$_i].mouth to "penisentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> face.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "tentacle">>
 				<<if $penisstate isnot "tentacleentrance" and $penisstate isnot "tentacleimminent">>
@@ -79,6 +111,12 @@
 				<<set $player.bodyliquid.mouth.semen += 1>>
 			<<else>>
 				<span class="pink">You are overcome by sensation. A surge of cum erupts from your penis<<if $worn.genitals.type.includes("chastity")>> into your $worn.genitals.name<</if>>.</span>
+				<<if $leftaction is "mpenisshaft" and !$worn.genitals.type.includes("chastity") and $semen_amount / 10 gte random(50,150)>>
+					<<set $leftFingersSemen to 1>>
+				<</if>>
+				<<if $$rightaction is "mpenisshaft" and !$worn.genitals.type.includes("chastity") and $semen_amount / 10 gte random(50,150)>>
+					<<set $rightFingersSemen to 1>>
+				<</if>>
 			<</if>>
 			<<if $semen_amount lte (($semen_volume / 24) * 6)>>
 				<span class="pink">Exhausted, your body only manages to produce a few droplets of watery cum.</span>

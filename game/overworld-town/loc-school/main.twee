@@ -551,14 +551,18 @@ You haul yourself over the fence and drop down on the other side.
 <br>
 
 :: School Passout
-You remain unconscious for a time.
-<br><br>
-
-<<pass 1 hour>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
 <<sydneySchedule>>
-<<if _sydney_location is "library" and ($NPCName[$NPCNameList.indexOf("Sydney")].init isnot 1 or ($sydneySeen and !$sydneySeen.includes("libRescue")) or $rng gte 20)>>
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "school">>
+<<elseif _sydney_location is "library" and ($NPCName[$NPCNameList.indexOf("Sydney")].init isnot 1 or ($sydneySeen and !$sydneySeen.includes("libRescue")) or $rng gte 20)>>
+	<<pass 1 hour>>
+	<<trauma 6>><<set $stress -= 2000>>
 	<<link [[Next|Sydney Library Rescue]]>><</link>>
 <<else>>
+	<<pass 1 hour>>
+	You remain unconscious for a time.
+	<br><br>
 	<<set $danger to random(1, 10000)>>
 
 	<<if $danger gte (9900 - $allure)>>
@@ -575,12 +579,12 @@ You remain unconscious for a time.
 				<<link [[Next|School Passout Gang Rape]]>><<set $molestationstart to 1>><</link>>
 			<</if>>
 		<</if>>
+		<<trauma 6>><<set $stress -= 2000>>
 	<<else>>
 		<<ambulance>>
+		<<trauma 6>><<set $stress -= 2000>>
 	<</if>>
 <</if>>
-
-<<trauma 6>><<set $stress -= 2000>>
 
 :: School Passout Exhibit
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>

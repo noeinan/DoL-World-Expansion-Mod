@@ -43,7 +43,7 @@
 	<br>
 <</if>>
 <hr>
-Breast Pills
+__Breast Pills__
 <br>
 <<if _pills.breast.owned[_pillTypes[0]] gt 0 or _pills.breast.owned[_pillTypes[1]] gt 0>>
 	There are warning labels on the <<if _pills.breast.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.breast.owned[_pillTypes[0]] gt 0 and _pills.breast.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.breast.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
@@ -83,7 +83,7 @@ Breast Pills
 
 <<if $penisexist is 1>>
 	<br><br>
-	Penis Pills
+	__Penis Pills__
 	<br>
 	<<if _pills.penis.owned[_pillTypes[0]] gt 0 or _pills.penis.owned[_pillTypes[1]] gt 0>>
 		There are warning labels on the <<if _pills.penis.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.penis.owned[_pillTypes[0]] gt 0 and _pills.penis.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.penis.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
@@ -125,7 +125,7 @@ Breast Pills
 <</if>>
 
 <br><br>
-Butt Pills
+__Butt Pills__
 <br>
 <<if _pills.bottom.owned[_pillTypes[0]] gt 0 or _pills.bottom.owned[_pillTypes[1]] gt 0>>
 	There are warning labels on the <<if _pills.bottom.owned[_pillTypes[0]] gt 0>>growth <</if>><<if _pills.bottom.owned[_pillTypes[0]] gt 0 and _pills.bottom.owned[_pillTypes[1]] gt 0>>and reduction <<elseif _pills.bottom.owned[_pillTypes[1]] gt 0>>reduction <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
@@ -163,7 +163,52 @@ Butt Pills
 <br>
 <<link [[Take every morning|PillCollection]]>><<set _pills.bottom.autoTake to clone(_pillTypes[_checked])>><</link>>
 
+<<set _pregnancy to $sexStats.vagina.pregnancy>>
+<<if $vaginaexist is 1 and _pregnancy.awareOf isnot true>>
+	<br><br>
+	<<set _pillNames2 to ["Fertility", "Contraceptive", "None"]>>
+	<<set _pillTypes2 to ["fertility", "contraceptive", null]>>
+	__Pregnancy__
+	<br>
+	<<if _pills.pregnancy.owned[_pillTypes2[0]] gt 0 or _pills.pregnancy.owned[_pillTypes2[1]] gt 0>>
+		There are warning labels on the <<if _pills.pregnancy.owned[_pillTypes2[0]] gt 0>>fertility <</if>><<if _pills.pregnancy.owned[_pillTypes2[0]] gt 0 and _pills.pregnancy.owned[_pillTypes2[1]] gt 0>>and contraceptive <<elseif _pills.pregnancy.owned[_pillTypes2[1]] gt 0>>contraceptive <</if>> cases, they mention severe side effects if you take too many doses per day, however, you don't understand what the complicated words mean.
+	<</if>>
+	<ul class="nostyle">
+		<<for _i to 0; _i lt _pillNames2.length; _i += 1>>
+			<<if _pills.pregnancy.owned[_pillTypes2[_i]] isnot 0>>
+				<li><label>
+					<<if _pillNames2[_i] is "None">>
+						<<ind>>
+					<<else>>
+						/*<<icon `"pregnancy" + _pillNames2[_i]`>>*/
+						<<ind>>
+					<</if>>
+					<<print '<<radiobutton "_checked" _i ' + (_pills.pregnancy.type is _pillTypes2[_i] ? "checked" : "") + '>>'>>
+					<<print _pillNames2[_i]>>
+					<<if _pillNames2[_i] isnot "None">><<print '['+_pills.pregnancy.owned[_pillTypes2[_i]]+']'>><</if>>
+					<<if _pills.pregnancy.type is _pillTypes2[_i] and _pillTypes2[_i] isnot null>>
+						<<print '[Taken ' + _pills.pregnancy.doseTaken + ' dose' + (_pills.pregnancy.doseTaken gt 1 ? "s" : "") +']'>>
+					<</if>>
+					<<if _pills.pregnancy.autoTake is _pillTypes2[_i] and _pillTypes2[_i] isnot null>>[Auto]<</if>>
+				</label></li>
+			<</if>>
+		<</for>>
+	</ul>
 
+	<<if _pills.pregnancy.type is null>>
+		<<link [[Take pills|PillCollection]]>><<managePill "pregnancy" _pillTypes2[_checked] -1 true false>><</link>>
+	<<elseif _pills.pregnancy.doseTaken is 1 and _pills.pregnancy.owned[_pills.pregnancy.type] gt 0>>
+		<<print'<<link [[Take a second dose of '+ _pills.pregnancy.type +' pills|PillCollectionSecondDosePregnancy]]>><<managePill "pregnancy" _pills.pregnancy.type -1 true false>><<set $secondDose to "pregnancy">><</link>>'>>
+	<<elseif _pills.pregnancy.owned[_pills.pregnancy.type] is 0>>
+		You have already taken a dose of pregnancy <<print _pills.pregnancy.type>> pills today.
+	<<else>>
+		You have already taken 2 doses of pregnancy <<print _pills.pregnancy.type>> pills today.
+	<</if>>
+	<br>
+	<<link [[Take every morning|PillCollection]]>><<set _pills.pregnancy.autoTake to clone(_pillTypes2[_checked])>><</link>>
+<<elseif $vaginaexist is 1 and _pregnancy.awareOf is true>>
+	You don't dare take any of the fertility pills while your pregnant.
+<</if>>
 <br><br>
 <<link [[Step away|$pillsExitPassage]]>><</link>>
 
@@ -287,3 +332,106 @@ As you get up, you check the time to find that<<if $timePassed gt 240>> many <<e
 <</if>>
 <br><br>
 <<link [[Next (1:00)|PillCollection]]>><<unset $secondDose>><<pass 60>><<unset $timePassed>><</link>>
+
+:: PillCollectionSecondDosePregnancy [nobr]
+<<set $outside to 0>><<effects>>
+<<cleareventpool>>
+<<set _pills to $sexStats.pills>>
+<<set _menstruation to $sexStats.vagina.menstruation>>
+<<if _pills.pregnancy.type is "fertility">>
+	Disregarding the warning label, you take a second dose of the fertility pills.
+	<br><br>
+	<<addinlineevent "no fertility overdose" 10>>
+		Despite the warning, nothing wrong seems to happen.
+		<br><br>
+		<<link [[Next (0:02)|PillCollection]]>><<pass 2>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "simple fertility overdose" 5>>
+		Despite the warning, you only feel a little warm for a few minutes but feel fine afterwards. <<garousal>><<arousal 100>>
+		<br><br>
+		<<link [[Next (0:02)|PillCollection]]>><<pass 2>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "simple fertility overdose 2" 4>>
+		You start to feel an odd warmth around your vagina for a few minutes but feel fine afterwards. It was oddly comforting. <<garousal>><<arousal 200>>
+		<<if _pills.pregnancy.doseTaken lt 3>>
+			<<set _pills.pregnancy.doseTaken to 3>>
+		<</if>>
+		<br><br>
+		<<link [[Next (0:05)|PillCollection]]>><<pass 5>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "advanced fertility overdose" 2>>
+		You start feeling an odd warmth around your vagina, however, it doesn't seem to stop until at one point you feel like it's burning you. The heat seems to start expanding to other areas of your body but then begins to subside. <<garousal>><<arousal 1000>><<gpain>><<pain 10>>
+		<<if _pills.pregnancy.doseTaken lt 4>>
+			<<set _pills.pregnancy.doseTaken to 4>>
+		<</if>>
+		<<if _menstruation.currentState is "normal">>
+			<<for _i to 0; _i lt 2; _i++>>
+				<<if _menstruation.currentDay lt _menstruation.stages[3] - 1.5>>
+					<<set _menstruation.currentDay += 1>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if _menstruation.baseDays gte 28>>
+			<<set _menstruation.baseDays-->>
+		<</if>>
+		<br><br>
+		<<link [[Next (0:15)|PillCollection]]>><<pass 15>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "advanced fertility overdose" 2>>
+		You start feeling an odd warmth and itch around your vagina, however, it doesn't seem to stop until at one point you feel like it's burning you. The heat seems to start expanding to other areas of your body till it reaches your head, forcing you into the fetal position. It takes some time, but your able to recover from the overdose. <<garousal>><<arousal 1000>><<ggpain>><<pain 100>>
+		<<if _pills.pregnancy.doseTaken lt 4>>
+			<<set _pills.pregnancy.doseTaken to 4>>
+		<</if>>
+		<<if _menstruation.currentState is "normal">>
+			<<for _i to 0; _i lt 6; _i++>>
+				<<if _menstruation.currentDay lt _menstruation.stages[3] - 1.5>>
+					<<set _menstruation.currentDay += 1>>
+				<</if>>
+			<</for>>
+		<</if>>
+		<<if _menstruation.baseDays gte 24>>
+			<<set _menstruation.baseDays-->>
+		<</if>>
+		<br><br>
+		<<link [[Next (1:00)|PillCollection]]>><<pass 60>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "advanced fertility overdose 2" 2>>
+		You start feeling an odd warmth and itch around your vagina, however, it doesn't seem to stop until at one point you feel like it's burning you. The heat seems to start expanding to other areas of your body till it reaches your head, forcing you into the fetal position. The pain forces you to pass out. <<garousal>><<arousal 1000>><<ggpain>><<pain 100>>
+		<<if _pills.pregnancy.doseTaken lt 4>>
+			<<set _pills.pregnancy.doseTaken to 4>>
+		<</if>>
+		<<if _menstruation.currentState is "normal">>
+			<<set _menstruation.currentDay to _menstruation.stages[3] - 0.5>>
+			<<menstruationCycle>>
+			<<set _menstruation.currentDay to _menstruation.stages[3] - 0.5>>
+		<</if>>
+		<<if _menstruation.baseDays gte 18>>
+			<<set _menstruation.baseDays-->>
+		<</if>>
+		<br><br>
+		<<link [[Next (3:00)|PillCollectionFertilityPassOut]]>><<pass 3 hours>><</link>>
+	<</addinlineevent>>
+<<elseif _pills.pregnancy.type is "contraceptive">>
+	Disregarding the warning label, you take a second dose of the contraceptive pills.
+	<br><br>
+	<<addinlineevent "no contraceptive overdose" 10>>
+		Despite the warning, nothing wrong seems to happen.
+		<br><br>
+		<<link [[Next (0:02)|PillCollection]]>><<pass 2>><</link>>
+	<</addinlineevent>>
+	<<addinlineevent "simple contraceptive overdose" 5>>
+		Despite the warning, you only feel a little cold for a few minutes but feel fine afterwards. <<garousal>><<arousal -100>>
+		<br><br>
+		<<link [[Next (0:02)|PillCollection]]>><<pass 2>><</link>>
+	<</addinlineevent>>
+<</if>>
+
+<<runeventpool>>
+
+:: PillCollectionFertilityPassOut
+<<set $outside to 0>><<effects>>
+
+You end up waking in with your vagina feeling rather warm. At least compared to before you passed out, it contains an oddly comfort, making you wonder what effect the two pills had on you was.
+
+<br><br>
+<<link [[Next (0:02)|PillCollection]]>><<pass 2>><</link>>

@@ -56,6 +56,15 @@
 	<<if !$npcSub and $asphyxiaLvl gte 1 and $consensual is 1 and $enemytype is "man" and ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
 		<<set _askActions["to choke you"] to "askchoke">>
 	<</if>>
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $enemytype is "man" and $condomAsk is undefined and $pregnancyTesting>>
+		<<if $npcCondoms isnot undefined>>
+			<<set _askActions["to use condoms"] to "condoms">>
+		<</if>>
+		<<if $npcCondoms isnot undefined>>
+			<<set _askActions["to not use condoms"] to "noCondoms">>
+		<</if>>
+	<</if>>
 	<<if Object.keys(_askActions).length gt 0>>
 		<<set _mouthaction["Ask "+_pron+""] to "ask">>
 		<<set _defaultsCombatAction to "askActions">>
@@ -72,7 +81,7 @@
 			<<set $askAction to Object.values(_askActions)[0]>>
 		<</if>>
 		<<switch $askAction>>
-			<<case "askchoke">><<set $askActionColour to "sub">>
+			<<case "askchoke" "condoms" "damagedCondoms" "noCondoms">><<set $askActionColour to "sub">>
 			<<default>><<set $askActionColour to "brat">>
 		<</switch>>
 	<</if>>
@@ -88,7 +97,7 @@
 
 <<widget "replaceAskColour">>
 <<switch $askAction>>
-	<<case "askchoke">>
+	<<case "askchoke" "condoms" "damagedCondoms" "noCondoms">>
 		<<if $combatControls is "radio">>
 			<<addclass "#askLabel" "sub">><<removeclass "#askLabel" "brat">>
 		<<else>>

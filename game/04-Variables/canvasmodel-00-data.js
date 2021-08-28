@@ -9,6 +9,7 @@ window.ZIndices = {
 	base: 20,
 	facebase: 21,
 	tanBody: 22,
+	bellyBase: 23,
 	hirsute: 25,
 	eyes: 30,
 	sclera: 31,

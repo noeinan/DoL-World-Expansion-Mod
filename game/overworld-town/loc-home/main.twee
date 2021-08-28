@@ -291,6 +291,7 @@ You are in the bathroom.
 		<<ind>><<link [[Groom pubic hair->Shave]]>><</link>>
 		<br>
 	<</if>>
+	<<pregnancyTest "Bedroom">>
 	<br>
 
 	<<bedroomicon>><<link [[Bedroom (0:01)->Bedroom]]>><<pass 1>><</link>>
@@ -433,12 +434,24 @@ You are in the bathroom.
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
-				You dream you are being hunted by something dark and terrible. The nightmares are interrupted by a hammering on your door. It's Bailey, waking you for school.
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					You dreamt of
+				<<else>>
+					You dream you are
+				<</if>>
+				being hunted by something dark and terrible. The nightmares are interrupted by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
 			<br><br>
 			<<set $motherwake to 1>>
 		<<else>>
-			You dream you are being hunted by something dark and terrible. You quickly forget the specifics, but the sense of dread lingers.
+			<<wakingEffects $sleepHoursTotal>>
+			<<if _wakingEffect isnot undefined>>
+				You dreamt of
+			<<else>>
+				You dream you are
+			<</if>>
+			you are being hunted by something dark and terrible. You quickly forget the specifics, but the sense of dread lingers.
 			<br><br>
 		<</if>>
 	<<else>>
@@ -447,12 +460,22 @@ You are in the bathroom.
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
-				You sleep soundly, but are awoken early by a hammering on your door. It's Bailey, waking you for school.
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					After you slept
+				<<else>>
+					You sleep
+				<</if>>
+				soundly, but are awoken early by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
 			<br><br>
 			<<set $motherwake to 1>>
 		<<else>>
-			<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+			<<wakingEffects $sleepHoursTotal>>
+			<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+				You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+				<br><br>
+			<<elseif $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
 				Your sleep is plagued by dirty dreams.
 				<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
 				<<arousal `100 * $sleepHoursTotal`>>
@@ -462,6 +485,9 @@ You are in the bathroom.
 				<<else>>
 					<br><br>
 				<</if>>
+			<<elseif _mildNausea>>
+				You sleep soundly.
+				<br><br>
 			<<else>>
 				You sleep soundly, and wake up refreshed.
 				<br><br>
@@ -471,7 +497,10 @@ You are in the bathroom.
 	<<if $robinbed is 1>>
 		<<set $robinbed to 0>>
 		<<npc Robin>><<person1>>
-		<<if _orgasm is true>>
+		<<wakingEffects $sleepHoursTotal>>
+		<<if _wakingEffect is "dryheaving">>
+			"Are you okay? Let me help," Robin says, easing you back up. <<He>> checks to see if you’re fine before taking <<his>> leave. 
+		<<elseif _orgasm is true>>
 			<<if $exposed gte 2>>
 				Robin cuddles you. "I'll leave you to get-" <<he>> pauses, noticing the moisture on their body and yours. Blushing, <<he>> gathers tissues for both of you.
 				<<if $rng gte 71>>
@@ -1550,7 +1579,14 @@ The warmth feels wonderful on your bare skin.
 <</if>>
 
 :: Widget Passout Home [widget]
-<<widget "passouthome">>[[Everything fades to black...->Passout home]]<</widget>>
+<<widget "passouthome">>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "home">>
+<<else>>
+	[[Everything fades to black...->Passout home]]
+<</if>>
+<</widget>>
 
 :: Bath Slime
 <<effects>>
