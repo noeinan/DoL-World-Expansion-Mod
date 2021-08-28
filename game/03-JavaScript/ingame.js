@@ -74,7 +74,7 @@ window.combatListColor = function (name, value, type) {
 			case "clench":
 			case "shacklewhack":
 			/*feetaction*/
-			case "run": case "hide":
+			case "run": case "hide": case "confront":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
