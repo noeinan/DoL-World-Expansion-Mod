@@ -25,7 +25,9 @@
 				"type": null,
 				"doseTaken": null,
 				"autoTake": null,
-				"overdose": false,
+				"overdose": {
+					"growth":0,
+					"reduction":0},
 				"owned": {
 					"growth": 0,
 					"reduction": 0,
@@ -36,7 +38,7 @@
 				"type": null,
 				"doseTaken": null,
 				"autoTake": null,
-				"overdose": false,
+				"overdose": {},
 				"owned": {
 					"growth": 0,
 					"reduction": 0,
@@ -47,7 +49,7 @@
 				"type": null,
 				"doseTaken": null,
 				"autoTake": null,
-				"overdose": false,
+				"overdose": {},
 				"owned": {
 					"growth": 0,
 					"reduction": 0,
@@ -111,7 +113,10 @@
 			"type": null,
 			"doseTaken": null,
 			"autoTake": null,
-			"overdose": false,
+			"overdose": {
+				"growth":0,
+				"reduction":0
+			},
 			"owned": {
 				"growth": clone(_quantity[0]),
 				"reduction": clone(_quantity[1]),
@@ -122,7 +127,7 @@
 			"type": null,
 			"doseTaken": null,
 			"autoTake": null,
-			"overdose": false,
+			"overdose": {},
 			"owned": {
 				"growth": clone(_quantity[3]),
 				"reduction": clone(_quantity[4]),
@@ -133,7 +138,7 @@
 			"type": null,
 			"doseTaken": null,
 			"autoTake": null,
-			"overdose": false,
+			"overdose": {},
 			"owned": {
 				"growth": clone(_quantity[6]),
 				"reduction": clone(_quantity[7]),
@@ -155,6 +160,12 @@
 			}
 	}>>
 	<<run $sexStats.pills.type.pushUnique("pregnancy")>>
+<</if>>
+<<if $sexStats.pills.penis.overdose is false>>
+	<<set $sexStats.pills.penis.overdose to {
+		"growth":0,
+		"reduction":0
+	}>>
 <</if>>
 <<set _pills to $sexStats.pills>>
 <<set _pills.penis.owned.growth to Math.clamp(_pills.penis.owned.growth, 0, 1000)>>
@@ -277,7 +288,7 @@
 	<<switch $player.gender>>
 	<<case "m">>
 		<<set _breastMulti -= 1>>
-	<<case "f">>
+	<<case "f" "h">>
 		<<set _breastMulti += (Math.clamp($sexStats.creampie.self.vagina * 2, 0, 50) / 100)>>
 	<</switch>>
 
@@ -292,15 +303,10 @@
 	<<if $cow gte 1>>
 		<<set _breastMulti += 1>>
 	<</if>>
+	
+	<<set _purityBoost to (_breastMulti lt 0 ? 1 + ($purity / 1000) : 1 + ((1000 - $purity) / 1000))>>
+	<<set $breastgrowthtimer -= _breastMulti * 25 * _purityBoost>>
 
-	<<if _breastMulti gt 0>>
-		<<set _impurityBoost to 1 + ((1000 - $purity) / 1000)>>
-		<<set $breastgrowthtimer -= _breastMulti * 25 * _impurityBoost>>
-	<<elseif _breastMulti lt 0>>
-		<<set _purityBoost to 1 + ($purity / 1000)>>
-		<<set $breastgrowthtimer -= _breastMulti * 25 * _purityBoost>>
-	<</if>>
-	<<set $impurityBoost to _impurityBoost>>
 	<<if $parasite.nipples.name is "urchin">>
 		<<set $breastgrowthtimer -= 300>>
 	<</if>>
@@ -312,7 +318,7 @@
 		<<set $breastsize += 1>>
 		<<set $breastgrowthtimer += 700>>
 		<<set $breastgrowthmessage to $breastsize>><<set $effectsmessage to 1>>
-	<<elseif $breastgrowthtimer gte 1000 and $breastsize gt 0>>
+	<<elseif $breastgrowthtimer gte 1000 and $breastsize gt $breastsizemin>>
 		<<set $breastsize -= 1>>
 		<<set $breastgrowthtimer -= 700>>
 		<<set $breastshrinkmessage to $breastsize>><<set $effectsmessage to 1>>
@@ -323,17 +329,25 @@
 <</if>>
 
 /*Penis*/
+<<if $sexStats.pills.penis.overdose.growth gt 0>>
+	<<set $sexStats.pills.penis.overdose.growth to Math.clamp($sexStats.pills.penis.overdose.growth - 1, 0, 100)>>
+<</if>>
+<<if $sexStats.pills.penis.overdose.reduction gt 0>>
+	<<set $sexStats.pills.penis.overdose.reduction to Math.clamp($sexStats.pills.penis.overdose.reduction - 1, 0, 100)>>
+<</if>>
+
 <<switch $sexStats.pills.penis.type>>
 	<<case "growth">>
 		<<set _penisMulti to 1 + (2.25 * $sexStats.pills.penis.doseTaken)>>
+		<<set $sexStats.pills.penis.overdose.growth += $sexStats.pills.penis.doseTaken>>
 	<<case "reduction">>
 		<<set _penisMulti to -1 + (-2.25 * $sexStats.pills.penis.doseTaken)>>
+		<<set $sexStats.pills.penis.overdose.reduction += $sexStats.pills.penis.doseTaken>>
 	<<case "blocker">>
 		<<set _penisMulti to 0>>
 	<<default>>
 		<<set _penisMulti to 1>>
 <</switch>>
-
 <<if $penisexist is 1 and _penisMulti isnot 0>>
 	<<set _totalReduction to ($sexStats.creampie.self.anus + $sexStats.creampie.self.mouth) * 2>>
 	<<set _totalIncrease to ($sexStats.creampie.npc.anus + $sexStats.creampie.npc.mouth + $sexStats.creampie.npc.vagina) * 2>>
@@ -349,45 +363,47 @@
 		<<set _totalReduction += 10>>
 		<<set _totalReduction *= _penisMulti * -1>>
 	<</if>>
+	<<set _totalChange to _totalIncrease - _totalReduction>>
+	<<set _purityBoost to (_totalChange lt 0 ? 2 + ($purity / 500) : 2 + ((1000 - $purity) / 500))>>
+	<<set $penisgrowthtimer -= _purityBoost * _totalChange>>
 
-	<<set _negativeChange to _totalReduction - _totalIncrease>>
-	<<set _positiveChange to _totalIncrease - _totalReduction>>
+	<<set $penisgrowthtimer -= $sexStats.pills.penis.overdose.growth>>
+	<<set $penisgrowthtimer += $sexStats.pills.penis.overdose.reduction>>
 
-	<<if _negativeChange gt 0>>
-		<<set _purityBoost to 1 + ($purity / 500)>>
-
-		<<set $penisgrowthtimer += _negativeChange>>
-		<<set $penisgrowthtimer += _purityBoost * _negativeChange>>
-	<<elseif _positiveChange gt 0>>
-		<<set _impurityBoost to 1 + ((1000 - $purity) / 500)>>
-
-		<<set $penisgrowthtimer -= _positiveChange>>
-		<<set $penisgrowthtimer -= _impurityBoost * _positiveChange>>
-	<</if>>
 	<<if $penissize lt 0>>
 		<<set $penisgrowthtimer -= 50>>
 	<</if>>
 
 	<<if $parasite.penis.name is "urchin">>
-		<<set $penisgrowthtimer -= 300>>
+		<<set $penisgrowthtimer -= 250>>
+		<<set $sexStats.pills.penis.overdose.growth += random(1,2)>>
 	<</if>>
 	<<if $parasite.penis.name is "slime">>
-		<<set $penisgrowthtimer += 300>>
+		<<set $penisgrowthtimer += 250>>
+		<<set $sexStats.pills.penis.overdose.reduction += random(1,2)>>
 	<</if>>
-	<<if $penisgrowthtimer lte 0 and $penissize lt $penissizemax>>
+	<<set _overdose to $sexStats.pills.penis.overdose.growth - $sexStats.pills.penis.overdose.reduction>>
+	<<if $penisgrowthtimer lte 0 and $penissize lt $penissizemax and $penissize gte -1>>
 		<<set $penissize += 1>>
 		<<set $penisgrowthtimer += 700>>
+		<<set $penisgrowthmessage to $penissize>><<set $effectsmessage to 1>>
+	<<elseif $penisgrowthtimer lte -400 and $penissize lt $penissizemax and $penissize is -2 and _overdose gte 20>>
+		<<set $penissize += 1>>
+		<<set $penisgrowthtimer += 1100>>
 		<<set $penisgrowthmessage to $penissize>><<set $effectsmessage to 1>>
 	<<elseif $penisgrowthtimer gte 1000 and $penissize gt 0>>
 		<<set $penissize -= 1>>
 		<<set $penisgrowthtimer -= 700>>
 		<<set $penisshrinkmessage to $penissize>><<set $effectsmessage to 1>>
-	<<elseif $penisgrowthtimer gte 1200 and $penissize lte 0 and $penissize gt $penissizemin>>
+	<<elseif $penisgrowthtimer gte 1200 and $penissize is 0 and $penissize gt $penissizemin>>
 		<<set $penissize -= 1>>
 		<<set $penisgrowthtimer -= 1000>>
 		<<set $penisshrinkmessage to $penissize>><<set $effectsmessage to 1>>
+	<<elseif $penisgrowthtimer gte 1500 and $penissize is -1 and $penissize gt $penissizemin and _overdose lte -20>>
+		<<set $penissize -= 1>>
+		<<set $penisgrowthtimer -= 1300>>
+		<<set $penisshrinkmessage to $penissize>><<set $effectsmessage to 1>>
 	<</if>>
-
 	<<set $penisgrowthtimer to Math.clamp($penisgrowthtimer, 0, 1000)>>
 
 <</if>>
@@ -421,22 +437,9 @@
 		<<set _totalReduction += 10>>
 		<<set _totalReduction *= _bottomMulti * -1>>
 	<</if>>
-
-	<<set _negativeChange to _totalReduction - _totalIncrease>>
-	<<set _positiveChange to _totalIncrease - _totalReduction>>
-
-	<<if _negativeChange gt 0>>
-		<<set _purityBoost to 1 + ($purity / 500)>>
-
-		<<set $bottomgrowthtimer += _negativeChange>>
-		<<set $bottomgrowthtimer += _purityBoost * _negativeChange>>
-	<<elseif _positiveChange gt 0>>
-		<<set _impurityBoost to 1 + ((1000 - $purity) / 500)>>
-
-		<<set $bottomgrowthtimer -= _positiveChange>>
-		<<set $bottomgrowthtimer -= _impurityBoost * _positiveChange>>
-	<</if>>
-
+	<<set _totalChange to _totalIncrease - _totalReduction>>
+	<<set _purityBoost to (_totalChange lt 0 ? 2 + ($purity / 500) : 2 + ((1000 - $purity) / 500))>>
+	<<set $bottomgrowthtimer -= _purityBoost * _totalChange>>
 
 	<<if $parasite.bottom.name is "urchin">>
 		<<set $bottomgrowthtimer -= 300>>
