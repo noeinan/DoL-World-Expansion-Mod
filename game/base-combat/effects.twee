@@ -1408,6 +1408,26 @@
 
 /*End of stalked actions */
 
+<<if $leftaction is "peniscondom" or $rightaction is "peniscondom">>
+	<<set _handsCount to 0>>
+	<<if $leftaction is "peniscondom">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+		<<set _handsCount++>>
+	<</if>>
+	<<if $rightaction is "peniscondom">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		<<set _handsCount++>>
+	<</if>>
+	<<if false>>
+		/*Npc tries to prevent you from putting the condom on*/
+	<<else>>
+		<<if $player.condom is false and $parasite.penis.name is undefined>>
+			You are not prevented from putting the condom over your penis.
+			<<equipCondom>>
+		<</if>>
+	<</if>>
+<</if>>
+
 <<if $feetaction is "grab">>
 	<<set $feetaction to 0>><<set $feetactiondefault to "grab">><<combatpromiscuity3>>
 	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $feetskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
@@ -3452,6 +3472,246 @@ You try to pull your head away from the penis threatening your mouth.
 					<<break>>
 				<</if>>
 			<</for>>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $mouthaction is "ask" and $askAction is "condoms">>
+	<<set $mouthaction to 0>><<unset $askAction>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> to use condoms">>
+	<<else>>
+		<<set $mouthactiondefault to "rest">><<sub 2>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<set $condomAsk to true>>
+		You tell <<him>> you want to use condoms.
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<if $consensual is 0>>
+				<<set $condomUse to true>>
+				They pause a moment before responding,
+				<<set _response to [
+					"Sure thing, slut.",
+					"Yeah, you probably have something contagious.",
+					"Last thing I want is an unclaimed brat with my name on it.",
+					"Fine, but I expect you to cooperate.",
+					"Good idea, I don't want any evidence traced back to me."
+				]>>
+				<span class="green">"<<print _response.pluck()>>"</span>
+			<<else>>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].pregnancyAvoidance is undefined>>
+					<<elseif $NPCList[_j].pregnancyAvoidance lt random(1, 100)>>
+						<<set _npcReject to true>>
+					<</if>>
+				<</for>>
+				<<if _npcReject>>
+					<<set $condomUse to false>>
+					<<switch $npc>>
+						<<case "Kylar">><span class="lewd"><<He>> says, "There is no need, we're going to have many amazing children."</span>
+						<<default>><span class="lewd"><<He>> says, "It's a safe day for me, don't worry about it."</span>
+					<</switch>>
+				<<else>>
+					<<set $condomUse to true>>
+					<span class="green">They nod in acknowledgement.</span>
+				<</if>>
+			<</if>>
+			<<if $condomUse>>
+				/*Your penis*/
+				<<if $penisstate is "entrance" or $penisstate is "imminent" or $penisstate is "otheranusentrance" or $penisstate is "otheranusimminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].vagina is "penis" or $NPCList[_j].penis is "otheranus") and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto your penis.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $penisstate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].vagina is "penis" and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly frees your penis from <<his>> vagina, puts a condom on it before sticking it back in.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $penisstate is "otheranus">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "otheranus" and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly frees your penis from <<his>> anus, puts a condom on it before sticking it back in.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				/*Their penis*/
+				<<if $vaginastate is "entrance" or $vaginastate is "imminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].penis is "vaginaentrance" or $NPCList[_j].penis is "vaginaimminent") and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $vaginastate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "vagina" and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly withdraws <<his>> penis from your vagina, puts a condom on it before sticking it back in.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $anusstate is "entrance" or $anusstate is "imminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].penis is "anusentrance" or $NPCList[_j].penis is "anusimminent") and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $anusstate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "anus" and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly withdraws <<his>> penis from your anus, puts a condom on it before sticking it back in.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<set $condomUse to false>>
+			<<if $consensual is 1>>
+				<<set $consensual to 0>>
+				<<molested>><<controlloss>>
+			<</if>>
+			<<set _response to [
+				"Stupid slut, you think you can tell me what to do?",
+				"You're not in charge here, slut.",
+				"You should feel lucky if I knock you up.",
+				"I think I'll leave you with a parting gift, actually.",
+				"Hah! You wish!"
+			]>>
+			They pause a moment before responding,
+			<span class="red">"<<print _response.pluck()>>"</span>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $mouthaction is "ask" and $askAction is "noCondoms">>
+	<<set $mouthaction to 0>><<unset $askAction>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> to not use condoms">>
+	<<else>>
+		<<set $mouthactiondefault to "rest">><<sub 2>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<set $condomAsk to true>>
+		You tell <<him>> you do not want to use condoms.
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<if $consensual is 0>>
+				They pause a moment before responding,
+				<<set _response to [
+					"Sure thing, slut.",
+					"Yeah, you probably have something contagious.",
+					"Last thing I want is an unclaimed brat with my name on it.",
+					"Fine, but I expect you to cooperate.",
+					"Good idea, I don't want any evidence traced back to me."
+				]>>
+				<span class="green">"<<print _response.pluck()>>"</span>
+				<<set $condomUse to false>>
+			<<else>>
+				<<if $npc and $NPCList[_j].pregnancyAvoidance gt random(0, 99)>>
+					<<set _npcReject to true>>
+				<</if>>
+				<<if _npcReject>>
+					<<set $condomUse to true>>
+					<<switch $npc>>
+						<<default>><span class="lewd"><<He>> says, "Im not ready for children, it's better to be safe than sorry."</span>
+					<</switch>>
+					/*Your penis*/
+					<<if $penisstate is "entrance" or $penisstate is "imminent" or $penisstate is "otheranusentrance" or $penisstate is "otheranusimminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].vagina is "penis" or $NPCList[_j].penis is "otheranus") and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto your penis.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $penisstate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].vagina is "penis" and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly frees your penis from <<his>> vagina, puts a condom on it before sticking it back in.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $penisstate is "otheranus">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "otheranus" and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly frees your penis from <<his>> anus, puts a condom on it before sticking it back in.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					/*Their penis*/
+					<<if $vaginastate is "entrance" or $vaginastate is "imminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].penis is "vaginaentrance" or $NPCList[_j].penis is "vaginaimminent") and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $vaginastate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "vagina" and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly withdraws <<his>> penis from your vagina, puts a condom on it before sticking it back in.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $anusstate is "entrance" or $anusstate is "imminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].penis is "anusentrance" or $NPCList[_j].penis is "anusimminent") and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $anusstate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "anus" and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly withdraws <<his>> penis from your anus, puts a condom on it before sticking it back in.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+				<<else>>
+					<span class="green">They nod in acknowledgement.</span>
+					<<set $condomUse to false>>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<set $condomUse to null>>
+			<<if $consensual is 1>>
+				<<set $consensual to 0>>
+				<<molested>><<controlloss>>
+			<</if>>
+			<<set _response to [
+				"Stupid slut, you think you can tell me what to do?",
+				"You're not in charge here, slut.",
+				"I'll do what I want, slut."
+			]>>
+			They pause a moment before responding,
+			<span class="red">"<<print _response.pluck()>>"</span>
 		<</if>>
 	<</if>>
 <</if>>

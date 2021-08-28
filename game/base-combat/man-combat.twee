@@ -2060,6 +2060,11 @@
 		<<set $speechthigh to 1>>
 		<<if $player.vaginaExist>>
 			<<if $rng gte 101>>
+				<<if $condomUse is false>>
+				<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+					<<equipCondom _n>>
+					<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+				<</if>>
 				<span class="blue"><<He>> angles <<his>> $NPCList[_n].penisdesc towards your <<pussy>>.</span>
 				<<set $thighuse to 0>><<set $NPCList[_n].penis to "vaginaentrance">><<set $vaginause to "penis">><<set $vaginastate to "entrance">><<set $speechvaginaentrance to 1>>
 			<<else>>
@@ -2080,6 +2085,11 @@
 	<<if $NPCList[_n].penis is "cheeks">>
 		<<set $speechcheeks to 1>>
 		<<if $rng gte 101>>
+			<<if $condomUse is false>>
+			<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+				<<equipCondom _n>>
+				<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+			<</if>>
 			<span class="blue"><<He>> angles <<his>> $NPCList[_n].penisdesc towards your anus.</span>
 			<<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $bottomuse to 0>><<set $cheekactiondefault to "cheeks">><<set $speechanusentrance to 1>>
 		<<else>>
@@ -2199,17 +2209,23 @@
 					<<sex 30>><<set $NPCList[_n].penis to "vagina">><<vaginalstat>><<bruise vagina>><<violence 1>><<raped>><<vaginaraped>><<set $vaginastate to "penetrated">><<set $speechvaginapenetrated to 1>>
 					<<pain _pain>>
 				<<elseif $player.virginity.vaginal is true>>
-					<<switch $NPCList[_n].penissize>>
-					<<case 4>>
-						<span class="red"><<His>> $NPCList[_n].penisdesc thrusts deep into your virgin pussy, obliterating your hymen and forever robbing you of your purity. You scream out as your <<pussy>> struggles to accommodate <<his>> cock.</span>
-						<<sex 100>><<set $NPCList[_n].penis to "vagina">><<takeVirginity $NPCList[_n].fullDescription "vaginal">><<bruise vagina>><<vaginalstat>><<violence 200>><<raped>><<vaginaraped>><<set $vaginastate to "penetrated">><<set $speechvaginavirgin to 1>>
-					<<case 1>>
-						<span class="red"><<His>> $NPCList[_n].penisdesc pushes into your virgin pussy, breaking your hymen and forever robbing you of your purity.</span> <span class="green"> While technically no longer a virgin, you can barely feel it.</span>
-						<<sex 100>><<set $NPCList[_n].penis to "vagina">><<takeVirginity $NPCList[_n].fullDescription "vaginal">><<vaginalstat>><<violence 25>><<raped>><<vaginaraped>><<set $vaginastate to "penetrated">><<set $speechvaginavirgin to 1>>
-					<<default>>
-						<span class="pink"><<His>> $NPCList[_n].penisdesc thrusts deep into your virgin pussy,</span><span class="red"> tearing your hymen and forever robbing you of your purity.</span>
-						<<sex 100>><<set $NPCList[_n].penis to "vagina">><<takeVirginity $NPCList[_n].fullDescription "vaginal">><<bruise vagina>><<vaginalstat>><<violence 100>><<raped>><<vaginaraped>><<set $vaginastate to "penetrated">><<set $speechvaginavirgin to 1>>
-					<</switch>>
+					<<if $sexStats.vagina.pregnancy.totalBirthEvents gt 0>>
+						<span class="red">Despite your lack of a hymen, you feel something inside you change as your virginity and purity are taken.</span>
+						<<violence 10>>
+					<<else>>
+						<<switch $NPCList[_n].penissize>>
+						<<case 4>>
+							<span class="red"><<His>> $NPCList[_n].penisdesc thrusts deep into your virgin pussy, obliterating your hymen and forever robbing you of your purity. You scream out as your <<pussy>> struggles to accommodate <<his>> cock.</span>
+							<<violence 200>>
+						<<case 1>>
+							<span class="red"><<His>> $NPCList[_n].penisdesc pushes into your virgin pussy, breaking your hymen and forever robbing you of your purity.</span> <span class="green"> While technically no longer a virgin, you can barely feel it.</span>
+							<<violence 25>>
+						<<default>>
+							<span class="pink"><<His>> $NPCList[_n].penisdesc thrusts deep into your virgin pussy,</span><span class="red"> tearing your hymen and forever robbing you of your purity.</span>
+							<<violence 100>>
+						<</switch>>
+					<</if>>
+					<<sex 100>><<set $NPCList[_n].penis to "vagina">><<takeVirginity $NPCList[_n].fullDescription "vaginal">><<raped>><<vaginaraped>><<set $vaginastate to "penetrated">><<set $speechvaginavirgin to 1>><<bruise vagina>><<vaginalstat>>
 					<<if $enemyanger gte 100>><<set _pain *= 1.5>><</if>><<pain _pain>>
 				<</if>>
 				<<takeNPCVirginity $NPCList[_n].fullDescription "penile">>
@@ -2992,6 +3008,11 @@
 	<<set $rng to random(1, 100)>>
 	<<if $NPCList[_n].vagina is "otherfrot">>
 		<<if $rng gte 101>>
+			<<if $condomUse is false>>
+			<<elseif $condomUse is true and $player.condom is false and $parasite.penis.name is undefined>>
+				<<equipCondom>>
+				<span class="green"><<He>> puts a condom on your <<penis>>.</span>
+			<</if>>
 			<span class="blue"><<He>> shifts <<his>> ass and presses <<his>> anus against your <<penis>>.</span>
 			<<set $penisuse to "otheranus">><<set $NPCList[_n].vagina to "otheranusentrance">><<set $penisstate to "otheranusentrance">><<set $speechotheranusentrance to 1>>
 		<<else>>
@@ -3940,15 +3961,45 @@
 			<<elseif $enemyanger + $rng lte 100 and $NPCList[_n].location.head is 0 and $NPCList[_n].location.genitals isnot "genitals" and $walltype isnot "front">>
 				<<neutral 10>>
 				<<if $penisuse is 0 and $NPCList[_n].penis is 0 and $player.penisExist>>
-					<span class="blue"><<He>> kneels beside you. You feel <<his>> breath on your <<penis>>.</span>
+					<<if $player.condom isnot false>>
+						<<removeCondom>>
+						<<He>> removes the condom on your penis.
+					<</if>>
+					<span class="blue">
+						<<He>> kneels beside
+						<<if $player.condom isnot false>>
+							<<removeCondom>>
+							you and removes your condom.
+						<<else>>
+							you.
+						<</if>>
+						You feel <<his>> breath on your <<penis>>.
+					</span>
 					<<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">><<set $NPCList[_n].mouth to "penisentrance">>
 					<<set $NPCList[_n].vagina to "othermouth">><<sex 1>><<set $NPCList[_n].location.head to "genitals">>
 				<<elseif $penisuse is 0 and $NPCList[_n].vagina is 0 and $player.penisExist>>
-					<span class="blue"><<He>> kneels beside you. You feel <<his>> breath on your <<penis>>.</span>
+					<span class="blue">
+						<<He>> kneels beside
+						<<if $player.condom isnot false>>
+							<<removeCondom>>
+							you and removes your condom.
+						<<else>>
+							you.
+						<</if>>
+						You feel <<his>> breath on your <<penis>>.
+					</span>
 					<<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">><<set $NPCList[_n].mouth to "penisentrance">>
 					<<set $NPCList[_n].penis to "othermouth">><<sex 1>><<set $NPCList[_n].location.head to "genitals">>
 				<<elseif $penisuse is 0 and $NPCList[_n].vagina is "facesit" and $player.penisExist>>
-					<span class="blue">You feel <<him>> lean forward along your body, then feel <<his>> breath on your <<penis>>.</span>
+					<span class="blue">
+						You feel <<him>> lean forward along your body, then feel <<his>> breath on your
+						<<if $player.condom isnot false>>
+							<<removeCondom>>
+							<<penis>> as your condom is removed.
+						<<else>>
+							<<penis>>.
+						<</if>>
+					</span>
 					<<set $penisuse to "othermouth">><<set $penisstate to "othermouthentrance">><<set $NPCList[_n].mouth to "penisentrance">>
 					<<sex 1>><<set $NPCList[_n].location.head to "genitals">>
 				<<else>>
@@ -4268,6 +4319,11 @@
 		<<if $player.penisExist>>
 			<<if $penisuse is 0>>
 				<<if $analdisable is "f" and $consensual is 1>>
+					<<if $condomUse is false>>
+					<<elseif $condomUse is true and $player.condom is false and $parasite.penis.name is undefined>>
+						<<equipCondom>>
+						<span class="green"><<He>> puts a condom on your <<penis>>.</span>
+					<</if>>
 					<span class="blue"><<He>> straddles you, rubbing <<his>> ass against your <<penis>>.</span>
 					<<neutral 5>><<set $penisuse to "otheranus">><<set $NPCList[_n].penis to "otheranusentrance">><<set $penisstate to "otheranusentrance">><<set $speechotheranusentrance to 1>>
 					<<set $NPCList[_n].location.genitals = "genitals">>
@@ -4278,6 +4334,10 @@
 		<<if $mouthuse is 0>>
 			<<if $penisbitten is 0>>
 				<<if $position isnot "wall">>
+					<<if $NPCList[_n].condom isnot false>>
+						<<removeCondom _n>>
+						<<He>> removes the condom on <<his>> penis.
+					<</if>>
 					<span class="blue"><<He>> positions <<his>> $NPCList[_n].penisdesc in front of your mouth.</span>
 					<<neutral 5>><<set $mouthuse to "penis">><<set $NPCList[_n].penis to "mouthentrance">><<set $mouthstate to "entrance">><<set $speechmouthentrance to 1>>
 					<<set $NPCList[_n].location.genitals = "head">>
@@ -4286,10 +4346,20 @@
 		<</if>>
 	<<elseif $enemyanger + $rng lte 100 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>
 		<<if $player.vaginaExist and $vaginause is 0 and ($anususe isnot 0 or random(0,100) gte 50)>>
+			<<if $condomUse is false>>
+			<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+				<<equipCondom _n>>
+				<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+			<</if>>
 			<span class="blue"><<He>> moves between your legs, positioning <<his>> $NPCList[_n].penisdesc in front of your <<pussy>>.</span>
 			<<neutral 5>><<set $vaginause to "penis">><<set $NPCList[_n].penis to "vaginaentrance">><<set $vaginastate to "entrance">><<set $speechvaginaentrance to 1>>
 			<<set $NPCList[_n].location.genitals = "genitals">>
 		<<elseif $analdisable is "f" and $anususe is 0>>
+			<<if $condomUse is false>>
+			<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+				<<equipCondom _n>>
+				<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+			<</if>>
 			<span class="blue"><<He>> moves between your legs, positioning <<his>> $NPCList[_n].penisdesc in front of your <<bottom>>.</span>
 			<<neutral 5>><<set $anususe to "penis">><<set $NPCList[_n].penis to "anusentrance">><<set $anusstate to "entrance">><<set $speechanusentrance to 1>>
 			<<set $NPCList[_n].location.genitals = "genitals">>
@@ -4311,6 +4381,10 @@
 		<<if $penisbitten is 0>>
 			<<if $position isnot "wall">>
 				<<if $mouthuse is 0 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "head">>
+					<<if $NPCList[_n].condom isnot false>>
+						<<removeCondom _n>>
+						<<He>> removes the condom on <<his>> penis.
+					<</if>>
 					<span class="purple"><<He>> shoves <<his>> $NPCList[_n].penisdesc against your lips.</span>
 					<<submission 5>><<set $mouthuse to "penis">><<set $mouthstate to "imminent">><<set $NPCList[_n].penis to "mouthimminent">><<set $speechmouthimminent to 1>>
 					<<set $NPCList[_n].location.genitals = "head">>
@@ -4337,6 +4411,11 @@
 		<</if>>
 	<<elseif $enemyanger + $rng lte 170 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>
 		<<if $anususe is 0 and $analdisable is "f">>
+			<<if $condomUse is false>>
+			<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+				<<equipCondom _n>>
+				<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+			<</if>>
 			<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 				<<if $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 					<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus, preparing to penetrate.</span>
@@ -4356,6 +4435,11 @@
 		<</if>>
 	<<elseif $enemyanger + $rng gte 171 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>
 		<<if $player.vaginaExist and $vaginause is 0 and (!$player.penisExist or $anususe isnot 0 or random(0,100) gte 50)>>
+			<<if $condomUse is false>>
+			<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+				<<equipCondom _n>>
+				<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+			<</if>>
 			<<if $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1>>
 				<<if $worn.under_lower.vagina_exposed is 1 and !$worn.genitals.type.includes("chastity")>>
 					<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your <<pussy>>, preparing to penetrate.</span>
@@ -4374,6 +4458,11 @@
 			<<set $NPCList[_n].location.genitals to "genitals">>
 		<<elseif $player.penisExist>>
 			<<if $anususe is 0 and $analdisable is "f">>
+				<<if $condomUse is false>>
+				<<elseif ($condomUse is true or (random(0,100) lt $condomautochance and $npcCondoms isnot undefined)) and $NPCList[_n].condom is false>>
+					<<equipCondom _n>>
+					<span class="green"><<He>> puts a condom on <<his>> penis.</span>
+				<</if>>
 				<<if $worn.lower.anus_exposed is 1 and $worn.over_lower.anus_exposed is 1>>
 					<<if $worn.under_lower.anus_exposed is 1 and $worn.genitals.anus_exposed is 1>>
 						<span class="purple"><<He>> presses <<his>> $NPCList[_n].penisdesc against your anus, preparing to penetrate.</span>
@@ -4411,6 +4500,11 @@
 		<<neutral 3>><<set $speechvaginaflaunt to 1>>
 	 <<elseif $enemyanger + $rng lte 50 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals"
 			and $player.penisExist and $penisuse is 0 and $analdisable is "f" and $walltype isnot "front">>
+		<<if $condomUse is false>>
+		<<elseif $condomUse is true and $player.condom is false and $parasite.penis.name is undefined>>
+			<<equipCondom>>
+			<span class="green"><<He>> puts a condom on your <<penis>>.</span>
+		<</if>>
 		<span class="blue"><<He>> straddles you, rubbing <<his>> ass against your <<penis>>.</span>
 		<<neutral 5>><<set $penisuse to "otheranus">><<set $NPCList[_n].vagina to "otheranusentrance">><<set $penisstate to "otheranusentrance">><<set $speechotheranusentrance to 1>>
 		<<set $NPCList[_n].location.genitals = "genitals">>
@@ -4458,6 +4552,11 @@
 		<</if>>
 	<<elseif $enemyanger + $rng lte 100 and $penisuse is 0 and $player.penisExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>
 		<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisentrance">><<set $penisstate to "entrance">>
+		<<if $condomUse is false>>
+		<<elseif $condomUse is true and $player.condom is false and $parasite.penis.name is undefined>>
+			<<equipCondom>>
+			<span class="green"><<He>> puts a condom on your <<penis>>.</span>
+		<</if>>
 		<span class="blue"><<He>> straddles you, <<his>> pussy hovering close to your <<penis>>.</span>
 		<<set $NPCList[_n].location.genitals = "genitals">>
 	<<elseif $enemyanger + $rng lte 100 and $vaginause is 0 and $player.vaginaExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>
@@ -4466,6 +4565,11 @@
 		<<set $NPCList[_n].location.genitals = "genitals">><<set $speechtribentrance to 1>>
 	<<elseif $enemyanger + $rng lte 120 and $penisuse is 0 and $player.penisExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and !$worn.genitals.type.includes("chastity") and $walltype isnot "front">>
 		<<set $penisuse to "othervagina">><<set $NPCList[_n].vagina to "penisimminent">><<set $penisstate to "imminent">>
+		<<if $condomUse is false>>
+		<<elseif $condomUse is true and $player.condom is false and $parasite.penis.name is undefined>>
+			<<equipCondom>>
+			<span class="green"><<He>> puts a condom on your <<penis>>.</span>
+		<</if>>
 		<span class="purple"><<He>> wraps <<his>> legs around your pelvis, pressing <<his>> pussy against your <<genitals>>.</span>
 		<<set $NPCList[_n].location.genitals = "genitals">>
 	<<elseif $enemyanger + $rng lte 120 and $vaginause is 0 and $player.vaginaExist and $worn.under_lower.vagina_exposed is 1 and $worn.lower.vagina_exposed is 1 and $worn.over_lower.vagina_exposed is 1 and $NPCList[_n].location.genitals is 0 and $NPCList[_n].location.head isnot "genitals" and $walltype isnot "front">>

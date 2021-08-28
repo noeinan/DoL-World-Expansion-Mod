@@ -127,22 +127,26 @@ You can access several parts of town from here.
 <<set $eventskip to 0>>
 
 :: Passout Drain
-
-You've pushed yourself too much.
-<br><br>
-<<passout>>
-<<set $danger to random(1, 10000)>>
-<<if $danger gte (9900 - $allure)>>
-	<<if $rng gte 51>><!-- Modified for Beast People -->
-		<<link [[Wake up|Passout Beast Drain]]>><<set $molestationstart to 1>><</link>>
-	<<elseif $rng gte 1>>
-		<<link [[Wake up|Passout Drain Abduction]]>><<set $molestationstart to 1>><</link>>
-	<</if>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "drain">>
 <<else>>
-	<<ambulance>>
+	You've pushed yourself too much.
+	<br><br>
+	<<passout>>
+	<<set $danger to random(1, 10000)>>
+	<<if $danger gte (9900 - $allure)>>
+		<<if $rng gte 51>><!-- Modified for Beast People -->
+			<<link [[Wake up|Passout Beast Drain]]>><<set $molestationstart to 1>><</link>>
+		<<elseif $rng gte 1>>
+			<<link [[Wake up|Passout Drain Abduction]]>><<set $molestationstart to 1>><</link>>
+		<</if>>
+	<<else>>
+		<<ambulance>>
+	<</if>>
+	<<pass 1 hour>>
+	<<trauma 6>><<set $stress -= 2000>>
 <</if>>
-<<pass 1 hour>>
-<<trauma 6>><<set $stress -= 2000>>
 
 :: Passout Beast Drain
 
@@ -634,11 +638,16 @@ The water pulls you further along the tunnel.
 :: Drain Water Passout
 
 <<effects>>
-<<passout>>
-Your unconscious body is carried along the drains until you are dropped into the sea. The shock wakes you.
-<br><br>
-<<link [[Next|Sea Cliffs]]>><</link>>
-<<set $stress -= 2000>><<trauma 6>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "drain">>
+<<else>>
+	<<passout>>
+	Your unconscious body is carried along the drains until you are dropped into the sea. The shock wakes you.
+	<br><br>
+	<<link [[Next|Sea Cliffs]]>><</link>>
+	<<set $stress -= 2000>><<trauma 6>>
+<</if>>
 
 :: Drain Water Lizard Finish
 

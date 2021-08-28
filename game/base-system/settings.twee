@@ -80,7 +80,16 @@
 <<set $clothesPriceUnderwear to 1>>
 <<set $clothesPriceSchool to 1>>
 <<set $clothesPriceLewd to 1>>
+<<set $baseVaginalPregnancyChance to 80>>
+<<set $baseNpcPregnancyChance to 8>>
+<<set $humanPregnancyMonths to 3>>
+<<set $wolfPregnancyWeeks to 4>>
+<<set $playerPregnancyHumanDisable to "f">>
+<<set $playerPregnancyBeastDisable to "f">>
+<<set $npcPregnancyDisable to "f">>
 <<set $rentmod to 1>>
+<<set $condomchance to 50>>
+<<set $condomautochance to 50>>
 
 <<set $notifyUpdate = true>>
 
@@ -122,6 +131,7 @@
 	<<case "humanSettings">><<replace #subsectionDiv>><<humanSettings>><</replace>>
 	<<case "beastSettings">><<replace #subsectionDiv>><<beastSettings>><</replace>>
 	<<case "priceSettings">><<replace #subsectionDiv>><<priceSettings>><</replace>>
+	<<case "pregnancySettings">><<replace #subsectionDiv>><<pregnancySettings>><</replace>>
 	<<default>><<replace #subsectionDiv>><<humanSettings>><</replace>>
 <</switch>>
 <</widget>>
@@ -616,6 +626,12 @@
 	<<button "Price Settings">>
 		<<displaySubsection "priceSettings">>
 	<</button>>
+	/*ToDo: Pregnancy, remove check to properly enable*/
+	<<if $pregnancyTesting>>
+		<<button "Pregnancy Settings">>
+			<<displaySubsection "pregnancySettings">>
+		<</button>>
+	<</if>>
 	</div>
 
 	<div id="subsectionDiv">
@@ -675,6 +691,16 @@
 			<br>
 			<<numberslider "$blackchance" $blackchance 0 100 1>>
 			<br><br>
+
+			<span class="gold">Likelihood of npcs having condoms on them</span>
+			<br>
+			<<numberslider "$condomchance" $condomchance 0 100 1>>
+			<br><br>
+
+			<span class="gold">Likelihood of npcs using a condom without being asked</span>
+			<br>
+			<<numberslider "$condomautochance" $condomautochance 0 100 1>>
+			<br><br>
 		</div>
 	<</widget>>
 
@@ -720,6 +746,7 @@
 			<label><div class="settingsToggle">
 			<<checkbox "$parasitedisable" "t" "f" autocheck>> Enable parasites
 			</div></label>
+			/*ToDo: Pregnancy, remove duplicate option once enabled*/
 			<label><div class="settingsToggle">
 			<<checkbox "$analpregdisable" "t" "f" autocheck>> Enable anal parasitic pregnancy
 			</div></label>
@@ -816,6 +843,59 @@
 			})>>
 		</div>
 	<</widget>>
+
+	<<widget "pregnancySettings">><<nobr>>
+		<div class="solidBorderContainer"><div class="numberslider-inline">
+			<div class="numberslider-inline basevaginalpregnancychance-container">
+				<span class="gold">Base Vaginal Pregnancy Chance</span>
+				<div class="small-description">Chance of conceiving when only being inseminated once at the right time, <span id="maxRequired"><<print 100 - $baseVaginalPregnancyChance>></span> times to guarantee. Some events may leave you with more than one helping of cum.</div>
+				<<numberslider "$baseVaginalPregnancyChance" $baseVaginalPregnancyChance 0 96 4>>
+			</div>
+			<<run $(() => { $('.basevaginalpregnancychance-container input').on('input change', e => { 
+				let valSpan = $(e.currentTarget).siblings().first();
+				let value = valSpan.text();
+				
+				valSpan.text((i, value) => "1 in " + (100 - value));
+				$('#maxRequired').text(100 - $baseVaginalPregnancyChance);
+			}).trigger('change') })>>
+			<div class="numberslider-inline basenpcpregnancychance-container">
+				<span class="gold">Base NPC Pregnancy Chance</span>
+				<div class="small-description">Chance of an npc conceiving when only being inseminated once at the right time, <span id="npcMaxRequired"><<print 20 - $baseNpcPregnancyChance>></span> times to guarantee.</div>
+				<<numberslider "$baseNpcPregnancyChance" $baseNpcPregnancyChance 0 16 4>>
+			</div>
+			<<run $(() => { $('.basenpcpregnancychance-container input').on('input change', e => { 
+				let valSpan = $(e.currentTarget).siblings().first();
+				let value = valSpan.text();
+				
+				valSpan.text((i, value) => "1 in " + (20 - value));
+				$('#npcMaxRequired').text(20 - $baseNpcPregnancyChance);
+			}).trigger('change') })>>
+			<div class="numberslider-inline">
+				<span class="gold">Human Pregnancy Length in Months</span>
+				<<numberslider "$humanPregnancyMonths" $humanPregnancyMonths 1 9 1>>
+			</div>
+			<div class="numberslider-inline">
+				<span class="gold">Wolf Pregnancy Length in Weeks</span>
+				<<numberslider "$wolfPregnancyWeeks" $wolfPregnancyWeeks 2 12 1>>
+			</div>
+			<br>
+			<div class="small-description"><span class="red">Will not stop existing pregnancy.</span></div>
+			<label><div class="settingsToggle">
+				<<checkbox "$playerPregnancyHumanDisable" "t" "f" autocheck>>
+				Enable Player Human Pregnancy
+			</div></label>
+			<label><div class="settingsToggle">
+				<<checkbox "$playerPregnancyBeastDisable" "t" "f" autocheck>> Enable Player Beast Pregnancy
+			</div></label>
+			<label><div class="settingsToggle">
+				<<checkbox "$npcPregnancyDisable" "t" "f" autocheck>> Enable NPC Pregnancy
+			</div></label>
+			<label><div class="settingsToggle">
+			<<checkbox "$analpregdisable" "t" "f" autocheck>> Enable anal parasitic pregnancy
+			</div></label>
+			<div style="clear:both;">/*Keep at end of toggles*/</div>
+		</div>
+	<</nobr>><</widget>>
 
 	<span class="gold">Togglable Features</span>
 	<br>
@@ -1215,30 +1295,30 @@ Click on "Copy Text Area" to copy the current contents for you. The button name 
 <<listbox "_npcId" autoselect>>
 	<<optionsfrom _npcList>>
 <</listbox>>
-<<if _npcId gt 0>>
-	| <<link Previous>>
+| <<link Previous>>
+	<<if _npcId is 0>>
+		<<set _npcId to $NPCNameList.length - 1>>
+	<<else>>
 		<<set _npcId-->>
-		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
-	<</link>> |
-<<else>>
-	| Previous |
-<</if>>
-<<if _npcId lt $NPCName.length>>
-	<<link Next>>
-		<<set _npcId++>>
-		<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
-	<</link>>
-<<else>>
-	Next
-<</if>>
+	<</if>>
+	<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
+<</link>> |
+<<link Next>>
+	<<set _npcId++>>
+	<<replace #npcSettingsMenu>><<npcSettingsMenu>><</replace>>
+<</link>>
 <br><br>
 <span class="gold">$NPCName[_npcId].nam the $NPCName[_npcId].title</span>
 <br>
 <label><<radiobutton "$NPCName[_npcId].pronoun" "f" autocheck>> Female</label> |
 <label><<radiobutton "$NPCName[_npcId].pronoun" "m" autocheck>> Male</label>
 <br>
+<<if $NPCName[_npcId].pregnancy[0] is null>>
 <label><<radiobutton "$NPCName[_npcId].gender" "f" autocheck>> Vagina</label> |
 <label><<radiobutton "$NPCName[_npcId].gender" "m" autocheck>> Penis</label>
+<<else>>
+	Unable to change the npc genitals due to their pregnancy.
+<</if>>
 <br><br>
 Penis size - if applicable:
 <br>

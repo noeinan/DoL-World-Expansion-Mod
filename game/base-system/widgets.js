@@ -166,6 +166,17 @@ function genderappearancecheck() {
 			(V.breastsize - 4) * 100, 0, Infinity
 		), "Breast size visible through clothing");
 	}
+	/* Pregnant Belly */
+	if (V.sexStats === undefined) {
+	}else if (V.sexStats.vagina.pregnancy.bellySize >= 8) {
+		addfemininityfromfactor(Math.clamp(
+			100000, 0, Infinity
+		), "Pregnant Belly");
+	}else if (V.sexStats.vagina.pregnancy.bellySize >= 5) {
+		addfemininityfromfactor(Math.clamp(
+			(V.sexStats.vagina.pregnancy.bellySize - 4) * 500, 0, Infinity
+		), "Pregnant Belly");
+	}
 	/* Body writing */
 	Wikifier.wikifyEval("<<bodywriting_exposure_check>>"); // TODO convert to JS when possible
 	T.skinValue = 0;

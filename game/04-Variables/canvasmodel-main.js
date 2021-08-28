@@ -640,6 +640,20 @@ Renderer.CanvasModels["main"] = {
 			z: ZIndices.breasts,
 			animation: "idle"
 		},
+		"belly":{
+			srcfn(options) {
+				/*ToDo: Pregnancy, uncomment to properly enable*/
+				/*if(between(options.belly,1,20)){
+					return "img/body/belly/pregnancy_belly_" + options.belly + ".png";
+				}*/
+				return "";
+			},
+			showfn(options) {
+				return !!options.belly;
+			},
+			z: ZIndices.bellyBase,
+			filters: ["body"],
+		},
 		"nipples_parasite": {
 			srcfn(options) {
 				switch (options.nipples_parasite) {

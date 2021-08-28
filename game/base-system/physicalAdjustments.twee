@@ -143,6 +143,19 @@
 		"boughtOnce": _boughtOnce
 	}>>
 <</if>>
+<<if $sexStats.pills.pregnancy is undefined>>
+	<<set $sexStats.pills.pregnancy to {
+			"type": null,
+			"doseTaken": null,
+			"autoTake": null,
+			"overdose": false,
+			"owned": {
+				"fertility": 0,
+				"contraceptive": 0,
+			}
+	}>>
+	<<run $sexStats.pills.type.pushUnique("pregnancy")>>
+<</if>>
 <<set _pills to $sexStats.pills>>
 <<set _pills.penis.owned.growth to Math.clamp(_pills.penis.owned.growth, 0, 1000)>>
 <<set _pills.penis.owned.reduction to Math.clamp(_pills.penis.owned.reduction, 0, 1000)>>
@@ -153,7 +166,96 @@
 <<set _pills.bottom.owned.growth to Math.clamp(_pills.bottom.owned.growth, 0, 1000)>>
 <<set _pills.bottom.owned.reduction to Math.clamp(_pills.bottom.owned.reduction, 0, 1000)>>
 <<set _pills.bottom.owned.blocker to Math.clamp(_pills.bottom.owned.blocker, 0, 1000)>>
+<<set _pills.pregnancy.owned.fertility to Math.clamp(_pills.pregnancy.owned.fertility, 0, 1000)>>
+<<set _pills.pregnancy.owned.contraceptive to Math.clamp(_pills.pregnancy.owned.contraceptive, 0, 1000)>>
 
+<<if $sexStats.vagina is undefined>>
+	<<set _baseDays to random(24,38)>>
+	<<if _baseDays lt 26>>
+		<<set _baseDaysRng to random(0,4)>>
+	<<elseif _baseDays gte 30>>
+		<<set _baseDaysRng to random(-4,0)>>
+	<<else>>
+		<<set _baseDaysRng to random(-2,2)>>
+	<</if>>
+	/*To change after every cycle*/
+	<<set _currentDaysMax to _baseDays + random(0, _baseDaysRng)>>
+	/*
+		- pregnancy has multiple slots, but pregnancy should only occur when none are taken
+		- "baseDays", "baseDaysRng", "lastDaysMax", "currentDaysMax" values should not be changed by multipliers, but by percent if you want a faster/slower cycle during calculations only, do not modifier the values themselves
+		- Sperm Template - 
+		"sperm":{
+			"Robin":{"type":"npc", "count":[[daysTillRemoval,cummed inside],[4,3],[3,2]]},
+			"Avery":{"type":"npc", "count":[[daysTillRemoval,cummed inside],[5,1]]},
+			"slender man":{"type":"npc", "count":[[daysTillRemoval,cummed inside],[5,1]]},
+			"Beast":{"type":"dog", "count":[[daysTillRemoval,cummed inside],[5,1]]},
+		}
+		- Sperm data should be deleted after 3-5 days worth of the base, the entire named object after it is cleared.
+		- "CurrentDay" should never be above "lastDaysMax" or "currentDaysMax", "lastDaysMax" should be set to "currentDaysMax" on releasing the egg
+		- "recoveryTime" and "recoveryTimeStart" are to track how long the player needs to recover before they can get pregnant again. "recoveryTime" is reduced faster by taking fertility pills and when "totalBirthEvents" is more than 2.
+		- "recoveryStage" ranges from 0 to 4, to help with any story text regarding how the player is feeling after giving birth
+		- "periodEnabled" is only to prevent the first period based events after recovering from giving birth
+	*/
+	<<set $sexStats.vagina to {
+		"pregnancy": {
+			0: null,
+			1: null,
+			2: null,
+			3: null,
+			4: null,
+			5: null,
+			6: null,
+			7: null,
+			"currentCount": 0,
+			"givenBirth": 0,
+			"totalBirthEvents": 0,
+			"motherStatus": 0,
+			"beastMotherStatus": 0,
+			"morningSicknessWaking":0,
+			"morningSicknessGeneral":0,
+			"waterBreaking": false,
+			"type": null,
+			"bellySize": 0,
+			"timer": null,
+			"timerStart": null,
+			"awareOf": null,
+			"potentialFathers": [],
+			"ultrasoundDone": false,
+		},
+		"menstruation":{
+			"baseDays": _baseDays,
+			"baseDaysRng": _baseDaysRng,
+			"currentDay": random(0, _baseDays + random(0,_baseDaysRng)),
+			"lastDaysMax": _currentDaysMax,
+			"currentDaysMax": _currentDaysMax,
+			"currentState": "normal",
+			"recoveryTime": null,
+			"recoveryTimeStart": null,
+			"recoveryStage": null,
+			"periodEnabled": true,
+			"running": false,
+			"stages": [0, 0, 0, 0],
+		},
+		"sperm":{}
+	}>>
+	<<set _menstruation to $sexStats.vagina.menstruation>>
+	<<set _stage2 to Math.round(_menstruation.currentDaysMax * 0.17)>>
+	<<if _stage2 gte 4>>
+		<<set _stage2-->>
+	<</if>>
+	<<set _stage3 to Math.round(_menstruation.currentDaysMax * 0.5)>>
+	<<if _stage3 lt 13>>
+		<<set _stage3++>>
+	<<elseif _stage3 gte 18>>
+		<<set _stage3-->>
+	<</if>>
+	<<set _menstruation.stages to [0, _stage2, _stage3, _stage3 + random(1,2) * 0.5]>>
+
+
+	<<if $vaginaexist is 1>>
+		<<set $sexStats.vagina.menstruation.running = true>>
+	<</if>>
+<</if>>
 <</widget>>
 
 :: Widgets physicalAdjustments [widget]
