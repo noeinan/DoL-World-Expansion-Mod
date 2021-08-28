@@ -126,6 +126,16 @@ setup.colours = {
  * - canvasfilter:object - Canvas model filter
  */
 setup.colours.hair = [{
+	"variable": "random",//Only used at the start for a randomised colour
+	"name": "random",
+	"name_cap": "Random",
+	"csstext": "Random",
+	"natural": true,
+	"dye": false,
+	"canvasfilter": {
+		"blend": "#f53d43"
+	}
+}, {
 	"variable": "red",
 	"name": "red",
 	"name_cap": "Red",
@@ -480,6 +490,17 @@ setup.colours.hair = [{
  * - canvasfilter:object - Canvas model filter
  */
 setup.colours.eyes = [{
+	variable: "random",//Only used at the start for a randomised colour
+	name: "random",
+	name_cap: "Random",
+	csstext: "Random",
+	natural: true,
+	lens: false,
+	canvasfilter: {
+		blend: "#b016d8"
+	}
+},
+	{
 	variable: "purple",
 	name: "purple",
 	name_cap: "Purple",
