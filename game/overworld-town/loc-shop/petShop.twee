@@ -31,6 +31,11 @@ You are in the pet shop. <<if $daystate is "night">>Most of the animals are slee
 	<<link [[Examine the cash register|Pet Shop Register]]>><</link>>
 	<br>
 <</if>>
+<<if $pregnancyStats.wolfToysUnlocked and $daystate isnot "night">>
+	<<toySelection>>
+	<<link [[Wolf toys|Pet Shop Item]]>><<set $selectedToy to clone(_toySelection["chewToy"])>><</link>>
+	<br>
+<</if>>
 <<if _pregnancy.seenDoctor gte 2 and $daystate isnot "night">>
 	<<set _container to $container.home>>
 	<<if $boughtItem isnot undefined>>
@@ -46,24 +51,24 @@ You are in the pet shop. <<if $daystate is "night">>Most of the animals are slee
 		<ul>
 		<<if _pregnancy.motherStatus gte 0 and _container.upgrades.capacity is 0>>
 			<<if $money gte 20000>>
-				<li><<link [[Buy Small Fish Tank £200|$passage]]>><<set $boughtItem to "Small Fish Tank">><</link>></li>
+				<li><<link [[Buy small fish tank £200|$passage]]>><<set $boughtItem to "Small Fish Tank">><</link>></li>
 			<<elseif _container.upgrades.capacity lt 1>>
 				<li>You don't have £200 for the Small Fish Tank.</li>
 			<</if>>
 		<</if>>
 		<<if _pregnancy.motherStatus gte 1>>
 			<<if $money gte 50000 and _container.upgrades.capacity lt 2>>
-				<li><<link [[Buy Fish Tank £500|$passage]]>><<set $boughtItem to "Fish Tank">><</link>></li>
+				<li><<link [[Buy fish tank £500|$passage]]>><<set $boughtItem to "Fish Tank">><</link>></li>
 			<<elseif _container.upgrades.capacity lt 2>>
 				<li>You don't have £500 for the Fish Tank.</li>
 			<</if>>
 			<<if $money gte 100000 and _container.upgrades.capacity lt 3>>
-				<li><<link [[Buy Large Fish Tank £1,000|$passage]]>><<set $boughtItem to "Large Fish Tank">><</link>></li>
+				<li><<link [[Buy large fish tank £1,000|$passage]]>><<set $boughtItem to "Large Fish Tank">><</link>></li>
 			<<elseif _container.upgrades.capacity lt 3>>
 				<li>You don't have £1,000 for the Large Fish Tank.</li>
 			<</if>>
 			<<if $money gte 500000 and _container.upgrades.capacity lt 4>>
-				<li><<link [[Buy Huge Fish Tank £5,000|$passage]]>><<set $boughtItem to "Huge Fish Tank">><</link>></li>
+				<li><<link [[Buy huge fish tank £5,000|$passage]]>><<set $boughtItem to "Huge Fish Tank">><</link>></li>
 			<<elseif _container.upgrades.capacity lt 4>>
 				<li>You don't have £5,000 for the Huge Fish Tank.</li>
 			<</if>>
@@ -80,17 +85,17 @@ You are in the pet shop. <<if $daystate is "night">>Most of the animals are slee
 		<<if _container.upgrades.foodStorage lt 3>>
 			<ul>
 			<<if $money gte 50000 and _container.upgrades.foodStorage lt 1>>
-				<li><<link [[Buy Small Automatic Feeder £500|$passage]]>><<set $boughtItem to "Small Automatic Feeder">><</link>></li>
+				<li><<link [[Buy small automatic feeder £500|$passage]]>><<set $boughtItem to "Small Automatic Feeder">><</link>></li>
 			<<elseif _container.upgrades.foodStorage lt 1>>
 				<li>You don't have £500 for the Small Automatic Feeder.</li>
 			<</if>>
 			<<if $money gte 150000 and _container.upgrades.foodStorage lt 2>>
-				<li><<link [[Buy Automatic Feeder £1,500|$passage]]>><<set $boughtItem to "Automatic Feeder">><</link>></li>
+				<li><<link [[Buy automatic feeder £1,500|$passage]]>><<set $boughtItem to "Automatic Feeder">><</link>></li>
 			<<elseif _container.upgrades.foodStorage lt 2>>
 				<li>You don't have £1,500 for the Automatic Feeder.</li>
 			<</if>>
 			<<if $money gte 750000 and _container.upgrades.foodStorage lt 3>>
-				<li><<link [[Buy Large Automatic Feeder £7,500|$passage]]>><<set $boughtItem to "Large Automatic Feeder">><</link>></li>
+				<li><<link [[Buy large automatic feeder £7,500|$passage]]>><<set $boughtItem to "Large Automatic Feeder">><</link>></li>
 			<<elseif _container.upgrades.foodStorage lt 3>>
 				<li>You don't have £7,500 for the Large Automatic Feeder.</li>
 			<</if>>
@@ -107,12 +112,12 @@ You are in the pet shop. <<if $daystate is "night">>Most of the animals are slee
 		<<if _container.upgrades.luxury lt 1 or (_container.upgrades.capacity gt 3 and _container.upgrades.luxury lt 2)>>
 			<ul>
 			<<if $money gte 500000 and _container.upgrades.luxury lt 1>>
-				<li><<link [[Buy Standard Decorations £5,000|$passage]]>><<set $boughtItem to "Standard Decorations">><</link>></li>
+				<li><<link [[Buy standard decorations £5,000|$passage]]>><<set $boughtItem to "Standard Decorations">><</link>></li>
 			<<elseif _container.upgrades.luxury lt 1>>
 				<li>You don't have £5,000 for the Standard Decorations.</li>
 			<</if>>
 			<<if $money gte 1500000 and _container.upgrades.luxury lt 2 and _container.upgrades.capacity gt 3>>
-				<li><<link [[Buy Exotic Decorations £15,000|$passage]]>><<set $boughtItem to "Exotic Decorations">><</link>></li>
+				<li><<link [[Buy exotic decorations £15,000|$passage]]>><<set $boughtItem to "Exotic Decorations">><</link>></li>
 			<<elseif _container.upgrades.luxury lt 2 and _container.upgrades.capacity gt 3>>
 				<li>You don't have £15,000 for the Exotic Decorations.</li>
 			<</if>>
@@ -212,3 +217,28 @@ You buy the treats, and have them sent to the farm. You have <span class="gold">
 		<<unset $boughtItem>>
 	<</if>>
 <</widget>>
+
+:: Pet Shop Item
+
+You take a look at the collection of <<print $selectedToy.set>>. They cost <span class="gold"><<print $selectedToy.costDisplay>></span> each.
+<br><br>
+<<if $selectedToy.options>>
+	<<for _i to 0; _i lt $selectedToy.options.length; _i++>>
+		<label>
+			<<radiobutton "$selectedToy.selectedOption" _i autocheck>>
+			<span @class="$selectedToy.options[_i].colour"><<print $selectedToy.options[_i].optionsName>></span>
+		</label> |
+	<</for>>
+	<br><br>
+<</if>>
+
+<<if $currentToys.length gte 5>>
+	You can't have more than 5 toys with you at a time.
+<<elseif $selectedToy.cost lte $money>>
+	<<link [[Buy|Pet Shop]]>><<buyToy>><</link>>
+	<br>
+<<else>>
+	You can't afford this toy.
+<</if>>
+
+<<link [[Don't buy|Pet Shop]]>><<unset $selectedToy>><</link>>

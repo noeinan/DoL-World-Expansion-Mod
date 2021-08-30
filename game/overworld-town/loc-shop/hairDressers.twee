@@ -104,10 +104,10 @@ You hand over the money and <<he>> gets to work.
 
 <<if $browsDyeOption is "removeDye">>
 	<<if _pass gt 0>>
-		Then <<he>> asks you to tilt your head back. <<He>> applies a liquid smelling of artificial chemicals to your eyebrows. Hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
+		Then <<he>> asks you to tilt your head back. <<He>> applies a liquid smelling of artificial chemicals to your eyebrows. The hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
 		<<He>> brings up a mirror for you to see your eyebrows back in its natural $naturalhaircolour colour.
 	<<else>>
-		<<He>> applies a liquid smelling of artificial chemicals to your eyebrows. Hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
+		<<He>> applies a liquid smelling of artificial chemicals to your eyebrows. The hairdresser finishes the procedure by wiping your brows with soapy tissue and washing your face.
 		<<He>> brings up a mirror for you to see your eyebrows back in its natural $naturalhaircolour colour.
 	<</if>>
 	<br><br>
@@ -281,13 +281,77 @@ You hand over the money and <<he>> gets to work.
 	<br><br>
 <</if>>
 
-<<if _currentCost gt 0 and $money gte _currentCost>>
-	<<link [[Pay hairdresser|Hairdressers Session]]>>
-		<<set $money -= _currentCost>>
-	<</link>>
-<<elseif $money lt _currentCost>>
-	You don't have enough money to pay the hairdresser.
+<<if _sydney>>
+	<<if (!_cancel or _currentCost gt 0) and $money gte _currentCost>>
+		<<link [[Continue|Sydney Hairdressers Session]]>>
+			<<set $money -= _currentCost>>
+		<</link>>
+	<<elseif $money lt _currentCost>>
+		You don't have enough money to pay the hairdresser.
+	<</if>>
+	<<if _cancel>>
+		<br><br>
+		<<link [[Leave|Sydney Hairdressers Cancel]]>><<endevent>><</link>>
+	<</if>>
+<<else>>
+	<<if _currentCost gt 0 and $money gte _currentCost>>
+		<<link [[Pay hairdresser|Hairdressers Session]]>>
+			<<set $money -= _currentCost>>
+		<</link>>
+	<<elseif $money lt _currentCost>>
+		You don't have enough money to pay the hairdresser.
+	<</if>>
+	<br><br>
+	<<link [[Leave|Hairdressers]]>><<endevent>><</link>>
+<</if>>
+<</widget>>
+
+<<widget "hairDressersOptionsSydney">>
+<<set _currentCost to 0>>
+Encourage Sydney to have <<his>> hair styled:
+<br>
+<<if ($money gte _currentCost + 3000 or $sydneyHairOption isnot $sydney.hair)>>
+	<<if $sydneyHairOption isnot $sydney.hair>>
+		<<set _currentCost += 3000>>
+	<</if>>
+	<<set _hairOptions to {"As it is":$sydney.hair}>>
+	<<if $sydney.hair is "ponytail">>
+		<<set _hairOptions["Loose"] to "loose">>
+	<<else>>
+		<<set _hairOptions["In a ponytail"] to "ponytail">>
+	<</if>>
+	<<cycle "$sydneyHairOption" autoselect>>
+		<<optionsfrom _hairOptions>>
+	<</cycle>>
+	<span class="grey">(Click to change)
+	<br>
+	Current style: $sydney.hair</span>
+	<br><br>
+<</if>>
+
+<<if $money gte _currentCost + 3000 or $dyeOption isnot "noChange">>
+	<<if $dyeOption is "removeDye">>
+		<<set _currentCost += 3000>>
+	<<elseif $dyeOption isnot "noChange">>
+		<<set _currentCost += 6000>>
+	<</if>>
+	Encourage Sydney to dye <<his>> hair<<if $NPCName[$NPCNameList.indexOf("Sydney")].hairColour isnot "strawberryblond">> or cleared of hair dye<</if>>:
+	<br>
+
+	<<set _dyeOptions to {"Don't dye":"noChange"}>>
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].hairColour isnot "strawberryblond">>
+		<<set _dyeOptions["Remove dye"] to "removeDye">>
+	<<else>>
+		<<set _dyeOptions["Black"] to "black">>
+	<</if>>
+	<<cycle "$dyeOption" autoselect>>
+		<<optionsfrom _dyeOptions>>
+	<</cycle>>
+	<span class="grey">(Click to change)
+	<br>
+	Current Colour: <<npcHairColour "Sydney">><<if _text_output is "strawberry blond">> (natural)<</if>></span>
+<<else>>
+	You don't have enough money to dye Sydney's hair.
 <</if>>
 <br><br>
-<<link [[Leave|Hairdressers]]>><<endevent>><</link>>
 <</widget>>

@@ -31,7 +31,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 		<span class="lblue">New milking equipment is being installed in the barn.</span>
 	<<case "barn 2">>
 		<span class="lblue">An extension is being built on the barn.</span>
-	<<case "stable">>
+	<<case "stable 1">>
 		<span class="lblue">The stable is being expanded.</span>
 	<<case "coop 1">>
 		<span class="lblue">The coop is being expanded.</span>
@@ -385,7 +385,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<br>
 <<elseif $farm.build_finished.includes("woodland 1")>>
 	<<run $farm.build_finished.delete("woodland 1")>>
-	<<set $location to "forest">>
+	<<location "forest">>
 	<span class="gold">You enter the farm's new woodland.</span>
 	<<if $daystate is "night">>
 		A bat flies overhead, barely visible in the dim light.
@@ -399,7 +399,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<br>
 <<elseif $farm.build_finished.includes("woodland 2")>>
 	<<run $farm.build_finished.delete("woodland 2")>>
-	<<set $location to "forest">>
+	<<location "forest">>
 	<span class="gold">You enter the new woodland. Fruit hangs overhead, and fat mushrooms grow all around.</span> You glimpse the fence between the trees, separating you from outside threats, and feel at ease.<<ltrauma>><<llstress>><<trauma -6>><<stress -12>>
 	<br><br>
 
@@ -407,7 +407,7 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 	<br>
 <<elseif $farm.build_finished.includes("woodland 3")>>
 	<<run $farm.build_finished.delete("woodland 3")>>
-	<<set $location to "forest">>
+	<<location "forest">>
 	<span class="gold">You explore the farm's new woodland, now large enough to get lost in.</span> You find Alex already lazing beneath a tree atop a hillock.
 	<br><br>
 
@@ -625,7 +625,6 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 				<<link [[Take shower (0:10)|Farm Shower]]>><<pass 10>><</link>>
 				<br>
 			<</if>>
-			
 			/* Go to farm barn passage if outside of farming hours, go to cattle milking passage otherwise. */
 			<<if $hour lte 5 or $hour gte 22 or ($hour is 21 and $farm_end is 1)>>
 				/* Determine whether you can access the barn normally with Alex's consent. */
@@ -637,7 +636,6 @@ You are on Alex's farm. A rustic farmhouse overlooks a yard and chicken coop. Ot
 			<<else>>
 				<<link [[Barn (0:02)|Farm Cattle Milk]]>><<pass 2>><</link>>
 			<</if>>
-			<br>
 		<</if>>
 		<<if $farm_stage gte 9>>
 			<<link [[Lab (0:01)|Farm Still]]>><<pass 1>><</link>>
@@ -2529,32 +2527,33 @@ The machine continues its devilish work, sucking with more intensity. You feel a
 	<<set $milk_amount -= $farm_breast_milk>>
 	<<set $milk_produced_stat += Math.trunc($farm_breast_milk)>>
 
-	<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 1000)>>
-	<<if $farm_breast_milk lte 0>>
-		<<set $farm_breast_milk to 1>>
-	<</if>>
-	<<if $farm_breast_milk gte 4>>
+	<<if $farm_breast_milk gte 3000>>
 		<span class="green">The tank almost overflows with milk.</span><<farmCatchChance 0.4>>
-	<<elseif $farm_breast_milk gte 3>>
+	<<elseif $farm_breast_milk gte 2000>>
 		<span class="teal">The tanks are over half full with your milk.</span><<farmCatchChance 0.2>>
-	<<elseif $farm_breast_milk gte 2>>
+	<<elseif $farm_breast_milk gte 1000>>
 		<span class="lblue">There's a large volume of milk in the tank.</span><<farmCatchChance 0.1>>
-	<<elseif $farm_breast_milk gte 1>>
+	<<elseif $farm_breast_milk gte 300>>
 		<span class="blue">There's a decent volume of milk in the tank.</span><<farmCatchChance 0.05>>
 	<<else>>
 		<span class="purple">There's only a dribble of milk in the tank.</span><<farmCatchChance 0.01>>
 	<</if>>
 	<br><br>
-	<<if $farm_breast_milk gte 2>>
+	<<if $farm_breast_milk gte 2000>>
+		<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 1000)>>
 		<span class="gold">You've filled $farm_breast_milk bottles of milk.</span>
 		<<tending_give bottle_of_breast_milk $farm_breast_milk>>
-	<<elseif $farm_breast_milk is 1>>
+	<<elseif $farm_breast_milk gte 1000>>
+		<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 1000)>>
 		<span class="gold">You've filled a bottle with milk.</span>
 		<<tending_give bottle_of_breast_milk $farm_breast_milk>>
 	<<else>>
+		<<set $farm_breast_milk to Math.trunc($farm_breast_milk / 300)>>
+		<<if $farm_breast_milk lte 0>>
+			<<set $farm_breast_milk to 1>>
+		<</if>>
 		You don't have enough to fill a bottle. You mix it with the cattle milk.<<gfarm>>
-		<<set _farm_yield to ($farm_breast_milk * 3)>>
-		<<farm_yield _farm_yield>>
+		<<farm_yield $farm_breast_milk>>
 	<</if>>
 	<br><br>
 
@@ -2631,6 +2630,7 @@ You take one of the suction tubes, and attach it to your <<penis>>.
 <<else>>
 	<<set $farm_penis_milk to ($semen_amount / 2)>>
 <</if>>
+<<set _original_amount to $semen_amount>>
 The machine continues its devilish work, sucking with more intensity. You feel a warmth build.<<gggarousal>><<arousal 10000>>
 <<orgasm>>
 <br>
@@ -2643,36 +2643,43 @@ Your semen is sucked up the tube, where it drips into a glass tank. The machine 
 You remain on your hands and knees as the machine milks you again and again, sucking everything it can take. Just when you fear you're about to pass out, the machine comes to a halt.
 <br><br>
 
-<<set $semen_amount -= $farm_penis_milk>>
-<<set $semen_produced_stat += $farm_penis_milk>>
-
-<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 1000)>>
-<<if $farm_penis_milk lte 0>>
-	<<set $farm_penis_milk to 1>>
+/* Either use the amount of semen produced by those three orgasms, or the original amount calculated for $farm_penis_milk, whichever is larger */
+<<set _orgasm_semen to _original_amount - $semen_amount>>
+<<if _orgasm_semen gt $farm_penis_milk>>
+	<<set $farm_penis_milk to _orgasm_semen>>
+<<else>>
+	<<set $semen_amount -= ($farm_penis_milk - _orgasm_semen)>>
+	<<set $semen_produced_stat += ($farm_penis_milk - _orgasm_semen)>>
 <</if>>
-<<if $farm_penis_milk gte 4>>
+
+<<if $farm_penis_milk gte 3000>>
 	<span class="green">The tank almost overflows with semen.</span><<farmCatchChance 0.4>>
-<<elseif $farm_penis_milk gte 3>>
+<<elseif $farm_penis_milk gte 2000>>
 	<span class="teal">The tanks are over half full with your semen.</span><<farmCatchChance 0.2>>
-<<elseif $farm_penis_milk gte 2>>
+<<elseif $farm_penis_milk gte 1000>>
 	<span class="lblue">There's a large volume of semen in the tank.</span><<farmCatchChance 0.1>>
-<<elseif $farm_penis_milk gte 1>>
+<<elseif $farm_penis_milk gte 300>>
 	<span class="blue">There's a decent volume of semen in the tank.</span><<farmCatchChance 0.05>>
 <<else>>
 	<span class="purple">There's only a dribble of semen in the tank.</span><<farmCatchChance 0.01>>
 <</if>>
 <br><br>
 
-<<if $farm_penis_milk gte 2>>
+<<if $farm_penis_milk gte 2000>>
+	<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 1000)>>
 	<span class="gold">You've filled $farm_penis_milk bottles of semen.</span>
 	<<tending_give bottle_of_semen $farm_penis_milk>>
-<<elseif $farm_penis_milk is 1>>
+<<elseif $farm_penis_milk gte 1000>>
+	<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 1000)>>
 	<span class="gold">You've filled a bottle with semen.</span>
 	<<tending_give bottle_of_semen $farm_penis_milk>>
 <<else>>
+	<<set $farm_penis_milk to Math.trunc($farm_penis_milk / 300)>>
+	<<if $farm_penis_milk lte 0>>
+		<<set $farm_penis_milk to 1>>
+	<</if>>
 	You don't have enough to fill a bottle. You mix it with the cattle milk.<<gfarm>>
-	<<set _farm_yield to ($farm_penis_milk * 3)>>
-	<<farm_yield _farm_yield>>
+	<<farm_yield $farm_penis_milk>>
 <</if>>
 <br><br>
 

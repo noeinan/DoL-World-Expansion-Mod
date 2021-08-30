@@ -640,6 +640,20 @@ Renderer.CanvasModels["main"] = {
 			z: ZIndices.breasts,
 			animation: "idle"
 		},
+		"belly":{
+			srcfn(options) {
+				/*ToDo: Pregnancy, uncomment to properly enable*/
+				/*if(between(options.belly,1,20)){
+					return "img/body/belly/pregnancy_belly_" + options.belly + ".png";
+				}*/
+				return "";
+			},
+			showfn(options) {
+				return !!options.belly;
+			},
+			z: ZIndices.bellyBase,
+			filters: ["body"],
+		},
 		"nipples_parasite": {
 			srcfn(options) {
 				switch (options.nipples_parasite) {
@@ -1293,7 +1307,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.demon_wings_type) && options.demon_wings_state === "idle"
 			},
-			z: ZIndices.tailPenisCover,
+			z: ZIndices.backhair,
 			animation: "idle"
 		},
 		"demon_wings_flaunt": {
@@ -1303,7 +1317,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.demon_wings_type) && options.demon_wings_state === "flaunt"
 			},
-			z: ZIndices.backhair,
+			z: ZIndices.tailPenisCover,
 			animation: "idle"
 		},
 		"demon_wings_cover": {
@@ -1323,7 +1337,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.demon_tail_type) && options.demon_tail_state === "idle"
 			},
-			z: ZIndices.tailPenisCover,
+			z: ZIndices.backhair,
 			animation: "idle"
 		},
 		"demon_tail_flaunt": {
@@ -1333,7 +1347,7 @@ Renderer.CanvasModels["main"] = {
 			showfn(options) {
 				return options.show_tf && tf_enabled(options.demon_tail_type) && options.demon_tail_state === "flaunt"
 			},
-			z: ZIndices.backhair,
+			z: ZIndices.tailPenisCover,
 			animation: "idle"
 		},
 		"demon_tail_cover": {

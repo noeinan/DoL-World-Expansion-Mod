@@ -99,7 +99,7 @@
 	<<else>>
 		A padded cupboard containing your clothes protrudes from the wall.
 		<br>
-		<<wardrobeicon>><<link [[Open|Asylum Wardrobe]]>><</link>>
+		<<link [[Open|Asylum Wardrobe]]>><</link>>
 		<br>
 	<</if>>
 	<br>
@@ -260,7 +260,11 @@ You snuggle under the covers.
 	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
 <</if>>
 <<sleep>><<effects>>
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -282,14 +286,25 @@ You snuggle under the covers.
 	<<set $schoolwake to 0>><<asylumeffects>>
 	<<if $rapewake is 1>>
 		<<set $rapewake to 0>>
-		<<generate1>><<generate2>><<person1>>A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<generate1>><<generate2>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. "Feeling better now?" <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<else>>
+			A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<</if>>		
 		<br><br>
 		<<link [[Next|Asylum Cell Rape]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<elseif $asylumstate is "firsttreatment" and $asylumfirsttreatment isnot 1>>
 		<<set $asylumfirsttreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -297,8 +312,14 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "secondtreatment" and $asylumsecondtreatment isnot 1>>
 		<<set $asylumsecondtreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -306,15 +327,27 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "assessment" and $asylumassessment isnot 1>>
 		<<set $asylumassessment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your assessment," <<he>> says. "Come with me."
 		<br><br>
 		<<endevent>>
 		<<asylumassessment>>
 	<<else>>
-		A loud buzzing wakes you.
+		<<if _wakingEffect is "dryheaving">>
+			A loud buzzing continues in the background.
+			<br><br>
+		<<else>>
+			A loud buzzing wakes you.
+			<br><br>
+		<</if>>
 		<br><br>
 		<<link [[Get out of bed|Asylum Cell]]>><</link>>
 		<br><br>
@@ -911,7 +944,7 @@ You chat with the other patients.
 		"Some of the crazies in here will tell you the staff are all lizard-people bent on world domination."
 		The <<person>> shakes <<his>> head. "What rubbish. They're obviously aliens."
 	<<else>>
-		"Some of the nutcases around here will tell you the staff are all aliens preparing us to join a galactic federation."
+		"Some of the nutcases around here will tell you the staff are all aliens preparing us to join a Galactic federation."
 		The <<person>> rolls <<his>> eyes. "Nonsense: they're clearly lizard-people."
 	<</if>>
 	<br><br>

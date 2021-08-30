@@ -48,6 +48,34 @@
 					this.data.location = true;
 					this.data.location_name = name; /* override for weird inheritance, e.g. drains */
 					return this;
+				},
+				build: function() {
+					if (this.data.descr === undefined) {
+						this.data.descr = this.data.name.replace(/_/, " ").replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
+					}
+					
+					let parent = this.data.name;
+					while (parent !== undefined) {
+						if (this.data.area_name === undefined && setup.locations[parent].area) {
+							this.data.area_name = setup.locations[parent].name;
+						}
+						if (this.data.location_name === undefined && setup.locations[parent].location) {
+							this.data.location_name = setup.locations[parent].name;
+						}
+						if (this.data.bus_name === undefined && setup.locations[parent].bus) {
+							this.data.bus_name = setup.locations[parent].name;
+						}
+						if (this.data.outside === undefined && setup.locations[parent].outside !== undefined) {
+							this.data.outside = setup.locations[parent].outside;
+						}
+						if (this.data.tanning === undefined && setup.locations[parent].tanning !== undefined) {
+							this.data.tanning = setup.locations[parent].tanning;
+						}
+						parent = setup.locations[parent].parent;
+					}
+					if (!this.data.outside) {
+						this.data.tanning = 0;
+					}
 				}
 			 };
 		};
@@ -62,129 +90,102 @@
 			}
 		};
 
-		setup.addlocation("town"                      ).parent("world").area().location().tanning(0.5);
+		setup.addlocation("town"                      ).parent("world").area().location().tanning(0.5).build();
 
-		setup.addlocation( "alley"                    ).parent("town").location();
-		setup.addlocation( "beach"                    ).parent("town").location().tanning(1.1);
-		setup.addlocation( "drain"                    ).parent("town").location().inside();
-		setup.addlocation(  "sewers"                  ).parent("drain").location();
-		setup.addlocation( "underground"              ).parent("town").location().inside(); /* both underground brothel and various caves */
+		setup.addlocation( "alley"                    ).parent("town").location().build();
+		setup.addlocation( "beach"                    ).parent("town").location().tanning(1.1).build();
+		setup.addlocation(  "changingroom"            ).parent("beach").inside().build();
+		setup.addlocation(  "seabeach"                ).parent("beach").bus().tanning(1.0).build();
+		setup.addlocation( "drain"                    ).parent("town").location().inside().build();
+		setup.addlocation(  "sewers"                  ).parent("drain").location().build();
+		setup.addlocation( "underground"              ).parent("town").location().inside().build(); /* both underground brothel and various caves */
 
-		setup.addlocation( "residential"              ).parent("town").bus();
-		setup.addlocation(  "domus"                   ).parent("residential").bus();
-		setup.addlocation(   "home"                   ).parent("domus").location().inside();
-		setup.addlocation(    "backyard"              ).parent("home").outside();
-		setup.addlocation(    "garden"                ).parent("home").outside();
-		setup.addlocation(  "barb"                    ).parent("residential").bus();
-		setup.addlocation(   "dance_studio"           ).parent("barb").location().inside();
-		setup.addlocation(   "police_station"         ).parent("barb").location().inside();
-		setup.addlocation(  "danube"                  ).parent("residential").bus();
-		setup.addlocation(   "spa"                    ).parent("danube").location().inside();
-		setup.addlocation(  "wolf"                    ).parent("residential").bus();
-		setup.addlocation(   "temple"                 ).parent("danube").location().inside();
-		setup.addlocation(  "residential_alley"       ).parent("residential").location("allay");
-		setup.addlocation(  "residential_drain"       ).parent("residential").location("drain").inside();
+		setup.addlocation( "residential"              ).parent("town").bus().build();
+		setup.addlocation(  "domus"                   ).parent("residential").bus().build();
+		setup.addlocation(   "home"                   ).parent("domus").location().inside().build();
+		setup.addlocation(    "backyard"              ).parent("home").outside().build();
+		setup.addlocation(    "garden"                ).parent("home").outside().build();
+		setup.addlocation(  "barb"                    ).parent("residential").bus().build();
+		setup.addlocation(   "dance_studio"           ).parent("barb").location().inside().build();
+		setup.addlocation(   "police_station"         ).parent("barb").location().inside().build();
+		setup.addlocation(  "danube"                  ).parent("residential").bus().build();
+		setup.addlocation(   "spa"                    ).parent("danube").location().inside().build();
+		setup.addlocation(  "wolf"                    ).parent("residential").bus().build();
+		setup.addlocation(   "temple"                 ).parent("danube").location().inside().build();
+		setup.addlocation(  "residential_alley"       ).parent("residential").location("allay").build();
+		setup.addlocation(  "residential_drain"       ).parent("residential").location("drain").inside().build();
 
-		setup.addlocation( "commercial"               ).parent("town").bus().location();
-		setup.addlocation(  "connudatus"              ).parent("town").bus();
-		setup.addlocation(   "strip_club"             ).parent("connudatus").location().inside();
-		setup.addlocation(  "cliff"                   ).parent("town").bus();
-		setup.addlocation(   "cafe"                   ).parent("cliff").location().inside();
-		setup.addlocation(    "cafe_outside"          ).parent("cafe").outside(); /* outside seating */
-		setup.addlocation(  "high"                    ).parent("town").bus();
-		setup.addlocation(   "shopping_centre"        ).parent("high").location().inside();
-		setup.addlocation(    "shopping_centre_roof"  ).parent("shopping_centre").location().inside();
-		setup.addlocation(  "starfish"                ).parent("town").bus();
-		setup.addlocation(   "arcade"                 ).parent("starfish").location().inside();
-		setup.addlocation(  "nightingale"             ).parent("town").bus();
-		setup.addlocation(   "hospital"               ).parent("nightingale").location().inside();
-		setup.addlocation(  "park"                    ).parent("town").location().tanning(0.75);
-		setup.addlocation(   "parkmens"               ).parent("park").inside().bus().descr("Men's Room");
-		setup.addlocation(   "parkwomens"             ).parent("park").inside().bus().descr("Women's Room");
-		setup.addlocation(   "chocolate_stand"        ).parent("park").inside();
-		setup.addlocation(   "parkcafe"               ).parent("park").inside();
-		setup.addlocation(   "parktree"               ).parent("park").inside().descr("Park");
-		setup.addlocation(  "oxford"                  ).parent("town").bus();
-		setup.addlocation(   "school"                 ).parent("oxford").location().inside();
-		setup.addlocation(    "schoolgrounds"         ).parent("school").outside();
-		setup.addlocation(    "pool"                  ).parent("school").location();
-		setup.addlocation(   "museum"                 ).parent("oxford").location().inside();
-		setup.addlocation(  "commercial_alley"        ).parent("commercial").location("allay");
-		setup.addlocation(  "commercial_drain"        ).parent("commercial").location("drain").inside();
+		setup.addlocation( "commercial"               ).parent("town").bus().location().build();
+		setup.addlocation(  "connudatus"              ).parent("town").bus().build();
+		setup.addlocation(   "strip_club"             ).parent("connudatus").location().inside().build();
+		setup.addlocation(  "cliff"                   ).parent("town").bus().build();
+		setup.addlocation(   "cafe"                   ).parent("cliff").location().inside().build();
+		setup.addlocation(    "cafe_outside"          ).parent("cafe").outside().build(); /* outside seating */
+		setup.addlocation(  "high"                    ).parent("town").bus().build();
+		setup.addlocation(   "shopping_centre"        ).parent("high").location().inside().build();
+		setup.addlocation(    "shopping_centre_roof"  ).parent("shopping_centre").location().inside().build();
+		setup.addlocation(  "starfish"                ).parent("town").bus().build();
+		setup.addlocation(   "arcade"                 ).parent("starfish").location().inside().build();
+		setup.addlocation(  "nightingale"             ).parent("town").bus().build();
+		setup.addlocation(   "hospital"               ).parent("nightingale").location().inside().build();
+		setup.addlocation(  "park"                    ).parent("town").location().tanning(0.75).build();
+		setup.addlocation(   "parkmens"               ).parent("park").inside().bus().descr("Men's Room").build();
+		setup.addlocation(   "parkwomens"             ).parent("park").inside().bus().descr("Women's Room").build();
+		setup.addlocation(   "chocolate_stand"        ).parent("park").inside().build();
+		setup.addlocation(   "parkcafe"               ).parent("park").inside().build();
+		setup.addlocation(   "parktree"               ).parent("park").inside().descr("Park").build();
+		setup.addlocation(  "oxford"                  ).parent("town").bus().build();
+		setup.addlocation(   "school"                 ).parent("oxford").location().inside().build();
+		setup.addlocation(    "schoolgrounds"         ).parent("school").outside().build();
+		setup.addlocation(    "pool"                  ).parent("school").location().build();
+		setup.addlocation(   "museum"                 ).parent("oxford").location().inside().build();
+		setup.addlocation(  "commercial_alley"        ).parent("commercial").location("allay").build();
+		setup.addlocation(  "commercial_drain"        ).parent("commercial").location("drain").inside().build();
 
-		setup.addlocation( "industrial"               ).parent("town").bus().location();
-		setup.addlocation(  "mer"                     ).parent("industrial").bus();
-		setup.addlocation(   "docks"                  ).parent("mer").location().outside();
-		setup.addlocation(    "docks_building"        ).parent("docks").inside();
-		setup.addlocation(  "elk"                     ).parent("industrial").bus();
-		setup.addlocation(   "compound"               ).parent("elk").location();
-		setup.addlocation(    "compound_building"     ).parent("compound").location().inside();
-		setup.addlocation(   "landfill"               ).parent("elk").location();
-		setup.addlocation(   "night_monster_lair"     ).parent("elk").location().inside();
-		setup.addlocation(  "harvest"                 ).parent("industrial").bus();
-		setup.addlocation(   "brothel"                ).parent("harvest").location().inside();
-		setup.addlocation(   "pub"                    ).parent("harvest").location().inside();
-		setup.addlocation(  "industrial_alley"        ).parent("industrial").location("allay");
-		setup.addlocation(  "industrial_drain"        ).parent("industrial").location("drain").inside();
+		setup.addlocation( "industrial"               ).parent("town").bus().location().build();
+		setup.addlocation(  "mer"                     ).parent("industrial").bus().build();
+		setup.addlocation(   "docks"                  ).parent("mer").location().outside().build();
+		setup.addlocation(    "docks_building"        ).parent("docks").inside().build();
+		setup.addlocation(  "elk"                     ).parent("industrial").bus().build();
+		setup.addlocation(   "compound"               ).parent("elk").location().build();
+		setup.addlocation(    "compound_building"     ).parent("compound").location().inside().build();
+		setup.addlocation(   "landfill"               ).parent("elk").location().build();
+		setup.addlocation(   "night_monster_lair"     ).parent("elk").location().inside().build();
+		setup.addlocation(  "harvest"                 ).parent("industrial").bus().build();
+		setup.addlocation(   "brothel"                ).parent("harvest").location().inside().build();
+		setup.addlocation(   "pub"                    ).parent("harvest").location().inside().build();
+		setup.addlocation(  "industrial_alley"        ).parent("industrial").location("allay").build();
+		setup.addlocation(  "industrial_drain"        ).parent("industrial").location("drain").inside().build();
 
-		setup.addlocation("forest"                    ).parent("world").area().location().tanning(0.1);
-		setup.addlocation( "wolf_cave"                ).parent("forest").location().inside();
-		setup.addlocation(  "wolf_cave_yard"          ).parent("wolf_cave").outside().tanning(0.5);
-		setup.addlocation( "asylum"                   ).parent("forest").location().inside();
-		setup.addlocation(  "asylum_yard"             ).parent("asylum").outside().tanning(0.5);
-		setup.addlocation( "cabin"                    ).parent("forest").location().inside();
-		setup.addlocation( "lake"                     ).parent("forest").location().tanning(1.0);
-		setup.addlocation(  "lake_ruin"               ).parent("lake").location().inside();
+		setup.addlocation("forest"                    ).parent("world").area().location().tanning(0.1).build();
+		setup.addlocation( "wolf_cave"                ).parent("forest").location().inside().build();
+		setup.addlocation(  "wolf_cave_yard"          ).parent("wolf_cave").outside().tanning(0.5).build();
+		setup.addlocation( "asylum"                   ).parent("forest").location().inside().build();
+		setup.addlocation(  "asylum_yard"             ).parent("asylum").outside().tanning(0.5).build();
+		setup.addlocation( "cabin"                    ).parent("forest").location().inside().build();
+		setup.addlocation( "lake"                     ).parent("forest").location().tanning(1.0).build();
+		setup.addlocation(  "lake_ruin"               ).parent("lake").location().inside().build();
+		setup.addlocation( "farmroad3"                ).parent("forest").bus().tanning(1.0).build();
 
-		setup.addlocation("plains"                    ).parent("world").area();
-		setup.addlocation( "farm"                     ).parent("plains").location(); /* underground farm */
-		setup.addlocation(  "estate"                  ).parent("farm").location();
-		setup.addlocation( "alex_farm"                ).parent("plains").location();
-		setup.addlocation(  "alex_cottage"            ).parent("alex_farm").location().inside();
-		setup.addlocation(  "alex_stables"            ).parent("alex_farm").inside();
-		setup.addlocation( "riding_school"            ).parent("plains").location();
-		setup.addlocation( "moor"                     ).parent("plains").location();
-		setup.addlocation(  "tower"                   ).parent("moor").location();
+		setup.addlocation("plains"                    ).parent("world").area().build();
+		setup.addlocation( "farm"                     ).parent("plains").location().build(); /* underground farm */
+		setup.addlocation(  "estate"                  ).parent("farm").location().build();
+		setup.addlocation( "alex_farm"                ).parent("plains").location().build();
+		setup.addlocation(  "alex_cottage"            ).parent("alex_farm").location().inside().build();
+		setup.addlocation(  "alex_stables"            ).parent("alex_farm").inside().build();
+		setup.addlocation( "riding_school"            ).parent("plains").location().build();
+		setup.addlocation( "moor"                     ).parent("plains").location().build();
+		setup.addlocation(  "tower"                   ).parent("moor").location().build();
 
-		setup.addlocation("sea"                       ).parent("world").area().location();
+		setup.addlocation("sea"                       ).parent("world").area().location().bus().build();
+		setup.addlocation( "searocks"                 ).parent("sea").bus().build();
+		setup.addlocation( "seadocks"                 ).parent("sea").bus().build();
+		setup.addlocation( "seacliffs"                ).parent("sea").bus().build();
+		setup.addlocation( "seapirates"               ).parent("sea").inside().build();
+		setup.addlocation( "coastpath"                ).parent("sea").build();
 
-		setup.addlocation("tentworld"                 ).parent("world").area().location().tanning(0);
+		setup.addlocation("tentworld"                 ).parent("world").area().location().tanning(0).inside().build(); /* TODO: remove inside() when consuming code has been adapted */
 
-	<</script>>
-	<<compute_locations>>
-<</widget>>
-
-<<widget "compute_locations">>
-	<<script>>
-		for (const location in setup.locations) {
-			setup.locations[location].name = location;
-			if (setup.locations[location].descr === undefined) {
-				setup.locations[location].descr = location.replace(/_/, " ").replace(/(^|\s)\S/g, function(t) { return t.toUpperCase() });
-			}
-			
-			let parent = location;
-			while (parent !== undefined) {
-				if (setup.locations[location].area_name === undefined && setup.locations[parent].area) {
-					setup.locations[location].area_name = parent.name;
-				}
-				if (setup.locations[location].location_name === undefined && setup.locations[parent].location) {
-					setup.locations[location].location_name = parent.name;
-				}
-				if (setup.locations[location].bus_name === undefined && setup.locations[parent].bus) {
-					setup.locations[location].bus_name = parent.name;
-				}
-				if (setup.locations[location].outside === undefined && setup.locations[parent].outside !== undefined) {
-					setup.locations[location].outside = parent.outside;
-				}
-				if (setup.locations[location].tanning === undefined && setup.locations[parent].tanning !== undefined) {
-					setup.locations[location].tanning = parent.tanning;
-				}
-				parent = parent.parent;
-			}
-			if (!setup.locations[location].outside) {
-				setup.locations[location].tanning = 0;
-			}
-		}
 	<</script>>
 <</widget>>
 

@@ -1,12 +1,12 @@
 :: Temple
 
-<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
+<<set $outside to 0>><<set $location to "temple">><<sydneySchedule>><<temple_effects>><<effects>>
 You are in the main hall of the temple. Stone walls and pillars tower into darkness. Rows of seats face an altar at the end of the room.
 <<if $daystate isnot "night" and $daystate isnot "dusk">>
 	A figure wearing a white cowl kneels before the altar.
 <</if>>
 <<if $weekday is 1 and $hour is 12 and $massattended isnot 1>>
-	The seats are filled with worshippers, here the for Sunday mass.
+	The seats are filled with worshippers, here for Sunday mass.
 <</if>>
 <<if $exposed gte 1>>
 	You hide behind one of the pillars to conceal your <<nudity>>.
@@ -15,21 +15,58 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 <<if $stress gte $stressmax>>
 	<<passouttemple>>
 <<elseif $temple_chastity_timer lte 0 and $temple_rank isnot undefined and $temple_rank isnot "prospective" and $exposed lte 0>><<set $temple_chastity_timer to 30>>
-	<<npc Jordan>><<person1>>
-	<<if $daystate isnot "night" and $daystate isnot "dusk">>
-		The figure turns. It's Jordan. "My child," <<he>> says. "It is time for your chastity examination.
+	<<if $templePromised is "Sydney">>
+		<<npc Jordan>><<person1>>
+		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+			The figure turns. It's Jordan. "My child," <<he>> says. "It is time for your chastity examination.
+		<<else>>
+			"My child," says a voice from the side. It's Jordan. "It is time for you chastity examination.
+		<</if>>
+		We must make sure you're still pure. You and your partner will be purified if you are not."
+		<br><br>
+		<<if _sydney_location is "temple">>
+			Another figure approaches. It's Sydney, who yawns.
+		<<else>>
+			<<He>> gives you a patient smile. "Your partner is being retrieved as we speak, so don't worry."
+		<</if>>
+		<br><br>
+		<<link [[Allow examination|Sydney Temple Test]]>><</link>>
+		<br>
+		<<link [[Refuse examination|Sydney Temple Test Refuse]]>><<npcincr Sydney love -5>><</link>><<lllove>>
+		<br>
+		<<link [[Say you are impure|Sydney Temple Test Admission]]>><<npcincr Sydney love -10>><</link>><<llllove>>
+		<br>
+	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].virginity.temple isnot true and $templePromised isnot "Sydney">>
+		<<npc Jordan>><<person1>>
+		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+			The figure turns. It's Jordan, holding Sydney by the arm. "My child," <<he>> says. "<span class="red">Sydney has failed <<nnpc_his "Sydney">> chastity examination.</span>
+		<<else>>
+			"My child," says a voice from the side. It's Jordan, holding Sydney by the arm. "<span class="red">Sydney has failed <<nnpc_his "Sydney">> chastity examination.</span>
+		<</if>>	
+		We know you're the one responsible, and you must be purified alongside <<nnpc_him "Sydney">>. I'm sorry." <<He>> produces a small bell from <<his>> robes, and rings.
+		<br><br>
+		Jordan releases Sydney, who quickly clings to you.
+		<br><br>
+		<<endevent>>
+		<<link [[Next|Sydney Temple Punish Intro]]>><</link>>
+		<br>		
 	<<else>>
-		"My child," says a voice from the side. It's Jordan. "It is time for you chastity examination.
-	<</if>>
-	We must make sure you're still pure. You will be purified if you are not."
-	<br><br>
+		<<npc Jordan>><<person1>>
+		<<if $daystate isnot "night" and $daystate isnot "dusk">>
+			The figure turns. It's Jordan. "My child," <<he>> says. "It is time for your chastity examination.
+		<<else>>
+			"My child," says a voice from the side. It's Jordan. "It is time for you chastity examination.
+		<</if>>
+		We must make sure you're still pure. You will be purified if you are not."
+		<br><br>
 
-	<<link [[Allow examination|Temple Test]]>><<set $phase to 2>><</link>>
-	<br>
-	<<link [[Refuse examination|Temple Test Refuse]]>><</link>>
-	<br>
-	<<link [[Say you are impure|Temple Test Admission]]>><</link>>
-	<br>
+		<<link [[Allow examination|Temple Test]]>><<set $phase to 2>><</link>>
+		<br>
+		<<link [[Refuse examination|Temple Test Refuse]]>><</link>>
+		<br>
+		<<link [[Say you are impure|Temple Test Admission]]>><</link>>
+		<br>
+	<</if>>
 
 <<elseif $temple_event is 1 and $daystate isnot "night" and $exposed lte 0>><<set $temple_event to 0>>
 	<<eventstemple>>
@@ -64,6 +101,36 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<if $exhibitionism gte 55 and $angel lte 0>>
 		<<link [[Masturbate (0:20)|Temple Masturbation]]>><<pass 20>><<set $masturbationstart to 1>><</link>><<llpurity>>
 		<br>
+	<</if>>
+
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and $exposed lte 0>>
+		<<if _sydney_location is "late" and $schoolday is 1>>
+			<<if $sydneyScience is 1 and !$sydneySeen.includes("science")>>
+			/* Do nothing. Prevents Sydney from being interactable if their science intro is ready. */
+			<<else>>
+				<br>
+				You see a figure asleep at one of the pews. Upon closer examination, you realise it's Sydney. <<if $hour is 9>><<nnpc_Hes "Sydney">> late for school.<<else>><<nnpc_He "Sydney">> might be late for school if someone doesn't wake <<nnpc_him "Sydney">>.<</if>>
+				<br>
+				<<link [["Wake " + $NPCName[$NPCNameList.indexOf("Sydney")].pronouns.him|Temple Sydney Wakeup]]>><<npcincr Sydney love 1>><</link>><<glove>>
+				<br>
+			<</if>>
+		<<elseif _sydney_location is "temple">>
+			<br>
+			<<switch $sydney_templeWork>>
+				<<case "pray">>
+					You see Sydney sitting on a pew, head bowed in prayer.
+					<br>
+					<<link [[Approach Sydney|Temple Sydney]]>><<set $phase to 1>><</link>>
+				<<case "garden">>
+					<span class="teal">You see Sydney carrying garden supplies in and out of the temple.</span>
+				<<case "quarters">>
+					<span class="teal">You see Sydney carrying laundry and cleaning supplies in and out of the quarters.</span>
+				<<case "mass">>
+					<span class="teal">Sydney is likely preparing for mass.</span>
+				<<case "sleep">>
+					<span class="teal">Sydney is staying overnight.</span>
+			<</switch>>
+		<</if>>
 	<</if>>
 
 	<<if $temple_rank isnot undefined and $temple_rank isnot "prospective">>
@@ -113,7 +180,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<set $phase to 0>>
 	Your thoughts turn to your <<penis>>, and the mocking way people regard it. The torment returns. You pray for a bigger penis.
 	<br><br>
-
+	An hour passes, and your penis is no bigger.
 	<br><br>
 	<<if $acceptance_penis_tiny gte 1000>>
 		Realisation dawns as you lean back. Your <<penis>> is beautiful. Why should you care what other people say about it? You've gained the <span class="green">Acceptance: Tiny Penis</span> trait.
@@ -175,7 +242,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<passouttemple>>
 <<elseif $danger gte (9900 - $allure) and $eventskip isnot 1>>
 	<<if $rng gte 81>>
-		<<generate1>><<person1>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
+		<<set _npcChastity to 1>><<generate1>><<person1>> A <<monk>> carrying a donation plate walks by. <<He>> smiles at you.
 		<br><br>
 
 		<<link [[Look away|Temple Plate Look]]>><</link>>
@@ -215,7 +282,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 		<<prayoptions>>
 
 	<<elseif $rng gte 41>>
-		<<generatey1>><<person1>>A young <<monk>> walks by, swinging a sweet-smelling thurible in <<his>> hands.
+		<<set _npcChastity to 1>><<generatey1>><<person1>>A young <<monk>> walks by, swinging a sweet-smelling thurible in <<his>> hands.
 		<br><br>
 
 		<<if $worn.upper.type.includes("naked") and $worn.under_upper.type.includes("naked")>>
@@ -242,7 +309,7 @@ You are in the main hall of the temple. Stone walls and pillars tower into darkn
 	<<prayoptions>>
 
 	<<else>>
-		<<generate1>><<person1>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
+		<<set _npcChastity to 1>><<generate1>><<person1>>A <<person>> dressed as a <<monk>> sits close beside you. Very close. <<He>> rests a hand on your thigh. "Don't cause a fuss," <<he>> whispers. "Or I'll say you attacked me. Who will they believe?"
 		<br><br>
 		<<if $angel gte 6>>
 		<<link [[Guilt|Temple Guilt]]>><</link>><<angel>>
@@ -300,17 +367,35 @@ You leave the <<person>> to their duties.
 
 <<if $phase is 0>>
 	You place a pound coin on the plate. The <<monk>> gives you a small <<if $pronoun is "m">>bow<<else>>curtsy<</if>>.
+	<<if $sydneyPresent>>
+		Sydney gives you an approving nod.
+	<</if>>
 	<br><br>
 
 	<<endevent>>
-	<<prayoptions>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
 
 <<elseif $phase is 1>>
 	You place a five pound note on the plate. "We rely on such kindnesses," <<he>> says. "Thank you."
+	<<if $sydneyPresent>>
+		Sydney gives you a gentle smile.
+	<</if>>
 	<br><br>
 
 	<<endevent>>
-	<<prayoptions>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
 
 <<elseif !$soup_kitchen_known>>
 	You place £25 on the plate. The <<monk>> beams at you. "Thank you," <<he>> says. "This will go a long way toward maintaining the building." <<He>> pauses before continuing. "Perhaps you would like to assist us further? We run a soup kitchen in the evening, between <span class="gold"><<ampm 18 00>> and <<ampm 21 00>></span>. We could use another pair of hands."
@@ -322,16 +407,35 @@ You leave the <<person>> to their duties.
 	<span class="gold">You've discovered the soup kitchen on Wolf Street.</span>
 	<br><br>
 	<<set $soup_kitchen_known to 1>>
-
+	<<if $sydneyPresent>>
+		Sydney puts a hand on your shoulder and nods. "That was very generous of you."
+		<br><br>
+	<</if>>
 	<<endevent>>
-	<<prayoptions>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
 
 <<else>>
 	You place £25 on the plate. The <<monk>> beams at you. "Thank you," <<he>> says. "This will go a long way toward maintaining the building."
 	<br><br>
 
+	<<if $sydneyPresent>>
+		Sydney puts a hand on your shoulder and nods. "That was very generous of you."
+		<br><br>
+	<</if>>
 	<<endevent>>
-	<<prayoptions>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
 <</if>>
 
 :: Temple Plate Steal
@@ -343,7 +447,7 @@ You place your hand on the collection plate, as if placing something. Instead, y
 <<skulduggerycheck>>
 <<if $skulduggerysuccess is 1>>
 
-<span class="green">The <<monk>> doesn't notice.</span> "Thank you," <<he>> says. <<He>> gives you a small <<if $pronoun is "m">>bow<<else>>curtsy<</if>>.
+<span class="green"><<if $sydneyPresent>>Both Sydney and the <<monk>> fail to notice.<<else>>The <<monk>> doesn't notice.<</if>></span> "Thank you," <<he>> says. <<He>> gives you a small <<if $pronoun is "m">>bow<<else>>curtsy<</if>>.
 <br><br>
 
 	<<if $skulduggery lte ($skulduggerydifficulty + 100)>>
@@ -353,13 +457,19 @@ You place your hand on the collection plate, as if placing something. Instead, y
 	<br><br>
 	<</if>>
 
-<<endevent>>
-<<prayoptions>>
-<br>
+	<<endevent>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
+	<br>
 
 <<else>>
 
-The <<monk>> grabs your wrist and tuts. "For shame."
+The <<monk>> grabs your wrist and tuts. "For shame." <<if $sydneyPresent>>Sydney gives you a horrified glare. <<npcincr Sydney love -5>><<lllove>><</if>>
 <br><br>
 
 	<<if $submissive gte 1150>>
@@ -380,9 +490,15 @@ The <<monk>> grabs your wrist and tuts. "For shame."
 	<br><br>
 	<</if>>
 
-<<endevent>>
-<<prayoptions>>
-<br>
+	<<endevent>>
+	<<if $sydneyPresent>>
+		<<unset $sydneyPresent>><<set _sydneyPray to true>>
+		<<npc "Sydney">><<person1>>
+		<<sydneyOptions>>
+	<<else>>
+		<<prayoptions>>
+	<</if>>
+	<br>
 
 <</if>>
 
@@ -390,10 +506,19 @@ The <<monk>> grabs your wrist and tuts. "For shame."
 <<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
 
 You look away from the <<monk>>, and <<he>> continues down the aisle.
+<<if $sydneyPresent>>
+	Sydney shakes <<nnpc_his "Sydney">> head.
+<</if>>
 <br><br>
 
 <<endevent>>
-<<prayoptions>>
+<<if $sydneyPresent>>
+	<<unset $sydneyPresent>><<set _sydneyPray to true>>
+	<<npc "Sydney">><<person1>>
+	<<sydneyOptions>>
+<<else>>
+	<<prayoptions>>
+<</if>>
 
 :: Temple Rape
 
@@ -460,52 +585,72 @@ You look away from the <<monk>>, and <<he>> continues down the aisle.
 
 :: Temple Mass
 
-<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
+<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>><<sydneySchedule>>
 <<npc Jordan>><<person1>>You take a seat at the end of a pew as Jordan reads holy scripture. <<His>> melodic voice calms you.
-<br><br>
-You are called to the front for communion. You kneel in front of Jordan as the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> watch. <<He>> pushes a small piece of bread into your mouth, and holds a cup in front of you. You take a sip of the bitter fluid and make way for the next person.
-<br><br>
-Jordan finishes with a prayer.
-<br><br>
+<<if $sydneySeen is undefined or !$sydneySeen.includes("mass")>>
+	<<sydneyMass>>
+<<else>>
+	<br><br>
+	You are called to the front for communion. You kneel in front of Jordan as the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> watch. <<He>> pushes a small piece of bread into your mouth, and holds a cup in front of you. You take a sip of the bitter fluid and make way for the next person.
+	<<sydneyMass>>
+	<br><br>
+	Jordan finishes with a prayer.
+	<br><br>
+<</if>>
 <<endevent>>
 <<link [[Next|Temple]]>><</link>>
 <br>
 
 :: Temple Mass Angel
 
-<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
+<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>><<sydneySchedule>>
 <<npc Jordan>><<person1>>You take a seat at the end of a pew as Jordan reads holy scripture. <<His>> melodic voice calms you. You feel serene.
-<br><br>
-You are called to the front for communion. You kneel in front of Jordan as the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> watch. <<He>> pushes a small piece of bread into your mouth, and holds a cup in front of you. You take a sip of the sweet fluid and make way for the next person.
-<br><br>
-Jordan finishes with a prayer.
-<br><br>
+<<if $sydneySeen is undefined or !$sydneySeen.includes("mass")>>
+	<<sydneyMass>>
+<<else>>
+	<br><br>
+	You are called to the front for communion. You kneel in front of Jordan as the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> watch. <<He>> pushes a small piece of bread into your mouth, and holds a cup in front of you. You take a sip of the sweet fluid and make way for the next person.
+	<<sydneyMass>>
+	<br><br>
+	Jordan finishes with a prayer.
+	<br><br>
+<</if>>
 <<endevent>>
 <<link [[Next|Temple]]>><</link>>
 <br>
 
 :: Temple Mass Fallen Angel
 
-<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
+<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>><<sydneySchedule>>
 <<npc Jordan>><<person1>>You take a seat at the end of a pew as Jordan reads holy scripture. <<His>> words are violent and accusing.
-<br><br>
-You are called to the front for communion. You kneel in front of Jordan, but the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> refuse to look at you. The bread slips from Jordan's fingers before reaching your mouth. The wine evaporates before touching your lips. Despite that, you feel vindicated by your effort.
-<br><br>
-Jordan finishes with a prayer.
-<br><br>
+<<if $sydneySeen is undefined or !$sydneySeen.includes("mass")>>
+	<<sydneyMass>>
+<<else>>
+	<br><br>
+	You are called to the front for communion. You kneel in front of Jordan, but the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> refuse to look at you. The bread slips from Jordan's fingers before reaching your mouth. The wine evaporates before touching your lips. Despite that, you feel vindicated by your effort.
+	<<sydneyMass>>
+	<br><br>
+	Jordan finishes with a prayer.
+	<br><br>
+<</if>>
 <<endevent>>
 <<link [[Next|Temple]]>><</link>>
 <br>
 
 :: Temple Mass Demon
 
-<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>>
+<<set $outside to 0>><<set $location to "temple">><<temple_effects>><<effects>><<sydneySchedule>>
 <<npc Jordan>><<person1>>You take a seat at the end of a pew as Jordan reads holy scripture. <<His>> words are violent and accusing.
-<br><br>
-You are called to the front for communion. You kneel in front of Jordan, but the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> refuse to look at you. The bread tastes like ash. The wine like blood.
-<br><br>
-Jordan finishes with a prayer.
-<br><br>
+<<if $sydneySeen is undefined or !$sydneySeen.includes("mass")>>
+	<<sydneyMass>>
+<<else>>
+	<br><br>
+	You are called to the front for communion. You kneel in front of Jordan, but the other <<if $pronoun is "m">>monks<<else>>nuns<</if>> refuse to look at you. The bread tastes like ash. The wine like blood.
+	<<sydneyMass>>
+	<br><br>
+	Jordan finishes with a prayer.
+	<br><br>
+<</if>>
 <<endevent>>
 <<link [[Next|Temple]]>><</link>>
 <br>
@@ -1043,7 +1188,7 @@ You fight through the shame and speak.
 
 :: Temple Buy Forgiveness
 
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+<<location "forest">><<effects>>
 <<if $pronoun is "m">>
 	<<generatem2>>
 	<<generatem3>>
@@ -1073,7 +1218,7 @@ The group stops once more, but this time someone rests their hand on your arm. Y
 
 :: Temple Buy Forgiveness 2
 
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+<<location "forest">><<effects>>
 <<strip>>
 The <<monks>> grasp your clothing and try to remove it. Between your blindness and the sheer number of hands pulling and tugging there's nothing you can do to stop them. They soon have you stripped and bare. <<covered>><<gtrauma>>
 <br><br>
@@ -1114,7 +1259,7 @@ You feel a warm breeze on your <<genitals 1>>, then something warm and wet touch
 
 :: Temple Buy Forgiveness 3
 
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+<<location "forest">><<effects>>
 "That's it," the older <<monk>> says.
 <<if $penisexist is 1>>
 	"Just keep working it with your tongue. Be careful not to take it into your mouth."
@@ -1176,7 +1321,7 @@ Jordan gets back to work, not even giving your spasms a chance to subside. "This
 
 :: Temple Buy Forgiveness 4
 
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+<<location "forest">><<effects>>
 The final two <<monks>> don't seem confident, but they comply and start licking your arms. "Not like that. Lick <<pher>> face."
 <br><br>
 And so you lie there, naked and assailed by tongues on your <<genitals 1>>, <<breasts>>, and face, shaking against the bonds holding you in place. One of the <<monks>> licking your face becomes more confident and starts licking your lips. You feel your mouth open of its own accord, and <<he>> invades you with <<his>> tongue, pressing your lips together in a kiss. <<takeKissVirginity `($pronoun is "m"?"monk":"nun")`>>
@@ -1270,12 +1415,12 @@ You describe the problems you've had, and how they started when a slime entered 
 <br>
 
 :: Temple Join Fire
-<<effects>>
+<<effects>><<sydneySchedule>>
 <<generate2>><<person2>>
 You follow Jordan into the garden. You follow past beds of flowers, and between hedge rows, until you reach a wide and barren space. A jovial <<monk>> agitates a coal fire. Jordan whispers in <<his>> ear, and the <<monk>> smiles.
 <br><br>
 
-The <<monk>> produces a bell from <<his>> habit. <<He>> rings it twice. Three initiates arrive from different directions. They discard their gardening gloves and grab shovels, before piling more coal onto the fire.
+The <<monk>> produces a bell from <<his>> habit. <<He>> rings it twice. Three initiates arrive from different directions.<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">> Sydney is one of them, and <<nnpc_he "Sydney">> smiles and waves at you.<</if>> They discard their gardening gloves and grab shovels, before piling more coal onto the fire.
 <br><br>
 
 Jordan watches, impassive, as the initiates work. The <<monk>> pokes a pair of bellows into the fire, and pumps. The flames spread.
@@ -1334,12 +1479,21 @@ Smoke rises from the coals. You take a deep breath, and step on them. It's a lit
 <br>
 
 :: Temple Firewalk Jump
-<<effects>>
+<<effects>><<sydneySchedule>>
 
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
+	Sydney runs to your side to support you. <<nnpc_He "Sydney">> runs right across the hot coals, entirely unaffected.
+	<br><br>
+<</if>>
 The cool earth feels wonderful on your feet. You examine your soles. They're covered in soot, but don't look burnt at all.
 <br><br>
 "The flames don't hurt you," Jordan says. "They merely burn away impurity. You have failed the trial, but may try again next week."
 <br><br>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
+	<<if $sydneyromance is 1>>Sydney hugs you.<<else>>Sydney puts a hand on your shoulder.<</if>>
+	"You'll get it next time, I'm sure." <<stress -3>><<lstress>>
+	<br><br>
+<</if>>
 The <<person2>><<monk>> smothers the coals with a bucket of sand as Jordan leads you back to the temple's main hall.
 <br><br>
 <<clotheson>>
@@ -1471,6 +1625,10 @@ Your feet sink into the cool earth. The <<person2>><<monk>> looks impressed. Stu
 	<br><br>
 	Jordan returns to the temple while the <<person2>><<monk>> smothers the coal with a bucket of sand.
 	<br><br>
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
+		Sydney hugs you. "I knew you could do it!" <<stress -6>><<lstress>><<npcincr Sydney love 1>><<glove>>
+		<br><br>
+	<</if>>
 <</if>>
 <<clotheson>>
 <<if $phase is 0>>
@@ -1487,7 +1645,7 @@ Your feet sink into the cool earth. The <<person2>><<monk>> looks impressed. Stu
 
 :: Temple Firewalk Success
 
-<<effects>>
+<<effects>><<sydneySchedule>>
 
 <<inittemple>>
 You follow Jordan back inside as the <<person2>><<monk>> smothers the coal with a bucket of sand.
@@ -1501,8 +1659,13 @@ You follow Jordan back inside as the <<person2>><<monk>> smothers the coal with 
 <br><br>
 We have some other rules. No stealing. No violence. No sex, <span class="pink">everyone has their chastity checked monthly.</span> No refusing your elders. If someone behaves in an improper manner towards you, tolerate it until you can inform me. Dealing with that is one of my responsibilities."
 <br><br>
-"I'll let the others know you've joined us," <<he>> continues, <<his>> stern countenance giving way to a smile. "I'm pleased to have you."
+"I'll let the others know you've joined us," <<he>> continues, <<his>> stern countenance giving way to a smile. "I'm pleased to have you.<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple" and !$sydneySeen.includes("initiate")>> It looks like I'm not the only one." <<He>> smiles at something behind you.<<else>>"<</if>>
 <br><br>
+<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple" and !$sydneySeen.includes("initiate")>>
+	<<set $sydneySeen.pushUnique("initiate")>>
+	Someone hugs you from behind. It's Sydney. "Congratulations... initiate!" <<Hes>> overflowing with joy. <<npcincr Sydney love 3>><<gglove>>
+	<br><br>
+<</if>>
 <<clotheson>>
 <<endevent>>
 <<link [[Next|Temple]]>><</link>>
@@ -1535,7 +1698,7 @@ We have some other rules. No stealing. No violence. No sex, <span class="pink">e
 :: Temple Arcade Intro
 <<effects>>
 
-<<generate1>><<person1>><<generate2>><<generate3>> A <<monk>> emerges from a door marked with a red cross. <<Hes>> flanked by two others. One of them assures Jordan that you'll be treated gently.
+<<set _npcChastity to 1>><<generate1>><<person1>><<generate2>><<generate3>> A <<monk>> emerges from a door marked with a red cross. <<Hes>> flanked by two others. One of them assures Jordan that you'll be treated gently.
 <br><br>
 Head bowed, Jordan leaves the room as a <<monk>> pulls a gag from <<his>> habit. "To make amends you must perform a service. Stay still."
 <br><br>
@@ -1816,7 +1979,7 @@ You're led through the tunnel and back to the temple. The others are silent the 
 <br>
 
 :: Temple Masturbation
-<<effects>>
+<<effects>><<sydneySchedule>>
 
 <<if $masturbationstart is 1>>
 <<set $masturbationstart to 0>>
@@ -1834,8 +1997,13 @@ You search for a secluded spot. It's not easy, as the temple is so busy. You wat
 <<masturbationactions>>
 
 <<if $timer lte 1>>
-	<<link [[Continue|Temple Masturbation Finish]]>><</link>><<nexttext>>
-	<br>
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1 and _sydney_location is "temple">>
+		<<link [[Continue|Temple Masturbation Sydney]]>><</link>><<nexttext>>
+		<br>		
+	<<else>>
+		<<link [[Continue|Temple Masturbation Finish]]>><</link>><<nexttext>>
+		<br>
+	<</if>>
 <<else>>
 	<<link [[Continue|Temple Masturbation]]>><</link>><<nexttext>>
 <br>
