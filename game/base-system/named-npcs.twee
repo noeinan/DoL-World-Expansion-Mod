@@ -455,30 +455,21 @@ Zohar
 <<widget "npc">>
 /* Prepare the call for multiple Named NPCs at the same time.
 * We do this by changing all $NPCList[0] calls to $NPCList[x] in which x can be any temporary variable. In this case, we'll use _npcno.
-* We also give the option to set the Named NPC in any available row if so desired, by calling a second argument $args[1]. In case no $args[1] is passed, the code will add the Named NPC into the next available row.
+* We also give the option to set the Named NPC in any available row if so desired, by calling a second argument $args[1]. In case no $args[1] is passed, it will default to the first row.
 * Remember: available rows go from 0 to 5 ($NPCList[0] to $NPCList[5]). No more than that.
 */
 <<if $args[1]>>
-	<<set _npcno to $args[1]>>
-	<!-- In case a developer/writer tries to define a named NPC in a row that already has a defined NPC, we warn them and <<endevent>> so nothing breaks -->
-	<<if $NPCList[_npcno].gender isnot 0 and $NPCList[_npcno].description>> <!-- These comparitions could be changed to a proper variable, for example $NPCList[x].active which would store if NPC x is active or not. To make things simple, we compare to .gender and .description since those two are always set to something other than 0 if the NPC in question is in fact active -->
-		<span class="red"> Error: an NPC is already defined in row _npcno. Ending event now.
-		<<set $endeventerror to $lastgenerated>>
-		<<endevent phaseless>>
-	<</if>>
+	<<set _npcno to $args[1] - 1>>
 <<else>>
-	<<for _controller to 0; _controller lt $NPCList.length; _controller++>>
-		<<if _controller gte 6>>
-			<!-- Since 6 is past our limit, we want to alert the user something went wrong. For simplicity, we'll set _npcno to 0 and overwrite $NPCList[0] -->
-			<span class="red"> Error: There are already 6 active NPCs. Clearing NPC 0 to make space for Named NPC.</span>
-			<<set _npcno to 0>>
-			<<break>> <!-- Always remember to break the for loop when the condition is met -->
-		<</if>>
-		<<if $NPCList[_controller].gender is 0 and $NPCList[_controller].description is 0>> <!-- These comparitions could be changed to a proper variable, for example $NPCList[x].active which would store if NPC x is active or not. To make things simple, we compare to .gender and .description since those two are always set to something other than 0 if the NPC in question is in fact active -->
-			<<set _npcno to clone(_controller)>>
-			<<break>> <!-- Always remember to break the for loop when the condition is met -->
-		<</if>>
-	<</for>>
+	<<set _npcno to 0>>
+<</if>>
+<<if _npcno is 0 and $enemyno gte 1>>
+	<<set $endeventerror to $lastgenerated>>
+	<<endevent phaseless>>
+<<else if $NPCList[_npcno].gender isnot 0 and $NPCList[_npcno].description>>
+	<span class="red"> Error: an NPC is already defined in row _npcno. Ending event now.
+	<<set $endeventerror to $lastgenerated>>
+	<<endevent phaseless>>
 <</if>>
 
 <<set $lastgenerated to $passage>>
