@@ -69,12 +69,12 @@ window.combatListColor = function (name, value, type) {
 			case "steal": case "penwhack": case "freeface": case "leftcovervagina": case "leftcoverpenis": case "leftcoveranus":
 			case "rightcovervagina": case "rightcoverpenis": case "rightcoveranus":
 			case "leftunderpull": case "leftskirtpull": case "leftlowerpull": case "leftupperpull":
-			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull":
+			case "rightunderpull": case "rightskirtpull": case "rightlowerpull": case "rightupperpull": case "rightUndressOther": case "leftUndressOther":
 			case "stopchoke":
 			case "clench":
 			case "shacklewhack":
 			/*feetaction*/
-			case "run": case "hide":
+			case "run": case "hide": case "confront":
 			/*mouthaction*/
 			case "pullaway": case "pullawayvagina": case "finish": case "novaginal": case "nopenile": case "noanal": case "scream":
 			case "mock": case "breastclosed": case "breastpull": case "pullawaykiss": case "noupper":
@@ -223,6 +223,16 @@ function hairdressersReset() {
 
 DefineMacroS("hairdressersReset", hairdressersReset);
 
+function hairdressersResetAlt() {
+	jQuery(document).on('click', '.macro-cycle', function (e) {
+		new Wikifier(null, '<<replace #hairDressersSydney>><<hairDressersOptionsSydney>><</replace>>');
+		new Wikifier(null, '<<replace #currentCost>>To pay: £<<print _currentCost / 100>><</replace>>');
+	});
+	return "";
+}
+
+DefineMacroS("hairdressersResetAlt", hairdressersResetAlt);
+
 function browsDyeReset() {
 	jQuery(document).on('change', '.macro-listbox', function (e) {
 		new Wikifier(null, '<<replace #browsColourPreview>><<browsColourPreview>><</replace>>');
@@ -303,10 +313,45 @@ function updateAskColour() {
 
 DefineMacroS("updateAskColour", updateAskColour);
 
+
+window.generateBabyName = function(name, gender, usedNames) {
+	var result = "";
+	if(name != undefined && name != null && name != ""){
+		var result = name.replace(/[^a-zA-Z ]+/g,"");
+		return result.substring(0,30);
+	}else{
+		var names = [];
+		switch(gender){
+			case "m":
+				names = ['Addison','Algernon','Allan','Alpha','Anton','Axel','Bazza','Benton','Bernard','Brand','Brett','Cale','Calvin','Carol','Chuck','Chucky','Clay','Cornelius','Crofton','Darden','Dax','Den','Deven','Digby','Don','Douglas','Driscoll','Duane','Duke','Edmund','Elsdon','Freeman','Gabby','Garland','George','Godfrey','Graeme','Grier','Hammond','Harlan','Hendrix','Herman','Hewie','Hugh','Indiana','Ingram','Jackie','Jasper','Jaxon','Jaycob','Jere','Kamden','Kelcey','Kendall','Kevin','Kian','Kieran','Kirby','Lanny','Lawson','Laz','Leland','Levi','Lindon','Linton','Lionel','Lonny','Lucas','Manley','Maverick','Merlyn','Michael','Monty','Murphy','Nate','Ned','Nowell','Odell','Ollie','Osbert','Otto','Paget','Pip','Quintin','Raymund','Ricky','Robert','Ross','Rudolph','Sammy','Scotty','Stacey','Thad','Theodore','Tommy','Trey','Tyson','Val','Vernon','Willis','Wilmer','Winton','Wisdom'];
+				break;
+			case "f":
+				names = ['Adelyn','Alene','Alexa','Aliah','Alyson','Angelica','Annalise','Annora','Azaria','Bessie','Betsy','Bettie','Biddy','Brianne','Camellia','Camille','Camryn','Caroline','Chastity','Chelsea','Chelsey','Cindy','Clematis','Darla','Deb','Debby','Dortha','Eleanora','Eliana','Elsabeth','Elyse','Emerson','Emmeline','Erica','Ettie','Eustacia','Evelyn','Gabrielle','Georgiana','Harper','Harrietta','Haylie','Haze','Hunter','Hyacinth','Indiana','Indie','Jacquetta','Janie','Jannine','Jonquil','Kaelyn','Kam','Khloe','Kolleen','Korrine','Kourtney','Krystine','Lavena','Leeann','Lela','Lesleigh','Lindsie','Lorena','Lucile','Luvinia','Lyn','Lyssa','Madeleine','Marian','Maudie','Maureen','Maxine','Melody','Milani','Misti','Nat','Noelle','Ottoline','Paige','Pauline','Payton','Pearl','Perlie','Petronel','Phebe','Posie','Praise','Rexana','Serena','Sharalyn','Sharla','Shauna','Sky','Sybella','Tracy','Tresha','Trudi','Wallis','Wilda','Wren','Yvette'];
+				break;
+		}
+		names.pushUnique('Aaren','Addison','Alex','Alpha','Andie','Arden','Ariel','Artie','Ashton','Aston','Aubrey','Beau','Bernie','Bertie','Beverly','Bobbie','Brooklyn','Caelan','Cameron','Carol','Cary','Casey','Channing','Charley','Cherokee','Cheyenne','Coby','Codie','Collyn','Cyan','Dale','Dallas','Dana','Darby','Dee','Derby','Devan','Devin','Emmerson','Emory','Finley','Flannery','Florence','Gabby','Garnet','Garnett','Gray','Hadyn','Harlow','Hollis','Jackie','Jade','Jae','Jaiden','Johnnie','Joyce','Justice','Kam','Kelcey','Kelsey','Leslie','Lindsey','Lorin','Lyric','Maitland','Marley','McKinley','Merlyn','Murphy','Nicky','Oakley','Odell','Pacey','Paget','Peyton','Presley','Rain','Raleigh','Reagan','Regan','Reilly','Remington','Robbie','Rory','Royale','Sage','Sam','Schuyler','Selby','Shae','Shaye','Shelly','Skylar','Sloan','Stacey','Stacy','Tayler','Tommie','Tracey','Tristen','Tristin','Val');
+		names.delete(usedNames);
+		result = names[random(0,names.length - 1)];
+		return result;
+	}
+}
+
+DefineMacroS("generateBabyName", generateBabyName);
+
 window.bulkProduceValue = function(plant, quantity = 250) {
 	if(plant !== undefined){
 		let baseCost = plant.plant_cost * quantity / 2;
 		let seasonBoost = !plant.season.includes(V.season) ? 1.1 : 1;
 		return Math.floor(baseCost * seasonBoost);
 	}
+}
+
+
+window.pregnancyBellyVisible = function(){
+	let size = State.variables.sexStats.vagina.pregnancy.bellySize;
+	if(size <= 7) return false;
+	if(size <= 11 && State.variables.worn.upper.name !== "naked" && State.variables.worn.upper.type.includes("bellyShow")) return false;
+	if(size <= 17 && State.variables.worn.upper.type.includes("bellyHide")) return false;
+
+	return true;
 }

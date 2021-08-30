@@ -295,6 +295,53 @@ There's <<printmoney $tip>>.
 
 <</if>>
 
+:: Toy Shop Register
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+
+A standard cash register sits on a counter. It's locked tight.
+<br><br>
+
+	<<if $skulduggery gte $lock>>
+	<span class="green">The lock looks easy to pick.</span>
+	<br><br>
+
+	<<link [[Pick it (0:10)|Toy Shop Register Sneak]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+	<br>
+	<<else>>
+	<span class="red">The lock looks beyond your ability to pick.</span><<skulduggeryrequired>>
+	<br><br>
+	<</if>>
+
+<<link [[Leave|Toy Shop]]>><</link>>
+<br>
+
+:: Toy Shop Register Sneak
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+
+<<set $toyshoptheft to 1>>
+
+<<set $tip to random(3000, 9000)>>
+<<set $tip to Math.round($tip)>>
+You deftly open the cash register and count out the money inside.
+There's <<printmoney $tip>>.
+<br><br>
+
+<<if $skulduggery lt 300>>
+	<<skulduggeryskilluse>>
+<<else>>
+	<span class="blue">There's nothing more you can learn from locks this simple.</span>
+<</if>>
+<br><br>
+
+<<if $rng gte 86>>
+	<<skulshopevents>>
+<<else>>
+	<<link [[Take it|Toy Shop]]>><<set $money += $tip>><<set $crime += ($tip / 100)>><</link>><<crime>>
+	<br>
+	<<link [[Leave it|Toy Shop]]>><</link>>
+	<br>
+<</if>>
+
 :: Tattoo Parlour Register
 
 <<set $outside to 0>><<effects>><<set $lock to 200>>
@@ -570,3 +617,53 @@ There's <<printmoney $tip>>.
 	<<link [[Leave it|Spa]]>><</link>>
 	<br>
 <</if>>
+
+:: School Library Register
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+A standard cash register sits there. It's locked tight.
+<br><br>
+<<if $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
+	<<if $skulduggery gte $lock>>
+		<span class="green">The lock looks easy to pick,</span> but the library is too busy to risk it.
+	<<else>>
+		<span class="red">The lock looks beyond your ability to pick.</span>
+		<<skulduggeryrequired>>
+		<br>
+		The library is too busy to risk it anyways.
+	<</if>>
+<br><br>
+<<else>>
+	<<if $skulduggery gte $lock>>
+		<span class="green">The lock looks easy to pick.</span>
+		<br><br>
+		<<link [[Pick it (0:10)|School Library Register Sneak]]>><<pass 10>><<crimeup 1>><</link>><<crime>>
+		<br>
+	<<else>>
+		<span class="red">The lock looks beyond your ability to pick.</span>
+		<<skulduggeryrequired>>
+		<br><br>
+	<</if>>
+<</if>>
+<<link [[Next|Library Rental Counter]]>><<endevent>><<set $eventskip to 1>><</link>>
+
+:: School Library Register Sneak
+<<set $outside to 0>><<effects>><<set $lock to 200>>
+<<set $schoollibrarymoneytheft to 1>>
+<<if $libraryMoneyStolen is undefined>>
+	<<set $libraryMoneyStolen to 0>>
+<</if>>
+<<set $tip to random(3000, 9000)>>
+<<set $tip to Math.round($tip)>>
+You deftly open the cash register and count out the money inside.
+There's <<printmoney $tip>>.
+<br><br>
+<<if $skulduggery lt 300>>
+	<<skulduggeryskilluse>>
+<<else>>
+	<span class="blue">There's nothing more you can learn from locks this simple.</span>
+<</if>>
+<br><br>
+<<link [[Take it|School Library]]>><<set $money += $tip>><<set $libraryMoneyStolen += ($tip / 100)>><<set $crime += ($tip / 100)>><</link>><<crime>>
+<br>
+<<link [[Leave it|School Library]]>><</link>>
+<br>

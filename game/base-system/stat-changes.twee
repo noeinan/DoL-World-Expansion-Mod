@@ -92,7 +92,7 @@
 <</widget>>
 
 <<widget "updateHallucinations">>
-	<<if $trauma gte ($traumamax / 10) * 5 or $awareness gte 400 or $hallucinogen gt 0 or ($moonstate isnot 0 and $daystate is "night")>>
+	<<if $trauma gte ($traumamax / 10) * 5 or $awareness gte 400 or $hallucinogen gt 0 or ($moonstate is "evening" and $hour gte 21 or $moonstate is "morning" and $hour lte 6)>>
 		<<set $hallucinations to 2>>
 	<<elseif $trauma gte ($traumamax / 10) * 3 or $awareness gte 300>>
 		<<set $hallucinations to 1>>
@@ -136,7 +136,7 @@
 <</widget>>
 
 <<widget "semenvolume">>
-	<<if $args[0] and $penisexist is 1>>
+	<<if $args[0] and $player.penisExist>>
 		<<set $semen_volume += ($args[0] * 3)>>
 		<<if $cow gte 6>>
 			<<set $semen_volume += ($args[0] * 3)>>
@@ -442,9 +442,7 @@
 			<<insecurity "penis_big" _n>><<ginsecurity "penis_big">>
 		<<case 1>>
 			<<insecurity "penis_small" _n>><<ginsecurity "penis_small">>
-		<<case 0>>
-			<<insecurity "penis_tiny" _n>><<ginsecurity "penis_tiny">>
-		<<case -1 -2>>
+		<<case 0 -1 -2>>
 			<<insecurity "penis_tiny" _n>><<ginsecurity "penis_tiny">>
 	<</switch>>
 <</widget>>
@@ -453,150 +451,66 @@
 	<<incgpenisinsecurity 20>>
 <</widget>>
 
+<<widget "insecurity_gain">>
+	<<set _acceptance to V["acceptance_" + $args[0]]>>
+	<<set _insecurity to V["insecurity_" + $args[0]]>>
+	<<set _stat_gain to ($args[1] * 10)>>
+	
+	<<set _insecurity_possible = {
+		"penis_tiny": $player.penisExist and $penissize lte 0,
+		"penis_small": $player.penisExist and $penissize is 1,
+		"penis_big": $player.penisExist and $penissize gte 4,
+		"breasts_tiny": $gender isnot "m",
+		"breasts_small": true,
+		"breasts_big": true
+	}[_insecurity]>>
+
+	<<if _acceptance lt 1000 and _insecurity_possible>>
+		<<set _insecurity += _stat_gain>>
+		<<set _insecurity = Math.clamp(_insecurity, 0, 1000)>>
+		<<if _insecurity gte 1000>>
+			<<stress 3>><<control -3>>
+		<<elseif _insecurity gte 800>>
+			<<stress 3>><<control -2>>
+		<<elseif _insecurity gte 600>>
+			<<stress 2>><<control -2>>
+		<<elseif _insecurity gte 400>>
+			<<stress 2>><<control -1>>
+		<<elseif _insecurity gte 200>>
+			<<stress 1>><<control -1>>
+		<<else>>
+			<<stress 1>>
+		<</if>>
+		<<set V["insecurity_" + $args[0]] to _insecurity>>
+	<</if>>
+<</widget>>
+
 <<widget "insecurity">>
-	<<if $statFreeze is true>>
-	<<elseif $args[0] is "penis_tiny" and $acceptance_penis_tiny lte 999>>
-		<<if $args[1] and $penisexist is 1>>
-			<<set $insecurity_penis_tiny += ($args[1] * 10)>>
-			<<set $insecurity_penis_tiny = Math.clamp($insecurity_penis_tiny, 0, 1000)>>
-			<<if $insecurity_penis_tiny gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_penis_tiny gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_penis_tiny gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_penis_tiny gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_penis_tiny gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
-		<</if>>
-	<<elseif $args[0] is "penis_small" and $acceptance_penis_small lte 999>>
-		<<if $args[1] and $penisexist is 1>>
-			<<set $insecurity_penis_small += ($args[1] * 10)>>
-			<<set $insecurity_penis_small = Math.clamp($insecurity_penis_small, 0, 1000)>>
-			<<if $insecurity_penis_small gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_penis_small gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_penis_small gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_penis_small gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_penis_small gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
-		<</if>>
-	<<elseif $args[0] is "penis_big" and $acceptance_penis_big lte 999>>
-		<<if $args[1] and $penisexist is 1>>
-			<<set $insecurity_penis_big += ($args[1] * 10)>>
-			<<set $insecurity_penis_big = Math.clamp($insecurity_penis_big, 0, 1000)>>
-			<<if $insecurity_penis_big gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_penis_big gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_penis_big gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_penis_big gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_penis_big gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
-		<</if>>
-	<<elseif $args[0] is "breasts_tiny" and $player.gender is "f" and $acceptance_breasts_tiny lte 999>>
-		<<if $args[1]>>
-			<<set $insecurity_breasts_tiny += ($args[1] * 10)>>
-			<<set $insecurity_breasts_tiny = Math.clamp($insecurity_breasts_tiny, 0, 1000)>>
-			<<if $insecurity_breasts_tiny gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_breasts_tiny gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_breasts_tiny gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_breasts_tiny gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_breasts_tiny gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
-		<</if>>
-	<<elseif $args[0] is "breasts_small" and $acceptance_breasts_small lte 999>>
-		<<if $args[1]>>
-			<<set $insecurity_breasts_small += ($args[1] * 10)>>
-			<<set $insecurity_breasts_small = Math.clamp($insecurity_breasts_small, 0, 1000)>>
-			<<if $insecurity_breasts_small gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_breasts_small gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_breasts_small gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_breasts_small gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_breasts_small gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
-		<</if>>
-	<<elseif $args[0] is "breasts_big" and $acceptance_breasts_big lte 999>>
-		<<if $args[1]>>
-			<<set $insecurity_breasts_big += ($args[1] * 10)>>
-			<<set $insecurity_breasts_big = Math.clamp($insecurity_breasts_big, 0, 1000)>>
-			<<if $insecurity_breasts_big gte 1000>>
-				<<stress 3>><<control -3>>
-			<<elseif $insecurity_breasts_big gte 800>>
-				<<stress 3>><<control -2>>
-			<<elseif $insecurity_breasts_big gte 600>>
-				<<stress 2>><<control -2>>
-			<<elseif $insecurity_breasts_big gte 400>>
-				<<stress 2>><<control -1>>
-			<<elseif $insecurity_breasts_big gte 200>>
-				<<stress 1>><<control -1>>
-			<<else>>
-				<<stress 1>>
-			<</if>>
+	/*
+		args[0]: insecurity type 
+		args[1]: amount to increase by
+	*/
+	<<if $args[0] and $args[1] and $statFreeze isnot true>>
+		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].contains($args[0])>>
+			<<insecurity_gain $args[0] $args[1]>>
+		<<else>>
+			<span class="red">INVALID INSECURITY TYPE SPECIFIED: <<print "insecurity_"+$args[0]>></span>
 		<</if>>
 	<</if>>
 <</widget>>
 
 <<widget "acceptance">>
-	<<if $statFreeze is true>>
-	<<elseif $args[0] is "penis_tiny">>
-		<<if $args[1]>>
-			<<set $acceptance_penis_tiny += ($args[1] * 6)>>
-			<<set $acceptance_penis_tiny = Math.clamp($acceptance_penis_tiny, 0, 1000)>>
-		<</if>>
-	<<elseif $args[0] is "penis_small">>
-		<<if $args[1]>>
-			<<set $acceptance_penis_small += ($args[1] * 6)>>
-			<<set $acceptance_penis_small = Math.clamp($acceptance_penis_small, 0, 1000)>>
-		<</if>>
-	<<elseif $args[0] is "penis_big">>
-		<<if $args[1]>>
-			<<set $acceptance_penis_big += ($args[1] * 6)>>
-			<<set $acceptance_penis_big = Math.clamp($acceptance_penis_big, 0, 1000)>>
-		<</if>>
-	<<elseif $args[0] is "breasts_tiny">>
-		<<if $args[1]>>
-			<<set $acceptance_breasts_tiny += ($args[1] * 6)>>
-			<<set $acceptance_breasts_tiny = Math.clamp($acceptance_breasts_tiny, 0, 1000)>>
-		<</if>>
-	<<elseif $args[0] is "breasts_small">>
-		<<if $args[1]>>
-			<<set $acceptance_breasts_small += ($args[1] * 6)>>
-			<<set $acceptance_breasts_small = Math.clamp($acceptance_breasts_small, 0, 1000)>>
-		<</if>>
-	<<elseif $args[0] is "breasts_big">>
-		<<if $args[1]>>
-			<<set $acceptance_breasts_big += ($args[1] * 6)>>
-			<<set $acceptance_breasts_big = Math.clamp($acceptance_breasts_big, 0, 1000)>>
+	/*
+		args[0]: insecurity type 
+		args[1]: amount to increase by
+	*/
+	<<if $args[0] and $args[1] and $statFreeze isnot true>>
+		/* note: this does not check if a player is capable of gaining acceptance, so dont use this widget without checking.  */
+		<<if ["penis_tiny", "penis_small", "penis_big", "breasts_tiny", "breasts_small", "breasts_big"].contains($args[0])>>
+			<<set V["acceptance_"+$args[0]] += ($args[1] * 6)>>
+			<<set V["acceptance_"+$args[0]] = Math.clamp(V["acceptance_"+$args[0]], 0, 1000)>>
+		<<else>>
+			<span class="red">INVALID ACCEPTANCE TYPE SPECIFIED: <<print "acceptance_"+$args[0]>></span>
 		<</if>>
 	<</if>>
 <</widget>>

@@ -159,7 +159,7 @@ __Makeup__
 <<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 <<settextcolorfromgender $player.gender_appearance>>
-You look like a <span @class="_text_color"><<girl>>.</span>
+You look like a <span @class="_text_color"><<if $sexStats.vagina.pregnancy.bellySize gte 9>>pregnant <</if>><<girl>>.</span>
 <br>
 The following factors are contributing:
 <br>
@@ -574,6 +574,25 @@ Increasing your allure:
 	<span class="teal">Obscure flaunter</span>
 	<br>
 <</if>>
+<<if $famepregnancy gte 1000>>
+	<span class="red">Notorious broodmother</span>
+	<br>
+<<elseif $famepregnancy gte 600>>
+	<span class="pink">Famous broodmother</span>
+<<elseif $famepregnancy gte 400>>
+	<span class="purple">Recognised breeder</span>
+	<br>
+<<elseif $famepregnancy gte 200>>
+	<span class="blue">Known breeder</span>
+	<br>
+<<elseif $famepregnancy gte 100>>
+	<span class="lblue">Low-key mother</span>
+	<br>
+<<elseif $famepregnancy gte 50>>
+	<span class="teal">Obscure mother</span>
+	<br>
+<</if>>
+
 <br>
 Decreasing your allure:
 <br>
@@ -719,7 +738,9 @@ __Body Writing__<br>
 <</if>>
 <<if $bodyWritingSelected isnot undefined>>
 	You write
-	<<if $skin[$bodyPartSelected].special isnot "none">>
+	<<if $skin[$bodyPartSelected].special is $loveInterest.primary or $skin[$bodyPartSelected].special is $loveInterest.secondary>>
+		"<span class="lewd"><<print $bodyWritingSelected>></span>"
+	<<elseif $skin[$bodyPartSelected].special isnot "none">>
 		"<span class="red"><<print $bodyWritingSelected>></span>"
 	<<elseif $skin[$bodyPartSelected].lewd is 1>>
 		"<span class="pink"><<print $bodyWritingSelected>></span>"
@@ -733,9 +754,6 @@ __Body Writing__<br>
 <</if>>
 <<bodywriting>>
 <br>
-<<set _bodyWritingOptions to {
-	general:{},
-}>>
 <<set _bodyWritingOptions to {
 	General: {
 	"Cute boy":"cute_boy",
@@ -871,7 +889,97 @@ __Body Writing__<br>
 		<</if>>
 	<</if>>
 <</if>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $vaginaexist and $promiscuity gte 75 and $pregnancyTesting>>
+	<<set _bodyWritingOptions.Pregnancy to {}>>
+	<<set _bodyWritingOptions.Pregnancy["Brood mother"] to "brood_mother">>
+	<<set _bodyWritingOptions.Pregnancy["Inseminate me"] to "inseminate_me">>
+	<<set _bodyWritingOptions.Pregnancy["Impregnate me"] to "impregnate_me">>
+	<<set _bodyWritingOptions.Pregnancy["Pregnancy slut"] to "pregnancy_slut">>
+	<<set _bodyWritingOptions.Pregnancy["Breeding ground"] to "breeding_ground">>
+<</if>>
 
+	<<set _bodyWritingOptions["Love Interests"] to {}>>
+	<<if $robinromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Robin's Protector"] to "robins_protector">>
+		<<set _bodyWritingOptions["Love Interests"]["Robin & I"] to "robin_and_i">>
+		<<set _bodyWritingOptions["Love Interests"]["The Orphan Lover"] to "the_orphan_lover">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Robin's Boyfriend"] to "robins_boyfriend">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Robin's Girlfriend"] to "robins_girlfriend">>
+		<</if>>
+	<</if>>
+	<<if $whitneyromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Whitney's Pet"] to "whitneys_pet">>
+		<<set _bodyWritingOptions["Love Interests"]["Property of Whitney"] to "property_of_whitney">>
+		<<set _bodyWritingOptions["Love Interests"]["Whitney's Toy"] to "whitneys_boyslut">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Whitney's Boyslut"] to "whitneys_boyslut">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Whitney's Slut"] to "whitneys_slut">>
+		<</if>>
+	<</if>>
+	<<if $kylarenglish gte 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state isnot "prison">>
+		<<set _bodyWritingOptions["Love Interests"]["Kylar's Obsession"] to "kylars_obsession">>
+		<<set _bodyWritingOptions["Love Interests"]["Love Kylar Forever"] to "love_kylar_forever">>
+		<<set _bodyWritingOptions["Love Interests"]["Reserved for Kylar"] to "reserved_for_kylar">>
+		<<set _bodyWritingOptions["Love Interests"]["Just Kylar"] to "just_kylar">>
+	<</if>>
+	<<if $syndromeeden is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Eden's Companion"] to "edens_companion">>
+		<<set _bodyWritingOptions["Love Interests"]["Hunter and Prey"] to "hunter_and_prey">>
+		<<set _bodyWritingOptions["Love Interests"]["It's Lonely in the Woods"] to "its_lonely_in_the_woods">>
+		<<set _bodyWritingOptions["Love Interests"]["Something is Hunting you"] to "something_is_hunting_you">>
+	<</if>>
+	<<if $dateCount.Avery gte 3 and $NPCName[$NPCNameList.indexOf("Avery")].state isnot "dismissed">>
+		<<set _bodyWritingOptions["Love Interests"]["Avery's Trophy"] to "averys_trophy">>
+		<<set _bodyWritingOptions["Love Interests"]["Endearing"] to "endearing">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Uptown Boy"] to "uptown_boy">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Uptown Girl"] to "uptown_girl">>
+		<</if>>
+		<<set _bodyWritingOptions["Love Interests"]["Avery's Monopoly"] to "averys_monopoly">>
+	<</if>>
+	<<if $farm_stage gte 7 and $alex_countdown is undefined>>
+		<<set _bodyWritingOptions["Love Interests"]["Alex's Partner"] to "alexs_partner">>
+		<<set _bodyWritingOptions["Love Interests"]["Sunrise to Sunset"] to "sunrise_to_sunset">>
+		<<set _bodyWritingOptions["Love Interests"]["Hay Baler"] to "hay_baler">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Cowboy"] to "cowboy">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Cowgirl"] to "Cowgirl">>
+		<</if>>
+	<</if>>
+	<<if $sydneyromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Sydney's Savior"] to "sydneys_savior">>
+		<<set _bodyWritingOptions["Love Interests"]["Bound to Sydney"] to "bound_to_sydney">>
+		<<set _bodyWritingOptions["Love Interests"]["Sydney Makes Me :)"] to "sydney_makes_me_smile">>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 1>>
+			<<set _bodyWritingOptions["Love Interests"]["Purest Love"] to "purest_love">>
+		<<else>>
+			<<set _bodyWritingOptions["Love Interests"]["Lusty Sinners"] to "lusty_sinners">>
+		<</if>>
+	<</if>>
+	<<if $syndromewolves is 1 and $deviancy gte 35>>
+		<<set _bodyWritingOptions["Love Interests"]["Black Wolf's Bitch"] to "black_wolfs_bitch">>
+		<<set _bodyWritingOptions["Love Interests"]["All for my Alpha"] to "all_for_my_alpha">>
+		<<if $wolfpackleader is 1>>
+			<<set _bodyWritingOptions["Love Interests"]["Leader of the Pack"] to "leader_of_the_pack">>
+		<</if>>
+		<<set _bodyWritingOptions["Love Interests"]["Runs With Wolves"] to "runs_with_wolves">>
+	<</if>>
+	<<if $syndromebird is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Great Hawk's Spouse"] to "great_hawks_spouse">>
+		<<set _bodyWritingOptions["Love Interests"]["Soaring With Love"] to "soaring_with_love">>
+		<<set _bodyWritingOptions["Love Interests"]["Terror's Mate"] to "terrors_mate">>
+		<<set _bodyWritingOptions["Love Interests"]["Free Bird"] to "free_bird">>
+	<</if>>
 
 /*Needs to be last*/
 <div id="bodywritingMenuLinks">
