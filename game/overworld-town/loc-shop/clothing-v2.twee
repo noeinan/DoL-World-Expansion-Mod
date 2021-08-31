@@ -53,9 +53,9 @@
 
 	<!-- List of clothes -->
 	<<set _items = setup.clothes[$clothingShopSlot].filter(x => x.shop.includes(_shopLocation) and x.outfitSecondary is undefined
-		and ((_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.contains("lower")))
+		and ((_outfits and x.outfitPrimary isnot undefined and Object.keys(x.outfitPrimary).some(secSlot => secSlot.includes("lower")))
 			or
-			(!_outfits and (x.outfitPrimary is undefined or Object.keys(x.outfitPrimary).every(secSlot => !secSlot.contains("lower")))))
+			(!_outfits and (x.outfitPrimary is undefined or Object.keys(x.outfitPrimary).every(secSlot => !secSlot.includes("lower")))))
 	)>>
 	<<set _items = applyClothingShopFilters(_items)>>
 	<<set _maxPage = Math.ceil(_items.length / $shopItemsPerPage)>>
@@ -249,7 +249,7 @@
 						<<if _item.colour_options.length > 0>>
 							<<if $shopDefaults.colourItems == "random">>
 								<<set _item.colour = _item.colour_options[random(_item.colour_options.length - 1)]>>
-							<<elseif $shopDefaults.colourItems == "default" and _item.colour_options.contains($shopDefaults.color)>>
+							<<elseif $shopDefaults.colourItems == "default" and _item.colour_options.includes($shopDefaults.color)>>
 								<<set _item.colour = $shopDefaults.color>>
 								<<if $shopDefaults.color == "custom">>
 									<<set _item.colourCustom = _colCustomPrimary>>
@@ -259,7 +259,7 @@
 						<<if _item.accessory_colour_options.length > 0>>
 							<<if $shopDefaults.colourItems == "random">>
 								<<set _item.accessory_colour = _item.accessory_colour_options[random(_item.accessory_colour_options.length - 1)]>>
-							<<elseif $shopDefaults.colourItems == "default" and _item.accessory_colour_options.contains($shopDefaults.secColor)>>
+							<<elseif $shopDefaults.colourItems == "default" and _item.accessory_colour_options.includes($shopDefaults.secColor)>>
 								<<set _item.accessory_colour = $shopDefaults.secColor>>
 								<<if $shopDefaults.secColor == "custom">>
 									<<set _item.accessory_colourCustom = _colCustomSecondary>>
@@ -760,7 +760,7 @@
 						<!-- Just... don't try to understand the next line. In short, it adds [L] to legacy preset names in dropdown -->
 						<<optionsfrom {...{'---': '---'}, ...Object.keys($customColors.presets).reduce((acc, val) => ({...acc, [($customColors.presets[val].ver >= 2 ? '' : '[L] ') + val]: val }), {})}>>
 					<</listbox>>
-					<<set _delDisabled = Object.keys($customColors.presets).contains(_preset_choice[_acc]) ? "" : "disabled">>
+					<<set _delDisabled = Object.keys($customColors.presets).includes(_preset_choice[_acc]) ? "" : "disabled">>
 					<div @class="'delete-preset div-link ' + _delDisabled">
 						<<if $images is 1>><img src="img/misc/icon/delete.png"><<else>>Del<</if>>
 						<<link "">>
@@ -851,12 +851,12 @@
 		<<set _item = setup.clothes[_slot][_index]>>
 
 		<<if _item.colour_options.length > 0>>
-			<<set _col = $args[2] or $colouraction or (_item.colour_options.contains($shopDefaults.color) ? $shopDefaults.color : _item.colour_options[0])>>
+			<<set _col = $args[2] or $colouraction or (_item.colour_options.includes($shopDefaults.color) ? $shopDefaults.color : _item.colour_options[0])>>
 		<<else>>
 			<<set _col = "">>
 		<</if>>
 		<<if _item.accessory_colour_options.length > 0>>
-			<<set _acc_col = $args[3] or $accessorycolouraction or (_item.accessory_colour_options.contains($shopDefaults.secColor) ? $shopDefaults.secColor : _item.accessory_colour_options[0])>>
+			<<set _acc_col = $args[3] or $accessorycolouraction or (_item.accessory_colour_options.includes($shopDefaults.secColor) ? $shopDefaults.secColor : _item.accessory_colour_options[0])>>
 		<<else>>
 			<<set _acc_col = "">>
 		<</if>>
@@ -1151,11 +1151,11 @@
 			<div id="filter-traits" class="filter-block">
 				<span class="bold gold">Traits</span>
 				<div class="traits-list">
-					<<set _traitsInThisShop = [...new Set(Object.keys(setup.clothes).flatMap(x => setup.clothes[x]).filter(x => x.shop.contains(_shopLocation)).flatMap(x => x.type))]>>
+					<<set _traitsInThisShop = [...new Set(Object.keys(setup.clothes).flatMap(x => setup.clothes[x]).filter(x => x.shop.includes(_shopLocation)).flatMap(x => x.type))]>>
 					<<for _trait range _traitsInThisShop>>
 						<div class="filters-trait-row">
 							<label>
-								<<set _checked = $shopClothingFilter.traits.contains(_trait) ? 'checked="checked"' : ''>>
+								<<set _checked = $shopClothingFilter.traits.includes(_trait) ? 'checked="checked"' : ''>>
 								<<print '<input type="checkbox" @id="_trait" @value="_trait" ' + _checked + ' onclick="window.shopClothingFilterToggleTrait(this.value)">'>>
 								<<clothingtrait _trait 'display_normal'>>
 								<span class="capitalize"><<print _trait.replace('_', ' ')>></span>

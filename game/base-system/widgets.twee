@@ -3906,12 +3906,12 @@ __Map__<br>
 				let statOverrides = T.npcOverrides[stat];
 
 				if(statOverrides)
-					return !statOverrides.hasOwnProperty("requirements") || statOverrides.requirements;
+					return !statOverrides.hasOwnProperty("requirements") || V[statOverrides.requirements] || false;
 				else
 					return true;
 			};
 
-			T.importantNpcStats = ["love", "lust", "dom", "trauma", "rage"];
+			T.importantNpcStats = V.baseNNPCd;
 			T.otherNpcStats = ["love", "lust"];
 
 			let statDefaults = {
@@ -4059,6 +4059,7 @@ __Map__<br>
 <</widget>>
 
 <<widget "relationshipclamp">>
+<<<<<<< HEAD
 	<<set _i to $NPCNameList.indexOf("Robin")>>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
@@ -4096,6 +4097,36 @@ __Map__<br>
 	<<set $NPCName[_i].love = Math.clamp($NPCName[_i].love, 0, 100)>>
 	<<set $NPCName[_i].dom = Math.clamp($NPCName[_i].dom, 0, 100)>>
 	<<set $NPCName[_i].lust = Math.clamp($NPCName[_i].lust, 0, 100)>>
+=======
+/* clamp relationship values of the love interests */
+	<<for _npc range $NPCNameList>>
+		<<set _npcConfig to $NPCName[_npc].npcConfig>>
+		<<for _stat range $baseNNPCd>>
+			<<if def $NPCName[_npc][_stat]>>
+				<<if ndef _npcConfig or ndef _npcConfig.important and ndef _npcConfig[_stat]>>
+				/* common npc defaults are between -50 and 50 */
+					<<set _minValue to -50; _maxValue to 50>>
+				<<elseif ndef _npcConfig[_stat]>>
+				/* important npc defaults are between 0 and 100 */
+					<<set _minValue to 0; _maxValue to 100>>
+				<<else>>
+				/* apply overrides or set defaults */
+					<<if def _npcConfig[_stat].minValue>>
+						<<set _minValue to _npcConfig[_stat].minValue>>
+					<<else>>
+						<<set _minValue to _npcConfig.important ? 0 : -50>>
+					<</if>>
+					<<if def _npcConfig[_stat].maxValue>>
+						<<set _maxValue to _npcConfig[_stat].maxValue>>
+					<<else>>
+						<<set _maxValue to _npcConfig.important ? 100 : 50>>
+					<</if>>
+				<</if>>
+				<<set $NPCName[_npc][_stat] to Math.clamp($NPCName[_npc][_stat], _minValue, _maxValue)>>
+			<</if>>
+		<</for>>
+	<</for>>
+>>>>>>> Note'sUpdates/npcname_v3
 <</widget>>
 
 <<widget "fringecheck">>
@@ -4756,11 +4787,11 @@ __Map__<br>
 	<<else>>
 		<<set _days_left to ($pillory_tenant.endday - $days)>>
 		<<He>> is scheduled for release <<if _days_left is 1>>tomorrow<<else>>in two days<</if>> at
-		<<if $pillory_tenant.endhour is 0>>midnight.
-		<<elseif $pillory_tenant.endhour lte 9>>0$pillory_tenant.endhour:00.
-		<<elseif $pillory_tenant.endhour is 12>>noon.
-		<<else>>$pillory_tenant.endhour:00.
-		<</if>>
+		<<switch $pillory_tenant.endhour>>
+			<<case 0>>midnight.
+			<<case 12>>noon.
+			<<default>><<ampm $pillory_tenant.endhour>>.
+		<</switch>>
 	<</if>>
 	<<endevent>>
 <</widget>>

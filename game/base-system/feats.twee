@@ -167,18 +167,20 @@
 <</if>>
 <</widget>>
 
-<<widget "update_school_skill">>
-<<print '<<if $' + $args[0] + 'trait gte 4>>
-	<<set $'+ $args[0] + ' to 1000>>
-<<elseif $' + $args[0] + 'trait gte 3>>
-	<<set $'+ $args[0] + ' to 700>>
-<<elseif $' + $args[0] + 'trait gte 2>>
-	<<set $'+ $args[0] + ' to 400>>
-<<elseif $' + $args[0] + 'trait gte 1>>
-	<<set $'+ $args[0] + ' to 200>>
-<<else>>
-	<<set $'+ $args[0] + ' to 100>>
-<</' + 'if>>'>>
+<<widget "update_school_skills">>
+<<for _subject range ["science", "english", "maths", "history"]>>
+	<<if V[_subject + 'trait'] gte 4>>
+		<<set V[_subject] to 1000>>
+	<<elseif V[_subject + 'trait'] gte 3>>
+		<<set V[_subject] to 700>>
+	<<elseif V[_subject + 'trait'] gte 2>>
+		<<set V[_subject] to 400>>
+	<<elseif V[_subject + 'trait'] gte 1>>
+		<<set V[_subject] to 200>>
+	<<else>>
+		<<set V[_subject] to 100>>
+	<</if>>
+<</for>>
 <</widget>>
 
 <<widget "applyFeatsBoost">>
@@ -195,10 +197,7 @@
 	<<set $englishtrait += _upgrades.grades / _details.grades.cost * 1>>
 	<<set $mathstrait += _upgrades.grades / _details.grades.cost * 1>>
 	<<set $historytrait += _upgrades.grades / _details.grades.cost * 1>>
-	<<update_school_skill science>>
-	<<update_school_skill maths>>
-	<<update_school_skill english>>
-	<<update_school_skill history>>
+	<<update_school_skills>>
 <</if>>
 <<if _upgrades.skulduggery gt 0>>
 	<<set $skulduggery to _upgrades.skulduggery / _details.skulduggery.cost * 100>>
@@ -477,7 +476,7 @@
 		<<if $museumAntiques.museumCount is $museumAntiques.maxCount>>
 			<<earnFeat "It Belongs in a Museum">>
 		<</if>>
-		<<if $NPCName[10].love gte 100 and $NPCName[16].love gte 100 and $NPCName[19].love gte 30>>
+		<<if $NPCName.Kylar.love gte 100 and $NPCName.Robin.love gte 100 and $NPCName.Whitney.love gte 30>>
 			<<earnFeat "Love Triangles">>
 		<</if>>
 		<<if $cat gte 6>>
@@ -1757,7 +1756,7 @@
 		},
 		"Reliable Employer":{
 			title: "Reliable Employer",
-			desc: "Emplyed an S-ranked guard.",
+			desc: "Employed an S-ranked guard.",
 			difficulty: 2,
 			series: "",
 			filter: ["All", "Discoveries"],
