@@ -114,11 +114,21 @@
 	<<set $sydneyScienceWarn++>>
 	<<if $sydneyScienceWarn is 1>>
 		Sydney looks up at you. "Classes usually start around now. Aren't you going to be late?"
+		<br><br>
+		<<sydneyOptions>>
 	<<elseif $sydneyScienceWarn is 2>>
 		Sydney looks up at you. "Are you... skipping class just to see me?"
+		<br><br>
+		<<sydneyOptions>>
+	<<elseif $sydneyScienceWarn gte 3 and $sydneyromance isnot 1>>
+		Sydney shoos you away from the rental counter. "If the <<nnpc_Title "Leighton">> catches you skipping class, we'll both be in big trouble!"
+		<br><br>
+		<<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
+		<br>
+	<<else>>
+		<br><br>
+		<<sydneyOptions>>		
 	<</if>>
-	<br><br>
-	<<sydneyOptions>>
 <<elseif _counterApproach is 1>>
 	<<if $sydneyChastityRemoveIntro is 1>>
 		Sydney looks eager to talk to you about something.
@@ -164,7 +174,7 @@
 		Sydney squints through <<his>> broken glasses as you approach, but smiles when <<he>> realises it's you. <<sydneyGreeting>>
 		<br><br>
 		<<sydneyOptions>>
-	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].love gte 60 and $NPCName[$NPCNameList.indexOf("Sydney")].lust gte 10 and $sydneyromance isnot 1 and !$sydneyFriendZoned>>
+	<<elseif $NPCName[$NPCNameList.indexOf("Sydney")].love gte 80 and $NPCName[$NPCNameList.indexOf("Sydney")].lust gte 10 and $sydneyromance isnot 1 and !$sydneyFriendZoned>>
 		Sydney's eyes light up upon seeing you. <<He>> seems nervous about something, and looks away with a blush. <<set _sydneyRomanceConfront to true>> <<sydneyGreeting>>
 		<br><br>
 		<<sydneyOptions>>
@@ -219,6 +229,16 @@
 			<br>
 			<<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
 			<br>
+		<<case "class">>
+			Sydney's eyes grow wide. "Sh<<if _sydneyStatus.includes("corrupt")>>i<<else>>oo<</if>>t! I'm late for class!" <<He>> begins to pack up <<his>> things.
+			<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 10>>		
+				"Sorry, can we finish this later?"
+			<<else>>
+				<<He>> <<if $sydneyromance is 1>>blows you a kiss and <</if>>waves you off as <<he>> exits the library.
+			<</if>>
+			<br><br>
+			<<link [[Leave|School Library]]>><<endevent>><<set $eventskip to 1>><</link>>
+			<br>		
 		<<case "canteen">>
 			Sydney stands up, stretching, before placing a small sign on the front of the counter. <span class="blue">"At lunch"</span>.
 			<br><br>
@@ -353,11 +373,11 @@
 		<br>
 	<</if>>
 <</if>>
-<<if $NPCName[$NPCNameList.indexOf("Sydney")].love gte 30 and !$sydneyDaily.walk>>
-	<<link [[Ask to go somewhere together|Sydney Walk]]>><</link>>
-	<br>
-<<elseif ($sydney.glasses is "broken" or $sydney.glasses is "playerbroken") and $money gte 1500 and ($sydneyChatState gte 3 or $sydneyromance is 1)>>
+<<if ($sydney.glasses is "broken" or $sydney.glasses is "playerbroken") and $money gte 1500 and ($sydneyChatState gte 3 or $sydneyromance is 1)>>
 	<<highicon>><<link [["Offer to replace " + $NPCList[0].pronouns.his + " glasses (£15 0:30)"|Sydney Walk]]>><<npcincr Sydney love 3>><</link>><<gglove>>
+	<br>
+<<elseif ($sydney.glasses isnot "broken" and $sydney.glasses isnot "playerbroken") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 30 and !$sydneyDaily.walk>>
+	<<link [[Ask to go somewhere together|Sydney Walk]]>><</link>>
 	<br>
 <</if>>
 <<if _sydneyRomanceConfront>>
@@ -394,9 +414,9 @@
 <<widget "sydneyChastityMessage">>
 <<set $sydneyChastityKnown to true>>
 <<if $sydneyromance is 1 and $NPCName[$NPCNameList.indexOf("Sydney")].chastity.vagina.includes("chastity") or $NPCName[$NPCNameList.indexOf("Sydney")].chastity.penis.includes("chastity")>>
-	<<if _sydneyStatus.includes("Lust") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 80 and $NPCName[$NPCNameList.indexOf("Sydney")].chastity.anus.includes("shield")>>
+	<<if _sydneyStatus.includes("Lust") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 90 and $NPCName[$NPCNameList.indexOf("Sydney")].chastity.anus.includes("shield")>>
 		<span class="lewd"><<He>> looks down to <<his>> chastity belt with resentment.</span>
-	<<elseif _sydneyStatus.includes("Lust") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 95 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity gte 80 or $NPCName[$NPCNameList.indexOf("Sydney")].corruption gte 40)>>
+	<<elseif _sydneyStatus.includes("Lust") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 125 and ($NPCName[$NPCNameList.indexOf("Sydney")].purity gte 80 or $NPCName[$NPCNameList.indexOf("Sydney")].corruption gte 40)>>
 		<<He>> seems to be on the very edge of falling into sinful lust.
 		<<if _sydneyStatus.includes("corrupt")>>
 			"That does it. We need to talk later. <span class="gold">I'm getting this thing off of me, one way or another.</span>"
@@ -494,6 +514,8 @@
 		<<set _sydney_location to "library">>
 	<<elseif $hour is 9>>
 		<<set _sydney_location to "science">>
+	<<elseif ["second", "third"].includes($schoolstate)>>
+		<<set _sydney_location to "class">>
 	<<elseif $schoolstate is "lunch" and $luncheaten isnot 1 and $minute lte 15>>
 		<<set _sydney_location to "canteen">>
 	<<elseif $hour lte 15 or ($hour is 16 and $minute lte 40)>>
