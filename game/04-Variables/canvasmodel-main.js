@@ -1734,7 +1734,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/rightwing/'+options.bee_wings_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_right === "idle"
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wings_right === "idle"
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
@@ -1744,7 +1744,7 @@ Renderer.CanvasModels["main"] = {
 				return 'img/transformations/bee/leftwing/'+options.bee_wings_type+'.png'
 			},
 			showfn(options) {
-				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wing_left === "idle"
+				return options.show_tf && tf_enabled(options.bee_wings_type) && options.bee_wings_left === "idle"
 			},
 			z: ZIndices.backhair,
 			animation: "idle"
