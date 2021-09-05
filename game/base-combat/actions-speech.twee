@@ -21,33 +21,23 @@
 		<<if $noFinish isnot 1>>
 			<<set _askActions["to stop" + _diffText] to "finish">>
 		<</if>>
-
-        /*noeinan mod START*/
-        /*Made it so monster people are treated as humans for the sake of ask actions*/
-
-        <<if $enemytype is "man" or ($enemytype is "beast" and $monster is 1)>>
-            <<if $vaginaexist is 1 and $vaginalchastity is 0 and $novaginal is 0>>
-                <<set _askActions["to not put anything in your pussy" + _diffText] to "novaginal">>
-            <</if>>
-            <<if $penisexist is 1 and $penilechastity is 0 and $nopenile is 0>>
-                <<set _askActions["to not put your penis in anything" + _diffText] to "nopenile">>
-            <</if>>
-            <<if $vaginaexist is 1>>
-                <<set _askActions["to not put anything in your anus" + _diffText] to "noanal">>
-            <</if>>
-            <<set _askActions["to change positions" + _diffText] to "sexreset">>
-            <<set _askActions["to go down on you" + _diffText] to "receiveoral">>
-            <<set _askActions["to give oral sex" + _diffText] to "giveoral">>
-            <<if $asphyxiaLvl gte 1 and $nochoke isnot 1>>
-                <<set _askActions["to not choke you" + _diffText] to "nochoke">>
-            <</if>>
-            <<if $asphyxiaLvl gte 1 and $consensual is 1 and ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
-                <<set _askActions["to choke you"] to "askchoke">>
-            <</if>>
-        <</if>>
-        
-        /*noeinan mod END*/
-
+		/*noeinan mod START*/
+		/*Made it so monster people are treated as humans for the sake of ask actions*/
+		<<if ($enemytype is "man" or ($enemytype is "beast" and $monster is 1)) and !$npcSub>>
+		/*noeinan mod END */
+			<<if $vaginaexist is 1 and $vaginalchastity is 0 and $novaginal is 0>>
+				<<set _askActions["to not put anything in your pussy" + _diffText] to "novaginal">>
+			<</if>>
+			<<if $penisexist is 1 and $penilechastity is 0 and $nopenile is 0>>
+				<<set _askActions["to not put your penis in anything" + _diffText] to "nopenile">>
+			<</if>>
+			<<if $analchastity is 0 and $noanal is 0>>
+				<<set _askActions["to not put anything in your anus" + _diffText] to "noanal">>
+			<</if>>
+			<<if $asphyxiaLvl gte 1 and $nochoke isnot 1>>
+				<<set _askActions["to not choke you" + _diffText] to "nochoke">>
+			<</if>>
+		<</if>>
 	<<else>>
 		<<set _mouthaction["Scream"] to "scream">>
 		<<set _mouthaction["Plead"] to "plead">>
@@ -59,7 +49,7 @@
 		<</if>>
 	<</if>>
 	<<if $worn.over_upper.name isnot "naked" and $worn.over_upper.cursed isnot 1 or $worn.upper.name isnot "naked" and $worn.upper.cursed isnot 1 or $worn.under_upper.name isnot "naked" and $worn.under_upper.cursed isnot 1>>
-		<<if $noupper isnot 1 and $noupperasked isnot 1 and $enemytype is "man">>
+		<<if $noupper isnot 1 and $noupperasked isnot 1 and $enemytype is "man" and !$npcSub>>
 			<<set _askActions["to leave your top on" + _diffText] to "noupper">>
 		<</if>>
 	<</if>>
@@ -67,8 +57,20 @@
 		<<set _mouthaction["Moan"] to "moan">>
 	<</if>>
 	/*noeinan mod START*/
-	/*Moved asking someone to choke you in with the other actions, so monster people can also be asked this*/
-	/*noeinan mod END*/
+	/*Made it so monster people are treated as humans for the sake of ask actions*/
+	<<if !$npcSub and $asphyxiaLvl gte 1 and $consensual is 1 and ($enemytype is "man" or ($enemytype is "beast" and $monster is 1)) and ($choketrait or ($chokeorgasm gte 1 and $submissive gt 850) or ($awarelevel gte 2 and $submissive gte 1150))>>
+	/*noeinan mod END */
+		<<set _askActions["to choke you"] to "askchoke">>
+	<</if>>
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $enemytype is "man" and $condomAsk is undefined and $pregnancyTesting>>
+		<<if $npcCondoms isnot undefined>>
+			<<set _askActions["to use condoms"] to "condoms">>
+		<</if>>
+		<<if $npcCondoms isnot undefined>>
+			<<set _askActions["to not use condoms"] to "noCondoms">>
+		<</if>>
+	<</if>>
 	<<if Object.keys(_askActions).length gt 0>>
 		<<set _mouthaction["Ask "+_pron+""] to "ask">>
 		<<set _defaultsCombatAction to "askActions">>
@@ -85,7 +87,7 @@
 			<<set $askAction to Object.values(_askActions)[0]>>
 		<</if>>
 		<<switch $askAction>>
-			<<case "askchoke">><<set $askActionColour to "sub">>
+			<<case "askchoke" "condoms" "damagedCondoms" "noCondoms">><<set $askActionColour to "sub">>
 			<<default>><<set $askActionColour to "brat">>
 		<</switch>>
 	<</if>>
@@ -101,7 +103,7 @@
 
 <<widget "replaceAskColour">>
 <<switch $askAction>>
-	<<case "askchoke">>
+	<<case "askchoke" "condoms" "damagedCondoms" "noCondoms">>
 		<<if $combatControls is "radio">>
 			<<addclass "#askLabel" "sub">><<removeclass "#askLabel" "brat">>
 		<<else>>

@@ -12,7 +12,7 @@
 <</widget>>
 
 /*
-	args[0] should be "clothing" or "forest"
+	args[0] should be "clothing", "forest" or "school"
 	args[1] is a slot: "upper", "lower", "under_upper", etc.
 	args[2] should be "outfits" or missing. Combination of "over_upper", "upper" or "under_upper" in args[1] with "outfits" provides respective outfits category
 */
@@ -819,10 +819,19 @@
 	<<if _action is "buy" or _action is "steal">>
 		You _action the <<print setup.clothes[_slot][_choice_index].name>>.
 		<br><br>
+		<<if $shopName is "school" and _action is "buy">>
+			<<set $schoolShopAction.push("buy")>>
+		<</if>>
 	<<elseif _action is "try">>
 		<<tryOnWear _slot _choice_index>>
+		<<if $shopName is "school">>
+			<<set $schoolShopAction.push("try")>>
+		<</if>>
 	<<elseif _action is "return">>
 		<<clothingReset _slot>>
+		<<if $shopName is "school">>
+			<<set $schoolShopAction.push("return")>>
+		<</if>>
 	<<elseif _action is "reset">>
 		<<unset $colouraction>>
 		<<unset $colouraction2>>
@@ -835,6 +844,9 @@
 	<<if _subaction is "wear">>
 		<<generalWear _slot _choice_index $colouraction2 $accessorycolouraction2>>
 		<<updateOwned _slot>>
+		<<if $shopName is "school">>
+			<<set $schoolShopAction.push("wear")>>
+		<</if>>
 	<<elseif _subaction is "send">>
 		<<set _loop to _amount or 1>>
 		<<for _s = 0; _s lt _loop; _s++>>

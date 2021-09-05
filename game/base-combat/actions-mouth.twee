@@ -71,8 +71,8 @@
 <<widget "facesitFlavorText">>
 	<<if $enemyno lt 2>>
 		<<person1>>
-		<<if $npc isnot 0>>
-			$npc
+		<<if $npc.length isnot 0>>
+			<<print $npc[0]>>
 		<<else>>
 			<<He>>
 		<</if>>
@@ -82,8 +82,8 @@
 		<<else>>
 			<<selectNpcWithPartInPosition "vagina" "facesit">>
 		<</if>>
-		<<if $npc_named is 1>>
-			$npc
+		<<if $npcrow.includes(_j)>>
+			<<print $npc[$npcrow.indexOf(_j)]>>
 		<<else>>
 			The <<person>>
 		<</if>>
@@ -172,31 +172,39 @@
 	<<set _stanceCheck to $NPCList[_xx].stance>>
 <</if>>
 
-<<if $consensual is 1 and ($promiscuity lte 54 and $enemytype is "man" or $deviancy lte 54 and $enemytype isnot "man")>>
+<<if $consensual is 1 and ($promiscuity lte 54 and $enemytype is "man" or $deviancy lte 54 and $enemytype isnot "man") and !$promiscuityIgnore>>
 	<!-- Do Nothing -->
 <<elseif _stanceCheck is "top">>
 	<!-- Do Nothing -->
 <<else>>
 	<<for _j = $enemyno-1; _j gte _end; _j-->>
 		<<if $NPCList[_j].penis is 0 and ($enemytype isnot "man" or ($NPCList[_j].location.genitals is 0 and $NPCList[_j].location.head isnot "head"))>>
-			<<set _mouthaction["Move your lips to their penis"] to "mouth">>
+			<<if $NPCList[_j].chastity.penis.includes("chastity")>>
+				<<set _mouthaction["Move your head to " + $NPCList[_j].pronouns.his + " " + $NPCList[_j].chastity.penis] to "mouth">>
+			<<else>>
+				<<set _mouthaction["Move your lips to " + $NPCList[_j].pronouns.his + " penis"] to "mouth">>
+			<</if>>
 		<<break>>
 		<</if>>
 	<</for>>
 	<<for _j = $enemyno-1; _j gte _end; _j-->>
 		<<if $NPCList[_j].vagina is 0 and ($enemytype isnot "man" or ($NPCList[_j].location.genitals is 0 and $NPCList[_j].location.head isnot "head"))>>
-			<<set _mouthaction["Move your mouth to their pussy"] to "othervagina">>
+			<<if $NPCList[_j].chastity.vagina.includes("chastity")>>
+				<<set _mouthaction["Move your head to " + $NPCList[_j].pronouns.his + " " + $NPCList[_j].chastity.vagina] to "othervagina">>
+			<<else>>
+				<<set _mouthaction["Move your mouth to " + $NPCList[_j].pronouns.his + " pussy"] to "othervagina">>
+			<</if>>
 			<<break>>
 		<</if>>
 	<</for>>
 <</if>>
 
-<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man") and !$promiscuityIgnore>>
 	<!-- Do Nothing -->
 <<elseif !$gloryhole>>
 	<<for _j = $enemyno-1; _j gte _end; _j-->>
 		<<if $NPCList[_j].chest is 0 and $NPCList[_j].location.genitals isnot "head" and $NPCList[_j].location.head isnot "head" and $NPCList[_j].location.head isnot "genitals">>
-			<<set _mouthaction["Move your lips to their chest"] to "movetochest">>
+			<<set _mouthaction["Move your lips to " + $NPCList[_j].pronouns.his + " chest"] to "movetochest">>
 			<<break>>
 		<</if>>
 	<</for>>
@@ -219,7 +227,7 @@
 <</widget>>
 
 <<widget "oralswallownew">>
-<<if $consensual is 1 and ($promiscuity lte 74 and $enemytype is "man" or $deviancy lte 74 and $enemytype isnot "man")>>
+<<if $consensual is 1 and ($promiscuity lte 74 and $enemytype is "man" or $deviancy lte 74 and $enemytype isnot "man") and !$promiscuityIgnore>>
 <<else>>
 	<<if $combattype is "train">>
 		<<set _end to $enemyno-1>>
@@ -227,8 +235,8 @@
 		<<set _end to 0>>
 	<</if>>
 	<<for _j = $enemyno-1; _j gte _end; _j-->>
-		<<if $NPCList[_j].penis is "mouthentrance" or $NPCList[_j].penis is "mouthimminent">>
-			<<set _mouthaction["Take their penis into your mouth"] to "swallow">>
+		<<if !$NPCList[_j].chastity.penis.includes("chastity") and ($NPCList[_j].penis is "mouthentrance" or $NPCList[_j].penis is "mouthimminent")>>
+			<<set _mouthaction["Take " + $NPCList[_j].pronouns.his + " penis into your mouth"] to "swallow">>
 			<<break>>
 		<</if>>
 	<</for>>
@@ -244,7 +252,7 @@
 <<widget "combatPenisEntrance">>
 <<set _mouthaction["Kiss"] to "peniskiss">>
 
-<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man")>>
+<<if $consensual is 1 and ($promiscuity lte 34 and $enemytype is "man" or $deviancy lte 34 and $enemytype isnot "man") and !$promiscuityIgnore>>
 <<elseif $chestuse is 0>>
 	<<set _mouthaction["Grab between breasts"] to "grasp">>
 <</if>>

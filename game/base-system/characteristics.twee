@@ -105,7 +105,27 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 	]
 }>>
 <<characteristic-text _hairTextConfig>>
-<br>
+<br><br>
+<<if $sexStats.vagina.pregnancy.awareOf is true>>
+	<<set _pregnancy to $sexStats.vagina.pregnancy>>
+	<<if _pregnancy.timer gte _pregnancy.timerStart * 0.66>>
+		You know your in the first trimester of your pregnancy.
+	<<elseif _pregnancy.timer gte _pregnancy.timerStart * 0.33>>
+		You know your in the second trimester of your pregnancy.
+	<<else>>
+		You know your in the third trimester of your pregnancy.
+	<</if>>
+	<<if _pregnancy.potentialFathers.length is 1>>
+		Your sure the father is <<print _pregnancy.potentialFathers[0]>>.
+	<<elseif _pregnancy.potentialFathers.length is 2>>
+		Your pretty sure the father is either <<print _pregnancy.potentialFathers[0]>> or <<print _pregnancy.potentialFathers[1]>>.
+	<<elseif _pregnancy.potentialFathers.length is 3>>
+		Your pretty sure the father is either <<print _pregnancy.potentialFathers[0]>>, <<print _pregnancy.potentialFathers[1]>> or <<print _pregnancy.potentialFathers[2]>>.
+	<<else>>
+		Your unsure on who the father is.
+	<</if>>
+	<br><br>
+<</if>>
 <!--Semen Details-->
 <<if $penisexist is 1>>
 	<<set _semenCapacityTextConfig = { currentValue : $semen_volume, preText: 'You produce ', states : [
@@ -218,19 +238,6 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 	<div id="base-characteristics" class="characteristic-box-list">
 		<!--Core skill configurations-->
 		<<silently>>
-			<!--AWARENESS-->
-			<<set _awarenessConfig = { name : "Awareness", icon : "ui/sym_awareness", displayType : "level", currentValue : $awareness, modifier: 100,
-				states : [
-					{ requiredValue: -200, 	level: 7, color: 'green',	description: 'You are innocent.'},
-					{ requiredValue: 1, 	level: 6, color: 'teal',	description: 'You are almost entirely innocent.'},
-					{ requiredValue: 100, 	level: 5, color: 'lblue',	description: 'You have a limited understanding of sexuality.'},
-					{ requiredValue: 200, 	level: 4, color: 'blue',	description: 'You have a normal understanding of sexuality.'},
-					{ requiredValue: 300, 	level: 3, color: 'purple',	description: 'Your knowledge of sexual depravity extends beyond that of most people.'},
-					{ requiredValue: 400, 	level: 2, color: 'pink',	description: 'You have seen things that few are privy to.'},
-					{ requiredValue: 500, 	level: 1, color: 'red',		description: 'You have peered into the depths of depravity.'},
-					{ requiredValue: 1000,	level: 0, color: 'red',		description: 'Your understanding is transcendental.'}
-				]
-			}>>
 
 			<!--PURITY-->
 			<<if $demon gte 6>>
@@ -253,6 +260,20 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 				]
 			}>>
 
+			<!--AWARENESS-->
+			<<set _awarenessConfig = { name : "Awareness", icon : "ui/sym_awareness", displayType : "level", currentValue : $awareness, modifier: 100,
+				states : [
+					{ requiredValue: -200, 	level: 0, color: 'green',	description: 'You are innocent.'},
+					{ requiredValue: 1, 	level: 1, color: 'teal',	description: 'You are almost entirely innocent.'},
+					{ requiredValue: 100, 	level: 2, color: 'lblue',	description: 'You have a limited understanding of sexuality.'},
+					{ requiredValue: 200, 	level: 3, color: 'blue',	description: 'You have a normal understanding of sexuality.'},
+					{ requiredValue: 300, 	level: 4, color: 'purple',	description: 'Your knowledge of sexual depravity extends beyond that of most people.'},
+					{ requiredValue: 400, 	level: 5, color: 'pink',	description: 'You have seen things that few are privy to.'},
+					{ requiredValue: 500, 	level: 6, color: 'red',		description: 'You have peered into the depths of depravity.'},
+					{ requiredValue: 1000,	level: 7, color: 'red',		description: 'Your understanding is transcendental.'}
+				]
+			}>>
+
 			<!--PHYSIQUE-->
 			<<set _physiqueConfig = { name : "Physique", icon : "ui/sym_physique", displayType : "level", currentValue : $physique, maxValue: $physiquesize, modifier: 100,
 				states : [
@@ -268,8 +289,18 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 			<<if $moorLuck gt 0>>
 				<<set _physiqueConfig.modifier to Math.floor(_physiqueConfig.modifier * (1 + ($moorLuck / 100)))>>
 			<</if>>
+			<<if $sexStats.vagina.pregnancy.bellySize gte 10>>
+				<<switch $pregnancyStats.mother>>
+					<<case 0>><<set _pregnancyModifier to 30>>
+					<<case 1>><<set _pregnancyModifier to 40>>
+					<<case 2>><<set _pregnancyModifier to 50>>
+					<<case 3>><<set _pregnancyModifier to 65>>
+					<<case 4>><<set _pregnancyModifier to 100>>
+				<</switch>>
+				<<set _physiqueConfig.modifier to Math.floor(_physiqueConfig.modifier * (1 - ($sexStats.vagina.pregnancy.bellySize / _pregnancyModifier)))>>
+			<</if>>
 			<<switch $location>>
-				<<case "forest" "moor" "farm">>
+				<<case "forest" "moor" "farm" "alex_farm">>
 					<<if $worn.feet.type.includes("heels")>>
 						<<set _physiqueConfig.modifier to Math.floor(_physiqueConfig.modifier * (1 - ($worn.feet.reveal / 5000)))>>
 					<</if>>
@@ -350,11 +381,11 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 			}>>
 		<</silently>>
 
-		<<characteristic-box _awarenessConfig>>
 		<<characteristic-box _purityConfig>>
+		<<characteristic-box _beautyConfig>>
 		<<characteristic-box _physiqueConfig>>
 		<<characteristic-box _willpowerConfig>>
-		<<characteristic-box _beautyConfig>>
+		<<characteristic-box _awarenessConfig>>
 		<<characteristic-box _promiscuityConfig>>
 		<<characteristic-box _exhibitionismConfig>>
 		<<characteristic-box _deviancyConfig>>
@@ -405,6 +436,18 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 				<<set _athleticsConfig.modifier to Math.floor(_athleticsConfig.modifier * (1 + ($moorLuck / 100)))>>
 				<<set _tendingConfig.modifier to Math.floor(_tendingConfig.modifier * (1 + ($moorLuck / 100)))>>
 			<</if>>
+			<<if $sexStats.vagina.pregnancy.bellySize gte 10>>
+				<<switch $pregnancyStats.mother>>
+					<<case 0>><<set _pregnancyModifier to 30>>
+					<<case 1>><<set _pregnancyModifier to 40>>
+					<<case 2>><<set _pregnancyModifier to 50>>
+					<<case 3>><<set _pregnancyModifier to 65>>
+					<<case 4>><<set _pregnancyModifier to 100>>
+				<</switch>>
+				<<set _dancingConfig.modifier to Math.floor(_dancingConfig.modifier * (1 - ($sexStats.vagina.pregnancy.bellySize / _pregnancyModifier)))>>
+				<<set _swimmingConfig.modifier to Math.floor(_swimmingConfig.modifier * (1 - ($sexStats.vagina.pregnancy.bellySize / _pregnancyModifier)))>>
+				<<set _athleticsConfig.modifier to Math.floor(_athleticsConfig.modifier * (1 - ($sexStats.vagina.pregnancy.bellySize / _pregnancyModifier)))>>
+			<</if>>
 			<<if $worn.hands.type.includes("sticky_fingers")>>
 				<<set _skulduggeryConfig.modifier to Math.floor(_skulduggeryConfig.modifier * 1.05)>>
 			<</if>>
@@ -437,7 +480,7 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 				<<set _swimmingConfig.modifier to Math.floor(_swimmingConfig.modifier * (0.9 + ($feetskill / 10000) - _heels))>>
 			<</if>>
 			<<switch $location>>
-				<<case "forest" "moor" "farm">>
+				<<case "forest" "moor" "farm" "alex_farm">>
 					<<if $worn.feet.type.includes("heels")>>
 						<<set _athleticsConfig.modifier to Math.floor(_athleticsConfig.modifier * (1 - ($worn.feet.reveal / 5000)))>>
 					<</if>>
@@ -445,6 +488,11 @@ You have a <<skincolourtext>> <<if $breastsize gte 1>>You have <<breasts>>.<</if
 						<<set _athleticsConfig.modifier to Math.floor(_athleticsConfig.modifier * (1 + ($feetskill / 10000)))>>
 					<</if>>
 			<</switch>>
+			<<if $worn.feet.type.includes("shackle")>>
+				<<set _athleticsConfig.modifier to 0>>
+				<<set _swimmingConfig.modifier to Math.floor(_swimmingConfig.modifier * 0.5)>>
+				<<set _dancingConfig.modifier to Math.floor(_dancingConfig.modifier * 0.5)>>
+			<</if>>
 
 			/*noeinan mod START*/
 

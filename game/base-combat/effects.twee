@@ -4,6 +4,14 @@
 <!-- "FOR" loops work by counting backward from highest numbered combatant to lowest e.g. 5 to 0. -->
 <!-- In case of train combat, count stops after 1, e.g. 5 to 5. -->
 <!-- Lots of further opportunity to reduce code using <<for>><</for>> loops with NPC objects NG 2.8-->
+<<set _ppbigreaction to ["Your body feels weak at the sight.","You shudder at the sight.","You moan involuntarily at its size.","You gasp at its massive girth.","Your thighs feel weak as you look on."]>>
+<<set _ppsmallreaction to ["You stifle a laugh at the sight.","You smirk at the sight.","You stifle a chuckle at the sight.","You stifle a giggle at the sight.","You try not to laugh."]>>
+<<set _pprng to random(0, 4)>>
+
+/*ToDo: Pregnancy, remove to properly enable*/
+<<if $pregnancyTesting is undefined>>
+	<<set $condomUse to false>>
+<</if>>
 
 <<if $combattype is "train">>
 	<<set _end to $enemyno-1>>
@@ -34,10 +42,12 @@
 	<<set $NPCList[_i].intro to 1>>
 <</for>>
 
-<<if $trance gte 1>>
-	You stare straight ahead, your body passive and compliant.
-<<elseif $dissociation gte 2>>
-	You stare straight ahead, your body passive and compliant.
+<<if $trance gte 1 or $dissociation gte 2>>
+	<<if $position is "stalk">>
+		You wander in a daze, unaware of your surroundings.
+	<<else>>
+		You stare straight ahead, your body passive and compliant.
+	<</if>>
 <</if>>
 
 <<if $underwater is 1>>
@@ -82,6 +92,7 @@
 	<<effectssteal>>
 <</if>>
 <<effectspenwhack>>
+<<effectsshacklewhack>>
 <<effectshandsfreeface>>
 
 <<if $bodyaction is "doggy">>
@@ -101,7 +112,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is 0>>
 				<<set $NPCList[_j].penis to "leftarm">><<set $leftarm to "penis">><<submission 1>><<handstat>>
-				<span class="lblue">You <<handtext>> grab <<hisselect _j>> $NPCList[_j].penisdesc with your left hand.</span>
+				<span class="lblue">You <<handtext>> <<if $NPCList[_j].chastity.penis.includes("chastity")>>fondle<<else>>grab<</if>> <<hisselect _j>> $NPCList[_j].penisdesc<<if $NPCList[_j].chastity.penis.includes("chastity")>> through <<hisselect _j>> $NPCList[_j].chastity.penis<</if>> with your left hand.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -117,7 +128,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is 0>>
 				<<set $NPCList[_j].penis to "rightarm">><<set $rightarm to "penis">><<submission 1>>
-				<span class="lblue"><<handstat>>You <<handtext>> grab <<hisselect _j>> $NPCList[_j].penisdesc with your right hand.</span>
+				<span class="lblue">You <<handtext>> <<if $NPCList[_j].chastity.penis.includes("chastity")>>fondle<<else>>grab<</if>> <<hisselect _j>> $NPCList[_j].penisdesc<<if $NPCList[_j].chastity.penis.includes("chastity")>> through <<hisselect _j>> $NPCList[_j].chastity.penis<</if>> with your right hand.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -285,6 +296,42 @@
 	You rest your right arm.
 <</if>>
 
+<<if $leftaction is "behind" and $rightaction is "behind">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "behind">><<set $rightactiondefault to "behind">>
+	You hold your arms behind your back in a compliant gesture.
+	<<meek 2>><<set $leftarm to "behind">><<set $rightarm to "behind">>
+<</if>>
+
+<<if $leftaction is "behind">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "behind">>
+	You hold your left arm behind your back in a compliant gesture.
+	<<meek 1>><<set $leftarm to "behind">>
+<</if>>
+
+<<if $rightaction is "behind">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "behind">>
+	You hold your left arm behind your back in a compliant gesture.
+	<<meek 1>><<set $rightarm to "behind">>
+<</if>>
+
+<<if $leftaction is "stopbehind" and $rightaction is "stopbehind">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "rest">><<set $rightactiondefault to "rest">>
+	You move your arms in front of you.
+	<<set $leftarm to 0>><<set $rightarm to 0>>
+<</if>>
+
+<<if $leftaction is "stopbehind">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+	You move your left arm in front of you.
+	<<set $leftarm to 0>>
+<</if>>
+
+<<if $rightaction is "stopbehind">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+	You move your right arm in front of you.
+	<<set $rightarm to 0>>
+<</if>>
+
 <<if $leftaction is "leftchest" and $rightaction is "rightchest">>
 	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftchest">>
 	<<set $rightactiondefault to "rightchest">><<actionsstroke>><<submission 2>>
@@ -355,6 +402,8 @@
 	<</if>>
 <</if>>
 
+<<cover_end>>/*Resets $face and other variables that are covered */
+
 <<if $leftaction is "leftcoverface" and $rightaction is "rightcoverface">>
 	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcoverface">><<set $rightactiondefault to "rightcoverface">>
 	You cover your face with your hands.
@@ -369,57 +418,184 @@
 	<<set $speechcoverface to 1>><<set $face to "covered">><<neutral 1>>
 <</if>>
 
+<<if $leftaction is "leftcovervaginameek" and $rightaction is "rightcovervaginameek">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcovervaginameek">><<set $rightactiondefault to "rightcovervaginameek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your hands.
+	<</if>>
+	<<meek 2>><<set $leftarm to "vagina">><<set $rightarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
+<</if>>
+
+<<if $leftaction is "leftcovervaginameek">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "leftcovervaginameek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your left hand.
+	<</if>>
+	<<meek 1>><<set $leftarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
+<</if>>
+
+<<if $rightaction is "rightcovervaginameek">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightcovervaginameek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your right hand.
+	<</if>>
+	<<meek 1>><<set $rightarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
+<</if>>
+
 <<if $leftaction is "leftcovervagina" and $rightaction is "rightcovervagina">>
 	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcovervagina">><<set $rightactiondefault to "rightcovervagina">>
-	You cover your pussy with your hands.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your hands.
+	<</if>>
 	<<brat 2>><<set $leftarm to "vagina">><<set $rightarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
 <</if>>
 
 <<if $leftaction is "leftcovervagina">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "leftcovervagina">>
-	You cover your pussy with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your left hand.
+	<</if>>
 	<<brat 1>><<set $leftarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
 <</if>>
 
 <<if $rightaction is "rightcovervagina">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "rightcovervagina">>
-	You cover your pussy with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your right hand.
+	<</if>>
 	<<brat 1>><<set $rightarm to "vagina">><<set $vaginause to "cover">><<set $speechcovervagina to 1>>
 <</if>>
 
+<<if $leftaction is "leftcoverpenismeek" and $rightaction is "rightcoverpenismeek">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcoverpenismeek">><<set $rightactiondefault to "rightcoverpenismeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your penis with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your penis with your hands.
+	<</if>>
+	<<meek 2>><<set $leftarm to "coverpenis">><<set $rightarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
+<</if>>
+
+<<if $leftaction is "leftcoverpenismeek">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "leftcoverpenismeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your penis with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your penis with your left hand.
+	<</if>>
+	<<meek 1>><<set $leftarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
+<</if>>
+
+<<if $rightaction is "rightcoverpenismeek">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightcoverpenismeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your right hand.
+	<</if>>
+	<<meek 1>><<set $rightarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
+<</if>>
+
+
 <<if $leftaction is "leftcoverpenis" and $rightaction is "rightcoverpenis">>
 	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcoverpenis">><<set $rightactiondefault to "rightcoverpenis">>
-	You cover your penis with your hands.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your penis with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your penis with your hands.
+	<</if>>
 	<<brat 2>><<set $leftarm to "coverpenis">><<set $rightarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
 <</if>>
 
 <<if $leftaction is "leftcoverpenis">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "leftcoverpenis">>
-	You cover your penis with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your penis with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your penis with your left hand.
+	<</if>>
 	<<brat 1>><<set $leftarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
 <</if>>
 
 <<if $rightaction is "rightcoverpenis">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "rightcoverpenis">>
-	You cover your penis with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your pussy with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your pussy with your right hand.
+	<</if>>
 	<<brat 1>><<set $rightarm to "coverpenis">><<set $penisuse to "cover">><<set $speechcoverpenis to 1>>
+<</if>>
+
+<<if $leftaction is "leftcoveranusmeek" and $rightaction is "rightcoveranusmeek">>
+	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcoveranusmeek">><<set $rightactiondefault to "rightcoveranusmeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your hands.
+	<</if>>
+	<<meek 2>><<set $leftarm to "anus">><<set $rightarm to "anus">><<set $anususe to "cover">>
+<</if>>
+
+<<if $leftaction is "leftcoveranusmeek">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "leftcoveranusmeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your left hand.
+	<</if>>
+	<<meek 1>><<set $leftarm to "anus">><<set $anususe to "cover">>
+<</if>>
+
+<<if $rightaction is "rightcoveranusmeek">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightcoveranusmeek">>
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your right hand.
+	<</if>>
+	<<meek 1>><<set $rightarm to "anus">><<set $anususe to "cover">>
 <</if>>
 
 <<if $leftaction is "leftcoveranus" and $rightaction is "rightcoveranus">>
 	<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "leftcoveranus">><<set $rightactiondefault to "rightcoveranus">>
-	You cover your anus with your hands.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your hands, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your hands.
+	<</if>>
 	<<brat 2>><<set $leftarm to "anus">><<set $rightarm to "anus">><<set $anususe to "cover">>
 <</if>>
 
 <<if $leftaction is "leftcoveranus">>
 	<<set $leftaction to 0>><<set $leftactiondefault to "leftcoveranus">>
-	You cover your anus with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your left hand, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your left hand.
+	<</if>>
 	<<brat 1>><<set $leftarm to "anus">><<set $anususe to "cover">>
 <</if>>
 
 <<if $rightaction is "rightcoveranus">>
 	<<set $rightaction to 0>><<set $rightactiondefault to "rightcoveranus">>
-	You cover your anus with your hand.
+	<<if ($worn.lower.name is "towel skirt" or $worn.lower.name is "large towel bottom") and $worn.lower.state is "waist">>
+		You cover your ass with your right hand, tugging the towel further over it.
+	<<else>>
+		You cover your ass with your right hand.
+	<</if>>
 	<<brat 1>><<set $rightarm to "anus">><<set $anususe to "cover">>
 <</if>>
 
@@ -622,7 +798,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].vagina is 0>>
 				<<set $NPCList[_j].vagina to "leftarm">><<set $leftarm to "othervagina">><<submission 1>><<handstat>><<personselect _j>>
-				<span class="lblue">You <<handtext>> grab <<his>> pussy with your left hand.</span>
+				<span class="lblue">You <<handtext>> grab <<his>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> through <<his>> $NPCList[_j].chastity.vagina<</if>> with your left hand.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -638,7 +814,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].vagina is 0>>
 				<<set $NPCList[_j].vagina to "rightarm">><<set $rightarm to "othervagina">><<submission 1>><<handstat>><<personselect _j>>
-				<span class="lblue">You <<handtext>> grab <<his>> pussy with your right hand.</span>
+				<span class="lblue">You <<handtext>> grab <<his>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> through <<his>> $NPCList[_j].chastity.vagina<</if>> with your right hand.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -1098,6 +1274,199 @@
 	<</if>>
 <</if>>
 
+<<if $rightaction is "rightUndressOther" and $leftaction is "leftUndressOther">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightUndressOther">><<set $leftaction to 0>><<set $leftactiondefault to "leftUndressOther">><<handskilluse>><<combatpromiscuity2>><<brat 2>>
+	<<if (1000 - ($rng * 10) - ($enemytrust * 5) - $handskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j].penis is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him with both hands.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him with both hands, revealing <<his>> $NPCList[_j].penisdesc, <<if $NPCList[_j].chastity.penis.includes("chastity")>>inside of a $NPCList[_j].chastity.penis<<else>>fully erect<</if>>.</span>
+				<</if>>
+				<<switch $NPCList[_j].penissize>>
+				<<case 4>>
+					<span class="red"> _ppbigreaction[_pprng]</span>
+				<<case 1>>
+					<span class="green"> _ppsmallreaction[_pprng]</span>
+				<<default>>
+				<</switch>>
+				<<set $NPCList[_j].penis to 0>>
+			<<elseif $NPCList[_j].vagina is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him with both hands.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him with both hands, revealing <<his>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> behind a $NPCList[_j].chastity.vagina<</if>>.</span>
+				<</if>>
+				<<set $NPCList[_j].vagina to 0>>
+			<</if>>			
+			<<break>>
+		<</for>>
+	<<else>>
+		You try to undress $NPCList[_j].pronouns.him with both hands, but <<theowner>> holds $NPCList[_j].pronouns.his clothing up.
+	<</if>>
+<</if>>
+
+<<if $rightaction is "rightUndressOther">>
+	<<set $rightaction to 0>><<set $rightactiondefault to "rightUndressOther">><<handskilluse>><<combatpromiscuity2>><<brat 1>>
+	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $handskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j].penis is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him, revealing <<his>> $NPCList[_j].penisdesc, <<if $NPCList[_j].chastity.penis.includes("chastity")>>inside of a $NPCList[_j].chastity.penis<<else>>fully erect<</if>>.</span>
+				<</if>>
+				<<switch $NPCList[_j].penissize>>
+				<<case 4>>
+					<span class="red"> _ppbigreaction[_pprng]</span>
+				<<case 1>>
+					<span class="green"> _ppsmallreaction[_pprng]</span>
+				<<default>>
+				<</switch>>
+				<<set $NPCList[_j].penis to 0>>
+			<<elseif $NPCList[_j].vagina is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him, revealing <<his>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> behind a $NPCList[_j].chastity.vagina<</if>>.</span>
+				<</if>>
+				<<set $NPCList[_j].vagina to 0>>
+			<</if>>			
+			<<break>>
+		<</for>>
+	<<else>>
+		You try to undress $NPCList[_j].pronouns.him, but <<theowner>> holds $NPCList[_j].pronouns.his clothing up.
+	<</if>>
+<</if>>
+
+<<if $leftaction is "leftUndressOther">>
+	<<set $leftaction to 0>><<set $leftactiondefault to "leftUndressOther">><<handskilluse>><<combatpromiscuity2>><<brat 1>>
+	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $handskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
+		<<for _j = 0; _j lt $enemyno; _j++>>
+			<<if $NPCList[_j].penis is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him, revealing <<his>> $NPCList[_j].penisdesc, <<if $NPCList[_j].chastity.penis.includes("chastity")>>inside of a $NPCList[_j].chastity.penis<<else>>fully erect<</if>>.</span>
+				<</if>>
+				<<switch $NPCList[_j].penissize>>
+				<<case 4>>
+					<span class="red"> _ppbigreaction[_pprng]</span>
+				<<case 1>>
+					<span class="green"> _ppsmallreaction[_pprng]</span>
+				<<default>>
+				<</switch>>
+				<<set $NPCList[_j].penis to 0>>
+			<<elseif $NPCList[_j].vagina is "clothed">>
+				<<if $npcSub and $NPCList[_j].fullDescription is "Sydney">>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him.</span> <<sydneyExpose>>
+				<<else>>
+					<span class="lblue">You <<handtext>> undress $NPCList[_j].pronouns.him, revealing <<his>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> behind a $NPCList[_j].chastity.vagina<</if>>.</span>
+				<</if>>
+				<<set $NPCList[_j].vagina to 0>>
+			<</if>>			
+			<<break>>
+		<</for>>
+	<<else>>
+		You try to undress $NPCList[_j].pronouns.him, but <<theowner>> holds $NPCList[_j].pronouns.his clothing up.
+	<</if>>
+<</if>>
+
+/*Stalked actions */
+<<if !$stalk_end>>
+	<<if $leftaction is "clench" and $rightaction is "clench">>
+		<<set $leftactiondefault to "clench">><<set $leftaction to 0>><<set $rightactiondefault to "clench">><<set $rightaction to 0>><<brat 6>>
+		You clench your fists.
+	<</if>>
+
+	<<if $leftaction is "clench">>
+		<<set $leftactiondefault to "clench">><<set $leftaction to 0>><<brat 3>>
+		You clench your left fist.
+	<</if>>
+
+	<<if $rightaction is "clench">>
+		<<set $rightactiondefault to "clench">><<set $rightaction to 0>><<brat 3>>
+		You clench your right fist.
+	<</if>>
+
+	<<if $leftaction is "fold" and $rightaction is "fold">>
+		<<set $leftaction to 0>><<set $rightaction to 0>><<set $leftactiondefault to "fold">><<set $rightactiondefault to "fold">>
+		<<if $breastsize gte 3>>
+			You fold your arms beneath your <<breasts>>.
+		<<else>>
+			You fold your arms in front of you.
+		<</if>>
+		<<meek 6>>
+	<</if>>
+
+	<<if $leftaction is "fold">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "fold">>
+		<<if $breastsize gte 3>>
+			You fold your left arm beneath your <<breasts>>.
+		<<else>>
+			You fold your left arm in front of you.
+		<</if>>
+		<<meek 3>>
+	<</if>>
+
+	<<if $rightaction is "fold">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "fold">>
+		<<if $breastsize gte 3>>
+			You fold your right arm beneath your <<breasts>>.
+		<<else>>
+			You fold your right arm in front of you.
+		<</if>>
+		<<meek 3>>
+	<</if>>
+
+	<<if $leftaction is "pursuit_grab" and $rightaction is "pursuit_grab">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "pursuit_grab">><<set $rightaction to 0>><<set $rightactiondefault to "pursuit_grab">>
+		<<set $feetaction to "rest">>
+		<<set $feetuse to 0>>
+		You grasp the back of the <<persons>> shirt with both hands, <span class="green">and force <<him>> to stop.</span> <<He>> turns to face you.
+		<<stalk_catch>>
+	<</if>>
+
+	<<if $leftaction is "pursuit_grab">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "pursuit_grab">>
+		<<set $feetaction to "rest">>
+		<<set $feetuse to 0>>
+		You grasp the back of the <<persons>> shirt with your left hand, <span class="green">and force <<him>> to stop.</span> <<He>> turns to face you.
+		<<stalk_catch>>
+	<</if>>
+
+	<<if $rightaction is "pursuit_grab">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "pursuit_grab">>
+		<<set $feetaction to "rest">>
+		<<set $feetuse to 0>>
+		You grasp the back of the <<persons>> shirt with your right hand, <span class="green">and force <<him>> to stop.</span> <<He>> turns to face you.
+		<<stalk_catch>>
+	<</if>>
+<</if>>
+
+/*End of stalked actions */
+
+<<if $leftaction is "peniscondom" or $rightaction is "peniscondom">>
+	<<set _handsCount to 0>>
+	<<if $leftaction is "peniscondom">>
+		<<set $leftaction to 0>><<set $leftactiondefault to "rest">>
+		<<set _handsCount++>>
+	<</if>>
+	<<if $rightaction is "peniscondom">>
+		<<set $rightaction to 0>><<set $rightactiondefault to "rest">>
+		<<set _handsCount++>>
+	<</if>>
+	<<if false>>
+		/*Npc tries to prevent you from putting the condom on*/
+	<<else>>
+		<<if $player.condom is false and $parasite.penis.name is undefined>>
+			You are not prevented from putting the condom over your penis.
+			<<equipCondom>>
+		<</if>>
+	<</if>>
+<</if>>
+
 <<if $feetaction is "grab">>
 	<<set $feetaction to 0>><<set $feetactiondefault to "grab">><<combatpromiscuity3>>
 	<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $feetskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100)>>
@@ -1105,7 +1474,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is 0>>
 				<<submission 2>><<set $NPCList[_j].penis to "feet">><<set $feetuse to "penis">><<feetstat>><<feetskilluse>>
-				<span class="lblue">You <<feettext>> grab <<hisselect _j>> $NPCList[_j].penisdesc between your feet.</span>
+				<span class="lblue">You <<feettext>> <<if $NPCList[_j].chastity.penis.includes("chastity")>>rub your foot on <<hisselect _j>> $NPCList[_j].penisdesc through <<hisselect _j>> $NPCList[_j].chastity.penis<<else>>grab <<hisselect _j>> $NPCList[_j].penisdesc between your feet<</if>>.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -1183,7 +1552,7 @@
 		<<set $feetactiondefault to "vaginagrabrub">>
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].vagina is 0>>
-				<<submission 2>><<set $feetuse to "othervagina">><<set $NPCList[_j].vagina to "feet">><<feetstat>><span class="lblue">You <<feettext>> press your feet against <<hisselect _j>> pussy.</span>
+				<<submission 2>><<set $feetuse to "othervagina">><<set $NPCList[_j].vagina to "feet">><<feetstat>><span class="lblue">You <<feettext>> press your feet against <<hisselect _j>> pussy<<if $NPCList[_j].chastity.vagina.includes("chastity")>> through <<hisselect _j>> $NPCList[_j].chastity.vagina<</if>>.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -1213,7 +1582,7 @@
 
 <<if $feetaction is "stop">>
 	<<set $feetaction to 0>><<set $feetactiondefault to "stop">>
-	You move your feet away from their genitals.
+	You move your feet away from <<his>> genitals.
 	<<set $feetuse to 0>>
 	<<for _j = 0; _j lt $enemyno; _j++>>
 		<<if $NPCList[_j].penis is "feet">>
@@ -1226,6 +1595,262 @@
 		<</if>>
 	<</for>>
 <</if>>
+
+<<if $feetaction is "feetshoes">>
+	<<set $feetaction to 0>>
+	You kick off your $worn.feet.name.
+	<<feetstrip>>
+<</if>>
+
+<<if $feetaction is "feetsocks">>
+	<<set $feetaction to 0>>
+	<<if $worn.legs.state is "thighs">>
+		You peel your $worn.legs.name down your thighs with your toes.
+		<<set $worn.legs.state to "ankles">>
+	<<elseif $worn.legs.state is "ankles">>
+		You kick off your $worn.legs.name.
+		<<legsstrip>>
+	<</if>>
+<</if>>
+
+/*Stalked actions */
+<<if !$stalk_end>>
+	<<if $feetaction is "walk">>
+		<<set $feetaction to 0>><<set $feetactiondefault to "walk">>
+		You keep walking,
+		<<if $control gte ($controlmax * 0.8)>>
+			your feet sure and steady.
+		<<elseif $control gte ($controlmax * 0.6)>>
+			putting one foot in front of the other.
+		<<elseif $control gte ($controlmax * 0.4)>>
+			though worried about the gaining footsteps.
+		<<elseif $control gte ($controlmax * 0.2)>>
+			doing your best to stay calm.
+		<<else>>
+			suppressing the urge to break into a run.
+		<</if>>
+		<<stalk_walk_events>>
+	<</if>>
+
+	<<if $feetaction is "run">>
+		<<set $feetaction to 0>><<set $feetactiondefault to "run">>
+		<<if $NPCList[0].state is "pursuit">>
+			<<if $feetuse isnot "run">>
+				You break into a run, and chase the thief.
+				<<stalk_run>>
+			<<else>>
+				You chase the thief.
+			<</if>>
+			<<run_text>>
+			<<if $worn.feet.type.includes("heels")>>
+				<<if $feetskill gte random(1, 1000)>>
+					<<set _stalk_feet to true>>
+				<<else>>
+					<<set _stalk_feet to false>>
+				<</if>>
+			<<else>>
+				<<set _stalk_feet to true>>
+			<</if>>
+			<<if $athletics gte random(1, $NPCList[0].skills.athletics)>>
+				<<set _stalk_athletics to true>>
+			<<else>>
+				<<set _stalk_athletics to false>>
+			<</if>>
+			<<if _stalk_athletics and _stalk_feet>>
+				<span class="teal">You catch up.</span>
+				<<set $NPCList[0].distance -= 2>>
+			<<else>>
+				<span class="red"><<He>> outpaces you.</span>
+				<br>
+			<</if>>
+			<<stalk_run_events>>
+		<<else>>
+			<<if $feetuse isnot "run">>
+				You break into a run.
+				<<if $NPCList[0].bold * 2 gte random(1, 1000)>>
+					The footsteps behind you speed up. <span class="red">You are being chased.</span>
+					<<stalk_run>>
+					<<if $worn.feet.type.includes("heels")>>
+						<<if $feetskill gte random(1, 1000)>>
+							<<set _stalk_feet to true>>
+						<</if>>
+					<<else>>
+						<<set _stalk_feet to true>>
+					<</if>>
+					<<if $athletics gte random(1, $NPCList[0].skills.athletics)>>
+						<<set _stalk_athletics to true>>
+					<<else>>
+						<<set _stalk_athletics to false>>
+					<</if>>
+					<<if _stalk_athletics and _stalk_feet>>
+						<span class="teal">The footsteps fall behind.</span>
+						<<set $NPCList[0].distance += 2>>
+					<<else>>
+						<span class="red">The footsteps get closer.</span>
+					<</if>>
+				<<else>>
+					<span class="teal">No one pursues.</span>
+					<<set $stalk_end to "escaped">>
+				<</if>>
+			<<else>>
+				You keep running.
+				<<run_text>>
+				<<if $worn.feet.type.includes("heels")>>
+					<<if $feetskill gte random(1, 1000)>>
+						<<set _stalk_feet to true>>
+					<</if>>
+				<<else>>
+					<<set _stalk_feet to true>>
+				<</if>>
+				<<if $athletics gte random(1, $NPCList[0].skills.athletics)>>
+					<<set _stalk_athletics to true>>
+				<<else>>
+					<<set _stalk_athletics to false>>
+				<</if>>
+				<<if _stalk_athletics and _stalk_feet>>
+					<span class="teal">The footsteps fall behind.</span>
+					<<set $NPCList[0].distance += 2>>
+				<<else>>
+					<span class="red">The footsteps get closer.</span>
+				<</if>>
+				<br>
+			<</if>>
+			<<if $NPCList[0].distance gte 5>>
+				<span class="green">You leave them far behind,</span> and escape to safety.
+				<<set $stalk_end to "escaped">>
+			<<else>>
+				<<stalk_run_events>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<if $feetaction is "stand">>
+		<<set $feetaction to 0>><<set $feetactiondefault to "stand">>
+		<<if $control gte ($controlmax * 0.8)>>
+			You stand still, your feet firm.
+		<<elseif $control gte ($controlmax * 0.6)>>
+			You stand still, and take a deep breath.
+		<<elseif $control gte ($controlmax * 0.4)>>
+			Despite your nerves, you stand still.
+		<<elseif $control gte ($controlmax * 0.2)>>
+			You stand still, despite your fear.
+		<<else>>
+			Shaking with fear, you stand still.
+		<</if>>
+		<<set $NPCList[0].distance to 0>>
+	<</if>>
+
+	<<if $feetaction is "hobble">>
+		<<set $feetaction to 0>><<set $feetactiondefaul to "hobble">>
+		<<if $leftleg is "bound" or $rightleg is "bound">>
+			You hobble as fast as your bound legs will allow,
+		<<else>>
+			You hobble as fast as your inexperience with high heels will allow,
+		<</if>>
+		<<if $control gte ($controlmax * 0.8)>>
+			your feet steady despite your predicament.
+		<<elseif $control gte ($controlmax * 0.6)>>
+			careful not to trip.
+		<<elseif $control gte ($controlmax * 0.4)>>
+			suppressing the growing fear of the footsteps behind you.
+		<<elseif $control gte ($controlmax * 0.2)>>
+			struggling to stay calm.
+		<<else>>
+			suppressing the urge to cower in terror.
+		<</if>>
+	<</if>>
+
+	<<if $feetaction is "hide">>
+		<<set $feetaction to 0>><<set $feetactiondefault to "hide">>
+		<<set _difficulty to $NPCList[0].skills.security>>
+		<<set _difficulty += ($semencount + $goocount) * 20>>
+		<<if $skulduggery gte random(1, _difficulty)>>
+			<<set _hide_success to true>>
+		<</if>>
+		<<if _hide_success and $NPCList[0].state is "pursuit">>
+			<<switch $location>>
+			<<case forest lake>>
+				You hide behind a tree, and hope that no one's watching.
+			<<case moor>>
+				You crouch behind a small ridge, and hope that no one's watching.
+			<<default>>
+				You dive down a small alley, and take cover behind a dumpster.
+			<</switch>>
+			<<set $stalk_end to "hide">>
+		<<elseif !_hide_success and ($NPCList[0].legs is "run" or $NPCList[0].bold gte random(1, 1000))>>
+			<<switch $location>>
+			<<case alley>>
+				You dive down a thin alley, and take cover behind a dumpster. You peek around the corner. You don't see anyone.
+			<<case forest lake>>
+				You run into a dense copse, and take cover behind a thick trunk. You peek around the side. You don't see anyone.
+			<<case moor>>
+				You crest a small ridge, and dive into a ditch. You look up, and don't see anyone.
+			<<default>>
+				You dive down a thin alley, and take cover behind a dumpster. You peek around the side. You don't see anyone.
+			<</switch>>
+			<span class="red">Then you feel a presence.</span>
+			<<events_stalk>>
+		<<else>>
+			<<switch $location>>
+			<<case alley>>
+				You dive down a thin alley, and take cover behind a dumpster. <span class="green"><<if $enemyno gt 1>>They pass<<else>>The <<person>> passes<</if>> without looking your way.</span>
+			<<case forest lake>>
+				You run into a dense copse, and take cover behind a thick trunk. You peek around the edge. <span class="green"><<if $enemyno gt 1>>They pass<<else>>The <<person>> passes<</if>> by without looking your way.</span>
+			<<case moor>>
+				You crest a small ridge, and dive into a ditch. The <<if $enemyno gt 1>><<person1>><</if>><<person>> pauses at the top, <span class="green">then moves on without looking your way.</span>
+			<<default>>
+				You dive down a thin alley, and take cover behind a dumpster. You peek around the side. <span class="green"><<if $enemyno gt 1>>They pass<<else>>The <<person>> passes<</if>> without looking your way.</span>
+			<</switch>>
+			<<set $stalk_end to "hide">>
+		<</if>>
+	<</if>>
+
+	<<if $feetaction is "confront">>
+		<<famescrap 1>>
+		You swivel around, and come face to face with the
+		<<person1>>
+		<<if $enemyno gte 2>>
+			<<person>> and <<his>> companions.
+		<<else>>
+			<<person>>.
+		<</if>>
+		<<actionsconfront>>
+		<br><br>
+		<<if $NPCList[0].bold * 2 gte random(1, 1000)>>
+			<span class="red"><<He>> marches towards you.</span>
+			<<if $NPCList[0].traits.includes("relaxed")>>
+				"Best play along," <<he>> says. "It'll be easier for you."
+			<<elseif $NPCList[0].traits.includes("sociable")>>
+				"That's no way to talk to a <<if $pronoun is "m">>gentleman<<else>>lady<</if>> like me," <<he>> says. "I know how you can make it up to me."
+			<<elseif $NPCList[0].traits.includes("brooding")>>
+				"This is the way of the world," <<he>> says. "It'll be over soon."
+			<<else>>
+				"You're such a hot piece," <<he>> says. "You're gonna get jumped sooner or later. I might as well benefit."
+			<</if>>
+			<br><br>
+			<<stalk_attack>>
+		<<else>>
+			<span class="green"><<He>> throws up <<his>> hands.</span>
+			<<if $NPCList[0].traits.includes("relaxed")>>
+				"Easy <<girl>>," <<he>> says, giving you a wide berth. "I didn't mean to frighten you."
+			<<elseif $NPCList[0].traits.includes("sociable")>>
+				"Damn <<girl>>," <<he>> says. "I am that ugly?" <<He>> gives you a wide berth.
+			<<elseif $NPCList[0].traits.includes("brooding")>>
+				The <<person>> laughs. "The streets that rough for you?" <<he>> asks. "I'll give you space."
+			<<else>>
+				"I was only looking!" <<he>> says. "Wasn't gonna try anything, honest." <<He>> gives you a wide berth.
+			<</if>>
+			<br><br>
+
+			<<He>> walks ahead. You feel a little silly.
+			<br><br>
+			<<set $stalk_end to "passed">>
+			<<set $NPCList[_n].distance to 1>>
+		<</if>>
+	<</if>>
+<</if>>
+
+/*End of stalked actions */
 
 <<if $mouthaction is "rest">>
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "rest">>
@@ -1311,7 +1936,7 @@
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is 0 and ($enemytype isnot "man" or $NPCList[_j].location.genitals is 0)>>
 				<<set $NPCList[_j].penis to "mouthentrance">><<set $mouthuse to "penis">><<oralskilluse>><<set $mouthstate to "entrance">>
-				<span class="lblue">You <<oraltext>> move your mouth to <<hisselect _j>> $NPCList[_j].penisdesc and <<he>> waits expectantly.</span>
+				<span class="lblue">You <<oraltext>> move your mouth to <<hisselect _j>> <<npcPenis _j>><<if !$npcSub>> and <<he>> waits expectantly<</if>>.</span>
 				<<if $enemytype is "beast">><<set $NPCList[_j].stance to "topface">><</if>>
 				<<set $NPCList[_j].location.genitals to "head">>
 				<<break>>
@@ -1357,7 +1982,7 @@
 		<<set $mouthactiondefault to "vaginalick">>
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].vagina is 0 and ($enemytype isnot "man" or $NPCList[_j].location.genitals is 0)>>
-				<span class="lblue">You <<oraltext>> move your mouth to <<hisselect _j>> pussy and <<he>> waits expectantly.</span>
+				<span class="lblue">You <<oraltext>> move your mouth to <<hisselect _j>> <<npcVagina _j>><<if !$npcSub>> and <<he>> waits expectantly<</if>>.</span>
 				<<set $NPCList[_j].vagina to "mouth">><<set $mouthstate to "othervagina">><<set $mouthuse to "othervagina">><<oralskilluse>>
 				<<if $enemytype is "beast">><<set $NPCList[_j].stance to "topface">><</if>>
 				<<set $NPCList[_j].location.genitals to "head">>
@@ -1416,7 +2041,7 @@
 			<<if $NPCList[_j].chest is 0 and $NPCList[_j].location.genitals isnot "head" and $NPCList[_j].location.head isnot "head" and $NPCList[_j].location.head isnot "genitals">>
 				<span class="lblue">You <<oraltext>> move your mouth to <<hisselect _j>> $NPCList[_j].breastsdesc.</span>
 				<<set $NPCList[_j].chest to "mouthentrance">><<set $mouthstate to "breasts">><<set $mouthuse to "breasts">><<set $head to "breasts">><<oralskilluse>>
-				<<set $NPCList[_n].location.head to "head">>
+				<<set $NPCList[_j].location.head to "head">>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -1516,7 +2141,7 @@
 	<<else>>
 		You scream for help.
 		<<if $loveInterest>>
-			<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden") and $location is "forest" and $npc isnot "Eden">>
+			<<if ($loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden") and $location is "forest" and !($npc.includes("Eden"))>>
 				<<if $rng lte 50>>
 					"Eden! Get them off of me!"
 				<<else>>
@@ -1675,7 +2300,7 @@ You try to pull your head away from the penis threatening your mouth.
 <<if $mouthaction is "bite">>
 	<<set $mouthaction to 0>><<set $mouthactiondefault to "bite">>
 	You bite down on the penis, <<theowner>> <<if $enemytype is "man">>yelps<<elseif $enemytype is "beast">>growls<<else>>shrieks<</if>> and recoils in agony.
-	<<defiance 20>><<attackstat>><<set $mouthuse to 0>><<set $penisbitten to 1>><<set $mouthstate to 0>>
+	<<defiance 20>><<attackstat>><<control 15>><<set $mouthuse to 0>><<set $penisbitten to 1>><<set $mouthstate to 0>>
 	/*noeinan mod START*/
 	/*Added fang text for new Fox Transformation*/
 	<<if $wolfgirl gte 2 or $cat gte 2 or $foxgirl gte 2>>
@@ -1765,15 +2390,18 @@ You try to pull your head away from the penis threatening your mouth.
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].lefthand is "mouth">>
 				<<set $NPCList[_j].lefthand to 0>>
+				<<control 15>>
 				<span class="teal"><<He `_j + 1`>> flinches away in pain, freeing your mouth.</span>
 			<</if>>
 			<<if $NPCList[_j].righthand is "mouth">>
 				<<set $NPCList[_j].righthand to 0>>
+				<<control 15>>
 				<span class="teal"><<He `_j + 1`>> flinches away in pain, freeing your mouth.</span>
 			<</if>>
 		<</for>>
 	<<else>>
-		<span class="purple">It remains over your mouth.</span>
+		<<control -5>>
+		<span class="purple">It remains over your mouth.</span> 
 	<</if>>
 <</if>>
 
@@ -1840,6 +2468,78 @@ You try to pull your head away from the penis threatening your mouth.
 	<</for>>
 <</if>>
 
+/*Stalked actions */
+<<if !$stalk_end>>
+	<<if $mouthaction is "up">>
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "up">>
+		<<if $control gte 100>>
+			You keep your chin up, and head proud.
+		<<elseif $control gte 80>>
+			You keep you head up and eyes focused on the path ahead.
+		<<elseif $control gte 60>>
+			You keep your eyes fixed on the path ahead.
+		<<elseif $control gte 40>>
+			You keep your eyes ahead, resisting the urge to look around for threats.
+		<<elseif $control gte 20>>
+			You keep your head up, your eyes searching the path ahead for danger.
+		<<else>>
+			You keep your head up, but close your eyes in fear.
+		<</if>>
+		<<brat 3>>
+	<</if>>
+
+	<<if $mouthaction is "down">>
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "down">>
+		<<if $control gte 100>>
+			You look at the ground in front of you.
+		<<elseif $control gte 80>>
+			You watch the ground in front of you.
+		<<elseif $control gte 60>>
+			You keep your head down, hoping not to be noticed.
+		<<elseif $control gte 40>>
+			You keep your head down, and hope nothing is watching.
+		<<elseif $control gte 20>>
+			You keep your head down, and tell yourself the path is safe.
+		<<else>>
+			You bow your head in fear.
+		<</if>>
+		<<meek 3>>
+	<</if>>
+
+	<<if $mouthaction is "turn">>
+		<<set $mouthaction to 0>><<set $mouthactiondefault to "turn">>
+		You glance over your shoulder.
+		You see a <<person1>><<person>> following you.
+		<<He>> moves with
+		<<if $NPCList[0].skills.athletics gte 800>>
+			<span class="pink">an energetic stride</span>
+		<<elseif $NPCList[0].skills.athletics gte 600>>
+			<span class="purple">a motivated pace</span>
+		<<elseif $NPCList[0].skills.athletics gte 400>>
+			<span class="blue">a calm gait</span>
+		<<elseif $NPCList[0].skills.athletics gte 200>>
+			<span class="lblue">a lazy ramble</span>
+		<<else>>
+			<span class="teal">a slothful shuffle</span>
+		<</if>>
+		and
+		<<if $NPCList[0].skills.security gte 800>>
+			<span class="pink">has a devious glint in <<his>> eyes.</span>
+		<<elseif $NPCList[0].skills.security gte 600>>
+			<span class="purple">looks focused.</span>
+		<<elseif $NPCList[0].skills.security gte 400>>
+			<span class="blue">looks relaxed.</span>
+		<<elseif $NPCList[0].skills.security gte 200>>
+			<span class="lblue">seems distracted.</span>
+		<<else>>
+			<span class="teal">appears to be daydreaming.</span>
+		<</if>>
+		<<set $stalk_assess to true>>
+	<</if>>
+<</if>>
+
+/*End of stalked actions */
+
 <<set $rng to random(1, 100)>>
 
 <<if $vaginaaction is "penisthighs">>
@@ -1881,7 +2581,7 @@ You try to pull your head away from the penis threatening your mouth.
 		<<for _j = 0; _j lt $enemyno; _j++>>
 			<<if $NPCList[_j].penis is "vaginaentrance">>
 				<<personselect _j>>
-				<span class="blue">You give your <<bottom>> a little wiggle, the <<combatperson>> responds to the provocation and moves <<his>> penis in front of your butt.</span>
+				<span class="blue">You give your <<bottom>> a little wiggle, <<combatperson>> responds to the provocation and moves <<his>> penis in front of your butt.</span>
 				<<submission 2>><<set $anususe to "penis">><<set $NPCList[_j].penis to "anusentrance">><<set $vaginause to 0>><<set $anusstate to "entrance">><<set $vaginastate to 0>>
 				<<break>>
 			<</if>>
@@ -1924,7 +2624,7 @@ You try to pull your head away from the penis threatening your mouth.
 			<<if $NPCList[_j].penis is "anusentrance">>
 				<<personselect _j>>
 				<<submission 2>><<set $vaginause to "penis">><<set $NPCList[_j].penis to "vaginaentrance">><<set $anususe to 0>><<set $vaginastate to "entrance">><<set $anusstate to 0>>
-				<span class="lblue">You spread your thighs, giving clear access to your pussy. The <<combatperson>> takes advantage and moves <<his>> penis away from your butt.</span>
+				<span class="lblue">You spread your thighs, giving clear access to your pussy, and <<combatperson>> takes advantage and moves <<his>> penis away from your butt.</span>
 				<<break>>
 			<</if>>
 		<</for>>
@@ -2667,7 +3367,7 @@ You try to pull your head away from the penis threatening your mouth.
 	<<else>>
 		<<set $mouthactiondefault to "rest">><<brat 10>>
 		You tell <<him>> you've had enough and want to stop.
-		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+		<<if !$loveDrunk and ((1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole)>>
 			<<set $finish to 1>>
 			<<if $trueconsensual isnot 1 and $gamemode is "soft">>
 				<<set $enemyhealth to -100>>
@@ -2978,6 +3678,246 @@ You try to pull your head away from the penis threatening your mouth.
 <</if>>
 
 /*noeinan mod END*/
+
+<<if $mouthaction is "ask" and $askAction is "condoms">>
+	<<set $mouthaction to 0>><<unset $askAction>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> to use condoms">>
+	<<else>>
+		<<set $mouthactiondefault to "rest">><<sub 2>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<set $condomAsk to true>>
+		You tell <<him>> you want to use condoms.
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<if $consensual is 0>>
+				<<set $condomUse to true>>
+				They pause a moment before responding,
+				<<set _response to [
+					"Sure thing, slut.",
+					"Yeah, you probably have something contagious.",
+					"Last thing I want is an unclaimed brat with my name on it.",
+					"Fine, but I expect you to cooperate.",
+					"Good idea, I don't want any evidence traced back to me."
+				]>>
+				<span class="green">"<<print _response.pluck()>>"</span>
+			<<else>>
+				<<for _j = 0; _j lt $enemyno; _j++>>
+					<<if $NPCList[_j].pregnancyAvoidance is undefined>>
+					<<elseif $NPCList[_j].pregnancyAvoidance lt random(1, 100)>>
+						<<set _npcReject to true>>
+					<</if>>
+				<</for>>
+				<<if _npcReject>>
+					<<set $condomUse to false>>
+					<<switch $npc>>
+						<<case "Kylar">><span class="lewd"><<He>> says, "There is no need, we're going to have many amazing children."</span>
+						<<default>><span class="lewd"><<He>> says, "It's a safe day for me, don't worry about it."</span>
+					<</switch>>
+				<<else>>
+					<<set $condomUse to true>>
+					<span class="green">They nod in acknowledgement.</span>
+				<</if>>
+			<</if>>
+			<<if $condomUse>>
+				/*Your penis*/
+				<<if $penisstate is "entrance" or $penisstate is "imminent" or $penisstate is "otheranusentrance" or $penisstate is "otheranusimminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].vagina is "penis" or $NPCList[_j].penis is "otheranus") and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto your penis.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $penisstate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].vagina is "penis" and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly frees your penis from <<his>> vagina, puts a condom on it before sticking it back in.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $penisstate is "otheranus">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "otheranus" and $player.condom is false and $parasite.penis.name is undefined>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly frees your penis from <<his>> anus, puts a condom on it before sticking it back in.</span>
+							<<equipCondom>>
+						<</if>>
+					<</for>>
+				<</if>>
+				/*Their penis*/
+				<<if $vaginastate is "entrance" or $vaginastate is "imminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].penis is "vaginaentrance" or $NPCList[_j].penis is "vaginaimminent") and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $vaginastate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "vagina" and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly withdraws <<his>> penis from your vagina, puts a condom on it before sticking it back in.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $anusstate is "entrance" or $anusstate is "imminent">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if ($NPCList[_j].penis is "anusentrance" or $NPCList[_j].penis is "anusimminent") and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+				<<if $anusstate is "penetrated">>
+					<<for _j = 0; _j lt $enemyno; _j++>>
+						<<if $NPCList[_j].penis is "anus" and $NPCList[_j].condom is false>>
+							<<personselect _j>>
+							<span class="green">The <<person>> briefly withdraws <<his>> penis from your anus, puts a condom on it before sticking it back in.</span>
+							<<equipCondom _j>>
+						<</if>>
+					<</for>>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<set $condomUse to false>>
+			<<if $consensual is 1>>
+				<<set $consensual to 0>>
+				<<molested>><<controlloss>>
+			<</if>>
+			<<set _response to [
+				"Stupid slut, you think you can tell me what to do?",
+				"You're not in charge here, slut.",
+				"You should feel lucky if I knock you up.",
+				"I think I'll leave you with a parting gift, actually.",
+				"Hah! You wish!"
+			]>>
+			They pause a moment before responding,
+			<span class="red">"<<print _response.pluck()>>"</span>
+		<</if>>
+	<</if>>
+<</if>>
+
+<<if $mouthaction is "ask" and $askAction is "noCondoms">>
+	<<set $mouthaction to 0>><<unset $askAction>>
+	<<if $neckuse is "hand" and $oxygen lt $oxygenmax and $asphyxiaLvl gte 2>>
+		<<wheeze "tell <<him>> to not use condoms">>
+	<<else>>
+		<<set $mouthactiondefault to "rest">><<sub 2>><<if !$gloryhole and $gamemode isnot "soft">><<seductionskillusecombat>><</if>>
+		<<set $condomAsk to true>>
+		You tell <<him>> you do not want to use condoms.
+		<<if (1000 - ($rng * 10) - ($enemytrust * 10) - $seductionskill + $enemyanger) lte (($enemyarousalmax / ($enemyarousal + 1)) * 100) or $gamemode is "soft" or $gloryhole>>
+			<<if $consensual is 0>>
+				They pause a moment before responding,
+				<<set _response to [
+					"Sure thing, slut.",
+					"Yeah, you probably have something contagious.",
+					"Last thing I want is an unclaimed brat with my name on it.",
+					"Fine, but I expect you to cooperate.",
+					"Good idea, I don't want any evidence traced back to me."
+				]>>
+				<span class="green">"<<print _response.pluck()>>"</span>
+				<<set $condomUse to false>>
+			<<else>>
+				<<if $npc and $NPCList[_j].pregnancyAvoidance gt random(0, 99)>>
+					<<set _npcReject to true>>
+				<</if>>
+				<<if _npcReject>>
+					<<set $condomUse to true>>
+					<<switch $npc>>
+						<<default>><span class="lewd"><<He>> says, "Im not ready for children, it's better to be safe than sorry."</span>
+					<</switch>>
+					/*Your penis*/
+					<<if $penisstate is "entrance" or $penisstate is "imminent" or $penisstate is "otheranusentrance" or $penisstate is "otheranusimminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].vagina is "penis" or $NPCList[_j].penis is "otheranus") and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto your penis.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $penisstate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].vagina is "penis" and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly frees your penis from <<his>> vagina, puts a condom on it before sticking it back in.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $penisstate is "otheranus">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "otheranus" and $player.condom is false and $parasite.penis.name is undefined>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly frees your penis from <<his>> anus, puts a condom on it before sticking it back in.</span>
+								<<equipCondom>>
+							<</if>>
+						<</for>>
+					<</if>>
+					/*Their penis*/
+					<<if $vaginastate is "entrance" or $vaginastate is "imminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].penis is "vaginaentrance" or $NPCList[_j].penis is "vaginaimminent") and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $vaginastate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "vagina" and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly withdraws <<his>> penis from your vagina, puts a condom on it before sticking it back in.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $anusstate is "entrance" or $anusstate is "imminent">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if ($NPCList[_j].penis is "anusentrance" or $NPCList[_j].penis is "anusimminent") and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> puts a condom onto <<his>> penis.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+					<<if $anusstate is "penetrated">>
+						<<for _j = 0; _j lt $enemyno; _j++>>
+							<<if $NPCList[_j].penis is "anus" and $NPCList[_j].condom is false>>
+								<<personselect _j>>
+								<span class="green">The <<person>> briefly withdraws <<his>> penis from your anus, puts a condom on it before sticking it back in.</span>
+								<<equipCondom _j>>
+							<</if>>
+						<</for>>
+					<</if>>
+				<<else>>
+					<span class="green">They nod in acknowledgement.</span>
+					<<set $condomUse to false>>
+				<</if>>
+			<</if>>
+		<<else>>
+			<<set $condomUse to null>>
+			<<if $consensual is 1>>
+				<<set $consensual to 0>>
+				<<molested>><<controlloss>>
+			<</if>>
+			<<set _response to [
+				"Stupid slut, you think you can tell me what to do?",
+				"You're not in charge here, slut.",
+				"I'll do what I want, slut."
+			]>>
+			They pause a moment before responding,
+			<span class="red">"<<print _response.pluck()>>"</span>
+		<</if>>
+	<</if>>
+<</if>>
 
 <<set $NPCList[0].intro to 0>>
 <<set $NPCList[1].intro to 0>>

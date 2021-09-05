@@ -64,7 +64,7 @@
 
 <<widget "display_plot">>/*Argument is the plot location you want to display.*/
 <<set _water_needed to 0>>
-There are <<print $plots[$args[0]].length>> tillable
+There are <<number $plots[$args[0]].length>> tillable
 <<if $plots[$args[0]][0].size is "small">>
 	<span class="lblue">beds</span>
 <<elseif $plots[$args[0]][0].size is "medium">>
@@ -72,7 +72,7 @@ There are <<print $plots[$args[0]].length>> tillable
 <<else>>
 	<span class="green">fields</span>
 <</if>>
-here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertiliser.current fertiliser.<</if>> Till time is reduced by tending skill.
+here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have <<number $fertiliser.current>> fertiliser.<</if>> Tilling time is reduced by tending skill.
 <br><br>
 <<for _i to 0; _i lt $plots[$args[0]].length; _i++>>
 <<set _tending_temp to _i>>
@@ -108,14 +108,24 @@ here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertilis
 			<<for _e to 0; _e lt $plants_known.length; _e++>>
 			<<capture _e>>
 			<br>
+			<<switch $args[0]>>
+				<<case "farm">>
+					<<if $farm.irrigation>>
+						<<set _irrigation to $farm.irrigation>>
+					<<else>>
+						<<set _irrigation to 0>>
+					<</if>>
+				<<default>>
+					<<set _irrigation to 0>>
+			<</switch>>
 			<<if setup.plants[$plants_known[_e]].season.includes($season) or ($args[0] is "garden" and $alex_greenhouse gte 3)>>
 				<<if setup.plants[$plants_known[_e]].bed is $plots[$args[0]][_i].bed>>
 					<<if $plots[$args[0]][_i].size is "small">>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (0:30)"` $passage>><<pass 30>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain">><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (0:30)"` $passage>><<pass 30>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain" or _e lt _irrigation>><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<<elseif $plots[$args[0]][_i].size is "medium">>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (1:30)"` $passage>><<pass 90>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain">><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (1:30)"` $passage>><<pass 90>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain" or _e lt _irrigation>><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<<else>>
-						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (3:00)"` $passage>><<pass 3 hours>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain">><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
+						<<link `"Plant " + setup.plants[$plants_known[_e]].plural + " (3:00)"` $passage>><<pass 3 hours>><<set $plots[$args[0]][_tending_temp].name to $plants_known[_e]>><<set $plots[$args[0]][_tending_temp].stage to 1>><<set $plot_planted to 1>><<if $weather is "rain" or _e lt _irrigation>><<set $plots[$args[0]][_tending_temp].water to 1>><</if>><</link>> <span class="orange">(<<print setup.plants[$plants_known[_e]].days>> days)</span>
 					<</if>>
 				<<else>>
 					<span class="blue"><<print setup.plants[$plants_known[_e]].plural.toLocaleUpperFirst()>> only grow in <<print setup.plants[$plants_known[_e]].bed>>.</span>
@@ -387,7 +397,7 @@ here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertilis
 <<elseif $args[1] is 2>>
 	<<set _tending_amount *= 1.2>>
 <</if>>
-<<if !$backgroundTraits.includes("greenthumb") and $tending is 1000 and ($fertiliser.used gte 40 or ($fertiliser.used gte 25 and $farm_stage gte 6)) and $plants_known.length gte 11>>
+<<if !$backgroundTraits.includes("greenthumb") and $tending is 1000 and ($fertiliser.used gte 40 or ($fertiliser.used gte 25 and $farm_stage gte 6)) and $plants_known.length gte 16>>
 	<<run $backgroundTraits.pushUnique("greenthumb")>>
 	<span class="gold">Spending a large amount of time in the dirt has given you a green thumb.</span>
 	<br>
@@ -399,7 +409,7 @@ here. <<if $fertiliser.current gt 0 or $fertiliser.used gt 0>>You have $fertilis
 <<set $plants[$args[0]].amount += _tending_amount>>
 <<set $plants[$args[0]].plural to clone(setup.plants[$args[0]].plural)>>
 <<set $plants[$args[0]].name to clone(setup.plants[$args[0]].name)>>
-You harvest <<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
+You harvest <<number _tending_amount>> <<print setup.plants[$args[0]].plural>>.
 <<if $plotDecay>>
 	The fertiliser effect has decayed<<if $plotDecay is 2>> completely<</if>>.
 	<<unset $plotDecay>>
@@ -433,7 +443,7 @@ You pick
 <<if _tending_amount is 1>>
 	a <<print setup.plants[$args[0]].name.replace(/_/g," ")>>.
 <<else>>
-	<<print _tending_amount>> <<print setup.plants[$args[0]].plural>>.
+	<<number _tending_amount>> <<print setup.plants[$args[0]].plural>>.
 <</if>>
 <</widget>>
 

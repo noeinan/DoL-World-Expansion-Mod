@@ -489,8 +489,8 @@ window.settingsObjects = function (type) {
 				bottomsize: { min: 0, max: 3, decimals: 0 },
 				breastsensitivity: { min: 0, max: 5, decimals: 0 },
 				genitalsensitivity: { min: 0, max: 5, decimals: 0 },
-				eyeselect: { strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "red", "pink", "grey"] },
-				hairselect: { strings: ["red", "jetblack", "black", "brown", "softbrown", "lightbrown", "burntorange", "blond", "softblond", "platinumblond", "ashyblond", "strawberryblond", "ginger"] },
+				eyeselect: { strings: ["purple", "dark blue", "light blue", "amber", "hazel", "green", "red", "pink", "grey", "random"] },
+				hairselect: { strings: ["red", "jetblack", "black", "brown", "softbrown", "lightbrown", "burntorange", "blond", "softblond", "platinumblond", "ashyblond", "strawberryblond", "ginger", "random"] },
 				hairlength: { min: 0, max: 400, decimals: 0 },
 				awareselect: { strings: ["innocent", "knowledgeable"] },
 				background: { strings: ["waif", "nerd", "athlete", "delinquent", "promiscuous", "exhibitionist", "deviant", "beautiful", "crossdresser", "lustful", "greenthumb"] },
@@ -527,15 +527,9 @@ window.settingsObjects = function (type) {
 				rentmod: { min: 0.1, max: 3, decimals: 1 },
 				beastmalechance: { min: 0, max: 100, decimals: 0 },
 				monsterchance: { min: 0, max: 100, decimals: 0 },
-
-				/*noeinan mod START*/
-				/*Changed beasts to always be monster boys/girls*/
-				/*Changed default fetishes enabled*/
-				/*Changed default tips enabled*/
-
-				monsterhallucinations: { boolLetter: false, bool: false },
+				monsterhallucinations: { boolLetter: true, bool: true },
 				blackwolfmonster: { min: 0, max: 2, decimals: 0 },
-				bestialitydisable: { boolLetter: false, bool: false },
+				bestialitydisable: { boolLetter: true, bool: true },
 				swarmdisable: { boolLetter: true, bool: true },
 				slimedisable: { boolLetter: true, bool: true },
 				voredisable: { boolLetter: true, bool: true },
@@ -544,7 +538,8 @@ window.settingsObjects = function (type) {
 				analingusdisablegiving: { boolLetter: true, bool: true },
 				analingusdisablereceiving: { boolLetter: true, bool: true },
 				transformdisable: { boolLetter: true, bool: true },
-				hirsutedisable: { boolLetter: false, bool: false },
+				transformdisabledivine: { boolLetter: true, bool: true },
+				hirsutedisable: { boolLetter: true, bool: true },
 				breastfeedingdisable: { boolLetter: true, bool: true },
 				analpregdisable: { boolLetter: true, bool: true },
 				watersportsdisable: { boolLetter: true, bool: true },
@@ -558,10 +553,19 @@ window.settingsObjects = function (type) {
 				horsedisable: {boolLetter: true, bool: true},
 				footdisable: {boolLetter: true, bool: true},
 				asphyxiaLvl: { min: 0, max: 3, decimals: 0 },
+				breastsizemin: { min: 0, max: 4, decimals: 0 },
 				breastsizemax: { min: 0, max: 13, decimals: 0 },
 				bottomsizemax: { min: 0, max: 9, decimals: 0 },
-				penissizemax: { min: -1, max: 4, decimals: 0 },
-				penissizemin: { min: -1, max: 0, decimals: 0 },
+				penissizemax: { min: -2, max: 4, decimals: 0 },
+				penissizemin: { min: -2, max: 0, decimals: 0 },
+				/*ToDo: Pregnancy, uncomment to properly enable, add defaults back to DolSettingsExport.json*/
+				//baseVaginalPregnancyChance: { min: 0, max: 96, decimals: 0 },
+				//baseNpcPregnancyChance: { min: 0, max: 16, decimals: 0 },
+				//humanPregnancyMonths: { min: 1, max: 9, decimals: 0 },
+				//wolfPregnancyWeeks: { min: 2, max: 12, decimals: 0 },
+				//playerPregnancyHumanDisable: {boolLetter: true, bool: true},
+				//playerPregnancyBeastDisable: {boolLetter: true, bool: true},
+				//npcPregnancyDisable: {boolLetter: true, bool: true},
 				images: { min: 0, max: 1, decimals: 0 },
 				sidebarAnimations: { bool: true },
 				combatAnimations: { bool: true },
@@ -577,11 +581,8 @@ window.settingsObjects = function (type) {
 				timestyle: { strings: ["military", "ampm"] },
 				checkstyle: { strings: ["percentage", "words", "skillname"] },
 				tipdisable: { boolLetter: false, bool: false },
-
-				/*noeinan mod END*/
-				
 				debugdisable: { boolLetter: true, bool: true },
-				cheatdisable: { boolLetter: true, bool: true },
+				cheatdisabletoggle: { boolLetter: true, bool: true },
 				showCaptionText: { bool: true },
 				confirmSave: { bool: true },
 				confirmLoad: { bool: true },

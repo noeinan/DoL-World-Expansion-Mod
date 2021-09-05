@@ -33,6 +33,12 @@
 				"Great Hawk" : {
 					important : true,
 				},
+				"Sydney" : {
+					important : true,
+					love : { maxValue: 150 },			
+					purity : { requirements : State.variables.NPCName[28].purity > 0, maxValue : 100, minValue : 0 },
+					corruption : { requirements : State.variables.NPCName[28].corruption > 0, maxValue : 50, minValue : 0 }
+				},
 				"Mason" : {
 					love : { maxValue : 50 }
 				},
@@ -61,7 +67,7 @@
 			};
 
 			/*This list is backwards due to the method used to sort via index, with unimportant NPCs being assigned -1*/
-			T.importantNpcOrder = [ "Alex", "Great Hawk", "Avery", "Kylar", "Eden", "Whitney", "Robin"];
+			T.importantNpcOrder = [ "Alex", "Great Hawk", "Avery", "Sydney", "Kylar", "Eden", "Whitney", "Robin"];
 
 			/*Clones the NPC list, and orderes it by important first, then by alphabetical order*/
 			T.orderedNPCs = V.NPCName.slice().sort(function(a, b) {
@@ -313,6 +319,14 @@
 				<<set _bestialityFameConfig =		{ currentValue: $famebestiality,	preText: 'Monster People:',	flavorText: 'monster fucker',		states: _fameStates }>>
 			<</if>>
 			<<set _exhibitionismFameConfig =	{ currentValue: $fameexhibitionism,	preText: 'Exhibitionism:',	flavorText: 'flaunter',		states: _fameStates }>>
+			<<if $famepregnancy gte 600>>
+				<<set $_name to "broodmother">>
+			<<elseif $famepregnancy gte 200>>
+				<<set $_name to "breeder">>
+			<<else>>
+				<<set $_name to "mother">>
+			<</if>>
+			<<set _pregnancyFameConfig = 		{ currentValue: $famepregnancy,		preText: 'Pregnancy:',	flavorText: $_name,		states: _fameStates }>>
 			<<set _combatFameConfig =			{ currentValue: $famescrap,			preText: 'Combat:',		flavorText: 'scrapper',		states: _inverseFameStates }>>
 			<<set _kindnessFameConfig =			{ currentValue: $famegood,			preText: 'Kindness:',		flavorText: 'do-gooder',	states: _inverseFameStates }>>
 			<<set _businessFameConfig =			{ currentValue: $famebusiness,		preText: 'Business:',		flavorText: 'entrepreneur',	states: _inverseFameStates }>>
@@ -332,6 +346,7 @@
 			<<set _rapeFameBoxConfig =			{ description : '<<relation-text _rapeFameConfig>>' }>>
 			<<set _bestialityFameBoxConfig =	{ description : '<<relation-text _bestialityFameConfig>>' }>>
 			<<set _exhibitionismFameBoxConfig =	{ description : '<<relation-text _exhibitionismFameConfig>>' }>>
+			<<set _pregnancyFameBoxConfig = 	{ description : '<<relation-text _pregnancyFameConfig>>' }>>
 			<<set _combatFameBoxConfig =		{ description : '<<relation-text _combatFameConfig>>' }>>
 			<<set _kindnessFameBoxConfig =		{ description : '<<relation-text _kindnessFameConfig>>' }>>
 			<<set _businessFameBoxConfig =		{ description : '<<relation-text _businessFameConfig>>' }>>
@@ -344,6 +359,10 @@
 		<<relation-box-simple _rapeFameBoxConfig>>
 		<<relation-box-simple _bestialityFameBoxConfig>>
 		<<relation-box-simple _exhibitionismFameBoxConfig>>
+		/*ToDo: Pregnancy, remove check to properly enable*/
+		<<if $pregnancyTesting>>
+			<<relation-box-simple _pregnancyFameBoxConfig>>
+		<</if>>
 		<<relation-box-simple _combatFameBoxConfig>>
 		<<relation-box-simple _kindnessFameBoxConfig>>
 		<<relation-box-simple _businessFameBoxConfig>>

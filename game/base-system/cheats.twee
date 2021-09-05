@@ -84,7 +84,7 @@ Infinite spray: <span id="statsinfinitespray">$infinitespray</span> |
 	Current Gender: <<gender>>
 	<br>
 	Change to:
-	<<if $player.gender isnot "m">>
+	<<if $player.gender isnot "m" and $sexStats.vagina.menstruation.currentState isnot "pregnant">>
 		<<link [[Become boy|$passage]]>>
 			<<set $vaginause to "none">>
 			<<set $vaginastate to "none">>
@@ -97,7 +97,10 @@ Infinite spray: <span id="statsinfinitespray">$infinitespray</span> |
 			<<set $player.ballsExist to true>>
 			<<set $player.penisExist to true>>
 			<<set $player.vaginaExist to false>>
+			<<set $sexStats.vagina.menstruation.running = false>>
 		<</link>> |
+	<<elseif $player.gender isnot "m" and $sexStats.vagina.menstruation.currentState is "pregnant">>
+		Gender can only be changed to male when you're not pregnant to prevent potential issues. |
 	<</if>>
 	<<if $player.gender isnot "f">>
 		<<link [[Become girl|$passage]]>>
@@ -112,6 +115,7 @@ Infinite spray: <span id="statsinfinitespray">$infinitespray</span> |
 			<<set $player.ballsExist to false>>
 			<<set $player.penisExist to false>>
 			<<set $player.vaginaExist to true>>
+			<<set $sexStats.vagina.menstruation.running = true>>
 		<</link>> |
 	<</if>>
 	<<if $player.gender isnot "h">>
@@ -129,6 +133,7 @@ Infinite spray: <span id="statsinfinitespray">$infinitespray</span> |
 			<<set $player.sex to "h">>
 			<<set $player.penisExist to true>>
 			<<set $player.vaginaExist to true>>
+			<<set $sexStats.vagina.menstruation.running = true>>
 		<</link>> |
 	<</if>>
 	<<if $player.gender is "h">>
@@ -434,15 +439,6 @@ Hallucinogens: <span id="statshallucinogen"><<print Math.trunc($hallucinogen)>><
 
 <u>Characteristics</u>
 <br>
-<<link "<<<">><<set $awareness -= 1000>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
-<<link "<<">><<set $awareness -= 100>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
-<<link "<">><<set $awareness -= 10>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
-Awareness: <span id="statsawareness"><<print Math.trunc($awareness)>></span>
-| <<link ">">><<set $awareness += 10>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
-| <<link ">>">><<set $awareness += 100>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
-| <<link ">>>">><<set $awareness += 1000>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
-<br>
-
 <<link "<<<">><<set $purity -= 1000>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>> |
 <<link "<<">><<set $purity -= 100>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>> |
 <<link "<">><<set $purity -= 10>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>> |
@@ -450,6 +446,15 @@ Purity: <span id="statspurity"><<print Math.trunc($purity)>></span>
 | <<link ">">><<set $purity += 10>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>>
 | <<link ">>">><<set $purity += 100>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>>
 | <<link ">>>">><<set $purity += 1000>><<clamp>><<replace "#statspurity">><<print Math.trunc($purity)>><</replace>> <<updatesidebarimg>><</link>>
+<br>
+
+<<link "<<<">><<set $beauty -= 5000>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
+<<link "<<">><<set $beauty -= 500>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
+<<link "<">><<set $beauty -= 50>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
+Beauty: <span id="statsbeauty"><<print Math.trunc($beauty)>></span>
+ | <<link ">">><<set $beauty += 50>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
+ | <<link ">>">><<set $beauty += 500>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
+ | <<link ">>>">><<set $beauty += 5000>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
 <br>
 
 <<link "<<<">><<set $physique -= 5000>><<clamp>><<replace "#statsphysique">><<print Math.trunc($physique)>><</replace>> <<updatesidebarimg>><</link>> |
@@ -470,13 +475,13 @@ Willpower: <span id="statswillpower"><<print Math.trunc($willpower)>></span>
  | <<link ">>>">><<set $willpower += 1000>><<clamp>><<replace "#statswillpower">><<print Math.trunc($willpower)>><</replace>> <<updatesidebarimg>><</link>>
 <br>
 
-<<link "<<<">><<set $beauty -= 5000>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
-<<link "<<">><<set $beauty -= 500>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
-<<link "<">><<set $beauty -= 50>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>> |
-Beauty: <span id="statsbeauty"><<print Math.trunc($beauty)>></span>
- | <<link ">">><<set $beauty += 50>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
- | <<link ">>">><<set $beauty += 500>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
- | <<link ">>>">><<set $beauty += 5000>><<clamp>><<replace "#statsbeauty">><<print Math.trunc($beauty)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<<<">><<set $awareness -= 1000>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
+<<link "<<">><<set $awareness -= 100>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
+<<link "<">><<set $awareness -= 10>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>> |
+Awareness: <span id="statsawareness"><<print Math.trunc($awareness)>></span>
+| <<link ">">><<set $awareness += 10>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
+| <<link ">>">><<set $awareness += 100>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
+| <<link ">>>">><<set $awareness += 1000>><<clamp>><<replace "#statsawareness">><<print Math.trunc($awareness)>><</replace>> <<updatesidebarimg>><</link>>
 <br>
 
 <<link "<<<">><<set $promiscuity -= 100>><<clamp>><<replace "#statspromiscuity">><<print Math.trunc($promiscuity)>><</replace>> <<updatesidebarimg>><</link>> |
@@ -717,7 +722,7 @@ Milk volume: <span id="statsmilk_volume"><<print Math.trunc($milk_volume)>></spa
 	| <<link ">>>">><<set $worn.genitals.integrity += 100>><<clamp>><<replace "#statsgenitalsintegrity">><<print Math.trunc($worn.genitals.integrity)>><</replace>> <<updatesidebarimg>><</link>> ($worn.genitals.integrity_max is default maximum)
 	<br>
 <<else>>
-	<i>You are not wearing any under bottoms.</i>
+	<i>You are not wearing a chastity belt.</i>
 	<br>
 <</if>>
 
@@ -1051,6 +1056,16 @@ Green Thumb: <span id="statsgreenthumb"><<print $backgroundTraits.includes("gree
 <</link>>
 <br>
 
+Asphyxiophilia: <span id="statschoke">$choketrait</span> |
+<<link "Change">>
+<<set $choketrait += 1>>
+<<if $choketrait gte 2>>
+<<set $choketrait to 0>>
+<</if>>
+<<replace "#statschoke">><<print $choketrait>><</replace>>
+<</link>>
+<br>
+
 <</widget>>
 
 <<widget "cheats-characterVisual">>
@@ -1332,104 +1347,105 @@ Right ear parasite: <span id="statsright_earparasite"><<if $parasite.right_ear.n
 <u>Semen</u>
 <br>
 <<link "Add all semen">>
-<<set $necksemen += 5>><<set $necksemen = Math.clamp($necksemen, 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($necksemen)>><</replace>>
-<<set $rightarmsemen += 5>><<set $rightarmsemen = Math.clamp($rightarmsemen, 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($rightarmsemen)>><</replace>>
-<<set $leftarmsemen += 5>><<set $leftarmsemen = Math.clamp($leftarmsemen, 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($leftarmsemen)>><</replace>>
-<<set $thighsemen += 5>><<set $thighsemen = Math.clamp($thighsemen, 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($thighsemen)>><</replace>>
-<<set $bottomsemen += 5>><<set $bottomsemen = Math.clamp($bottomsemen, 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($bottomsemen)>><</replace>>
-<<set $tummysemen += 5>><<set $tummysemen = Math.clamp($tummysemen, 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($tummysemen)>><</replace>>
-<<set $chestsemen += 5>><<set $chestsemen = Math.clamp($chestsemen, 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($chestsemen)>><</replace>>
-<<set $facesemen += 5>><<set $facesemen = Math.clamp($facesemen, 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($facesemen)>><</replace>>
-<<set $hairsemen += 5>><<set $hairsemen = Math.clamp($hairsemen, 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($hairsemen)>><</replace>>
-<<set $feetsemen += 5>><<set $feetsemen = Math.clamp($feetsemen, 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($feetsemen)>><</replace>>
-<<set $vaginaoutsidesemen += 5>><<set $vaginaoutsidesemen = Math.clamp($vaginaoutsidesemen, 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($vaginaoutsidesemen)>><</replace>>
-<<set $vaginasemen += 5>><<set $vaginasemen = Math.clamp($vaginasemen, 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($vaginasemen)>><</replace>>
-<<set $penissemen += 5>><<set $penissemen = Math.clamp($penissemen, 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($penissemen)>><</replace>>
-<<set $anussemen += 5>><<set $anussemen = Math.clamp($anussemen, 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($anussemen)>><</replace>>
-<<set $mouthsemen += 5>><<set $mouthsemen = Math.clamp($mouthsemen, 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($mouthsemen)>><</replace>>
+<!-- todosemen -->
+<<set $player.bodyliquid.neck.semen += 5>><<set $player.bodyliquid.neck.semen = Math.clamp($player.bodyliquid.neck.semen , 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($player.bodyliquid.neck.semen )>><</replace>>
+<<set $player.bodyliquid.rightarm.semen += 5>><<set $player.bodyliquid.rightarm.semen = Math.clamp($player.bodyliquid.rightarm.semen , 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($player.bodyliquid.rightarm.semen )>><</replace>>
+<<set $player.bodyliquid.leftarm.semen += 5>><<set $player.bodyliquid.leftarm.semen = Math.clamp($player.bodyliquid.leftarm.semen , 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($player.bodyliquid.leftarm.semen )>><</replace>>
+<<set $player.bodyliquid.thigh.semen += 5>><<set $player.bodyliquid.thigh.semen = Math.clamp($player.bodyliquid.thigh.semen , 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($player.bodyliquid.thigh.semen )>><</replace>>
+<<set $player.bodyliquid.bottom.semen += 5>><<set $player.bodyliquid.bottom.semen = Math.clamp($player.bodyliquid.bottom.semen , 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($player.bodyliquid.bottom.semen )>><</replace>>
+<<set $player.bodyliquid.tummy.semen += 5>><<set $player.bodyliquid.tummy.semen = Math.clamp($player.bodyliquid.tummy.semen , 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($player.bodyliquid.tummy.semen )>><</replace>>
+<<set $player.bodyliquid.chest.semen += 5>><<set $player.bodyliquid.chest.semen = Math.clamp($player.bodyliquid.chest.semen , 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($player.bodyliquid.chest.semen )>><</replace>>
+<<set $player.bodyliquid.face.semen += 5>><<set $player.bodyliquid.face.semen = Math.clamp($player.bodyliquid.face.semen , 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($player.bodyliquid.face.semen )>><</replace>>
+<<set $player.bodyliquid.hair.semen += 5>><<set $player.bodyliquid.hair.semen = Math.clamp($player.bodyliquid.hair.semen , 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($player.bodyliquid.hair.semen )>><</replace>>
+<<set $player.bodyliquid.feet.semen += 5>><<set $player.bodyliquid.feet.semen = Math.clamp($player.bodyliquid.feet.semen , 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($player.bodyliquid.feet.semen )>><</replace>>
+<<set $player.bodyliquid.vaginaoutside.semen += 5>><<set $player.bodyliquid.vaginaoutside.semen = Math.clamp($player.bodyliquid.vaginaoutside.semen , 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($player.bodyliquid.vaginaoutside.semen )>><</replace>>
+<<set $player.bodyliquid.vagina.semen += 5>><<set $player.bodyliquid.vagina.semen = Math.clamp($player.bodyliquid.vagina.semen , 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($player.bodyliquid.vagina.semen )>><</replace>>
+<<set $player.bodyliquid.penis.semen += 5>><<set $player.bodyliquid.penis.semen = Math.clamp($player.bodyliquid.penis.semen , 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($player.bodyliquid.penis.semen )>><</replace>>
+<<set $player.bodyliquid.anus.semen += 5>><<set $player.bodyliquid.anus.semen = Math.clamp($player.bodyliquid.anus.semen , 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($player.bodyliquid.anus.semen )>><</replace>>
+<<set $player.bodyliquid.mouth.semen += 5>><<set $player.bodyliquid.mouth.semen = Math.clamp($player.bodyliquid.mouth.semen , 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($player.bodyliquid.mouth.semen )>><</replace>>
  <<updatesidebarimg>>
 <</link>> |
 
 <<link "Remove all semen">>
-<<set $necksemen -= 5>><<set $necksemen = Math.clamp($necksemen, 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($necksemen)>><</replace>>
-<<set $rightarmsemen -= 5>><<set $rightarmsemen = Math.clamp($rightarmsemen, 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($rightarmsemen)>><</replace>>
-<<set $leftarmsemen -= 5>><<set $leftarmsemen = Math.clamp($leftarmsemen, 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($leftarmsemen)>><</replace>>
-<<set $thighsemen -= 5>><<set $thighsemen = Math.clamp($thighsemen, 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($thighsemen)>><</replace>>
-<<set $bottomsemen -= 5>><<set $bottomsemen = Math.clamp($bottomsemen, 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($bottomsemen)>><</replace>>
-<<set $tummysemen -= 5>><<set $tummysemen = Math.clamp($tummysemen, 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($tummysemen)>><</replace>>
-<<set $chestsemen -= 5>><<set $chestsemen = Math.clamp($chestsemen, 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($chestsemen)>><</replace>>
-<<set $facesemen -= 5>><<set $facesemen = Math.clamp($facesemen, 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($facesemen)>><</replace>>
-<<set $hairsemen -= 5>><<set $hairsemen = Math.clamp($hairsemen, 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($hairsemen)>><</replace>>
-<<set $feetsemen -= 5>><<set $feetsemen = Math.clamp($feetsemen, 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($feetsemen)>><</replace>>
-<<set $vaginaoutsidesemen -= 5>><<set $vaginaoutsidesemen = Math.clamp($vaginaoutsidesemen, 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($vaginaoutsidesemen)>><</replace>>
-<<set $vaginasemen -= 5>><<set $vaginasemen = Math.clamp($vaginasemen, 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($vaginasemen)>><</replace>>
-<<set $penissemen -= 5>><<set $penissemen = Math.clamp($penissemen, 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($penissemen)>><</replace>>
-<<set $anussemen -= 5>><<set $anussemen = Math.clamp($anussemen, 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($anussemen)>><</replace>>
-<<set $mouthsemen -= 5>><<set $mouthsemen = Math.clamp($mouthsemen, 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($mouthsemen)>><</replace>>
+<<set $player.bodyliquid.neck.semen -= 5>><<set $player.bodyliquid.neck.semen = Math.clamp($player.bodyliquid.neck.semen , 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($player.bodyliquid.neck.semen )>><</replace>>
+<<set $player.bodyliquid.rightarm.semen -= 5>><<set $player.bodyliquid.rightarm.semen = Math.clamp($player.bodyliquid.rightarm.semen , 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($player.bodyliquid.rightarm.semen )>><</replace>>
+<<set $player.bodyliquid.leftarm.semen -= 5>><<set $player.bodyliquid.leftarm.semen = Math.clamp($player.bodyliquid.leftarm.semen , 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($player.bodyliquid.leftarm.semen )>><</replace>>
+<<set $player.bodyliquid.thigh.semen -= 5>><<set $player.bodyliquid.thigh.semen = Math.clamp($player.bodyliquid.thigh.semen , 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($player.bodyliquid.thigh.semen )>><</replace>>
+<<set $player.bodyliquid.bottom.semen -= 5>><<set $player.bodyliquid.bottom.semen = Math.clamp($player.bodyliquid.bottom.semen , 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($player.bodyliquid.bottom.semen )>><</replace>>
+<<set $player.bodyliquid.tummy.semen -= 5>><<set $player.bodyliquid.tummy.semen = Math.clamp($player.bodyliquid.tummy.semen , 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($player.bodyliquid.tummy.semen )>><</replace>>
+<<set $player.bodyliquid.chest.semen -= 5>><<set $player.bodyliquid.chest.semen = Math.clamp($player.bodyliquid.chest.semen , 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($player.bodyliquid.chest.semen )>><</replace>>
+<<set $player.bodyliquid.face.semen -= 5>><<set $player.bodyliquid.face.semen = Math.clamp($player.bodyliquid.face.semen , 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($player.bodyliquid.face.semen )>><</replace>>
+<<set $player.bodyliquid.hair.semen -= 5>><<set $player.bodyliquid.hair.semen = Math.clamp($player.bodyliquid.hair.semen , 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($player.bodyliquid.hair.semen )>><</replace>>
+<<set $player.bodyliquid.feet.semen -= 5>><<set $player.bodyliquid.feet.semen = Math.clamp($player.bodyliquid.feet.semen , 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($player.bodyliquid.feet.semen )>><</replace>>
+<<set $player.bodyliquid.vaginaoutside.semen -= 5>><<set $player.bodyliquid.vaginaoutside.semen = Math.clamp($player.bodyliquid.vaginaoutside.semen , 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($player.bodyliquid.vaginaoutside.semen )>><</replace>>
+<<set $player.bodyliquid.vagina.semen -= 5>><<set $player.bodyliquid.vagina.semen = Math.clamp($player.bodyliquid.vagina.semen , 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($player.bodyliquid.vagina.semen )>><</replace>>
+<<set $player.bodyliquid.penis.semen -= 5>><<set $player.bodyliquid.penis.semen = Math.clamp($player.bodyliquid.penis.semen , 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($player.bodyliquid.penis.semen )>><</replace>>
+<<set $player.bodyliquid.anus.semen -= 5>><<set $player.bodyliquid.anus.semen = Math.clamp($player.bodyliquid.anus.semen , 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($player.bodyliquid.anus.semen )>><</replace>>
+<<set $player.bodyliquid.mouth.semen -= 5>><<set $player.bodyliquid.mouth.semen = Math.clamp($player.bodyliquid.mouth.semen , 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($player.bodyliquid.mouth.semen )>><</replace>>
  <<updatesidebarimg>>
 <</link>> |
 
 <br>
 
-<<link "<">><<set $necksemen -= 1>><<set $necksemen = Math.clamp($necksemen, 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($necksemen)>><</replace>> <<updatesidebarimg>><</link>>
-Neck semen: <span id="statsnecksemen"><<print Math.trunc($necksemen)>></span>
-  <<link ">">><<set $necksemen += 1>><<set $necksemen = Math.clamp($necksemen, 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($necksemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.neck.semen -= 1>><<set $player.bodyliquid.neck.semen = Math.clamp($player.bodyliquid.neck.semen , 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($player.bodyliquid.neck.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Neck semen: <span id="statsnecksemen"><<print Math.trunc($player.bodyliquid.neck.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.neck.semen += 1>><<set $player.bodyliquid.neck.semen = Math.clamp($player.bodyliquid.neck.semen , 0, 5)>><<replace "#statsnecksemen">><<print Math.trunc($player.bodyliquid.neck.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $rightarmsemen -= 1>><<set $rightarmsemen = Math.clamp($rightarmsemen, 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($rightarmsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Right arm semen: <span id="statsrightarmsemen"><<print Math.trunc($rightarmsemen)>></span>
-  <<link ">">><<set $rightarmsemen += 1>><<set $rightarmsemen = Math.clamp($rightarmsemen, 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($rightarmsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.rightarm.semen -= 1>><<set $player.bodyliquid.rightarm.semen = Math.clamp($player.bodyliquid.rightarm.semen , 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($player.bodyliquid.rightarm.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Right arm semen: <span id="statsrightarmsemen"><<print Math.trunc($player.bodyliquid.rightarm.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.rightarm.semen += 1>><<set $player.bodyliquid.rightarm.semen = Math.clamp($player.bodyliquid.rightarm.semen , 0, 5)>><<replace "#statsrightarmsemen">><<print Math.trunc($player.bodyliquid.rightarm.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $leftarmsemen -= 1>><<set $leftarmsemen = Math.clamp($leftarmsemen, 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($leftarmsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Left arm semen: <span id="statsleftarmsemen"><<print Math.trunc($leftarmsemen)>></span>
-  <<link ">">><<set $leftarmsemen += 1>><<set $leftarmsemen = Math.clamp($leftarmsemen, 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($leftarmsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.leftarm.semen -= 1>><<set $player.bodyliquid.leftarm.semen = Math.clamp($player.bodyliquid.leftarm.semen , 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($player.bodyliquid.leftarm.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Left arm semen: <span id="statsleftarmsemen"><<print Math.trunc($player.bodyliquid.leftarm.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.leftarm.semen += 1>><<set $player.bodyliquid.leftarm.semen = Math.clamp($player.bodyliquid.leftarm.semen , 0, 5)>><<replace "#statsleftarmsemen">><<print Math.trunc($player.bodyliquid.leftarm.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $thighsemen -= 1>><<set $thighsemen = Math.clamp($thighsemen, 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($thighsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Thigh semen: <span id="statsthighsemen"><<print Math.trunc($thighsemen)>></span>
-  <<link ">">><<set $thighsemen += 1>><<set $thighsemen = Math.clamp($thighsemen, 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($thighsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.thigh.semen -= 1>><<set $player.bodyliquid.thigh.semen = Math.clamp($player.bodyliquid.thigh.semen , 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($player.bodyliquid.thigh.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Thigh semen: <span id="statsthighsemen"><<print Math.trunc($player.bodyliquid.thigh.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.thigh.semen += 1>><<set $player.bodyliquid.thigh.semen = Math.clamp($player.bodyliquid.thigh.semen , 0, 5)>><<replace "#statsthighsemen">><<print Math.trunc($player.bodyliquid.thigh.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $bottomsemen -= 1>><<set $bottomsemen = Math.clamp($bottomsemen, 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($bottomsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Bottom semen: <span id="statsbottomsemen"><<print Math.trunc($bottomsemen)>></span>
-  <<link ">">><<set $bottomsemen += 1>><<set $bottomsemen = Math.clamp($bottomsemen, 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($bottomsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.bottom.semen -= 1>><<set $player.bodyliquid.bottom.semen = Math.clamp($player.bodyliquid.bottom.semen , 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($player.bodyliquid.bottom.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Bottom semen: <span id="statsbottomsemen"><<print Math.trunc($player.bodyliquid.bottom.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.bottom.semen += 1>><<set $player.bodyliquid.bottom.semen = Math.clamp($player.bodyliquid.bottom.semen , 0, 5)>><<replace "#statsbottomsemen">><<print Math.trunc($player.bodyliquid.bottom.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $tummysemen -= 1>><<set $tummysemen = Math.clamp($tummysemen, 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($tummysemen)>><</replace>> <<updatesidebarimg>><</link>>
-Tummy semen: <span id="statstummysemen"><<print Math.trunc($tummysemen)>></span>
-  <<link ">">><<set $tummysemen += 1>><<set $tummysemen = Math.clamp($tummysemen, 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($tummysemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.tummy.semen -= 1>><<set $player.bodyliquid.tummy.semen = Math.clamp($player.bodyliquid.tummy.semen , 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($player.bodyliquid.tummy.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Tummy semen: <span id="statstummysemen"><<print Math.trunc($player.bodyliquid.tummy.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.tummy.semen += 1>><<set $player.bodyliquid.tummy.semen = Math.clamp($player.bodyliquid.tummy.semen , 0, 5)>><<replace "#statstummysemen">><<print Math.trunc($player.bodyliquid.tummy.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $chestsemen -= 1>><<set $chestsemen = Math.clamp($chestsemen, 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($chestsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Chest semen: <span id="statschestsemen"><<print Math.trunc($chestsemen)>></span>
-  <<link ">">><<set $chestsemen += 1>><<set $chestsemen = Math.clamp($chestsemen, 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($chestsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.chest.semen -= 1>><<set $player.bodyliquid.chest.semen = Math.clamp($player.bodyliquid.chest.semen , 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($player.bodyliquid.chest.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Chest semen: <span id="statschestsemen"><<print Math.trunc($player.bodyliquid.chest.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.chest.semen += 1>><<set $player.bodyliquid.chest.semen = Math.clamp($player.bodyliquid.chest.semen , 0, 5)>><<replace "#statschestsemen">><<print Math.trunc($player.bodyliquid.chest.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $facesemen -= 1>><<set $facesemen = Math.clamp($facesemen, 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($facesemen)>><</replace>> <<updatesidebarimg>><</link>>
-Face semen: <span id="statsfacesemen"><<print Math.trunc($facesemen)>></span>
-  <<link ">">><<set $facesemen += 1>><<set $facesemen = Math.clamp($facesemen, 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($facesemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.face.semen -= 1>><<set $player.bodyliquid.face.semen = Math.clamp($player.bodyliquid.face.semen , 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($player.bodyliquid.face.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Face semen: <span id="statsfacesemen"><<print Math.trunc($player.bodyliquid.face.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.face.semen += 1>><<set $player.bodyliquid.face.semen = Math.clamp($player.bodyliquid.face.semen , 0, 5)>><<replace "#statsfacesemen">><<print Math.trunc($player.bodyliquid.face.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $hairsemen -= 1>><<set $hairsemen = Math.clamp($hairsemen, 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($hairsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Hair semen: <span id="statshairsemen"><<print Math.trunc($hairsemen)>></span>
-  <<link ">">><<set $hairsemen += 1>><<set $hairsemen = Math.clamp($hairsemen, 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($hairsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.hair.semen -= 1>><<set $player.bodyliquid.hair.semen = Math.clamp($player.bodyliquid.hair.semen , 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($player.bodyliquid.hair.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Hair semen: <span id="statshairsemen"><<print Math.trunc($player.bodyliquid.hair.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.hair.semen += 1>><<set $player.bodyliquid.hair.semen = Math.clamp($player.bodyliquid.hair.semen , 0, 5)>><<replace "#statshairsemen">><<print Math.trunc($player.bodyliquid.hair.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $feetsemen -= 1>><<set $feetsemen = Math.clamp($feetsemen, 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($feetsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Feet semen: <span id="statsfeetsemen"><<print Math.trunc($feetsemen)>></span>
-  <<link ">">><<set $feetsemen += 1>><<set $feetsemen = Math.clamp($feetsemen, 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($feetsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.feet.semen -= 1>><<set $player.bodyliquid.feet.semen = Math.clamp($player.bodyliquid.feet.semen , 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($player.bodyliquid.feet.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Feet semen: <span id="statsfeetsemen"><<print Math.trunc($player.bodyliquid.feet.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.feet.semen += 1>><<set $player.bodyliquid.feet.semen = Math.clamp($player.bodyliquid.feet.semen , 0, 5)>><<replace "#statsfeetsemen">><<print Math.trunc($player.bodyliquid.feet.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $vaginaoutsidesemen -= 1>><<set $vaginaoutsidesemen = Math.clamp($vaginaoutsidesemen, 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($vaginaoutsidesemen)>><</replace>> <<updatesidebarimg>><</link>>
-Labia semen: <span id="statsvaginaoutsidesemen"><<print Math.trunc($vaginaoutsidesemen)>></span>
-  <<link ">">><<set $vaginaoutsidesemen += 1>><<set $vaginaoutsidesemen = Math.clamp($vaginaoutsidesemen, 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($vaginaoutsidesemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.vaginaoutside.semen -= 1>><<set $player.bodyliquid.vaginaoutside.semen = Math.clamp($player.bodyliquid.vaginaoutside.semen , 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($player.bodyliquid.vaginaoutside.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Labia semen: <span id="statsvaginaoutsidesemen"><<print Math.trunc($player.bodyliquid.vaginaoutside.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.vaginaoutside.semen += 1>><<set $player.bodyliquid.vaginaoutside.semen = Math.clamp($player.bodyliquid.vaginaoutside.semen , 0, 5)>><<replace "#statsvaginaoutsidesemen">><<print Math.trunc($player.bodyliquid.vaginaoutside.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $vaginasemen -= 1>><<set $vaginasemen = Math.clamp($vaginasemen, 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($vaginasemen)>><</replace>> <<updatesidebarimg>><</link>>
-Vagina semen: <span id="statsvaginasemen"><<print Math.trunc($vaginasemen)>></span>
-  <<link ">">><<set $vaginasemen += 1>><<set $vaginasemen = Math.clamp($vaginasemen, 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($vaginasemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.vagina.semen -= 1>><<set $player.bodyliquid.vagina.semen = Math.clamp($player.bodyliquid.vagina.semen , 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($player.bodyliquid.vagina.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Vagina semen: <span id="statsvaginasemen"><<print Math.trunc($player.bodyliquid.vagina.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.vagina.semen += 1>><<set $player.bodyliquid.vagina.semen = Math.clamp($player.bodyliquid.vagina.semen , 0, 5)>><<replace "#statsvaginasemen">><<print Math.trunc($player.bodyliquid.vagina.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $penissemen -= 1>><<set $penissemen = Math.clamp($penissemen, 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($penissemen)>><</replace>> <<updatesidebarimg>><</link>>
-Penis semen: <span id="statspenissemen"><<print Math.trunc($penissemen)>></span>
-  <<link ">">><<set $penissemen += 1>><<set $penissemen = Math.clamp($penissemen, 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($penissemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.penis.semen -= 1>><<set $player.bodyliquid.penis.semen = Math.clamp($player.bodyliquid.penis.semen , 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($player.bodyliquid.penis.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Penis semen: <span id="statspenissemen"><<print Math.trunc($player.bodyliquid.penis.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.penis.semen += 1>><<set $player.bodyliquid.penis.semen = Math.clamp($player.bodyliquid.penis.semen , 0, 5)>><<replace "#statspenissemen">><<print Math.trunc($player.bodyliquid.penis.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $anussemen -= 1>><<set $anussemen = Math.clamp($anussemen, 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($anussemen)>><</replace>> <<updatesidebarimg>><</link>>
-Anus semen: <span id="statsanussemen"><<print Math.trunc($anussemen)>></span>
-  <<link ">">><<set $anussemen += 1>><<set $anussemen = Math.clamp($anussemen, 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($anussemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.anus.semen -= 1>><<set $player.bodyliquid.anus.semen = Math.clamp($player.bodyliquid.anus.semen , 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($player.bodyliquid.anus.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Anus semen: <span id="statsanussemen"><<print Math.trunc($player.bodyliquid.anus.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.anus.semen += 1>><<set $player.bodyliquid.anus.semen = Math.clamp($player.bodyliquid.anus.semen , 0, 5)>><<replace "#statsanussemen">><<print Math.trunc($player.bodyliquid.anus.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $mouthsemen -= 1>><<set $mouthsemen = Math.clamp($mouthsemen, 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($mouthsemen)>><</replace>> <<updatesidebarimg>><</link>>
-Mouth semen: <span id="statsmouthsemen"><<print Math.trunc($mouthsemen)>></span>
-  <<link ">">><<set $mouthsemen += 1>><<set $mouthsemen = Math.clamp($mouthsemen, 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($mouthsemen)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.mouth.semen -= 1>><<set $player.bodyliquid.mouth.semen = Math.clamp($player.bodyliquid.mouth.semen , 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($player.bodyliquid.mouth.semen )>><</replace>> <<updatesidebarimg>><</link>>
+Mouth semen: <span id="statsmouthsemen"><<print Math.trunc($player.bodyliquid.mouth.semen )>></span>
+  <<link ">">><<set $player.bodyliquid.mouth.semen += 1>><<set $player.bodyliquid.mouth.semen = Math.clamp($player.bodyliquid.mouth.semen , 0, 5)>><<replace "#statsmouthsemen">><<print Math.trunc($player.bodyliquid.mouth.semen )>><</replace>> <<updatesidebarimg>><</link>>
 |
 
 <br><br>
@@ -1437,104 +1453,104 @@ Mouth semen: <span id="statsmouthsemen"><<print Math.trunc($mouthsemen)>></span>
 <u>Slime</u>
 <br>
 <<link "Add all slime">>
-<<set $neckgoo += 5>><<set $neckgoo = Math.clamp($neckgoo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($neckgoo)>><</replace>>
-<<set $rightarmgoo += 5>><<set $rightarmgoo = Math.clamp($rightarmgoo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($rightarmgoo)>><</replace>>
-<<set $leftarmgoo += 5>><<set $leftarmgoo = Math.clamp($leftarmgoo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($leftarmgoo)>><</replace>>
-<<set $thighgoo += 5>><<set $thighgoo = Math.clamp($thighgoo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($thighgoo)>><</replace>>
-<<set $bottomgoo += 5>><<set $bottomgoo = Math.clamp($bottomgoo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($bottomgoo)>><</replace>>
-<<set $tummygoo += 5>><<set $tummygoo = Math.clamp($tummygoo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($tummygoo)>><</replace>>
-<<set $chestgoo += 5>><<set $chestgoo = Math.clamp($chestgoo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($chestgoo)>><</replace>>
-<<set $facegoo += 5>><<set $facegoo = Math.clamp($facegoo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($facegoo)>><</replace>>
-<<set $hairgoo += 5>><<set $hairgoo = Math.clamp($hairgoo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($hairgoo)>><</replace>>
-<<set $feetgoo += 5>><<set $feetgoo = Math.clamp($feetgoo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($feetgoo)>><</replace>>
-<<set $vaginaoutsidegoo += 5>><<set $vaginaoutsidegoo = Math.clamp($vaginaoutsidegoo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($vaginaoutsidegoo)>><</replace>>
-<<set $vaginagoo += 5>><<set $vaginagoo = Math.clamp($vaginagoo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($vaginagoo)>><</replace>>
-<<set $penisgoo += 5>><<set $penisgoo = Math.clamp($penisgoo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($penisgoo)>><</replace>>
-<<set $anusgoo += 5>><<set $anusgoo = Math.clamp($anusgoo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($anusgoo)>><</replace>>
-<<set $mouthgoo += 5>><<set $mouthgoo = Math.clamp($mouthgoo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($mouthgoo)>><</replace>>
+<<set $player.bodyliquid.neck.goo += 5>><<set $player.bodyliquid.neck.goo = Math.clamp($player.bodyliquid.neck.goo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($player.bodyliquid.neck.goo)>><</replace>>
+<<set $player.bodyliquid.rightarm.goo += 5>><<set $player.bodyliquid.rightarm.goo = Math.clamp($player.bodyliquid.rightarm.goo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($player.bodyliquid.rightarm.goo)>><</replace>>
+<<set $player.bodyliquid.leftarm.goo += 5>><<set $player.bodyliquid.leftarm.goo = Math.clamp($player.bodyliquid.leftarm.goo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($player.bodyliquid.leftarm.goo)>><</replace>>
+<<set $player.bodyliquid.thigh.goo += 5>><<set $player.bodyliquid.thigh.goo = Math.clamp($player.bodyliquid.thigh.goo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($player.bodyliquid.thigh.goo)>><</replace>>
+<<set $player.bodyliquid.bottom.goo += 5>><<set $player.bodyliquid.bottom.goo = Math.clamp($player.bodyliquid.bottom.goo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($player.bodyliquid.bottom.goo)>><</replace>>
+<<set $player.bodyliquid.tummy.goo += 5>><<set $player.bodyliquid.tummy.goo = Math.clamp($player.bodyliquid.tummy.goo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($player.bodyliquid.tummy.goo)>><</replace>>
+<<set $player.bodyliquid.chest.goo += 5>><<set $player.bodyliquid.chest.goo = Math.clamp($player.bodyliquid.chest.goo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($player.bodyliquid.chest.goo)>><</replace>>
+<<set $player.bodyliquid.face.goo += 5>><<set $player.bodyliquid.face.goo = Math.clamp($player.bodyliquid.face.goo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($player.bodyliquid.face.goo)>><</replace>>
+<<set $player.bodyliquid.hair.goo += 5>><<set $player.bodyliquid.hair.goo = Math.clamp($player.bodyliquid.hair.goo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($player.bodyliquid.hair.goo)>><</replace>>
+<<set $player.bodyliquid.feet.goo += 5>><<set $player.bodyliquid.feet.goo = Math.clamp($player.bodyliquid.feet.goo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($player.bodyliquid.feet.goo)>><</replace>>
+<<set $player.bodyliquid.vaginaoutside.goo += 5>><<set $player.bodyliquid.vaginaoutside.goo = Math.clamp($player.bodyliquid.vaginaoutside.goo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($player.bodyliquid.vaginaoutside.goo)>><</replace>>
+<<set $player.bodyliquid.vagina.goo += 5>><<set $player.bodyliquid.vagina.goo = Math.clamp($player.bodyliquid.vagina.goo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($player.bodyliquid.vagina.goo)>><</replace>>
+<<set $player.bodyliquid.penis.goo += 5>><<set $player.bodyliquid.penis.goo = Math.clamp($player.bodyliquid.penis.goo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($player.bodyliquid.penis.goo)>><</replace>>
+<<set $player.bodyliquid.anus.goo += 5>><<set $player.bodyliquid.anus.goo = Math.clamp($player.bodyliquid.anus.goo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($player.bodyliquid.anus.goo)>><</replace>>
+<<set $player.bodyliquid.mouth.goo += 5>><<set $player.bodyliquid.mouth.goo = Math.clamp($player.bodyliquid.mouth.goo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($player.bodyliquid.mouth.goo)>><</replace>>
  <<updatesidebarimg>>
 <</link>> |
 
 <<link "Remove all slime">>
-<<set $neckgoo -= 5>><<set $neckgoo = Math.clamp($neckgoo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($neckgoo)>><</replace>>
-<<set $rightarmgoo -= 5>><<set $rightarmgoo = Math.clamp($rightarmgoo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($rightarmgoo)>><</replace>>
-<<set $leftarmgoo -= 5>><<set $leftarmgoo = Math.clamp($leftarmgoo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($leftarmgoo)>><</replace>>
-<<set $thighgoo -= 5>><<set $thighgoo = Math.clamp($thighgoo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($thighgoo)>><</replace>>
-<<set $bottomgoo -= 5>><<set $bottomgoo = Math.clamp($bottomgoo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($bottomgoo)>><</replace>>
-<<set $tummygoo -= 5>><<set $tummygoo = Math.clamp($tummygoo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($tummygoo)>><</replace>>
-<<set $chestgoo -= 5>><<set $chestgoo = Math.clamp($chestgoo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($chestgoo)>><</replace>>
-<<set $facegoo -= 5>><<set $facegoo = Math.clamp($facegoo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($facegoo)>><</replace>>
-<<set $hairgoo -= 5>><<set $hairgoo = Math.clamp($hairgoo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($hairgoo)>><</replace>>
-<<set $feetgoo -= 5>><<set $feetgoo = Math.clamp($feetgoo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($feetgoo)>><</replace>>
-<<set $vaginaoutsidegoo -= 5>><<set $vaginaoutsidegoo = Math.clamp($vaginaoutsidegoo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($vaginaoutsidegoo)>><</replace>>
-<<set $vaginagoo -= 5>><<set $vaginagoo = Math.clamp($vaginagoo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($vaginagoo)>><</replace>>
-<<set $penisgoo -= 5>><<set $penisgoo = Math.clamp($penisgoo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($penisgoo)>><</replace>>
-<<set $anusgoo -= 5>><<set $anusgoo = Math.clamp($anusgoo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($anusgoo)>><</replace>>
-<<set $mouthgoo -= 5>><<set $mouthgoo = Math.clamp($mouthgoo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($mouthgoo)>><</replace>>
+<<set $player.bodyliquid.neck.goo -= 5>><<set $player.bodyliquid.neck.goo = Math.clamp($player.bodyliquid.neck.goo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($player.bodyliquid.neck.goo)>><</replace>>
+<<set $player.bodyliquid.rightarm.goo -= 5>><<set $player.bodyliquid.rightarm.goo = Math.clamp($player.bodyliquid.rightarm.goo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($player.bodyliquid.rightarm.goo)>><</replace>>
+<<set $player.bodyliquid.leftarm.goo -= 5>><<set $player.bodyliquid.leftarm.goo = Math.clamp($player.bodyliquid.leftarm.goo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($player.bodyliquid.leftarm.goo)>><</replace>>
+<<set $player.bodyliquid.thigh.goo -= 5>><<set $player.bodyliquid.thigh.goo = Math.clamp($player.bodyliquid.thigh.goo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($player.bodyliquid.thigh.goo)>><</replace>>
+<<set $player.bodyliquid.bottom.goo -= 5>><<set $player.bodyliquid.bottom.goo = Math.clamp($player.bodyliquid.bottom.goo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($player.bodyliquid.bottom.goo)>><</replace>>
+<<set $player.bodyliquid.tummy.goo -= 5>><<set $player.bodyliquid.tummy.goo = Math.clamp($player.bodyliquid.tummy.goo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($player.bodyliquid.tummy.goo)>><</replace>>
+<<set $player.bodyliquid.chest.goo -= 5>><<set $player.bodyliquid.chest.goo = Math.clamp($player.bodyliquid.chest.goo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($player.bodyliquid.chest.goo)>><</replace>>
+<<set $player.bodyliquid.face.goo -= 5>><<set $player.bodyliquid.face.goo = Math.clamp($player.bodyliquid.face.goo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($player.bodyliquid.face.goo)>><</replace>>
+<<set $player.bodyliquid.hair.goo -= 5>><<set $player.bodyliquid.hair.goo = Math.clamp($player.bodyliquid.hair.goo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($player.bodyliquid.hair.goo)>><</replace>>
+<<set $player.bodyliquid.feet.goo -= 5>><<set $player.bodyliquid.feet.goo = Math.clamp($player.bodyliquid.feet.goo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($player.bodyliquid.feet.goo)>><</replace>>
+<<set $player.bodyliquid.vaginaoutside.goo -= 5>><<set $player.bodyliquid.vaginaoutside.goo = Math.clamp($player.bodyliquid.vaginaoutside.goo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($player.bodyliquid.vaginaoutside.goo)>><</replace>>
+<<set $player.bodyliquid.vagina.goo -= 5>><<set $player.bodyliquid.vagina.goo = Math.clamp($player.bodyliquid.vagina.goo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($player.bodyliquid.vagina.goo)>><</replace>>
+<<set $player.bodyliquid.penis.goo -= 5>><<set $player.bodyliquid.penis.goo = Math.clamp($player.bodyliquid.penis.goo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($player.bodyliquid.penis.goo)>><</replace>>
+<<set $player.bodyliquid.anus.goo -= 5>><<set $player.bodyliquid.anus.goo = Math.clamp($player.bodyliquid.anus.goo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($player.bodyliquid.anus.goo)>><</replace>>
+<<set $player.bodyliquid.mouth.goo -= 5>><<set $player.bodyliquid.mouth.goo = Math.clamp($player.bodyliquid.mouth.goo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($player.bodyliquid.mouth.goo)>><</replace>>
  <<updatesidebarimg>>
 <</link>> |
 
 <br>
 
-<<link "<">><<set $neckgoo -= 1>><<set $neckgoo = Math.clamp($neckgoo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($neckgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Neck slime: <span id="statsneckgoo"><<print Math.trunc($neckgoo)>></span>
-  <<link ">">><<set $neckgoo += 1>><<set $neckgoo = Math.clamp($neckgoo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($neckgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.neck.goo -= 1>><<set $player.bodyliquid.neck.goo = Math.clamp($player.bodyliquid.neck.goo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($player.bodyliquid.neck.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Neck slime: <span id="statsneckgoo"><<print Math.trunc($player.bodyliquid.neck.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.neck.goo += 1>><<set $player.bodyliquid.neck.goo = Math.clamp($player.bodyliquid.neck.goo, 0, 5)>><<replace "#statsneckgoo">><<print Math.trunc($player.bodyliquid.neck.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $rightarmgoo -= 1>><<set $rightarmgoo = Math.clamp($rightarmgoo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($rightarmgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Right arm slime: <span id="statsrightarmgoo"><<print Math.trunc($rightarmgoo)>></span>
-  <<link ">">><<set $rightarmgoo += 1>><<set $rightarmgoo = Math.clamp($rightarmgoo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($rightarmgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.rightarm.goo -= 1>><<set $player.bodyliquid.rightarm.goo = Math.clamp($player.bodyliquid.rightarm.goo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($player.bodyliquid.rightarm.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Right arm slime: <span id="statsrightarmgoo"><<print Math.trunc($player.bodyliquid.rightarm.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.rightarm.goo += 1>><<set $player.bodyliquid.rightarm.goo = Math.clamp($player.bodyliquid.rightarm.goo, 0, 5)>><<replace "#statsrightarmgoo">><<print Math.trunc($player.bodyliquid.rightarm.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $leftarmgoo -= 1>><<set $leftarmgoo = Math.clamp($leftarmgoo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($leftarmgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Left arm slime: <span id="statsleftarmgoo"><<print Math.trunc($leftarmgoo)>></span>
-  <<link ">">><<set $leftarmgoo += 1>><<set $leftarmgoo = Math.clamp($leftarmgoo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($leftarmgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.leftarm.goo -= 1>><<set $player.bodyliquid.leftarm.goo = Math.clamp($player.bodyliquid.leftarm.goo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($player.bodyliquid.leftarm.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Left arm slime: <span id="statsleftarmgoo"><<print Math.trunc($player.bodyliquid.leftarm.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.leftarm.goo += 1>><<set $player.bodyliquid.leftarm.goo = Math.clamp($player.bodyliquid.leftarm.goo, 0, 5)>><<replace "#statsleftarmgoo">><<print Math.trunc($player.bodyliquid.leftarm.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $thighgoo -= 1>><<set $thighgoo = Math.clamp($thighgoo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($thighgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Thigh slime: <span id="statsthighgoo"><<print Math.trunc($thighgoo)>></span>
-  <<link ">">><<set $thighgoo += 1>><<set $thighgoo = Math.clamp($thighgoo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($thighgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.thigh.goo -= 1>><<set $player.bodyliquid.thigh.goo = Math.clamp($player.bodyliquid.thigh.goo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($player.bodyliquid.thigh.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Thigh slime: <span id="statsthighgoo"><<print Math.trunc($player.bodyliquid.thigh.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.thigh.goo += 1>><<set $player.bodyliquid.thigh.goo = Math.clamp($player.bodyliquid.thigh.goo, 0, 5)>><<replace "#statsthighgoo">><<print Math.trunc($player.bodyliquid.thigh.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $bottomgoo -= 1>><<set $bottomgoo = Math.clamp($bottomgoo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($bottomgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Bottom slime: <span id="statsbottomgoo"><<print Math.trunc($bottomgoo)>></span>
-  <<link ">">><<set $bottomgoo += 1>><<set $bottomgoo = Math.clamp($bottomgoo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($bottomgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.bottom.goo -= 1>><<set $player.bodyliquid.bottom.goo = Math.clamp($player.bodyliquid.bottom.goo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($player.bodyliquid.bottom.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Bottom slime: <span id="statsbottomgoo"><<print Math.trunc($player.bodyliquid.bottom.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.bottom.goo += 1>><<set $player.bodyliquid.bottom.goo = Math.clamp($player.bodyliquid.bottom.goo, 0, 5)>><<replace "#statsbottomgoo">><<print Math.trunc($player.bodyliquid.bottom.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $tummygoo -= 1>><<set $tummygoo = Math.clamp($tummygoo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($tummygoo)>><</replace>> <<updatesidebarimg>><</link>>
-Tummy slime: <span id="statstummygoo"><<print Math.trunc($tummygoo)>></span>
-  <<link ">">><<set $tummygoo += 1>><<set $tummygoo = Math.clamp($tummygoo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($tummygoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.tummy.goo -= 1>><<set $player.bodyliquid.tummy.goo = Math.clamp($player.bodyliquid.tummy.goo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($player.bodyliquid.tummy.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Tummy slime: <span id="statstummygoo"><<print Math.trunc($player.bodyliquid.tummy.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.tummy.goo += 1>><<set $player.bodyliquid.tummy.goo = Math.clamp($player.bodyliquid.tummy.goo, 0, 5)>><<replace "#statstummygoo">><<print Math.trunc($player.bodyliquid.tummy.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $chestgoo -= 1>><<set $chestgoo = Math.clamp($chestgoo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($chestgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Chest slime: <span id="statschestgoo"><<print Math.trunc($chestgoo)>></span>
-  <<link ">">><<set $chestgoo += 1>><<set $chestgoo = Math.clamp($chestgoo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($chestgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.chest.goo -= 1>><<set $player.bodyliquid.chest.goo = Math.clamp($player.bodyliquid.chest.goo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($player.bodyliquid.chest.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Chest slime: <span id="statschestgoo"><<print Math.trunc($player.bodyliquid.chest.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.chest.goo += 1>><<set $player.bodyliquid.chest.goo = Math.clamp($player.bodyliquid.chest.goo, 0, 5)>><<replace "#statschestgoo">><<print Math.trunc($player.bodyliquid.chest.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $facegoo -= 1>><<set $facegoo = Math.clamp($facegoo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($facegoo)>><</replace>> <<updatesidebarimg>><</link>>
-Face slime: <span id="statsfacegoo"><<print Math.trunc($facegoo)>></span>
-  <<link ">">><<set $facegoo += 1>><<set $facegoo = Math.clamp($facegoo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($facegoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.face.goo -= 1>><<set $player.bodyliquid.face.goo = Math.clamp($player.bodyliquid.face.goo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($player.bodyliquid.face.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Face slime: <span id="statsfacegoo"><<print Math.trunc($player.bodyliquid.face.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.face.goo += 1>><<set $player.bodyliquid.face.goo = Math.clamp($player.bodyliquid.face.goo, 0, 5)>><<replace "#statsfacegoo">><<print Math.trunc($player.bodyliquid.face.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $hairgoo -= 1>><<set $hairgoo = Math.clamp($hairgoo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($hairgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Hair slime: <span id="statshairgoo"><<print Math.trunc($hairgoo)>></span>
-  <<link ">">><<set $hairgoo += 1>><<set $hairgoo = Math.clamp($hairgoo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($hairgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.hair.goo -= 1>><<set $player.bodyliquid.hair.goo = Math.clamp($player.bodyliquid.hair.goo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($player.bodyliquid.hair.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Hair slime: <span id="statshairgoo"><<print Math.trunc($player.bodyliquid.hair.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.hair.goo += 1>><<set $player.bodyliquid.hair.goo = Math.clamp($player.bodyliquid.hair.goo, 0, 5)>><<replace "#statshairgoo">><<print Math.trunc($player.bodyliquid.hair.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $feetgoo -= 1>><<set $feetgoo = Math.clamp($feetgoo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($feetgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Feet slime: <span id="statsfeetgoo"><<print Math.trunc($feetgoo)>></span>
-  <<link ">">><<set $feetgoo += 1>><<set $feetgoo = Math.clamp($feetgoo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($feetgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.feet.goo -= 1>><<set $player.bodyliquid.feet.goo = Math.clamp($player.bodyliquid.feet.goo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($player.bodyliquid.feet.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Feet slime: <span id="statsfeetgoo"><<print Math.trunc($player.bodyliquid.feet.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.feet.goo += 1>><<set $player.bodyliquid.feet.goo = Math.clamp($player.bodyliquid.feet.goo, 0, 5)>><<replace "#statsfeetgoo">><<print Math.trunc($player.bodyliquid.feet.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $vaginaoutsidegoo -= 1>><<set $vaginaoutsidegoo = Math.clamp($vaginaoutsidegoo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($vaginaoutsidegoo)>><</replace>> <<updatesidebarimg>><</link>>
-Labia slime: <span id="statsvaginaoutsidegoo"><<print Math.trunc($vaginaoutsidegoo)>></span>
-  <<link ">">><<set $vaginaoutsidegoo += 1>><<set $vaginaoutsidegoo = Math.clamp($vaginaoutsidegoo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($vaginaoutsidegoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.vaginaoutside.goo -= 1>><<set $player.bodyliquid.vaginaoutside.goo = Math.clamp($player.bodyliquid.vaginaoutside.goo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($player.bodyliquid.vaginaoutside.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Labia slime: <span id="statsvaginaoutsidegoo"><<print Math.trunc($player.bodyliquid.vaginaoutside.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.vaginaoutside.goo += 1>><<set $player.bodyliquid.vaginaoutside.goo = Math.clamp($player.bodyliquid.vaginaoutside.goo, 0, 5)>><<replace "#statsvaginaoutsidegoo">><<print Math.trunc($player.bodyliquid.vaginaoutside.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $vaginagoo -= 1>><<set $vaginagoo = Math.clamp($vaginagoo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($vaginagoo)>><</replace>> <<updatesidebarimg>><</link>>
-Vagina slime: <span id="statsvaginagoo"><<print Math.trunc($vaginagoo)>></span>
-  <<link ">">><<set $vaginagoo += 1>><<set $vaginagoo = Math.clamp($vaginagoo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($vaginagoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.vagina.goo -= 1>><<set $player.bodyliquid.vagina.goo = Math.clamp($player.bodyliquid.vagina.goo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($player.bodyliquid.vagina.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Vagina slime: <span id="statsvaginagoo"><<print Math.trunc($player.bodyliquid.vagina.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.vagina.goo += 1>><<set $player.bodyliquid.vagina.goo = Math.clamp($player.bodyliquid.vagina.goo, 0, 5)>><<replace "#statsvaginagoo">><<print Math.trunc($player.bodyliquid.vagina.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $penisgoo -= 1>><<set $penisgoo = Math.clamp($penisgoo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($penisgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Penis slime: <span id="statspenisgoo"><<print Math.trunc($penisgoo)>></span>
-	<<link ">">><<set $penisgoo += 1>><<set $penisgoo = Math.clamp($penisgoo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($penisgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.penis.goo -= 1>><<set $player.bodyliquid.penis.goo = Math.clamp($player.bodyliquid.penis.goo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($player.bodyliquid.penis.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Penis slime: <span id="statspenisgoo"><<print Math.trunc($player.bodyliquid.penis.goo)>></span>
+	<<link ">">><<set $player.bodyliquid.penis.goo += 1>><<set $player.bodyliquid.penis.goo = Math.clamp($player.bodyliquid.penis.goo, 0, 5)>><<replace "#statspenisgoo">><<print Math.trunc($player.bodyliquid.penis.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $anusgoo -= 1>><<set $anusgoo = Math.clamp($anusgoo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($anusgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Anus slime: <span id="statsanusgoo"><<print Math.trunc($anusgoo)>></span>
-  <<link ">">><<set $anusgoo += 1>><<set $anusgoo = Math.clamp($anusgoo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($anusgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.anus.goo -= 1>><<set $player.bodyliquid.anus.goo = Math.clamp($player.bodyliquid.anus.goo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($player.bodyliquid.anus.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Anus slime: <span id="statsanusgoo"><<print Math.trunc($player.bodyliquid.anus.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.anus.goo += 1>><<set $player.bodyliquid.anus.goo = Math.clamp($player.bodyliquid.anus.goo, 0, 5)>><<replace "#statsanusgoo">><<print Math.trunc($player.bodyliquid.anus.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
-<<link "<">><<set $mouthgoo -= 1>><<set $mouthgoo = Math.clamp($mouthgoo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($mouthgoo)>><</replace>> <<updatesidebarimg>><</link>>
-Mouth slime: <span id="statsmouthgoo"><<print Math.trunc($mouthgoo)>></span>
-  <<link ">">><<set $mouthgoo += 1>><<set $mouthgoo = Math.clamp($mouthgoo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($mouthgoo)>><</replace>> <<updatesidebarimg>><</link>>
+<<link "<">><<set $player.bodyliquid.mouth.goo -= 1>><<set $player.bodyliquid.mouth.goo = Math.clamp($player.bodyliquid.mouth.goo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($player.bodyliquid.mouth.goo)>><</replace>> <<updatesidebarimg>><</link>>
+Mouth slime: <span id="statsmouthgoo"><<print Math.trunc($player.bodyliquid.mouth.goo)>></span>
+  <<link ">">><<set $player.bodyliquid.mouth.goo += 1>><<set $player.bodyliquid.mouth.goo = Math.clamp($player.bodyliquid.mouth.goo, 0, 5)>><<replace "#statsmouthgoo">><<print Math.trunc($player.bodyliquid.mouth.goo)>><</replace>> <<updatesidebarimg>><</link>>
 |
 <br><br>
 
@@ -1707,6 +1723,33 @@ Avery rage: <span id="statsaveryrage"><<print Math.trunc($NPCName[0].rage)>></sp
  | <<link ">">><<npcincr Avery rage 1>><<clamp>><<replace "#statsaveryrage">><<print Math.trunc($NPCName[0].rage)>><</replace>><</link>>
  | <<link ">>">><<npcincr Avery rage 10>><<clamp>><<replace "#statsaveryrage">><<print Math.trunc($NPCName[0].rage)>><</replace>><</link>>
  | <<link ">>>">><<npcincr Avery rage 100>><<clamp>><<replace "#statsaveryrage">><<print Math.trunc($NPCName[0].rage)>><</replace>><</link>> (100 = full)
+<br><br>
+
+<<link "<<<">><<npcincr Sydney love -100>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>> |
+<<link "<<">><<npcincr Sydney love -10>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>> |
+<<link "<">><<npcincr Sydney love -1>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>> |
+Sydney love: <span id="statssydneylove"><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>></span>
+ | <<link ">">><<npcincr Sydney love 1>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>>
+ | <<link ">>">><<npcincr Sydney love 10>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>>
+ | <<link ">>>">><<npcincr Sydney love 100>><<clamp>><<replace "#statssydneylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].love)>><</replace>><</link>> (150 = full)
+<br>
+
+<<link "<<<">><<npcincr Sydney lust -100>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>> |
+<<link "<<">><<npcincr Sydney lust -10>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>> |
+<<link "<">><<npcincr Sydney lust -1>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>> |
+Sydney lust: <span id="statssydneylust"><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>></span>
+ | <<link ">">><<npcincr Sydney lust 1>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>>
+ | <<link ">>">><<npcincr Sydney lust 10>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>>
+ | <<link ">>>">><<npcincr Sydney lust 100>><<clamp>><<replace "#statssydneylust">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].lust)>><</replace>><</link>> (100 = full)
+<br>
+
+<<link "<<<">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity -100>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>> |
+<<link "<<">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity -10>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>> |
+<<link "<">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity -1>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>> |
+Sydney <span id="sydneypuretext"><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>></span> <span id="statssydneypure"><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>></span>
+ | <<link ">">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity 1>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>>
+ | <<link ">>">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity 10>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>>
+ | <<link ">>>">><<set $purityEvent to 1>><<set $corruptionEvent to 1>><<npcincr Sydney purity 100>><<clamp>><<replace "#statssydneypure">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].purity)>><<else>><<print Math.trunc($NPCName[$NPCNameList.indexOf("Sydney")].corruption)>><</if>><</replace>><<replace "#sydneypuretext">><<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 0>><<print "purity:">><<else>><<print "corruption:">><</if>><</replace>><</link>> (100 = full, below 0 will switch to corruption.)
 <br><br>
 
 <<link "<<<">><<npcincr Mason love -100>><<clamp>><<replace "#statsmasonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Mason")].love)>><</replace>><</link>> |
@@ -2042,6 +2085,17 @@ Bestiality: <span id="statsfamebestiality"><<print Math.trunc($famebestiality)>>
  | <<link ">>">><<set $famebestiality += 100>><<set $fame += 10>><<fameclamp>><<replace "#statsfamebestiality">><<print Math.trunc($famebestiality)>><</replace>><</link>>
  | <<link ">>>">><<set $famebestiality += 1000>><<set $fame += 100>><<fameclamp>><<replace "#statsfamebestiality">><<print Math.trunc($famebestiality)>><</replace>><</link>>
 <br>
+/*ToDo: Pregnancy, remove check to properly enable*/
+<<if $pregnancyTesting>>
+	<<link "<<<">><<set $famepregnancy -= 1000>><<set $fame -= 100>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>> |
+	<<link "<<">><<set $famepregnancy -= 100>><<set $fame -= 10>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>> |
+	<<link "<">><<set $famepregnancy -= 10>><<set $fame -= 1>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>> |
+	Pregnancy: <span id="statsfamepregnancy"><<print Math.trunc($famepregnancy)>></span>
+	| <<link ">">><<set $famepregnancy += 10>><<set $fame += 1>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>>
+	| <<link ">>">><<set $famepregnancy += 100>><<set $fame += 10>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>>
+	| <<link ">>>">><<set $famepregnancy += 1000>><<set $fame += 100>><<fameclamp>><<replace "#statsfamepregnancy">><<print Math.trunc($famepregnancy)>><</replace>><</link>>
+	<br>
+<</if>>
 
 <<link "<<<">><<set $fameexhibitionism -= 1000>><<set $fame -= 100>><<fameclamp>><<replace "#statsfameexhibitionism">><<print Math.trunc($fameexhibitionism)>><</replace>><</link>> |
 <<link "<<">><<set $fameexhibitionism -= 100>><<set $fame -= 10>><<fameclamp>><<replace "#statsfameexhibitionism">><<print Math.trunc($fameexhibitionism)>><</replace>><</link>> |

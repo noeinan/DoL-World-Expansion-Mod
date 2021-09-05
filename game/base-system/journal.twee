@@ -44,15 +44,15 @@
 	<</if>>
 <</if>>
 
-<<if $brothelshow isnot "none" and $brothelshowintro is 1>>
-	<<if $weekday is 6 and $brothelshowdone isnot 1>>
+<<if $brothelshowdata.type isnot "none" and $brothelshowdata.intro>>
+	<<if $weekday is 6 and not $brothelshowdata.done>>
 		You're expected to perform at the brothel today.
 		<br>
 	<<else>>
 		You're expected to perform at the brothel on Friday.
 		<br>
 	<</if>>
-<<elseif $brothelshowintro is 1>>
+<<elseif $brothelshowdata.intro>>
 	You can star in shows at the brothel.
 	<br>
 <</if>>
@@ -120,7 +120,7 @@
 	<br>
 <</if>>
 
-<<if $averydate is 1 and $hour lte 21>>
+<<if $averydate is 1 and $hour lte 21 and $averydatedone isnot 1>>
 	You have a date scheduled with Avery. They'll wait for you on Domus Street between <<ampm 20 00>> and <<ampm 21 00>>.
 	<br>
 <</if>>
@@ -170,7 +170,7 @@
 		<br>
 	<</if>>
 	<<if $christmas_gift_robin is undefined and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
-		You can buy Robin a gift at the shopping centre or forest shop.
+		You can buy Robin a gift at the shopping centre<<if $forest_shop_intro is 1>> or forest shop<</if>>.
 		<br>
 	<<elseif $christmas_gift_robin and $christmas_gift_robin_wrapped isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
 		You can wrap Robin's gift in your room.
@@ -476,6 +476,15 @@
 	<hr>
 <</if>>
 
+<<if $studyBooks isnot undefined and $studyBooks.rented isnot "none">>
+	<<if $book_rent_timer is 0>>
+		<span class="blue">You have a library book due.</span>
+	<<elseif $book_rent_timer lt 0>>
+		<span class="red">You have a library book overdue.</span>
+	<<else>>
+		You have a library book due in <span class="gold">$book_rent_timer day<<if $book_rent_timer gt 1>>s<</if>>.</span>
+	<</if>>
+<</if>>
 
 <h4>Seeds</h4>
 <<set _plant_keys to Object.keys(setup.plants)>>
@@ -489,5 +498,19 @@
 	<</if>>
 <</for>>
 
+
+<<if $museumAntiqueJournalHints is not undefined>>
+<br><br>
+<h4>Winter has mentioned some items missing from the museum</h4>
+	<<for _hint range $museumAntiqueJournalHints>>
+
+		<<print $museumAntiqueText[_hint].journal>>
+		<br><br>
+	<</for>>
+<</if>>
+
+<<if $farm>>
+	<<farm_upgrades_current>>
+<</if>>
 
 <</widget>>

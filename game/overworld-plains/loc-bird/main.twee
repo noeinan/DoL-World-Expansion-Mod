@@ -427,25 +427,28 @@ You are inside a ruined tower, deep in the moor.
 		<br>
 	<</if>>
 	<<if $bird.lock is 1>>
-		<<link [[Examine the trap door(0:05)|Bird Tower Door]]>><<bird_pass 5>><</link>>
+		<<link [[Examine the trap door (0:05)|Bird Tower Door]]>><<bird_pass 5>><</link>>
 		<br>
 	<<else>>
 		<<link [[Enter the trap door (0:05)|Bird Tower Base Descend]]>><<bird_pass 5>><</link>>
 		<br>
 	<</if>>
-	<<link [[Sleep in the nest|Bird Tower Bed]]>><</link>>
 	<br>
 	<<if $syndromebird isnot 1>>
 		<<link [[Search for materials (1:00)|Bird Tower Search]]>><<bird_pass 60>><</link>>
 		<br>
 	<</if>>
 	<<if $estate_fence is "quest" and $syndromebird is 1 and $bird.state is "home" and $bird.activity isnot "sleep">>
-		<<link [[Ask for help breaking into the Remy estate|Bird Tower Estate]]>><</link>>
+		<<link [[Ask for help breaking into the Remy Estate|Bird Tower Estate]]>><</link>>
 		<br>
 	<</if>>
+	<br>
+	<<link [[Sleep in the nest|Bird Tower Bed]]>><</link>>
+	<br>
+	<<link [[Sleep elsewhere|Bird Tower Bed Alone]]>><<bird_stockholm -2>><</link>><<if $syndromebird isnot 1>><<lstockholm>><</if>>
 	<<if $bird.mirror is 1>>
 		<br>
-		<<link [[Mirror|Bird Tower Mirror]]>><</link>>
+		<<mirroricon>><<link [[Mirror|Bird Tower Mirror]]>><</link>>
 	<</if>>
 		<br>
 	<<if $syndromebird is 1>>
@@ -585,7 +588,7 @@ You squeeze through the slit, and tumble to the ground outside. You're in the ca
 The wind snatches your hair as you peer over the edge. It's a long way down.
 <br><br>
 
-You have <<print $bird.fabric>> spare materials.
+You have <<number $bird.fabric>> spare material<<if $bird.fabric gt 1>>s<</if>>.
 <<if $syndromebird isnot 1>>
 	You could tear up your clothes for more.
 <</if>>
@@ -736,11 +739,22 @@ You tie one end of your rope around a chunk of upward-pointing stone, and throw 
 	<<npc "Great Hawk">>
 	You glance at the <<beasttype>>. <<bHe>> is not paying attention. You take the rope in both hands, turn around, and ease yourself down the tower wall.
 	<br><br>
+	You drop the last few feet, landing in the castle courtyard.
 
-	You drop the last few feet, landing in the castle courtyard. <span class="red">You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<<if $bird.activity isnot "sleep">>
+		<<set $moor_hunt to 9>>
+
+	 	<span class="red"> You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<<elseif $bird.activity is "sleep" and $rng lte 70>>
+		<<set $moor_hunt to 9>>
+
+	 	<span class="red"> You hear a terrible shriek.</span> It didn't take long for the <<beasttype>> to notice your escape.
+	<</if>>
+
 	<br><br>
-	<<set $moor_hunt to 9>>
+
 	<<endevent>>
+
 <<else>>
 	You take the rope in both hands, turn around, and ease yourself down the tower wall. You drop the last few feet, landing in the castle courtyard.
 	<br><br>
@@ -923,7 +937,7 @@ It fills you with a strange warmth.<<set $drugged += 60>>
 <br><br>
 
 <<if $monster is 1>>
-	<<bHis>> wings hang limp as <<bhe>> frowns. "I'm sorry, <<wife>>. Will find better meat next hunt." <<bhe>> lifts the lurker, and walks away with it.
+	<<bHis>> wings hang limp as <<bhe>> frowns. "I'm sorry, <<wife>>. Will find better meat next hunt." <<bHe>> lifts the lurker, and walks away with it.
 <<else>>
 	The <<beasttype>>'s feathers lay flat. <<bHe>> lifts the lurker, and hops away with it.
 <</if>>
@@ -1095,7 +1109,7 @@ You lift the necklace.
 <<elseif $rng gte 21>>
 	It's gold plated, and might be worth a little to a fence.<<set $blackmoney += 20>>
 <<else>>
-	It's made of copper, and probably not worth enough for a fance to bother with it.
+	It's made of copper, and probably not worth enough for a fence to bother with it.
 <</if>>
 <br><br>
 
@@ -1377,7 +1391,7 @@ You don't move.
 	<<link [[Rub lewdly|Bird Tower Nest Rub]]>><<transform bird 1>><<npcincr "Great Hawk" love 1>><<npcincr "Great Hawk" dom -1>><<set $phase to 1>><</link>><<glove>><<npc "Great Hawk">><<person1>><<ldom>><<endevent>><<deviant1>>
 	<br>
 	<<if $deviancy gte 55>>
-		<<link [[Wake for sex|Bird Tower Nest Rub]]>><<transform bird 1>><<npcincr "Great Hawk" love 3>><<npcincr "Great Hawk" dom 1>><<set $phase to 2>><</link>><<gglove>><<gdom>><<deviant4>>
+		<<link [[Wake for sex|Bird Tower Nest Rub]]>><<transform bird 1>><<npcincr "Great Hawk" love 3>><<npcincr "Great Hawk" dom 1>><<set $phase to 2>><</link>><<gglove>><<gdom "Great Hawk">><<deviant4>>
 		<br>
 	<</if>>
 	<br>
@@ -1408,6 +1422,41 @@ You don't move.
 <<link [[Sleep for 1 hours|Bird Tower Sleep]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 1>>)<<ltiredness>>
 <br>
 <<link [[Just sleep|Bird Tower Sleep]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
+<br><br>
+<<link [[Climb out of bed|Bird Tower]]>><</link>>
+<br><br>
+
+:: Bird Tower Bed Alone
+<<effects>>
+You lie in a covered corner of the tower. It's hard to get comfortable.
+<<endevent>>
+<br><br>
+
+
+<<if $sleeptrouble is 1 and $controlled is 0>>
+	<<link [[Sleep for 10 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 10>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 10>>)<<ltiredness>>
+	<br>
+	<<link [[Sleep for 9 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 9>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 9>>)<<ltiredness>>
+	<br>
+<</if>>
+
+<<link [[Sleep for 8 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 8>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 8>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 7 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 7>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 7>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 6 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 6>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 6>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 5 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 5>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 5>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 4 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 4>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 4>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 3 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 3>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 3>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 2 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 2>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 2>>)<<ltiredness>>
+<br>
+<<link [[Sleep for 1 hours|Bird Tower Sleep Alone]]>><<set $sleephour to 1>><<set $saveDetails.auto.count++>><</link>> (<<timeAfterXHours 1>>)<<ltiredness>>
+<br>
+<<link [[Just sleep|Bird Tower Sleep Alone]]>><<set $sleephour to -1>><<set $saveDetails.auto.count++>><</link>> (??:??)<<ltiredness>>
 <br><br>
 <<link [[Climb out of bed|Bird Tower]]>><</link>>
 <br><br>
@@ -1468,7 +1517,11 @@ You sit by the rainwater pool.
 <</if>>
 <<sleep>><<effects>>
 
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -1537,6 +1590,70 @@ You sit by the rainwater pool.
 		<br>
 		<<link [[Push away|Bird Tower Sleep Push]]>><<npcincr "Great Hawk" dom -1>><<def 1>><</link>><<ldom>>
 		<br>
+	<</if>>
+<<else>>
+	<br><br>
+
+	<<link [[Climb from the nest|Bird Tower]]>><</link>>
+	<br><br>
+<</if>>
+
+:: Bird Tower Sleep Alone
+<<run Save.autosave.save(null, {"saveId":$saveId, "saveName":$saveName})>>
+<<if _preventUpdate is undefined>>
+	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
+<</if>>
+<<sleep>><<effects>>
+
+<<if $nightmares gte 1 and $controlled is 0>>
+	You dream you are being hunted by something dark and terrible.
+<<else>>
+	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+		Your sleep is plagued by dirty dreams.
+		<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
+		<<arousal `100 * $sleepHoursTotal`>>
+		<<if $arousal gte $arousalmax>>
+			They push you over the edge.
+			<<orgasm>><<set _orgasm to true>>
+		<<else>>
+			<br><br>
+		<</if>>
+	<<else>>
+		You sleep as soundly as you can on a stone floor.
+	<</if>>
+<</if>>
+
+<<sleepeffects>>
+
+
+<<if $schoolwake is 1>><<set $schoolwake to 0>>
+	<<if $bird.state is "hunting">>
+		<<npc "Great Hawk">>
+		<<if $monster is 1>>
+			You slowly wake, hearing the harpy's voice. "<<Wife>>?"
+			<br><br>
+		<<else>>
+			You're nudged awake by the <<beasttype>>.
+		<</if>>
+		<<bird_hunt_return>>
+	<<elseif random(1,4) is 1>>
+		<<npc "Great Hawk">>
+		<<if $monster is 1>>
+			You feel a massive pair of wings closing around you. The <<beasttype>> embraces you.
+		<<else>>
+			Wings flap on either side as the <<beasttype>> tries to mount you.
+		<</if>>
+		<br><br>
+
+		<<link [[Let it happen|Bird Tower Sleep Sex]]>><<set $sexstart to 1>><<transform bird 1>><<npcincr "Great Hawk" love 1>><<npcincr "Great Hawk" dom 1>><<bird_stockholm 1>><</link>><<deviant1>><<gbirdstockholm>><<glove>><<gdom>>
+		<br>
+		<<link [[Push away|Bird Tower Sleep Push]]>><<npcincr "Great Hawk" dom -1>><<def 1>><</link>><<ldom>>
+		<br>
+	<<else>>
+		<br><br>
+
+		<<link [[Climb from the nest|Bird Tower]]>><</link>>
+		<br><br>
 	<</if>>
 <<else>>
 	<br><br>
@@ -1677,7 +1794,7 @@ You slowly run your hands down the <<beasttypes>> feathers, towards <<bhis>> <<n
 	<<else>>
 		"I'm not in the mood,"
 	<</if>>
-	You say as you try to push <<bhim>> away. <<bHis>> wings beat in frustration, and <<bhe>> squeezes you tightly for a moment before letting you go. <<bHe>> curls up next to you without further fuss.
+	you say as you try to push <<bhim>> away. <<bHis>> wings beat in frustration, and <<bhe>> squeezes you tightly for a moment before letting you go. <<bHe>> curls up next to you without further fuss.
 <<else>>
 	You shove the <<beasttype>> away from you. <<bHe>> flaps <<bhis>> wings in frustration, then curls up without further fuss.
 <</if>>
@@ -1755,7 +1872,7 @@ You remove your clothing. The <<beasttype>> swims to the other side of the pool,
 		Your knees buckle as the wave hits. <<orgasm>>
 		<br><br>
 
-		"Healthy response," The <<beasttype>> laughs. <<bHe>> sounds pleased with <<bhimself>>.
+		"Healthy response," the <<beasttype>> laughs. <<bHe>> sounds pleased with <<bhimself>>.
 		<br><br>
 	<</if>>
 <<else>>
@@ -1814,7 +1931,7 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 		The <<beasttype>> shakes <<bhis>> wings. <<bHe>> backs up from the perch, and walks towards the bathing pool.
 	<</if>>
 	<br><br>
-	<<link [[Follow (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><<endevent>><<set $phase to 1>><</link>><<if $monster is 1>><<handholdingvirginitywarning>><</if>><br>
+	<<link [[Follow (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><<endevent>><<set $phase to 1>><</link>><<if $monster is 1>><<handholdingvirginitywarning>><<NPCvirginitywarning "Great Hawk" "handholding">><</if>><br>
 	<<link [[Stay|Bird Tower Perch]]>><<endevent>><</link>><br>
 <<elseif ($bird.activity is "sing" or $bird.activity is "groom") and $bird.state is "home">>
 	<<if $birdPerch is undefined>>
@@ -1875,7 +1992,7 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 		The <<beasttype>> shakes <<bhis>> wings. <<bHe>> backs up from the perch, and walks towards the bathing pool.
 	<</if>>
 	<br><br>
-	<<link [[Follow (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><<endevent>><<set $phase to 1>><</link>><<if $monster is 1>><<handholdingvirginitywarning>><</if>><br>
+	<<link [[Follow (0:30)|Bird Tower Bathe Bird]]>><<bird_pass 30>><<endevent>><<set $phase to 1>><</link>><<if $monster is 1>><<handholdingvirginitywarning>><<NPCvirginitywarning "Great Hawk" "handholding">><</if>><br>
 	<<link [[Stay|Bird Tower Perch]]>><<endevent>><</link>><br>
 <<elseif $rng gte 91>>
 	<<if $harpy gte 6>>
@@ -1956,12 +2073,19 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 			<<case "Kylar">>
 				Kylar.
 				<<if $NPCName[$NPCNameList.indexOf("Kylar")].rage gte 60>>
-					You wonder if <<nnpc_he "Kylar">> will come looking for you. After mulling it over, you realize that "if" should be replaced with "when". <<stress 3>><<gstress>>
+					You wonder if <<nnpc_he "Kylar">> will come looking for you. After mulling it over, you realise that "if" should be replaced with "when". <<stress 3>><<gstress>>
 				<<else>>
 					You hope <<nnpc_he "Kylar">> isn't being bullied in your absence.
 				<</if>>
 			<<case "Whitney">>
 				Whitney. You can only imagine what <<nnpc_he "Whitney">> would do if <<nnpc_he "Whitney">> found out about all this.
+			<<case "Sydney">>
+				Sydney.
+				<<if $weekday is 1>>
+					<<nnpc_He "Sydney">>'s probably hard at work at the temple right now.
+				<<else>>
+					The thought of <<nnpc_his "Sydney">> smile makes you feel warm.
+				<</if>>
 			<<case "Eden">>
 				Eden. <<nnpc_He "Eden">> would probably hunt the Great Hawk for sport, especially if <<nnpc_he "Eden">> found out about what you've been doing.
 			<<case "Avery">>
@@ -2000,12 +2124,19 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 			<<case "Kylar">>
 				Kylar.
 				<<if $NPCName[$NPCNameList.indexOf("Kylar")].rage gte 60>>
-					You wonder if <<nnpc_he "Kylar">> will come looking for you. After mulling it over, you realize that "if" should be replaced with "when". <<stress 3>><<gstress>>
+					You wonder if <<nnpc_he "Kylar">> will come looking for you. After mulling it over, you realise that "if" should be replaced with "when". <<stress 3>><<gstress>>
 				<<else>>
 					You hope <<nnpc_he "Kylar">> isn't being bullied in your absence.
 				<</if>>
 			<<case "Whitney">>
 				Whitney. You can only imagine what <<nnpc_he "Whitney">> would do if <<nnpc_he "Whitney">> found out about all this.
+			<<case "Sydney">>
+				Sydney.
+				<<if $weekday is 1>>
+					<<nnpc_He "Sydney">>'s probably hard at work at the temple right now.
+				<<else>>
+					The thought of <<nnpc_his "Sydney">> smile makes you feel warm.
+				<</if>>
 			<<case "Eden">>
 				Eden. <<nnpc_he "Eden">> would probably hunt the Great Hawk for sport, especially if <<nnpc_he "Eden">> found out about what you've been doing.
 			<<case "Avery">>
@@ -2090,7 +2221,7 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 			<<case 4>>
 				You see a shifty-looking person wearing all black with a hood, waiting behind a hillock. You blink a few times, and aren't sure when they disappeared. The <<beasttype>> resumes <<bhis>> song.
 			<<case 5>>
-				You see a glint in the distance, something very shiny. After a moment, you realize it's a reflective piece of rubbish.
+				You see a glint in the distance, something very shiny. After a moment, you realise it's a reflective piece of rubbish.
 				<<if $monster is 1>>
 					"Dangerous."
 				<<else>>
@@ -2137,7 +2268,7 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 		)>>"
 		<br><br>
 		<<if $bird.activity is "sing" or $bird.activity is "groom">>
-			<<link [[Kiss|Bird Perch Monster Kiss]]>><<npcincr "Great Hawk" love 1>><</link>><<glove>><<kissvirginitywarning>><br>
+			<<link [[Kiss|Bird Perch Monster Kiss]]>><<npcincr "Great Hawk" love 1>><</link>><<glove>><<kissvirginitywarning>><<NPCvirginitywarning "Great Hawk" "kiss">><br>
 		<</if>>
 		<<bird_perch_options>>
 	<<else>>
@@ -2171,7 +2302,7 @@ The <<beasttype>> shakes <<bhis>> feathers, and lets you stroke <<bhis>> wings.
 	<br><br>
 	<<bird_perch_options>>
 <<else>>
-	There's something familiar about the <<beasttypes>> melody, but you can't quite put your <<if $harpy gte 6>>wing<<else>>finger<</if>> on it.
+	<span class="teal">There's something familiar about the <<beasttypes>> melody,</span> but you can't quite put your <<if $harpy gte 6>>wing<<else>>finger<</if>> on it.
 	<br><br>
 	<<bird_perch_options>>
 <</if>>
