@@ -201,11 +201,25 @@
 		<</if>>
 	<</for>>
 	/*noeinan mod START */
-	/* regenerate npcnamelist */
-	<<set $NPCNameList to []>>
-	<<for _ii = 0; _ii lt $NPCName.length; _ii++>>
-		<<run $NPCNameList.push($NPCName[_ii].nam)>>
-	<</for>>
+	/* regenerate $NPCName in proper order */
+	<<set $NPCNameList to ["Avery","Bailey","Briar","Charlie","Darryl","Doren","Eden","Gwylan","Harper","Jordan","Kylar","Landry","Leighton","Mason","Morgan","River","Robin","Sam","Sirris","Whitney","Winter","Black Wolf","Niki","Quinn","Remy","Alex","Great Hawk","Wren","Sydney","Aki","Taylor"]>>
+	<<if $NPCName.length gt $NPCNameList.length>>
+		<<set _NPCName to []>>
+		<<for _ii = 0; _ii lt $NPCName.length; _ii++>>
+			<<for _jj = _ii; _jj lt $NPCName.length; _jj++>>
+				<<if $NPCNameList[_ii] is $NPCName[_jj].nam>>
+					<<run _NPCName.push(clone($NPCName[_jj]))>>
+					<<break>>
+				<</if>>
+			<</for>>
+		<</for>>
+		<<set $NPCName to clone(_NPCName)>>
+	<</if>>
+	/* fix virginities */
+	<<if $NPCName[$NPCNameList.indexOf("Aki")].virginity is undefined>>
+		<<set $NPCName[$NPCNameList.indexOf("Aki")].virginity to {anal:true, oral:true, penile:false, vaginal:false, handholding:false, temple: false, kiss:false}>>
+		<<set $NPCName[$NPCNameList.indexOf("Taylor")].virginity to {anal:true, oral:true, penile:false, vaginal:false, handholding:false, temple: false, kiss:false}>>
+	<</if>>
 	/*noeinan mod END */
 	<<if _npcsAdded is true>>
 		<<initnpcgender>>
