@@ -62,7 +62,7 @@
 			<<link [[Leave the school (0:01)|Oxford Street]]>><<pass 1>><</link>>
 			<br>
 		<<else>>
-			<<link [[Leave the School|School Gate Exit]]>><</link>>
+			<<link [[Leave the school|School Gate Exit]]>><</link>>
 			<br>
 		<</if>>
 	<</if>>
@@ -189,30 +189,30 @@ The school gate is shut and sealed by a sturdy padlock.
 <</if>>
 
 <<if $player.gender is "f" and $changingroomstate is "empty">>
-		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<arousal 300>><</link>><<garousal>>
+		<<maleicon>><<link [[Boys' changing room|School Boy Changing Room]]>><<arousal 300>><</link>><<garousal>>
 			<br>
 	<<elseif $player.gender is "f" and  $schoolrep.crossdress gte 3>>
-		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<arousal 600>><<stress 12>><</link>><<ggarousal>>
+		<<maleicon>><<link [[Boys' changing room|School Boy Changing Room]]>><<arousal 600>><<stress 12>><</link>><<ggarousal>>
 			<br>
 	<<elseif $player.gender is "f">>
-		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><<arousal 600>><</link>><<ggarousal>>
+		<<maleicon>><<link [[Boys' changing room|School Boy Changing Room]]>><<arousal 600>><</link>><<ggarousal>>
 			<br>
 	<<else>>
-		<<maleicon>><<link [[Boy's Changing Room|School Boy Changing Room]]>><</link>>
+		<<maleicon>><<link [[Boys' changing room|School Boy Changing Room]]>><</link>>
 			<br>
 <</if>>
 
 <<if $player.gender is "m" and $changingroomstate is "empty">>
-		<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<arousal 300>><</link>><<garousal>>
+		<<femaleicon>><<link [[Girls' changing room|School Girl Changing Room]]>><<arousal 300>><</link>><<garousal>>
 			<br><br>
 	<<elseif $player.gender is "m" and  $schoolrep.crossdress gte 3>>
-		<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<arousal 600>><<stress 12>><</link>><<ggarousal>>
+		<<femaleicon>><<link [[Girls' changing room|School Girl Changing Room]]>><<arousal 600>><<stress 12>><</link>><<ggarousal>>
 			<br><br>
 	<<elseif $player.gender is "m">>
-		<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><<arousal 600>><</link>><<ggarousal>>
+		<<femaleicon>><<link [[Girls' changing room|School Girl Changing Room]]>><<arousal 600>><</link>><<ggarousal>>
 			<br><br>
 	<<else>>
-	<<femaleicon>><<link [[Girl's Changing Room|School Girl Changing Room]]>><</link>>
+	<<femaleicon>><<link [[Girls' changing room|School Girl Changing Room]]>><</link>>
 		<br><br>
 <</if>>
 
@@ -227,7 +227,7 @@ The school gate is shut and sealed by a sturdy padlock.
 	<</if>>
 <</if>>
 
-<<link [[Leave|Hallways]]>><</link>>
+<<link [[Leave (0:01)|Hallways]]>><<pass 1>><</link>>
 <br>
 
 :: School Rear Fence
@@ -551,32 +551,40 @@ You haul yourself over the fence and drop down on the other side.
 <br>
 
 :: School Passout
-You remain unconscious for a time.
-<br><br>
-
-<<pass 1 hour>>
-
-<<set $danger to random(1, 10000)>>
-
-<<if $danger gte (9900 - $allure)>>
-	<<if $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
-		<<if $rng gte 81>>
-			<<link [[Next|School Passout Exhibit]]>><<upperruined>><<lowerruined>><<underruined>><</link>>
-		<<elseif $rng gte 1>>
-			<<link [[Next|School Passout Rape]]>><<set $molestationstart to 1>><</link>>
-		<</if>>
-	<<else>>
-		<<if $rng gte 51>>
-			<<link [[Next|School Passout Gang Rape]]>><<set $molestationstart to 1>><</link>>
-		<<elseif $rng gte 1>>
-			<<link [[Next|School Passout Gang Rape]]>><<set $molestationstart to 1>><</link>>
-		<</if>>
-	<</if>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<sydneySchedule>>
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "school">>
+<<elseif _sydney_location is "library" and ($NPCName[$NPCNameList.indexOf("Sydney")].init isnot 1 or ($sydneySeen and !$sydneySeen.includes("libRescue")) or $rng gte 20)>>
+	<<pass 1 hour>>
+	<<trauma 6>><<set $stress -= 2000>>
+	<<link [[Next|Sydney Library Rescue]]>><</link>>
 <<else>>
-	<<ambulance>>
-<</if>>
+	<<pass 1 hour>>
+	You remain unconscious for a time.
+	<br><br>
+	<<set $danger to random(1, 10000)>>
 
-<<trauma 6>><<set $stress -= 2000>>
+	<<if $danger gte (9900 - $allure)>>
+		<<if $schoolday is 1 and $schoolstate isnot "early" and $schoolstate isnot "late">>
+			<<if $rng gte 81>>
+				<<link [[Next|School Passout Exhibit]]>><<upperruined>><<lowerruined>><<underruined>><</link>>
+			<<elseif $rng gte 1>>
+				<<link [[Next|School Passout Rape]]>><<set $molestationstart to 1>><</link>>
+			<</if>>
+		<<else>>
+			<<if $rng gte 51>>
+				<<link [[Next|School Passout Gang Rape]]>><<set $molestationstart to 1>><</link>>
+			<<elseif $rng gte 1>>
+				<<link [[Next|School Passout Gang Rape]]>><<set $molestationstart to 1>><</link>>
+			<</if>>
+		<</if>>
+		<<trauma 6>><<set $stress -= 2000>>
+	<<else>>
+		<<ambulance>>
+		<<trauma 6>><<set $stress -= 2000>>
+	<</if>>
+<</if>>
 
 :: School Passout Exhibit
 <<set $outside to 0>><<set $location to "school">><<schooleffects>><<effects>>
@@ -727,7 +735,7 @@ A minute passes before a <<generatey1>><<generatey2>><<person1>><<person>> and <
 		<<set $position to "missionary">>
 	<</if>>
 	<br><br>
-	<<if $pillory_tenant.special.name isnot "Leighton">><<set $rescue to 1>><</if>>
+	<<if $pillory_tenant.special.name isnot "Leighton">><<enable_rescue>><</if>>
 <</if>>
 
 <<effects>>
@@ -791,7 +799,7 @@ You awaken in the science classroom, bent over a desk. Straps tie down your arms
 <<link [[Next|School Rear Playground]]>><</link>>
 
 <<elseif $enemyhealth lte 0>>
-Your assailants recoil in pain. <<tearful>> you seize the opportunity and escape from the shed.
+The <<group>> recoil in pain. <<tearful>> you seize the opportunity and escape from the shed.
 <br><br>
 
 <<clotheson>>
@@ -801,7 +809,7 @@ Your assailants recoil in pain. <<tearful>> you seize the opportunity and escape
 
 <<elseif $rescue is 1 and $alarm is 1>><<set $rescued += 1>>
 <<endevent>>
-<<npc Leighton>>Leighton barges into the shed. Eyes wide with panic, your assailants stumble over their words as they try to explain themselves. Leighton is having none of it, and drags them from the building by the scruff of their necks. <<tearful>> you gather yourself.
+<<npc Leighton>>Leighton barges into the shed. Eyes wide with panic, the <<group>> stumble over their words as they try to explain themselves. Leighton is having none of it, and drags them from the building by the scruff of their necks. <<tearful>> you gather yourself.
 <br><br>
 
 <<clotheson>>
@@ -982,7 +990,7 @@ it will take some time to pick.
 <br><br>
 <<set $skulduggerydifficulty to 1000>>
 
-<<link [[Pick the Lock (0:30)|Head's Stash 2]]>><<pass 30>><</link>><<skulduggerydifficulty>>
+<<link [[Pick the lock (0:30)|Head's Stash 2]]>><<pass 30>><</link>><<skulduggerydifficulty>>
 <br>
 <<link [[Leave it alone|Head's Office]]>><<endevent>><</link>>
 <br>
@@ -1010,7 +1018,7 @@ You settle under the desk and set to work on the lock.
 		<</if>>
 
 	<<if $hacker_tasks.length gte 2>>
-	<span class="green">You have completed the hacker's tasks - you now need to talk to Landry.</span>
+	<span class="green">You have completed the hacker's tasks. You should talk to Landry.</span>
 	<br><br>
 	<</if>>
 	<<link [[Next|Head's Office]]>><<endevent>><</link>>
@@ -1053,7 +1061,7 @@ You can't bring yourself to look <<him>> in the eye. "I-I've seen what you did t
 <</if>>
 <br><br>
 <<crimeup 1000>>
-<<He>> stares at you, not moving a muscle. Then <<he>> glances at the door, and sizes you up. <<He>> seems to think better of whatever <<he>> was planning however and sighs, "What do you want?"
+<<He>> stares at you, not moving a muscle. Then <<he>> glances at the door, and sizes you up. <<He>> seems to think better of whatever <<he>> was planning however, and sighs. "What do you want?"
 <br><br>
 <<npcincr Leighton dom -10>>
 <<npcincr Leighton love -10>>
@@ -1106,7 +1114,7 @@ You leave the office. That's one less problem to worry about.
 :: Events Shades Hand
 <<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>>
 
-You hand river the shades. "Good. You'll get them back, the way you dress outside school is your parent's business. Here though, you abide by the rules." <<He>> marches away from you.
+You hand River the shades. "Good. You'll get them back, the way you dress outside school is your par-" <<He>> catches <<himself>> mid-sentence. "Here, you abide by the rules." <<He>> marches away from you.
 <br><br>
 
 <<generatey2>><<person2>>"I thought <<pshe>> was cooler than that," you hear a <<person>> say to <<his>> friend.
@@ -1512,6 +1520,74 @@ You walk away. The pair jeer at you, but you know neither have a chance with Whi
 <<endevent>>
 <<playground>>
 
+:: Playground Crush Sydney Angry
+<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>>
+
+You march over to the pair, who look at you. You must look angry, given their startled expressions.
+<br><br>
+
+<<if $submissive gte 1150>>
+"I-I'm Sydney's," you say. "St-stay away!"
+<<elseif $submissive lte 850>>
+"Sydney's mine," you say, clutching the <<person1>><<persons>> collar. "Forget it at your peril." You release and shove <<him>> away.
+<<else>>
+"Sydney's not available," you say. "Don't you forget it."
+<</if>>
+<br><br>
+"We're only joking around," the <<person2>><<person>> says in <<his>> friend's defence.
+
+<<if $cool gte 240>>
+	"We know Sydney's your territory. We're not gonna mess with you." The <<person1>><<person>> nods. They seem sincere.
+	<<gcool>><<status 1>>
+	<br><br>
+
+	<<endevent>>
+	<<playground>>
+<<elseif $cool gte 120>>
+	<<if $cool gte random(1, 240)>>
+		"We know Sydney's your territory. We're not gonna mess with you." The <<person1>><<person>> nods. They seem sincere.
+		<<gcool>><<status 1>>
+		<br><br>
+
+		<<endevent>>
+		<<playground>>
+	<<else>>
+		"You wanna start something?"
+		<br><br>
+
+		<<link [[Fight them both|Playground Crush Fight]]>><<set $fightstart to 1>><</link>>
+		<br>
+		<<link [[Walk away|Playground Crush Robin Walk]]>><<stress 6>><</link>><<lstress>>
+		<br>
+	<</if>>
+<<else>>
+	"You're fucking crazy. Back off before you get fucked up."
+	<br><br>
+
+	<<link [[Fight them both|Playground Crush Fight]]>><<set $fightstart to 1>><</link>>
+	<br>
+	<<link [[Walk away|Playground Crush Robin Walk]]>><<stress 6>><</link>><<lstress>>
+	<br>
+<</if>>
+
+:: Playground Crush Sydney Ignore
+<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>>
+
+You ignore them. You know Sydney would want you to forgive them.
+
+<br><br>
+<<endevent>>
+<<playground>>
+
+:: Playground Crush Sydney Walk
+<<set $outside to 1>><<set $location to "school">><<schooleffects>><<effects>>
+
+You walk away. The pair jeer at you, but you know Sydney would want you to forgive them.
+<br><br>
+
+<<endevent>>
+<<playground>>
+
 :: Playground Crush Fight
 <<if $fightstart is 1>>
 <<set $fightstart to 0>>
@@ -1523,7 +1599,7 @@ You walk away. The pair jeer at you, but you know neither have a chance with Whi
 <<set $enemyanger += 200>>
 <<npcidlegenitals>>
 
-<<if $pillory_tenant.special.name isnot "Leighton">><<set $rescue to 1>><</if>>
+<<if $pillory_tenant.special.name isnot "Leighton">><<enable_rescue>><</if>>
 
 You lunge at the <<person1>><<person>>, and tumble to the ground together. The <<person2>><<person>> joins in.<<person1>>
 <br><br>
@@ -1667,7 +1743,7 @@ The <<person2>><<person>> tries to grab you again, but you bat <<his>> arm away.
 <<set $enemytrust -= 100>>
 <<set $enemyanger += 200>>
 <<npcidlegenitals>>
-<<set $rescue to 1>>
+<<enable_rescue>>
 <</if>>
 
 <<effects>>

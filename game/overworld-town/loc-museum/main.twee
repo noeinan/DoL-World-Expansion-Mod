@@ -222,7 +222,11 @@ The museum is closed. A sign on the door reads.
 	<br>
 <<elseif $bell_timer lte 0>>
 	<<unset $bell_timer>>
-	A hooded figure barges through as you open the doors, almost knocking you to the pavement. You get your bearings, but the figure's already gone.
+	<<if $worn.feet.type.includes("shackle")>>
+		A hooded figure barges through as you open the doors. You trip over your $worn.feet.name, and together tumble to the ground. The figure jumps to <<his>> feet, but yelps in pain, and hurries away with a limp. You get your bearings, but the figure's already gone.
+	<<else>>
+		A hooded figure barges through as you open the doors, almost knocking you to the pavement. You get your bearings, but the figure's already gone.
+	<</if>>
 	<br><br>
 	<<npc Winter>><<person1>>
 	You enter the musem, <span class="red">and find Winter lying on the ground.</span> <<His>> eyes are shut. Antiques litter the floor, knocked from pedestals. The leather map still rests on the wall, but a great tear runs through it.
@@ -314,7 +318,14 @@ The museum is closed. A sign on the door reads.
 		<<link [[Demonstrate ducking stool (1:00)|Museum Duck]]>><<pass 60>><<set $museumduck to 1>><</link>><<exhibitionist1>>
 		<br>
 	<</if>>
+	<<if $museumAntiqueJournalHints is undefined>>
+		<<set $museumAntiqueJournalHints to []>>
+	<</if>>
 	<<museumtalk>>
+	<<if $worn.feet.type.includes("shackle")>>
+		<<link [[Ask to have your shackles removed (0:10)|Museum Shackle]]>><<pass 10>><</link>>
+		<br>
+	<</if>>
 	<<if $museumAntiques.antiques.antiqueforestgem is "museum" and $museumgreengemtouch isnot 1>>
 		<<link [[Touch green gem|Museum Green Gem Touch]]>><<stress -9>><<set $museumgreengemtouch to 1>><</link>><<lstress>>
 		<br>
@@ -331,6 +342,70 @@ The museum is closed. A sign on the door reads.
 
 <</if>>
 
+:: Museum Shackle
+<<effects>>
+
+<<npc Winter>><<person1>>
+
+Winter examines the $worn.feet.name. "I have just the thing," <<he>> says.
+<br><br>
+
+<<He>> leads you into a small room behind reception. A broken pot sits on a counter, the fragments ordered by size and shape. There's a table not far from it. Winter directs you to lie down.
+<br><br>
+
+You do so as <<he>> retrieves a set of black iron keys from a hook on the wall, each a different size and shape. <<He>> separates one without looking, and inserts it into the keyhole on your $worn.feet.name. Nothing happens.
+<br><br>
+<<He>> tries another key. <<He>> continues without expression, trying key after key, until at last you feel a click, <span class="green">and the metal around your ankles comes loose.</span>
+<br><br>
+
+<<remove_shackle>>
+
+<<link [[Thank|Museum Shackle Thank]]>><</link>>
+<br>
+<<link [[Ask why Winter has so many keys|Museum Shackle Ask]]>><</link>>
+<br>
+
+:: Museum Shackle Thank
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"Th-thank you," you say. "I felt so vulnerable."
+<<elseif $submissive lte 850>>
+	"Thanks," you say. "They were annoying."
+<<else>>
+	"Thank you," you say. "That was troublesome."
+<</if>>
+<br><br>
+
+"You're welcome," Winter says, already examining the lock. "I'll keep the shackles. They might have... historical value."
+<br><br>
+
+You return to the museum proper.
+<br><br>
+
+<<link [[Next|Museum]]>><<endevent>><</link>>
+<br>
+
+:: Museum Shackle Ask
+<<effects>>
+
+<<if $submissive gte 1150>>
+	"Wh-where did you get so many old keys?" you ask.
+<<elseif $submissive lte 850>>
+	"What are you doing with so many old keys?" you ask.
+<<else>>
+	"Why do you have so many old keys?" you ask.
+<</if>>
+<br><br>
+
+"I collect them," Winter replies after brief hesitation. "People bring in antique lockboxes and the like now and then. It's fun to match the lock and key. There are more brute methods, of course, but some things ought be done properly."
+<br><br>
+
+You return to the museum.
+<br><br>
+
+<<link [[Next|Museum]]>><<endevent>><</link>>
+<br>
 
 :: Museum Attack Stay
 <<effects>>
@@ -547,7 +622,7 @@ Winter returns the bell to its resting place, and throws a sheet over it. "Not m
 
 You ignore the bell for now, and approach the <<person>>. You try pulling <<his>> hands away from <<his>> throat, but <<he>> won't budge.
 <<if $submissive gte 1150>>
-	"Pl-please listen to me," you plead. "There's no danger. You need to relax."
+	"P-please listen to me," you plead. "There's no danger. You need to relax."
 <<elseif $submissive lte 850>>
 	"Idiot," you say. "Stop hurting yourself and relax."
 <<else>>
@@ -676,7 +751,7 @@ Winter dons a pair of gloves and appraises the goods. <<His>> scepticism fades a
 <br><br>
 <<elseif $antiquemoney gte 200>>
 
-Winter dons a pair of gloves and appraises the goods. "Thank you," <<he>> says. "Your contribution is noted." <<he>> places £<<print $antiquemoney>> on the table.
+Winter dons a pair of gloves and appraises the goods. "Thank you," <<he>> says. "Your contribution is noted." <<He>> places £<<print $antiquemoney>> on the table.
 <br><br>
 
 <<He>> takes the goods into a back room.
@@ -699,6 +774,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Box
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquebox")>>
+	<<run $museumAntiqueJournalHints.delete("antiquebox")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter picks up the small box you brought. "It's a jewellery case," <<he>> says. "They would have made thousands of these. Very few have survived. That the lock still works is a miracle."
 <br><br>
@@ -707,6 +786,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Silver Ring
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquesilverring")>>
+<<run $museumAntiqueJournalHints.delete("antiquesilverring")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter holds the silver ring up to the light and examines it. "Common jewellery," <<he>> says. "And of enduring metal. There's a lot of these around. This one was worn by someone who lived here. There's value there, I think. Thanks for bringing it."
 <br><br>
@@ -715,6 +798,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Gold Necklace
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquegoldnecklace")>>
+<<run $museumAntiqueJournalHints.delete("antiquegoldnecklace")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter turns the gold necklace in <<his>> palm. "This is magnificent," <<he>> says. "Worn by someone of note I imagine. Where did you find it?"
 <br><br>
@@ -726,6 +813,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Gold Chastity Belt
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquegoldchastitybelt")>>
+<<run $museumAntiqueJournalHints.delete("antiquegoldchastitybelt")>>
+<</if>>
 
 <<npc Winter>><<person1>>
 <<if $worn.genitals.origin is "Underwater Temple" and $gold_chastity_held isnot true>>
@@ -741,7 +832,7 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 "This is ancient," <<he>> says. "There are religious inscriptions. This would have been worn by a priestess for a particular ritual or ceremony."
 <<if $worn.genitals.origin is "Underwater Temple" and $gold_chastity_held isnot true>>
 	<br>
-	"Let me take a couple of close up photos" <<he>> continues as <<he>> takes out <<his>> small camera. "I'm sure I can get a replication setup, try not to get it locked on you next time."
+	"Let me take a couple of close up photos," <<he>> continues as <<he>> takes out a small camera. "I'm sure I can get a replication set up, try not to get it locked on you next time."
 <</if>>
 <br><br>
 <<unset $gold_chastity_held>>
@@ -766,6 +857,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Ivory Necklace
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueivorynecklace")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueivorynecklace")>>
+<</if>>
 
 <<npc Winter>><<person1>>"The ivory necklace?" Winter says. "I have to send it away. Terrible shame, but I was told to inform the mayor's office should I acquire anything fitting that description. They've sent someone to pick it up." <<He>> shakes <<his>> head. "Best not interfere with those types."
 <br><br>
@@ -774,6 +869,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Crystal
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquecrystal")>>
+	<<run $museumAntiqueJournalHints.delete("antiquecrystal")>>
+<</if>>
 
 <<npc Winter>><<person1>>"I must admit," Winter says. "I have no idea what it is. There's a carving. Looks like writing, but I don't recognise it." <<He>> frowns. "A corporation is looking to buy the thing. They must know something I don't."
 <br><br>
@@ -782,6 +881,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Horn
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquehorn")>>
+	<<run $museumAntiqueJournalHints.delete("antiquehorn")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter runs <<his>> finger over the mouthpiece, and recoils as if hurt. <<His>> face shows no sign of pain. "A hunting trophy from abroad," <<he>> says. "They had it made into an instrument. Not what I would have done."
 <br><br>
@@ -790,6 +893,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Candlestick
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquecandlestick")>>
+	<<run $museumAntiqueJournalHints.delete("antiquecandlestick")>>
+<</if>>
 
 <<npc Winter>><<person1>>"Candlesticks are common enough," Winter says. "This one was made for a particular noble house that resided here." <<He>> shakes <<his>> head. "A pity what became of them."
 <br><br>
@@ -798,6 +905,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Watch
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquewatch")>>
+	<<run $museumAntiqueJournalHints.delete("antiquewatch")>>
+<</if>>
 
 <<npc Winter>><<person1>>"This is something special," Winter says. "A century and a half, yet still ticking away. Was made during the town's glory days."
 <br><br>
@@ -806,6 +917,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Dildo
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquedildo")>>
+	<<run $museumAntiqueJournalHints.delete("antiquedildo")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter blushes. "That's," <<he>> says. "That's a... medical aid. A very old fashioned one. It's not terribly interesting." <<He>> wants to change the subject.
 <br><br>
@@ -814,6 +929,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Arrow
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueforestarrow")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueforestarrow")>>
+<</if>>
 
 <<npc Winter>><<person1>>"You can't take twenty steps in the forest without finding an old arrowhead," Winter says. "Not that I'm ungrateful. Most people wouldn't spot them."
 <br><br>
@@ -822,6 +941,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Dagger
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueforestdagger")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueforestdagger")>>
+<</if>>
 
 <<npc Winter>><<person1>>"A nice find," Winter says. "These would have been common in the distant past, but few have survived. I'm surprised you found it without any digging."
 <br><br>
@@ -830,6 +953,10 @@ Winter dons a pair of gloves and appraises the goods. Without a word, <<he>> pla
 
 :: Museum Gem
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueforestgem")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueforestgem")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter holds the gem up to the light. "Pretty," <<he>> says. "Similar to the ones they mine nearby." <<He>> frowns. "Except a different hue."
 <br><br>
@@ -846,6 +973,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Silver Brooch
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquesilverbrooch")>>
+	<<run $museumAntiqueJournalHints.delete("antiquesilverbrooch")>>
+<</if>>
 
 <<npc Winter>><<person1>>"Sterling silver," Winter says. "The design was popular several decades ago. I imagine it was hidden away in a loft somewhere."
 <br><br>
@@ -854,6 +985,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Cup
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquetrashcup")>>
+	<<run $museumAntiqueJournalHints.delete("antiquetrashcup")>>
+<</if>>
 
 <<npc Winter>><<person1>>"This style was popular among the middle-classes some hundred years ago," Winter says. <<He>> curls <<his>> nose. "I wouldn't drink from it now. I think it's had quite an adventure."
 <br><br>
@@ -862,6 +997,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Burner
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquetrashburner")>>
+	<<run $museumAntiqueJournalHints.delete("antiquetrashburner")>>
+<</if>>
 
 <<npc Winter>><<person1>>"They still use these," Winter says. "At the temple. Got them in trouble with the greater church in the past."
 <br><br>
@@ -870,6 +1009,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Brass Statuette
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquebrassstatuette")>>
+	<<run $museumAntiqueJournalHints.delete("antiquebrassstatuette")>>
+<</if>>
 
 <<npc Winter>><<person1>>"This wasn't made locally," Winter says, examing the statuette through a magnifying glass. "Possibly brought by foreign conquerers over a thousand years ago."
 <br><br>
@@ -878,6 +1021,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Copper Compass
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquecoppercompass")>>
+	<<run $museumAntiqueJournalHints.delete("antiquecoppercompass")>>
+<</if>>
 
 <<npc Winter>><<person1>>"Remarkable," Winter says, turning the compass and observing the spin. "You found it out at sea? We're fortunate it survived so intact."
 <br><br>
@@ -887,6 +1034,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Grenade
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquegrenade")>>
+	<<run $museumAntiqueJournalHints.delete("antiquegrenade")>>
+<</if>>
 
 <<npc Winter>><<person1>>"This one might be younger than me," Winter laughs. You assume <<hes>> joking. "I'm not surprised you found it in the countryside. I hear of some impressive collections."
 <br><br>
@@ -896,6 +1047,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Stone Talisman
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquestonetalisman")>>
+	<<run $museumAntiqueJournalHints.delete("antiquestonetalisman")>>
+<</if>>
 
 <<npc Winter>><<person1>>"I wasn't sure about this one," Winter says. "Had to phone an old colleague, but it's genuine. Ancient, and engraved with symbols of the old religion."
 <br><br>
@@ -905,6 +1060,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Silver Mask
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquesilvermask")>>
+	<<run $museumAntiqueJournalHints.delete("antiquesilvermask")>>
+<</if>>
 
 <<npc Winter>><<person1>>"It was serendipitous," Winter says. "That you found this where you did. Or sinister. We don't know much about its origins, but it was used by the old religion. The myths are colourful."
 <br><br>
@@ -915,6 +1074,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Diamond
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquediamond")>>
+	<<run $museumAntiqueJournalHints.delete("antiquediamond")>>
+<</if>>
 
 <<npc Winter>><<person1>>"I did some digging," Winter says. "That rock you found was reported stolen almost two centuries ago. The authorities are content to let us hang on to it for now."
 <br><br>
@@ -926,6 +1089,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Silver Compass
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquesilvercompass")>>
+	<<run $museumAntiqueJournalHints.delete("antiquesilvercompass")>>
+<</if>>
 
 <<npc Winter>><<person1>>"Silver doesn't tarnish," Winter says. "But a tool like this wouldn't be made of pure silver. It's in remarkably good condition."
 <br><br>
@@ -937,6 +1104,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Silver Dagger
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquesilverdagger")>>
+	<<run $museumAntiqueJournalHints.delete("antiquesilverdagger")>>
+<</if>>
 
 <<npc Winter>><<person1>>"It would have been worn as an accessory," Winter says. "But do be careful around it. It's still a sharp blade."
 <br><br>
@@ -948,6 +1119,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Rusted Cutlass
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquerustedcutlass")>>
+	<<run $museumAntiqueJournalHints.delete("antiquerustedcutlass")>>
+<</if>>
 
 <<npc Winter>><<person1>>"A sailor's weapon," Winter says. "I looked into having it restored, but it's too far gone. We're lucky it hasn't crumbled."
 <br><br>
@@ -959,6 +1134,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Cutlass
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquecutlass")>>
+	<<run $museumAntiqueJournalHints.delete("antiquecutlass")>>
+<</if>>
 
 <<npc Winter>><<person1>>"A sailor's weapon," Winter says, testing the straps. "It's in good condition, but there are notches on the blade." <<He>> runs a finger along the surface. "It saw use."
 <br><br>
@@ -970,6 +1149,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Leather Map
 <<set $outside to 0>><<set $location to "museum">><<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueleathermap")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueleathermap")>>
+<</if>>
 <<set $treasure_map to 1>>
 <<npc Winter>><<person1>>"An actual treasure map," Winter laughs. "The coastline matches other depictions from the time. This is our town here, with the forest right here." <<His>> finger trails across, and taps on a rendition of a castle. A dragon perches on top. Winter rubs the paper, and a red X appears.
 <br><br>
@@ -982,6 +1165,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Bell
 <<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquebell")>>
+	<<run $museumAntiqueJournalHints.delete("antiquebell")>>
+<</if>>
 
 <<set $bell_timer to 2>>
 
@@ -998,6 +1185,10 @@ You touch the green gem. A calmness falls over you.
 
 :: Museum Bullet
 <<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquebullet")>>
+	<<run $museumAntiqueJournalHints.delete("antiquebullet")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter examines the bullet through a magnifying glass. "Over a century old, but you can still make out the manufacturer," <<he>> says. "Some careless volunteer dropped it during training, perhaps."
 <br><br>
@@ -1039,6 +1230,10 @@ Winter goes off on a tangent, but you remain polite, and nod along.
 
 :: Museum Shell
 <<effects>>
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiqueshell")>>
+	<<run $museumAntiqueJournalHints.delete("antiqueshell")>>
+<</if>>
 
 <<npc Winter>><<person1>>Winter taps the artillery shell. "It's not live," <<he>> says. "Not after all this time. It might never have worked. Not sure why else they'd cast it aside."
 <br><br>
@@ -1051,7 +1246,10 @@ Winter goes off on a tangent, but you remain polite, and nod along.
 
 :: Museum Gold Ring
 <<effects>>
-
+<<set $winterHint to "notGiven">>
+<<if $museumAntiqueJournalHints.includes("antiquegoldring")>>
+	<<run $museumAntiqueJournalHints.delete("antiquegoldring")>>
+<</if>>
 
 <<npc Winter>><<person1>>"Magnificent," Winter says, turning the ring in <<his>> palm. "To think something this valuable has remained hidden for so long. This would have been worn by nobility, or someone very wealthy."
 <br><br>

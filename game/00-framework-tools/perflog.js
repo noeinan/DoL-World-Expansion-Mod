@@ -130,13 +130,15 @@ function niceround(x) {
  * @param {number} [options.limit=20] Max number of entries to report, 0 to no limit
  * @param {boolean} [options.global=true] Report widgets from all recorded history or from last passage only.
  * @param {boolean} [options.round=true] Round to 0.1 precision
+ * @param {string} [options.filter=null] A regular expression pattern that will be used to filter widgets
  */
 DOL.Perflog.report = function (options) {
 	options = Object.assign({
 		sort: 'own',
 		limit: 20,
 		global: true,
-		round: true
+		round: true,
+		filter: null
 	}, options);
 	const numfn = options.round ? niceround : (x)=>x;
 	var entries;
@@ -163,6 +165,10 @@ DOL.Perflog.report = function (options) {
 			totalp1: numfn(e.total/e.n),
 			ownp1: numfn(e.own/e.n),
 		}));
+	}
+	if (options.filter) {
+		var matcher = new RegExp(options.filter)
+		entries = entries.filter(x => typeof x.name === 'string' && matcher.test(x.name))
 	}
 	var comparator;
 	const sort = options.sort;

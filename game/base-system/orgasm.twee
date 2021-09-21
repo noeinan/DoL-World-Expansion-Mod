@@ -1,12 +1,14 @@
 :: Widgets Orgasm [widget]
 
 <<widget "orgasm">>
-	<<if $femaleclimax isnot -1 and $orgasmdown lt 0>>
+	<<if $penisexist is 1 and $penissize is -2>>
+		<<set $femaleclimax to 1>>
+	<<elseif $femaleclimax isnot -1 and $orgasmdown lt 0>>
 		<<set $femaleclimax to -1>>
 	<</if>>
 	<<orgasmstat>><<set $orgasmcount += 1>><<set $orgasmdown to 3>>
 	<<if $combat is 1>>
-		<<set $speechcum += 1>><<set $speechorgasmcount += 1>>
+		<<set $speechcum to 1>><<set $speechorgasmcount += 1>>
 	<</if>>
 	<<if $penisexist is 1 and $femaleclimax is -1 and $penissize lt 0>>
 		<<set _calculation to 0>>
@@ -31,32 +33,64 @@
 			<<set $femaleclimax to 1>>
 			<<semenvolume -1>>
 		<<else>>
-			<<set $penissemen += 1>>
-			<<if $parasite.penis.name>>
-			You are overcome by sensation. You ejaculate into the parasite latched onto your penis.
-			<<elseif $penisuse is "othervagina">>
-				<<if $penisstate is "penetrated">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> womb.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "vagina">>
+			<<set $player.bodyliquid.penis.semen += 1>>
+			<<if $player.condom>>
+				<<if $player.condom.damaged is true or ($player.condom.cum is true and random(0,100) gte 95)>>
+					<<set _condom to "damaged">>
 				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> pussy.</span>
+					<<set _condom to true>>
+				<</if>>
+			<</if>>
+			<<if $parasite.penis.name>>
+				You are overcome by sensation. You ejaculate into the parasite latched onto your penis.
+			<<elseif _condom is true>>
+				You are overcome by sensation. You ejaculate into the condom that covers your penis.
+				<<set $player.condom.cum to true>>
+			<<elseif $penisuse is "othervagina">>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].vagina is "penis">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> womb.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "vagina">>
+						<<recordVaginalSperm $NPCList[$_i].fullDescription "pc" "human">>
+					<<elseif $NPCList[$_i].vagina is "penisimminent" or $NPCList[$_i].vagina is "penisentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> pussy.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "otheranus">>
-				<<if $penisstate is "otheranus">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> bowels.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "anus">>
-				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> ass.</span>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].penis is "otheranus">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate deep into <<his>> bowels.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "anus">>
+					<<elseif $NPCList[$_i].penis is "otheranusimminent" or $NPCList[$_i].penis is "otheranusentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> ass.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "othermouth">>
-				<<if $penisstate is "othermouth">>
-					<<penileejacstat>>
-					<span class="pink">You are overcome by sensation and ejaculate into <<his>> mouth.</span>
-					<<purity -1>><<internalejac>><<creampie "npc" "mouth">>
-				<<else>>
-					<span class="pink">You are overcome by sensation and ejaculate on <<his>> face.</span>
+				<<for $_i = 0; $_i lt $enemyno; $_i++>>
+					<<if $NPCList[$_i].mouth is "penis">>
+						<<personselect $_i>>
+						<<penileejacstat>>
+						<span class="pink">You are overcome by sensation and ejaculate into <<his>> mouth.</span>
+						<<purity -1>><<internalejac>><<creampie "npc" "mouth">>
+					<<elseif $NPCList[$_i].mouth is "penisimminent" or $NPCList[$_i].mouth is "penisentrance">>
+						<<personselect $_i>>
+						<span class="pink">You are overcome by sensation and ejaculate on <<his>> face.</span>
+					<</if>>
+				<</for>>
+				<<if _condom is "damaged">>
+					Despite wearing a condom, it's too damaged to prevent the semen from escaping.
 				<</if>>
 			<<elseif $penisuse is "tentacle">>
 				<<if $penisstate isnot "tentacleentrance" and $penisstate isnot "tentacleimminent">>
@@ -69,16 +103,22 @@
 			<<elseif $mouth is "mpenisentrance">>
 				<span class="pink">
 					You are overcome by sensation. A surge of cum erupts from your penis onto your
-					face<<if $rng gte 10 and $semen_amount gt ($semen_volume / 24) * 18>> and hair<<set $hairsemen += 1>><</if>>.
+					face<<if $rng gte 10 and $semen_amount gt ($semen_volume / 24) * 18>> and hair<<set $player.bodyliquid.hair.semen += 1>><</if>>.
 				</span>
 				<<if $semen_amount gt ($semen_volume / 24) * 18>>
-					<<set $facesemen += 1>>
+					<<set $player.bodyliquid.face.semen += 1>>
 				<</if>>
 			<<elseif $mouth is "mpenis">>
 				<span class="pink">You are overcome by sensation and ejaculate in your mouth, forcing you to quickly drink it down.</span>
-				<<set $mouthsemen += 1>>
+				<<set $player.bodyliquid.mouth.semen += 1>>
 			<<else>>
 				<span class="pink">You are overcome by sensation. A surge of cum erupts from your penis<<if $worn.genitals.type.includes("chastity")>> into your $worn.genitals.name<</if>>.</span>
+				<<if $leftaction is "mpenisshaft" and !$worn.genitals.type.includes("chastity") and $semen_amount / 10 gte random(50,150)>>
+					<<set $leftFingersSemen to 1>>
+				<</if>>
+				<<if $rightaction is "mpenisshaft" and !$worn.genitals.type.includes("chastity") and $semen_amount / 10 gte random(50,150)>>
+					<<set $rightFingersSemen to 1>>
+				<</if>>
 			<</if>>
 			<<if $semen_amount lte (($semen_volume / 24) * 6)>>
 				<span class="pink">Exhausted, your body only manages to produce a few droplets of watery cum.</span>
@@ -500,12 +540,12 @@
 
 <<set _exponential to Math.pow(0.99985,_totalArousal)>>
 <<if $vaginaexist is 1>>
-	<<set $vaginaWetness to Math.clamp((75 - Math.floor(_exponential * 75)) + ($vaginagoo * 6) + ($vaginasemen * 6) + ($vaginaoutsidegoo * 6) + ($vaginaoutsidesemen * 6) + $combatWetBoost, 0, 120)>>
+	<<set $vaginaWetness to Math.clamp((75 - Math.floor(_exponential * 75)) + ($player.bodyliquid.vagina.goo * 6) + ($player.bodyliquid.vagina.semen * 6) + ($player.bodyliquid.vaginaoutside.goo * 6) + ($player.bodyliquid.vaginaoutside.semen * 6) + $combatWetBoost, 0, 120)>>
 <</if>>
 <<if $penisexist is 1>>
-	<<set $penisWetness to Math.clamp(($penisgoo * 12) + ($penissemen * 12), 0, 120)>>
+	<<set $penisWetness to Math.clamp(($player.bodyliquid.penis.goo * 12) + ($player.bodyliquid.penis.semen * 12), 0, 120)>>
 <</if>>
-<<set $anusWetness to Math.clamp(($anusgoo * 6) + ($anussemen * 6) + ($bottomgoo * 6) + ($bottomsemen * 6), 0, 120)>>
+<<set $anusWetness to Math.clamp(($player.bodyliquid.anus.goo * 6) + ($player.bodyliquid.anus.semen * 6) + ($player.bodyliquid.bottom.goo * 6) + ($player.bodyliquid.bottom.semen * 6), 0, 120)>>
 <<if $combat is 1>>
 	<<combatWetnessCalculate>>
 <</if>>

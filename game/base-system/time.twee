@@ -10,7 +10,7 @@
 	<<set $dawn_check to 0>>
 	<<set $renttime -= 1>>
 	<<set $motherwake to 0>>
-	<<if $gamemode isnot "hard">>
+	<<if $gamemode isnot "hard" and $uncomfortable.lewd is true>>
 		<<set $exhibitionism -= 1>>
 		<<set $promiscuity -= 1>>
 		<<set $deviancy -= 1>>
@@ -71,11 +71,11 @@
 	<<set $robinschoolafternoon to 0>>
 	<<set $baileyvisit to 0>>
 	<<set $robinwalk to 0>>
-	<<if $weekday is 7 and $brothelshow isnot "none" and $brothelshowdone isnot 1 and $brothelshowintro is 1>>
-		<<set $brothelshowmissed to 1>><<set $brothelshow to "none">>
+	<<if $weekday is 7 and $brothelshowdata.type isnot "none" and not $brothelshowdata.done and $brothelshowdata.intro>>
+		<<set $brothelshowdata.missed to true>><<set $brothelshowdata.type to "none">>
 	<</if>>
 	<<if $weekday is 7>>
-		<<set $brothelshowdone to 0>>
+		<<set $brothelshowdata.done to false>>
 	<</if>>
 	<<set $robinhugcry to 0>>
 	<<set $robinhugcomplain to 0>>
@@ -251,7 +251,10 @@
 		<<unset $community_service_done>>
 	<</if>>
 	<<unset $robin_history_chat>>
-
+	<<if $exhibitionism gte 35 or $promiscuity gte 35 or $deviancy gte 35>>
+		<<set $lewd_unlock to true>>
+	<</if>>
+	<<unset $bailey_wake_day>>
 
 	<<unset $pharmTriedSeduction>>
 	<<unset $pharmSexFinished>>
@@ -372,7 +375,7 @@
 	<</if>>
 	<<if $farm_stage gte 5>>
 		<<if $bailey_encroach gte 1>>
-			<<farm_aggro 20>>
+			<<farm_aggro 15>>
 		<</if>>
 		<<if $bailey_encroach gte 2>>
 			<<farm_aggro `$bailey_encroach * 3`>>
@@ -410,7 +413,6 @@
 		<</if>>
 		<<if $farm.kennel gte 1>>
 			<<farm_dogs -2>>
-			<<farm_horses -1>>
 			<<farm_cattle -1>>
 		<</if>>
 	<</if>>
@@ -564,27 +566,27 @@
 
 	<<if $schoolday is 1>>
 		<<if $scienceattended isnot 1>>
-			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $sciencemissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $sciencemissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $mathsattended isnot 1>>
-			<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $mathsmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $mathsmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $englishattended isnot 1>>
-			<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $englishmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $englishmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $historyattended isnot 1>>
-			<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $historymissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $historymissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
 		<<if $swimmingattended isnot 1>>
-			<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>>
+			<<set $swimmingmissed += 1>><<set $lessonmissedtext += 1>><<set $lessonmissed += 1>><<set _lessonmissed to true>>
 		<<else>>
 			<<set $swimmingmissed -= 1>><<set $lessonmissed -= ($lessonmissed gt 0 ? 1 : 0)>>
 		<</if>>
@@ -784,26 +786,30 @@
 	<<calchairlengthstage>>
 
 	<<if $schoolterm is 1>>
-		<<if $weekday is 2 or $weekday is 3 or $weekday is 4 or $weekday is 5 or $weekday is 6>>
-			<<set $delinquency -= 1>>
+		<<if $weekday is 3 or $weekday is 4 or $weekday is 5 or $weekday is 6 or $weekday is 7>>
+			<<set _delinquencyDecay to 1>>
 			<<if $NPCName[$NPCNameList.indexOf("Leighton")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Sirris")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("River")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Doren")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Winter")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
 			<<if $NPCName[$NPCNameList.indexOf("Mason")].love gte $npclovehigh>>
-				<<set $delinquency -= 1>>
+				<<set _delinquencyDecay += 1>>
 			<</if>>
+			<<if _lessonmissed>>
+				<<set _delinquencyDecay to Math.floor(_delinquencyDecay / 2)>>
+			<</if>>
+			<<set $delinquency -= _delinquencyDecay>>
 			<<if $schoolfameblackmail isnot undefined>>
 				<<set $schoolfameblackmail += 1>>
 			<</if>>
@@ -948,6 +954,7 @@
 	<<unset $eden_salve>>
 	<<unset $eden_soap>>
 	<<unset $eden_search>>
+	<<unset $edenexposed>>
 	<<unset $salveuse>>
 	<<set $edenmassage to 0>>
 	<<set $edenhuntcaught to 0>>
@@ -984,10 +991,12 @@
 		<<set $NPCName[$NPCNameList.indexOf("Kylar")].rage to Math.clamp($NPCName[$NPCNameList.indexOf("Kylar")].rage, 0, 100)>>
 		<<set $kylartimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
 		<<set $kylarhometimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
-		<<set $kylarstreettimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
 		<<set $kylarspray to 0>>
+		<<set $kylarstreettimer += (10 + ($NPCName[$NPCNameList.indexOf("Kylar")].lust / 4))>>
 		<<unset $kylar_bodywriting>>
+		<<unset $kylarsydneywriting>>
 		<<unset $kylar_invite>>
+		<<unset $kylar_undies_taken>>
 		<<if $kylar_riddle is 1>>
 			<<set $kylar_riddle to 2>>
 		<<else>>
@@ -1028,6 +1037,104 @@
 	<<set $alexwake to 0>>
 
 	/*noeinan mod END*/
+	<<if $sydneyScience isnot 1 and $days gte random(7, 12)>>
+		/*<<set $sydneyLate to 1>><<set $sydneyScience to 1>>*/
+	<</if>>
+
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1>>
+		<<sydneyStatusCheck>>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gte 1 and $NPCName[$NPCNameList.indexOf("Sydney")].virginity.temple is true>>
+			<<npcincr Sydney purity 1>>
+		<</if>>
+		<<if _sydneyStatus.includes("corrupt")>>
+			<<set $NPCName[$NPCNameList.indexOf("Sydney")].title to "fallen">>
+		<<else>>
+			<<set $NPCName[$NPCNameList.indexOf("Sydney")].title to "faithful">>
+		<</if>>
+		<<unset $sydneyLate>> <!-- Remove this line when Sydney can show up in Science Class -->
+		<<if $schoolday is 1 and random(1, 4) is 1>>
+			<<set $sydneyLate to 1>>
+		<</if>>
+		<<if $sydneySeen.includes("library") and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 60 and $sydneyLibraryEvent is undefined and $NPCName[$NPCNameList.indexOf("Whitney")].init is 1 and $NPCName[$NPCNameList.indexOf("Whitney")].state isnot "dungeon" and !$sydneyLeightonConfrontTimer>>
+			<<set $sydneyLibraryEvent to 1>>
+		<</if>>
+		<<if $sydneySeen.includes("library") and ($sydneyLibraryEvent is 2 or $libraryMoneyStolen or $sydneyStolenKnown) and !$sydneyLeightonConfrontTimer>>
+			<<if $sydneyLibraryEvent is 2>>
+				<<set $sydneyLeightonConfront to 1>>
+				<<set $sydneyLeightonWhitneyGuilty to 1>>
+			<<elseif $libraryMoneyStolen gte 100 or $sydneyStolenKnown>>
+				<<set $sydneyLeightonConfront to 1>>		
+				<<set $sydneyLeightonPlayerGuilty to 1>>
+			<</if>>
+		<<elseif $sydneyLeightonConfrontTimer>>
+			<<set $sydneyLeightonConfrontTimer-->>
+			<<if $sydneyLeightonConfrontTimer lte 0>>
+				<<unset $sydneyLeightonConfrontTimer>>
+			<</if>>
+		<</if>>
+		<<set $sydneyDaily to {}>>
+		<<set $sydneyDaily.sex to 0>>
+		<<unset $sydneyScienceWarn>>
+		<<unset $sydneyPunish>>
+		<<unset $sydneyTempleSkip>>
+
+		<<if $sydneyromance is 1 and $sydneyChastityKnown and $NPCName[$NPCNameList.indexOf("Sydney")].love gte 90 and _sydneyStatus.includes("Lust") and $NPCName[$NPCNameList.indexOf("Sydney")].chastity.anus.includes("shield")>>
+			<<set $NPCName[$NPCNameList.indexOf("Sydney")].chastity.anus to "">>
+			<<set $sydneyAnalShieldComment to true>>
+		<</if>>
+	<</if>>
+
+	<<if $studyBooks>>
+		<<passiveStudy>>
+		<<if $studyBooks.rented isnot "none" and $schoolterm is 1>>
+			<<if $book_rent_timer gte 0>>
+				<<set $book_rent_timer -= 1>>
+			<<elseif $book_rent_timer lt 0>>
+				<<if $bookOverdue is undefined>>
+					<<set $bookOverdue to 0>>
+				<</if>>
+				<<set $bookOverdue += 1>>
+				<<if $bookOverdue gte 7>>
+					<<crimeup 1>>
+					<<set $delinquency += 5>>
+					<br><span class="red">You have a book severely overdue, and the police have been informed.</span><br>
+				<<elseif $bookOverdue gte 3>>
+					<<set $delinquency += 3>>
+					<br><span class="red">You have a book overdue, and have incurred delinquency.</span><br>
+				<</if>>
+			<</if>>
+		<</if>>
+		<<if $studyBooks.stolen isnot "none" and $schoolterm is 1>>
+			<<crimeup 1>>
+		<</if>>
+		<<if $recentReturnTimer>>
+			<<set $recentReturnTimer-->>
+			<<if $recentReturnTimer lte 0>>
+				<<unset $recentReturnTimer>>
+			<</if>>
+		<</if>>
+	<</if>>
+
+	<<if $bookStolen is 1>>
+		<<unset $bookStolen>>
+		<<if $bookStolenKnown is undefined>>
+			<<set $bookStolenKnown to 1>>
+		<</if>>
+		<<if $libraryMoneyStolen is undefined>>
+			<<set $libraryMoneyStolen to 0>>
+		<</if>>
+		<<set $libraryMoneyStolen += 20>>
+		<<crimeup 20>>
+	<</if>>
+
+	<<unset $scienceExcused>>
+
+	<<if $temple_evaluation>>
+		<<set $temple_evaluation -= 1>>
+		<<if $temple_evaluation lte 0>>
+			<<unset $temple_evaluation>>
+		<</if>>
+	<</if>>
 
 	<<if $skulduggery gte 100 and $skulduggeryday lt 100>>
 		<span class="gold">Your skulduggery has improved to</span> <span class="pink">F+.</span>
@@ -1169,6 +1276,10 @@
 	<</if>>
 	<<unset $glideScared>>
 	<<unset $swimCrossdressPermission>>
+	/*ToDo: Pregnancy, remove check to properly enable*/
+	<<if $pregnancyTesting>>
+		<<menstruationCycle>>
+	<</if>>
 <</if>>
 <</widget>>
 
@@ -1186,6 +1297,10 @@
 <</if>>
 <<if $lake_ice_broken lte 0>>
 	<<unset $lake_ice_broken>>
+<</if>>
+/*ToDo: Pregnancy, remove check to properly enable*/
+<<if $pregnancyTesting>>
+	<<menstruationCycle>>
 <</if>>
 <<unset $birdSleep>>
 <<unset $glideScared>>
@@ -1281,10 +1396,35 @@
 	<<if $wolfevent is 0>>
 		<<set $wolfevent to 1>>
 	<</if>>
+	
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $pregnancyTesting is undefined>>
+	<<elseif $sexStats.vagina.menstruation.currentState is "pregnant" or ($sexStats.vagina.menstruation.currentState is "normal" and ($playerPregnancyHumanDisable is "f" or $playerPregnancyBeastDisable is "f"))>>
+		<<set $pregnancyDailyEvent to true>>
+	<</if>>
 
 	<<temperature_hour>>
 
 	<<set $home_gone += 1>>
+
+	<<if $NPCName[$NPCNameList.indexOf("Sydney")].init is 1>>
+		<<sydneySchedule>>
+		<<if _sydney_location is "temple" and $temple_rank isnot undefined and $temple_rank isnot "prospective">>
+			<<switch $sydney_templeWork>>
+				<<case "garden">>
+					<<if $temple_garden gte 1>>
+						<<set $temple_garden += 1>>
+					<</if>>
+				<<case "quarters">>
+					<<if $temple_quarters gte 1>>
+						<<set $temple_quarters += 1>>
+					<</if>>
+				<<default>>
+				/* Do Nothing */
+			<</switch>>
+		<</if>>
+	<</if>>
+
 <</if>>
 <</widget>>
 
@@ -1403,9 +1543,11 @@
 <<unset $hairdresserstheft>>
 <<unset $tailortheft>>
 <<unset $petshoptheft>>
+<<unset $toyshoptheft>>
 <<unset $tattooparlourtheft>>
 <<unset $ridingschooltheft>>
 <<unset $spatheft>>
+<<unset $schoollibrarymoneytheft>>
 
 <<set $streetpolice to 0>>
 <<unset $sewersantiquecrystal>>
@@ -1422,6 +1564,12 @@
 	<<if $farm.tower_guard>>
 		<<set $farm.tower_guard_unpaid += 1>>
 		<<set $farm.tower_guard_patience to 0>>
+	<</if>>
+<</if>>
+
+<<if $sydney>>
+	<<if $sydney.glasses is "broken" or $sydney.glasses is "playerbroken">>
+		<<set $sydney.glasses to "glasses">><<set $sydneyGlassesNotice to 1>>
 	<</if>>
 <</if>>
 

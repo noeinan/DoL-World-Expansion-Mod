@@ -1,19 +1,10 @@
 :: Test
-<<set $location to "sea">><<set $outside to 1>><<effects>>
+<<location "sea">><<effects>>
 <<endcombat>>
 
-<<generatef1>><<person1>>
-<<set $NPCList[0].vagina to "lefthand">>
-		/*<<set $_npchand to $NPCList[_n].vagina.slice(0,4)>>*/
-
-		<<if $rng lte 80>>
-			<<He>> strokes <<his>> pussy with <<his>> hand.
-			<<neutral 1>><<set $enemyarousal += 20>>
-		<<else>>
-			<span class="blue"><<He>> moves <<his>> hand away from <<his>> pussy.</span>
-			<<set $NPCList[_n][$NPCList[_n].vagina] to 0>><<set $NPCList[_n].vagina to 0>>
-		<</if>>
-
+<<generate1>><<person1>>
+<<endcombat>>
+<<generate1>><<person1>>
 
 :: Robin
 <<set $NPCName[$NPCNameList.indexOf("Robin")].love to 50>>
@@ -86,13 +77,13 @@
 	<<molested>>
 
 	<<maninit>>
-
-	<<set $rescue to 1>>/*Remove line if rescue is impossible*/
+	<<enable_rescue>>/*Remove line if rescue is impossible*/
 <</if>>
 
 <<effects>>
 
 <<effectsman>><<man>>
+	
 
 <<stateman>>
 <br><br>
@@ -118,7 +109,7 @@
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Next|Rape]]>><</link>>/*Link points wherever you want the player to end up*/
+	<<link [[Next|Rape]]>><<set $molestationstart to 1>><</link>>/*Link points wherever you want the player to end up*/
 
 <<elseif $enemyhealth lte 0>>
 	Text about escaping.
@@ -127,7 +118,7 @@
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Next|Rape]]>><</link>>
+	<<link [[Next|Rape]]>><<set $molestationstart to 1>><</link>>
 
 <<else>>
 	<<set $rescued += 1>>/*Unnecessary if rescue is impossible*/
@@ -137,7 +128,7 @@
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-	<<link [[Next|Rape]]>><</link>>
+	<<link [[Next|Rape]]>><<set $molestationstart to 1>><</link>>
 
 <</if>>
 
@@ -256,7 +247,7 @@ Possible text describing your attempt.
 	<<set $consensual to 1>>
 	<<neutral 1>>
 
-	<<beastNEWinit 1 dog>>
+	<<beastNEWinit 1 dog>>/* - Delete if beasts are already generated*/
 	<<beastCombatInit>>
 	<<beastTrainGenerate>>/* - Delete if there aren't multiple beasts*/
 <</if>>
@@ -416,7 +407,7 @@ Possible text describing your attempt.
 	<<beastNEWinit 1 wolf>>
 	<<beastCombatInit>>
 	<<beastTrainGenerate>>
-	<<set $rescue to 1>>/*optional*/
+	<<enable_rescue>>/*optional*/
 <</if>>
 <<effects>>
 <<effectsman>>
@@ -805,7 +796,7 @@ $NPCName[$NPCNameList.indexOf("Robin")].love
 <</if>>
 
 <<statetentacles>>
-You count $tentacles.active tentacles surrounding you.
+You count <<number $tentacles.active>> tentacles surrounding you.
 
 <<effects>>
 <<effectstentacles>>
@@ -1080,14 +1071,150 @@ Stuff happens.
 /*Farm stage reminders:
 $farm_stage = 1: Alex met, farm work explained.
 $farm_stage = 2: Farm work accepted. 1 field clear
-$farm=stage = 3: Worked at the farm a little, harasser appeared.
-$farm=stage = 4: 2 fields clear. Alex offered booze.
-$farm=stage = 5: 3 fields clear. Remy threatened Alex.
-$farm=stage = 6: 4 fields clear. Alex's parent visits.
-$farm=stage = 7: Time passed since Alex's parent's visit. Bailey visits. Fields are now controlled by the player, steeds can be saddled, and Alex can be chosen as a love interest. Attacks begin. Wall can be upgraded.
-$farm=stage = 8: 5 fields clear. More upgrades can be bought.
-$farm=stage = 9: 6 fields clear. Lab unlocked. 1 phial available for PC to sell to compound.
-$farm=stage = 10: 7 fields clear. "Hurl net" ability unlocked, and more phials can now be produced.
-$farm=stage = 11: 8 fields clear. Strange flowers can now be grown.
-$farm=stage = 12: 9 fields clear. Remy threatens again.
+$farm_stage = 3: Worked at the farm a little, harasser appeared.
+$farm_stage = 4: 2 fields clear. Alex offered booze.
+$farm_stage = 5: 3 fields clear. Remy threatened Alex.
+$farm_stage = 6: 4 fields clear. Alex's parent visits.
+$farm_stage = 7: Time passed since Alex's parent's visit. Bailey visits. Fields are now controlled by the player, steeds can be saddled, and Alex can be chosen as a love interest. Attacks begin. Wall can be upgraded.
+$farm_stage = 8: 5 fields clear. More upgrades can be bought.
+$farm_stage = 9: 6 fields clear. Lab unlocked. 1 phial available for PC to sell to compound.
+$farm_stage = 10: 7 fields clear. "Hurl net" ability unlocked, and more phials can now be produced.
+$farm_stage = 11: 8 fields clear. Strange flowers can now be grown.
+$farm_stage = 12: 9 fields clear. Remy threatens again.
 */
+
+
+:: Stalk
+
+<<if $molestationstart is 1>>
+	<<set $molestationstart to 0>>
+	<<violence 1>>
+	<<neutral 1>>
+
+	<<maninit>>
+	<<stalk_init>>
+	<<if $daystate isnot "night">>
+		<<enable_rescue>>/*Remove if rescue is impossible*/
+	<</if>>
+	<<set $location to "town">>
+<</if>>
+
+<<effects>>
+
+<<effectsman>><<man>>
+
+<<if $audience_active>>
+	<<audience>>
+<</if>>
+
+<<stateman>>
+<br><br>
+<<actionsman>>
+
+<<if $enemyhealth lte 0>>
+	<span id="next"><<link [[Next|Stalk Finish]]>><</link>></span><<nexttext>>
+<<elseif $enemyarousal gte $enemyarousalmax>>
+	<span id="next"><<link [[Next|Stalk Finish]]>><</link>></span><<nexttext>>
+<<elseif $alarm is 1 and $rescue is 1>>
+	<span id="next"><<link [[Next|Stalk Finish]]>><</link>></span><<nexttext>>
+<<elseif $stalk_end>>/*Not usually needed */
+	<span id="next"><<link [[Next|Stalk Finish]]>><</link>></span><<nexttext>>
+<<else>>
+	<span id="next"><<link [[Next|Stalk]]>><</link>></span><<nexttext>>
+<</if>>
+
+:: Stalk Finish
+<<effects>>
+<<if $enemyarousal gte $enemyarousalmax>>
+	<<ejaculation>>
+	<<if $combat_end_text>>
+		<<print $combat_end_text>>
+	<<else>>
+		Text about the aftermath of them cumming.
+	<</if>>
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>/*Link points wherever you want the player to end up*/
+
+<<elseif $enemyhealth lte 0>>
+	Text about escaping.
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+<<elseif $stalk_end is "escaped">>
+	You slow to a walk. <<tearful>> you continue your journey.
+	<br><br>
+
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+	<br>
+
+<<elseif $stalk_end is "passed">>
+	You take a deep breath. <<tearful>> you continue your journey.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+	<br>
+
+<<elseif $stalk_end is "hide">>
+	<<covered>> <<tearful>> you emerge from your hiding place. You continue your journey.
+	<br><br>
+
+	<<set $stealtextskip to 1>>
+	<<stealclothes>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<<elseif $stalk_end is "outpaced">>/*Unnecessary if the PC can't become the pursuer */
+	<<if $exposed gte 1>>
+		<<switch $location>>
+		<<case alley>>
+			<<tearful>> you slow to a stop. <<covered>> There's no one around, but this is still a public place.
+		<<case forest lake>>
+			<<tearful>> you slow to a stop. <<covered>> There's no one around right now, but there's no knowing who you could meet in the woods.
+		<<case moor>>
+			<<tearful>> you slow to a stop. <<covered>> There's no one around, but being exposed in such an open place is frightening regardless.
+		<<default>>
+			<<covered>> <<tearful>> you dive down an alley, hoping to shield your body from any prying eyes.
+		<</switch>>
+	<<else>>
+		<<tearful>> you slow to stop.
+	<</if>>
+	<br><br>
+	<<set $stealtextskip to 1>>
+	<<stealclothes>>
+	<<clotheson>>
+	<<endcombat>>
+
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+	<br>
+<<else>>
+	<<set $rescued += 1>>/*Unnecessary if rescue is impossible*/
+	<<if $position is "stalk">>
+		Text about being rescued while pursued.
+	<<else>>
+		Text about being rescued while assaulted.
+	<</if>>
+	<br><br>
+	<<tearful>> you recover.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<link [[Next|Stalk]]>><<set $molestationstart to 1>><</link>>
+
+<</if>>
+<br><br>
+<<link [[Escape!|Domus Street]]>><<endevent>><</link>>
+<br>

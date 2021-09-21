@@ -106,7 +106,7 @@ You look into the mirror.
 	<br>
 	You stare into the void, and the void
 <<elseif $hallucinogen gte 100>>
-	The surface folds over itself at an angle you can't quite understand, and something unrecognizable
+	The surface folds over itself at an angle you can't quite understand, and something unrecognisable
 <<elseif $hallucinogen gt 0>>
 	The surface ripples at your presence, and a vaguely familiar <<girl>>
 <<elseif $trauma gte $traumamax>>
@@ -159,7 +159,7 @@ __Makeup__
 <<link "Back">><<replace #mirror>><<mirrorMenu>><</replace>><<numberify "#passages > .passage">><<unset $mirrorMenu>><</link>>
 <br><br>
 <<settextcolorfromgender $player.gender_appearance>>
-You look like a <span @class="_text_color"><<girl>>.</span>
+You look like a <span @class="_text_color"><<if $sexStats.vagina.pregnancy.bellySize gte 9>>pregnant <</if>><<girl>>.</span>
 <br>
 The following factors are contributing:
 <br>
@@ -626,6 +626,25 @@ Increasing your allure:
 	<span class="teal">Obscure flaunter</span>
 	<br>
 <</if>>
+<<if $famepregnancy gte 1000>>
+	<span class="red">Notorious broodmother</span>
+	<br>
+<<elseif $famepregnancy gte 600>>
+	<span class="pink">Famous broodmother</span>
+<<elseif $famepregnancy gte 400>>
+	<span class="purple">Recognised breeder</span>
+	<br>
+<<elseif $famepregnancy gte 200>>
+	<span class="blue">Known breeder</span>
+	<br>
+<<elseif $famepregnancy gte 100>>
+	<span class="lblue">Low-key mother</span>
+	<br>
+<<elseif $famepregnancy gte 50>>
+	<span class="teal">Obscure mother</span>
+	<br>
+<</if>>
+
 <br>
 Decreasing your allure:
 <br>
@@ -751,30 +770,35 @@ You are looking at your skin.
 
 <<if $goocount + $semencount gt 0>>
 	__Goo and Semen__
-	<<mirrorwet $necksemen $neckgoo "neck">>
-	<<mirrorwet $rightarmsemen $rightarmgoo "right arm">>
-	<<mirrorwet $leftarmsemen $leftarmgoo "left arm">>
-	<<mirrorwet $thighsemen $thighgoo "thighs">>
-	<<mirrorwet $bottomsemen $bottomgoo "bottom">>
-	<<mirrorwet $tummysemen $tummygoo "tummy">>
-	<<mirrorwet $chestsemen $chestgoo "chest">>
-	<<mirrorwet $facesemen $facegoo "face">>
-	<<mirrorwet $hairsemen $hairgoo "hair">>
-	<<mirrorwet $feetsemen $feetgoo "feet">>
-	<<mirrorwet $vaginaoutsidesemen $vaginaoutsidegoo "labia">>
-	<<mirrorwet $vaginasemen $vaginagoo "vagina">>
-	<<mirrorwet $penissemen $penisgoo "penis">>
-	<<mirrorwet $anussemen $anusgoo "anus">>
-	<<mirrorwet $mouthsemen $mouthgoo "mouth">>
+	<<mirrorwet $player.bodyliquid.neck.semen $player.bodyliquid.neck.goo "neck">>
+	<<mirrorwet $player.bodyliquid.rightarm.semen $player.bodyliquid.rightarm.goo "right arm">>
+	<<mirrorwet $player.bodyliquid.leftarm.semen $player.bodyliquid.leftarm.goo "left arm">>
+	<<mirrorwet $player.bodyliquid.thigh.semen $player.bodyliquid.thigh.goo "thighs">>
+	<<mirrorwet $player.bodyliquid.bottom.semen $player.bodyliquid.bottom.goo "bottom">>
+	<<mirrorwet $player.bodyliquid.tummy.semen $player.bodyliquid.tummy.goo "tummy">>
+	<<mirrorwet $player.bodyliquid.chest.semen $player.bodyliquid.chest.goo "chest">>
+	<<mirrorwet $player.bodyliquid.face.semen $player.bodyliquid.face.goo "face">>
+	<<mirrorwet $player.bodyliquid.hair.semen $player.bodyliquid.hair.goo "hair">>
+	<<mirrorwet $player.bodyliquid.feet.semen $player.bodyliquid.feet.goo "feet">>
+	<<mirrorwet $player.bodyliquid.vaginaoutside.semen $player.bodyliquid.vaginaoutside.goo "labia">>
+	<<mirrorwet $player.bodyliquid.vagina.semen $player.bodyliquid.vagina.goo "vagina">>
+	<<mirrorwet $player.bodyliquid.penis.semen $player.bodyliquid.penis.goo "penis">>
+	<<mirrorwet $player.bodyliquid.anus.semen $player.bodyliquid.anus.goo "anus">>
+	<<mirrorwet $player.bodyliquid.mouth.semen $player.bodyliquid.mouth.goo "mouth">>
 <<else>>
 	Your skin feels clean.
 <</if>>
 <br><br>
 __Body Writing__<br>
 
+<<if $bodyWritingSelected is null>>
+	<<unset $bodyWritingSelected>>
+<</if>>
 <<if $bodyWritingSelected isnot undefined>>
 	You write
-	<<if $skin[$bodyPartSelected].special isnot "none">>
+	<<if $skin[$bodyPartSelected].special is $loveInterest.primary or $skin[$bodyPartSelected].special is $loveInterest.secondary>>
+		"<span class="lewd"><<print $bodyWritingSelected>></span>"
+	<<elseif $skin[$bodyPartSelected].special isnot "none">>
 		"<span class="red"><<print $bodyWritingSelected>></span>"
 	<<elseif $skin[$bodyPartSelected].lewd is 1>>
 		"<span class="pink"><<print $bodyWritingSelected>></span>"
@@ -789,29 +813,88 @@ __Body Writing__<br>
 <<bodywriting>>
 <br>
 <<set _bodyWritingOptions to {
-	general:{},
-}>>
-<<set _bodyWritingOptions to {
 	General: {
 	"Cute boy":"cute_boy",
 	"Cute girl":"cute_girl",
 	"Orphan":"orphan"
 	}
 }>>
+
+<<if $beauty gte ($beautymax / 7) * 3>>
+   <<set _bodyWritingOptions.General["Handsome"] to "handsome">>
+   <<set _bodyWritingOptions.General["Pretty"] to "pretty">>
+<</if>>
+<<if $beauty gte ($beautymax / 7) * 4>>
+   <<set _bodyWritingOptions.General["Stud"] to "stud">>
+   <<set _bodyWritingOptions.General["Beauty"] to "beauty">>
+<</if>>
+<<if $beauty gte ($beautymax / 7) * 5>>
+   <<set _bodyWritingOptions.General["Beautiful"] to "beautiful">>
+<</if>>
+
+<<if $trauma gte (($traumamax / 5) * 2)>>
+   <<set _bodyWritingOptions.General["Daddy issues"] to "daddy_issues">>
+   <<set _bodyWritingOptions.General["Mommy issues"] to "mommy_issues">>
+   <<set _bodyWritingOptions.General["Trashy"] to "trashy">>
+<</if>>
+<<if $trauma gte (($traumamax / 5) * 3)>>
+   <<set _bodyWritingOptions.General["Worthless"] to "worthless">>
+   <<set _bodyWritingOptions.General["Oh no"] to "oh_no">>
+   <<set _bodyWritingOptions.General["Dumb bitch"] to "dumb_bitch">>
+<</if>>
+
+<<if $promiscuity gte 15>>
+   <<set _bodyWritingOptions.General["Hot"] to "hot">>
+<</if>>
 <<if $promiscuity gte 35>>
-	<<set _bodyWritingOptions.Promiscuity = {}>>
-	<<set _bodyWritingOptions.Promiscuity["Daddy issues"] to "daddy_issues">>
-	<<set _bodyWritingOptions.Promiscuity["Mommy issues"] to "mommy_issues">>
-	<<set _bodyWritingOptions.Promiscuity["Trashy"] to "trashy">>
-	<<set _bodyWritingOptions.Promiscuity["£5 whore"] to "five_pound_whore">>
-	<<set _bodyWritingOptions.Promiscuity["£10 a pop"] to "ten_pound_a_pop">>
-	<<set _bodyWritingOptions.Promiscuity["£25 per fuck"] to "twenty_five_pound_per_fuck">>
-	<<set _bodyWritingOptions.Promiscuity["£100"] to "one_hundred_pound">>
-	<<set _bodyWritingOptions.Promiscuity["It's not rape if you pay me"] to "its_not_rape_if_you_pay_me">>
-	<<set _bodyWritingOptions.Promiscuity["Whore"] to "whore">>
-	<<set _bodyWritingOptions.Promiscuity["Slut for hire"] to "slut_for_hire">>
-	<<set _bodyWritingOptions.Promiscuity["Body for sale"] to "body_for_sale">>
-	<<set _bodyWritingOptions.Promiscuity["Prostitute"] to "prostitute">>
+   <<set _bodyWritingOptions.Promiscuity = {}>>
+	<<set _bodyWritingOptions.Promiscuity["Slut"] to "slut">>
+	<<set _bodyWritingOptions.Promiscuity["Promiscuous"] to "Promiscuous">>
+	<<set _bodyWritingOptions.Promiscuity["Wanton"] to "wanton">>
+	<<set _bodyWritingOptions.Promiscuity["D.T.F."] to "dtf">>
+<</if>>
+
+<<if $promiscuity gte 55>>
+   <<set _bodyWritingOptions.Promiscuity["Insatiable slut"] to "insatiable_slut">>
+   <<set _bodyWritingOptions.Promiscuity["Free Sex"] to "free_sex">>
+   <<set _bodyWritingOptions.Promiscuity["Town bicycle"] to "town_bicycle">>
+   <<set _bodyWritingOptions.Promiscuity["Size queen"] to "size_queen">>
+   <<if $orgasmtrait gte 1>>
+		<<set _bodyWritingOptions.Promiscuity["Sex addict"] to "sex_addict">>
+		<<set _bodyWritingOptions.Promiscuity["Make me cum"] to "make_me_cum">>
+   <</if>>
+<</if>>
+
+<<if $promiscuity gte 75>>
+   <<set _bodyWritingOptions.Promiscuity["Fuck Me"] to "fuck_me">>
+   <<set _bodyWritingOptions.Promiscuity["Cocksucker"] to "cocksucker">>
+   <<set _bodyWritingOptions.Promiscuity["Cum dump"] to "cum_dump">>
+   <<set _bodyWritingOptions.Promiscuity["Public Slut"] to "public_slut">>
+   <<if $analstat gte 100>>
+	  <<set _bodyWritingOptions.Promiscuity["Buttslut"] to "buttslut">>
+	  <<set _bodyWritingOptions.Promiscuity["Anal whore"] to "anal_whore">>
+   <</if>>
+<</if>>
+
+<<if $promiscuity gte 35>>
+	<<set _bodyWritingOptions.Prostitution = {}>>
+	<<if $trauma gte (($traumamax / 5) * 2)>>
+		<<set _bodyWritingOptions.Prostitution["It's not rape if you pay me"] to "its_not_rape_if_you_pay_me">>
+	<</if>>
+	<<set _bodyWritingOptions.Prostitution["£5 whore"] to "five_pound_whore">>
+	<<set _bodyWritingOptions.Prostitution["£10 a pop"] to "ten_pound_a_pop">>
+	<<set _bodyWritingOptions.Prostitution["Slut for hire"] to "slut_for_hire">>
+<</if>>
+<<if $promiscuity gte 55>>
+	<<set _bodyWritingOptions.Prostitution["£25 per fuck"] to "twenty_five_pound_per_fuck">>
+	<<set _bodyWritingOptions.Prostitution["£100"] to "one_hundred_pound">>
+	<<set _bodyWritingOptions.Prostitution["Body for sale"] to "body_for_sale">>
+	<<if $trauma gte (($traumamax / 5) * 3)>>
+		<<set _bodyWritingOptions.Prostitution["Stupid whore"] to "stupid_whore">>
+	<<else>>
+		<<set _bodyWritingOptions.Prostitution["Whore"] to "whore">>
+	<</if>>
+	<<set _bodyWritingOptions.Prostitution["Prostitute"] to "prostitute">>
 <</if>>
 <<if $exhibitionism gte 35>>
 	<<set _bodyWritingOptions.Exhibitionism to {}>>
@@ -837,7 +920,124 @@ __Body Writing__<br>
 	<<set _bodyWritingOptions.Masochism["Treat me bad"] to "treat_me_bad">>
 	<<set _bodyWritingOptions.Masochism["Make me squeal"] to "make_me_squeal">>
 <</if>>
+<<if $submissive gte 1200>>
+	<<set _bodyWritingOptions.Submission to {}>>
+	<<set _bodyWritingOptions.Submission["Submissive"] to "submissive">>
+	<<set _bodyWritingOptions.Submission["Pet"] to "pet">>
 
+   	<<if $deviancy gte 35>>
+	  <<set _bodyWritingOptions.Submission["Public pet"] to "public_pet">>
+  	<</if>>
+	  
+	<<if $promiscuity gte 55>>
+		<<set _bodyWritingOptions.Submission["Free use"] to "free_use">>
+		<<set _bodyWritingOptions.Submission["Use Me"] to "use_me">>
+	<</if>>
+
+	<<if $submissive gte 1500>>
+		<<set _bodyWritingOptions.Submission["Slave"] to "slave">>
+		<<set _bodyWritingOptions.Submission["Enslave Me"] to "enslave_me">>
+		<<set _bodyWritingOptions.Submission["Cum rag"] to "cum_rag">>
+		<<if $promiscuity gte 75>>
+			<<set _bodyWritingOptions.Submission["Fuckdoll"] to "fuckdoll">>
+			<<set _bodyWritingOptions.Submission["Fucktoy"] to "fucktoy">>
+			<<if $penisexist is 1>>
+				<<set _bodyWritingOptions.Submission["Walking dildo"] to "walking_dildo">>
+			<</if>> 
+		<</if>>
+	<</if>>
+<</if>>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $vaginaexist and $promiscuity gte 75 and $pregnancyTesting>>
+	<<set _bodyWritingOptions.Pregnancy to {}>>
+	<<set _bodyWritingOptions.Pregnancy["Brood mother"] to "brood_mother">>
+	<<set _bodyWritingOptions.Pregnancy["Inseminate me"] to "inseminate_me">>
+	<<set _bodyWritingOptions.Pregnancy["Impregnate me"] to "impregnate_me">>
+	<<set _bodyWritingOptions.Pregnancy["Pregnancy slut"] to "pregnancy_slut">>
+	<<set _bodyWritingOptions.Pregnancy["Breeding ground"] to "breeding_ground">>
+<</if>>
+
+	<<set _bodyWritingOptions["Love Interests"] to {}>>
+	<<if $robinromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Robin's Protector"] to "robins_protector">>
+		<<set _bodyWritingOptions["Love Interests"]["Robin & I"] to "robin_and_i">>
+		<<set _bodyWritingOptions["Love Interests"]["The Orphan Lover"] to "the_orphan_lover">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Robin's Boyfriend"] to "robins_boyfriend">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Robin's Girlfriend"] to "robins_girlfriend">>
+		<</if>>
+	<</if>>
+	<<if $whitneyromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Whitney's Pet"] to "whitneys_pet">>
+		<<set _bodyWritingOptions["Love Interests"]["Property of Whitney"] to "property_of_whitney">>
+		<<set _bodyWritingOptions["Love Interests"]["Whitney's Toy"] to "whitneys_boyslut">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Whitney's Boyslut"] to "whitneys_boyslut">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Whitney's Slut"] to "whitneys_slut">>
+		<</if>>
+	<</if>>
+	<<if $kylarenglish gte 1 and $NPCName[$NPCNameList.indexOf("Kylar")].state isnot "prison">>
+		<<set _bodyWritingOptions["Love Interests"]["Kylar's Obsession"] to "kylars_obsession">>
+		<<set _bodyWritingOptions["Love Interests"]["Love Kylar Forever"] to "love_kylar_forever">>
+		<<set _bodyWritingOptions["Love Interests"]["Reserved for Kylar"] to "reserved_for_kylar">>
+		<<set _bodyWritingOptions["Love Interests"]["Just Kylar"] to "just_kylar">>
+	<</if>>
+	<<if $syndromeeden is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Eden's Companion"] to "edens_companion">>
+		<<set _bodyWritingOptions["Love Interests"]["Hunter and Prey"] to "hunter_and_prey">>
+		<<set _bodyWritingOptions["Love Interests"]["It's Lonely in the Woods"] to "its_lonely_in_the_woods">>
+		<<set _bodyWritingOptions["Love Interests"]["Something is Hunting you"] to "something_is_hunting_you">>
+	<</if>>
+	<<if $dateCount.Avery gte 3 and $NPCName[$NPCNameList.indexOf("Avery")].state isnot "dismissed">>
+		<<set _bodyWritingOptions["Love Interests"]["Avery's Trophy"] to "averys_trophy">>
+		<<set _bodyWritingOptions["Love Interests"]["Endearing"] to "endearing">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Uptown Boy"] to "uptown_boy">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Uptown Girl"] to "uptown_girl">>
+		<</if>>
+		<<set _bodyWritingOptions["Love Interests"]["Avery's Monopoly"] to "averys_monopoly">>
+	<</if>>
+	<<if $farm_stage gte 7 and $alex_countdown is undefined>>
+		<<set _bodyWritingOptions["Love Interests"]["Alex's Partner"] to "alexs_partner">>
+		<<set _bodyWritingOptions["Love Interests"]["Sunrise to Sunset"] to "sunrise_to_sunset">>
+		<<set _bodyWritingOptions["Love Interests"]["Hay Baler"] to "hay_baler">>
+		<<if ($player.gender is "m" or $player.gender is "h" or $player.gender.appearance is "m" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Cowboy"] to "cowboy">>
+		<</if>>
+		<<if ($player.gender is "f" or $player.gender is "h" or $player.gender.appearance is "f" or $backgroundTraits.includes("crossdresser"))>>
+			<<set _bodyWritingOptions["Love Interests"]["Cowgirl"] to "Cowgirl">>
+		<</if>>
+	<</if>>
+	<<if $sydneyromance is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Sydney's Savior"] to "sydneys_savior">>
+		<<set _bodyWritingOptions["Love Interests"]["Bound to Sydney"] to "bound_to_sydney">>
+		<<set _bodyWritingOptions["Love Interests"]["Sydney Makes Me :)"] to "sydney_makes_me_smile">>
+		<<if $NPCName[$NPCNameList.indexOf("Sydney")].purity gt 1>>
+			<<set _bodyWritingOptions["Love Interests"]["Purest Love"] to "purest_love">>
+		<<else>>
+			<<set _bodyWritingOptions["Love Interests"]["Lusty Sinners"] to "lusty_sinners">>
+		<</if>>
+	<</if>>
+	<<if $syndromewolves is 1 and $deviancy gte 35>>
+		<<set _bodyWritingOptions["Love Interests"]["Black Wolf's Bitch"] to "black_wolfs_bitch">>
+		<<set _bodyWritingOptions["Love Interests"]["All for my Alpha"] to "all_for_my_alpha">>
+		<<if $wolfpackleader is 1>>
+			<<set _bodyWritingOptions["Love Interests"]["Leader of the Pack"] to "leader_of_the_pack">>
+		<</if>>
+		<<set _bodyWritingOptions["Love Interests"]["Runs With Wolves"] to "runs_with_wolves">>
+	<</if>>
+	<<if $syndromebird is 1>>
+		<<set _bodyWritingOptions["Love Interests"]["Great Hawk's Spouse"] to "great_hawks_spouse">>
+		<<set _bodyWritingOptions["Love Interests"]["Soaring With Love"] to "soaring_with_love">>
+		<<set _bodyWritingOptions["Love Interests"]["Terror's Mate"] to "terrors_mate">>
+		<<set _bodyWritingOptions["Love Interests"]["Free Bird"] to "free_bird">>
+	<</if>>
 
 /*Needs to be last*/
 <div id="bodywritingMenuLinks">
@@ -891,7 +1091,7 @@ __Body Writing__<br>
 			<<set $mirrorMenu to "skin">>
 			<<set $bodyWritingSelected to Object.keys(_bodyWritingOptions[$bodywritingSet])[Object.values(_bodyWritingOptions[$bodywritingSet]).indexOf(_bodyWritingSelected)]>>
 			<<set $bodyPartSelected to _bodyPartSelected>>
-			<<add_bodywriting _bodyPartSelected _bodyWritingSelected pen>>
+			<<add_bodywriting _bodyPartSelected _bodyWritingSelected "pen">>
 		<</link>>
 	<<else>>
 		You're not sure where else you can write an advertisement.
@@ -908,9 +1108,6 @@ __Hair__
 <br><br>
 Your sides are in the "$hairtype" style, and positioned <<if $hairposition is "front">>in front of<<else>>behind<</if>> your body.
 
-<<if $hairtype is "default">>
-	Changing your sides from natural will set your fringe to messy.
-<</if>>
 <br>
 <<set _hairTypeByName to {"Braid left": "braid left", "Braid right": "braid right", "Flat ponytail": "flat ponytail", "Loose": "loose", "Messy": "messy", "Pigtails": "pigtails", "Ponytail": "ponytail", "Short": "short", "Side tail left": "side tail left", "Side tail right": "side tail right", "Straight": "straight", "Swept left": "swept left", "Twin braids": "twin braids", "Twintails": "twintails", "Curl": "curl", "Defined curl": "defined curl"}>>
 <<set _fringeTypeByName to {"Thin flaps": "thin flaps", "Wide flaps": "wide flaps", "Hime": "hime", "Loose": "loose", "Messy": "messy", "Overgrown": "overgrown", "Ringlets": "ringlets", "Split": "split", "Straight": "straight", "Swept left": "swept left", "Back": "back", "Parted": "parted", "Flat": "flat", "Quiff": "quiff", "Straight curl": "straight curl", "Ringlet curl": "ringlet curl"}>>
@@ -1000,7 +1197,7 @@ __Makeup__
 <</if>>
 
 
-<<link [[Remove All|$passage]]>>
+<<link [[Remove all|$passage]]>>
 	<<set $makeup.lipstick to 0>>
 	<<set $makeup.eyeshadow to 0>>
 	<<set $makeup.mascara to 0>>
@@ -1135,7 +1332,7 @@ __Makeup__
 __New Makeup Preset__ - Saves the makeup you current have on
 <br>
 <<textbox "_newPresetName" "">>
-<<link [[Save Preset|$passage]]>>
+<<link [[Save preset|$passage]]>>
 	<<set _newPresetName to _newPresetName.replace(/[^a-zA-Z 0-9]+/g,"")>>
 	<<set $makeup.presets[_newPresetName] to {
 		lipstick:clone($makeup.lipstick),
@@ -1168,7 +1365,7 @@ Preset: <<print $args[0]>>
 	<br>
 <</for>>
 <br>
-<<link [[Apply Preset Makeup|$passage]]>>
+<<link [[Apply preset makeup|$passage]]>>
 	<<for $_i to 0; $_i lt _makeupNames.length; $_i++>>
 		<<if _makeupNames[$_i] is "eyelenses">>
 			<<if _presetChosen[_makeupNames[$_i]] is 0>>
@@ -1191,7 +1388,7 @@ Preset: <<print $args[0]>>
 		<</if>>
 	<</for>>
 <</link>> |
-<<link [[Delete Preset|$passage]]>>
+<<link [[Delete preset|$passage]]>>
 	<<run delete $makeup.presets[$args[0]]>>
 <</link>>
 <</widget>>

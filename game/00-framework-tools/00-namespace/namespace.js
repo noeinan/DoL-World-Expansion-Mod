@@ -62,7 +62,7 @@ defineGlobalNamespaces(DOL);
  * By making this alias, if you simply use `State` to refer to state, it does not
  * matter if your code is executing inside of sugarcube or not. It'll always just work
  *
- * To elaborate further, we don't use `SugarCube.State` here as global initialization is considered
+ * To elaborate further, we don't use `SugarCube.State` here as global initialisation is considered
  * sugarcube execution. `SugarCube.State` (currently) does not exist, but `State` (note, *not* window.State)
  * exists.
  */

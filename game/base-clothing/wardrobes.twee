@@ -23,8 +23,8 @@
 <<set _slimePrevent to ["upper", "lower", "under_upper", "under_lower"]>>
 <<set _towelCheck to ["upper", "lower"]>>
 <<set _equipSkip to {"over_upper":false, "over_lower":false, "upper":false, "lower":false, "under_upper":false, "under_lower":false, "over_head":false, "head":false, "face":false, "neck":false, "hands":false, "legs":false, "feet":false}>>
-<<unset _outfitPieceIds>>
 <<for _ie to 0; _ie lt _equip.length;_ie++>>
+	<<unset _outfitPieceIds>>
 	<<if _equipSkip[_equip[_ie]] is true>>
 		<<continue>>
 	<</if>>
@@ -352,7 +352,9 @@ __Clothing__
 	<<dynamic "wardrobeLinks" "wardrobeLinks">>
 	<<dynamic "wardrobeContents" "wardrobeList">>
 <<else>>
-	<<oldWardrobeListDisplay>>
+	<div id="oldWardrobeListDisplay">
+		<<oldWardrobeListDisplay>>
+	</div>
 <</if>>
 
 <<set $upperoff to 0>>
@@ -696,10 +698,14 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 <</widget>>
 
 <<widget "wearlink_norefresh">>
-	<<capture $args[1]>>
+	<<capture $args[1] $args[2]>>
 		<<link $args[0]>>
-			<<set V[_wear] = $args[1]>>
-			<<updatewardrobe>>
+			<<if $args[2]>>
+				<<set V[$args[2]] = $args[1]>>
+			<<else>>
+				<<set V[_wear] = $args[1]>>
+			<</if>>
+			<<updatewardrobe undefined $args[2]>>
 		<</link>>
 	<</capture>>
 <</widget>>
@@ -722,6 +728,33 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<</if>>
 	<<replace '#clotheson'>><<clotheson>><</replace>>
 	<<if $('#wardrobeList')[0]>><<replace '#wardrobeList'>><<wardrobeContents>><</replace>><</if>>
+	<<if $('#oldWardrobeListDisplay')[0]>>
+		<<if $args[1]>>
+			<<set $_slot to $args[1].slice(5)>>
+			<<switch $_slot>>
+				<<case "upper">>
+					<<replace '#clothingBox-upper'>>
+						<<oldWardrobeList "upper" "outfits">>
+						<<oldWardrobeList "upper" "non-outfits">>
+					<</replace>>
+					<<replace '#clothingBox-lower'>>
+						<<oldWardrobeList "lower">>
+					<</replace>>
+				<<case "under_upper">>
+					<<replace '#clothingBox-under_upper'>>
+						<<oldWardrobeList "under_upper" "outfits">>
+						<<oldWardrobeList "under_upper" "non-outfits">>
+					<</replace>>
+					<<replace '#clothingBox-under_lower'>>
+						<<oldWardrobeList "under_lower">>
+					<</replace>>
+				<<default>>
+					<<replace `'#clothingBox-' + $_slot`>><<oldWardrobeList $_slot>><</replace>>
+			<</switch>>
+		<<else>>
+			<<replace '#oldWardrobeListDisplay'>><<oldWardrobeListDisplay>><</replace>>
+		<</if>>
+	<</if>>
 	<<exposure>>
 	<<run $('#wardrobeExits').html(new Wikifier(null, "<<wardrobeExits>>").output)>>
 	<<numberify ".passage">>
@@ -754,27 +787,34 @@ Type: <label>Everyday <<radiobutton "$outfit_type" 0 checked>></label> | <label>
 	<<oldWardrobeList "over_upper">>
 	<<oldWardrobeList "over_lower">>
 <</if>>
-<<oldWardrobeList "upper" "outfits">>
-<<oldWardrobeList "upper" "non-outfits">>
-<<oldWardrobeList "lower">>
-<<oldWardrobeList "under_upper" "outfits">>
-<<oldWardrobeList "under_upper" "non-outfits">>
-<<oldWardrobeList "under_lower">>
+<div id="clothingBox-upper">
+	<<oldWardrobeList "upper" "outfits">>
+	<<oldWardrobeList "upper" "non-outfits">>
+</div>
+<div id="clothingBox-lower">
+	<<oldWardrobeList "lower">>
+</div>
+<div id="clothingBox-under_upper">
+	<<oldWardrobeList "under_upper" "outfits">>
+	<<oldWardrobeList "under_upper" "non-outfits">>
+</div>
+<div id="clothingBox-under_lower">
+	<<oldWardrobeList "under_lower">>
+</div>
 <<if $debug is 1>>
 	<<oldWardrobeList "over_head">>
 <</if>>
-<<oldWardrobeList "head">>
-<<oldWardrobeList "face">>
-<<oldWardrobeList "neck">>
-<<oldWardrobeList "hands">>
-<<oldWardrobeList "legs">>
-<<oldWardrobeList "feet">>
+<div id="clothingBox-head"><<oldWardrobeList "head">></div>
+<div id="clothingBox-face"><<oldWardrobeList "face">></div>
+<div id="clothingBox-neck"><<oldWardrobeList "neck">></div>
+<div id="clothingBox-hands"><<oldWardrobeList "hands">></div>
+<div id="clothingBox-legs"><<oldWardrobeList "legs">></div>
+<div id="clothingBox-feet"><<oldWardrobeList "feet">></div>
 <div style="clear:both;"></div>
 <<wardrobeNewOutfit>>
 <</widget>>
 
 <<widget "oldWardrobeList">>
-
 <<set _wardrobe_list to $args[0]>>
 <<set _showType to $args[1]>>
 <<switch _wardrobe_list>>
@@ -799,13 +839,13 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1) + (_show
 <div>
 <ul>
 <<if $worn[_wardrobe_list].name isnot "naked">>
-	<li><a @onclick="`V.`+_wear+` = 'strip';SugarCube.State.display(V.passage)`">Strip</a></li>
+	<li class="no-numberify"><<wearlink_norefresh "Strip" 'strip' _wear>></li>
 <</if>>
-<<if _wardrobe_list is "upper">>
-	<li><a onclick="V.wear_upper='large_towel';SugarCube.State.display(V.passage)">Large Towel</a></li>
+<<if _wardrobe_list is "upper" and _showType is "outfits">>
+	<li class="no-numberify"><<wearlink_norefresh "Large towel" 'large_towel' _wear>></li>
 <</if>>
-<<if _wardrobe_list is "upper" or _wardrobe_list is "lower" >>
-	<li><a @onclick="`V.`+_wear+` = 'towel';SugarCube.State.display(V.passage)`">Towel</a></li>
+<<if (_wardrobe_list is "upper" or _wardrobe_list is "lower") and _showType isnot "outfits">>
+	<li class="no-numberify"><<wearlink_norefresh "Towel" 'towel' _wear>></li>
 <</if>>
 <<for _i to 0; _i lt $wardrobe[_wardrobe_list].length; _i++>>
 	<<set _item to $wardrobe[_wardrobe_list][_i]>>
@@ -817,7 +857,7 @@ __<<print _wardrobe_list[0].toUpperCase() + _wardrobe_list.substring(1) + (_show
 	<<if (_item.outfitPrimary isnot undefined and _showType is "non-outfits") or (_item.outfitPrimary is undefined and _showType is "outfits")>>
 		<<continue>>
 	<</if>>
-	<li>/*<<clothingicon _item>>*/<a @onclick="`V.`+_wear+` = `+ _i +`;SugarCube.State.display(V.passage)`">_item.name_cap</a>
+	<li class="no-numberify">/*<<clothingicon _item>>*/<<wearlink_norefresh _item.name_cap _i _wear>>
 	<<if $wardrobe[_wardrobe_list][_i].colour isnot 0>>
 		<span @class="$wardrobe[_wardrobe_list][_i].colour">(_item.colour)</span>
 	<</if>>
@@ -1109,6 +1149,22 @@ Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 
 				You can't go out like this!
 				<br><br>
 			<</if>>
+		<<case "Sydney Beach Changing Room">>
+			<<if $exposed lte 1>>
+				<<link[[Leave|Sydney Beach Swimsuit]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				You can't go out like this!
+				<br><br>
+			<</if>>
+		<<case "Sydney Beach Changing Room Leave">>
+			<<if $exposed lte 1>>
+				<<link[[Leave|Sydney Beach Leave]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+			<<else>>
+				You can't go out like this!
+				<br><br>
+			<</if>>
 		<<case "Eden Wardrobe">>
 			<<if $exhibitionism gte 75 or $loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden">>
 				<<link [[Done|Eden Cabin]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
@@ -1123,6 +1179,26 @@ Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 
 			<<else>>
 				<<if $exposed lte 0>>
 				<<link [[Done|Eden Cabin]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+				<<else>>
+				You can't remain undressed like this!
+				<br><br>
+				<</if>>
+			<</if>>
+		<<case "Eden Night Wardrobe">>
+			<<if $exhibitionism gte 75 or $loveInterest.primary is "Eden" or $loveInterest.secondary is "Eden">>
+				<<link [[Done|Eden Cabin Bed]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+			<<elseif $exhibitionism gte 55>>
+				<<if $exposed lte 1>>
+				<<link [[Done|Eden Cabin Bed]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<br><br>
+				<<else>>
+				You can't remain undressed like this!
+				<br><br>
+				<</if>>
+			<<else>>
+				<<if $exposed lte 0>>
+				<<link [[Done|Eden Cabin Bed]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 				<br><br>
 				<<else>>
 				You can't remain undressed like this!
@@ -1171,42 +1247,42 @@ Comfortable warmth range: <<print ($chill + 1)>> - <<print Math.trunc(($chill * 
 					<br><br>
 				<</if>>
 			<</if>>
-		<<case "Strip Club Dressing Room">>
+		<<case "Strip Club Wardrobe">>
 			<<if $exhibitionism lte 14>>
 				<<if $exposed lte 0>>
-					<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<<link [[Step away|Strip Club Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 					<br><br>
 				<<else>>
 					You can't go out like this!
 					<br><br>
 				<</if>>
 			<<elseif $exhibitionism gte 55>>
-				<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<<link [[Step away|Strip Club Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 				<br><br>
 			<<else>>
 				<<if $exposed lte 1>>
-					<<link [[Back to the club (0:01)|Strip Club]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<<link [[Step away|Strip Club Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 					<br><br>
 				<<else>>
 					You can't go out like this!
 					<br><br>
 				<</if>>
 			<</if>>
-		<<case "Brothel Dressing Room">>
+		<<case "Brothel Wardrobe">>
 			<<if $exhibitionism lte 14>>
 				<<if $exposed lte 0>>
-					<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<<link [[Step away|Brothel Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 					<br><br>
 				<<else>>
 					You can't go out like this!
 					<br><br>
 				<</if>>
 			<<elseif $exhibitionism gte 55>>
-				<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+				<<link [[Step away|Brothel Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 				<br><br>
 			<<else>>
 				<<if $exposed lte 1>>
-					<<link [[Back to the brothel (0:01)|Brothel]]>><<pass 1>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
+					<<link [[Step away|Brothel Dressing Room]]>><<unset $saveColor>><<unset $wardrobeRepeat>><<unset $tempDisable>><<set $delete_outfit to "none">><</link>>
 					<br><br>
 				<<else>>
 					You can't go out like this!
@@ -1264,7 +1340,7 @@ You look in your wardrobe.
 <<wardrobe>>
 
 :: Changing Room
-<<effects>><<set $outside to 0>><<set $location to "beach">>
+<<effects>><<location "changingroom">>
 <<set $wardrobe_location to "wardrobe">>
 You are in a small wooden changing room.
 <br><br>
@@ -1335,27 +1411,22 @@ You look through the rustic wardrobe.
 <<wardrobe>>
 
 
-:: Strip Club Dressing Room
-
-<<effects>><<set $outside to 0>><<set $location to "strip_club">>
+:: Strip Club Wardrobe
+<<effects>>
 <<set $wardrobe_location to "wardrobe">>
-You are in the strip club's dressing room. <<if $daystate isnot "day" and $daystate isnot "dawn">>There are a few mirrors, currently occupied by staff fixing their hair and makeup.<</if>>
-<br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
 <div id="wardrobeExits"><<wardrobeExits>></div>
 
 <<wardrobe>>
 
-:: Brothel Dressing Room
-
-<<effects>><<set $outside to 0>><<set $location to "brothel">>
+:: Brothel Wardrobe
+<<effects>>
 <<set $wardrobe_location to "wardrobe">>
-You are in the brothel's dressing room. There are a few mirrors, currently occupied by staff fixing their hair and makeup.
-<br><br>
 <div id="wardrobewear"><<wardrobewear>></div>
 <div id="wardrobeExits"><<wardrobeExits>></div>
 
 <<wardrobe>>
+
 
 :: School Boy Wardrobe
 

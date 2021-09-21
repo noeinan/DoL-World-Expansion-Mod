@@ -4,6 +4,11 @@
 <<exposure>>
 <<set $face to 0>>
 
+/*ToDo: Pregnancy, remove to properly enable*/
+<<if $pregnancyTesting is undefined>>
+	<<set $condomUse to false>>
+<</if>>
+
 <<if $enemyno gte 2>>
 	<<set $pronoun to "n">>
 <<else>>
@@ -25,10 +30,12 @@
 <</if>>
 
 <<if $images is 1>>
-	<<timed 100ms>>
-	<<combatimg>>
-	<br>
-	<</timed>>
+	<<if $position isnot "stalk">>
+		<<timed 100ms>>
+		<<combatimg>>
+		<br>
+		<</timed>>
+	<</if>>
 <</if>>
 
 <<if $traumafocus gte 1 and $traumafocusintro isnot 1>>
@@ -41,6 +48,7 @@
 	<<set $traumafocus to 0>><<set $trauma -= 1000>><<set $dissociation to 1>>
 	<span class="green">Your lucidity returns.</span>
 	<<ltrauma>>
+	<br>
 	<span class="red">The weight of reality crashes down on you.</span>
 	<br><br>
 <</if>>
@@ -52,7 +60,7 @@
 <<actioncarry>>
 <<actioncarrydrop>>
 
-<<if $trance lte 0 and $dissociation lte 1 and $panicparalysis is 0 and $panicviolence is 0
+<<if $trance lte 0 and $dissociation lte 1 and $panicparalysis is 0 and ($panicviolence is 0 or $position is "stalk")
 and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 
 	<<if $images is 1 and $consensual is 1 and $position_lock isnot 1>>
@@ -61,8 +69,10 @@ and $orgasmdown lte 0 and ($pain lt 100 or $willpowerpain is undefined)>>
 		<<elseif $position is "missionary">>
 			| <label>Roll over <<radiobutton "$bodyaction" "doggy">></label>
 		<</if>>
-		| <label>Rest <<radiobutton "$bodyaction" "rest" checked>></label>
-		<br>
+		<<if $position isnot "stalk">>
+			| <label>Rest <<radiobutton "$bodyaction" "rest" checked>></label>
+			<br>
+		<</if>>
 	<</if>>
 
 	<<if $combatControls isnot "disabled">>

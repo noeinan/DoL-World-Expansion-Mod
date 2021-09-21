@@ -1,16 +1,18 @@
 :: Widgets Wolf Cave [widget]
 
 <<widget "wolfcaveevent">>
-<<beastNEWinit 1 wolf>>
+	<<beastNEWinit 1 wolf>>
 	<<set $rng to random(1, 100)>>
+	<<cleareventpool>>
 	<<if $wolfstate isnot "cave">>
-		<<if $rng gte 81>>
+		<<childrenEvents "wolf_cave" $passage>>
+		<<addinlineevent "wolf cave play fight">>
 			One of the younger <<beastsplural>> approaches you. It wants to play fight.
 			<br><br>
 			<<link [[Play (0:20)|Wolf Cave Play Fight]]>><<pass 20>><<stress -4>><</link>><<lstress>>
 			<br>
 			<<if $deviancy gte 15>>
-				<<link [[Lewd Play|Wolf Cave Lewd Play]]>><<set $sexstart to 1>><</link>><<deviant2>>
+				<<link [[Lewd play|Wolf Cave Lewd Play]]>><<set $sexstart to 1>><</link>><<deviant2>>
 				<br>
 			<</if>>
 			<<if $bus is "wolfcave">>
@@ -20,28 +22,32 @@
 				<<link [[Ignore|Wolf Cave Clearing]]>><<endevent>><</link>>
 				<br>
 			<</if>>
-		<<elseif $rng gte 41>>
+		<</addinlineevent>>
+		<<addinlineevent "anxious younger wolves" 2>>
 			The younger <<wolf_cave_plural>> stare at the tree line, anxious for the pack's return.
 			<br><br>
 			<<endevent>>
 			<<destinationwolfcave>>
-		<<else>>
+		<</addinlineevent>>
+		<<addinlineevent "younger wolf rub" 2>>
 			One of the younger <<beastsplural>> rubs its head against your leg as it walks by.
 			<<ltrauma>><<lstress>><<trauma -6>><<stress -12>>
 			<<endevent>>
 			<br><br>
 			<<destinationwolfcave>>
-		<</if>>
+		<</addinlineevent>>
 	<<else>>
+		<<childrenEvents "wolf_cave" $passage>>
 		<<if $wolfpackferocity + random(1, 20) gte $wolfpackharmony + random(1, 20)>>
-			<<if $rng gte 81>>
+			<<addinlineevent "wolf cave fight">>
 				One of the <<beastsplural>> paces towards you, growling.
 				<br><br>
 				<<link [[Fight|Wolf Cave Fight]]>><<set $molestationstart to 1>><</link>>
 				<br>
 				<<link [[Call for help|Wolf Cave Help]]>><</link>>
 				<br>
-			<<elseif $rng gte 41>>
+			<</addinlineevent>>
+			<<addinlineevent "wolf cave play fight" 2>>
 				A play fight escalates until one draws blood.
 				<br><br>
 				<<link [[Intervene|Wolf Cave Intervene]]>><<set $phase to 0>><</link>>
@@ -50,7 +56,8 @@
 				<br>
 				<<link [[Ignore|Wolf Cave Intervene]]>><<set $phase to 2>><</link>>
 				<br>
-			<<else>>
+			<</addinlineevent>>
+			<<addinlineevent "wolf cave blackwolf agitated" 2>>
 				<<endevent>><<npc "Black Wolf">>/*<<beastNNPCinit>>*/
 				<<if $wolfpackleader is 1>>
 					The Black Wolf is agitated. <<bHe>> bites and growls at the others, agitating them in turn.
@@ -73,16 +80,16 @@
 					<<link [[Challenge|Wolf Cave Calm]]>><<set $phase to 2>><</link>>
 					<br>
 				<</if>>
-			<</if>>
+			<</addinlineevent>>
 		<<else>>
-			<<if $rng gte 61>>
+			<<addinlineevent "wolf face lick" 2>>
 				A <<beasttype>> rushes over to you. <<bHe>> rears up and leans on you, almost knocking you over. <<bHe>> licks your face.
 				<<ltrauma>><<lstress>><<trauma -6>><<stress -12>>
 				<br><br>
 
 				<<destinationwolfcave>>
-
-			<<elseif $rng gte 41>>
+			<</addinlineevent>>
+			<<addinlineevent "wolve mating rank">>
 				<<beastNEWinit 2 wolf>>
 				A low ranking <<print $combatTrain.beastTypes[0]>> approaches you wishing to mate. A more dominant <<print $combatTrain.beastTypes[1]>> tries to steal your attention.
 				<br><br>
@@ -98,16 +105,18 @@
 				<</if>>
 				<<link [[Ignore both|Wolf Cave Rank]]>><<set $phase to 3>><</link>>
 				<br>
-			<<else>>
+			<</addinlineevent>>
+			<<addinlineevent "young wolf rock climb" 2>>
 				A younger <<beasttype>> tries to climb on a rock. <<bHis>> feet skid and <<bhe>> tumbles to the ground. <<bHe>> stands up, but starts whining.
 				<br><br>
 				<<link [[Make sure it's okay (0:05)|Wolf Cave Young]]>><<set $phase to 0>><<pass 5>><</link>>
 				<br>
 				<<link [[Ignore|Wolf Cave Young]]>><<set $phase to 1>><</link>>
 				<br>
-			<</if>>
+			<</addinlineevent>>
 		<</if>>
 	<</if>>
+	<<runeventpool>>
 <</widget>>
 <<widget "wolfcavestate">>
 <<if $wolfpackferocity gte 20 and $wolfpackharmony gte 20>>

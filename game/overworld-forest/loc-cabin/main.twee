@@ -16,23 +16,28 @@ You are in Eden's cabin.
 <</if>>
 <<if $edencoat is 2>>
 	A coat stand is placed in the corner.
-	<<if $edencoatjacket is 1 and $edenscarf is 1>>
+	<<if $edencoatjacket is 1 and $edenscarf is 1 and !($hour gte 11 and $hour lte 14 and $edenhunting is 1)>>
 		A hunting coat and a scarf hang from it.
-	<<elseif $edenscarf is 1>>
+	<<elseif ($edenscarf is 1 and !($hour gte 11 and $hour lte 14 and $season is "winter" and $edenhunting is 1))>>
 		A scarf hangs from it.
-	<<elseif $edencoatjacket is 1>>
+	<<elseif $edencoatjacket is 1 and !($hour gte 11 and $hour lte 14 and $edenhunting is 1)>>
 		A hunting coat hangs from it.
 	<</if>>
 <</if>>
 
 <<if $stress gte $stressmax>>
 	<br><br>
-	<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+		<<pregnancyWatersBrokenPassout "edencabin">>
+	<<else>>
+		<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
+	<</if>>
 <<elseif ($edenfreedom is 2 and $edendays gte 8 and $hour gte 0 and $hour lte 6) or ($edenfreedom is 1 and $edendays gte 2 and $hour gte 0 and $hour lte 6)>>
 	<<set $edendays to 0>>
 	<<npcincr Eden love -2>>
 	You enter to find Eden sleeping. Woken by the sound of the door opening, <<he>> quickly rises from the bed, but relaxes slightly when <<he>> sees you.
-	Throwing off the covers, <<he>> rushes over to you. "Where have you been?" <<He>> asks grabbing you by the shoulders. "I was so worried about you."
+	Throwing off the covers, <<he>> rushes over to you. "Where have you been?" <<he>> asks grabbing you by the shoulders. "I was so worried about you."
 	<br><br>
 
 	<<link [[Apologize|Eden Return Apologize]]>><<npcincr Eden love 1>><<set $phase to 0>><</link>>
@@ -51,13 +56,13 @@ You are in Eden's cabin.
 	<</if>>
 	<br>
 	<<link [[Just say you removed it|Eden Collar Remove]]>><</link>>
-<<elseif $exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary is "Eden">>
+<<elseif $exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary isnot "Eden">>
 	You don't want to be seen like this! You rush to your clothes.
 	<br><br>
 
 	<<link [[Next|Eden Wardrobe]]>><<endevent>><</link>>
 	<br><br>
-<<elseif $exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary is "Eden">>
+<<elseif $exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary isnot "Eden">>
 	You don't want to be seen like this! You rush to your clothes.
 	<br><br>
 
@@ -67,9 +72,8 @@ You are in Eden's cabin.
 
 	<<if $exposed is 1 and $exhibitionism gte 55 or $exposed is 2 and $exhibitionism gte 75>>
 		<span class="lewd">You feel a primal thrill from your displayed <<lewdness>>.</span>
-		<br><br>
 	<<elseif $exposed is 1 or $exposed is 2>>
-		<span class="lewd">Your <<lewdness>> embarrass you, though no one but Eden can see you here.</span>
+		<span class="lewd">Your <<lewdness>> embarrasses you, though no one but Eden can see you here.</span>
 	<</if>>
 
 	<<if $daystate is "night">>
@@ -107,6 +111,8 @@ You are in Eden's cabin.
 
 		<<link [[Go with Eden|Eden Cabin Bed]]>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
 		<br>
+		<<link [[Change into night clothes|Eden Night Wardrobe]]>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
+		<br>
 		<<link [[Stay|Eden Cabin]]>><<endevent>><</link>>
 		<br>
 
@@ -137,7 +143,7 @@ You are in Eden's cabin.
 
 		<<set $valentines_eden_breakfast to 1>>
 		The sound of kitchenware rattles throughout the cabin, ripping you from your slumber. Blinking your eyes open, you see small beams of morning sunlight peek through the windows. Momentarily distracted, you stare at the scenery for a bit before the smell of food breaks your focus.
-		Puzzled, you turn over to ask Eden about it, but realize that <<hes>> not in bed. You sit up just in time to see <<him>> setting the table for breakfast. Hearing you stir, <<he>> turns <<his>> head to look at you.
+		Puzzled, you turn over to ask Eden about it, but realise that <<hes>> not in bed. You sit up just in time to see <<him>> setting the table for breakfast. Hearing you stir, <<he>> turns <<his>> head to look at you.
 		<br><br>
 
 		"Morning," <<he>> greets. <<Hes>> holding two plates of eggs.
@@ -428,7 +434,11 @@ You are in Eden's cabin.
 <<endevent>>
 <<effects>>
 
-You snuggle under the covers.
+<<if $hour gte 0 and $hour lte 6>>
+	You snuggle in beside Eden.
+<<else>>
+	You snuggle under the covers.
+<</if>>
 <br><br>
 
 <<if $sleeptrouble is 1 and $controlled is 0>>
@@ -468,7 +478,11 @@ You snuggle under the covers.
 <</if>>
 <<sleep>><<effects>>
 
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -487,8 +501,11 @@ You snuggle under the covers.
 <</if>>
 
 <<sleepeffects>>
-
-<<if $schoolwake is 1>><<set $schoolwake to 0>>
+<<if _dryheaving is true>>
+	"Hope you're not coming down with something. You should stay in bed," Eden says, watching worriedly. "I'll handle breakfast." <<set $edenbreakfast to 1>>
+	<br><br>
+	<<link [[Get out of bed|Eden Cabin]]>><</link>>
+<<elseif $schoolwake is 1>><<set $schoolwake to 0>>
 	<<npc Eden>><<person1>>
 	<<if _orgasm is true>>
 		Eden starts groping. <<He>> feels the moistness around your crotch. "I've been neglectful," <<he>> says, rubbing up against you.
@@ -608,6 +625,30 @@ You shove <<him>> away from you.
 <br><br>
 <<link [[Next|Eden Cabin Bed]]>><</link>>
 
+:: Eden Night Wardrobe
+<<effects>>
+
+You look through Eden's wardrobe.
+<br><br>
+<<set $wardrobe_location to "wardrobe">>
+<<wardrobewear>>
+<div id="wardrobeExits"><<wardrobeExits>></div>
+<<wardrobe>>
+
+:: Eden Exposed
+<<effects>>
+
+You reach for the door, but Eden's voice stops you in your tracks.
+<br><br>
+
+"Wait," <<nnpc_he "Eden">> says. "You shouldn't go out like that."
+<br><br>
+
+<<link [[Stay inside|Eden Cabin]]>><<endevent>><</link>>
+<br>
+<<link [[Leave|Eden Clearing]]>><<set $edenexposed to 1>><</link>>
+
+
 :: Eden Bindings
 <<effects>>
 
@@ -633,8 +674,8 @@ Without a word, Eden picks up a knife and slashes your bindings.
 :: Eden Pillow Set
 <<effects>>
 
-You set the new rug by the fireplace and arrange the pillows around it. When you’re done, you step back and take a look at your work.
-The setup looks quite cozy, and you feel a sense of accomplishment. You’re sure that Eden would be satisfied with your choice.
+You set the new rug by the fireplace and arrange the pillows around it. When you're done, you step back and take a look at your work.
+The setup looks quite cozy, and you feel a sense of accomplishment. You're sure that Eden would be satisfied with your choice.
 <br><br>
 
 <<link [[Next|Eden Cabin]]>><<endevent>><</link>>
@@ -681,40 +722,55 @@ As the final touch, Eden lacquers the stand and leaves it to dry overnight.
 "Want to join me for a walk to the lake?" you ask.
 <</if>>
 
-Eden considers for a moment, then shrugs. "Not like I had anything better planned anyway."
-<br><br>
-
-<<if $edenraftintro is 1>>
-	<<if $submissive gte 1150>>
-		"O-oh, wait. I just remembered." you say.
-	<<elseif $submissive lte 850>>
-		"Oh, almost forgot" you say.
-	<<else>>
-		"Wait, I just remembered something" you say.
-	<</if>>
-	<br>
-
-	You hand Eden the inflatable raft you bought at the shopping center.
-	<br>
-	<<He>> looks at it, reading over the box cover. "An inflatable raft?" <<He>> asks.
+<<if $exposed gte 1>>
+	Eden's eyes scan over your exposed form. "I'm not letting you leave like that. Put some clothes on."
 	<br><br>
 
-	<<if $submissive gte 1150>>
-		"Y-Yes. We could use it at the lake. The <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> would look beautiful over the water."
-	<<elseif $submissive lte 850>>
-		"Yup. I was thinking we could use it at the lake. Besides, we could see the <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> over the water."
+	<<if $bus is "edenclearing">>
+		<<link [[Next|Eden Clearing]]>><<endevent>><</link>>
+		<br>
 	<<else>>
-		"Yes. I was thinking we could use it at the lake. Besides, we could see <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> over the water."
+		<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+		<br>
 	<</if>>
 
-	<<He>> peeks inside the box for a few seconds before nodding in response. You smile at <<him>> in gratitude and start walking to the lake.
-	<br><br>
-<</if>>
-
-<<if $edenraftintro is 1>>
-	<<link [[Forest lake (0:30)|Eden Raft Intro]]>><<pass 30>><<set $edenlake to 1>><</link>>
 <<else>>
-	<<link [[Forest lake (0:30)|Eden Forest Lake]]>><<pass 30>><<set $edenlake to 1>><</link>>
+	<<set $edenwalk to 1>>
+	Eden considers for a moment, then shrugs. "Not like I had anything better planned anyway."
+	<br><br>
+
+	<<if $edenraftintro is 1>>
+		<<if $submissive gte 1150>>
+			"O-oh, wait. I just remembered," you say.
+		<<elseif $submissive lte 850>>
+			"Oh, almost forgot," you say.
+		<<else>>
+			"Wait, I just remembered something," you say.
+		<</if>>
+		<br>
+
+		You hand Eden the inflatable raft you bought at the shopping centre.
+		<br>
+		<<He>> looks at it, reading over the box cover. "An inflatable raft?" <<he>> asks.
+		<br><br>
+
+		<<if $submissive gte 1150>>
+			"Y-Yes. We could use it at the lake. The <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> would look beautiful over the water."
+		<<elseif $submissive lte 850>>
+			"Yup. I was thinking we could use it at the lake. Besides, we could see the <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> over the water."
+		<<else>>
+			"Yes. I was thinking we could use it at the lake. Besides, we could see <<if $season is "autumn">>falling autumn leaves<<elseif $hour gte 6 and $hour lte 8>>sunset<<else>>sky<</if>> over the water."
+		<</if>>
+
+		<<He>> peeks inside the box for a few seconds before nodding in response. You smile at <<him>> in gratitude and start walking to the lake.
+		<br><br>
+	<</if>>
+
+	<<if $edenraftintro is 1>>
+		<<link [[Forest lake (0:30)|Eden Raft Intro]]>><<pass 30>><<set $edenlake to 1>><</link>>
+	<<else>>
+		<<link [[Forest lake (0:30)|Eden Forest Lake]]>><<pass 30>><<set $edenlake to 1>><</link>>
+	<</if>>
 <</if>>
 <br><br>
 
@@ -731,11 +787,11 @@ Eden considers for a moment, then shrugs. "Not like I had anything better planne
 <<else>>
 "Want to help me search the forest?" you ask.
 <</if>>
-
+<br><br>
 Eden thinks for a second, then nods. "If you must, I'll accompany you."
 <br><br>
 
-<<link [[Search the Forest|Eden Forest Search]]>><<pass 30>><</link>>
+<<link [[Search the forest|Eden Forest Search]]>><<pass 30>><</link>>
 <br><br>
 
 :: Eden Clearing
@@ -773,23 +829,48 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 	<br>
 	<<link [[Just say you removed it|Eden Collar Remove]]>><</link>>
 <<elseif $stress gte $stressmax>>
-	<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
-<<elseif $exposed gte 2 and $exhibitionism lte 74>>
-	You don't want to be seen like this! You rush to your clothes.
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+		<<pregnancyWatersBrokenPassout "edencabin">>
+	<<else>>
+		<<link [[Everything fades to black...|Eden Cabin Passout]]>><</link>>
+	<</if>>
+<<elseif $hour is 17 and $exposed gte 1 and !$edenexposed>>
+	Eden walks up to the cabin door, turning back to you just before <<he>> enters. <<He>> eyes your <<lewdness>> for a moment. "You should head inside."
+	<br><br>
+
+	<<link [[Follow Eden|Eden Cabin]]>><<endevent>><</link>>
+	<br>
+	<<link [[Stay outside|Eden Clearing]]>><<set $edenexposed to 1>><<endevent>><</link>>
+<<elseif ($exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary is "Eden") or ($exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary is "Eden" and $hour gte 0 and $hour lte 8) or ($exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary is "Eden" and $hour gte 11 and $hour lte 14 and $edenhunting is 1) or ($exposed gte 2 and $exhibitionism lte 74 and $loveInterest.primary is "Eden" and $hour gte 17)>>
+
+	<<if $loveInterest.primary is "Eden">>
+		You don't want to be seen like this when Eden's not around! You rush to your clothes.
+	<<else>>
+		You don't want to be seen like this! You rush to your clothes.
+	<</if>>
 	<br><br>
 
 	<<link [[Next|Eden Wardrobe]]>><<endevent>><</link>>
 	<br><br>
-<<elseif $exhibitionism lte 54 and $exposed gte 1>>
-	You don't want to be seen like this! You rush to your clothes.
+<<elseif ($exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary isnot "Eden" and $loveInterest.secondary is "Eden") or ($exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary is "Eden" and $hour gte 0 and $hour lte 8) or ($exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary is "Eden" and $hour gte 11 and $hour lte 14 and $edenhunting is 1) or ($exhibitionism lte 54 and $exposed gte 1 and $loveInterest.primary is "Eden" and $hour gte 17)>>
+
+	<<if $loveInterest.primary is "Eden">>
+		You don't want to be seen like this when Eden's not around! You rush to your clothes.
+	<<else>>
+		You don't want to be seen like this! You rush to your clothes.
+	<</if>>
 	<br><br>
 
 	<<link [[Next|Eden Wardrobe]]>><<endevent>><</link>>
 	<br><br>
 <<else>>
 
-<<if $exposed is 1 and $exhibitionism gte 55>>
+<<if $exposed is 1 and $exhibitionism gte 55 or $exposed is 2 and $exhibitionism gte 75>>
 	<span class="lewd">With your <<lewdness>> on display, you can't help but feel a primal thrill.</span>
+	<br><br>
+<<elseif $exposed is 1 or $exposed is 2>>
+	<span class="lewd">Your <<lewdness>> embarrasses you, but it's alright if Eden's here.</span>
 	<br><br>
 <</if>>
 
@@ -822,12 +903,17 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 <<elseif $hour gte 11 and $hour lte 14>>
 
 	<<if $edenhunting isnot 1>><<set $edenhunting to 1>>
-	Eden exits the cabin, gun in hand. "I'm going hunting. Stay near the cabin while I'm gone."
+
+	<<if $season is "winter" and $edenscarf is 1>>
+		Eden exits the cabin, scarf around <<his>> neck and gun in hand. "I'm going hunting. Stay near the cabin while I'm gone."
+	<<else>>
+		Eden exits the cabin, gun in hand. "I'm going hunting. Stay near the cabin while I'm gone."
+	<</if>>
 	<br><br>
 
 	<<link [[Nod|Eden Hunting]]>><<set $phase to 0>><</link>>
 	<br>
-	<<link [[Tell Eden to be Safe|Eden Hunting]]>><<set $phase to 1>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
+	<<link [[Tell Eden to be safe|Eden Hunting]]>><<set $phase to 1>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
 	<br>
 	<<link [[Ask to go along|Eden Hunting]]>><<set $phase to 2>><</link>>
 	<br>
@@ -848,8 +934,9 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 
 	<<if $rng gte 91 and !$edenhurt>>
 		<<set $edenhurt to 1>>
+		<<person1>>
 		The sudden snapping of a twig draws your attention to the treeline. Eden emerges from the forest, <<his>> clothes looking ragged and torn in various places.
-		<<His>> rifle, usually slung over <<his>> shoulder, is grasped tightly in <<his>> hand. You gasp when you see the state <<hes>> in, and flinch when you notice the claw shaped marks covering <<his>> arms and chest.
+		<<His>> rifle, usually slung over <<his>> shoulder, is grasped tightly in <<his>> hand. You gasp when you see the state <<he>>'s in, and flinch when you notice the claw shaped marks covering <<his>> arms and chest.
 		<br><br>
 
 		<<if $submissive gte 1150>>
@@ -857,16 +944,16 @@ You are in the clearing outside Eden's cabin. The surrounding trees are so huge 
 		<<elseif $submissive lte 850>>
 		  		"You're hurt! How could you be so reckless?" You stomp over to examine <<his>> wounds.
 		<<else>>
-		  		"You're hurt!" You cry, and rush over to examine <<his>> wounds.
+		  		"You're hurt!" you cry, and rush over to examine <<his>> wounds.
 		<</if>>
 		<br><br>
 
-		Eden brushes your concern off with a wave of <<his>> hand. "I'm fine," he says. "Ran into some wolves, but I scared them off."
+		Eden brushes your concern off with a wave of <<his>> hand. "I'm fine," <<he>> says. "Ran into some wolves, but I scared them off."
 		<<He>> wipes some sweat from <<his>> face and brushes a few clumps of dirt off <<his>> pants. "I'm going to fix myself up." Making <<his>> way to the cabin door, <<he>> pauses just as <<he>> reaches for the handle.
-		Turning to face you, <<he>> gives you a wary look. "Better get in. Don’t want you getting hurt too."
+		Turning to face you, <<he>> gives you a wary look. "Better get in. Don't want you getting hurt too."
 	 	<br><br>
 
-		<<link [[Offer to Patch Wounds (0:20)|Eden Wounds]]>><<pass 20>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
+		<<link [[Offer to patch wounds (0:20)|Eden Wounds]]>><<pass 20>><<npcincr Eden love 1>><<npcincr Eden dom 1>><</link>><<glove>><<gdom>>
 		<br>
 		<<link [[Nod|Eden Wounds Nod]]>><</link>>
 
@@ -1076,7 +1163,7 @@ You hug Eden. <<He>> expects it and catches you.
 <</if>>
 
 :: Eden Cabin Escape
-<<set $outside to 1>><<set $location to "forest">><<effects>>
+<<location "forest">><<effects>>
 
 You walk to the edge of the clearing and gaze into the darkness of the forest. Are you sure you want to escape?
 <br><br>
@@ -1176,7 +1263,7 @@ Eden leads you back to the safety of <<his>> cabin.
 
 	Eden furrows <<his>> eyebrows at your question. "I'm not going to town," <<he>> says, turning away from you.
 	<br>
-	"But you don’t have to go. I'll do it," you say.
+	"But you don't have to go. I'll do it," you say.
 	<br><br>
  	<<He>> sighs at your words, looking away in consideration. "Fine," <<he>> says, "but don't go overboard."
 	<br>
@@ -1209,9 +1296,9 @@ Eden leads you back to the safety of <<his>> cabin.
 <<if $submissive gte 1150>>
 	"I-I was wondering if we could get new curtains. And a coat stand," you ask.
 <<elseif $submissive lte 850>>
-	"The cabin still looks bare. How about some new curtains and a coat stand?" You ask.
+	"The cabin still looks bare. How about some new curtains and a coat stand?" you ask.
 <<else>>
-	"Could we get some new curtains and a coat stand?" You ask.
+	"Could we get some new curtains and a coat stand?" you ask.
 <</if>>
 <br><br>
 <<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 120>><<set $edenfurniture to 2>>
@@ -1223,7 +1310,7 @@ Eden leads you back to the safety of <<his>> cabin.
 	"But it's just for two more things," you say.
 	<br><br>
  	For a few seconds, Eden shifts <<his>> gaze to the worn out curtains hanging from the cabin windows, before <<his>> eyes land back on you.
-	   "Fine," <<he>> says, albeit more reluctantly than last time. “But we’re making the coat stand.”
+	   "Fine," <<he>> says, albeit more reluctantly than last time. “But we're making the coat stand.”
 	<br>
 	You smile at <<him>> in thanks, leaving <<him>> be.
 	<br><br>
@@ -1253,9 +1340,9 @@ Eden leads you back to the safety of <<his>> cabin.
 <<if $submissive gte 1150>>
 	"I-I was wondering if we could make a loveseat," you ask.
 <<elseif $submissive lte 850>>
-	"This place needs a final touch. How about making a loveseat?" You ask.
+	"This place needs a final touch. How about making a loveseat?" you ask.
 <<else>>
-	"Could we make a loveseat for the cabin?" You ask.
+	"Could we make a loveseat for the cabin?" you ask.
 <</if>>
 <br><br>
 <<if $NPCName[$NPCNameList.indexOf("Eden")].love gte 180>><<set $edenfurniture to 3>><<set $edenloveseat to 1>>
@@ -1268,7 +1355,7 @@ Eden leads you back to the safety of <<his>> cabin.
 	<<if $submissive gte 1150>>
 		"I-I don't mind," you say.
 	<<elseif $submissive lte 850>>
-		"So?" You ask.
+		"So?" you ask.
 	<<else>>
 		"That's fine," you say.
 	<</if>>
@@ -1315,12 +1402,12 @@ Eden leads you back to the safety of <<his>> cabin.
 		You do the same with attaching the slats in the notches. The loveseat's foundation is halfway done.
 	<<case 4>>
 		You and Eden turn your attention to creating the upright back of the loveseat.<br>
-		It’s thankfully a similar process of cutting out notches and placing the supporting slats inside.
+		It's thankfully a similar process of cutting out notches and placing the supporting slats inside.
 	<<case 5>>
-		With most of the loveseat’s foundation complete, you and Eden spend your time sanding the wood down in the clearing.<br>
-		Though it’s not the easiest process in the world, you know that sanding before the foundation is assembled would save you a lot of time in the long run.
+		With most of the loveseat's foundation complete, you and Eden spend your time sanding the wood down in the clearing.<br>
+		Though it's not the easiest process in the world, you know that sanding before the foundation is assembled would save you a lot of time in the long run.
 	<<case 6>>
-		Now that the foundation’s been sanded, you and Eden start putting it all together. You position the seats, securing them by drilling in some screws in the corner.<br>
+		Now that the foundation's been sanded, you and Eden start putting it all together. You position the seats, securing them by drilling in some screws in the corner.<br>
 		Next, you join the upright back, once again securing them in with screws. You and Eden step back and take a look at your work. The only thing missing now are some cushions.
 		<br><br>
 
@@ -1329,8 +1416,8 @@ Eden leads you back to the safety of <<his>> cabin.
 		Using the foam cushions as a template, you cut the batting and attach them to the cushions with superglue. Next, you cut out the cloth and start sewing together some cushion covers.<br>
 		With that done, you place the covers around your foam base, completing your cushions.
 	<<case 8>>
-		As the last step, you place your cushions on top of the frame, completing your loveseat. Knowing that this wasn’t an easy project to tackle, looking at your work fills you with a sense of pride.<br>
-		You glance around the cabin one more time. With all your new additions, the cabin’s looking better than ever, and you smile to yourself in satisfaction for a job well done.
+		As the last step, you place your cushions on top of the frame, completing your loveseat. Knowing that this wasn't an easy project to tackle, looking at your work fills you with a sense of pride.<br>
+		You glance around the cabin one more time. With all your new additions, the cabin's looking better than ever, and you smile to yourself in satisfaction for a job well done.
 <</switch>>
 <br><br>
 
@@ -1341,17 +1428,17 @@ Eden leads you back to the safety of <<his>> cabin.
 <</if>>
 :: Eden Blanket One
 <<effects>>
-You grab a few animal pelts and start sewing. It’s slow work, but you get some of the blanket done.
+You grab a few animal pelts and start sewing. It's slow work, but you get some of the blanket done.
 <br><br>
 
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Blanket Two
 <<effects>>
-You grab more pelts and sew them together. The blanket’s getting bigger now.
+You grab more pelts and sew them together. The blanket's getting bigger now.
 <br><br>
 
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Blanket Three
 <<effects>>
@@ -1361,7 +1448,7 @@ You sew on the remaining pelts and look over your work. Running your hands over 
 Looking around the cabin, your eyes are drawn to the loveseat. You drape it over, stepping back and nodding in satisfaction at your work. Eden will be happy when <<he>> sees this.
 <br><br>
 
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Design
 <<effects>>
@@ -1375,12 +1462,12 @@ Looking around the cabin, your eyes are drawn to the loveseat. You drape it over
 		Taking the pillows again, you turn your attention to the sky. You alternate between yellow and orange threads, until your project is complete.
 		Eden would be happy when <<he>> sees this.
 	<<case 4>>
-		You grab another pillow, thinking about what design you’d work on this time. Eventually, you settle on sewing in the trees of the forest.
+		You grab another pillow, thinking about what design you'd work on this time. Eventually, you settle on sewing in the trees of the forest.
 		Grabbing some brown thread, you start working on the tree trunks, making sure to pack them tightly together.
 	<<case 5>>
 		You grab the pillow again and, using some green thread, start sewing in the leaves. You make sure to alternate between different shades for extra detail in your design.
 	<<case 6>>
-		Grabbing the pillow, you finish the landscape by sewing in the ground. When you’re done, you place it next to the other pillow you previously worked on.
+		Grabbing the pillow, you finish the landscape by sewing in the ground. When you're done, you place it next to the other pillow you previously worked on.
 		The sight of a job well done makes you satisfied, and Eden would be happy when <<he>> sees this.
 	<<case 7>>
 		You grab another pillow and spend some time wondering what your next design will be. Looking around, inspiration strikes. You decide on sewing the cabin clearing.
@@ -1388,20 +1475,20 @@ Looking around the cabin, your eyes are drawn to the loveseat. You drape it over
 	<<case 8>>
 		Grabbing the pillow again, you start working on sewing in the garden plots and spring. You find yourself peering out the window at times for reference.
 	<<case 9>>
-		Taking the pillow, you finish the scene by focusing on the sky. It takes a bit, but when you’re done, you place it with all the other pillows you worked on.
-		Seeing them fills you with a sense of accomplishment, and you’re sure Eden would be happy too.
+		Taking the pillow, you finish the scene by focusing on the sky. It takes a bit, but when you're done, you place it with all the other pillows you worked on.
+		Seeing them fills you with a sense of accomplishment, and you're sure Eden would be happy too.
 <</switch>>
 <br><br>
 
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Scarf
 <<effects>>
-You grab some fleece and, folding it in half, start sewing it together. It’s slow work, but you make steady progress until you’re done.
-Once you’re finished, you hang the scarf on the coat stand, where you know Eden will see it.
+You grab some fleece and, folding it in half, start sewing it together. It's slow work, but you make steady progress until you're done.
+Once you're finished, you hang the scarf on the coat stand, where you know Eden will see it.
 <br><br>
 
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Recaptured
 <<set $outside to 0>><<set $location to "cabin">><<effects>>
@@ -1629,75 +1716,6 @@ You climb to your knees and look up at <<him>>.
 <br><br>
 <<link [[Next|Eden Cabin]]>><</link>>
 
-
-:: Street Eden
-/* note: unused passage */
-<<effects>>
-
-You cross the road. Eden spots you. "You think this is funny?" <<He>> shouts, marching towards you. "I've been worried half to death!" <<He>> grasps your arm. "I'm taking you home, and never letting you leave again. I'll keep you in a cage if I have to."
-<br><br>
-
-<<if $worn.neck.collared isnot 1>><<neckwear 1>>
-<<He>> fastens a collar around your neck.
-<br><br>
-<</if>>
-<<He>> grabs hold of your leash and pulls. "Come on. I'll punish you when we get home."
-<br><br>
-
-<<generate2>><<person2>>"You shouldn't treat <<phim>> like that," A <<person>> interjects as Eden drags you by. Eden ignores <<him>>.
-<br><br>
-
-The sight of a <<girl>> being dragged along on a leash turns heads. People whisper to each other, but no one intervenes. A <<generatey3>><<person3>><<person>> laughs and pulls out <<his>> phone to record you. Eden ignores <<him>> too.
-
-Eden calms down a bit once you're in the forest.
-<br><br>
-
-<<endevent>><<npc Eden>><<person1>>
-<<link [[Next|Eden Recaptured]]>><</link>>
-<br>
-
-:: Street Eden Hide
-/* note: unused passage */
-<<effects>>
-
-<<if $rng gte 51>>
-	You hide behind a postbox. Eden continues bothering passers-by, unaware that you're so close. It looks like <<he>> doesn't intend to move on for a while, until <<he>> starts arguing with a <<generate2>><<person2>><<person>>. The argument becomes more intense until Eden storms off.
-	<br><br>
-
-	<<endevent>>
-	<<destinationeventend>>
-
-<<else>>
-	<<set $edenaskcollar to 0>>
-	You hide behind a postbox. Eden continues bothering passers-by, drawing ever closer. <<He>> stops a moment, and sniffs the air, before continuing.
-	<br><br>
-
-	Eden waits until <<hes>> right beside the postbox before striking, <span class="red">lunging around it and grasping your arm.</span>
-	<br><br>
-	"You think this is funny?" <<He>> shouts. "I've been worried half to death!" <<His>> grip is tight. "I'm taking you home, and never letting you leave again. I'll keep you in a cage if I have to."
-	<br><br>
-
-	<<if $worn.neck.collared isnot 1>><<neckwear 1>>
-	<<He>> fastens a collar around your neck.
-	<br><br>
-	<</if>>
-	<<He>> grabs hold of your leash and pulls. "Come on. I'll punish you when we get home."
-	<br><br>
-
-	<<generate2>><<person2>>"You shouldn't treat <<phim>> like that," A <<person>> interjects as Eden drags you by. Eden ignores <<him>>.
-	<br><br>
-
-	The sight of a <<girl>> being dragged along on a leash turns heads. People whisper to each other, but no one intervenes. A <<generatey3>><<person3>><<person>> laughs and pulls out <<his>> phone to record you. Eden ignores <<him>> too.
-
-	Eden calms down a bit once you're in the forest.
-	<br><br>
-
-	<<endevent>><<npc Eden>><<person1>>
-	<<link [[Next|Eden Recaptured]]>><</link>>
-	<br>
-<</if>>
-
-
 :: Eden Asylum Rescue
 <<set $outside to 0>><<set $location to "cabin">><<effects>>
 <<set $edendays to 0>>
@@ -1716,7 +1734,7 @@ After you enter the cabin, Eden shuts the door behind you and wraps you up in a 
 	<<lllpain>><<lltrauma>><<llstress>><<trauma -20>><<pain -200>><<stress -20>>
 	<br><br>
 <</if>>
-"What happened?" <<He>> asks. Moreso demands. You tell <<him>> about the trauma that you suffered, and how you had been forced into the asylum for "treatment," and weren't allowed to leave. You also detail what Harper, the asylum staff and other patients subjected you to while you were there.
+"What happened?" <<he>> asks. Moreso demands. You tell <<him>> about the trauma that you suffered, and how you had been forced into the asylum for "treatment," and weren't allowed to leave. You also detail what Harper, the asylum staff and other patients subjected you to while you were there.
 <br><br>
 Eden's face twists in rage, guilt and horror through your story. When you're done, <<he>> slams <<his>> fist onto the table.
 <br><br>
@@ -1774,7 +1792,7 @@ You feel safe once beneath the canopy, but don't stop until you reach the cabin.
 		<<if $edenshoutrescue is 1>>
 			"The one you punched in the face."
 			<br>
-			"That one?" <<He>> asks. "Should have done more than punch."
+			"That one?" <<he>> asks. "Should have done more than punch."
 		<</if>>
 <<else>>
 	"What happened?" <<he>> asks.
@@ -1869,7 +1887,7 @@ You decide against buying the radio. Maybe next time.
 <<set $edenradiointro to 2>><<npcincr Eden love 10>>
 You place the radio on the table before calling Eden over to see it.
 <br><br>
-"A radio?" <<He>> asks, scratching <<his>> head. "Not that I don't appreciate the gesture, but why the sudden purchase?"
+"A radio?" <<he>> asks, scratching <<his>> head. "Not that I don't appreciate the gesture, but why the sudden purchase?"
 <br><br>
 <<if $submissive gte 1150>>
 "I-I just thought you'd enjoy it," you say.
@@ -1904,7 +1922,7 @@ In fact, the vulnerability of the moment seems to have exposed <<him>>, somehow.
 <br><br>
 You feel glad that <<he>>'s showing this to you now, even if it's through uncertain and awkward movements. Maybe, that's what makes it special.
 <br><br>
-<<He>>'s no expert at dancing and stumbles more than a few times, but it's nice. You're struck with the realization that even if life with Eden isn't perfect, <<he>> is trying for you.
+<<He>>'s no expert at dancing and stumbles more than a few times, but it's nice. You're struck with the realisation that even if life with Eden isn't perfect, <<he>> is trying for you.
 <br><br>
 Like <<he>>'s trying right now.
 <br><br>
@@ -2037,45 +2055,57 @@ You've gained <<moneyGain 200>>.
 
 :: Eden Fix
 <<effects>>
-<!-- <<npc Eden>><<person1>> -->
+<<npc Eden>><<person1>>
 You fix Eden's clothes, which are full of rips and tears from <<his>> hunting trips.
 <<if $hour lte 6>>
 You decide to leave them on the table as to not disturb <<his>> rest.
-<<elseif $hour gte 11 and $hour lte 14>>
+<<elseif $hour gte 11 and $hour lte 14 and $edenhunting is 1>>
 You decide to leave them on the table until <<he>> comes back.
 <<else>>
 <<He>> seems grateful when you give them back to <<him>>.
 <</if>>
 <br><br>
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Sweep
 <<effects>>
 <!-- <<npc Eden>><<person1>> -->
-Using the broom and dustpan, you sweep the cabin floor until it’s clean.
+Using the broom and dustpan, you sweep the cabin floor until it's clean.
 <br><br>
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Salve
 <<effects>>
 <!-- <<npc Eden>><<person1>> -->
-You gather the ingredients for your salve and boil the mixture on the stove. When you’re done, you leave your salve on the table to cool and dry.
+You gather the ingredients for your salve and boil the mixture on the stove. When you're done, you leave your salve on the table to cool and dry.
 <br><br>
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<if $salve is 1>>
+	You have 1 jar of salve.
+<<elseif $salve gte 2>>
+	You have $salve jars of salve.
+<</if>>
+<br><br>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Soap
 <<effects>>
 <!-- <<npc Eden>><<person1>> -->
-You gather the ingredients for your soap and boil the mixture on the stove. When you’re done, you leave your soap on the table to cool and set.
+You gather the ingredients for your soap and boil the mixture on the stove. When you're done, you leave your soap on the table to cool and set.
 <br><br>
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<if $soap is 1>>
+	You have 1 bar of soap.
+<<elseif $soap gte 2>>
+	You have $soap bars of soap.
+<</if>>
+<br><br>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Stock
 <<effects>>
 <!-- <<npc Eden>><<person1>> -->
 You take stock of Eden's supplies, noting what needs to be replenished and how much it would cost.<<gmaths>><<mathsskill>>
 <br><br>
-<<link [[Next|Eden Cabin]]>><<endevent>><</link>>
+<<link [[Next|Cabin House Actions]]>><<endevent>><</link>>
 
 :: Eden Mirror
 
@@ -2140,17 +2170,17 @@ You search the clearing for wild flowers, and find a number of poppies growing a
 	<<set $alarm to 0>>
 	<<set $gwylan_aborted to 1>>
 	<<if $forest_shop_intro isnot 1 and $gwylan_rescue isnot 1>>
-		You see a <<nnpc_gendery "Gwylan">> burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> flinches back upon seeing who you're being attacked by, <span class="red">before turning and running away.</span>
+		You see a <<nnpc_gendery "Gwylan">> burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> takes one look at the assailant, <span class="red">then turns and runs away.</span>
 		<br><br>
 	<<else>>
-		You see Gwylan burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> flinches back upon seeing who you're being attacked by, <span class="red">before turning and running away.</span>
-	<br><br>
+		You see Gwylan burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> takes one look at the assailant, <span class="red">then turns and runs away.</span>
+		<br><br>
 	<</if>>
 <<elseif $alarm is 1 and $rescue is 0 and $forest gte 21>>
 	<<if $gwylan_rescue is 1>>
 		<span class="red">You're too deep into the forest for Gwylan to hear you.</span>
 	<<else>>
-		<span class="red">You're too far from the town for anyone to hear you.</span>
+		<span class="red">You're too far from town for anyone to hear you.</span>
 	<</if>>
 	<br><br>
 <</if>>
@@ -2215,10 +2245,10 @@ You search the clearing for wild flowers, and find a number of poppies growing a
 	<<set $alarm to 0>>
 	<<set $gwylan_aborted to 1>>
 	<<if $forest_shop_intro isnot 1 and $gwylan_rescue isnot 1>>
-		You see a <<nnpc_gendery "Gwylan">> burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> flinches back upon seeing who you're being attacked by, <span class="red">before turning and running away.</span>
+		You see a <<nnpc_gendery "Gwylan">> burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> takes one look at the assailant, <span class="red">then turns and runs away.</span>
 		<br><br>
 	<<else>>
-		You see Gwylan burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> flinches back upon seeing who you're being attacked by, <span class="red">before turning and running away.</span>
+		You see Gwylan burst through the treeline, alarmed by your shout. <<nnpc_He "Gwylan">> takes one look at the assailant, <span class="red">then turns and runs away.</span>
 	<br><br>
 	<</if>>
 <<elseif $alarm is 1 and $rescue is 0 and $forest gte 21>>
@@ -2318,14 +2348,14 @@ You search the clearing for wild flowers, and find a number of poppies growing a
 You slip in and out of consciousness. You feel something carry you, and hear the sounds of the forest.
 <br><br>
 
-You wake up some time later on a bed. It feels familiar. You look around, and realize that you are in the cabin in the forest. Eden sits beside you, drinking from a mug. <<He>> glances at you, and puts down <<his>> drink.
+You wake up some time later on a bed. It feels familiar. You look around, and realise that you are in the cabin in the forest. Eden sits beside you, drinking from a mug. <<He>> glances at you, and puts down <<his>> drink.
 <br><br>
 
 "You're awake. I was worried," <<he>> says, looking relieved as <<he>> reaches for you, and folds you in a firm hug. You hug <<him>> back, though you're still weak.
 <br><br>
 
 <<if $submissive gte 1150>>
-	"Thank you!" You say. "I don't know what would've happened to me if you didn't rescue me."
+	"Thank you!" you say. "I don't know what would've happened to me if you didn't rescue me."
 <<elseif $submissive lte 850>>
 	"Thanks for the help," you say. "I owe you one."
 <<else>>
@@ -2389,7 +2419,7 @@ You pass out again.
 <</if>>
 <br><br>
 
-"What? Why?" <<He>> asks, frustrated.
+"What? Why?" <<he>> asks, frustrated.
 <br>
 
 <<if $submissive gte 1150>>

@@ -267,7 +267,11 @@ You snuggle under the covers.
 	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
 <</if>>
 <<sleep>><<effects>>
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -289,14 +293,25 @@ You snuggle under the covers.
 	<<set $schoolwake to 0>><<asylumeffects>>
 	<<if $rapewake is 1>>
 		<<set $rapewake to 0>>
-		<<generate1>><<generate2>><<person1>>A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<generate1>><<generate2>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. "Feeling better now?" <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<<else>>
+			A <<person>> shakes you awake. "Wakey wakey," <<he>> says. "Me and my friend here work very hard protecting you crazies from yourselves. How about you give us a little something in return?" <<He>> gropes you.
+		<</if>>		
 		<br><br>
 		<<link [[Next|Asylum Cell Rape]]>><<set $molestationstart to 1>><</link>>
 		<br>
 	<<elseif $asylumstate is "firsttreatment" and $asylumfirsttreatment isnot 1>>
 		<<set $asylumfirsttreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>> rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -304,8 +319,14 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "secondtreatment" and $asylumsecondtreatment isnot 1>>
 		<<set $asylumsecondtreatment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your treatment," <<he>> says. "Come with me."
 		<br><br>
@@ -313,15 +334,27 @@ You snuggle under the covers.
 		<<asylumtreatments>>
 	<<elseif $asylumstate is "assessment" and $asylumassessment isnot 1>>
 		<<set $asylumassessment to 1>>
-		<<generate1>><<person1>>A <<person>> shakes you awake. <<Hes>> a nurse.
-		<br><br>
+		<<generate1>><<person1>>
+		<<if _wakingEffect is "dryheaving">>
+			A <<person>>  rubs your back. <<Hes>> a nurse.
+			<br><br>
+		<<else>>
+			A <<person>> shakes you awake. <<Hes>> a nurse.
+			<br><br>
+		<</if>>
 		<<asylumoptions>>
 		"Doctor says it's time for your assessment," <<he>> says. "Come with me."
 		<br><br>
 		<<endevent>>
 		<<asylumassessment>>
 	<<else>>
-		A loud buzzing wakes you.
+		<<if _wakingEffect is "dryheaving">>
+			A loud buzzing continues in the background.
+			<br><br>
+		<<else>>
+			A loud buzzing wakes you.
+			<br><br>
+		<</if>>
 		<br><br>
 		<<link [[Get out of bed|Asylum Cell]]>><</link>>
 		<br><br>
@@ -405,7 +438,7 @@ You are in the asylum, deep in the forest. The building is over a century old, a
 	<br><br>
 	<<endevent>>
 	<<npc Harper>><<person1>>
-	The Doctor is indeed waiting outside. The other patients line up near <<him>>. <<Hes>> holding a whistle. "Time for your daily exercise," <<he>> says. "When I blow, I want you to run in a circle around the grounds. Don't stop until you hear me blow again."
+	The doctor is indeed waiting outside. The other patients line up near <<him>>. <<Hes>> holding a whistle. "Time for your daily exercise," <<he>> says. "When I blow, I want you to run in a circle around the grounds. Don't stop until you hear me blow again."
 	<br><br>
 	<<He>> whistles, and you run. It's not too harsh a pace, but orderlies follow after and chastise those who fall behind.
 	<<gathletics>><<athletics 3>><<physique 3>><<pass 30>>
@@ -685,9 +718,9 @@ You return to your workout.
 <<npc Eden>><<person1>>
 You're about to agree to Eden's plan, but stop when you remember something. "The guard towers," you say. "They'll see me climb the fence."
 <br><br>
-Eden's face falls at this realization. "I'll delay the distraction to 9 pm," <<he>> says. "They shouldn't see you then."
+Eden's face falls at this realisation. "I'll delay the distraction to 9 pm," <<he>> says. "They shouldn't see you then."
 <br><br>
-"How about their search lights?" You ask.
+"How about their search lights?" you ask.
 <br><br>
 "There has to be a breaker room somewhere providing power. Before the explosion goes off, shut it down and meet me in the forest," <<he>> says, placing a lock pick in your hands and sneaking off.
 <br><br>
@@ -961,7 +994,7 @@ You chat with the other patients.
 	<<else>>
 		"None of this <<print either("matters,","is real,","makes any difference,")>>" a <<person>> says. "We're all just
 		<<print either("living in some future supercomputer's artificial reality","NPCs in someone else's game","characters in a book","ghosts who don't realise we've died","katra passing through the infinite cycle of death and rebirth")>>
-		- but no-one recognises the truth."
+		- but no one recognises the truth."
 	<</if>>
 	<br><br>
 	<<endevent>>
@@ -994,7 +1027,7 @@ You chat with the other patients.
 	She's been here forever now. Her long hair used to be so beautiful but now no one-"<br>
 	The voices behind raise sharply. A <<person2>><<person>> is arguing with one of the orderlies.
 	<br><br>
-	"That's <<if $NPCList[0].penis isnot "none">>Dad. He's<<else>>Mum. She's<</if>> telling them to take better care of my sister.
+	"That's <<if $NPCList[0].pronoun is "m">>Dad. He's<<else>>Mum. She's<</if>> telling them to take better care of my sister.
 	She seems to be getting worse again. She blames herself now and thinks she was 'asking for it.' One of the doctors keeps
 	telling her that too. Really upsets her. She doesn't talk to anyone now. Won't even see us anymore. And her hair is nasty now.
 	They don't even brush it. I'd do it, but she won't see me. It's so-"
@@ -1065,7 +1098,7 @@ You chat with the other patients.
 		<<else>>We should complain! The doctors should help all of us, not just those attractive ones."
 		<</if>>
 	<<else>>
-		"That young Doctor smelled like cow manure the other afternoon," a <<person>> whispers. "Does <<nnpc_he "Harper">> live on a farm or something!?"
+		"That young doctor smelled like cow manure the other afternoon," a <<person>> whispers. "Does <<nnpc_he "Harper">> live on a farm or something!?"
 	<</if>>
 	<br><br>
 	<<endevent>>
@@ -1116,7 +1149,7 @@ You chat with the other patients.
 		<<He>> looks sharply around.
 	<<else>>
 		A <<person>> is smiling at you. As you sit near <<him>> you notice one of <<his>> hands is under <<his>> clothes, rhythmically
-		<<if $NPCList[0].penis isnot "none">>rubbing his dick.<<else>>rubbing her pussy.<</if>><br><br>
+		<<if $NPCList[0].penis isnot "none">>rubbing <<his>> dick.<<else>>rubbing <<his>> pussy.<</if>><br><br>
 
 		"Stay right there," <<he>> breathes.
 		<<if $beauty gte ($beautymax / 3) * 2 and $rng % 3>>"Looking at you is helping a lot."
@@ -1145,7 +1178,7 @@ You chat with the other patients.
 :: Asylum Eden Towel
 
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
-You think about the window above your room. Although the bars look unassuming, they're undoubtably connected to an alarm system.
+You think about the window above your room. Although the bars look unassuming, they're undoubtedly connected to an alarm system.
 <br><br>
 It seems that for this plan to work, you'll have to find and disable it.
 <br><br>
@@ -1242,7 +1275,7 @@ You rest a hand on their thigh as they explain something to you. Their voice wav
 	You lift <<his>> skirt.
 <</if>>
 <<if $NPCList[0].penis isnot "none">>
-	<<set $rightarmsemen += 1>>
+	<<set $player.bodyliquid.rightarm.semen += 1>>
 	<<Hes>> already hard beneath. You run your fingers along <<his>> shaft, and feel <<him>> tremble under your touch. <<He>> shoots furtive glances around the library, but none of the patients or staff have noticed.
 	<br><br>
 	Your fingers reach <<his>> glans, and a moan escapes <<his>> lips. <<He>> presses a hand to <<his>> mouth. <<He>> doesn't last much longer before a wave of pleasure spasms through <<him>> and <<he>> erupts on your hand.
@@ -1617,7 +1650,7 @@ You emerge from the wood far from town, but the road curves north through moor a
 :: Asylum Harper Shove
 
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
-You shove the Doctor away from you. <<He>> looks angry, but soon regains <<his>> composure. "You still have some issues with anger management," <<he>> says. "But that's not why you were here. I'd like to keep seeing you on Fridays, at the hospital. There's a vehicle waiting to take you back to town. Be well."
+You shove the doctor away from you. <<He>> looks angry, but soon regains <<his>> composure. "You still have some issues with anger management," <<he>> says. "But that's not why you were here. I'd like to keep seeing you on Fridays, at the hospital. There's a vehicle waiting to take you back to town. Be well."
 <br><br>
 <<if $suspicion gte 80>>
 	A group of orderlies lead you away from Harper's office, through the main area of the asylum.
@@ -1775,7 +1808,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 <<set $outside to 1>><<set $location to "asylum">><<effects>>
 <<if $enemyarousal gte $enemyarousalmax>>
 	<<ejaculation>>
-	"The Doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
+	"The doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
 	<br><br>
 	<<He>> kisses your cheek and departs.
 	<br><br>
@@ -1787,7 +1820,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 	<<clotheson>>
 	<<endcombat>>
 <<elseif $finish is 1>>
-	"The Doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
+	"The doctor told me to be more accepting of advances," <<he>> says. "I've been missing out."
 	<br><br>
 	<<He>> kisses your cheek and departs.
 	<br><br>
@@ -1834,7 +1867,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 	<<endcombat>>
 	<<link [[Next|Asylum Cell]]>><</link>>
 <<else>>
-	Your assailants recoil in pain. "Come on," the <<person2>><<person>> says. "There are easier <<girls>> than this." The cell door locks with a click. <<tearful>> you lie back on the bed.
+	The <<group>> recoil in pain. "Come on," the <<person2>><<person>> says. "There are easier <<girls>> than this." The cell door locks with a click. <<tearful>> you lie back on the bed.
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
@@ -1849,7 +1882,7 @@ You lean closer to the <<person>>. "There are a lot of quiet places here," you w
 <<elseif $submissive lte 850>>
 	"Sure," you say. "I'll take a look."
 <<else>>
-	"Okay," You say. "You can show me."
+	"Okay," you say. "You can show me."
 <</if>>
 <br><br>
 
@@ -1897,7 +1930,7 @@ You shake your head. The <<person>> looks relieved for a moment, but <<his>> ord
 <<elseif $submissive lte 850>>
 	"Sure," you say, loud enough for the staff to hear. "I'll take a look."
 <<else>>
-	"Okay," You say, loud enough for the staff to hear. "You can show me."
+	"Okay," you say, loud enough for the staff to hear. "You can show me."
 <</if>>
 You close your eyes.
 <br><br>
@@ -1920,7 +1953,7 @@ You hear the shuffle of the <<persons>> gown fall to the floor. <<He>> starts co
 <<elseif $submissive lte 850>>
 	"Sure," you say. "I'll take a look."
 <<else>>
-	"Okay," You say. "You can show me."
+	"Okay," you say. "You can show me."
 <</if>>
 You pretend to close your eyes, though you really keep them a little open. Enough to see.
 <br><br>
@@ -2262,7 +2295,7 @@ is an important part of your assessment so you need to be on your best behaviour
 		<<set $ft_count to -10>>
 	<</if>><br>
 	_crowd<br><br>
-	<<link [[Let Yourself Enjoy It|Asylum Fake Treatment Masturbation]]>><<arousal 200>><<set $ft_count -=1>><</link>><<garousal>><br>
+	<<link [[Let yourself enjoy it|Asylum Fake Treatment Masturbation]]>><<arousal 200>><<set $ft_count -=1>><</link>><<garousal>><br>
 	<<link [[Resist|Asylum Fake Treatment Masturbation]]>><<arousal -100>><<set $ft_count -=1>><</link>><br>
 <<elseif $ft_count gte 1>>
 	<<if $ft_count is 19>>
@@ -2304,7 +2337,7 @@ is an important part of your assessment so you need to be on your best behaviour
 	<</if>><br>
 	_crowd<br><br>
 	<<if $ft_count gte 0 or $ft_count is -20>>
-		<<link [[Let Yourself Enjoy It|Asylum Fake Treatment Masturbation]]>><<arousal 200>><<set $ft_count -=1>><</link>><<garousal>><br>
+		<<link [[Let yourself enjoy it|Asylum Fake Treatment Masturbation]]>><<arousal 200>><<set $ft_count -=1>><</link>><<garousal>><br>
 		<<link [[Resist|Asylum Fake Treatment Masturbation]]>><<arousal -100>><<set $ft_count -=1>><</link>><br>
 	<<else>>
 		<<link [[Cool off|Asylum Fake Treatment Masturbation]]>><</link>><br>
@@ -2336,10 +2369,10 @@ is an important part of your assessment so you need to be on your best behaviour
 <<pass 5>>
 <<if $ft_count is 5>>
 	The <<person1>><<person>> and the <<person2>><<person>> rub themselves off in front of you.
-	Soon the <<person>> cums, squirting <<if $NPCList[0].penis isnot "none">><<set $facesemen += 1>>semen across<<else>><<set $facegoo += 1>>suddenly in<</if>> your face.
+	Soon the <<person>> cums, squirting <<if $NPCList[0].penis isnot "none">><<set $player.bodyliquid.face.semen += 1>>semen across<<else>><<set $player.bodyliquid.face.goo += 1>>suddenly in<</if>> your face.
 	Another orderly takes <<his>> place as the <<person1>><<person>> reaches climax. The <<person>> stares into your eyes as
 	<<he>> cums, <<his>> fluids splatering against your cheek and running down the collar of your straightjacket.<br>
-	Two more orderlies take <<his>> place.<<if $NPCList[0].penis isnot "none">><<set $necksemen += 1>><<else>><<set $neckgoo += 1>><</if>>
+	Two more orderlies take <<his>> place.<<if $NPCList[0].penis isnot "none">><<set $player.bodyliquid.neck.semen += 1>><<else>><<set $player.bodyliquid.neck.goo += 1>><</if>>
 	<br><br>
 	<<if $arousal gte $arousalmax>>
 		<<orgasm>>
@@ -2350,7 +2383,7 @@ is an important part of your assessment so you need to be on your best behaviour
 	<<set _rand to random(1,9)>>
 	<<if _rand lte 6>>
 		<<if _rand is 1>>
-			Two orderlies manage to simultaneously cum in your face, and <<faceejacstat>><<ejacstat>><<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $facesemen += 1>>
+			Two orderlies manage to simultaneously cum in your face, and <<faceejacstat>><<ejacstat>><<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.face.semen += 1>>
 		<<elseif _rand is 2>>
 			One orderly shoves a hand between your legs and roughly gropes your <<genitals>> and <<genitalarousal 200>><<pain 5>>
 		<<elseif _rand is 3>>
@@ -2359,32 +2392,32 @@ is an important part of your assessment so you need to be on your best behaviour
 			<<else>>
 				One orderly shoves your head against the wall and grinds <<his>> cunt against your face until <<his>> fluids run over you, and
 			<</if>>
-			<<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $facegoo += 1>>
+			<<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.face.goo += 1>>
 		<<elseif _rand is 4>>
 			Two orderlies masturbate to orgasm either side of you, and
-			<<hairejacstat>><<ejacstat>><<set $hairsemen += 1>><<neckejacstat>><<ejacstat>><<set $hygiene += 500>><<set $necksemen += 1>>
+			<<hairejacstat>><<ejacstat>><<set $player.bodyliquid.hair.semen += 1>><<neckejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.neck.semen += 1>>
 		<<elseif _rand is 5>>
 			<<if $NPCList[0].penis isnot "none">>
 				One orderly pulls your head up by your hair and ejaculates down the front of your straightjacket, and
 			<<else>>
 				One orderly pulls your head up by your hair and squirts down the front of your straightjacket, and
 			<</if>>
-			<<pain 5>><<chestejacstat>><<ejacstat>><<set $hygiene += 500>><<set $chestsemen += 1>>
+			<<pain 5>><<chestejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.chest.semen += 1>>
 		<<else>>
 			<<if $NPCList[0].penis isnot "none">>
 				One orderly deliberately shoots <<his>> load in your eye, and
 			<<else>>
 				One orderly deliberately squirts <<his>> juices in your eye, and
 			<</if>>
-			<<pain 5>><<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $facesemen += 1>>
+			<<pain 5>><<faceejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.face.semen += 1>>
 		<</if>>
 
 		<<if _rand % 3 ==2>>
-			as you try to breathe, you end up taking a mouthful of juices from another.<<oralejacstat>><<ejacstat>><<set $hunger -= 200>><<set $thirst -= 200>><<set $mouthsemen += 1>>
+			as you try to breathe, you end up taking a mouthful of juices from another.<<oralejacstat>><<ejacstat>><<set $hunger -= 200>><<set $thirst -= 200>><<set $player.bodyliquid.mouth.semen += 1>>
 		<<elseif _rand % 3 == 1>>
-			you hear a grunt as juices squirt down your neck. <<neckejacstat>><<ejacstat>><<set $hygiene += 500>><<set $neckgoo += 1>>
+			you hear a grunt as juices squirt down your neck. <<neckejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.neck.goo += 1>>
 		<<else>>
-			a moment later you feel hot juices jet into your hair. <<hairejacstat>><<ejacstat>><<set $hygiene += 500>><<set $hairsemen += 1>>
+			a moment later you feel hot juices jet into your hair. <<hairejacstat>><<ejacstat>><<set $hygiene += 500>><<set $player.bodyliquid.hair.semen += 1>>
 		<</if>>
 	<<elseif _rand is 7 and ($malechance gte 1 and $cbchance lt 100 or $malechance lt 100 and $dgchance gte 1)>>
 		One orderly tries to shove their cock in your mouth. They're jerked away by another.<br>
@@ -2418,7 +2451,7 @@ is an important part of your assessment so you need to be on your best behaviour
 :: Asylum Fake Treatment Finish
 <<set $outside to 0>><<set $location to "asylum">><<asylumeffects>><<effects>>
 
-"Excellent. Doctor Harper's very pleased with your progress. The Doctor asked me to tell you not to mention this treatment to anyone.
+"Excellent. Doctor Harper's very pleased with your progress. The doctor asked me to tell you not to mention this treatment to anyone.
 It's very important for your treatment. If you mention it to anyone - even to Doctor Harper <<nnpc_himself "Harper">> - <<nnpc_he "Harper">>
 will be very angry and it will set back your progress. This should be kept secret. Understood?"<br>
 

@@ -42,14 +42,14 @@
 	/* update changed indexes of mod-specific clothes and tattoos
 	 * increment the number and update the list whenever
 	 * new clothes/tattoos need to change due to additions to base game */
-	<<if $dolweversion is undefined or $dolweversion lt 32>>
-		<<set $dolweversion to 32>>
+	<<if $dolweversion is undefined or $dolweversion lt 33>>
+		<<set $dolweversion to 33>>
 		<!-- cloud hair clip (head): old = 33, new = 36 -->
 		<<updateclothingindexes "cloud hair clip" "head" 36>>
 		<!-- prayer beads (neck): old = 19, new = 20 -->
 		<<updateclothingindexes "prayer beads" "neck" 20>>
-		<!-- Complex array (tattoo): old = 111, new = 121 -->
-		<<updateclothingindexes "Complex Array" "skin" 121>>
+		<!-- Complex array (tattoo): old = 111, new = 186 -->
+		<<updateclothingindexes "Complex Array" "skin" 186>>
 	<</if>>
 <</widget>>
 
@@ -127,11 +127,7 @@
 <</if>>
 
 <<if $player.ballsExist is undefined>>
-	<<if $player.gender is "f">>
-		<<set $player.ballsExist to false>>
-	<<else>>
-		<<set $player.ballsExist to true>>
-	<</if>>
+	<<set $player.ballsExist to ($player.gender isnot "f")>>
 <</if>>
 
 <<if $clothing_update is undefined>><<set $clothing_update to 1>>
@@ -297,6 +293,7 @@
 <<if $transformdisable is undefined>>
 	<<set $transformdisable to "f">>
 <</if>>
+
 <<if $analpregdisable is undefined>>
 	<<set $analpregdisable to "f">>
 <</if>>
@@ -816,7 +813,7 @@
 <</if>>
 
 <<if $penissizemin is undefined>>
-	<<set $penissizemin to -1>>
+	<<set $penissizemin to -2>>
 <</if>>
 
 <<if $insecurity_penis_tiny is undefined>>
@@ -1103,6 +1100,26 @@
 	<<set $brothel_basement_price to 1000>>
 <</if>>
 
+<<if $brothelshowdata is undefined>>
+	<<set $brothelshowdata to { counts:{ agreed:0, done:0 }, type:"none", intro:false, done:false, missed:false }>>
+	<<if $brothelshow isnot undefined>>
+		<<set $brothelshowdata.type to $brothelshow>>
+		<<unset $brothelshow>>
+	<</if>>
+	<<if $brothelshowintro isnot undefined>>
+		<<set $brothelshowdata.intro to !!$brothelshowintro>>
+		<<unset $brothelshowintro>>
+	<</if>>
+	<<if $brothelshowdone isnot undefined>>
+		<<set $brothelshowdata.done to !!$brothelshowdone>>
+		<<unset $brothelshowdone>>
+	<</if>>
+	<<if $brothelshowmissed isnot undefined>>
+		<<set $brothelshowdata.missed to !!$brothelshowmissed>>
+		<<unset $brothelshowmissed>>
+	<</if>>
+<</if>>
+
 <<if $money is undefined>>
 	<<set $money to 0>>
 <</if>>
@@ -1385,6 +1402,12 @@
 	<<set $player.femininity to 0>>
 <</if>>
 
+<<if $player.condom is undefined>>
+	<<set $player.condom to false>>
+	<<set $condomchance to 50>>
+	<<set $condomautochance to 50>>
+<</if>>
+
 <<unset $clothes>>
 
 /*noeinan mod START*/
@@ -1661,6 +1684,23 @@
 		Eden: 0,
 		Avery: 0,
 		BlackWolfHunts: 0
+	}>>
+<</if>>
+
+<<if $dateCount.Alex is undefined>>
+	<<set $dateCount.GreatHawkHunts to 0>>
+	<<set $dateCount.Alex to 0>>
+	<<set $dateCount.Sydney to 0>>
+<</if>>
+
+<<if $virginTaken is undefined>>
+	<<set $virginTaken to {
+		kiss: [],
+		handholding: [],
+		oral: [],
+		anal: [],
+		vaginal: [],
+		penile: []
 	}>>
 <</if>>
 
@@ -2388,6 +2428,28 @@
 	<<set $clothesPriceLewd to 1>>
 <</if>>
 
+
+<<childrenSetup>>
+<<npcPregnancyUpdater>>
+<<if $baseVaginalPregnancyChance is undefined>>
+	<<set $baseVaginalPregnancyChance to 50>>
+	<<set $humanPregnancyMonths to 3>>
+	<<set $wolfPregnancyWeeks to 4>>
+	<<set $playerPregnancyHumanDisable to "f">>
+	<<set $playerPregnancyBeastDisable to "f">>
+	<<set $npcPregnancyDisable to "f">>
+<</if>>
+<<if $famepregnancy is undefined>>
+	<<set $famepregnancy to 0>>
+	<<set $baseNpcPregnancyChance to 8>>
+<</if>>
+<<if $currentToys is undefined>>
+	<<set $currentToys to []>>
+	<<set $storedToys to {
+		"wolf_cave":[],
+	}>>
+<</if>>
+
 <<if $analingusdisablegiving is undefined or $analingusdisablereceiving is undefined>>
 	<<set $analingusdisablegiving to $analdisable>>
 	<<set $analingusdisablereceiving to $analdisable>>
@@ -2437,6 +2499,92 @@
 
 <<if $cardcover is undefined>>
 	<<set $cardcover = { style: 0, colour: 'red' }>>
+<</if>>
+
+<<if $NPCVirginityTypes is undefined>>
+	<<set $NPCVirginityTypes to {anal:false, oral:false, penile:false, vaginal:false, handholding:false, temple: false, kiss:false}>>
+	<<set _allVirginitiesPresent to {anal:true, oral:true, penile:true, vaginal:true, handholding:true, temple: false, kiss:true}>>
+	<<if $NPCList[0].chastity is undefined>>
+		<<for _i to 0; _i lt $NPCList.length; _i++>>
+			<<set $NPCList[_i].chastity to {penis:"", vagina:"", anus:""}>>
+		<</for>>
+	<</if>>
+	<<for _i to 0; _i lt $NPCNameList.length; _i++>>
+		<<set $NPCName[_i].purity to 0>>
+		<<set $NPCName[_i].corruption to 0>>
+		<<set $NPCName[_i].virginity to clone(_allVirginitiesPresent)>>
+		<<set $NPCName[_i].chastity to {penis:"", vagina:"", anus:""}>>
+		<<generatePronouns $NPCName[_i]>>
+		<<switch $NPCNameList[_i]>>
+			<<case "Sydney">>
+				/* Has all virginities + temple virginity. */
+				<<set $NPCName[_i].virginity to {anal:true, oral:true, penile:true, vaginal:true, temple:true, handholding:true, kiss:true}>>
+			<<case "Robin" "Kylar">>
+				/* Has all virginities. */
+				<<set $NPCName[_i].virginity to clone(_allVirginitiesPresent)>>
+			<<case "Jordan">>
+				/* Has anal, oral, penile/vaginal, and kiss virginities. Missing handholding. */
+				<<set $NPCName[_i].virginity.handholding to false>>
+			<<case "Black Wolf" "Great Hawk">>
+				/* Has anal, oral, kiss, and handholding virginities. Missing penile/vaginal. */
+				<<set $NPCName[_i].virginity.penile to false>>
+				<<set $NPCName[_i].virginity.vaginal to false>>				
+			<<case "Gwylan">>
+				/* Missing all virginities. */
+				<<set $NPCName[_i].virginity.oral to false>>
+				<<set $NPCName[_i].virginity.handholding to false>>
+				<<set $NPCName[_i].virginity.penile to false>>
+				<<set $NPCName[_i].virginity.vaginal to false>>
+				<<set $NPCName[_i].virginity.anal to false>>
+				<<set $NPCName[_i].virginity.kiss to false>>
+			<<case "Charlie">>
+				/* Has oral, anal, and vaginal/penile virginities. Missing kiss and handholding. */
+				<<set $NPCName[_i].virginity.kiss to false>>
+				<<set $NPCName[_i].virginity.handholding to false>>
+			<<case "Eden">>
+				/* Has anal, oral and handholding virginity. Missing penile/vaginal and kiss. */
+				<<set $NPCName[_i].virginity.penile to false>>
+				<<set $NPCName[_i].virginity.vaginal to false>>
+				<<set $NPCName[_i].virginity.kiss to false>>
+			<<case "Sam" "Mason">>
+				/* Has anal and oral virginity. Missing penile/vaginal, kiss, and handholding. */
+				<<set $NPCName[_i].virginity.penile to false>>
+				<<set $NPCName[_i].virginity.vaginal to false>>
+				<<set $NPCName[_i].virginity.kiss to false>>
+				<<set $NPCName[_i].virginity.handholding to false>>
+			<<case "Alex" "Darryl" "Sirris" "Briar" "Wren">>
+				/* Missing all virginities. */
+				<<set $NPCName[_i].virginity to clone($NPCVirginityTypes)>>
+			<<default>>
+				/* Defaults to only having anal virginity. */
+				<<set $NPCName[_i].virginity.oral to false>>
+				<<set $NPCName[_i].virginity.penile to false>>
+				<<set $NPCName[_i].virginity.vaginal to false>>
+				<<set $NPCName[_i].virginity.kiss to false>>
+				<<set $NPCName[_i].virginity.handholding to false>>
+		<</switch>>
+	<</for>>
+	<<set $templePromised to "">>
+<</if>>
+
+<<if $perChastityFix is undefined>>
+    <<set $perChastityFix to 1>>
+    <<set _keys to Object.keys($per_npc)>>
+    <<for _npc range _keys>>
+        <<if $per_npc[_npc].chastity is undefined>>
+            <<set $per_npc[_npc].chastity to {penis:"", vagina:"", anus:""}>>
+        <</if>>
+    <</for>>
+<</if>>
+
+<<if $perPronounFix is undefined or $perPronounFix is 1>>
+    <<set $perPronounFix to 2>>
+    <<set _keys to Object.keys($per_npc)>>
+    <<for _npc range _keys>>
+        <<if $per_npc[_npc].pronouns is undefined or $per_npc[_npc].pronouns.he is 0>>
+			<<generatePronouns $per_npc[_npc]>>
+        <</if>>
+    <</for>>
 <</if>>
 
 <<if $sidebarRenderer is undefined>>
@@ -2505,12 +2653,84 @@
 	<<set $stat_police.prison to 0>>
 <</if>>
 
-<<if [undefined, NaN, null].includes($locker_suspicion) or [undefined, NaN, null].includes($panties_held)>>
+<<if [undefined, NaN, null].includes($locker_suspicion) or [undefined, NaN, null].includes($panties_held) or $locker_suspicion lt 0>>
 	<<set $locker_suspicion to 0>>
 	<<set $panties_held to 0>>
 <</if>>
 
 <<if $footdisable is undefined>>
 	<<set $footdisable to "f">>
+	<<set $uncomfortable.lewd to true>>
 <</if>>
+
+<<if $player.bodyliquid is undefined>>
+	<<set $player.bodyliquid to {}>>
+
+	<<for _bodypart range setup.bodyliquid.bodyparts>>
+		<<set $player.bodyliquid[_bodypart] to {}>>
+		<<set $player.bodyliquid[_bodypart].goo to V[_bodypart+"goo"]>>
+		<<set $player.bodyliquid[_bodypart].semen to V[_bodypart+"semen"]>>
+		<<run delete V[_bodypart+"goo"]>>
+		<<run delete V[_bodypart+"semen"]>>
+	<</for>>
+<</if>>
+
+<<if $npcdescription isnot undefined>>
+	<<unset $npcdescription>>
+<</if>>
+
+<<if $npc is 0>>
+	<<unset $npc>>
+	<<set $npc to []>>
+<<elseif !(Array.isArray($npc))>>
+	<<set _npcsubstitute to clone($npc)>>
+	<<unset $npc>>
+	<<set $npc to [_npcsubstitute]>>
+	<<unset _npcsubstitute>>
+<</if>>
+
+<<if $npcnum is undefined>>
+	<<set $npcnum to []>>
+<<elseif !(Array.isArray($npcnum))>>
+	<<set _npcsubstitute to clone($npcnum)>>
+	<<unset $npcnum>>
+	<<set $npcnum to [_npcsubstitute]>>
+	<<unset _npcsubstitute>>
+<</if>>
+
+<<if $npcrow is undefined>>
+	<<set $npcrow to []>>
+	<<if $npc[0]>>
+		<<set $npcrow[0] to 0>>
+	<</if>>
+<</if>>
+
+<<if $choketrait is undefined>>
+	<<set $choketrait to 0>>
+<</if>>
+
+<<if $museumAntiqueJournalHints is undefined>>
+	<<set $museumAntiqueJournalHints to []>>
+<</if>>
+
+<<if $plants_known.includes("red rose")>>
+	<<run $plants_known.delete("red rose")>>
+	<<set $plants_known.push("red_rose")>>
+<</if>>
+
+<<if $transformdisabledivine is undefined>>
+	<<if $transformdisable is "f">>
+		<<set $transformdisabledivine to "f">>
+	<<else>>
+		<<set $transformdisabledivine to "t">>
+	<</if>>
+<</if>>
+
+<<if $penisexist isnot undefined and ($player.penisExist != $penisexist or $player.vaginaExist != $vaginaexist)>>
+	<<set $player.vaginaExist to ($player.gender isnot "m")>>
+	<<set $vaginaexist to ($player.gender isnot "m" ? 1 : 0)>>
+	<<set $player.penisExist to ($player.gender isnot "f")>>
+	<<set $penisexist to ($player.gender isnot "f" ? 1 : 0)>>
+<</if>>
+
 <</widget>>

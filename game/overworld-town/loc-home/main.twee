@@ -14,6 +14,20 @@ You are in your bedroom.
 	You rub your bindings against your desk. It takes some effort, but eventually the material yields, freeing your limbs.
 	<br><br>
 <</if>>
+<<if $study is 1>>
+	<<unset $study>>
+	<<if $phase is 1>><<scienceskill>>
+		You settle down on your bed with a science textbook and read through the material.
+	<<elseif $phase is 2>><<mathsskill>>
+		You settle down on your bed with a maths textbook and read through the material.
+	<<elseif $phase is 3>><<englishskill>>
+		You settle down on your bed with an English textbook and read through the material.
+	<<elseif $phase is 4>><<historyskill>>
+		You settle down on your bed with a history textbook and read through the material.
+	<</if>>
+	<<endevent>>
+	<br><br>
+<</if>>
 <<if $stress gte $stressmax>>
 	<<passouthome>>
 <<elseif $christmas is 1 and $monthday is 25 and $christmas_robin_visit is undefined and $christmas_robin_gift_received is undefined and $daystate isnot "night" and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
@@ -35,7 +49,8 @@ You are in your bedroom.
 	/*Added ability to study in your room at the orphanage*/
 
 	<<projectoptions>>
-	<<studyoptions>>
+	<<homeStudyOptions>>
+	<br>
 	<<christmas_options>>
 
 	/*noeinan mod END*/
@@ -53,7 +68,7 @@ You are in your bedroom.
 		<br>
 		<<link [[Hard reset news|Bedroom]]>><<radio_hardreset>><</link>> radio_hardreset
 		<br>
-		<<link [[Midnight Importance reduction|Bedroom]]>><<radio_midnight>><</link>> radio_midnight
+		<<link [[Midnight importance reduction|Bedroom]]>><<radio_midnight>><</link>> radio_midnight
 		<br>
 		<<link [[Skip to 23:58|Bedroom]]>><<set $time to 1438>><</link>>
 		<br>
@@ -87,10 +102,10 @@ You are in your bedroom.
 		<br>
 		<span class="purple">An eerie light spills from your mirror.</span>
 		<br>
-		<<ind>><<link [[Mirror|Eerie Mirror]]>><<set $mirrortentacles to 1>><<set $phase to 0>><</link>>
+		<<mirroricon>><<link [[Mirror|Eerie Mirror]]>><<set $mirrortentacles to 1>><<set $phase to 0>><</link>>
 		<br>
 	<<else>>
-		<<ind>>[[Mirror]]
+		<<mirroricon>>[[Mirror]]
 		<br>
 	<</if>>
 
@@ -283,6 +298,7 @@ You are in the bathroom.
 		<<ind>><<link [[Groom pubic hair->Shave]]>><</link>>
 		<br>
 	<</if>>
+	<<pregnancyTest "Bedroom">>
 	<br>
 
 	<<bedroomicon>><<link [[Bedroom (0:01)->Bedroom]]>><<pass 1>><</link>>
@@ -415,12 +431,12 @@ You are in the bathroom.
 <<elseif $baileyrapewake is 1>>
 	<<set $baileyrapewake to 0>><<set $schoolwake to 0>>
 	<<generate1>><<person1>>You awaken to a shape looming over you and hands pulling off your covers. It's a <<person>>. "Don't struggle," <<he>> says.
-	<<if $robinbed is 1>>
-		"We wouldn't want to wake up your friend." Robin lays beside you, still asleep.
+	<<if $robinbed is 1 or $kylarbed is 1>>
+		"We wouldn't want to wake up your friend." <<if $robinbed is 1>>Robin<<else>>Kylar<</if>> lays beside you, still asleep.
 	<</if>>
 	"You looked so cute, cosy and safe sleeping. I couldn't help myself."
 	<br><br>
-	Bailey leans against the door frame, counting money.
+	<span class="red">Bailey leans against the door frame, counting money.</span>
 	<br><br>
 	<<link [[Next|Sleep Rape]]>><<set $molestationstart to 1>><</link>>
 	<br>
@@ -438,25 +454,25 @@ You are in the bathroom.
 	<<if random(0,100) gt 80>>
 		<<set _coveredIn to "slime">>
 		<<if $penisexist is 1 and $player.virginity.penile isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $penisgoo += random(1,3)>>
+			<<set $player.bodyliquid.penis.goo += random(1,3)>>
 		<</if>>
 		<<if $vaginaexist is 1 and $player.virginity.vaginal isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $vaginagoo += random(1,3)>>
+			<<set $player.bodyliquid.vagina.goo += random(1,3)>>
 		<</if>>
 		<<if $player.virginity.anal isnot true and $worn.genitals.anal_shield isnot 1 and $analdisable is "f">>
-			<<set $anusgoo += random(1,3)>>
+			<<set $player.bodyliquid.anus.goo += random(1,3)>>
 		<</if>>
 		<<if $player.virginity.oral isnot true>>
-			<<set $mouthgoo += random(1,3)>>
+			<<set $player.bodyliquid.mouth.goo += random(1,3)>>
 		<</if>>
-		<<set $hairgoo += random(1,3)>>
-		<<set $facegoo += random(1,3)>>
-		<<set $neckgoo += random(1,3)>>
-		<<set $chestgoo += random(1,3)>>
-		<<set $leftarmgoo += random(1,3)>>
-		<<set $rightarmgoo += random(1,3)>>
-		<<set $thighgoo += random(1,3)>>
-		<<set $feetgoo += random(1,3)>>
+		<<set $player.bodyliquid.hair.goo += random(1,3)>>
+		<<set $player.bodyliquid.face.goo += random(1,3)>>
+		<<set $player.bodyliquid.neck.goo += random(1,3)>>
+		<<set $player.bodyliquid.chest.goo += random(1,3)>>
+		<<set $player.bodyliquid.leftarm.goo += random(1,3)>>
+		<<set $player.bodyliquid.rightarm.goo += random(1,3)>>
+		<<set $player.bodyliquid.thigh.goo += random(1,3)>>
+		<<set $player.bodyliquid.feet.goo += random(1,3)>>
 	<</if>>
 	<<if random(0,100) gt 80>>
 		<<if _coveredIn is "slime">>
@@ -465,25 +481,25 @@ You are in the bathroom.
 			<<set _coveredIn to "semen">>
 		<</if>>
 		<<if $penisexist is 1 and $player.virginity.penile isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $penissemen += random(1,3)>>
+			<<set $player.bodyliquid.penis.semen += random(1,3)>>
 		<</if>>
 		<<if $vaginaexist is 1 and $player.virginity.vaginal isnot true and !$worn.genitals.type.includes("chastity")>>
-			<<set $vaginasemen += random(1,3)>>
+			<<set $player.bodyliquid.vagina.semen += random(1,3)>>
 		<</if>>
 		<<if $player.virginity.anal isnot true and $worn.genitals.anal_shield isnot 1 and $analdisable is "f">>
-			<<set $anussemen += random(1,3)>>
+			<<set $player.bodyliquid.anus.semen += random(1,3)>>
 		<</if>>
 		<<if $player.virginity.oral isnot true>>
-			<<set $mouthsemen += random(1,3)>>
+			<<set $player.bodyliquid.mouth.semen += random(1,3)>>
 		<</if>>
-		<<set $hairsemen += random(1,3)>>
-		<<set $facesemen += random(1,3)>>
-		<<set $necksemen += random(1,3)>>
-		<<set $chestsemen += random(1,3)>>
-		<<set $leftarmsemen += random(1,3)>>
-		<<set $rightarmsemen += random(1,3)>>
-		<<set $thighsemen += random(1,3)>>
-		<<set $feetsemen += random(1,3)>>
+		<<set $player.bodyliquid.hair.semen += random(1,3)>>
+		<<set $player.bodyliquid.face.semen += random(1,3)>>
+		<<set $player.bodyliquid.neck.semen += random(1,3)>>
+		<<set $player.bodyliquid.chest.semen += random(1,3)>>
+		<<set $player.bodyliquid.leftarm.semen += random(1,3)>>
+		<<set $player.bodyliquid.rightarm.semen += random(1,3)>>
+		<<set $player.bodyliquid.thigh.semen += random(1,3)>>
+		<<set $player.bodyliquid.feet.semen += random(1,3)>>
 	<</if>>
 	<<if _coveredIn isnot "">>
 		<<set $slimeSleepEvent += 2>>
@@ -500,12 +516,24 @@ You are in the bathroom.
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
-				You dream you are being hunted by something dark and terrible. The nightmares are interrupted by a hammering on your door. It's Bailey, waking you for school.
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					You dreamt of
+				<<else>>
+					You dream you are
+				<</if>>
+				being hunted by something dark and terrible. The nightmares are interrupted by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
 			<br><br>
 			<<set $motherwake to 1>>
 		<<else>>
-			You dream you are being hunted by something dark and terrible. You quickly forget the specifics, but the sense of dread lingers.
+			<<wakingEffects $sleepHoursTotal>>
+			<<if _wakingEffect isnot undefined>>
+				You dreamt of
+			<<else>>
+				You dream you are
+			<</if>>
+			you are being hunted by something dark and terrible. You quickly forget the specifics, but the sense of dread lingers.
 			<br><br>
 		<</if>>
 	<<else>>
@@ -514,12 +542,22 @@ You are in the bathroom.
 			<<if $motherwake is 1>>
 				You try to go back to sleep, but Bailey knocks again, reminding you to get up.
 			<<else>>
-				You sleep soundly, but are awoken early by a hammering on your door. It's Bailey, waking you for school.
+				<<wakingEffects $sleepHoursTotal>>
+				<<if _wakingEffect isnot undefined>>
+					After you slept
+				<<else>>
+					You sleep
+				<</if>>
+				soundly, but are awoken early by a hammering on your door. It's Bailey, waking you for school.
 			<</if>>
 			<br><br>
 			<<set $motherwake to 1>>
 		<<else>>
-			<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
+			<<wakingEffects $sleepHoursTotal>>
+			<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+				You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+				<br><br>
+			<<elseif $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
 				Your sleep is plagued by dirty dreams.
 				<<arousal `$specialClothesEffects.bimboTotal / 10 * $sleepHoursTotal`>>
 				<<arousal `100 * $sleepHoursTotal`>>
@@ -529,6 +567,9 @@ You are in the bathroom.
 				<<else>>
 					<br><br>
 				<</if>>
+			<<elseif _mildNausea>>
+				You sleep soundly.
+				<br><br>
 			<<else>>
 				You sleep soundly, and wake up refreshed.
 				<br><br>
@@ -538,7 +579,10 @@ You are in the bathroom.
 	<<if $robinbed is 1>>
 		<<set $robinbed to 0>>
 		<<npc Robin>><<person1>>
-		<<if _orgasm is true>>
+		<<wakingEffects $sleepHoursTotal>>
+		<<if _wakingEffect is "dryheaving">>
+			"Are you okay? Let me help," Robin says, easing you back up. <<He>> checks to see if you’re fine before taking <<his>> leave. 
+		<<elseif _orgasm is true>>
 			<<if $exposed gte 2>>
 				Robin cuddles you. "I'll leave you to get-" <<he>> pauses, noticing the moisture on their body and yours. Blushing, <<he>> gathers tissues for both of you.
 				<<if $rng gte 71>>
@@ -557,18 +601,72 @@ You are in the bathroom.
 		<</if>>
 		<<endevent>>
 		<br><br>
+	<<elseif $kylarbed is 1>>
+		<<npc Kylar>><<person1>>
+		<<if $rng gte 81 and $robinmissing isnot 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
+			You awaken to the sound of your door creaking open. You hear somebody gasp, before they hurriedly shut the door.
+			<br><br>
+
+			"Who was that...?" you yawn, slowly untangling from Kylar.
+			<br><br>
+
+			"Don't know," Kylar says, rubbing <<his>> eyes. "Probably nobody important."
+			<br><br>
+
+			<<if $robinromance is 1>>
+				<<npcincr Robin love -5>>
+				<span class="red">- - Robin's Love</span>
+				<br><br>
+			<</if>>
+			<<link [[Next|Kylar Orphanage Cuddle]]>><<set $kylarbed to 0>><</link>>
+
+		<<elseif $rng gte 61>>
+			You awaken to the sound of your door creaking open. You hear somebody gasp, before starting to laugh.
+			<br><br>
+
+			<<generatey2>><<person2>>
+			A <<person>> is standing in your doorway, looking at you and Kylar. "You're sleeping with <<nnpc_him "Kylar">>?!" <<he>> laughs. "Is that why you invited <<nnpc_him "Kylar">> here? You got a thing for freaks, huh?"
+			<br><br>
+
+			Anger flashes across Kylar's face, but <<nnpc_he "Kylar">> doesn't say anything.
+			<br><br>
+
+			<<link [[Defend Kylar|Kylar Orphanage Sleep Defend]]>><<set $kylarbed to 0>><<status -10>><<npcincr Kylar love 1>><</link>><<lcool>><<glove>>
+			<br>
+			<<link [[Berate Kylar|Kylar Orphanage Sleep Berate]]>><<set $kylarbed to 0>><<npcincr Kylar love -3>><</link>><<lllove>>
+			<br>
+			<<if $submissive lte 500>>
+				<<link [[Slam the door|Kylar Orphanage Slam]]>><<set $kylarbed to 0>><<npcincr Kylar love 1>><<npcincr Kylar lust 1>><</link>><<glove>><<glust>><<defianttext>>
+			<</if>>
+
+		<<else>>
+			You wake up, <<if $submissive gte 1150 or $kylarsleeprape is 1>>Kylar still holding on to you<<else>>still holding on to Kylar<</if>>. Kylar stirs shortly after, blinking lazily.
+			<<if _orgasm is true>>
+				<<He>> sniffs the air for a moment, before looking at you. "Were you dreaming of us too?" <<he>> asks.
+			<</if>>
+			<br><br>
+
+			"I should probably get going," <<he>> says. Despite that, <<he>> makes no move to get up.
+			<br><br>
+
+			<<link [[Next|Kylar Orphanage Cuddle]]>><<set $kylarbed to 0>><</link>>
+		<</if>>
 	<</if>>
-	<<radiooutfits>>
-	<br><br>
-	<<if $renttime lte 0>><<set $bus to "home">>
-		<<link [[Get out of bed|Bedroom Bailey]]>><</link>>
+	<<if $kylarbed isnot 1>>
+		<<radiooutfits>>
 		<br><br>
-	<<else>>
-		<<link [[Get out of bed|Bedroom]]>><</link>>
-		<br><br>
+		<<if $renttime lte 0>><<set $bus to "home">>
+			<<link [[Get out of bed|Bedroom Bailey]]>><</link>>
+			<br><br>
+		<<else>>
+			<<link [[Get out of bed|Bedroom]]>><</link>>
+			<br><br>
+		<</if>>
 	<</if>>
 <</if>>
-<<set $phase to 0>>
+<<if $kylarbed isnot 1>>
+	<<set $phase to 0>>
+<</if>>
 
 :: Bath Scream
 
@@ -621,7 +719,7 @@ You scream. The trio recoil and scramble for the door handle. They flee into the
 	<<neutral 1>>
 	<<molested>>
 	<<maninit>>
-	<<set $rescue to 1>><<hand_gag 0 left>>
+	<<enable_rescue>><<hand_gag 0 left>>
 <</if>>
 <<effects>>
 <<effectsman>><<man>>
@@ -681,7 +779,7 @@ You scream. The trio recoil and scramble for the door handle. They flee into the
 
 <<maninit>>
 <<set $enemytrust += 100>>
-<<set $rescue to 1>>
+<<enable_rescue>>
 You stand up. Their eyes grow wider. You grasp the <<person2>><<persons>> collar and pull <<him>> closer.<<person1>>
 <<promiscuity5>>
 <</if>>
@@ -939,7 +1037,7 @@ You've pushed yourself too much.
 	<<molested>>
 	<<generate1>><<maninit>><<hand_gag 0 left>>You feel something probing your nethers. As you open your eyes a hand clasps down on your mouth, muffling your screams.
 	<br>
-	<<set $rescue to 1>>
+	<<enable_rescue>>
 	<<if $phase is 1>><</if>>
 <</if>>
 <<effects>>
@@ -1098,7 +1196,7 @@ You are in the main hall of the orphanage.
 
 	<<link [[Next|Orphanage]]>><<endevent>><</link>>
 
-<<elseif $days gte 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and $hour gte 7 and $hour lte 20>>
+<<elseif $days gte 1 and $NPCName[$NPCNameList.indexOf("Robin")].init is 0 and ($schoolday is 1 and ($hour is 7 or $hour gte 16 and $hour lte 20) or $schoolday isnot 1 and $hour gte 7 and $hour lte 20)>>
 	<<set $robindebt to 0>><<set $robindebtlimit to 5>>
 	<<npc Robin>><<initnpc Robin>><<person1>>You hear a voice shout behind you. "Hey!" It's Robin. <<Hes>> another resident at the orphanage. <<Hes>> always looked up to you, despite being about the same age. <<He>> runs towards you and fails to slow down in time, colliding with you and almost falling over. You hold <<his>> arm to steady <<him>>. "Thanks," <<he>> says, looking embarrassed though still smiling.
 	<br><br>
@@ -1148,7 +1246,7 @@ You are in the main hall of the orphanage.
 <<else>>
 	<<if ndef $police_hack>><<set $police_hack to 0>><</if>><<if ndef $pub_hack_job>><<set $pub_hack_job to 0>><</if>>
 	<<if $police_hack is 2 and ($pub_hack_job is 1 or $pub_hack_job is 2)>>
-		<<link [[Find hacker (0:10)|Orphanage Hacker]]>><<pass 10>><</link>>
+		<<ind>><<link [[Find hacker (0:10)|Orphanage Hacker]]>><<pass 10>><</link>>
 		<br><br>
 	<</if>>
 	<<if $halloween is 1 and $robinmissing isnot 1 and $hour gte 16 and $hour lt 19 and $monthday is 31 and $NPCName[$NPCNameList.indexOf("Robin")].init is 1>>
@@ -1175,7 +1273,7 @@ You are in the main hall of the orphanage.
 	<</if>>
 	<<gardenicon>><<link [[Garden (0:01)|Garden]]>><<pass 1>><</link>>
 	<br><br>
-	<<ind>><<link [[Bailey's Office (0:01)|Bailey's Office]]>><<pass 1>><</link>>
+	<<ind>><<link [[Bailey's office (0:01)|Bailey's Office]]>><<pass 1>><</link>>
 	<br>
 	<<if $kylarhometimer gte 100 and $kylarhome is undefined>>
 		<<bedroomicon>><<link [[Bedroom (0:01)|Kylar Bedroom 1]]>><<pass 1>><<set $kylarhometimer to 0>><<set $kylarhome to 0>><</link>>
@@ -1252,7 +1350,7 @@ A first-person shooter's story leaves you pondering about your character's actio
 
 --
 
-You find an easter egg in one of your games. The developer thanks you for playing.
+You find an Easter egg in one of your games. The developer thanks you for playing.
 
 --
 
@@ -1583,7 +1681,14 @@ The warmth feels wonderful on your bare skin.
 <</if>>
 
 :: Widget Passout Home [widget]
-<<widget "passouthome">>[[Everything fades to black...->Passout home]]<</widget>>
+<<widget "passouthome">>
+/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+	<<pregnancyWatersBrokenPassout "home">>
+<<else>>
+	[[Everything fades to black...->Passout home]]
+<</if>>
+<</widget>>
 
 :: Bath Slime
 <<effects>>
@@ -1759,7 +1864,7 @@ Attitudes
 
 <<effects>>
 
-Your bedroom door bursts open without warning. It's Bailey.
+Your bedroom door bursts open without warning. <span class="red">It's Bailey.</span>
 <br><br>
 <<rentdue>>
 
@@ -1841,8 +1946,8 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<<neutral 1>>
 	<<molested>>
 	<<maninit>>
-	<<if $robinbed is 1>>
-		<<set $rescue to 1>>
+	<<if $robinbed is 1 or $kylarbed is 1>>
+		<<enable_rescue>>
 	<</if>>
 <</if>>
 <<effects>>
@@ -1874,6 +1979,8 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
+	<br><br>
+	<<link [[Next|Bed]]>><</link>>
 <<elseif $enemyhealth lte 0>>
 	You knock the <<person>> off the bed, and <<he>> stumbles to the ground. "Fucking brat," <<he>> says, then turns to Bailey. "I want my money back."
 	<br><br>
@@ -1883,7 +1990,8 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<br><br>
 	<<clotheson>>
 	<<endcombat>>
-<<else>>
+	<<link [[Next|Bed]]>><</link>>
+<<elseif $robinbed is 1>>
 	Robin's eyes flutter open in response to your cry. Robin sees the <<person>> pawing at you, and kicks <<him>> in the face. <<He>> falls off the bed. "Fucking brat," <<he>> says, then turns to Bailey. "I want my money back."
 	<br><br>
 	Bailey gives <<him>> a level stare. "You got what you paid for. Not my fault you couldn't handle them."
@@ -1896,8 +2004,33 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 	<br><br>
 	<<npcincr Robin dom 1>>
 	<<endevent>>
+	<<link [[Next|Bed]]>><</link>>
+<<else>>
+	<<set $kylarsleeprape to 1>>
+	Kylar's eyes snap open the moment you cry out. <<nnpc_He "Kylar">> lunges out of the bed, tackling the <<person>> to the floor. <<nnpc_He "Kylar">> pulls out a knife from
+	<<if $skulduggery gte 200>>
+		a hidden pocket on the inside of <<nnpc_his "Kylar">> <<if $NPCName[$NPCNameList.indexOf("Kylar")].pronoun is "m">>pant leg<<else>>skirt<</if>>
+	<<else>>
+		out of nowhere
+	<</if>>
+	and holds it to the <<persons>> neck.
+	<br><br>
+	"Whoa, whoa!" the <<person>> yells. "I get it, I'm gone! Fucking hell!" Kylar backs away, but keeps <<nnpc_his "Kylar">> eyes fixed on the intruder. <<nnpc_He "Kylar">> stays between the two of you.
+	<br><br>
+	The <<person>> scrambes for the door. "I want my money back," <<he>> hisses to Bailey.
+	<br><br>
+	Bailey gives <<him>> a level stare. "You got what you paid for. Not my fault you couldn't handle them."
+	<br><br>
+	"I did not pay for that!" <<He>> glares at Bailey, but doesn't press the issue and stalks out. Bailey examines Kylar for a moment, then slams the door shut.
+	<br><br>
+	<<clotheson>>
+	<<endcombat>>
+	<<npc Kylar>><<person1>>Kylar returns to the bed, and wraps <<his>> arms around you<<if $submissive gte 1150>> again<</if>>. <<His>> pulse is racing. "I-It's okay," <<he>> whispers. "I protected you. You're safe."
+	<<lksuspicion>><<npcincr Kylar rage -1>>
+	<br><br>
+	<<endevent>>
+	<<link [[Next|Kylar Orphanage Bed]]>><</link>>
 <</if>>
-<<link [[Next|Bed]]>><</link>>
 <br>
 
 :: Orphanage Hacker
@@ -1980,53 +2113,72 @@ You reach out and pet the <<beasttype>>. <<bHe>> stretches into your hand and ya
 <<set $outside to 0>><<set $location to "town">><<effects>>
 "And any jewellery."
 <br><br>
-You take off your clothes. <<if $exhibitionism gte 55>>Disappointingly, the<<elseif $exhibitionism lt 15>>Thankfully, the<<else>>The<</if>> kid pays you zero attention as you strip,
-focusing heavily on your clothes. Once you are fully nude, all your clothes are shoved into a metal basket. The lid clips down.
+You take off your clothes. <<if $exhibitionism gte 55>>Disappointingly<<elseif $exhibitionism lt 15>>Thankfully,<<else>><</if>> they pay you no attention as you strip, being more interested on your clothes. Once nude, all your clothes are shoved into a metal basket. The lid clips down.
 <br><br>
-"Faraday cage," the eyes fix on your face. "Stops all transmissions. All listening devices. All radio. All bugs," said with a meaningful glance. "Nothing in or out."
+"Faraday cage." Their eyes fix on your face. "Stops all transmissions. All listening devices. All radio. All bugs. Nothing in or out."
 <br>
 "What?"
 <br>
-The kid studies your face for a long moment. Seems to weigh something.
+They study your face for a long moment.
 <<if $hairlength gte 200>><<pass 5>>
 	<br>
-	"Okay. Look, if- Wait! Wait right there... Nice try!"
+	"Okay. Look, if- Wait! Nice try."
 	<br>
-	The kid glares at your hair, walks up to you and runs fingers through your hair, checking it. This goes on for a few minutes. Your ears are also checked for earrings
-	and headsets.
+	They run fingers through your hair, combing through it. Seeming satisfied, they also check your ears.
 <</if>>
 <br><br>
-"Good-good. Okay. Look if you know about me, and Landry knows about me, then it's no longer safe. Word's out and spreading. Just a matter of time before Bailey hears something.
+
+<<link [[Next|Orphanage Hacker Strip 2]]>><</link>>
+<br>
+
+:: Orphanage Hacker Strip 2
+<<effects>>
+
+"Good-good," they continue. "Okay. Look if you know about me, and Landry knows about me, then it's no longer safe. Word's out and spreading. Just a matter of time before Bailey hears something.
 That would be bad. I need to disappear. I'll help you later. But I need you now. Need you to do three things."
 <br>
 You nod. A small USB device is shoved into your hand.
 <br><br>
+
+<<link [[Next|Orphanage Hacker Strip 3]]>><</link>>
+<br>
+
+
+:: Orphanage Hacker Strip 3
+<<effects>>
+
 "One. There's a computer in Bailey's office. Ancient. Full of holes. It's where all the orphan records are. Easy pickings. Plug this device into it.
-Computer has to be on and logged in - probably need to catch Bailey using it. This will let me in so I can delete all records of myself.
-<br>
-"Two. Get into Leighton's office. At the school. There's a safebox under the desk. SD memory cards. Lots of them. Pictures of things. Things Leighton does to naive people who don't know better.
-People like I was. Leighton can not keep those. I don't allow it. So steal them. You'll have to pick the lock. Don't get caught.
-<br>
-"Three. Put in a good word with Landry. I can make Landry money. Insane money. And I need a place to lay low. So it's win-win: Landry hides me - I make Landry very rich.
-Bailey never finds me. So talk to Landry. BUT. Do the other stuff first. That's more urgent."
+Computer has to be on and logged in. Might need to catch Bailey using it. This will let me in so I can delete all records of myself.
 <br><br>
+"Two. Get into Leighton's office. At the school. There's a safebox under the desk. SD memory cards. Lots of them. Pictures of things. Things Leighton does to naive people who don't know better.
+People like I was. Leighton can not keep those. I won't allow it. So steal them. You'll have to pick the lock. Don't get caught.
+<br><br>
+"Three. Put in a good word with Landry. I can make Landry money. Insane money. And I need a place to lay low. So it's win-win. Landry hides me, and I make Landry rich.
+Bailey never finds me. So talk to Landry. Do the other stuff first. That's more urgent."
+<br><br>
+<<link [[Next|Orphanage Hacker Strip 4]]>><</link>>
+<br>
+
+:: Orphanage Hacker Strip 4
+<<effects>>
+
 "Okay," you say.
 <br>
 "Good-good. Do this for me, I'll look out for you. I mean... you'll probably never see me again. But I will. Promise. Anyway get to it."
 <br>
-"Uh..."
+"There's one thing-"
 <br>
 "What? Get to it!"
 <br>
 You wave a hand to indicate your nudity.
 <br>
-"Oh, wow," the eyes widen. "Sorry."
+"Oh, wow," Their eyes widen. "Sorry."
 <br>
-The kid grabs the clothes basket, passes it over.
+They pass over the clothes basket.
 <br>
-"Sorry. Forgot. You... uh, look good."
+"Sorry. Forgot. You, ah, look good."
 <br><br>
-You grab your clothes and quickly dress.
+You grab your clothes and dress with haste.
 <br><br>
 <<link [[Next|Orphanage]]>><<storeon "mickey">><<set $hacker_tasks to []>><</link>>
 
@@ -2035,7 +2187,7 @@ You grab your clothes and quickly dress.
 <<dontHideForNow>><<shavestrip>>
 You take off your clothes and look at your <<genitals>>.
 <br>
-<<if $worn.genitals.name is "chastity belt">>
+<<if $worn.genitals.name is "chastity belt" or $worn.genitals.name is "gold chastity belt">>
 The belt fits snug against your body and it seems that reaching pubes with a razor is almost impossible.
 <br>
 <<link [[Dress up->Bathroom]]>><<clotheson>><<dontHideRevert>><</link>>
@@ -2143,7 +2295,7 @@ You spread your legs and start carefully trimming your pubes. After a few minute
 	<<set _choice = _ownedColours[0].colour>>
 	<<for _i, _item range _ownedColours>>
 		<label><span class="grey-shadow"><span @class="'hair-' + _item.colour.replace(/ /g, '-')"><span class="colour-hair"><span style="color:#FD6064;"><<haircolourtext _item.colour>></span></span></span></span>&nbsp;<<print '<<radiobutton "_choice" "'+_item.colour+'" ' + (_choice is _item.colour ? "checked" : "") + '>>'>></label>
-		&nbsp;�?&nbsp;_item.count |
+		&nbsp;?��?&nbsp;_item.count |
 	<</for>>
 
 	<br><br>
@@ -2439,13 +2591,27 @@ The pair whisper to themselves for a couple of minutes, with occasional furtive 
 <br><br>
 The pair make you keep their drinks full, and fetch snacks from the kitchen on demand. When you're unneeded, they make you stand to the side. <<if $exposed gte 1>>You wish you weren't so exposed.<</if>> They leer at you openly, but there's no helping it. <<if $exposed gte 1>>You can't even cover yourself with your arms bound.<</if>>
 <br><br>
-The <<person2>><<person>> gestures at <<his>> glass. This time, when you bend over to fill it, <<he>> kicks your bottom, knocking you to your knees. A weight presses against your back before you can stand up. Then another. "I need a new footstool," <<he>> says. "Best stay still. Footstools don't move."
-<<gtrauma>><<gstress>><<pain>><<trauma 6>><<stress 6>><<pain 6>>
-<br><br>
-<<link [[Endure|Sold Work Foot]]>><<pass 60>><<sub 1>><<trauma 6>><<stress 6>><<arousal 4000>><</link>><<gtrauma>><<gstress>><<ggarousal>>
-<br>
-<<link [[This is too humiliating|Sold Work Foot Refuse]]>><<def 1>><</link>>
-<br>
+
+<<if $footdisable is "f">>
+	The <<person2>><<person>> gestures at <<his>> glass. This time, when you bend over to fill it, <<he>> kicks your bottom, knocking you to your knees. A weight presses against your back before you can stand up. Then another. "I need a new footstool," <<he>> says. "Best stay still. Footstools don't move."
+	<<gtrauma>><<gstress>><<pain>><<trauma 6>><<stress 6>><<pain 6>>
+	<br><br>
+	<<link [[Endure|Sold Work Foot]]>><<pass 60>><<sub 1>><<trauma 6>><<stress 6>><<arousal 4000>><</link>><<gtrauma>><<gstress>><<ggarousal>>
+	<br>
+	<<link [[This is too humiliating|Sold Work Foot Refuse]]>><<def 1>><</link>>
+	<br>
+<<else>>
+	They send you to the kitchen to pick up some cream. It's awkward with your arms bound, but you manage to open the fridge and lift the large tub. You bring it into the living room.
+	<br><br>
+	"Lie on the table," the <<person2>><<person>> says, removing the lid. "All our plates are in the sink."
+	<br><br>
+	<<link [[Accept|Sold Work Food]]>><<trauma 6>><<stress 6>><<pass 60>><<sub 1>><<arousal 4000>><</link>><<gtrauma>><<gstress>><<ggarousal>>
+	<br>
+	<<link [[Refuse|Sold Work Food Refuse]]>><</link>>
+	<br>
+<</if>>
+
+
 
 :: Sold Work Foot
 
@@ -2454,7 +2620,7 @@ You remain on your knees. The pair continue to chat as if you're not there, thou
 <br><br>
 You're beginning to feel bored, but yelp in surprise as something touches your <<genitals>>.
 <<if $worn.genitals.type.includes("chastity")>>
-	<<His>> lifts your $worn.genitals.name with <<his>> feet, pulling it against your <<genitals 1>> and <<bottom>>.
+	<<He>> lifts your $worn.genitals.name with <<his>> feet, pulling it against your <<genitals 1>> and <<bottom>>.
 <<else>>
 	<<He>> nonchalantly molests you with <<his>> toes.
 <</if>>

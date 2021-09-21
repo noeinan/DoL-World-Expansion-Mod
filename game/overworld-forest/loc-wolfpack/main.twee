@@ -62,6 +62,11 @@ You are in the wolf cave. The ceiling hangs low. There's a breeze blowing from t
 			<br>
 		<</if>>
 	<</if>>
+	<<getChildrenIds $location>>
+	<<if _childrenIds.length gt 0>>
+		<<link [[Check on your children|Childrens Home]]>><<set $exitPassage to $passage>><</link>>
+		<br>
+	<</if>>
 	<<link [[Sleep|Wolf Cave Bed]]>><</link>>
 	<br>
 	<<link [[Go outside|Wolf Cave Clearing]]>><</link>>
@@ -132,8 +137,9 @@ You are in the clearing outside the wolf cave. A stream runs by.
 	<br>
 	<<link [[Examine|Wolf Cave Plots]]>><</link>>
 	<br>
+	<<pregnancyTest "Wolf Cave Clearing">>
 	<br>
-	<<link [[Go Inside|Wolf Cave]]>><</link>>
+	<<link [[Go inside|Wolf Cave]]>><</link>>
 	<br><br>
 	<<foresticon>><<link [[Walk into the forest (0:10)|Forest]]>><<pass 10>><<set $eventskip to 1>><<set $forest to 60>><</link>>
 	<br>
@@ -234,7 +240,11 @@ You sit on the edge and try to lower yourself down, but the rock gives way and y
 	<<run setSaveDetail("autosave",{"saveId":$saveId,"saveName":$saveName})>>
 <</if>>
 <<sleep>><<effects>>
-<<if $nightmares gte 1 and $controlled is 0>>
+<<wakingEffects $sleepHoursTotal>>
+<<if ["dryheaving","nausea"].includes(_wakingEffect)>>
+	You slept soundly, but now feel a little rough. <<stress 5>><<gstress>>
+	<br><br>
+<<elseif $nightmares gte 1 and $controlled is 0>>
 	You dream you are being hunted by something dark and terrible.
 <<else>>
 	<<if $specialClothesEffects.bimboTotal gte random(100,1000) or $arousal gte ($arousalmax / 10) * 9>>
@@ -278,7 +288,7 @@ You sit on the edge and try to lower yourself down, but the rock gives way and y
 	You shift your body to make things easier for the horny <<beasttype>>.
 	<<deviancy1>><<set $enemytrust -= 20>>
 	<<if $wolfpackharmony gte 1>>
-		<<set $rescue to 1>>
+		<<enable_rescue>>
 	<</if>>
 <<elseif $molestationstart is 1>>
 	<<set $molestationstart to 0>>
@@ -289,7 +299,7 @@ You sit on the edge and try to lower yourself down, but the rock gives way and y
 	<<beastCombatInit>>
 	<<set $enemytrust -= 40>>
 	<<if $wolfpackharmony gte 1>>
-		<<set $rescue to 1>>
+		<<enable_rescue>>
 	<</if>>
 <</if>>
 <<effects>>
@@ -413,7 +423,7 @@ You wash in the stream. The water is cold but clean.
 	The <<beasttype>> becomes more bold.
 	<<deviancy1>><<set $enemytrust -= 20>>
 	<<if $wolfpackharmony gte 1>>
-		<<set $rescue to 1>>
+		<<enable_rescue>>
 	<</if>>
 <<elseif $molestationstart is 1>>
 	<<set $molestationstart to 0>>
@@ -424,7 +434,7 @@ You wash in the stream. The water is cold but clean.
 	<<beastCombatInit>>
 	<<set $enemytrust -= 40>>
 	<<if $wolfpackharmony gte 1>>
-		<<set $rescue to 1>>
+		<<enable_rescue>>
 	<</if>>
 <</if>>
 <<effects>>

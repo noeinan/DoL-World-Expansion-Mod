@@ -73,7 +73,7 @@ function genderappearancecheck() {
 	addfemininityofclothingarticle(V.worn.legs);
 	addfemininityofclothingarticle(V.worn.feet);
 	/* Hair length */
-	if (V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1 && V.hoodDown !== 1) {
+	if ((V.worn.over_head.hood !== 1 && V.worn.head.hood !== 1) || V.hoodDown == 1) {
 		addfemininityfromfactor(Math.trunc((V.hairlength - 200) / 2), "Hair length");
 	}
 	/* Makeup */
@@ -166,6 +166,17 @@ function genderappearancecheck() {
 			(V.breastsize - 4) * 100, 0, Infinity
 		), "Breast size visible through clothing");
 	}
+	/* Pregnant Belly */
+	if (V.sexStats === undefined) {
+	}else if (V.sexStats.vagina.pregnancy.bellySize >= 8) {
+		addfemininityfromfactor(Math.clamp(
+			100000, 0, Infinity
+		), "Pregnant Belly");
+	}else if (V.sexStats.vagina.pregnancy.bellySize >= 5) {
+		addfemininityfromfactor(Math.clamp(
+			(V.sexStats.vagina.pregnancy.bellySize - 4) * 500, 0, Infinity
+		), "Pregnant Belly");
+	}
 	/* Body writing */
 	Wikifier.wikifyEval("<<bodywriting_exposure_check>>"); // TODO convert to JS when possible
 	T.skinValue = 0;
@@ -192,6 +203,13 @@ function genderappearancecheck() {
 		T.gender_appearance = "f";
 	} else if (T.apparent_femininity < 0) {
 		T.gender_appearance = "m";
+	} else if (V.player.gender == "h") { // if herm pc and perfect 0 apparent_femininity
+		if (["m", "f"].contains(V.player.gender_body)) // use natural features as a tie breaker if not androgynous
+			T.gender_appearance = V.player.gender_body;
+		else if (["m", "f"].contains(V.player.gender_posture)) // use gender posture as a tie breaker if not acting naturally
+			T.gender_appearance = V.player.gender_posture;
+		else
+			T.gender_appearance = "f"; // you've done it. you've broken me. default to "f".
 	} else {
 		T.gender_appearance = V.player.gender;
 	}
@@ -199,11 +217,54 @@ function genderappearancecheck() {
 		T.gender_appearance_noow = "f";
 	} else if (T.apparent_femininity_noow < 0) {
 		T.gender_appearance_noow = "m";
+	} else if (V.player.gender == "h") {
+		if (["m", "f"].contains(V.player.gender_body))
+			T.gender_appearance_noow = V.player.gender_body;
+		else if (["m", "f"].contains(V.player.gender_posture))
+			T.gender_appearance_noow = V.player.gender_posture;
+		else
+			T.gender_appearance_noow = "f";
 	} else {
 		T.gender_appearance_noow = V.player.gender;
 	}
 }
-DefineMacro("genderappearancecheck", genderappearancecheck);
+
+function apparentbreastsizecheck(){
+	T.tempbreast = V.breastsize;
+	if ( V.worn.upper.bustresize != undefined ){ T.tempbreast += V.worn.upper.bustresize };
+	if ( V.worn.under_upper.bustresize != undefined ){ T.tempbreast += V.worn.under_upper.bustresize };
+	if ( V.worn.over_upper.bustresize != undefined){ T.tempbreast += V.worn.over_upper.bustresize };
+	V.player.perceived_breastsize = Math.clamp( V.breastsizemin, T.tempbreast, V.breastsizemax );
+}
+
+function apparentbottomsizecheck(){
+	T.tempbutt = V.bottomsize;
+	if ( V.worn.lower.rearresize != undefined ){ T.tempbutt += V.worn.lower.rearresize };
+	if ( V.worn.under_lower.rearresize != undefined ){ T.tempbutt += V.worn.under_lower.rearresize };
+	if ( V.worn.lower.rearresize != undefined ){ T.tempbutt += V.worn.over_lower.rearresize };
+	V.player.perceived_bottomsize = Math.clamp( V.bottomsizemin, T.tempbutt, V.bottomsizemax );
+}
+
+function exposedcheck() { 
+	if ( !V.combat || V.args[0] === true ){
+		genderappearancecheck();
+		V.player.gender_appearance = T.gender_appearance;
+		T.gender_appearance_factors.sort((a, b) => a.femininity > b.femininity);
+		V.player.gender_appearance_factors = T.gender_appearance_factors;
+		V.player.femininity = T.apparent_femininity;
+
+		V.player.gender_appearance_without_overwear = T.gender_appearance_noow;
+		T.gender_appearance_factors_noow.sort((a, b) => a.femininity > b.femininity);
+		V.player.gender_appearance_without_overwear_factors = T.gender_appearance_factors_noow;
+		V.player.femininity_without_overwear = T.apparent_femininity_noow;
+
+		V.breastindicator = T.breast_indicator;
+
+		apparentbreastsizecheck();
+		apparentbottomsizecheck();
+	}
+}
+DefineMacro("exposedcheck", exposedcheck);
 
 function updatehistorycontrols(){
 	if (V.maxStates === undefined || V.maxStates > 20) {

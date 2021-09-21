@@ -63,17 +63,21 @@ A <<generate1>><<person1>><<person>> approaches you, smiling. "Rope accident?" <
 <<widget "dockwork">>
 <<set $dockhours += 1>>
 <<if $stress gte $stressmax>>
-	You've pushed yourself too much.
-	<br><br>
-	<<passout>>
-
-	<<if $danger gte (9900 - $allure)>>
-		<<link [[Next|Passout Docks]]>><</link>>
-		<br>
+	/*ToDo: Pregnancy, remove $pregnancyTesting to properly enable*/
+	<<if $sexStats.vagina.pregnancy.waterBreaking is true and $pregnancyTesting>>
+		<<pregnancyWatersBrokenPassout "docks">>
 	<<else>>
-		<<ambulance>>
-	<</if>>
+		You've pushed yourself too much.
+		<br><br>
+		<<passout>>
 
+		<<if $danger gte (9900 - $allure)>>
+			<<link [[Next|Passout Docks]]>><</link>>
+			<br>
+		<<else>>
+			<<ambulance>>
+		<</if>>
+	<</if>>
 <<elseif $hour gte 19>>
 	You help put away equipment and make sure the containers are locked for the night.
 	<br><br>
@@ -261,7 +265,7 @@ A <<generate1>><<person1>><<person>> approaches you, smiling. "Rope accident?" <
 			<br><br>
 			<<dockoptions>>
 		<<elseif !$worn.over_lower.type.includes("naked")>>
-			You're working on a crane when it roars into life, and the boom rises. You find yourself yanked upwards by a hook embedded in your $worn.over_lower.name.
+			You're working on a crane when it roars to life, and the boom rises. You find yourself yanked upwards by a hook embedded in your $worn.over_lower.name.
 			<br><br>
 			<<generate1>><<person1>>The crane stops, leaving you suspended in the air. The <<person>> manning the crane waves at you as you spin. Other dockers step into view. They whistle and applaud.
 			<br><br>
@@ -288,7 +292,7 @@ A <<generate1>><<person1>><<person>> approaches you, smiling. "Rope accident?" <
 				<br>
 			<</if>>
 		<<else>>
-			You're working on a crane when it roars into life, and the boom rises. You find yourself yanked upwards by a hook embedded in your $worn.lower.name.
+			You're working on a crane when it roars to life, and the boom rises. You find yourself yanked upwards by a hook embedded in your $worn.lower.name.
 			<br><br>
 			<<generate1>><<person1>>The crane stops, leaving you suspended in the air. The <<person>> manning the crane waves at you as you spin. Other dockers step into view. They whistle and applaud.
 			<br><br>
@@ -433,6 +437,7 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 
 <<widget "skul_dock_init">>
 <<if $skul_dock_init is undefined>>
+	<<unset $catsuit_spawned>>
 	<<set $skul_dock_init to 1>>
 	<<set $dock_security to 1>>
 	<<set $skul_dock to {}>>
@@ -461,7 +466,8 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 		<<elseif $rng gte 65>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "fertiliser">>
 			<<set _count++>>
-		<<elseif $rng gte 55 and $catsuit_found isnot true>>
+		<<elseif $rng gte 55 and $catsuit_found isnot true and $catsuit_spawned is undefined>>
+			<<set $catsuit_spawned to 1>>
 			<<set $skul_dock[_skul_dock_keys[_i]].contents to "equipment">>
 			<<set _count++>>
 		<<else>>
@@ -546,7 +552,7 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 	<<link [[Sneak to the cranes (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "W">><</link>><<skul_dock_state W>><br>
 <</if>>
 <<if $bus is "E">>
-	<<link [[Sneak to the tallest stacks of cargo containers|Docks Sneak]]>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>><br>
+	<<link [[Sneak to the tallest stacks of cargo containers (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "M">><</link>><<skul_dock_state M>><br>
 <</if>>
 <<if $bus is "SE" or $bus is "M" or $bus is "NE">>
 	<<link [[Sneak to the office (0:05)|Docks Sneak]]>><<pass 5>><<set $bus to "E">><</link>><<skul_dock_state E>><br>
@@ -612,7 +618,7 @@ is lovemaking, which prompts a bawdy cheer. Your colleagues insist this will be 
 		You hear a patter of feet on the other side of a row of containers.
 		<!-- Modified for Monster People -->
 		<<if ($monsterchance gte random(1, 100) and ($hallucinations gte 1 or $monsterhallucinations is "f")) or ($bestialitydisable is "t")>>
-			<<if $malechance lt random(1, 100)>>
+			<<if $beastmalechance lt random(1, 100)>>
 				<<set $dock_dog to "girl">>
 				You peer between them, and see a doggirl on all fours sniffing the ground. You walked there not long ago. She has your scent.
 				<br><br>
